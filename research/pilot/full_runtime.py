@@ -133,7 +133,11 @@ class Runtime:
         if create:
             (RUN / 'completion-cache').mkdir()
             (RUN / 'embedding-cache').mkdir()
-            prior = json.loads((probe.FINISH_RUN / 'summary.json').read_text())
+            prior_file=probe.FINISH_RUN / 'summary.json'
+            prior = json.loads(prior_file.read_text()) if prior_file.exists() else {
+                'reserved':{k:0 for k in ('generation_attempts','embedding_attempts',
+                    'generation_input_tokens','embedding_input_tokens','embedding_items')},
+                'cumulative_elapsed_seconds':0}
             self.ledger = {'run_id': RUN.name, 'status': 'prepared', 'created_utc': now(),
                 'supervisor_pid': os.getpid(), 'limits': LIMITS, 'events': [],
                 'logical_completion_calls': 0, 'completion_cache_hits': 0,
@@ -165,12 +169,14 @@ class Runtime:
         if resume:
             if stage != 'index' or self.ledger.get('verified_resume_ready') is not True:
                 raise Halt('unverified_resume')
-            required, marker = 'stopped', 'index-verified-resume-01.lock'
+            number=self.ledger.get('verified_resume_number',1)
+            required, marker = 'stopped', f'index-verified-resume-{number:02}.lock'
         if required is None or self.ledger['status'] != required:
             raise Halt('run_not_ready_for_new_stage')
         fd = os.open(RUN/marker, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
         os.close(fd)
         self.phase = stage
+        if resume:self.ledger['verified_resume_ready']=False
         self.ledger.setdefault('started_utc', now())
         self.ledger['status'] = 'running'
         self.ledger.pop('stop_reason', None)

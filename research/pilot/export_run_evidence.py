@@ -12,7 +12,7 @@ import probe_runtime as probe
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[1]
 RUN=ROOT/'.cache/pilot/full-20261012'
-OUT=HERE/'results'
+from result_paths import OUT
 
 
 def write(name,obj):

@@ -4,6 +4,7 @@ from collections import defaultdict
 import json
 from pathlib import Path
 import statistics
+from result_paths import OUT
 
 HERE = Path(__file__).resolve().parent
 
@@ -82,9 +83,9 @@ def main():
               'rows':rows,'aggregates':aggregates,'paired_differences':paired,
               'feature_evidence_rows':feature_rows}
     if args.check:
-        assert json.loads((HERE/'results/scores.json').read_text())==result, 'saved scores differ from recomputation'
+        assert json.loads((OUT/'scores.json').read_text())==result, 'saved scores differ from recomputation'
     else:
-        (HERE/'results/scores.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
+        (OUT/'scores.json').write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n')
     print(json.dumps([r for r in aggregates if r['budget']==4000 and r['split']=='test' and r['kind']=='all'],indent=2))
 
 

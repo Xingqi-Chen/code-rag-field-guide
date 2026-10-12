@@ -18,7 +18,7 @@ import full_index
 import probe_runtime as probe
 
 ROOT, RUN = transport.ROOT, transport.RUN
-OUT = ROOT/'research/pilot/results'
+from result_paths import OUT
 METHODS = ['bm25', 'hybrid', 'ms_basic', 'ms_local']
 ORDER = ['reports', 'entities', 'relationships', 'claims', 'sources']
 
@@ -151,7 +151,7 @@ def run():
     # Confirm adapter reads exactly the shared cached query vectors, without a
     # source re-embedding or extra query normalization.
     runtime.offline = True
-    OUT.mkdir(exist_ok=True)
+    OUT.mkdir(parents=True,exist_ok=True)
     (OUT/'provenance.json').write_bytes((ROOT/'.cache/pilot/provenance.json').read_bytes())
     (OUT/'short-id-map.json').write_text(json.dumps([{'short_id':t.short_id,'text_unit_id':t.id,
         'input_id':unit_map[t.id]['input_id']} for t in units],indent=2)+'\n')

@@ -9,7 +9,7 @@ from pathlib import Path
 from full_retrieve import render, adapt, budget_tables
 
 HERE=Path(__file__).resolve().parent
-OUT=HERE/'results'
+from result_paths import OUT
 
 
 def validate(tokens=False):
@@ -81,7 +81,8 @@ def validate(tokens=False):
                 sources.append({'short_id':short_id,'text_unit_id':mapping['text_unit_id'],**p})
         assert sources==context['sources']==result['sources'], 'summary sidecar does not match actual context'
         assert len(sources)==context['source_chunks']==result['source_chunks']
-        assert result['final_context_tokens']==context['final_context_tokens']
+        for key in ('final_context_tokens','source_text_tokens','retrieval_compute_seconds','adaptation_seconds','raw_context_tokens'):
+            assert result[key]==context[key], 'summary auxiliary field differs: '+key
         if count:
             assert count(context['final_context'])==context['final_context_tokens'], 'token mismatch'
             if context['upstream_raw_context'] is not None:

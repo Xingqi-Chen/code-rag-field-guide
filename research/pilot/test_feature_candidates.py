@@ -11,10 +11,11 @@ import re
 import shutil
 import subprocess
 import time
+from full_features import extract_diff
 
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[1]
-OUT=HERE/'results'
+from result_paths import OUT
 
 
 def sanitized(text,candidate):
@@ -52,12 +53,20 @@ def main():
     record_file=OUT/'features'/f'{args.label}-evaluation.json'
     if record_file.exists():raise ValueError('candidate already evaluated')
     result={'feature_id':feature,'method':method,'generation':generation,'suites':[]}
+    response=(OUT/'features'/f'{args.label}.response.txt').read_bytes()
+    response_sha=hashlib.sha256(response).hexdigest()
+    assert response_sha==generation['response_sha256'], 'original response changed'
+    extracted,issue=extract_diff(response.decode())
+    assert issue==generation['patch_format_issue']
     if generation['patch_status']=='invalid_format':
         result['status']='invalid_format'
     else:
         patch=OUT/'features'/f'{args.label}.patch'
+        assert patch.read_bytes()==extracted.encode(), 'patch differs from original response'
+        assert hashlib.sha256(patch.read_bytes()).hexdigest()==generation['patch_sha256']
         review=json.loads((OUT/'features'/f'{args.label}-review.json').read_text())
         assert review['patch_sha256']==hashlib.sha256(patch.read_bytes()).hexdigest()
+        assert review['response_sha256']==response_sha
         assert review['approved_for_isolated_tests'] is True
         candidate=ROOT/'.cache/pilot/candidates'/args.label
         if candidate.exists():raise ValueError('candidate directory already exists')

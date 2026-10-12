@@ -66,7 +66,10 @@ uv pip install --python .cache/graphrag-venv/bin/python --no-deps \
 
 运行前须自行确认服务权限、预算和[仓库外凭据](credentials.md)。历史结果已在仓库，无需为了读报告发请求。运行器固定独立目录并拒绝重复启动，已运行的目录不能直接覆盖。成功缓存只按完整请求参数／endpoint或精确embedding输入复用；失败或结果不明不会自动重试。
 
+在全新clone中重跑时，历史探针缓存可以不存在，先前用量从0记起。将新结果放到独立目录，避免覆盖已发布结果；下列环境变量只影响结果输出，核验已发布结果时不要设置它。
+
 ```bash
+export CODE_RAG_RESULTS_DIR=.cache/pilot/reproduction-results
 PYTHONHASHSEED=20261012 .cache/graphrag-venv/bin/python research/pilot/full_index.py prepare
 PYTHONHASHSEED=20261012 .cache/graphrag-venv/bin/python research/pilot/full_index.py index
 PYTHONHASHSEED=20261012 .cache/graphrag-venv/bin/python research/pilot/full_retrieve.py --execute

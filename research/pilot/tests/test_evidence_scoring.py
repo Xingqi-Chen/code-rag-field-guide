@@ -48,5 +48,10 @@ class EvidenceScoringTests(unittest.TestCase):
         _, issue=extract_diff('--- a/../../outside\n+++ b/../../outside\n@@ -1 +1 @@\n-x\n+y')
         self.assertEqual(issue,'unsafe_diff_path')
 
+    def test_diff_final_blank_context_line_keeps_required_space(self):
+        patch='--- a/src/requests/sessions.py\n+++ b/src/requests/sessions.py\n@@ -1,2 +1,2 @@\n-old\n+new\n \n'
+        self.assertEqual(extract_diff(patch),(patch,None))
+        self.assertEqual(extract_diff('```diff\n'+patch+'```\n'),(patch,None))
+
 
 if __name__=='__main__':unittest.main()

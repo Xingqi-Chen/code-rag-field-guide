@@ -9,7 +9,7 @@ import full_runtime as transport
 import probe_runtime as probe
 
 ROOT, RUN = transport.ROOT, transport.RUN
-OUT = ROOT/'research/pilot/results'
+from result_paths import OUT
 METHODS = ['bm25', 'hybrid', 'ms_basic', 'ms_local']
 PROMPT = '''You are implementing one small feature in the public Requests 2.32.3 source snapshot.
 Use the supplied source evidence and task requirements. Do not use tools, search,
@@ -35,7 +35,9 @@ SOURCE EVIDENCE (the same maximum 4000 o200k tokens for every retrieval method)
 
 def extract_diff(text):
     """A single optional enclosing fence is formatting, never patch repair."""
-    stripped = text.strip()
+    # A unified diff's final context line may be exactly one space. Strip
+    # only enclosing newline characters, never meaningful line whitespace.
+    stripped = text.strip('\r\n')
     if stripped.startswith('```') and stripped.endswith('```'):
         lines = stripped.splitlines()
         if lines[0] in {'```', '```diff', '```patch'}:
@@ -83,12 +85,15 @@ def generate():
             response = reply['choices'][0]['message']['content']
             patch, issue = extract_diff(response)
             label = feature['id']+'-'+method
-            (destination/f'{label}.response.txt').write_text(response+'\n')
+            response_bytes=response.encode()
+            (destination/f'{label}.response.txt').write_bytes(response_bytes)
             if patch is not None:
                 (destination/f'{label}.patch').write_text(patch)
             result = {'feature_id':feature['id'],'method':method,'model':probe.MODEL,
                 'context_file':'contexts/'+context_file.name,'context_tokens':context['final_context_tokens'],
                 'prompt_sha256':hashlib.sha256(prompt.encode()).hexdigest(),
+                'response_sha256':hashlib.sha256(response_bytes).hexdigest(),
+                'patch_sha256':hashlib.sha256(patch.encode()).hexdigest() if patch is not None else None,
                 'prompt_common_tokens':len(runtime.oenc.encode(prompt)), 'usage':reply['usage'],
                 'requested_output_limit_exceeded': reply['usage']['completion_tokens']>2048 or len(runtime.oenc.encode(response))>2048,
                 'physical_generation_attempts':runtime.ledger['feature_generation_attempts']-before,
