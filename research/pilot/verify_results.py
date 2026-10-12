@@ -1,10 +1,12 @@
 """Validate actual public contexts and reconstruct scored provenance, offline."""
 import argparse
+import csv
 import hashlib
+import io
 import json
 from pathlib import Path
 
-from full_retrieve import render
+from full_retrieve import render, adapt, budget_tables
 
 HERE=Path(__file__).resolve().parent
 OUT=HERE/'results'
@@ -47,6 +49,25 @@ def validate(tokens=False):
         assert context['final_context_tokens']<=context['budget']
         assert context['retrieval_compute_seconds']>=0 and context['adaptation_seconds']>=0
         sources=[]
+        if context['method'].startswith('ms_'):
+            raw=context['upstream_raw_context']
+            raw_text='\n\n'.join(raw) if isinstance(raw,list) else raw
+            raw_sources={}
+            for row in context['upstream_raw_records'].get('sources',[]):
+                short_id=str(row['id'])
+                p=provenance[by_short[short_id]['input_id']]
+                assert hashlib.sha256(row['text'].encode()).hexdigest()==p['text_sha256']
+                raw_sources[short_id]={'text':row['text'],'provenance':p}
+                if context['method']=='ms_local':assert row['text'] in raw_text, 'source absent from actual raw context'
+            if context['method']=='ms_basic' and raw_text:
+                parsed=list(csv.DictReader(io.StringIO(raw_text),delimiter='|',escapechar='\\'))
+                assert parsed==context['upstream_raw_records'].get('sources',[]), 'Basic raw CSV differs from records'
+            expected_tables=adapt(context['upstream_raw_records'],raw_sources)
+            flatten=lambda tables:[(t['name'],t['columns'],r) for t in tables for r in t['rows']]
+            kept=flatten(context['final_tables'])
+            assert kept==flatten(expected_tables)[:len(kept)], 'adaptation is not a whole-row prefix'
+            if count:
+                assert render(budget_tables(expected_tables,context['budget'],count))==context['final_context']
         for table in context['final_tables']:
             if table['name']!='sources':continue
             assert table['columns']==['id','source','text']
