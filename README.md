@@ -12,7 +12,7 @@
 
 旧自制代码图实验未测试微软实现，保留于[正常 Git 历史](research/legacy.md)，不作为新版效果证据。
 
-**最新实测：**按授权启动8块接口探测，one.fullstar `gpt-5.6-luna` 的第1个请求返回HTTP 401，随即停止、没有重试；OpenAI `text-embedding-3-large`调用为0。[真实记录与未完成边界](research/pilot/probe-result.md)。认证失败不是GraphRAG效果证据。
+**最新实测：**首次401后，用户更新key并授权续批；一次初抽与两批官方embedding通过当前校验，随后补抽HTTP500而停止。累计3次生成尝试、2批embedding，没有自动重试。[真实记录与未完成边界](research/pilot/probe-result.md)。接口结果不是GraphRAG检索效果证据。
 
 发布快检不需要网络或模型：
 
