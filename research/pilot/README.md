@@ -30,7 +30,7 @@
 | feature | F01 字典合并运算；F02 Session默认超时；各从相同修改前版本开始 |
 | 本地回归 | 59项通过；这是所选离线子集，不是 Requests完整测试套件 |
 | 新功能验收前测 | F01：4失败/3通过；F02：10失败/4通过，失败来自功能缺失；没有生成/应用解决补丁 |
-| 微软接入 | v3.3.0配置字段/接口已静态核对；模板非可直接运行配置，模型/provider/维度仍是占位符 |
+| 微软接入 | v3.3.0配置字段/接口已静态核对；已选生成与embedding模型；第三方endpoint及运行适配仍未验证 |
 
 大小来自 [size.json](size.json)，逐文件hash见 [files.json](files.json)。原始本地输出见 [回归日志](regression.log)、[F01前测](feature-F01-before.log)、[F02前测](feature-F02-before.log)。环境为 Apple M4、10 CPU、16 GiB、macOS26.4.1、Python3.12.10；工具实测版本见 [environment.json](environment.json)。只安装了小型测试／token计数依赖，没有下载新权重或安装微软依赖。
 
@@ -40,29 +40,17 @@
 
 先对比 **BM25、同模型hybrid、Microsoft Basic、Microsoft Local** 交回的代码证据，另保留便宜的精确文本/符号参考。共享embedding、源码块和4,000/12,000-token最终预算；图关系与社区文字也占预算。只取上下文时必须绕开会继续生成答案的公共search API，使用固定版本内部builder，接入边界见 [接口说明](interfaces.md)。
 
-之后才把各组相同预算的材料交给同一个编辑模型完成两个feature，分别检查新增验收、旧回归和人工需求满足。仅有检索数据时，只能说检索效果，不能推断代码修改成功率。目前只提供 [离线排名函数](baselines.py)；完整微软运行适配器、上下文序列化和评分聚合器仍须在模型确定后接通并机械验收，不能把准备代码称为已跑通实验。
+之后才把各组相同预算的材料交给同一个编辑模型完成两个feature，分别检查新增验收、旧回归和人工需求满足。仅有检索数据时，只能说检索效果，不能推断代码修改成功率。目前只提供 [离线排名函数](baselines.py)；完整微软运行适配器、上下文序列化和评分聚合器仍须接通并机械验收，不能把准备代码称为已跑通实验。
 
-## 费用：已有规模，尚无服务报价
+## 已选模型与下一步限额
 
-当前未选服务／模型，**不填写美元预算**。下面是可复算的请求与文本token测量，不是账单或费用上限。
+生成使用 **one.fullstar.tech `gpt-5.6-luna`**；hybrid／Basic／Local统一使用 **OpenAI官方 `text-embedding-3-large`，3072维**。这是用户后续选择，原冻结模板、问题和协议保持原hash；新增[选定配置](ms-settings.selected.yaml)与[选择清单](selection.json)记录变化，不冒称在原冻结时已决定。
 
-默认抽取每块一次初抽、一次补抽；第二次会重新发送原提示及第一次结果。按“每次结果最多2048个共同计数token”的**估算情景**：
+**待确认范围仅为[8块兼容性探测](probe.md)**：生成最多17次发送、每次最多请求2048输出token、60秒超时；embedding最多3批、累计20,000个cl100k输入token、30秒超时；所有层0自动重试，并发1，总时长20分钟。按官方普通输入单价，OpenAI embedding输入费上限约 **$0.0026税前**；用户已明确one.fullstar不必估价。密钥由用户手动放在仓库外，见[凭据说明](credentials.md)。
 
-| 抽取范围 | 成功时逻辑completion请求 | 输入文本token情景范围 | 输出文本token情景范围 |
-| --- | ---: | ---: | ---: |
-| 固定种子选8块兼容样本 | 16 | 36,480–52,864 | 0–32,768 |
-| 全部114块 | 228 | 609,410–842,882 | 0–466,944 |
+原[文本token情景测量](token-estimate.json)仍可复算：8块初抽加补抽成功时共16次逻辑请求，输入36,480–52,864个o200k文本token；全部114块为228次、609,410–842,882。这只计算抽取，并以每次2048可见文本token为假设，**不是完整索引预算**；不含角色封装、描述汇总、社区报告、图产物embedding或改码。现在另用embedding实际词表cl100k重算8块加4dev，共4,327 token，见[结果](embedding-estimate.json)。两种计数口径不能混用。
 
-这不含角色封装、重试、实体/关系描述汇总、社区报告或改码。2048只是估算条件，尚未落实为服务端限额；不同模型的实际tokenizer和计费不同，不能把表中上界当总预算。原始数值与8块ID见 [token-estimate.json](token-estimate.json)，由 [measure.py](measure.py)对固定微软prompt和真实输入计数。
-
-源码embedding的已知量是114段、105,656个共同计数token；22个查询正文共682 token。按每批1–16段，源码阶段是8–114个逻辑请求；共享查询缓存可避免方法间重复，但批量限制须以服务支持为准。Local需要实体描述embedding；本模板还配置了社区报告embedding，但Local上下文构建本身不依赖后者。两者数量和长度依赖实际索引产物，当前未知。描述汇总、报告拆分与重试同样不能仅凭源码行数准确估计。
-
-可行候选：
-
-- **托管官方接口：**例如 OpenAI `gpt-4.1-2025-04-14` completion + `text-embedding-3-small`统一embedding。官方列出前者的结构化输出和固定snapshot，后者提供embedding；只是兼容候选，不是已选或已测配置。[completion文档](https://developers.openai.com/api/docs/models/gpt-4.1)、[embedding文档](https://developers.openai.com/api/docs/models/text-embedding-3-small)，访问2026-10-12。实际可用性、维度、token限制和计价须确认；不读取其他项目key。
-- **本地兼容服务：**llama.cpp官方server文档列出chat、JSON schema和`/v1/embeddings`端点，但模型、pooling、输入容量和微软适配仍要实测。本轮没有下载或选定本地权重；16GiB硬件不能直接保证某组合稳定。尤其不能把现有MiniLM的256-wordpiece输入上限当成1200-token代码块可用。[官方server说明](https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md)，访问2026-10-12（动态文档，执行时另固定commit）。
-
-**最小下一步批准项：**选择completion和统一embedding的服务/模型，以及仅8块兼容探测的请求、token、时间/内存上限；若用收费服务，再依据该服务当日官方单价确认金额上限。还须明确使用本项目获授权的凭据方式，不能复用其他项目秘密。先落实计数/停机机制、验证格式和来源，再决定114块完整索引预算。此处没有把任何模型调用视为已获批准。
+第三方endpoint、模型映射、schema与限额语义仍待兼容检查。选定YAML的候选参数不等于运行时限额已生效；发送前配额、总超时和RSS监督仍须接入。准备完成不代表探测或完整微软实验已跑通。
 
 ## 可运行的准备命令
 
@@ -80,4 +68,4 @@ python3 research/pilot/verify.py --source
 
 后两条在原版预期返回exit1，不能把它们放进要求全绿的CI。脚本只选择经审查的离线测试，阻断TCP/DNS并替换个人netrc/proxy读取；它不是执行任意未知补丁的安全沙箱。若要核算微软提示词，先按[源码核对说明](../process.md)下载固定引用文件，之后运行 `.cache/pilot-venv/bin/python research/pilot/measure.py` 即可；其所需prompt已包含在固定引用文件中，不必另下载完整微软归档。此脚本不会调用模型。
 
-发布CI仅执行 `python3 research/pilot/verify.py` 及现有轻量测试，不下载语料、不跑微软或feature前测。冻结复核、许可、隐私检查和未完成项见 [准备复核记录](review.md)。
+发布CI仅执行冻结／选择清单检查及现有轻量测试，不下载语料、不跑微软或feature前测。冻结复核、许可、隐私检查和未完成项见 [准备复核记录](review.md)。

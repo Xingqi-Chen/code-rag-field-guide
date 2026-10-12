@@ -1,0 +1,24 @@
+Offline selected-model preparation checks; Mac mini; 2026-10-12.
+No credentials loaded by these checks; no model/embedding requests.
+
+$ .venv/bin/python research/pilot/verify.py --source
+Freeze verified: 20 retrieval + 2 feature tasks; 71 source spans; 41 input files; source_check=True; no inference.
+exit=0
+
+$ .venv/bin/python research/pilot/verify_selection.py --yaml
+Selection hashes (8 files), frozen 8 IDs / 4 dev queries, token sums and USD arithmetic: PASS.
+YAML syntax, selected names, literal key placeholders and candidate request limits: PASS.
+Offline preparation only; no secret loading, model request, runtime limiter or compatibility verification.
+exit=0
+
+$ .venv/bin/python -m unittest discover -s tests
+........
+----------------------------------------------------------------------
+Ran 8 tests in 0.004s
+
+OK
+exit=0
+
+$ python3 scripts/validate.py
+Validated 74 public files, 126 local links/anchors, 4 PNG/SVG pairs, source pin and privacy patterns.
+exit=0

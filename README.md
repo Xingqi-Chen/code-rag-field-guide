@@ -12,6 +12,8 @@
 
 旧自制代码图实验未测试微软实现，保留于[正常 Git 历史](research/legacy.md)，不作为新版效果证据。
 
+后续接口探测已选 one.fullstar `gpt-5.6-luna` 与统一 OpenAI `text-embedding-3-large`；[8块探测范围及费用限额](research/pilot/probe.md)和[无密钥配置](research/pilot/ms-settings.selected.yaml)可供审核，尚未执行。
+
 发布快检不需要网络或模型：
 
 ```bash
