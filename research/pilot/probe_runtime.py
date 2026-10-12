@@ -26,6 +26,8 @@ ROOT = HERE.parents[1]
 RUN = ROOT / ".cache/pilot/probe-approved-20261012-01"
 PRIOR_RUN = RUN
 KEY_UPDATE_RUN = ROOT / ".cache/pilot/probe-approved-20261012-02"
+RESPONSES_RUN = ROOT / ".cache/pilot/probe-approved-20261012-03"
+FINISH_RUN = ROOT / ".cache/pilot/probe-approved-20261012-04"
 MS = ROOT / ".cache/ms-graphrag/graphrag-5faaaf4f5685fa2056fa8c3bf9342cb089f2942f"
 MODEL = "gpt-5.6-luna"
 EMBED = "text-embedding-3-large"
@@ -501,10 +503,23 @@ def inherited_key_update():
     return prior
 
 
-def execute(key_update=False):
+def execute(key_update=False, finish=False):
     started = time.monotonic()
     prior = inherited_key_update() if key_update else None
-    inherited_seconds = prior["elapsed_seconds"] if prior else 0
+    if finish:
+        prior = json.loads((RESPONSES_RUN / "summary.json").read_text())
+        public = json.loads((HERE / "responses-result.json").read_text())
+        if (prior["status"] != "single_glean_validated" or prior["reserved"] != public["reserved"]
+                or prior["cumulative_elapsed_seconds"] != public["cumulative_elapsed_seconds"]
+                or prior["reserved"]["generation_attempts"] != 4 or prior["reserved"]["embedding_attempts"] != 2):
+            raise Stop("prior_responses_batch_not_closed_or_changed")
+        try:
+            os.kill(prior["supervisor_pid"], 0)
+        except ProcessLookupError:
+            pass
+        else:
+            raise Stop("prior_supervisor_still_exists")
+    inherited_seconds = (prior["cumulative_elapsed_seconds"] if finish else prior["elapsed_seconds"]) if prior else 0
     remaining_seconds = LIMITS["wall_seconds"] - inherited_seconds
     if remaining_seconds <= 0:
         raise Stop("cumulative_deadline_exhausted")
@@ -524,8 +539,10 @@ def execute(key_update=False):
                "supervisor_pid": os.getpid(),
                "implementation": "direct HTTP with fixed Microsoft prompts; GraphRAG/LiteLLM packages not executed"}
     if prior:
-        summary["inherited"] = {"batch_id": PRIOR_RUN.name, "reserved": prior["reserved"], "elapsed_seconds": inherited_seconds}
-        summary["planned_omission"] = "Last fixed chunk glean omitted to retain report-schema call within 16 remaining generation attempts."
+        summary["inherited"] = {"batch_id": prior["batch_id"], "reserved": prior["reserved"], "elapsed_seconds": inherited_seconds}
+        summary["planned_omission"] = ("Fixed chunks 7 and 8 skip glean; reuse chunk 1 and both source/dev embedding batches. Remaining 7 initial + 5 glean + 1 report, then one artifact embedding batch."
+                                       if finish else "Last fixed chunk glean omitted to retain report-schema call within 16 remaining generation attempts.")
+    summary["executed_source_commit"] = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     save(RUN / "summary.json", summary)
 
     def request(service, body, input_ids):
@@ -567,7 +584,9 @@ def execute(key_update=False):
         event["response_model_matches"] = response.get("model") == (MODEL if service == "generation" else EMBED)
         if service == "generation":
             content, usage = validate_generation(response, o200k)
-            event.update(usage=usage, visible_output_tokens=len(o200k.encode(content, disallowed_special=())))
+            event.update(usage=usage, visible_output_tokens=len(o200k.encode(content, disallowed_special=())),
+                         terminal_status="completed", responses_transport=response.get("responses_transport"),
+                         recovered_output_items=response.get("recovered_output_items"))
             return content, event
         event["usage"] = validate_embedding(response, len(counts), sum(counts))
         event["status"] = "validated"
@@ -577,10 +596,16 @@ def execute(key_update=False):
 
     try:
         entities, relations = [], []
-        for chunk_index, chunk in enumerate(chunks):
+        if finish:
+            for folder in (KEY_UPDATE_RUN, RESPONSES_RUN):
+                response = json.loads((folder / "response-01.json").read_text())["response"]
+                old_text, _ = validate_generation(response, o200k)
+                es, rs = parse_extraction(old_text, chunks[0]["id"])
+                entities.extend(es); relations.extend(rs)
+        for chunk_index, chunk in (enumerate(chunks[1:], 1) if finish else enumerate(chunks)):
             prompt = prompts["GRAPH_EXTRACTION_PROMPT"].format(entity_types="organization,person,geo,event", input_text=chunk["text"])
             messages = [{"role": "user", "content": prompt}]
-            stages = ("initial",) if key_update and chunk_index == 7 else ("initial", "glean")
+            stages = ("initial",) if (key_update and chunk_index == 7) or (finish and chunk_index >= 6) else ("initial", "glean")
             for stage in stages:
                 text, event = request("generation", generation_payload(messages), [chunk["id"], stage])
                 es, rs = parse_extraction(text, chunk["id"])
@@ -594,6 +619,9 @@ def execute(key_update=False):
                         request("embedding", {"model": EMBED, "input": texts, "dimensions": 3072, "encoding_format": "float"}, ids)
                 messages += [{"role": "assistant", "content": text}, {"role": "user", "content": prompts["CONTINUE_PROMPT"]}]
         source = canonical({"entities": entities, "relationships": relations})
+        summary["extraction"] = {"entity_records": len(entities), "relationship_records": len(relations),
+                                 "initial_chunks_completed": 8, "glean_chunks_completed": 6 if finish else 7 if key_update else 8}
+        save(RUN / "extracted-graph.json", {"entities": entities, "relationships": relations})
         prompt = prompts["COMMUNITY_REPORT_PROMPT"].format(input_text=source, max_report_length=2000)
         text, event = request("generation", generation_payload([{"role": "user", "content": prompt}], REPORT_SCHEMA), ["sample-derived-report"])
         report = json.loads(text)
@@ -610,7 +638,7 @@ def execute(key_update=False):
         batches = [([c["text"] for c in chunks], [c["id"] for c in chunks]),
                    ([q["query"] for q in queries], [q["id"] for q in queries]),
                    ([e["description"] for e in selected] + [text], [e["id"] for e in selected] + ["sample-derived-report"])]
-        if key_update:
+        if key_update or finish:
             batches = batches[2:]
         for texts, ids in batches:
             request("embedding", {"model": EMBED, "input": texts, "dimensions": 3072, "encoding_format": "float"}, ids)
@@ -641,8 +669,16 @@ def main():
     group.add_argument("--check", action="store_true")
     group.add_argument("--execute-approved", action="store_true")
     group.add_argument("--execute-key-update-20261012", action="store_true")
+    group.add_argument("--execute-remaining-approved", action="store_true")
     group.add_argument("--worker", nargs=2, metavar=("REQUEST", "RESPONSE"))
     args = parser.parse_args()
+    if args.worker and all(Path(x).parent.resolve() == FINISH_RUN.resolve() for x in args.worker):
+        RUN = FINISH_RUN
+        worker(*map(Path, args.worker))
+        return 0
+    if args.execute_remaining_approved:
+        RUN = FINISH_RUN
+        return execute(finish=True)
     if not args.check:
         print("Responses transport is offline-only pending explicit continuation authorization; no request sent.")
         return 2
