@@ -58,6 +58,28 @@ def main():
         assert c["cumulative_elapsed_seconds"] < 1200
         assert "rss_bytes" not in c["limits"] and "supervisor_pid" not in c
         print("Explicit key-update continuation: inherited totals, HTTP 500 stop, 12 vectors / 4,327 tokens, cost and cumulative time verified offline.")
+        once_path = HERE / "responses-result.json"
+        if once_path.is_file():
+            once = json.loads(once_path.read_text())
+            for name, sha in once["executed_source_sha256"].items():
+                data = subprocess.check_output(["git", "show", once["executed_source_commit"] + ":" + name], cwd=ROOT)
+                assert hashlib.sha256(data).hexdigest() == sha, name
+            assert once["inherited"]["reserved"] == c["reserved"] and len(once["events"]) == 1
+            e = once["events"][0]
+            assert e["service"] == "generation" and e["input_ids"] == c["events"][-1]["input_ids"]
+            assert e["http_status"] == 200 and e["terminal_status"] == "completed" and e["status"] == "validated"
+            assert e["reported_model"] == "gpt-5.6-luna" and e["responses_transport"] == "sse"
+            assert e["usage"] == {"prompt_tokens": 3540, "completion_tokens": 68, "total_tokens": 3608}
+            assert e["recovered_output_items"] is False and e["entity_records"] == e["relationship_records"] == 0
+            assert once["reserved"]["generation_attempts"] == c["reserved"]["generation_attempts"] + 1 == 4
+            assert once["reserved"]["generation_input_tokens"] == c["reserved"]["generation_input_tokens"] + e["reserved_input_tokens"] == 8590
+            assert all(once["reserved"][k] == c["reserved"][k] for k in ("embedding_attempts", "embedding_input_tokens", "embedding_items"))
+            assert once["new_generation_http_attempts_sent"] == 1 and once["new_embedding_http_attempts_sent"] == 0
+            assert abs(once["cumulative_elapsed_seconds"] - c["cumulative_elapsed_seconds"] - once["elapsed_seconds"]) < 0.002
+            assert once["elapsed_seconds"] < 60 and once["cumulative_elapsed_seconds"] < 1200
+            assert once["status"] == "single_glean_validated" and once["restart_permitted"] is False
+            assert "supervisor_pid" not in once
+            print("Authorized one-shot Responses glean: one 200/completed, no embeddings/retry, cumulative 4/17 and 2/3 verified offline.")
 
 
 if __name__ == "__main__":

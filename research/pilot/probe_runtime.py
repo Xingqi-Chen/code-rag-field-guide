@@ -3,7 +3,7 @@
 No SDK, automatic retries, redirects or endpoint overrides. Workers alone
 load a task-specific credential. Never print an exception, request, or raw reply.
 The persistent run directory is an exclusive, non-resumable batch lock.
-Responses transport is currently offline-only; all live CLI paths are disabled.
+Original batch CLI paths remain disabled; the authorized one-shot has a separate entry point.
 """
 import argparse
 import ast

@@ -6,7 +6,7 @@
 - [官方原理与固定源码核对](implementation.md)、[版本与文件哈希](microsoft-version.json)。
 - [直接代码证据及排除项](direct-evidence.md)、[检索记录](search-log.md)。
 - [Requests真实项目准备包](pilot/README.md)：题集与协议、隔离输入、实际离线测试和成本测量；模型实验未执行。
-- [首次真实接口探测](pilot/probe-result.md)：含人工授权续批；初抽与两批embedding通过当前校验，补抽500后停止，无检索效果结论。
+- [首次真实接口探测](pilot/probe-result.md)：含人工授权续批；初抽与两批embedding通过当前校验，补抽500后停止，后续明确授权的单次Responses补抽成功并结束，仍无检索效果结论。
 - [本轮过程与发布检查](process.md)。
 - [旧版与正常 Git 历史](legacy.md)：旧自制代码图实验退出新版证据。
 

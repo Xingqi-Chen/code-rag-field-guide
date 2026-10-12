@@ -6,4 +6,4 @@
 
 第一阶段在 Requests v2.32.3 固定提交上，对照普通hybrid与Microsoft Basic/Local的代码证据检索；第二阶段再用相同编辑器做两个小feature，分别检查检索和改码。项目确被官方SWE-bench采用，但本次自建任务不是官方榜单复现。
 
-已选 one.fullstar.tech `gpt-5.6-luna` 和 OpenAI官方 `text-embedding-3-large`（共享3072维）。[8块兼容性探测](pilot/probe.md)已提出具体请求／token／超时／重试边界及OpenAI金额上限，已完成首次401及用户更新key后的人工续批：初抽与两批embedding通过当前校验，补抽500后停止，见[真实记录](pilot/probe-result.md)。完成准备不代表微软依赖、服务兼容性或完整运行适配器已通过验证；没有实际检索效果数字。探测后再据实制定完整索引预算。
+已选 one.fullstar.tech `gpt-5.6-luna` 和 OpenAI官方 `text-embedding-3-large`（共享3072维）。[8块兼容性探测](pilot/probe.md)已提出具体请求／token／超时／重试边界及OpenAI金额上限，已完成首次401及用户更新key后的人工续批：初抽与两批embedding通过当前校验，补抽500后停止，随后单次明确授权的Responses补抽返回200／completed并结束，累计4次生成／2批embedding，见[真实记录](pilot/probe-result.md)。完成准备不代表微软依赖、服务兼容性或完整运行适配器已通过验证；没有实际检索效果数字。探测后再据实制定完整索引预算。
