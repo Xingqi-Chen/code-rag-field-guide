@@ -1,0 +1,718 @@
+[
+  {
+    "id": "R01",
+    "repo": "requests",
+    "category": "location",
+    "query": "Where is the decision to remove credentials when a redirect changes the host?",
+    "question_zh": "重定向换主机时，哪里决定移除凭据？",
+    "evidence": [
+      {
+        "path": "src/requests/sessions.py",
+        "line": 131,
+        "note": "比较旧新 hostname",
+        "line_sha256": "66a51f7ff30aad0e07e7f4fffff99d3aa4c5f2bfa8db0b6481891478ec875676"
+      }
+    ],
+    "negative_rationale": null
+  },
+  {
+    "id": "R02",
+    "repo": "requests",
+    "category": "location",
+    "query": "Where does preparing a JSON request body reject non-finite numbers?",
+    "question_zh": "请求体转 JSON 时哪里拒绝非有限数值？",
+    "evidence": [
+      {
+        "path": "src/requests/models.py",
+        "line": 510,
+        "note": "JSON 编码禁用 NaN",
+        "line_sha256": "28bc54188367eb1b193e279ec74bf810e89974a8fbb9e3a579eb0b6a64496d83"
+      },
+      {
+        "path": "src/requests/models.py",
+        "line": 512,
+        "note": "包装为请求异常",
+        "line_sha256": "0d9a54f1b1822ba9b77727472713ef9dd5bea82b65289ae46385a786bbe55499"
+      }
+    ],
+    "negative_rationale": null
+  },
+  {
+    "id": "R03",
+    "repo": "requests",
+    "category": "location",
+    "query": "How do header lookups ignore letter case while retaining the original spelling?",
+    "question_zh": "HTTP 头查找如何忽略大小写又保留原拼写？",
+    "evidence": [
+      {
+        "path": "src/requests/structures.py",
+        "line": 49,
+        "note": "小写存储键与原始键并存",
+        "line_sha256": "1793d10ae036d8692482b142db1e70937cef6c26bc285ebe2dc6859426815117"
+      },
+      {
+        "path": "src/requests/structures.py",
+        "line": 52,
+        "note": "查找转小写",
+        "line_sha256": "aab70f8993825972a49e25e5eb6888edd910e3cebb707ea91badb8ded64b4c0d"
+      }
+    ],
+    "negative_rationale": null
+  },
+  {
+    "id": "R04",
+    "repo": "requests",
+    "category": "location",
+    "query": "Where can a caller turn a failed HTTP status into an exception?",
+    "question_zh": "调用者在哪里将失败 HTTP 状态转成异常？",
+    "evidence": [
+      {
+        "path": "src/requests/models.py",
+        "line": 1013,
+        "note": "客户端错误状态分支",
+        "line_sha256": "62368cb84225ba378f35482433971b4b6d8a9ebdf0c5aadd0f37d486338190eb"
+      },
+      {
+        "path": "src/requests/models.py",
+        "line": 1024,
+        "note": "抛出 HTTPError",
+        "line_sha256": "4f451cbb8cd88518109843ad97f21d43c5571f28f3b1f8f59a5c26d748753495"
+      }
+    ],
+    "negative_rationale": null
+  },
+  {
+    "id": "R05",
+    "repo": "requests",
+    "category": "cross_file",
+    "query": "Trace a public GET call into creation and preparation of the session request.",
+    "question_zh": "从公开 GET 调用追到会话请求构造和准备。",
+    "evidence": [
+      {
+        "path": "src/requests/api.py",
+        "line": 73,
+        "note": "GET 包装入口",
+        "line_sha256": "d5a42457cd5224cc69f6d2bb37a1a19332a60b5b2325ee4bc148c99305b79cf0"
+      },
+      {
+        "path": "src/requests/api.py",
+        "line": 59,
+        "note": "临时会话委托",
+        "line_sha256": "ca22ebe45330ab95b95aa138dc74f2d9280d2f2bee24b0b87ea37c5ffc53b93d"
+      },
+      {
+        "path": "src/requests/sessions.py",
+        "line": 575,
+        "note": "会话准备请求",
+        "line_sha256": "2092d80f7d3d9897d128656972f77eb92423a706dcea08ef63a3063757e8fcb7"
+      },
+      {
+        "path": "src/requests/sessions.py",
+        "line": 484,
+        "note": "构建 PreparedRequest 内容",
+        "line_sha256": "684bf5ee9b7013328d3fb52f042e5535193777e36701bea160f0ff23a94ff348"
+      }
+    ],
+    "negative_rationale": null
+  },
+  {
+    "id": "R06",
+    "repo": "requests",
+    "category": "cross_file",
+    "query": "How does a cookie jar become the outgoing Cookie header?",
+    "question_zh": "Cookie 容器如何变成发出的 Cookie 头？",
+    "evidence": [
+      {
+        "path": "src/requests/models.py",
+        "line": 626,
+        "note": "调用 cookie 头生成器",
+        "line_sha256": "f3611f42241cbc8e1101da46ed609f556929f6b768199c0b9f41ff79763d3f98"
+      },
+      {
+        "path": "src/requests/models.py",
+        "line": 628,
+        "note": "将值写到请求头",
+        "line_sha256": "db39c913b836fe5e1f9e5966dfef6f707a0ffbdc3e66d2bd5c4851ce7c3e61fb"
+      },
+      {
+        "path": "src/requests/cookies.py",
+        "line": 147,
+        "note": "交给标准库 jar 生成头",
+        "line_sha256": "f0a4c2b7771cc03d9acde5f4ec0a6a05d8d15de9093f998463049ef8dbeb647c"
+      }
+    ],
+    "negative_rationale": null
+  },
+  {
+    "id": "R07",
+    "repo": "requests",
+    "category": "cross_file",
+    "query": "Trace the default connection adapter setup to retry policy configuration and its use during transport.",
+    "question_zh": "追踪默认连接适配器、重试策略配置及传输时使用。",
+    "evidence": [
+      {
+        "path": "src/requests/sessions.py",
+        "line": 448,
+        "note": "会话挂载 HTTPS 适配器",
+        "line_sha256": "78cddc8e12285ac301c1f7c9a519a48631e2a9ab63f857d482abf7cfb02181bd"
+      },
+      {
+        "path": "src/requests/adapters.py",
+        "line": 210,
+        "note": "默认重试对象",
+        "line_sha256": "b783a4afe8dc2364ec6c0c48f8855b8cb2e3e11dd3df2d51bd3fb251a94f0dad"
+      },
+      {
+        "path": "src/requests/adapters.py",
+        "line": 212,
+        "note": "整数转重试配置",
+        "line_sha256": "0fa2e3b0ec6771ccb180a81b56185dcba541848d91c5643231fccb56432a9404"
+      },
+      {
+        "path": "src/requests/adapters.py",
+        "line": 676,
+        "note": "传输传入重试策略",
+        "line_sha256": "2fc150f35044544a5065d63bdb5722d484eed6f39dacf93696cb2f858ebb5751"
+      }
+    ],
+    "negative_rationale": null
+  },
+  {
+    "id": "R08",
+    "repo": "requests",
+    "category": "cross_file",
+    "query": "How are streamed response byte chunks incrementally converted to Unicode?",
+    "question_zh": "流式响应字节块如何增量转换成 Unicode？",
+    "evidence": [
+      {
+        "path": "src/requests/models.py",
+        "line": 853,
+        "note": "流迭代器调用解码工具",
+        "line_sha256": "d908b5ae1741679d04eb696b494148842bbd0207ca14833228bd252ec5acd64e"
+      },
+      {
+        "path": "src/requests/utils.py",
+        "line": 571,
+        "note": "创建增量解码器",
+        "line_sha256": "05ca04640a551cc4d49dce8e31c8585ed619f384f1cb91a591cb4876ef3bbaaa"
+      },
+      {
+        "path": "src/requests/utils.py",
+        "line": 576,
+        "note": "最后刷新剩余字节",
+        "line_sha256": "c7c65edaeed11372fddc2189e8d49314f7b1af07e3ae3b266318680cb7bb74e7"
+      }
+    ],
+    "negative_rationale": null
+  },
+  {
+    "id": "R09",
+    "repo": "requests",
+    "category": "impact",
+    "query": "If netrc credential lookup changes, which initial preparation and redirect authentication paths need checking?",
+    "question_zh": "修改 netrc 凭据读取时，需要检查哪些初始准备和重定向认证路径？",
+    "evidence": [
+      {
+        "path": "src/requests/sessions.py",
+        "line": 481,
+        "note": "初始请求认证读取",
+        "line_sha256": "b120f7e5bfb8d935879befd28bc02b135c8b9ee081b30caf1028ef35aca1c412"
+      },
+      {
+        "path": "src/requests/sessions.py",
+        "line": 298,
+        "note": "重定向认证重新读取",
+        "line_sha256": "184fa7d6123d78b0e51a8a7cad7870fe818ed91c253a19c2ceb774bc71fdcc48"
+      },
+      {
+        "path": "src/requests/utils.py",
+        "line": 204,
+        "note": "凭据读取入口",
+        "line_sha256": "00ab13e39f1325d404fcd0870440a63e5328799b85ddd22a9c2b6d0d064d907c"
+      }
+    ],
+    "negative_rationale": null
+  },
+  {
+    "id": "R10",
+    "repo": "requests",
+    "category": "impact",
+    "query": "If environment proxy bypass rules change, what request setup and redirect paths depend on them?",
+    "question_zh": "环境代理绕过规则改变时，请求准备与重定向哪些路径受影响？",
+    "evidence": [
+      {
+        "path": "src/requests/sessions.py",
+        "line": 760,
+        "note": "准备阶段环境代理",
+        "line_sha256": "5c223ff5413f93220864b3a023c6826699cb71a99afe6fd2e04a8936704dd33c"
+      },
+      {
+        "path": "src/requests/sessions.py",
+        "line": 316,
+        "note": "重定向代理重建",
+        "line_sha256": "2bad47541873184e501e347bf90cddff72cd9fe4dcddd53910d57ea3f5cdb5cf"
+      },
+      {
+        "path": "src/requests/utils.py",
+        "line": 881,
+        "note": "代理解析执行绕过判断",
+        "line_sha256": "12a487f11acf7c33c438d5a641cf1cebb349eb18866b1040e39c1392d3322472"
+      },
+      {
+        "path": "src/requests/utils.py",
+        "line": 765,
+        "note": "绕过判断入口",
+        "line_sha256": "b0fc88b1c2bd813b805874e2e97cc51b8044ac515d804ea9d79ec10b2966939f"
+      }
+    ],
+    "negative_rationale": null
+  },
+  {
+    "id": "R11",
+    "repo": "requests",
+    "category": "impact",
+    "query": "If validation of header names and values becomes stricter, where is it applied during request preparation?",
+    "question_zh": "头名称和值的校验收紧后，在请求准备哪里生效？",
+    "evidence": [
+      {
+        "path": "src/requests/models.py",
+        "line": 490,
+        "note": "准备时校验",
+        "line_sha256": "8ae5e2ec3bcadea537fbdff8990479fdcf666037157f017caeaa4ae5646cd9b8"
+      },
+      {
+        "path": "src/requests/utils.py",
+        "line": 1041,
+        "note": "名称校验",
+        "line_sha256": "c8bda6dc971315aff9e67e6b1f5d1b64bd32136a63fa1ba78ca91d8f158048b3"
+      },
+      {
+        "path": "src/requests/utils.py",
+        "line": 1042,
+        "note": "值校验",
+        "line_sha256": "21e37548c17d434dcdd820b4275fcc5306d2b82b3a348740fc184b04141ff1f6"
+      }
+    ],
+    "negative_rationale": null
+  },
+  {
+    "id": "R12",
+    "repo": "requests",
+    "category": "concept",
+    "query": "When merging per-request settings with session defaults, what does a dictionary value of None mean?",
+    "question_zh": "逐请求设置覆盖会话默认值时，字典值 None 有何含义？",
+    "evidence": [
+      {
+        "path": "src/requests/sessions.py",
+        "line": 80,
+        "note": "请求级覆盖会话设置",
+        "line_sha256": "66ba3467bca90973e16f06bc100b8cfe04861de08dae7c96fbbf5fe16dfa389c"
+      },
+      {
+        "path": "src/requests/sessions.py",
+        "line": 86,
+        "note": "None 对应键被移除",
+        "line_sha256": "8440d48fc931598a75b7b0960603e23190f16c5efb5b141b632abebdab5e1787"
+      }
+    ],
+    "negative_rationale": null
+  },
+  {
+    "id": "R13",
+    "repo": "requests",
+    "category": "concept",
+    "query": "Why can reading a response again fail after streaming its body without keeping a cached copy?",
+    "question_zh": "响应体已流式读完且没有缓存后，再读为什么可能失败？",
+    "evidence": [
+      {
+        "path": "src/requests/models.py",
+        "line": 840,
+        "note": "流已消耗且无缓存时抛异常",
+        "line_sha256": "7765a2d92687c696b0c485043cf71b3276495b59520523ac6b913f281a6185aa"
+      },
+      {
+        "path": "src/requests/models.py",
+        "line": 897,
+        "note": "content 再读也会报错",
+        "line_sha256": "c387cfaf36307d27da7585eade1dc3aed21f5e62e39b50b2da6d072a0868f174"
+      }
+    ],
+    "negative_rationale": null
+  },
+  {
+    "id": "R14",
+    "repo": "requests",
+    "category": "negative",
+    "query": "Where does this library implement SQL transaction rollback for a database connection pool?",
+    "question_zh": "库在哪里实现数据库连接池的 SQL 事务回滚？",
+    "evidence": [],
+    "negative_rationale": "范围限定 Requests 自有 src/requests；HTTP 连接池不等于数据库事务；静态审阅包清单及 transaction/rollback/sql 搜索无实现。"
+  },
+  {
+    "id": "R15",
+    "repo": "requests",
+    "category": "negative",
+    "query": "Where is the WebSocket frame masking and ping-pong protocol implemented?",
+    "question_zh": "WebSocket 帧掩码与 ping-pong 协议在哪里实现？",
+    "evidence": [],
+    "negative_rationale": "Requests 为 HTTP 客户端；固定源目录中没有 WebSocket 帧协议实现，不能把 HTTP 字节流当作证据。"
+  },
+  {
+    "id": "C01",
+    "repo": "click",
+    "category": "location",
+    "query": "Where are repeated verbosity flags accumulated into an integer count?",
+    "question_zh": "重复的详细输出标志在哪里累计成整数计数？",
+    "evidence": [
+      {
+        "path": "src/click/parser.py",
+        "line": 209,
+        "note": "count 动作递增",
+        "line_sha256": "67aaa039ef679e728ff02bae66e10902cc0c90bc7b454ca47c54dedd5de28573"
+      }
+    ],
+    "negative_rationale": null
+  },
+  {
+    "id": "C02",
+    "repo": "click",
+    "category": "location",
+    "query": "Where is a command-line UUID converted and invalid input rejected?",
+    "question_zh": "命令行 UUID 在哪里转换并拒绝非法输入？",
+    "evidence": [
+      {
+        "path": "src/click/types.py",
+        "line": 633,
+        "note": "构造 uuid 对象",
+        "line_sha256": "d205195b67e5aec98fbbe85df63929f060e3914189f49a7b908ad695883990a8"
+      },
+      {
+        "path": "src/click/types.py",
+        "line": 635,
+        "note": "非法值报告失败",
+        "line_sha256": "03538ac0b82d222c2e32cf9980390201522a4bf6a0e5eb6b33f32be5eb4d4304"
+      }
+    ],
+    "negative_rationale": null
+  },
+  {
+    "id": "C03",
+    "repo": "click",
+    "category": "location",
+    "query": "Where does an interactive prompt retry after the entered value fails validation?",
+    "question_zh": "交互提示在哪里于输入校验失败后重试？",
+    "evidence": [
+      {
+        "path": "src/click/termui.py",
+        "line": 177,
+        "note": "错误分支继续提示循环",
+        "line_sha256": "8c42600c669d37de59f5ec1a0a3adcc9ef2cf7423a67de07bfaa8b04f8d57af8"
+      }
+    ],
+    "negative_rationale": null
+  },
+  {
+    "id": "C04",
+    "repo": "click",
+    "category": "location",
+    "query": "How can a helper obtain the currently active command context and what happens when none exists?",
+    "question_zh": "辅助函数如何取当前命令上下文，没有时如何处理？",
+    "evidence": [
+      {
+        "path": "src/click/globals.py",
+        "line": 36,
+        "note": "线程本地栈读取",
+        "line_sha256": "ccc437a3c79758920165375312cd73fc6316402ea4453cff631d9a4b85b6825f"
+      },
+      {
+        "path": "src/click/globals.py",
+        "line": 39,
+        "note": "无活动上下文时报错",
+        "line_sha256": "293702dad9654ff2be6ba4734a300cd2a444cc925a613a0f26d1041d9a9b5d28"
+      }
+    ],
+    "negative_rationale": null
+  },
+  {
+    "id": "C05",
+    "repo": "click",
+    "category": "cross_file",
+    "query": "Trace how an option decorator attaches metadata and how a parsed value reaches type conversion and its callback.",
+    "question_zh": "选项装饰器如何挂元数据，解析值又如何进入类型转换及回调？",
+    "evidence": [
+      {
+        "path": "src/click/decorators.py",
+        "line": 365,
+        "note": "装饰器登记参数",
+        "line_sha256": "7bde5d30471e1cf64a70dbf5f7070171745805ff2f389d94474bcaca4b75d956"
+      },
+      {
+        "path": "src/click/decorators.py",
+        "line": 312,
+        "note": "参数元数据存到函数",
+        "line_sha256": "a17ff731eb1e8ed16c1059f6424c2c0dfade44c76865b17cb997f9e3719a15c8"
+      },
+      {
+        "path": "src/click/core.py",
+        "line": 2403,
+        "note": "解析值进入处理",
+        "line_sha256": "675975c25fb5e75ac68fe2b5822a0a796b057bfb4508a7dcdbaa0180dfd0042e"
+      },
+      {
+        "path": "src/click/core.py",
+        "line": 2359,
+        "note": "执行类型转换",
+        "line_sha256": "3212a7c19e0aaa2ed9e79c345b715e8d7be330eae0cfba1ac9fef0992112dba2"
+      },
+      {
+        "path": "src/click/core.py",
+        "line": 2365,
+        "note": "调用用户回调",
+        "line_sha256": "230f6b9c24d4756076dd3ee8ab239f65d425f0bf474717d8d00decac0a94a767"
+      }
+    ],
+    "negative_rationale": null
+  },
+  {
+    "id": "C06",
+    "repo": "click",
+    "category": "cross_file",
+    "query": "How does a file argument defer opening a file until it is needed?",
+    "question_zh": "文件参数如何延迟到需要时才打开文件？",
+    "evidence": [
+      {
+        "path": "src/click/types.py",
+        "line": 719,
+        "note": "惰性文件对象创建",
+        "line_sha256": "b85eb9319fc9a16a6d561fe3ccff49c966ae5b6904dea3eea2e914f9c4f6cefd"
+      },
+      {
+        "path": "src/click/utils.py",
+        "line": 156,
+        "note": "实际打开底层流",
+        "line_sha256": "605f3d57c8754919e7caab276de31003e45c558af26b8fdb323c62e0ec8056d7"
+      }
+    ],
+    "negative_rationale": null
+  },
+  {
+    "id": "C07",
+    "repo": "click",
+    "category": "cross_file",
+    "query": "Trace command help prose into paragraph-preserving line wrapping.",
+    "question_zh": "命令帮助正文如何进入保留段落的自动折行？",
+    "evidence": [
+      {
+        "path": "src/click/core.py",
+        "line": 1385,
+        "note": "命令帮助正文写入格式器",
+        "line_sha256": "72a54df85d8ee54ee587cbef8445c29cbf96ff6b55d934ee7d88cd3c1ad62f8e"
+      },
+      {
+        "path": "src/click/formatting.py",
+        "line": 200,
+        "note": "格式器调用折行",
+        "line_sha256": "069dd2cfc5541920dd0dd179b62a74376808011e97bd0e8631d069b2ff80d7d7"
+      },
+      {
+        "path": "src/click/formatting.py",
+        "line": 205,
+        "note": "保留段落开关",
+        "line_sha256": "2b25ada320c3a3bd3326ceff5803bb533964681d0fc536f3ec79d98d764caa4b"
+      },
+      {
+        "path": "src/click/formatting.py",
+        "line": 29,
+        "note": "折行函数入口",
+        "line_sha256": "a0979fe4a9e04135e209d03f12d8ce398518513f022add3ca6eec57011f0fd8a"
+      }
+    ],
+    "negative_rationale": null
+  },
+  {
+    "id": "C08",
+    "repo": "click",
+    "category": "cross_file",
+    "query": "Trace a shell completion environment instruction to the selected shell implementation.",
+    "question_zh": "shell 补全环境指令如何到达选中的 shell 实现？",
+    "evidence": [
+      {
+        "path": "src/click/core.py",
+        "line": 1149,
+        "note": "获取补全环境指令",
+        "line_sha256": "90b3396f8eb7b7b25ab889835001ef3cfa23ff7fe4de06e924257026752f980b"
+      },
+      {
+        "path": "src/click/core.py",
+        "line": 1156,
+        "note": "委托补全模块",
+        "line_sha256": "85e7d03b726086f728d1368b5a0ef2ccb3c63794f4b3edf7ca8d026a5bb5b96c"
+      },
+      {
+        "path": "src/click/shell_completion.py",
+        "line": 37,
+        "note": "查找 shell 类型",
+        "line_sha256": "c451dd1a06f291a0572ecb6020c1a8de73d51e9ae68ab4d5541417f19c7161bd"
+      },
+      {
+        "path": "src/click/shell_completion.py",
+        "line": 49,
+        "note": "动态执行补全",
+        "line_sha256": "f04928c9b36797a15ab5fad5acbdcafe8a2709447bff80671aabd94b991fa6ad"
+      }
+    ],
+    "negative_rationale": null
+  },
+  {
+    "id": "C09",
+    "repo": "click",
+    "category": "impact",
+    "query": "If automatic ANSI color stripping changes, which output helper and context-derived color default need review?",
+    "question_zh": "自动去除 ANSI 颜色规则改变时，哪个输出助手和上下文颜色默认值需复核？",
+    "evidence": [
+      {
+        "path": "src/click/utils.py",
+        "line": 308,
+        "note": "输出解析上下文颜色",
+        "line_sha256": "f2e04817f129ce9a7c8e650f71031121227ba9b3ad22ce6575023e865c211bc4"
+      },
+      {
+        "path": "src/click/utils.py",
+        "line": 310,
+        "note": "输出调用去色判断",
+        "line_sha256": "df4603a9084a321b2f2ab0943ab304682c3b8c2c5ffb57b14ac6e66ca461d6f5"
+      },
+      {
+        "path": "src/click/_compat.py",
+        "line": 502,
+        "note": "终端和 notebook 判断",
+        "line_sha256": "47ae1fa1d5a9f41073ea2420b801294695fbe8c7e1050e0c2a37e5e437733409"
+      },
+      {
+        "path": "src/click/globals.py",
+        "line": 65,
+        "note": "上下文颜色来源",
+        "line_sha256": "8d002a2952e64f5ff1637f47f7a0b3cbe7fd1850b97bc4743ee96847239f46e5"
+      }
+    ],
+    "negative_rationale": null
+  },
+  {
+    "id": "C10",
+    "repo": "click",
+    "category": "impact",
+    "query": "If environment-variable list splitting changes, how are multi-value options affected?",
+    "question_zh": "环境变量列表拆分改变时，多值选项会如何受影响？",
+    "evidence": [
+      {
+        "path": "src/click/types.py",
+        "line": 128,
+        "note": "类型定义拆分规则",
+        "line_sha256": "ae9f6d3f6706c1efbc8c46cebe7bc48257f79237a91aad6bf1bfb3265bc70173"
+      },
+      {
+        "path": "src/click/core.py",
+        "line": 2929,
+        "note": "多值选项调用拆分",
+        "line_sha256": "94d9e085a14378d0ce36e80bc20eeafd81572822129640d0aa1f584fa9d9ab00"
+      },
+      {
+        "path": "src/click/core.py",
+        "line": 2932,
+        "note": "多个定长组再次分组",
+        "line_sha256": "b38ae2a35799094428948835ee7dc4826d91186d0c7f6d179e79934db72da3f9"
+      }
+    ],
+    "negative_rationale": null
+  },
+  {
+    "id": "C11",
+    "repo": "click",
+    "category": "impact",
+    "query": "If token normalization changes, which option-name, choice-value, and subcommand-name matching paths must be checked?",
+    "question_zh": "token 规范化改变时，选项名、选项值和子命令名匹配需检查哪里？",
+    "evidence": [
+      {
+        "path": "src/click/parser.py",
+        "line": 124,
+        "note": "选项名规范化",
+        "line_sha256": "6767373dbd7ec0b076dab10827e7772dff7c0de1542775d96a41945e50d4514d"
+      },
+      {
+        "path": "src/click/types.py",
+        "line": 280,
+        "note": "Choice 值规范化",
+        "line_sha256": "58b4f06e11d5b1da90c014bfa3f90c0a86d4debff3bd7a1e417ad7c57cc34358"
+      },
+      {
+        "path": "src/click/core.py",
+        "line": 1743,
+        "note": "子命令名规范化",
+        "line_sha256": "836ab9d4d2ebd706debecab8a72cb0f7484b025b399129b277d8d12aec6e9f11"
+      }
+    ],
+    "negative_rationale": null
+  },
+  {
+    "id": "C12",
+    "repo": "click",
+    "category": "concept",
+    "query": "Why does disabling standalone mode allow a command result or exception to return to the caller?",
+    "question_zh": "关闭独立运行模式后，为什么命令结果或异常会返回调用者？",
+    "evidence": [
+      {
+        "path": "src/click/core.py",
+        "line": 1084,
+        "note": "返回回调结果",
+        "line_sha256": "b50e60b39829c95ae814a4aa3c0c527a0d7370ab47a271d71ac9ac9d2a8dcc2e"
+      },
+      {
+        "path": "src/click/core.py",
+        "line": 1098,
+        "note": "异常重新抛给调用者",
+        "line_sha256": "7c2ce22cee1ef70e7dddefd43d7630efe056fbd6a53bf3aa656d4cf5908f271e"
+      }
+    ],
+    "negative_rationale": null
+  },
+  {
+    "id": "C13",
+    "repo": "click",
+    "category": "concept",
+    "query": "How do nested command contexts inherit help option names and expand environment variable prefixes?",
+    "question_zh": "嵌套命令上下文如何继承帮助选项名并扩展环境变量前缀？",
+    "evidence": [
+      {
+        "path": "src/click/core.py",
+        "line": 383,
+        "note": "继承帮助选项名",
+        "line_sha256": "2c8ceef50f9e5e45890709ef57fd64618b5b79e32afb0a93d7aaea58231c9491"
+      },
+      {
+        "path": "src/click/core.py",
+        "line": 414,
+        "note": "组合父前缀与子命令名",
+        "line_sha256": "887ad6d655f7296ba100a9a0211b0950a3482b12641e64afe346e13f2c217917"
+      }
+    ],
+    "negative_rationale": null
+  },
+  {
+    "id": "C14",
+    "repo": "click",
+    "category": "negative",
+    "query": "Where does this library verify an HTTPS server certificate chain during a network connection?",
+    "question_zh": "库在哪里于网络连接时验证 HTTPS 服务端证书链？",
+    "evidence": [],
+    "negative_rationale": "Click 自有 src/click 为命令行工具；TLS 证书验证不属于此范围，File/Path 校验不是证书链校验。"
+  },
+  {
+    "id": "C15",
+    "repo": "click",
+    "category": "negative",
+    "query": "Where is an asynchronous SQL database query executor with automatic transaction rollback implemented?",
+    "question_zh": "异步 SQL 查询执行器与自动事务回滚在哪里实现？",
+    "evidence": [],
+    "negative_rationale": "固定 Click 源目录不实现数据库执行器，命令回调可调用外部数据库不等于库本身实现。"
+  }
+]
