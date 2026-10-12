@@ -14,6 +14,8 @@
 
 **最新实测：**首次401后，用户更新key并授权续批；一次初抽与两批官方embedding通过当前校验，随后补抽HTTP500而停止。累计3次生成尝试、2批embedding，没有自动重试。[真实记录与未完成边界](research/pilot/probe-result.md)。接口结果不是GraphRAG检索效果证据。
 
+**兼容修复：**Responses JSON/SSE传输适配已完成离线测试；尚未重新请求服务。真实调用入口保持关闭，因为代理可能丢弃请求的2048输出上限，见[修复与下一步边界](research/pilot/probe-result.md#离线传输修复2026-10-12)。
+
 发布快检不需要网络或模型：
 
 ```bash

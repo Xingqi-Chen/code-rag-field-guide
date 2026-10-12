@@ -54,7 +54,7 @@ class ProbeLimits(unittest.TestCase):
 
     def test_changed_payload_rejected(self):
         original = p.generation_payload([{"role": "user", "content": "fixture"}])
-        for key, value in [("model", "other"), ("max_completion_tokens", 2049), ("num_retries", 1), ("fallbacks", ["other"]), ("drop_params", True)]:
+        for key, value in [("model", "other"), ("max_output_tokens", 2049), ("num_retries", 1), ("fallbacks", ["other"]), ("drop_params", True)]:
             body = dict(original); body[key] = value
             with self.assertRaises(p.Stop): p.validate_payload("generation", body)
         p.validate_payload("generation", original)

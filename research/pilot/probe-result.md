@@ -57,3 +57,15 @@ python3 scripts/validate.py
 ```
 
 CI只运行离线检查，不加载凭据、不发模型请求。
+
+## 离线传输修复（2026-10-12）
+
+当前[运行器](probe_runtime.py)改为同一服务的 `/v1/responses`，使用 `input`、`max_output_tokens=2048`、`stream=true`、`store=false`。原Microsoft抽取／补抽prompt、题集和解析规则未改；报告schema只改为Responses的 `text.format` 表达。接收端兼容JSON和SSE，在最终 `completed.output` 为空时，从已完成且编号连续的 `output_item.done` 恢复；只收到delta、真正空输出、不完整／失败状态、断流、重复／冲突数据均不算成功。辅助reasoning内容不进入保存结果。usage映射后仍检查模型、总量一致性与2048输出限制，但接收后的检查不能约束上游已发生的生成。
+
+8项新增合成样例测试通过，连同原测试共25项；离线预检通过，未读取凭据、未发请求。[样例与检查代码](../../tests/test_responses_transport.py)。**所有真实调用CLI入口保持禁用；这证明本地解析行为，尚未证明远端兼容或修复了本次500。** 原两份实测记录及执行提交保留不变。
+
+公开LiteLLM版本核查：v1.94.0（`38f2e023f1179d06a199f3d5f02702c89c1a8a58`）及2026-10-12的main提交 `7efce7f8e05e58fb86e006a6427ab39b6db467fb` 均在chatgpt适配器中强制上游stream，并以允许字段过滤请求；其中没有 `max_output_tokens` 或 `text`。这是公开源码事实，**不是对服务当前部署版本的确认**。直接Responses也不能保证上游执行输出上限或schema；本地仍严格验证返回结果。[v1.94.0源码](https://github.com/BerriAI/litellm/blob/38f2e023f1179d06a199f3d5f02702c89c1a8a58/litellm/llms/chatgpt/responses/transformation.py#L55)、[当前固定源码](https://github.com/BerriAI/litellm/blob/7efce7f8e05e58fb86e006a6427ab39b6db467fb/litellm/llms/chatgpt/responses/transformation.py#L64)，访问日2026-10-12。
+
+原两批缓存向量已离线复验，可以复用8个源码向量和4个dev查询向量，无需重发。当前累计仍为生成3/17、embedding 2/3；剩余14次生成、1批embedding、15,673个embedding输入token及9个item。最后一批仅足以在原限制内用于小样本图产物，不代表可完成114块全量索引。
+
+下一次最小续试建议仅重发第一块的补抽：同服务、同模型、相同三条消息，经Responses发送1次生成、0次embedding，仍请求2048上限，60秒超时，失败即停且不重试；发送后累计为4/17和2/3。需先由服务端确认上限能执行，或由用户明确接受“请求上限不保证上游实际上限”的这一单次尝试；本地超时也不能保证远端停止计算或计费。该建议尚未获得执行授权，没有提高或重置原总额度。

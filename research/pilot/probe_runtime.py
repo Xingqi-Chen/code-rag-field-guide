@@ -3,6 +3,7 @@
 No SDK, automatic retries, redirects or endpoint overrides. Workers alone
 load a task-specific credential. Never print an exception, request, or raw reply.
 The persistent run directory is an exclusive, non-resumable batch lock.
+Responses transport is currently offline-only; all live CLI paths are disabled.
 """
 import argparse
 import ast
@@ -28,7 +29,7 @@ KEY_UPDATE_RUN = ROOT / ".cache/pilot/probe-approved-20261012-02"
 MS = ROOT / ".cache/ms-graphrag/graphrag-5faaaf4f5685fa2056fa8c3bf9342cb089f2942f"
 MODEL = "gpt-5.6-luna"
 EMBED = "text-embedding-3-large"
-HOSTS = {"generation": "https://one.fullstar.tech/v1/chat/completions",
+HOSTS = {"generation": "https://one.fullstar.tech/v1/responses",
          "embedding": "https://api.openai.com/v1/embeddings"}
 LIMITS = {"generation_attempts": 17, "embedding_attempts": 3,
           "generation_input_tokens": 100000, "embedding_input_tokens": 20000,
@@ -128,11 +129,15 @@ def prompt_values():
 
 
 def generation_payload(messages, schema=None):
-    body = {"model": MODEL, "messages": messages, "max_completion_tokens": 2048,
-            "stream": False, "num_retries": 0, "fallbacks": [],
+    body = {"model": MODEL, "input": [
+                {"role": m["role"], "content": [{
+                    "type": "output_text" if m["role"] == "assistant" else "input_text",
+                    "text": m["content"]}]} for m in messages],
+            "max_output_tokens": 2048, "store": False,
+            "stream": True, "num_retries": 0, "fallbacks": [],
             "context_window_fallback_dict": {}, "caching": False}
     if schema is not None:
-        body["response_format"] = {"type": "json_schema", "json_schema": {
+        body["text"] = {"format": {"type": "json_schema",
             "name": "CommunityReportResponse", "strict": True, "schema": schema}}
     return body
 
@@ -148,13 +153,16 @@ REPORT_SCHEMA = {"type": "object", "additionalProperties": False,
 
 def validate_payload(service, body):
     if service == "generation":
-        expected = generation_payload(body.get("messages", []))
-        if "response_format" in body:
-            expected = generation_payload(body.get("messages", []), REPORT_SCHEMA)
-        if body != expected or not body["messages"]:
+        try:
+            messages = [{"role": m["role"], "content": m["content"][0]["text"]}
+                        for m in body["input"]]
+        except (KeyError, TypeError, IndexError):
+            raise Stop("unsupported_message") from None
+        expected = generation_payload(messages, REPORT_SCHEMA if "text" in body else None)
+        if body != expected or not messages:
             raise Stop("generation_parameters_changed")
         if any(set(m) != {"role", "content"} or m["role"] not in {"user", "assistant"}
-               or not isinstance(m["content"], str) for m in body["messages"]):
+               or not isinstance(m["content"], str) for m in messages):
             raise Stop("unsupported_message")
     elif service == "embedding":
         if (set(body) != {"model", "input", "dimensions", "encoding_format"}
@@ -165,6 +173,92 @@ def validate_payload(service, body):
             raise Stop("embedding_parameters_changed")
     else:
         raise Stop("invalid_service")
+
+
+def decode_generation(raw, content_type):
+    """Normalize bounded Responses JSON/SSE; partial deltas never prove success.
+
+    No network, SDK, retry, credentials, or retention of auxiliary reasoning.
+    The caller still enforces model, usage and visible/reported output limits.
+    """
+    def obj(text):
+        try:
+            value = json.loads(text)
+        except ValueError:
+            raise Stop("responses_invalid_json") from None
+        if not isinstance(value, dict):
+            raise Stop("responses_invalid_object")
+        return value
+
+    items, terminal, response_id = {}, None, None
+    sse = "text/event-stream" in (content_type or "").lower() or raw.lstrip().startswith(("data:", "event:"))
+    if sse:
+        for frame in raw.replace("\r\n", "\n").split("\n\n"):
+            data = "\n".join(line[5:].removeprefix(" ") for line in frame.splitlines() if line.startswith("data:"))
+            if not data or data == "[DONE]":
+                continue
+            event = obj(data)
+            if terminal is not None:
+                raise Stop("responses_after_terminal")
+            kind = event.get("type")
+            if kind == "error":
+                raise Stop("responses_stream_error")
+            if "response" in event:
+                response = event["response"]
+                if (not isinstance(response, dict) or not isinstance(response.get("id"), str)
+                        or not response["id"] or response_id not in (None, response["id"])):
+                    raise Stop("responses_identity_mismatch")
+                response_id = response["id"]
+            if kind == "response.output_item.done":
+                index, item = event.get("output_index"), event.get("item")
+                if (type(index) is not int or index < 0 or index in items
+                        or not isinstance(item, dict) or not isinstance(item.get("id"), str)
+                        or not item["id"] or any(x["id"] == item["id"] for x in items.values())):
+                    raise Stop("responses_invalid_item")
+                items[index] = item
+            elif kind in {"response.completed", "response.incomplete", "response.failed"}:
+                terminal = event.get("response")
+                if not isinstance(terminal, dict) or kind != "response." + str(terminal.get("status")):
+                    raise Stop("responses_invalid_terminal")
+        if terminal is None:
+            raise Stop("responses_stream_unfinished")
+    else:
+        terminal = obj(raw)
+    if terminal.get("error") is not None or terminal.get("status") != "completed":
+        raise Stop("responses_not_completed")
+    output = terminal.get("output")
+    if not isinstance(output, list):
+        raise Stop("responses_missing_output")
+    recovered = not output and bool(items)
+    if recovered:
+        if sorted(items) != list(range(len(items))):
+            raise Stop("responses_item_gap")
+        output = [items[i] for i in range(len(items))]
+    elif any(i >= len(output) or output[i] != item for i, item in items.items()):
+        raise Stop("responses_item_conflict")
+    messages = []
+    for item in output:
+        if not isinstance(item, dict):
+            raise Stop("responses_invalid_item")
+        if item.get("type") == "reasoning":
+            continue  # Never extract, expose or record reasoning content.
+        if item.get("type") != "message" or item.get("role") != "assistant" or item.get("status") not in (None, "completed"):
+            raise Stop("responses_unexpected_output")
+        content = item.get("content")
+        if not isinstance(content, list) or not content or any(
+                not isinstance(c, dict) or c.get("type") != "output_text" or not isinstance(c.get("text"), str) for c in content):
+            raise Stop("responses_nontext_output")
+        messages.append("".join(c["text"] for c in content))
+    if len(messages) != 1 or not messages[0].strip():
+        raise Stop("responses_empty_or_multiple_messages")
+    usage = terminal.get("usage")
+    if not isinstance(usage, dict):
+        raise Stop("responses_missing_usage")
+    return {"model": terminal.get("model"),
+            "choices": [{"finish_reason": "stop", "message": {"content": messages[0]}}],
+            "usage": {"prompt_tokens": usage.get("input_tokens"), "completion_tokens": usage.get("output_tokens"),
+                      "total_tokens": usage.get("total_tokens")},
+            "responses_transport": "sse" if sse else "json", "recovered_output_items": recovered}
 
 
 def load_credential(service):
@@ -226,7 +320,7 @@ def error_summary(data):
                 break
     param = error.get("param")
     return {"response_format": "json", "error_category": category,
-            "error_parameter": param if param in {"model", "max_completion_tokens", "response_format", "num_retries", "fallbacks"} else None}
+            "error_parameter": param if param in {"model", "max_completion_tokens", "max_output_tokens", "response_format", "text", "num_retries", "fallbacks"} else None}
 
 
 def worker(request_path, response_path):
@@ -277,7 +371,9 @@ def worker(request_path, response_path):
                 if len(data) > 2 * 1024**2:
                     raise Stop("response_byte_cap_exceeded")
                 # Never retain response headers. Exact credential redaction is a final safeguard.
-                parsed = json.loads(data.decode().replace(key, "[REDACTED]"))
+                raw = data.decode().replace(key, "[REDACTED]")
+                parsed = (decode_generation(raw, r.headers.get("Content-Type")) if service == "generation"
+                          else json.loads(raw))
                 result = {"http_status": r.status, "response": parsed}
         except urllib.error.HTTPError as e:
             result = {"http_status": e.code, **error_summary(e.read(65536))}
@@ -547,6 +643,9 @@ def main():
     group.add_argument("--execute-key-update-20261012", action="store_true")
     group.add_argument("--worker", nargs=2, metavar=("REQUEST", "RESPONSE"))
     args = parser.parse_args()
+    if not args.check:
+        print("Responses transport is offline-only pending explicit continuation authorization; no request sent.")
+        return 2
     if args.worker:
         if Path(args.worker[0]).parent.resolve() == KEY_UPDATE_RUN.resolve():
             RUN = KEY_UPDATE_RUN
