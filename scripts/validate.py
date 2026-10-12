@@ -1,10 +1,8 @@
-"""Offline publication checks; reconstruct qrels independently of stored labels."""
-import hashlib
+"""Offline, standard-library checks for the Microsoft GraphRAG literature guide."""
 import json
 from pathlib import Path
 import re
 import subprocess
-import sys
 import struct
 import xml.etree.ElementTree as ET
 import zlib
@@ -56,58 +54,63 @@ def check_svg(text):
     assert root.attrib['viewBox']==f'0 0 {width} {height}','SVG viewBox'
     return width,height
 
+def prose_only(text):
+    """Remove fenced/inline code before treating text as Markdown links/headings."""
+    lines=[]; fence=None
+    for line in text.splitlines():
+        marker=re.match(r'^ {0,3}(`{3,}|~{3,})',line)
+        if marker:
+            token=marker[1]
+            if fence is None:fence=token
+            elif token[0]==fence[0] and len(token)>=len(fence):fence=None
+            continue
+        if fence is None:lines.append(line)
+    return re.sub(r'(`+).*?\1','', '\n'.join(lines))
+
+def anchors(text):
+    result=set(); counts={}
+    for line in prose_only(text).splitlines():
+        if not re.match(r'^#{1,6} ',line):continue
+        heading=re.sub(r'^#{1,6} +','',line).strip().lower()
+        heading=re.sub(r'[^\w\- ]','',heading).replace(' ','-')
+        count=counts.get(heading,0);counts[heading]=count+1
+        result.add(heading+(f'-{count}' if count else ''))
+    return result
+
 def main():
-    freeze=json.loads((ROOT/'benchmark/freeze.json').read_text())
-    for path,digest in freeze['files'].items():
-        assert hashlib.sha256((ROOT/path).read_bytes()).hexdigest()==digest,path
-    qs={q['id']:q for q in json.loads((ROOT/'benchmark/queries.json').read_text())}
-    assert len(qs)==30 and sum(not q['evidence'] for q in qs.values())==4
-    chunks={c['id']:c for c in json.loads((ROOT/'results/chunks.json').read_text())}
-    assert len(chunks)==1280
-    for c in chunks.values():
-        assert 0<c['tokens']<=240 and 1<=c['start']<=c['end']
-        assert c['url'].startswith('https://github.com/')
-    rows=[json.loads(x) for x in (ROOT/'results/raw.jsonl').read_text().splitlines()]
-    keys={(r['query_id'],r['method'],r['k']) for r in rows}
-    expected={(q,m,k) for q in qs for m in ['bm25','dense','hybrid','graph','random'] for k in [4,8,12]}
-    assert keys==expected and len(rows)==len(expected)==450
-    for r in rows:
-        q=qs[r['query_id']]
-        groups=[{cid for cid,c in chunks.items() if c['repo']==q['repo'] and c['path']==e['path'] and c['start']<=e['line']<=c['end']} for e in q['evidence']]
-        assert all(groups) if groups else True
-        assert groups==[set(g) for g in r['evidence_groups']],r['query_id']
-        assert set(r['relevant'])==(set().union(*groups) if groups else set())
-    for name in ['requests','click']:
-        graph=json.loads((ROOT/'results'/f'{name}-graph.json').read_text())
-        assert all(cid in chunks for cid in graph['chunks'])
-        assert all(0<=a<b<len(graph['chunks']) and kind in {'static_call','same_symbol_next'} for a,b,kind in graph['edges'])
-    subprocess.run([sys.executable,str(ROOT/'scripts/aggregate.py'),'--check'],check=True)
-    files=subprocess.check_output(['git','-C',str(ROOT),'ls-files','--cached','--others','--exclude-standard'],text=True).splitlines()
+    files=subprocess.check_output(['git','-C',str(ROOT),'ls-files','--cached','--others','--exclude-standard','-z']).decode().split('\0')
+    files=sorted(set(filter(None,files))); links=0; pngs=0
     for rel in files:
         p=ROOT/rel
         assert not rel.startswith(('.cache/','.venv/')),rel
-        assert p.stat().st_size<5_000_000,rel
+        assert p.is_file() and not p.is_symlink(),rel
+        assert p.stat().st_size<2_000_000,rel
         if p.suffix=='.png':
-            width,height=check_png(p.read_bytes())
-            assert p.with_suffix('.svg').exists(),rel
+            width,height=check_png(p.read_bytes());pngs+=1
             sw,sh=check_svg(p.with_suffix('.svg').read_text())
             assert (width,height)==(sw*2,sh*2),rel
             continue
         s=p.read_text()
-        if p.suffix=='.svg':
-            check_svg(s)
-            assert p.with_suffix('.png').exists(),rel
         assert not re.search(r'/(?:Users|home)/[A-Za-z0-9_-]+/',s),rel
         assert not re.search(r'(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|sk-[A-Za-z0-9]{24,}|-----BEGIN (?:RSA |OPENSSH )?PRIVATE KEY-----)',s),rel
+        if p.suffix=='.svg':
+            check_svg(s);assert p.with_suffix('.png').exists(),rel
         if p.suffix=='.md':
+            s=prose_only(s)
             for alt,target in re.findall(r'!\[([^\]]*)\]\(([^)]+)\)',s):
                 assert alt.strip(),('missing image alt',rel,target)
             for target in re.findall(r'\]\(([^)]+)\)',s):
-                if '://' in target or target.startswith('#') or target.startswith('mailto:'):continue
-                target,_,fragment=target.partition('#')
-                linked=p.parent/target
-                assert linked.exists(),(rel,target)
+                if '://' in target or target.startswith('mailto:'):continue
+                target,_,fragment=target.partition('#');linked=p.parent/target if target else p
+                assert linked.is_file(),(rel,target)
                 if re.fullmatch(r'L\d+',fragment):
                     assert 1<=int(fragment[1:])<=len(linked.read_text().splitlines()),(rel,target,fragment)
-    print('Validated freeze, 450 independent qrels, graph ranges, budgets, publication links, image formats/alt text, file sizes and privacy patterns.')
+                elif fragment and linked.suffix=='.md':
+                    assert fragment in anchors(linked.read_text()),(rel,target,fragment)
+                links+=1
+    assert pngs==4,('expected four published diagrams',pngs)
+    version=json.loads((ROOT/'research/microsoft-version.json').read_text())
+    assert '5faaaf4f5685fa2056fa8c3bf9342cb089f2942f' in json.dumps(version),'fixed Microsoft source revision'
+    assert not (ROOT/'results').exists() and not (ROOT/'benchmark').exists(),'old experiment belongs in Git history'
+    print(f'Validated {len(files)} public files, {links} local links/anchors, 4 PNG/SVG pairs, source pin and privacy patterns.')
 if __name__=='__main__':main()
