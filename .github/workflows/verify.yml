@@ -7,6 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -16,4 +18,5 @@ jobs:
         run: python -m unittest test_shop
       - run: python research/pilot/verify.py
       - run: python research/pilot/verify_selection.py
+      - run: python research/pilot/verify_probe_result.py
       - run: python scripts/validate.py

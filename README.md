@@ -8,11 +8,11 @@
 
 核查对象为 **Microsoft GraphRAG v3.3.0**，截止 **2026-10-12**。固定源码显示：默认文本实体图没有提供程序语义层面的符号身份、调用与影响集合保证，来源定位及修改／删除同步也需额外处理。在本轮公开检索范围内，四类任务的特定价值仍缺足够直接评测证据；这不是断言它无效。
 
-已完成文献、静态源码和图文复核。**未运行微软模型索引、检索评测或改码实验，未发起付费模型调用。** [小 feature 示例](docs/examples/shop/README.md)是人工教学材料；[真实项目准备包](research/pilot/README.md)已固定 Requests 语料、20题和2个feature，并通过59项本地回归；微软效果实验尚未执行。原版、提示词定制、外接程序图分别讨论。
+已完成文献、静态源码和图文复核。**微软模型索引、检索评测及改码实验尚未完成。** [小 feature 示例](docs/examples/shop/README.md)是人工教学材料；[真实项目准备包](research/pilot/README.md)已固定 Requests 语料、20题和2个feature，并通过59项本地回归。原版、提示词定制、外接程序图分别讨论。
 
 旧自制代码图实验未测试微软实现，保留于[正常 Git 历史](research/legacy.md)，不作为新版效果证据。
 
-后续接口探测已选 one.fullstar `gpt-5.6-luna` 与统一 OpenAI `text-embedding-3-large`；[8块探测范围及费用限额](research/pilot/probe.md)和[无密钥配置](research/pilot/ms-settings.selected.yaml)可供审核，尚未执行。
+**最新实测：**按授权启动8块接口探测，one.fullstar `gpt-5.6-luna` 的第1个请求返回HTTP 401，随即停止、没有重试；OpenAI `text-embedding-3-large`调用为0。[真实记录与未完成边界](research/pilot/probe-result.md)。认证失败不是GraphRAG效果证据。
 
 发布快检不需要网络或模型：
 

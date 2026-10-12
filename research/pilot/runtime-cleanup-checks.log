@@ -1,0 +1,23 @@
+Post-run removal of resource monitoring; 2026-10-12T15:15:50.429458+00:00
+Offline only; no credential loading, model requests, or restarted batch.
+
+$ .venv/bin/python -m unittest discover -s tests -p test_probe_limits.py
+........
+----------------------------------------------------------------------
+Ran 8 tests in 0.114s
+
+OK
+exit=0
+
+$ .venv/bin/python research/pilot/verify.py
+Freeze verified: 20 retrieval + 2 feature tasks; 71 source spans; 41 input files; source_check=False; no inference.
+exit=0
+
+$ .venv/bin/python research/pilot/verify_selection.py
+Selection hashes (8 files), frozen 8 IDs / 4 dev queries, token sums and USD arithmetic: PASS.
+Offline preparation only; no secret loading, model request, runtime limiter or compatibility verification.
+exit=0
+
+$ .venv/bin/python research/pilot/verify_probe_result.py
+Published probe: pinned runtime, one HTTP 401, zero OpenAI requests, unchanged sample and bounded recorded usage verified offline.
+exit=0

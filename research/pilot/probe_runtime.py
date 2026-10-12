@@ -18,7 +18,6 @@ import signal
 import stat
 import subprocess
 import sys
-import threading
 import time
 
 HERE = Path(__file__).resolve().parent
@@ -33,7 +32,7 @@ LIMITS = {"generation_attempts": 17, "embedding_attempts": 3,
           "generation_input_tokens": 100000, "embedding_input_tokens": 20000,
           "embedding_items": 21, "generation_output_per_request": 2048,
           "generation_request_seconds": 60, "embedding_request_seconds": 30,
-          "wall_seconds": 1200, "rss_bytes": 2 * 1024**3,
+          "wall_seconds": 1200,
           "openai_budget_usd": "0.01", "embedding_usd_per_million": "0.13"}
 
 
@@ -285,57 +284,14 @@ def worker(request_path, response_path):
         save(response_path, {"error_category": "worker_exception_redacted"})
 
 
-def rss_bytes(pids):
-    # Read only PID/parent/RSS metadata, never process arguments or other projects.
-    out = subprocess.check_output(["ps", "-axo", "pid=,ppid=,rss="], text=True)
-    rows = [tuple(map(int, line.split())) for line in out.splitlines() if line.strip()]
-    descendants = set(pids)
-    while True:
-        larger = descendants | {pid for pid, parent, rss in rows if parent in descendants}
-        if larger == descendants:
-            break
-        descendants = larger
-    return sum(rss for pid, parent, rss in rows if pid in descendants) * 1024
-
-
-class MemoryWatch:
-    """Whole-run sampled RSS threshold; not an instantaneous kernel memory cap."""
-    def __init__(self):
-        self.done = threading.Event()
-        self.peak = 0
-        self.reason = None
-        self.thread = threading.Thread(target=self.run, daemon=True)
-
-    def run(self):
-        while not self.done.is_set():
-            try:
-                self.peak = max(self.peak, rss_bytes([os.getpid()]))
-                if self.peak >= LIMITS["rss_bytes"]:
-                    self.reason = "rss_threshold"
-            except Exception:
-                self.reason = "rss_monitor_failed"
-            if self.reason:
-                os.kill(os.getpid(), signal.SIGTERM)
-                return
-            self.done.wait(0.2)
-
-    def stop(self):
-        self.done.set()
-        self.thread.join(timeout=2)
-
-
-def supervise(command, timeout, deadline, memory_probe=rss_bytes):
+def supervise(command, timeout, deadline):
     started = time.monotonic()
-    peak = 0
     proc = subprocess.Popen(command, start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     reason = None
     try:
         while proc.poll() is None:
             elapsed = time.monotonic() - started
-            peak = max(peak, memory_probe([os.getpid(), proc.pid]))
-            if peak >= LIMITS["rss_bytes"]:
-                reason = "rss_threshold"
-            elif elapsed >= timeout or time.monotonic() >= deadline:
+            if elapsed >= timeout or time.monotonic() >= deadline:
                 reason = "request_or_batch_timeout"
             if reason:
                 os.killpg(proc.pid, signal.SIGKILL)
@@ -347,7 +303,7 @@ def supervise(command, timeout, deadline, memory_probe=rss_bytes):
             os.killpg(proc.pid, signal.SIGKILL)
             proc.wait()
     return {"supervisor_reason": reason, "worker_exit": proc.returncode,
-            "elapsed_seconds": round(time.monotonic() - started, 3), "sampled_peak_rss_bytes": peak}
+            "elapsed_seconds": round(time.monotonic() - started, 3)}
 
 
 def validate_generation(reply, enc):
@@ -428,13 +384,11 @@ def inputs():
 def execute():
     started = time.monotonic()
     deadline = started + LIMITS["wall_seconds"]
-    watch = MemoryWatch()
     def interrupted(signum, frame):
-        raise Stop(watch.reason or "batch_alarm_or_interruption")
+        raise Stop("batch_alarm_or_interruption")
     for sig in (signal.SIGALRM, signal.SIGTERM, signal.SIGINT):
         signal.signal(sig, interrupted)
     signal.setitimer(signal.ITIMER_REAL, LIMITS["wall_seconds"])
-    watch.thread.start()
     chunks, queries = inputs()
     o200k, cl100k = tokenizers()
     prompts = prompt_values()
@@ -533,10 +487,8 @@ def execute():
         summary.update(status="stopped", stop_reason="unexpected_exception_redacted")
     finally:
         signal.setitimer(signal.ITIMER_REAL, 0)
-        watch.stop()
         budget.stopped = True
         summary.update(reserved=budget.counts.copy(), elapsed_seconds=round(time.monotonic() - started, 3),
-            full_run_sampled_peak_rss_bytes=watch.peak, rss_poll_seconds=0.2,
             finished_utc=datetime.now(timezone.utc).isoformat(), restart_permitted=False,
             openai_reserved_input_cost_usd=str(Decimal(budget.counts["embedding_input_tokens"]) * Decimal("0.13") / 1000000))
         save(RUN / "summary.json", summary)

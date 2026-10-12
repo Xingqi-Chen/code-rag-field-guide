@@ -5,7 +5,6 @@ from pathlib import Path
 import sys
 import time
 import unittest
-from unittest.mock import patch
 
 path = Path(__file__).resolve().parents[1] / "research/pilot/probe_runtime.py"
 spec = importlib.util.spec_from_file_location("probe_runtime", path)
@@ -69,18 +68,11 @@ class ProbeLimits(unittest.TestCase):
         reply["data"][0]["embedding"][0] = float("nan")
         with self.assertRaises(p.Stop): p.validate_embedding(reply, 1, 2)
 
-    def test_timeout_and_memory_kill_sleeping_worker(self):
+    def test_timeout_kills_sleeping_worker(self):
         command = [sys.executable, "-c", "import time; time.sleep(10)"]
-        result = p.supervise(command, 0.1, time.monotonic() + 5, memory_probe=lambda _: 1)
+        result = p.supervise(command, 0.1, time.monotonic() + 5)
         self.assertEqual(result["supervisor_reason"], "request_or_batch_timeout")
         self.assertLess(result["elapsed_seconds"], 2)
-        result = p.supervise(command, 5, time.monotonic() + 5, memory_probe=lambda _: 2 * 1024**3)
-        self.assertEqual(result["supervisor_reason"], "rss_threshold")
-        self.assertNotEqual(result["worker_exit"], 0)
-
-    def test_rss_includes_grandchildren_excludes_unrelated_process(self):
-        with patch.object(p.subprocess, "check_output", return_value="10 1 100\n20 10 200\n30 20 300\n40 1 999\n"):
-            self.assertEqual(p.rss_bytes([10]), 600 * 1024)
 
     def test_error_details_do_not_retain_untrusted_strings(self):
         raw = json.dumps({"error": {"message": "api key CREDENTIAL_FIXTURE https://private.invalid/secret", "code": "CREDENTIAL_FIXTURE", "param": "CREDENTIAL_FIXTURE"}}).encode()
