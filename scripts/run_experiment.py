@@ -28,6 +28,12 @@ def timed(fn,n=3):
     return value,statistics.median(elapsed)
 
 
+def probe(name, convert=str):
+    if platform.system()!='Darwin':
+        return platform.processor() or 'unknown' if convert is str else None
+    result=subprocess.run(['sysctl','-n',name],capture_output=True,text=True)
+    return convert(result.stdout.strip()) if result.returncode==0 else None
+
 def main():
     check_freeze()
     torch.set_num_threads(4)
@@ -59,6 +65,8 @@ def main():
         t=time.perf_counter()
         vectors=model.encode([c['text'] for c in chunks],batch_size=32,normalize_embeddings=True,convert_to_numpy=True,show_progress_bar=False)
         stats['vector_seconds']=time.perf_counter()-t
+        assert np.isfinite(vectors).all()
+        assert np.allclose(np.linalg.norm(vectors,axis=1),1,atol=1e-5)
         cache=ROOT/'.cache/index'/name;cache.mkdir(parents=True,exist_ok=True)
         dump(cache/'chunks.json',chunks);dump(cache/'edges.json',edges)
         (cache/'bm25.pkl').write_bytes(pickle.dumps(bm))
@@ -75,7 +83,8 @@ def main():
             # Include sorting in each corresponding retrieval phase.
             bo,bs_ms=timed(lambda:ranked(bms))
             query_vec,embed_ms=timed(lambda:model.encode([q['query']],normalize_embeddings=True,convert_to_numpy=True)[0])
-            ds,dot_ms=timed(lambda:vectors@query_vec)
+            ds,dot_ms=timed(lambda:np.einsum('ij,j->i',vectors,query_vec,optimize=False))
+            assert np.isfinite(ds).all() and np.isfinite(query_vec).all()
             do,ds_ms=timed(lambda:ranked(ds))
             ho,rrf_ms=timed(lambda:fuse(bo,do))
             stages={'bm25_ms':bm_ms+bs_ms,'embed_ms':embed_ms,'dense_search_ms':dot_ms+ds_ms,'fusion_ms':rrf_ms}
@@ -100,7 +109,7 @@ def main():
     (ROOT/'results/raw.jsonl').write_text(''.join(json.dumps(r,ensure_ascii=False)+'\n' for r in result_rows))
     versions={p:importlib.metadata.version(p) for p in ['numpy','torch','transformers','sentence-transformers','rank-bm25','tokenizers']}
     env=dict(os=platform.system(),os_version=platform.mac_ver()[0],architecture=platform.machine(),python=platform.python_version(),
-        processor='Apple M4',physical_memory_bytes=17179869184,logical_cpus=10,torch_threads=torch.get_num_threads(),device='cpu',
+        processor=probe('machdep.cpu.brand_string'),physical_memory_bytes=probe('hw.memsize',int),logical_cpus=os.cpu_count(),torch_threads=torch.get_num_threads(),device='cpu',
         seed=SEED,versions=versions,model='sentence-transformers/all-MiniLM-L6-v2',
         model_revision='1110a243fdf4706b3f48f1d95db1a4f5529b4d41',model_dimension=model.get_sentence_embedding_dimension(),
         model_max_seq_length=model.max_seq_length,model_load_seconds=model_load,

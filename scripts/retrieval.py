@@ -38,6 +38,7 @@ def check_freeze():
 
 def build(repo, tokenizer):
     """Partition by deepest AST definition; connect call-site chunks to definitions."""
+    tokenizer.deprecation_warnings['sequence-length-is-longer-than-the-specified-maximum'] = True
     start = time.perf_counter()
     base = ROOT/'.cache/corpora'/repo['name']
     chunks, symbols, modules, file_data = [], {}, {}, {}
