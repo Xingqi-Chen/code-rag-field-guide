@@ -1,0 +1,83 @@
+Requests 2.32.3; fixed source snapshot; TCP/DNS disabled; suite=F02
+FFFFFFF...F.FF                                                           [100%]
+=================================== FAILURES ===================================
+___________ TestF02.test_attribute_exists_and_preserves_old_default ____________
+research/pilot/acceptance.py:92: in test_attribute_exists_and_preserves_old_default
+    assert session.default_timeout is None
+           ^^^^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: 'Session' object has no attribute 'default_timeout'
+___________ TestF02.test_omitted_timeout_uses_session_value[get-3.0] ___________
+research/pilot/acceptance.py:102: in test_omitted_timeout_uses_session_value
+    assert adapter.seen == [value]
+E   assert [None] == [3.0]
+E     
+E     At index 0 diff: None != 3.0
+E     Use -v to get more diff
+_________ TestF02.test_omitted_timeout_uses_session_value[get-value1] __________
+research/pilot/acceptance.py:102: in test_omitted_timeout_uses_session_value
+    assert adapter.seen == [value]
+E   assert [None] == [(1.0, 4.0)]
+E     
+E     At index 0 diff: None != (1.0, 4.0)
+E     Use -v to get more diff
+__________ TestF02.test_omitted_timeout_uses_session_value[post-3.0] ___________
+research/pilot/acceptance.py:102: in test_omitted_timeout_uses_session_value
+    assert adapter.seen == [value]
+E   assert [None] == [3.0]
+E     
+E     At index 0 diff: None != 3.0
+E     Use -v to get more diff
+_________ TestF02.test_omitted_timeout_uses_session_value[post-value1] _________
+research/pilot/acceptance.py:102: in test_omitted_timeout_uses_session_value
+    assert adapter.seen == [value]
+E   assert [None] == [(1.0, 4.0)]
+E     
+E     At index 0 diff: None != (1.0, 4.0)
+E     Use -v to get more diff
+_________ TestF02.test_omitted_timeout_uses_session_value[request-3.0] _________
+research/pilot/acceptance.py:102: in test_omitted_timeout_uses_session_value
+    assert adapter.seen == [value]
+E   assert [None] == [3.0]
+E     
+E     At index 0 diff: None != 3.0
+E     Use -v to get more diff
+_______ TestF02.test_omitted_timeout_uses_session_value[request-value1] ________
+research/pilot/acceptance.py:102: in test_omitted_timeout_uses_session_value
+    assert adapter.seen == [value]
+E   assert [None] == [(1.0, 4.0)]
+E     
+E     At index 0 diff: None != (1.0, 4.0)
+E     Use -v to get more diff
+________________ TestF02.test_redirect_keeps_effective_timeout _________________
+research/pilot/acceptance.py:113: in test_redirect_keeps_effective_timeout
+    assert adapter.seen == [(1.0, 4.0), (1.0, 4.0)]
+E   assert [None, None] == [(1.0, 4.0), (1.0, 4.0)]
+E     
+E     At index 0 diff: None != (1.0, 4.0)
+E     Use -v to get more diff
+____________ TestF02.test_different_sessions_do_not_share_defaults _____________
+research/pilot/acceptance.py:126: in test_different_sessions_do_not_share_defaults
+    assert first_adapter.seen == [3.0]
+E   assert [None] == [3.0]
+E     
+E     At index 0 diff: None != 3.0
+E     Use -v to get more diff
+________________ TestF02.test_mutating_default_between_requests ________________
+research/pilot/acceptance.py:134: in test_mutating_default_between_requests
+    assert adapter.seen == [3.0, (2.0, 6.0)]
+E   assert [None, None] == [3.0, (2.0, 6.0)]
+E     
+E     At index 0 diff: None != 3.0
+E     Use -v to get more diff
+=========================== short test summary info ============================
+FAILED research/pilot/acceptance.py::TestF02::test_attribute_exists_and_preserves_old_default
+FAILED research/pilot/acceptance.py::TestF02::test_omitted_timeout_uses_session_value[get-3.0]
+FAILED research/pilot/acceptance.py::TestF02::test_omitted_timeout_uses_session_value[get-value1]
+FAILED research/pilot/acceptance.py::TestF02::test_omitted_timeout_uses_session_value[post-3.0]
+FAILED research/pilot/acceptance.py::TestF02::test_omitted_timeout_uses_session_value[post-value1]
+FAILED research/pilot/acceptance.py::TestF02::test_omitted_timeout_uses_session_value[request-3.0]
+FAILED research/pilot/acceptance.py::TestF02::test_omitted_timeout_uses_session_value[request-value1]
+FAILED research/pilot/acceptance.py::TestF02::test_redirect_keeps_effective_timeout
+FAILED research/pilot/acceptance.py::TestF02::test_different_sessions_do_not_share_defaults
+FAILED research/pilot/acceptance.py::TestF02::test_mutating_default_between_requests
+10 failed, 4 passed in 0.04s

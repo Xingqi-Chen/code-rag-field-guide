@@ -1,0 +1,24 @@
+[
+  {
+    "id": "F01",
+    "split": "test",
+    "query": "Add mapping union operators to CaseInsensitiveDict: a | b, dict | a, and a |= b. All operands must be Mapping objects; reject other operands with TypeError. Return CaseInsensitiveDict for non-mutating union, preserve inputs, and preserve identity for in-place union. On keys equal ignoring case, the right-hand value and spelling win; retain existing key order and append new keys in right-hand order. Assume each operand has no internal case-insensitive duplicate keys. Keep existing header preparation behavior and document the new operations. This is an original exploratory feature, not an upstream issue.",
+    "acceptance": "acceptance.py::TestF01",
+    "constraints": [
+      "No network behavior changes",
+      "Do not implement unrelated mapping APIs",
+      "Each candidate starts at the pinned pre-change commit"
+    ]
+  },
+  {
+    "id": "F02",
+    "split": "test",
+    "query": "Add a per-instance mutable Session.default_timeout attribute, initialized to None. Calls through Session.request/get/post and other existing method wrappers that OMIT timeout must use that attribute. An explicitly supplied timeout, including None, must win. Support the existing float and (connect, read) timeout shapes without adding validation rules. Redirects must keep the effective timeout. Preserve the direct Session.send contract; do not introduce global defaults or change Session constructor arguments. Document the distinction between omitted timeout and explicit None. This is an original exploratory feature, not an upstream issue.",
+    "acceptance": "acceptance.py::TestF02",
+    "constraints": [
+      "No real HTTP access in acceptance tests",
+      "No constructor signature change; no new pickle/backward-serialization requirement",
+      "Each candidate starts at the pinned pre-change commit"
+    ]
+  }
+]

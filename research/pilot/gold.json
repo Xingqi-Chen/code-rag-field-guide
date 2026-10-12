@@ -1,0 +1,751 @@
+[
+  {
+    "id": "Q01",
+    "expected_decision": "answerable",
+    "reference_answer": "CaseInsensitiveDict stores lower-case lookup keys alongside the original spelling.",
+    "evidence": [
+      {
+        "path": "src/requests/structures.py",
+        "symbol": "CaseInsensitiveDict.__setitem__",
+        "start_line": 46,
+        "end_line": 49,
+        "span_sha256": "d2dd595c8e7ea0e1b7ef2f8d07ca11ac46ca3795f8ef8adef582f3cb2abc7496",
+        "id": "Q01-E1"
+      },
+      {
+        "path": "src/requests/structures.py",
+        "symbol": "CaseInsensitiveDict.__getitem__",
+        "start_line": 51,
+        "end_line": 52,
+        "span_sha256": "50522e6951e62263533e5128ac3f5dfdeb8aeb4b5c112777aebd7f9a3f37f244",
+        "id": "Q01-E2"
+      },
+      {
+        "path": "src/requests/structures.py",
+        "symbol": "CaseInsensitiveDict.__iter__",
+        "start_line": 57,
+        "end_line": 58,
+        "span_sha256": "8f17ffd12d65b0bc77e44e3b6a3c9ea8a9c9810b348ceebdc1b506381f04fb89",
+        "id": "Q01-E3"
+      }
+    ],
+    "verified_edges": [],
+    "scope": "Listed evidence is a sufficient bounded reference set, not all possible relevant code."
+  },
+  {
+    "id": "Q02",
+    "expected_decision": "answerable",
+    "reference_answer": "PreparedRequest.prepare_headers invokes check_header_validity, which validates name and value separately.",
+    "evidence": [
+      {
+        "path": "src/requests/models.py",
+        "symbol": "PreparedRequest.prepare_headers",
+        "start_line": 483,
+        "end_line": 492,
+        "span_sha256": "e5c5262d067ac89571a6fb9fc70f01c6572394e61f6fbe244735b1c89673e3c1",
+        "id": "Q02-E1"
+      },
+      {
+        "path": "src/requests/utils.py",
+        "symbol": "check_header_validity",
+        "start_line": 1034,
+        "end_line": 1042,
+        "span_sha256": "ffef415d997f0f041a10c01543b74d8f70055a04d30a92a882deacb764f98717",
+        "id": "Q02-E2"
+      }
+    ],
+    "verified_edges": [],
+    "scope": "Listed evidence is a sufficient bounded reference set, not all possible relevant code."
+  },
+  {
+    "id": "Q03",
+    "expected_decision": "answerable",
+    "reference_answer": "Response.__bool__ returns ok; ok catches HTTPError from raise_for_status. HTTP status failure is not object absence.",
+    "evidence": [
+      {
+        "path": "src/requests/models.py",
+        "symbol": "Response.__bool__",
+        "start_line": 738,
+        "end_line": 738,
+        "span_sha256": "de791b5f6e03c68b8ba9c5e7d17ee46e4671a4efafb62edd8eb6085e360e8db8",
+        "id": "Q03-E1"
+      },
+      {
+        "path": "src/requests/models.py",
+        "symbol": "Response.ok",
+        "start_line": 763,
+        "end_line": 767,
+        "span_sha256": "85c4ae895557120f261878778909ff7125fa6ba77a0c12a59e1c05888d454992",
+        "id": "Q03-E2"
+      },
+      {
+        "path": "src/requests/models.py",
+        "symbol": "Response.raise_for_status",
+        "start_line": 1013,
+        "end_line": 1024,
+        "span_sha256": "b981dd1a91d40c349e6041d21b8cfdeb924658c180b26587155f45c2b9de24e5",
+        "id": "Q03-E3"
+      }
+    ],
+    "verified_edges": [],
+    "scope": "Listed evidence is a sufficient bounded reference set, not all possible relevant code."
+  },
+  {
+    "id": "Q04",
+    "expected_decision": "answerable",
+    "reference_answer": "RequestHooksMixin.deregister_hook removes one matching callback and returns False when list.remove raises ValueError.",
+    "evidence": [
+      {
+        "path": "src/requests/models.py",
+        "symbol": "RequestHooksMixin.deregister_hook",
+        "start_line": 218,
+        "end_line": 227,
+        "span_sha256": "88cbf845bfc3523c57798c20c9fe326b4b189e4d16c450cc0b0e28b6ff04d620",
+        "id": "Q04-E1"
+      }
+    ],
+    "verified_edges": [],
+    "scope": "Listed evidence is a sufficient bounded reference set, not all possible relevant code."
+  },
+  {
+    "id": "Q05",
+    "expected_decision": "answerable",
+    "reference_answer": "Response.json catches the decoder JSONDecodeError in both decoding routes and raises RequestsJSONDecodeError alias.",
+    "evidence": [
+      {
+        "path": "src/requests/models.py",
+        "symbol": "Response.json",
+        "start_line": 970,
+        "end_line": 971,
+        "span_sha256": "d13a445e75bfa5cc69346f36ac760ebca4878552e0bce679eb34f2e1e2f7d4a3",
+        "id": "Q05-E1"
+      },
+      {
+        "path": "src/requests/models.py",
+        "symbol": "Response.json",
+        "start_line": 975,
+        "end_line": 978,
+        "span_sha256": "867afe1651df7053ef3ceb90fbcc8fa2b5a8287a76273d14b9d6738837f17057",
+        "id": "Q05-E2"
+      }
+    ],
+    "verified_edges": [],
+    "scope": "Listed evidence is a sufficient bounded reference set, not all possible relevant code."
+  },
+  {
+    "id": "Q06",
+    "expected_decision": "answerable",
+    "reference_answer": "Response.iter_lines maintains pending, splits chunks by delimiter or splitlines, and yields final pending data.",
+    "evidence": [
+      {
+        "path": "src/requests/models.py",
+        "symbol": "Response.iter_lines",
+        "start_line": 867,
+        "end_line": 888,
+        "span_sha256": "d6f7a075aeede4a0bb7033c1d5d5df79ca7951f2016c960bbb6d6d6526f80aac",
+        "id": "Q06-E1"
+      }
+    ],
+    "verified_edges": [],
+    "scope": "Listed evidence is a sufficient bounded reference set, not all possible relevant code."
+  },
+  {
+    "id": "Q07",
+    "expected_decision": "answerable",
+    "reference_answer": "api.get -> api.request -> Session.request; Session.request calls prepare_request then Session.send; send selects get_adapter and invokes its send.",
+    "evidence": [
+      {
+        "path": "src/requests/api.py",
+        "symbol": "get",
+        "start_line": 73,
+        "end_line": 73,
+        "span_sha256": "70549dd2a63c274797867c46af37edcc16c7910183baa74d29777d93d59c47cd",
+        "id": "Q07-E1"
+      },
+      {
+        "path": "src/requests/api.py",
+        "symbol": "request",
+        "start_line": 58,
+        "end_line": 59,
+        "span_sha256": "e59a55a07e738ba374816e2002174d93f87fbe36b96890e592ce55cd54901387",
+        "id": "Q07-E2"
+      },
+      {
+        "path": "src/requests/sessions.py",
+        "symbol": "Session.request",
+        "start_line": 575,
+        "end_line": 575,
+        "span_sha256": "dbc9f752718a85e13f1c0ff07f4580d913a00af35a7fb77b5756bd8d75c10d2b",
+        "id": "Q07-E3"
+      },
+      {
+        "path": "src/requests/sessions.py",
+        "symbol": "Session.request",
+        "start_line": 589,
+        "end_line": 589,
+        "span_sha256": "12ee5af6a7da84d81bd1ded3f002d0a9c510a18868da21aca944220ef898b037",
+        "id": "Q07-E4"
+      },
+      {
+        "path": "src/requests/sessions.py",
+        "symbol": "Session.send",
+        "start_line": 697,
+        "end_line": 703,
+        "span_sha256": "3678a62e1750e7c6b1d993f0df47d90c736f79d3738c44285e5278dce58391e2",
+        "id": "Q07-E5"
+      }
+    ],
+    "verified_edges": [
+      [
+        "api.get",
+        "api.request",
+        "direct"
+      ],
+      [
+        "api.request",
+        "Session.request",
+        "direct"
+      ],
+      [
+        "Session.request",
+        "Session.prepare_request",
+        "direct"
+      ],
+      [
+        "Session.request",
+        "Session.send",
+        "direct"
+      ],
+      [
+        "Session.send",
+        "Session.get_adapter",
+        "direct"
+      ],
+      [
+        "Session.send",
+        "selected adapter.send",
+        "dynamic"
+      ]
+    ],
+    "scope": "Listed evidence is a sufficient bounded reference set, not all possible relevant code."
+  },
+  {
+    "id": "Q08",
+    "expected_decision": "answerable",
+    "reference_answer": "Session.prepare_request merges headers, passes them to PreparedRequest.prepare, which calls prepare_headers then check_header_validity.",
+    "evidence": [
+      {
+        "path": "src/requests/sessions.py",
+        "symbol": "Session.prepare_request",
+        "start_line": 483,
+        "end_line": 492,
+        "span_sha256": "00af30de3bc9bbcbe85d90ead029349ba8c07066e711688b61e168d3dd36970f",
+        "id": "Q08-E1"
+      },
+      {
+        "path": "src/requests/models.py",
+        "symbol": "PreparedRequest.prepare",
+        "start_line": 368,
+        "end_line": 368,
+        "span_sha256": "f7aaeb31b1c66ea6407eeb1b8214bf57eb7c8fbadb70e900dde0c64feededd5a",
+        "id": "Q08-E2"
+      },
+      {
+        "path": "src/requests/models.py",
+        "symbol": "PreparedRequest.prepare_headers",
+        "start_line": 490,
+        "end_line": 491,
+        "span_sha256": "482afb6cc69bf0f13205f96e530f460009b63d70049ec58cbb00ebb5bc45528a",
+        "id": "Q08-E3"
+      },
+      {
+        "path": "src/requests/utils.py",
+        "symbol": "check_header_validity",
+        "start_line": 1034,
+        "end_line": 1042,
+        "span_sha256": "ffef415d997f0f041a10c01543b74d8f70055a04d30a92a882deacb764f98717",
+        "id": "Q08-E4"
+      }
+    ],
+    "verified_edges": [
+      [
+        "Session.prepare_request",
+        "PreparedRequest.prepare",
+        "direct"
+      ],
+      [
+        "PreparedRequest.prepare",
+        "PreparedRequest.prepare_headers",
+        "direct"
+      ],
+      [
+        "PreparedRequest.prepare_headers",
+        "utils.check_header_validity",
+        "direct"
+      ]
+    ],
+    "scope": "Listed evidence is a sufficient bounded reference set, not all possible relevant code."
+  },
+  {
+    "id": "Q09",
+    "expected_decision": "answerable",
+    "reference_answer": "resolve_redirects calls rebuild_auth; rebuild_auth consults should_strip_auth and deletes Authorization; it conditionally uses netrc when trust_env.",
+    "evidence": [
+      {
+        "path": "src/requests/sessions.py",
+        "symbol": "SessionRedirectMixin.resolve_redirects",
+        "start_line": 246,
+        "end_line": 246,
+        "span_sha256": "5c8c6140b31ad52c3be30196ab9c12ac7223d0688f2b3f2ce9cc4f120c13c245",
+        "id": "Q09-E1"
+      },
+      {
+        "path": "src/requests/sessions.py",
+        "symbol": "SessionRedirectMixin.rebuild_auth",
+        "start_line": 290,
+        "end_line": 300,
+        "span_sha256": "27b7614ac035f9c7cf2e0d6e10ffa0960c7d438b7bb6a0faac4765d692199bff",
+        "id": "Q09-E2"
+      },
+      {
+        "path": "src/requests/sessions.py",
+        "symbol": "SessionRedirectMixin.should_strip_auth",
+        "start_line": 131,
+        "end_line": 132,
+        "span_sha256": "76ed98026760eb44461179606dc8606145a2ff4c3c053dac5b160ecdffd66782",
+        "id": "Q09-E3"
+      }
+    ],
+    "verified_edges": [
+      [
+        "SessionRedirectMixin.resolve_redirects",
+        "SessionRedirectMixin.rebuild_auth",
+        "direct"
+      ],
+      [
+        "SessionRedirectMixin.rebuild_auth",
+        "SessionRedirectMixin.should_strip_auth",
+        "conditional"
+      ],
+      [
+        "SessionRedirectMixin.rebuild_auth",
+        "utils.get_netrc_auth",
+        "conditional"
+      ]
+    ],
+    "scope": "Listed evidence is a sufficient bounded reference set, not all possible relevant code."
+  },
+  {
+    "id": "Q10",
+    "expected_decision": "answerable",
+    "reference_answer": "Session.prepare_request merges cookies; PreparedRequest.prepare invokes prepare_cookies; it creates the Cookie header through get_cookie_header.",
+    "evidence": [
+      {
+        "path": "src/requests/sessions.py",
+        "symbol": "Session.prepare_request",
+        "start_line": 474,
+        "end_line": 476,
+        "span_sha256": "2a19d7dae0a67fc3742fec78cfb1b736510885b011e2609f4f3190eb765b01b6",
+        "id": "Q10-E1"
+      },
+      {
+        "path": "src/requests/sessions.py",
+        "symbol": "Session.prepare_request",
+        "start_line": 483,
+        "end_line": 495,
+        "span_sha256": "c86eaf373ce7fe908341befe52336b1372c5fced64cecde3846646c2431467cf",
+        "id": "Q10-E2"
+      },
+      {
+        "path": "src/requests/models.py",
+        "symbol": "PreparedRequest.prepare",
+        "start_line": 369,
+        "end_line": 369,
+        "span_sha256": "c05140d3b1319efe304673006fcf0fcd11433b910022a054166daabf98fa6352",
+        "id": "Q10-E3"
+      },
+      {
+        "path": "src/requests/models.py",
+        "symbol": "PreparedRequest.prepare_cookies",
+        "start_line": 626,
+        "end_line": 628,
+        "span_sha256": "9e7f14f52f360b2e40fbec4155a5a5822fe7c8d075995a3273003cb81de2dd20",
+        "id": "Q10-E4"
+      },
+      {
+        "path": "src/requests/cookies.py",
+        "symbol": "get_cookie_header",
+        "start_line": 140,
+        "end_line": 148,
+        "span_sha256": "ad54cc6247828ac2cbce27df1e2b9c9d854df1a0b93b9f089ec3a635dff4061d",
+        "id": "Q10-E5"
+      }
+    ],
+    "verified_edges": [
+      [
+        "Session.prepare_request",
+        "PreparedRequest.prepare",
+        "direct"
+      ],
+      [
+        "Session.prepare_request",
+        "cookies.merge_cookies",
+        "direct"
+      ],
+      [
+        "PreparedRequest.prepare",
+        "PreparedRequest.prepare_cookies",
+        "direct"
+      ],
+      [
+        "PreparedRequest.prepare_cookies",
+        "cookies.get_cookie_header",
+        "direct"
+      ]
+    ],
+    "scope": "Listed evidence is a sufficient bounded reference set, not all possible relevant code."
+  },
+  {
+    "id": "Q11",
+    "expected_decision": "answerable",
+    "reference_answer": "HTTPAdapter.build_response calls get_encoding_from_headers; Response.text uses apparent_encoding only when encoding is None.",
+    "evidence": [
+      {
+        "path": "src/requests/adapters.py",
+        "symbol": "HTTPAdapter.build_response",
+        "start_line": 378,
+        "end_line": 378,
+        "span_sha256": "cef4300149725daf2c1049f702d0ebfb9659cf328afcfc5dd99a1d05c9ebd5aa",
+        "id": "Q11-E1"
+      },
+      {
+        "path": "src/requests/utils.py",
+        "symbol": "get_encoding_from_headers",
+        "start_line": 546,
+        "end_line": 561,
+        "span_sha256": "58537ca8bd0825d7e3a1ab7480954fc3bcb1704b23af76954f019702cd6a7993",
+        "id": "Q11-E2"
+      },
+      {
+        "path": "src/requests/models.py",
+        "symbol": "Response.text",
+        "start_line": 924,
+        "end_line": 934,
+        "span_sha256": "760734a67e555c18161691fb477aec84c832c2e44e65a0000737de401d0f61fe",
+        "id": "Q11-E3"
+      }
+    ],
+    "verified_edges": [
+      [
+        "HTTPAdapter.build_response",
+        "utils.get_encoding_from_headers",
+        "direct"
+      ],
+      [
+        "Response.text",
+        "Response.apparent_encoding",
+        "conditional property"
+      ]
+    ],
+    "scope": "Listed evidence is a sufficient bounded reference set, not all possible relevant code."
+  },
+  {
+    "id": "Q12",
+    "expected_decision": "answerable",
+    "reference_answer": "Session.send uses dispatch_hook return; dispatch_hook invokes runtime callables and only replaces data when a callback returns non-None. Concrete callback targets are unknown.",
+    "evidence": [
+      {
+        "path": "src/requests/sessions.py",
+        "symbol": "Session.send",
+        "start_line": 710,
+        "end_line": 710,
+        "span_sha256": "cda88942c3dbaa570346f07642019cec0349969401905352c0d103a3d36f47a4",
+        "id": "Q12-E1"
+      },
+      {
+        "path": "src/requests/hooks.py",
+        "symbol": "dispatch_hook",
+        "start_line": 22,
+        "end_line": 33,
+        "span_sha256": "86743489dfb0ca956f1d5c182f0ee1b423327ece775b0444704dbfd14f9e3df7",
+        "id": "Q12-E2"
+      }
+    ],
+    "verified_edges": [
+      [
+        "Session.send",
+        "hooks.dispatch_hook",
+        "direct"
+      ],
+      [
+        "hooks.dispatch_hook",
+        "runtime callback",
+        "dynamic"
+      ]
+    ],
+    "scope": "Listed evidence is a sufficient bounded reference set, not all possible relevant code."
+  },
+  {
+    "id": "Q13",
+    "expected_decision": "answerable",
+    "reference_answer": "Inspect CaseInsensitiveDict set/get, PreparedRequest.prepare_headers, and the existing spelling-variant test; inspection dependency is not mandatory patch scope.",
+    "evidence": [
+      {
+        "path": "src/requests/structures.py",
+        "symbol": "CaseInsensitiveDict.__setitem__",
+        "start_line": 46,
+        "end_line": 49,
+        "span_sha256": "d2dd595c8e7ea0e1b7ef2f8d07ca11ac46ca3795f8ef8adef582f3cb2abc7496",
+        "id": "Q13-E1"
+      },
+      {
+        "path": "src/requests/structures.py",
+        "symbol": "CaseInsensitiveDict.__getitem__",
+        "start_line": 51,
+        "end_line": 52,
+        "span_sha256": "50522e6951e62263533e5128ac3f5dfdeb8aeb4b5c112777aebd7f9a3f37f244",
+        "id": "Q13-E2"
+      },
+      {
+        "path": "src/requests/models.py",
+        "symbol": "PreparedRequest.prepare_headers",
+        "start_line": 483,
+        "end_line": 492,
+        "span_sha256": "e5c5262d067ac89571a6fb9fc70f01c6572394e61f6fbe244735b1c89673e3c1",
+        "id": "Q13-E3"
+      },
+      {
+        "path": "tests/test_structures.py",
+        "symbol": "TestCaseInsensitiveDict",
+        "start_line": 16,
+        "end_line": 22,
+        "span_sha256": "b346d5bdd4da781061a138fae0451e5b628477de2859105c276a502a7655a24f",
+        "id": "Q13-E4"
+      }
+    ],
+    "verified_edges": [],
+    "scope": "Listed evidence is a sufficient bounded reference set, not all possible relevant code."
+  },
+  {
+    "id": "Q14",
+    "expected_decision": "answerable",
+    "reference_answer": "guess_json_utf is consumed by Response.json; TestGuessJSONUTF.test_encoded covers encoding cases.",
+    "evidence": [
+      {
+        "path": "src/requests/utils.py",
+        "symbol": "guess_json_utf",
+        "start_line": 957,
+        "end_line": 986,
+        "span_sha256": "1905380eaa9de47dc73f2cb38e995a18dc9a355cfb70ba6f69b61919af24334b",
+        "id": "Q14-E1"
+      },
+      {
+        "path": "src/requests/models.py",
+        "symbol": "Response.json",
+        "start_line": 960,
+        "end_line": 963,
+        "span_sha256": "223fd34340f69cace5a1a173a38a2c973d285df4e12e1b21d5906cbd73be43ea",
+        "id": "Q14-E2"
+      },
+      {
+        "path": "tests/test_utils.py",
+        "symbol": "TestGuessJSONUTF",
+        "start_line": 377,
+        "end_line": 392,
+        "span_sha256": "445941a5fe71679b9682a9b805f63271b4d402be93561147fe2f0180bfb40ff6",
+        "id": "Q14-E3"
+      }
+    ],
+    "verified_edges": [],
+    "scope": "Listed evidence is a sufficient bounded reference set, not all possible relevant code."
+  },
+  {
+    "id": "Q15",
+    "expected_decision": "answerable",
+    "reference_answer": "prepare_body stores _body_position; resolve_redirects checks rewindable before rewind_body; test_rewind_body_failed_seek covers failed seek.",
+    "evidence": [
+      {
+        "path": "src/requests/models.py",
+        "symbol": "PreparedRequest.prepare_body",
+        "start_line": 537,
+        "end_line": 542,
+        "span_sha256": "5b014b5862820ac52aa89a2c02fc19ca00f03c7d9c33a39ab4a5142590d05b55",
+        "id": "Q15-E1"
+      },
+      {
+        "path": "src/requests/sessions.py",
+        "symbol": "SessionRedirectMixin.resolve_redirects",
+        "start_line": 251,
+        "end_line": 260,
+        "span_sha256": "343dc260186b174179e39b3621afa86ac6b4dd7ebe0f45def8fd1752e41857b7",
+        "id": "Q15-E2"
+      },
+      {
+        "path": "src/requests/utils.py",
+        "symbol": "rewind_body",
+        "start_line": 1081,
+        "end_line": 1096,
+        "span_sha256": "f45a155b48bfd3d9cd6b86e7bed7cf674a12083e0d61fab2edb103e105d9b3b6",
+        "id": "Q15-E3"
+      },
+      {
+        "path": "tests/test_requests.py",
+        "symbol": "TestRequests.test_rewind_body_failed_seek",
+        "start_line": 1979,
+        "end_line": 2000,
+        "span_sha256": "d0c5b332f84d303d25416a812723aa85f45fb44c9bbfb5d151d0383dd15a39f8",
+        "id": "Q15-E4"
+      }
+    ],
+    "verified_edges": [],
+    "scope": "Listed evidence is a sufficient bounded reference set, not all possible relevant code."
+  },
+  {
+    "id": "Q16",
+    "expected_decision": "answerable",
+    "reference_answer": "merge_setting deletes None-valued merged keys; prepare_request uses it for headers/params/auth, merge_environment_settings for proxies/stream/verify/cert. Non-mappings bypass dictionary deletion.",
+    "evidence": [
+      {
+        "path": "src/requests/sessions.py",
+        "symbol": "merge_setting",
+        "start_line": 74,
+        "end_line": 79,
+        "span_sha256": "7af6960e8da9f27f4dc81eb444c564d9d9cbab6a6ce3dd8041652261a2ec5ab9",
+        "id": "Q16-E1"
+      },
+      {
+        "path": "src/requests/sessions.py",
+        "symbol": "merge_setting",
+        "start_line": 84,
+        "end_line": 87,
+        "span_sha256": "b1ff2a501875237fcd9bc7bbbbd1d34ea13dcdde1adfd6edc8751154ba24cf20",
+        "id": "Q16-E2"
+      },
+      {
+        "path": "src/requests/sessions.py",
+        "symbol": "Session.prepare_request",
+        "start_line": 490,
+        "end_line": 495,
+        "span_sha256": "9fd2e01d97c172950ea37dc8ef073c2a7f4f0ad1d2e389bb57cee97fb3b642dd",
+        "id": "Q16-E3"
+      },
+      {
+        "path": "src/requests/sessions.py",
+        "symbol": "Session.merge_environment_settings",
+        "start_line": 774,
+        "end_line": 777,
+        "span_sha256": "bcd25ccf48fefae1a88b5fa2045b1cf4c4eb49349758a0397040cb625fb56491",
+        "id": "Q16-E4"
+      }
+    ],
+    "verified_edges": [],
+    "scope": "Listed evidence is a sufficient bounded reference set, not all possible relevant code."
+  },
+  {
+    "id": "Q17",
+    "expected_decision": "answerable",
+    "reference_answer": "mount sorts descending prefix lengths; get_adapter lowercases both sides; Session.send consumes selected adapter. No claim that every adapter implementation needs changes.",
+    "evidence": [
+      {
+        "path": "src/requests/sessions.py",
+        "symbol": "Session.mount",
+        "start_line": 799,
+        "end_line": 808,
+        "span_sha256": "12c82dad031da9b0100e5cbb5634241d3caa915149e011409c22272023124261",
+        "id": "Q17-E1"
+      },
+      {
+        "path": "src/requests/sessions.py",
+        "symbol": "Session.get_adapter",
+        "start_line": 781,
+        "end_line": 792,
+        "span_sha256": "b4f50aec8afe7b1d555d63e27a4a28e6cad30f78349de070bc4a7a6d706ec5e2",
+        "id": "Q17-E2"
+      },
+      {
+        "path": "src/requests/sessions.py",
+        "symbol": "Session.send",
+        "start_line": 697,
+        "end_line": 703,
+        "span_sha256": "3678a62e1750e7c6b1d993f0df47d90c736f79d3738c44285e5278dce58391e2",
+        "id": "Q17-E3"
+      }
+    ],
+    "verified_edges": [],
+    "scope": "Listed evidence is a sufficient bounded reference set, not all possible relevant code."
+  },
+  {
+    "id": "Q18",
+    "expected_decision": "answerable",
+    "reference_answer": "dispatch_hook currently skips None returns; Session.send immediately accesses r.history and r.raw for cookie persistence; test_hooks includes a None-return callback.",
+    "evidence": [
+      {
+        "path": "src/requests/hooks.py",
+        "symbol": "dispatch_hook",
+        "start_line": 30,
+        "end_line": 32,
+        "span_sha256": "15727ee3e305e82331d1ba43c3c8492417476c643441207d231df5f146fff377",
+        "id": "Q18-E1"
+      },
+      {
+        "path": "src/requests/sessions.py",
+        "symbol": "Session.send",
+        "start_line": 710,
+        "end_line": 718,
+        "span_sha256": "767d00c9201d4ad385c2489661404e920bd512cd878239e8cd905d42c3c2ac6f",
+        "id": "Q18-E2"
+      },
+      {
+        "path": "tests/test_hooks.py",
+        "symbol": "test_hooks",
+        "start_line": 10,
+        "end_line": 18,
+        "span_sha256": "fa7b5881b117b622e8867572d2c6a1feedf2fd439d01dd80b2fad742424b1d14",
+        "id": "Q18-E3"
+      }
+    ],
+    "verified_edges": [],
+    "scope": "Listed evidence is a sufficient bounded reference set, not all possible relevant code."
+  },
+  {
+    "id": "Q19",
+    "expected_decision": "not_found",
+    "reference_answer": "No AsyncSession class definition exists in the allowlisted Python snapshot. This says nothing about external packages or future versions.",
+    "evidence": [],
+    "verified_edges": [],
+    "scope": "Exhaustive class-name check only within allowlisted Python files; no general async capability claim."
+  },
+  {
+    "id": "Q20",
+    "expected_decision": "runtime_unknown",
+    "reference_answer": "Cannot determine the exact external class without runtime mount configuration. Locate mount/get_adapter/adapter.send and retain unknown target.",
+    "evidence": [
+      {
+        "path": "src/requests/sessions.py",
+        "symbol": "Session.mount",
+        "start_line": 804,
+        "end_line": 804,
+        "span_sha256": "2078120ab3318295a5dff6881b8e5e577e4e209c2cddf153eb281a63b59e792d",
+        "id": "Q20-E1"
+      },
+      {
+        "path": "src/requests/sessions.py",
+        "symbol": "Session.get_adapter",
+        "start_line": 787,
+        "end_line": 789,
+        "span_sha256": "858667ea67d07b5fc47e8bef4c2800dec9b99db1a459c59b4189e76000b511ca",
+        "id": "Q20-E2"
+      },
+      {
+        "path": "src/requests/sessions.py",
+        "symbol": "Session.send",
+        "start_line": 703,
+        "end_line": 703,
+        "span_sha256": "df95ce1c1198dd4fd0b19014923ff16ad42bc060cc11cf6b305a7322aac73bf3",
+        "id": "Q20-E3"
+      }
+    ],
+    "verified_edges": [],
+    "scope": "Listed evidence is a sufficient bounded reference set, not all possible relevant code."
+  }
+]

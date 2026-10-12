@@ -7,3 +7,5 @@
 论文、官方文档及第三方项目名称的权利属于原作者。引用与证据边界见 [研究入口](research/README.md)，不把相近研究当作本项目运行结果。
 
 四张配图由本地脚本原创绘制，不复制官方图片。PNG 使用已安装的中文字体渲染，不分发字体文件。没有公司代码、第三方模型权重、缓存、凭证、私人路径或私人资料入库。旧版语料与许可证的分发情况保留在[历史版本](research/legacy.md)。
+
+真实项目准备使用 psf/requests v2.32.3，commit `0e322af87745eff34caffe4df68456ebc20d9068`，采用 [Apache-2.0](https://github.com/psf/requests/blob/0e322af87745eff34caffe4df68456ebc20d9068/LICENSE)，另见其 [NOTICE](https://github.com/psf/requests/blob/0e322af87745eff34caffe4df68456ebc20d9068/NOTICE)。上游源码／测试仅在忽略缓存中下载和受控运行，不在当前树分发。公开的是原创问题／验收测试、简述、源码路径／行号／hash和不含上游代码全文的日志。官方SWE-bench论文／数据只用于确认仓库纳入及任务元数据，没有分发其问题或答案patch。

@@ -1,0 +1,28 @@
+Requests 2.32.3; fixed source snapshot; TCP/DNS disabled; suite=F01
+FFF...F                                                                  [100%]
+=================================== FAILURES ===================================
+_________ TestF01.test_union_preserves_type_case_precedence_and_inputs _________
+research/pilot/acceptance.py:17: in test_union_preserves_type_case_precedence_and_inputs
+    result = left | right
+             ^^^^^^^^^^^^
+E   TypeError: unsupported operand type(s) for |: 'CaseInsensitiveDict' and 'UserDict'
+____________________ TestF01.test_reverse_plain_dict_union _____________________
+research/pilot/acceptance.py:27: in test_reverse_plain_dict_union
+    result = left | right
+             ^^^^^^^^^^^^
+E   TypeError: unsupported operand type(s) for |: 'dict' and 'CaseInsensitiveDict'
+_____________________ TestF01.test_inplace_keeps_identity ______________________
+research/pilot/acceptance.py:37: in test_inplace_keeps_identity
+    value |= UserDict({'ACCEPT': 'new', 'X-New': '2'})
+E   TypeError: unsupported operand type(s) for |=: 'CaseInsensitiveDict' and 'UserDict'
+______________ TestF01.test_merged_headers_still_prepare_normally ______________
+research/pilot/acceptance.py:54: in test_merged_headers_still_prepare_normally
+    headers = CaseInsensitiveDict({'Accept': 'old'}) | {'ACCEPT': 'new'}
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   TypeError: unsupported operand type(s) for |: 'CaseInsensitiveDict' and 'dict'
+=========================== short test summary info ============================
+FAILED research/pilot/acceptance.py::TestF01::test_union_preserves_type_case_precedence_and_inputs
+FAILED research/pilot/acceptance.py::TestF01::test_reverse_plain_dict_union
+FAILED research/pilot/acceptance.py::TestF01::test_inplace_keeps_identity - T...
+FAILED research/pilot/acceptance.py::TestF01::test_merged_headers_still_prepare_normally
+4 failed, 3 passed in 0.03s
