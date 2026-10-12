@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "research_cutoff": "2026-10-12",
+  "scope": "Official Microsoft GraphRAG Standard index on all 114 frozen Requests chunks; 20 retrieval questions at 4000/12000 shared context tokens; four methods by two exploratory feature tasks",
+  "supersedes_runtime_limits_only": "The user explicitly authorized the full evaluation and increased cumulative official OpenAI embedding budget to USD 1. Earlier 8-chunk probe attempt/token/time limits do not apply to this new stage. Frozen questions, gold and ranking settings remain unchanged.",
+  "providers": {
+    "generation": {"endpoint": "https://one.fullstar.tech/v1/responses", "model": "gpt-5.6-luna", "billing_cost": "unknown; provider usage is not a verified invoice", "requested_max_output_tokens": 2048},
+    "embedding": {"endpoint": "https://api.openai.com/v1/embeddings", "model": "text-embedding-3-large", "dimensions": 3072, "estimated_usd_per_million_input_tokens": "0.13", "cumulative_budget_usd": "1.00"}
+  },
+  "limits": {"index_generation_attempts": 600, "feature_generation_attempts": 8, "generation_input_per_request_common_tokens": 16000, "generation_input_total_common_tokens": 4000000, "embedding_batch_items": 32, "embedding_input_per_item_cl100k_tokens": 8000, "embedding_attempts": 1000, "generation_timeout_seconds": 60, "embedding_timeout_seconds": 30, "full_stage_wall_seconds": 7200, "concurrency": 1, "automatic_retries": 0},
+  "failure_policy": "Stop on new transport, output-validation, schema, provenance or budget failure. Do not automatically replay uncertain calls. Diagnose locally; any authorized resumption must retain successful cache and failure history.",
+  "known_output_limit_risk": "User explicitly accepts that the upstream may ignore the requested 2048 output limit, and a client timeout may not stop remote generation. Returned over-limit outputs are rejected and stop the run.",
+  "resource_monitoring": "Disabled at user request, including upstream tracemalloc instrumentation. Wall time and artifact sizes remain measurable; memory fields in upstream stats are unmeasured placeholders, never measured zero.",
+  "official_integration": "Supported custom LLM provider registration only; pinned upstream prompts, entity types, extraction, merging, clustering and context builders. Common o200k tokenizer and identical prepared chunks are declared evaluation adaptations. Direct Responses transport is not the upstream LiteLLM transport.",
+  "seed": 20261012,
+  "cache_policy": "Reuse successful responses only on exact normalized message/schema or exact embedding text/model/dimension identity. No whitespace normalization to force hits. The 8 prior probe initial prompts do not match upstream's stripped-text prompts; source embedding cache can still be reused.",
+  "fairness": "One shared source corpus, chunk mapping, source/query embeddings, frozen questions and gold. Save both upstream raw context and final adapted/budgeted context. Do not infer end-to-end answer accuracy from retrieval scores.",
+  "prior_probe_cumulative": {"generation_attempts": 16, "embedding_attempts": 2, "generation_input_common_tokens": 40570, "embedding_input_cl100k_tokens": 4327, "estimated_embedding_usd": "0.00056251", "elapsed_seconds": 137.816}
+}
