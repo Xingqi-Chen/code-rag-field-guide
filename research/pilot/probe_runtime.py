@@ -1,6 +1,6 @@
 """One approved HTTP compatibility probe, not a GraphRAG index implementation.
 
-No SDK, retries, redirects, endpoint overrides or resume command. Workers alone
+No SDK, automatic retries, redirects or endpoint overrides. Workers alone
 load a task-specific credential. Never print an exception, request, or raw reply.
 The persistent run directory is an exclusive, non-resumable batch lock.
 """
@@ -23,6 +23,8 @@ import time
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
 RUN = ROOT / ".cache/pilot/probe-approved-20261012-01"
+PRIOR_RUN = RUN
+KEY_UPDATE_RUN = ROOT / ".cache/pilot/probe-approved-20261012-02"
 MS = ROOT / ".cache/ms-graphrag/graphrag-5faaaf4f5685fa2056fa8c3bf9342cb089f2942f"
 MODEL = "gpt-5.6-luna"
 EMBED = "text-embedding-3-large"
@@ -65,10 +67,14 @@ def save(path, obj):
 
 
 class Budget:
-    def __init__(self):
+    def __init__(self, inherited=None):
         self.counts = {k: 0 for k in ("generation_attempts", "embedding_attempts",
                       "generation_input_tokens", "embedding_input_tokens", "embedding_items")}
         self.stopped = False
+        if inherited is not None:
+            if set(inherited) != set(self.counts) or any(type(v) is not int or not 0 <= v <= LIMITS[k] for k, v in inherited.items()):
+                raise Stop("invalid_inherited_budget")
+            self.counts = inherited.copy()
 
     def reserve(self, service, token_counts):
         if self.stopped or service not in HOSTS:
@@ -381,23 +387,49 @@ def inputs():
     return [rows[i] for i in ids], queries
 
 
-def execute():
+def inherited_key_update():
+    """One explicit user-authorized continuation, never an automatic retry."""
+    prior = json.loads((PRIOR_RUN / "summary.json").read_text())
+    public = json.loads((HERE / "probe-result.json").read_text())
+    if (prior["status"] != "stopped" or prior["reserved"] != public["reserved"]
+            or prior["elapsed_seconds"] != public["elapsed_seconds"]
+            or len(prior["events"]) != 1 or prior["events"][0]["http_status"] != 401
+            or prior["events"][0]["worker_exit"] != 0):
+        raise Stop("prior_batch_not_closed_or_changed")
+    try:
+        os.kill(prior["supervisor_pid"], 0)
+    except ProcessLookupError:
+        pass
+    else:
+        raise Stop("prior_supervisor_still_exists")
+    return prior
+
+
+def execute(key_update=False):
     started = time.monotonic()
-    deadline = started + LIMITS["wall_seconds"]
+    prior = inherited_key_update() if key_update else None
+    inherited_seconds = prior["elapsed_seconds"] if prior else 0
+    remaining_seconds = LIMITS["wall_seconds"] - inherited_seconds
+    if remaining_seconds <= 0:
+        raise Stop("cumulative_deadline_exhausted")
+    deadline = started + remaining_seconds
     def interrupted(signum, frame):
         raise Stop("batch_alarm_or_interruption")
     for sig in (signal.SIGALRM, signal.SIGTERM, signal.SIGINT):
         signal.signal(sig, interrupted)
-    signal.setitimer(signal.ITIMER_REAL, LIMITS["wall_seconds"])
+    signal.setitimer(signal.ITIMER_REAL, max(0.001, deadline - time.monotonic()))
     chunks, queries = inputs()
     o200k, cl100k = tokenizers()
     prompts = prompt_values()
     RUN.mkdir(mode=0o700)  # Refuses every repeated invocation, including after failure.
-    budget, events = Budget(), []
+    budget, events = Budget(prior["reserved"] if prior else None), []
     summary = {"batch_id": RUN.name, "started_utc": datetime.now(timezone.utc).isoformat(),
                "limits": LIMITS, "status": "running", "events": events,
                "supervisor_pid": os.getpid(),
                "implementation": "direct HTTP with fixed Microsoft prompts; GraphRAG/LiteLLM packages not executed"}
+    if prior:
+        summary["inherited"] = {"batch_id": PRIOR_RUN.name, "reserved": prior["reserved"], "elapsed_seconds": inherited_seconds}
+        summary["planned_omission"] = "Last fixed chunk glean omitted to retain report-schema call within 16 remaining generation attempts."
     save(RUN / "summary.json", summary)
 
     def request(service, body, input_ids):
@@ -409,6 +441,7 @@ def execute():
         budget.reserve(service, counts)
         seq = len(events) + 1
         event = {"sequence": seq, "service": service, "input_ids": input_ids,
+                 "cumulative_service_attempt": budget.counts[service + "_attempts"],
                  "reserved_input_tokens": sum(counts), "request_body_sha256": digest(canonical(body).encode()),
                  "status": "reserved_before_dispatch"}
         events.append(event)
@@ -448,16 +481,21 @@ def execute():
 
     try:
         entities, relations = [], []
-        for chunk in chunks:
+        for chunk_index, chunk in enumerate(chunks):
             prompt = prompts["GRAPH_EXTRACTION_PROMPT"].format(entity_types="organization,person,geo,event", input_text=chunk["text"])
             messages = [{"role": "user", "content": prompt}]
-            for stage in ("initial", "glean"):
+            stages = ("initial",) if key_update and chunk_index == 7 else ("initial", "glean")
+            for stage in stages:
                 text, event = request("generation", generation_payload(messages), [chunk["id"], stage])
                 es, rs = parse_extraction(text, chunk["id"])
                 entities.extend(es); relations.extend(rs)
                 event.update(status="validated", entity_records=len(es), relationship_records=len(rs))
                 save(RUN / "summary.json", summary)
                 print(canonical({"sequence": event["sequence"], "service": "generation", "status": "validated", "elapsed_seconds": event["elapsed_seconds"]}), flush=True)
+                if key_update and chunk_index == 0 and stage == "initial":
+                    for texts, ids in [([c["text"] for c in chunks], [c["id"] for c in chunks]),
+                                       ([q["query"] for q in queries], [q["id"] for q in queries])]:
+                        request("embedding", {"model": EMBED, "input": texts, "dimensions": 3072, "encoding_format": "float"}, ids)
                 messages += [{"role": "assistant", "content": text}, {"role": "user", "content": prompts["CONTINUE_PROMPT"]}]
         source = canonical({"entities": entities, "relationships": relations})
         prompt = prompts["COMMUNITY_REPORT_PROMPT"].format(input_text=source, max_report_length=2000)
@@ -476,6 +514,8 @@ def execute():
         batches = [([c["text"] for c in chunks], [c["id"] for c in chunks]),
                    ([q["query"] for q in queries], [q["id"] for q in queries]),
                    ([e["description"] for e in selected] + [text], [e["id"] for e in selected] + ["sample-derived-report"])]
+        if key_update:
+            batches = batches[2:]
         for texts, ids in batches:
             request("embedding", {"model": EMBED, "input": texts, "dimensions": 3072, "encoding_format": "float"}, ids)
         summary["status"] = "compatibility_probe_completed"
@@ -489,6 +529,7 @@ def execute():
         signal.setitimer(signal.ITIMER_REAL, 0)
         budget.stopped = True
         summary.update(reserved=budget.counts.copy(), elapsed_seconds=round(time.monotonic() - started, 3),
+            cumulative_elapsed_seconds=round(inherited_seconds + time.monotonic() - started, 3),
             finished_utc=datetime.now(timezone.utc).isoformat(), restart_permitted=False,
             openai_reserved_input_cost_usd=str(Decimal(budget.counts["embedding_input_tokens"]) * Decimal("0.13") / 1000000))
         save(RUN / "summary.json", summary)
@@ -498,13 +539,17 @@ def execute():
 
 
 def main():
+    global RUN
     parser = argparse.ArgumentParser(description=__doc__)
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--check", action="store_true")
     group.add_argument("--execute-approved", action="store_true")
+    group.add_argument("--execute-key-update-20261012", action="store_true")
     group.add_argument("--worker", nargs=2, metavar=("REQUEST", "RESPONSE"))
     args = parser.parse_args()
     if args.worker:
+        if Path(args.worker[0]).parent.resolve() == KEY_UPDATE_RUN.resolve():
+            RUN = KEY_UPDATE_RUN
         worker(*map(Path, args.worker))
         return 0
     if args.check:
@@ -523,7 +568,9 @@ def main():
         print(canonical({"offline_preflight": "passed", "initial_payload_tokens": sum(counts), "known_embedding_tokens": known,
                          "credentials_read": False, "model_requests": 0}))
         return 0
-    return execute()
+    if args.execute_key_update_20261012:
+        RUN = KEY_UPDATE_RUN
+    return execute(key_update=args.execute_key_update_20261012)
 
 
 if __name__ == "__main__":

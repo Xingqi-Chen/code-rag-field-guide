@@ -18,6 +18,15 @@ class FakeEncoding:
 
 
 class ProbeLimits(unittest.TestCase):
+    def test_key_update_inherits_failed_attempt_and_tokens(self):
+        first = p.Budget(); first.reserve("generation", [2112])
+        second = p.Budget(first.counts)
+        for _ in range(16): second.reserve("generation", [1])
+        self.assertEqual(second.counts["generation_attempts"], 17)
+        self.assertEqual(second.counts["generation_input_tokens"], 2128)
+        with self.assertRaises(p.Stop): second.reserve("generation", [1])
+        self.assertEqual(first.counts["generation_attempts"], 1)
+
     def test_generation_attempts_and_irreversible_stop(self):
         b = p.Budget()
         for _ in range(17):
