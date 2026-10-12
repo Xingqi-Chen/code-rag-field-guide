@@ -63,6 +63,31 @@ def embedding_key(text):
     return probe.digest(probe.canonical([probe.EMBED, 3072, text]).encode())
 
 
+def validate_completion(reply, enc):
+    """Validate a completed reply; report the known upstream cap violation.
+
+    The user accepted that the proxy may ignore requested max_output_tokens.
+    Rejecting an already completed reply cannot undo its cost. Keep authentic
+    usage and content rather than truncating, concealing, or resending it.
+    Transport still limits bytes, time and total physical attempts.
+    """
+    if reply.get('model') != probe.MODEL:
+        raise probe.Stop('response_model_mismatch')
+    choices = reply.get('choices', [])
+    if len(choices) != 1 or choices[0].get('finish_reason') != 'stop':
+        raise probe.Stop('generation_incomplete_or_multiple_choices')
+    content = choices[0].get('message', {}).get('content')
+    usage = reply.get('usage', {})
+    if not isinstance(content, str) or not content.strip():
+        raise probe.Stop('empty_generation')
+    if any(type(usage.get(k)) is not int or usage[k] < 0
+           for k in ('prompt_tokens', 'completion_tokens', 'total_tokens')):
+        raise probe.Stop('missing_or_invalid_generation_usage')
+    if usage['total_tokens'] != usage['prompt_tokens'] + usage['completion_tokens']:
+        raise probe.Stop('inconsistent_generation_usage')
+    return content, usage
+
+
 def validate_payload(service, body):
     if service == 'embedding':
         return probe.validate_payload(service, body)
@@ -134,17 +159,26 @@ class Runtime:
                 self.ledger['started_utc']).timestamp() + LIMITS['wall_seconds']:
             self.fail('full_run_deadline')
 
-    def begin(self, stage='index'):
-        required = {'index': 'prepared', 'feature': 'retrieval_complete'}.get(stage)
+    def begin(self, stage='index', resume=False):
+        required = {'index': 'prepared', 'retrieval': 'index_complete', 'feature': 'retrieval_complete'}.get(stage)
+        marker = f'{stage}-started.lock'
+        if resume:
+            if stage != 'index' or self.ledger.get('verified_resume_ready') is not True:
+                raise Halt('unverified_resume')
+            required, marker = 'stopped', 'index-verified-resume-01.lock'
         if required is None or self.ledger['status'] != required:
             raise Halt('run_not_ready_for_new_stage')
-        fd = os.open(RUN/f'{stage}-started.lock', os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+        fd = os.open(RUN/marker, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
         os.close(fd)
         self.phase = stage
         self.ledger.setdefault('started_utc', now())
         self.ledger['status'] = 'running'
+        self.ledger.pop('stop_reason', None)
         self.ledger['source_commit'] = subprocess.check_output(
             ['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
+        self.ledger.setdefault('executions', []).append({'stage': stage, 'resume': resume,
+            'started_utc': now(), 'source_commit': self.ledger['source_commit'],
+            'next_event_sequence': len(self.ledger['events'])+1})
         self.save()
         # A stage-wide timer also interrupts cache/local work. Per-request
         # supervision reaps its worker in finally when this fires.
@@ -154,6 +188,8 @@ class Runtime:
         signal.setitimer(signal.ITIMER_REAL, remaining)
 
     def fail(self, reason):
+        if self.stopped:
+            raise Halt(self.ledger.get('stop_reason', reason))
         self.stopped = True
         self.ledger.update(status='stopped', stop_reason=reason, stopped_utc=now())
         self.save()
@@ -230,7 +266,8 @@ class Runtime:
             event = {'sequence': seq, 'service': service, 'phase': self.phase,
                      'workflow': self.workflow, 'input_tokens': sum(token_counts),
                      'items': len(token_counts), 'status': 'reserved_before_dispatch',
-                     'request_body_sha256': probe.digest(probe.canonical(body).encode()), 'started_utc': now()}
+                     'request_body_sha256': probe.digest(probe.canonical(body).encode()), 'started_utc': now(),
+                     'source_commit': self.ledger['source_commit']}
             self.ledger['events'].append(event)
             request, response = RUN/f'request-{seq:02}.json', RUN/f'response-{seq:02}.json'
             probe.save(request, {'service': service, 'body': body})
@@ -250,11 +287,15 @@ class Runtime:
             reply = envelope['response']
             try:
                 if service == 'generation':
-                    _, usage = probe.validate_generation(reply, self.oenc)
+                    content, usage = validate_completion(reply, self.oenc)
+                    event['visible_output_common_tokens'] = len(self.oenc.encode(content))
+                    event['requested_output_limit_exceeded'] = (
+                        usage['completion_tokens'] > 2048 or event['visible_output_common_tokens'] > 2048)
                 else:
                     usage = probe.validate_embedding(reply, len(token_counts), sum(token_counts))
             except probe.Stop as error:
                 event['status'] = 'invalid_response'
+                event['validation_reason'] = str(error)
                 self.fail(str(error))
             event.update(status='validated', usage=usage)
             self.save()
@@ -281,6 +322,7 @@ class Runtime:
                 tokens = sum(len(self.oenc.encode(m['content'])) for m in messages)
                 reply, origin = self.request('generation', body, [tokens])
                 probe.save(cache, {'response': reply, 'origin': origin})
+            validate_completion(reply, self.oenc)
             return reply
 
     def embed(self, texts):

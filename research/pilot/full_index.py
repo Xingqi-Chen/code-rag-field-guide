@@ -111,7 +111,7 @@ def prepare():
     print(json.dumps(result))
 
 
-async def index():
+async def index(resume=False):
     import importlib
     from graphrag.api.index import build_index
     from graphrag.callbacks.noop_workflow_callbacks import NoopWorkflowCallbacks
@@ -151,7 +151,7 @@ async def index():
         def pipeline_error(self, error):
             runtime.fail('upstream_pipeline_error_' + type(error).__name__)
 
-    runtime.begin()
+    runtime.begin(resume=resume)
     t = time.monotonic()
     try:
         outputs = await build_index(config, method='standard', callbacks=[Callbacks()])
@@ -174,7 +174,7 @@ async def index():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('action', choices=['prepare', 'index'])
+    parser.add_argument('action', choices=['prepare', 'index', 'resume-verified-index'])
     args = parser.parse_args()
     if args.action == 'prepare': prepare()
-    else: sys.exit(asyncio.run(index()))
+    else: sys.exit(asyncio.run(index(resume=args.action=='resume-verified-index')))

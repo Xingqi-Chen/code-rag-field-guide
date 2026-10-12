@@ -36,5 +36,14 @@ class FullRuntimeTests(unittest.TestCase):
         self.assertFalse(issubclass(full.Halt, Exception))
         self.assertTrue(issubclass(full.Halt, BaseException))
 
+    def test_complete_over_requested_cap_keeps_authentic_usage(self):
+        reply = {'model':probe.MODEL,'choices':[{'finish_reason':'stop','message':{'content':'complete'}}],
+                 'usage':{'prompt_tokens':100,'completion_tokens':2278,'total_tokens':2378}}
+        content, usage = full.validate_completion(reply, None)
+        self.assertEqual(content, 'complete')
+        self.assertEqual(usage['completion_tokens'], 2278)
+        reply['usage']['total_tokens'] = 0
+        with self.assertRaises(probe.Stop): full.validate_completion(reply,None)
+
 
 if __name__ == '__main__': unittest.main()
