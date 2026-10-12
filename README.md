@@ -6,6 +6,8 @@
 
 **先读：[完整中文报告](docs/report.md)** · [来源与版本](docs/sources.md) · [逐题证据](benchmark/questions.md) · [复现命令](docs/reproduce.md)
 
+第一次接触 RAG？从报告的[图书馆与地图图解](docs/report.md#一先把它想成图书馆和地图)开始：四张中文图，用一个“下单—确认—生成回执”的教学例子，解释怎么找资料、沿关系补证据，以及为什么加图也会找错。[配图与生成源](docs/figures/README.md)
+
 ## 一页核心结论
 
 1. **有条件的价值。** 调用、引用和依赖图适合补充跨文件调查；实体抽取与社区摘要更适合文档全局归纳。Microsoft GraphRAG、AST、调用图和图预训练不是同一种方案。[区别与研究证据](docs/report.md)

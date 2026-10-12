@@ -29,7 +29,7 @@
 
 | ID | 官方来源与 URL | 首发／版本状态 | 能支持什么 | 证据边界 |
 | --- | --- | --- | --- | --- |
-| S2 | [Microsoft GraphRAG documentation](https://microsoft.github.io/graphrag/) | 持续更新；首页未给稳定文档版本；采用访问日快照 | 实体图／社区处理及 local、global、DRIFT、basic 查询模式 | 官方功能说明；不是针对代码的独立效果证明 |
+| S2 | [Microsoft GraphRAG documentation](https://microsoft.github.io/graphrag/)；[Indexing Dataflow](https://microsoft.github.io/graphrag/index/default_dataflow/) | 持续更新；未给稳定文档版本或可确认发布日期；采用访问日快照 | 实体图／社区／报告处理及 local、global、DRIFT、basic 查询模式；原理图解的流程依据 | 官方功能说明；不是针对代码的独立效果证明 |
 | S3 | [microsoft/graphrag](https://github.com/microsoft/graphrag) | 访问时主分支 README；本次未固定 commit | 作者实现、索引成本提醒、版本迁移提示 | 未在本项目安装或跑完整 GraphRAG；仓库存在和 stars 不证明采用率或效果 |
 | S10 | [Sourcegraph Cody Context](https://sourcegraph.com/docs/cody/core-concepts/context) | 持续文档，页面标注 Latest，未给可确认首发日期 | 关键词、Sourcegraph Search、Code Graph 等上下文来源 | 产品自述；没有各组件流量占比、内部完整策略、受控消融或市场份额 |
 | S11 | [VS Code: How Copilot understands your workspace](https://code.visualstudio.com/docs/agents/reference/workspace-context) | 页面页尾标注 2026-10-07；访问快照 | 语义搜索、文本／grep、文件、usages、读取与迭代；索引可用性 | 不能由当前说明倒推历史所有版本；也不能等同所有 Copilot 客户端行为 |
