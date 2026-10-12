@@ -53,41 +53,25 @@ def build(repo, tokenizer):
         tree = ast.parse(text)
         entries = []
         module_id = mod + ':<module>@1'
-        symbols[module_id] = dict(id=module_id, module=mod, qual='<module>', kind='module', cls=None, node=tree)
+        symbols[module_id] = dict(id=module_id, module=mod, qual='<module>', kind='module', cls=None, node=tree, parent=None)
         owner = [module_id] * len(lines)
 
-        def visit(node, scope='', cls=None):
+        def visit(node, scope='', cls=None, parent=module_id):
             for child in ast.iter_child_nodes(node):
                 if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
                     qual = scope + child.name
                     sid = f'{mod}:{qual}@{child.lineno}'
                     kind = 'class' if isinstance(child, ast.ClassDef) else 'function'
-                    symbols[sid] = dict(id=sid, module=mod, qual=qual, kind=kind, cls=cls, node=child)
+                    symbols[sid] = dict(id=sid, module=mod, qual=qual, kind=kind, cls=cls, node=child, parent=parent)
                     a = min([child.lineno] + [d.lineno for d in child.decorator_list])
                     for i in range(a-1, child.end_lineno):
                         owner[i] = sid
                     entries.append(sid)
-                    visit(child, qual+'.', qual if kind == 'class' else cls)
+                    visit(child, qual+'.', qual if kind == 'class' else cls, sid)
                 else:
-                    visit(child, scope, cls)
+                    visit(child, scope, cls, parent)
         visit(tree)
-        imports = {}
-        package = mod if path.name == '__init__.py' else mod.rsplit('.', 1)[0]
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                for alias in node.names:
-                    imports[alias.asname or alias.name.split('.')[0]] = alias.name if alias.asname else alias.name.split('.')[0]
-            elif isinstance(node, ast.ImportFrom):
-                prefix = package.split('.')
-                if node.level:
-                    prefix = prefix[:len(prefix)-node.level+1]
-                    target = '.'.join(prefix + ([node.module] if node.module else []))
-                else:
-                    target = node.module or ''
-                for alias in node.names:
-                    if alias.name != '*':
-                        imports[alias.asname or alias.name] = target+'.'+alias.name
-        modules[mod] = {'imports': imports, 'entries': entries}
+        modules[mod] = {'package': mod if path.name == '__init__.py' else mod.rsplit('.', 1)[0], 'entries': entries}
         file_data[rel] = {'tree': tree, 'owner': owner, 'module': mod, 'lines': len(lines)}
         # Preserve all non-empty lines; no overlap and no enclosing class duplication.
         i = 0
@@ -104,7 +88,7 @@ def build(repo, tokenizer):
                 j += 1
             if j == i:
                 # Rare long source line: slice by tokenizer offsets. Kept separate,
-                # any anchor on such a line requires all fragments (evaluation).
+                # anchors on such lines would be a coarse localization metric.
                 oversized += 1
                 encoded = tokenizer(lines[i], add_special_tokens=False, return_offsets_mapping=True)
                 offsets = encoded['offset_mapping']
@@ -134,10 +118,75 @@ def build(repo, tokenizer):
         for a,b in zip(ids,ids[1:]):
             edge(a,b,'same_symbol_next')
 
-    def resolve(expr, mod, cls=None, seen=None):
+    # Build lexical bindings: imports inside one function must not leak into
+    # another; local assignments/parameters shadow global definitions.
+    bindings = {}
+    for sid, sym in symbols.items():
+        values = defaultdict(set)
+        def bind(name, value):
+            values[name].add(value)
+        def target_names(node):
+            if isinstance(node, ast.Name):
+                bind(node.id, None)
+            elif isinstance(node, (ast.Tuple, ast.List)):
+                for e in node.elts: target_names(e)
+        def scan(node):
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                qual = ('' if sym['kind']=='module' else sym['qual']+'.')+node.name
+                bind(node.name, sym['module']+'.'+qual)
+                return
+            if isinstance(node, ast.Import):
+                for alias in node.names:
+                    bind(alias.asname or alias.name.split('.')[0], alias.name if alias.asname else alias.name.split('.')[0])
+                return
+            if isinstance(node, ast.ImportFrom):
+                prefix=modules[sym['module']]['package'].split('.')
+                if node.level:
+                    target='.'.join(prefix[:len(prefix)-node.level+1]+([node.module] if node.module else []))
+                else: target=node.module or ''
+                for alias in node.names:
+                    if alias.name!='*': bind(alias.asname or alias.name,target+'.'+alias.name)
+                return
+            if isinstance(node, ast.Assign):
+                for t in node.targets: target_names(t)
+            elif isinstance(node,(ast.AnnAssign,ast.AugAssign,ast.NamedExpr)):
+                target_names(node.target)
+            elif isinstance(node,(ast.For,ast.AsyncFor)):
+                target_names(node.target)
+            elif isinstance(node,(ast.With,ast.AsyncWith)):
+                for item in node.items:
+                    if item.optional_vars: target_names(item.optional_vars)
+            elif isinstance(node,ast.ExceptHandler) and node.name:
+                bind(node.name,None)
+            elif isinstance(node,(ast.Global,ast.Nonlocal)):
+                for name in node.names: bind(name,None)
+            # Comprehension targets have their own scope. Do not promote them.
+            if isinstance(node,(ast.ListComp,ast.SetComp,ast.DictComp,ast.GeneratorExp)):
+                return
+            for c in ast.iter_child_nodes(node): scan(c)
+        node=sym['node']
+        if isinstance(node,(ast.FunctionDef,ast.AsyncFunctionDef)):
+            for arg in node.args.posonlyargs+node.args.args+node.args.kwonlyargs:
+                bind(arg.arg,None)
+            for arg in [node.args.vararg,node.args.kwarg]:
+                if arg:bind(arg.arg,None)
+        for child in node.body: scan(child)
+        bindings[sid]={name:next(iter(v)) if len(v)==1 else None for name,v in values.items()}
+
+    def lookup_name(name, sid):
+        current=sid
+        while current:
+            if name in bindings[current]:return bindings[current][name]
+            current=symbols[current]['parent']
+            # Python function bodies do not close over class namespaces.
+            while current and symbols[current]['kind']=='class':
+                current=symbols[current]['parent']
+        return None
+
+    def resolve(expr, sid, cls=None, seen=None):
+        mod=symbols[sid]['module']
         if isinstance(expr, ast.Name):
-            name = modules[mod]['imports'].get(expr.id, mod+'.'+expr.id)
-            return name
+            return lookup_name(expr.id,sid)
         if isinstance(expr, ast.Attribute):
             if isinstance(expr.value, ast.Name) and expr.value.id in {'self','cls'} and cls:
                 direct = mod+'.'+cls+'.'+expr.attr
@@ -151,14 +200,14 @@ def build(repo, tokenizer):
                 cs = symbols.get(lookup.get(ck,''))
                 if cs and isinstance(cs['node'],ast.ClassDef):
                     for base_expr in cs['node'].bases:
-                        b = resolve(base_expr,mod)
+                        b = resolve(base_expr,cs['parent'])
                         bs = symbols.get(lookup.get(b,''))
                         if bs:
-                            r = resolve(expr,bs['module'],bs['qual'],seen)
+                            r = resolve(expr,bs['id'],bs['qual'],seen)
                             if r:
                                 return r
                 return None
-            value = resolve(expr.value,mod,cls)
+            value = resolve(expr.value,sid,cls)
             return value+'.'+expr.attr if value else None
         return None
 
@@ -170,7 +219,7 @@ def build(repo, tokenizer):
             total_calls += 1
             owner = symbols[data['owner'][node.lineno-1]]
             cls = owner['cls']
-            name = resolve(node.func,data['module'],cls)
+            name = resolve(node.func,owner['id'],cls)
             sid = lookup.get(name)
             if sid and symbols[sid]['kind'] == 'class':
                 sid = lookup.get(name+'.__init__', sid)
