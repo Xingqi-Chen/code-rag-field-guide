@@ -13,4 +13,4 @@ for q in qs:
         lines.append(f"- [{e['path']}:{e['line']}]({url})：{e['note']}")
     if not q['evidence']: lines.append('负例边界：'+q['negative_rationale'])
     lines.append('')
-(ROOT/'benchmark/questions.md').write_text('\n'.join(lines)+'\n')
+(ROOT/'benchmark/questions.md').write_text('\n'.join(lines).rstrip()+'\n')
