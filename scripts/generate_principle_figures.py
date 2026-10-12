@@ -59,80 +59,77 @@ class Figure:
         if svg:(out/(self.name+'.svg')).write_text('\n'.join(self.svg+['</svg>'])+'\n')
 
 def figures(font,scale,out,svg=True):
-    f=Figure('01-ms-graphrag-pipeline',1360,'它先整理资料，再回答','Microsoft GraphRAG标准流程的教学示意，并非实测输出。输入文本，切块，模型抽取实体与关系，算法划分社区，模型写社区报告，最后按问题选择查询方式。关系不等于经程序分析验证的调用。',font,scale)
-    f.text(32,103,'像整理一柜资料：做卡片、分组、写导读。',28,'muted')
-    steps=[('1  输入材料','代码可以作为文本读入，文档也可以。','要配置读取范围，并保留文件和版本。','white','line'),
-           ('2  切成小段','默认按文字长度切，不是按函数切。','每段称为 TextUnit，方便模型处理。','white','line'),
-           ('3  提取事物与关系','模型读每段，写实体卡片和关系说明。','这是从文本理解出的关联，可能出错。','pale_blue','blue'),
-           ('4  把关系紧密的事物分组','算法在图上划分社区，还可形成层级。','社区只是分组，不保证就是代码模块。','pale_teal','teal'),
-           ('5  为分组写报告','模型把相关材料整理成社区报告。','导读便于概括，但可能丢失代码细节。','pale_blue','blue'),
-           ('6  收到问题后选查询方式','可查原文、实体附近材料，或社区报告。','选好的材料再交给模型组织回答。','pale_amber','amber')]
-    for i,(title,a,b,fill,stroke) in enumerate(steps):
-        y=130+i*187
-        f.rect(32,y,696,155,fill,stroke)
-        f.text(56,y+44,title,32);f.text(56,y+88,a,28);f.text(56,y+130,b,27,'muted')
-        if i<5:f.line(380,y+160,380,y+182)
-    f.text(32,1305,'蓝色标出抽取与报告；最后回答也调用模型。',27,'blue')
-    f.text(32,1344,'教学图；本轮未运行这套索引与回答流程。',26,'muted')
+    f=Figure('01-code-evidence-layer',1220,'代码索引要交付什么？','开发助手的建议分工，非现成功能或实测输出。Microsoft GraphRAG从文本抽取关系并检索候选材料；路径版本和程序事实需要回到源码核对。编辑、执行测试和补丁审查属于下游系统。',font,scale)
+    f.text(32,104,'先找对证据，再让开发助手修改代码。',28,'muted')
+    rows=[('1  固定一份代码快照','输入还应包括相关测试和项目约定。','明确目录、版本，以及哪些文件未纳入。','white','line'),
+          ('2  Microsoft GraphRAG 整理与检索','文本分块 → 抽取实体关系 → 选取材料','社区报告是辅助材料，不是调用证明。','pale_blue','blue'),
+          ('3  得到候选证据，回查源码','核对函数身份、位置、调用方向和条件。','还要检查遗漏的调用者、测试与旧版本。','pale_amber','amber'),
+          ('4  下游工具编辑、测试与审查','同一份证据交给编辑模型或开发者。','找到材料、写出补丁、改对，是三件事。','pale_teal','teal')]
+    for i,(title,a,b,fill,stroke) in enumerate(rows):
+        y=145+i*221;f.rect(32,y,696,182,fill,stroke)
+        f.text(54,y+43,title,30);f.text(54,y+93,a,28);f.text(54,y+139,b,27,'muted')
+        if i<3:f.line(380,y+188,380,y+214)
+    f.text(32,1090,'第 3、4 步是开发助手额外负责的工作。',28,'teal')
+    f.text(32,1137,'不是微软默认索引自带的正确性保证。',28)
+    f.text(32,1181,'教学分工示意；本轮未运行微软模型。',26,'muted')
     f.save(out,svg)
 
-    f=Figure('02-query-modes',1200,'四种查资料的方式','查询模式教学示意。Basic检索原始文本，Local围绕实体结合关系和原文，Global用社区报告概括全局，DRIFT结合社区概览与进一步局部查询。示例问题不是评测成绩，更多步骤不保证更准确。',font,scale)
-    f.text(32,103,'同一套资料，不同问题要用不同入口。',29,'muted')
-    modes=[('Basic｜按意思找原文','像查相关章节，主要用文本向量检索。','例如：回执数据里放了哪些字段？','pale_blue','blue'),
-           ('Local｜围绕一个事物找','先定位实体，再取关系和相关原文等。','例如：订单确认与哪些功能有关？','pale_teal','teal'),
-           ('Global｜先读各组导读','用社区报告组织整体概括。','例如：这套系统大致有哪些职责？','pale_blue','blue'),
-           ('DRIFT｜概览后继续追问','结合社区信息与多轮局部查询。','例如：从下单到回执还缺哪些线索？','pale_teal','teal')]
-    for i,(title,a,b,fill,stroke) in enumerate(modes):
-        y=139+i*224;f.rect(32,y,696,194,fill,stroke)
-        f.text(56,y+49,title,33);f.text(56,y+100,a,28);f.text(56,y+148,b,28)
-    f.text(32,1084,'这些是查询思路和教学问题，不是实测。',28)
-    f.text(32,1130,'Global 不等于逐行检查了全仓代码。',29,'red')
-    f.text(32,1173,'多轮、多材料，也不保证回答更准确。',27,'muted')
+    f=Figure('02-feature-context',1380,'实现一个小功能，要找什么？','人工阅读原创小店代码所得的教学图，不是GraphRAG输出。需求是从下单入口指定回执主题，保持默认兼容。place_order调用confirm_order，后者调用make_receipt。需要现有测试和约定，analytics.order_count不在此链路。feature尚未实现。',font,scale)
+    f.text(32,105,'需求：从下单入口指定回执主题，默认不变。',26,'muted')
+    rows=[('checkout.place_order','入口怎样接收新参数？旧调用还兼容吗？'),
+          ('orders.confirm_order','中间层是否需要继续传递参数？'),
+          ('mailer.make_receipt','主题在这里形成；这里只返回回执数据。')]
+    for i,(title,line) in enumerate(rows):
+        y=155+i*183;f.rect(32,y,696,140,'pale_teal','teal')
+        f.text(56,y+49,title,31);f.text(56,y+103,line,27)
+        if i<2:f.line(380,y+147,380,y+177,'teal')
+    f.text(32,726,'实线向下是源码调用；分析影响还要反向找。',26)
+    f.rect(32,771,696,190,'pale_blue','blue')
+    f.text(56,816,'还需要：测试与项目约定',31,'blue')
+    f.text(56,863,'test_shop.py：旧入口、默认主题、订单不变',25)
+    f.text(56,909,'CONVENTIONS.md：兼容、只返回数据、不发信',24)
+    f.rect(32,1001,696,141,'pale_amber','amber')
+    f.text(56,1048,'干扰材料：analytics.order_count',29,'amber')
+    f.text(56,1099,'也谈订单，但不在这条待改调用链上。',28)
+    f.text(32,1208,'需新增测试：自定义主题从入口传至回执。',27)
+    f.text(32,1257,'这是所需证据清单，不是微软已检索到的结果。',25,'red')
+    f.text(32,1306,'当前例子停在新功能实现前；本轮未做改码实验。',24,'muted')
     f.save(out,svg)
 
-    f=Figure('03-code-is-not-a-call-graph',1280,'读懂关联，不等于验证调用','原创小店教学示例：orders中的confirm_order调用mailer中的make_receipt，但后者只返回回执数据。模型可能概括成通知客户，不能把这种假设当源码事实。同名符号、动态选择与摘要都会带来额外风险。',font,scale)
-    f.text(32,104,'同一个小店例子：确认订单后生成回执。',28,'muted')
-    f.rect(32,134,696,225,'pale_teal','teal')
-    f.text(56,179,'源码能直接支持的事实',34,'teal')
-    f.text(56,229,'confirm_order → make_receipt',30)
-    f.text(56,276,'make_receipt 只返回一份回执数据。',28)
-    f.text(56,321,'这段示例没有发送邮件，也没有支付。',28)
-    f.line(380,369,380,412,'muted',True,True)
-    f.rect(32,430,696,219,'pale_amber','amber')
-    f.text(56,478,'模型可能写出的概括',34,'amber')
-    f.text(56,526,'“订单确认后会通知客户”',32)
-    f.text(56,575,'听起来合理，却超出了这段源码。',29)
-    f.text(56,621,'这是风险示意，不是微软系统实测输出。',26,'muted')
-    risks=[('同名函数','不同文件的 send，可能被混成一个实体。'),
-           ('动态调用','运行时才决定目标，文字关系图未必知道。'),
-           ('摘要压缩','漏掉 if、异常或参数，流程就可能讲错。')]
-    for i,(a,b) in enumerate(risks):
-        y=681+i*150;f.rect(32,y,696,126)
-        f.text(56,y+43,a,32);f.text(56,y+89,b,27,'muted')
-    f.text(32,1193,'要追调用：回查定义、导入、条件和原文。',28,'teal')
-    f.text(32,1241,'图中的线，是待核对的证据线索。',30)
+    f=Figure('03-identity-and-freshness',1220,'名字相同，代码也可能不同','两类源码机制的教学示意，不是运行实验。默认实体名称合并不保证区别同名符号；v3.3.0标准update按文档title识别新增，同title内容修改不会进入新增集合，删除也不由该默认合并路径同步清除。',font,scale)
+    f.text(32,104,'代码索引需要身份，也需要与当前版本一致。',27,'muted')
+    f.rect(32,151,696,348,'pale_blue','blue')
+    f.text(56,199,'第一关：这是哪一个 send？',32,'blue')
+    f.text(56,255,'billing.py::send    /    alerts.py::send',28)
+    f.text(56,307,'若都抽成 SEND ＋ 同一类型，就会合并。',27)
+    f.text(56,362,'原版按名称键处理，不自动绑定文件和签名。',26)
+    f.text(56,418,'提示词能提供线索，但不能保证可靠消歧。',26)
+    f.text(56,465,'这里是机制风险，不是已测出的错误率。',25,'muted')
+    f.rect(32,545,696,421,'pale_amber','amber')
+    f.text(56,594,'第二关：索引看到的还是旧代码吗？',31,'amber')
+    f.text(56,651,'v1：mailer.py 已在索引中',29)
+    f.text(56,706,'v2：同名文件里的函数已经修改',29)
+    f.text(56,766,'标准更新按文档标题（title）判断新增。',27)
+    f.text(56,819,'标题相同、内容改了，也不算新增。',26)
+    f.text(56,873,'删除源码后，该路径不清除旧索引记录。',27)
+    f.text(56,928,'有更新命令，不等于能同步所有代码变化。',25,'muted')
+    f.text(32,1047,'使用前要核对：代码版本、来源范围、更新覆盖。',26,'teal')
+    f.text(32,1101,'全量重建或自定义同步也需单独验证。',28)
+    f.text(32,1157,'固定版本 v3.3.0 源码核查；不是实测截图。',26,'muted')
     f.save(out,svg)
 
-    f=Figure('04-communities-and-reports',1230,'从关系卡片到社区导读','人为教学假设，不是Microsoft GraphRAG真实输出。下单、确认、回执等实体可通过关系连接；算法可能划分为订单处理和订单统计两个社区，再由模型为社区写报告。社区不是源码文件夹，也不是经过程序分析验证的模块边界。',font,scale)
-    f.text(32,104,'假想整理结果；不是微软系统的运行输出。',27,'muted')
-    f.rect(32,145,332,520,'pale_teal','teal')
-    f.rect(396,145,332,520,'pale_blue','blue')
-    f.text(57,191,'社区 A：订单处理',29,'teal');f.text(421,191,'社区 B：订单统计',29,'blue')
-    f.line(198,300,198,365,'teal',False);f.line(198,435,198,500,'teal',False)
-    f.line(562,370,562,460,'blue',False);f.line(318,400,442,335,'muted',False)
-    for x,y,label in [(78,230,'下单'),(78,365,'确认'),(78,500,'回执'),(442,300,'统计'),(442,460,'订单数量')]:
-        f.rect(x,y,240,70,'white','line',12);f.text(x+32,y+47,label,31)
-    f.text(56,621,'关联紧密的一组事物',26,'teal');f.text(420,621,'不是源码文件夹',26,'blue')
-    f.text(32,714,'点是事物，线是提取出的关联。',30)
-    f.text(32,759,'社区由算法划分，不保证就是代码模块。',28,'muted')
-    f.line(198,791,198,837,'teal');f.line(562,791,562,837,'blue')
-    f.rect(32,860,332,187,'pale_teal','teal');f.rect(396,860,332,187,'pale_blue','blue')
-    f.text(56,908,'社区报告 A',32,'teal');f.text(420,908,'社区报告 B',32,'blue')
-    f.text(56,958,'“下单、确认与',28);f.text(56,1002,'回执有关联……”',28)
-    f.text(420,958,'“统计功能涉及',28);f.text(420,1002,'订单数量……”',28)
-    f.text(32,1100,'模型为分组写导读，Global 可据此概括。',28)
-    f.text(32,1150,'导读可能省略条件和细节，仍要回查原文。',27,'red')
-    f.text(32,1197,'图中的具体分组与报告，全部为教学假设。',27,'muted')
+    f=Figure('04-three-variants',1190,'三种方案，不能混称原版能力','Microsoft GraphRAG默认文本图、代码提示词定制、外接程序分析图是三个不同配置。外接图的程序语义来自外部分析器，GraphRAG下游仍需验证身份方向和来源映射是否保留；收益需与外部图单独使用比较。',font,scale)
+    f.text(32,104,'同样叫 GraphRAG，证据从哪里来很关键。',28,'muted')
+    rows=[('A  原版默认流程','模型从文本解释实体和关系。','不是内置的函数／调用／影响集合分析器。','pale_blue','blue'),
+          ('B  定制代码提示词','让模型抽函数、类，提供路径等线索。','仍是模型抽取；不会自动验证函数身份与调用。','pale_amber','amber'),
+          ('C  外接程序分析图','先由外部工具生成定义、引用、调用等。','这部分语义来自外部工具；接入后仍需核查。','pale_teal','teal')]
+    for i,(title,a,b,fill,stroke) in enumerate(rows):
+        y=160+i*262;f.rect(32,y,696,212,fill,stroke)
+        f.text(56,y+49,title,32);f.text(56,y+106,a,28);f.text(56,y+164,b,26)
+    f.text(32,974,'定制要公开：版本、输入格式与字段含义、改动。',26)
+    f.text(32,1033,'C 还应比较：同一外部代码图单独使用会怎样？',25,'teal')
+    f.text(32,1091,'不能拿改造系统的好成绩证明 A 已有同等能力。',25,'red')
+    f.text(32,1144,'方案边界示意；收益均须按目标任务实测。',27,'muted')
     f.save(out,svg)
 
 def main():

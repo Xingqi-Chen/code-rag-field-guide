@@ -1,11 +1,11 @@
 # 研究材料导航
 
-主文在[中文分享报告](../docs/report.md)。以下材料用于核对与追溯，不必按顺序读完。
+研究对象是微软 v3.3.0 的代码索引／上下文检索能力，按精确定位、调用追踪、修改影响、feature 四项任务组织。主文在[中文分享报告](../docs/report.md)。以下材料用于核对与追溯，不必按顺序读完。
 
 - [研究计划](plan.md)：研究问题、直接证据标准与调用边界。
 - [官方原理与固定源码核对](implementation.md)、[版本与文件哈希](microsoft-version.json)。
 - [直接代码证据及排除项](direct-evidence.md)、[检索记录](search-log.md)。
-- [实验是否需要、怎样做及成本待决项](pilot-decision.md)：方案，未执行。
+- [代码索引与下游改码分开的必要验证计划](pilot-decision.md)：方案，未执行。
 - [本轮过程与发布检查](process.md)。
 - [旧版与正常 Git 历史](legacy.md)：旧自制代码图实验退出新版证据。
 

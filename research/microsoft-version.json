@@ -64,7 +64,14 @@
       "entity_description",
       "community_full_content",
       "text_unit_text"
-    ]
+    ],
+    "local_search_max_context_tokens": 12000,
+    "local_search_text_unit_prop": 0.5,
+    "local_search_community_prop": 0.15,
+    "local_search_top_k_entities": 10,
+    "local_search_entity_oversample_scaler": 2,
+    "local_search_top_k_relationships": 10,
+    "local_search_return_candidate_context": false
   },
   "fixed_version_observations": [
     "Entity names/types and relation endpoints are uppercased during parsing.",
@@ -72,7 +79,15 @@
     "Downstream description merge and community mapping use title-only keys.",
     "Clustering normalizes relationships to an undirected graph and defaults to the largest connected component.",
     "summarize_communities builds all level contexts before extending reports, so its normal context-building calls see an empty report DataFrame. This is a static control-flow observation, not a runtime experiment.",
-    "README describes maintenance mode and demonstration code, not an officially supported Microsoft offering."
+    "README describes maintenance mode and demonstration code, not an officially supported Microsoft offering.",
+    "Final entity processing drops later rows with the same title regardless of type and assigns fresh UUIDs; final relationship deduplication uses ordered (source, target).",
+    "The default final documents/text_units schemas do not require repository path, source line/character span or source commit. Internal TextChunk objects expose offsets, but create_base_text_units retains chunk.text only.",
+    "The default query adapter does not load TextUnit attributes. Sources context displays short_id and text; read_text_units derives short_id from the input DataFrame index, not source line numbers.",
+    "Local text-unit retrieval is gated by selected entities and their text_unit_ids; relationship expansion considers either endpoint and context is bounded by token allocations.",
+    "The default update loader detects new and deleted documents by title, returns only new_inputs, and stops the pipeline when no new titles are found. Same-title edits do not enter this path; deletion results are not consumed by it.",
+    "Default update workflows concatenate previous and delta documents/text_units; merge entities by title and relationships by ordered endpoints; append delta communities/reports rather than reclustering the entire merged graph.",
+    "Call-response caching is a separate layer from document delta detection and does not provide repository freshness guarantees.",
+    "Official Bring Your Own Graph documentation supports custom workflows over entities, relationships and, for relevant searches, text_units plus embeddings. This does not supply verified code symbol identity, typed directed call traversal, source locations or repository update semantics."
   ],
   "source_files": [
     {
@@ -576,6 +591,14 @@
         {
           "start": 91,
           "end": 222
+        },
+        {
+          "start": 306,
+          "end": 375
+        },
+        {
+          "start": 377,
+          "end": 493
         }
       ],
       "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/query/structured_search/local_search/mixed_context.py",
@@ -603,6 +626,10 @@
       "byte_length": 10291,
       "line_count": 275,
       "line_ranges": [
+        {
+          "start": 37,
+          "end": 100
+        },
         {
           "start": 103,
           "end": 179
@@ -844,6 +871,518 @@
       ],
       "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/docs/config/models.md",
       "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/docs/config/models.md"
+    },
+    {
+      "citation_id": "S49",
+      "path": "packages/graphrag/graphrag/data_model/schemas.py",
+      "sha256": "ab23854fbb43acfcff6ffdc2f32703d3fbf620e82723d8e742bac97cb3c37293",
+      "byte_length": 2963,
+      "line_count": 159,
+      "line_ranges": [
+        {
+          "start": 70,
+          "end": 90
+        },
+        {
+          "start": 140,
+          "end": 159
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/data_model/schemas.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/data_model/schemas.py"
+    },
+    {
+      "citation_id": "S50",
+      "path": "packages/graphrag/graphrag/data_model/text_unit.py",
+      "sha256": "27650462646b686a0cf2f2e51edecfec378db48fe8a91a33e3872d05a76715ba",
+      "byte_length": 2046,
+      "line_count": 62,
+      "line_ranges": [
+        {
+          "start": 12,
+          "end": 62
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/data_model/text_unit.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/data_model/text_unit.py"
+    },
+    {
+      "citation_id": "S51",
+      "path": "packages/graphrag/graphrag/data_model/entity.py",
+      "sha256": "88aecadbed3dd65affb272b64c6645aadb606d6afd507839c0774bbf22a1b4b0",
+      "byte_length": 2455,
+      "line_count": 69,
+      "line_ranges": [
+        {
+          "start": 12,
+          "end": 38
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/data_model/entity.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/data_model/entity.py"
+    },
+    {
+      "citation_id": "S52",
+      "path": "packages/graphrag/graphrag/data_model/relationship.py",
+      "sha256": "38ab0d54c605fca20a9be7c3aab3d7e4a4c96b32b560ca0db53cb2a4fb908bf5",
+      "byte_length": 2226,
+      "line_count": 65,
+      "line_ranges": [
+        {
+          "start": 12,
+          "end": 38
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/data_model/relationship.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/data_model/relationship.py"
+    },
+    {
+      "citation_id": "S53",
+      "path": "packages/graphrag-chunking/graphrag_chunking/text_chunk.py",
+      "sha256": "03e63be40d2e9dfa35816e3a2c9c7d3889527e6c3771921880b81c8e689d6f1e",
+      "byte_length": 746,
+      "line_count": 29,
+      "line_ranges": [
+        {
+          "start": 9,
+          "end": 29
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag-chunking/graphrag_chunking/text_chunk.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag-chunking/graphrag_chunking/text_chunk.py"
+    },
+    {
+      "citation_id": "S54",
+      "path": "packages/graphrag/graphrag/index/workflows/create_final_text_units.py",
+      "sha256": "4973551ddc8741099daad74e4ff05797129f7b3f13026268266a1900f4f70797",
+      "byte_length": 4697,
+      "line_count": 135,
+      "line_ranges": [
+        {
+          "start": 95,
+          "end": 112
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/workflows/create_final_text_units.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/workflows/create_final_text_units.py"
+    },
+    {
+      "citation_id": "S55",
+      "path": "packages/graphrag/graphrag/index/workflows/create_final_documents.py",
+      "sha256": "eb34f636f166cf3bcf1483025313fdb6595e91b8c89279b36a8f9486fac8e13b",
+      "byte_length": 2259,
+      "line_count": 73,
+      "line_ranges": [
+        {
+          "start": 51,
+          "end": 73
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/workflows/create_final_documents.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/workflows/create_final_documents.py"
+    },
+    {
+      "citation_id": "S56",
+      "path": "packages/graphrag/graphrag/query/indexer_adapters.py",
+      "sha256": "d330af291d827941fe904c6d1532913249e9a8aa05702bf8f3fa9eb6cbc28270",
+      "byte_length": 7574,
+      "line_count": 225,
+      "line_ranges": [
+        {
+          "start": 36,
+          "end": 42
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/query/indexer_adapters.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/query/indexer_adapters.py"
+    },
+    {
+      "citation_id": "S57",
+      "path": "packages/graphrag/graphrag/query/input/loaders/dfs.py",
+      "sha256": "c8669db55a5238091f8b24249ca1eabed1e7d69fc39717248587070058a981fa",
+      "byte_length": 9160,
+      "line_count": 257,
+      "line_ranges": [
+        {
+          "start": 25,
+          "end": 32
+        },
+        {
+          "start": 225,
+          "end": 257
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/query/input/loaders/dfs.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/query/input/loaders/dfs.py"
+    },
+    {
+      "citation_id": "S58",
+      "path": "packages/graphrag/graphrag/query/context_builder/source_context.py",
+      "sha256": "01cfc554b5833996020db85e8b9e2576d1a8b89e7390a95d87b9ab7ace6ed752",
+      "byte_length": 3292,
+      "line_count": 100,
+      "line_ranges": [
+        {
+          "start": 21,
+          "end": 79
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/query/context_builder/source_context.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/query/context_builder/source_context.py"
+    },
+    {
+      "citation_id": "S59",
+      "path": "packages/graphrag/graphrag/index/operations/finalize_entities.py",
+      "sha256": "5f4a800ff5e4a728128ff0f68f415c99ac9b474a03718f44c1f93ed5f90e32c6",
+      "byte_length": 1704,
+      "line_count": 56,
+      "line_ranges": [
+        {
+          "start": 38,
+          "end": 56
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/operations/finalize_entities.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/operations/finalize_entities.py"
+    },
+    {
+      "citation_id": "S60",
+      "path": "packages/graphrag/graphrag/index/operations/finalize_relationships.py",
+      "sha256": "3a9378da997c9077933052aeebfbffaed33a245947a59c4fb42ead1782030c68",
+      "byte_length": 1755,
+      "line_count": 55,
+      "line_ranges": [
+        {
+          "start": 37,
+          "end": 55
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/operations/finalize_relationships.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/operations/finalize_relationships.py"
+    },
+    {
+      "citation_id": "S61",
+      "path": "packages/graphrag/graphrag/query/context_builder/local_context.py",
+      "sha256": "fd0e36688340aacc0b87386a301e7db42bcc9796a36e6ff9c2afab9989ff6933",
+      "byte_length": 13290,
+      "line_count": 357,
+      "line_ranges": [
+        {
+          "start": 158,
+          "end": 229
+        },
+        {
+          "start": 232,
+          "end": 317
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/query/context_builder/local_context.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/query/context_builder/local_context.py"
+    },
+    {
+      "citation_id": "S62",
+      "path": "packages/graphrag/graphrag/query/input/retrieval/relationships.py",
+      "sha256": "9c42aad4360f7478a44b70110bb0d0989d55a176a0f4444fb679de871905c2cd",
+      "byte_length": 5125,
+      "line_count": 139,
+      "line_ranges": [
+        {
+          "start": 14,
+          "end": 54
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/query/input/retrieval/relationships.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/query/input/retrieval/relationships.py"
+    },
+    {
+      "citation_id": "S63",
+      "path": "packages/graphrag/graphrag/index/update/incremental_index.py",
+      "sha256": "f9c47d8959345ede23e6f23415c642a6d54f7f77b7e19c6c921b15ce81d42a99",
+      "byte_length": 2323,
+      "line_count": 78,
+      "line_ranges": [
+        {
+          "start": 29,
+          "end": 78
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/update/incremental_index.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/update/incremental_index.py"
+    },
+    {
+      "citation_id": "S64",
+      "path": "packages/graphrag/graphrag/index/workflows/load_update_documents.py",
+      "sha256": "00990f71f661472a685fce7318424c949b962695aa3f5c3ffd68c0b61fd0ca7e",
+      "byte_length": 2355,
+      "line_count": 62,
+      "line_ranges": [
+        {
+          "start": 22,
+          "end": 62
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/workflows/load_update_documents.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/workflows/load_update_documents.py"
+    },
+    {
+      "citation_id": "S65",
+      "path": "packages/graphrag/graphrag/index/workflows/update_final_documents.py",
+      "sha256": "50f90481096c3cb6b2714ee47433823cbe6742b8b7ccf98a5895c33f02c1d843",
+      "byte_length": 1271,
+      "line_count": 37,
+      "line_ranges": [
+        {
+          "start": 17,
+          "end": 37
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/workflows/update_final_documents.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/workflows/update_final_documents.py"
+    },
+    {
+      "citation_id": "S66",
+      "path": "packages/graphrag/graphrag/index/workflows/update_text_units.py",
+      "sha256": "2b755f82bbec5135033945de5662b3fe6260b664ee95ba2572d54426359bcdc2",
+      "byte_length": 3153,
+      "line_count": 95,
+      "line_ranges": [
+        {
+          "start": 63,
+          "end": 95
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/workflows/update_text_units.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/workflows/update_text_units.py"
+    },
+    {
+      "citation_id": "S67",
+      "path": "packages/graphrag/graphrag/index/workflows/update_entities_relationships.py",
+      "sha256": "5f4feb6972c44344fea39ac8a03620002b849d99791b9e7ead366ffa3c7b4bfe",
+      "byte_length": 4492,
+      "line_count": 119,
+      "line_ranges": [
+        {
+          "start": 61,
+          "end": 119
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/workflows/update_entities_relationships.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/workflows/update_entities_relationships.py"
+    },
+    {
+      "citation_id": "S68",
+      "path": "packages/graphrag/graphrag/index/update/entities.py",
+      "sha256": "f1f071b5ca6af69e00685e6af2e8e87892f465acec347b4f032c81119cfb969f",
+      "byte_length": 2321,
+      "line_count": 74,
+      "line_ranges": [
+        {
+          "start": 33,
+          "end": 74
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/update/entities.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/update/entities.py"
+    },
+    {
+      "citation_id": "S69",
+      "path": "packages/graphrag/graphrag/index/update/relationships.py",
+      "sha256": "030c812e9930d497941dbab5d58de6d6af9be7091ace3e4e57beaa4e39167f63",
+      "byte_length": 2706,
+      "line_count": 86,
+      "line_ranges": [
+        {
+          "start": 31,
+          "end": 86
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/update/relationships.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/update/relationships.py"
+    },
+    {
+      "citation_id": "S70",
+      "path": "packages/graphrag/graphrag/index/update/communities.py",
+      "sha256": "47cd3a3d03b57c03003517c1db1cfe7777b6b3f7262a5a3bd5e1eab90bda12dd",
+      "byte_length": 4786,
+      "line_count": 149,
+      "line_ranges": [
+        {
+          "start": 44,
+          "end": 84
+        },
+        {
+          "start": 120,
+          "end": 149
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/update/communities.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/update/communities.py"
+    },
+    {
+      "citation_id": "S71",
+      "path": "packages/graphrag/graphrag/index/workflows/update_communities.py",
+      "sha256": "481233b634ca586d0394ef1eb156388d5ab90b728699cb98d321baca1922087f",
+      "byte_length": 1982,
+      "line_count": 54,
+      "line_ranges": [
+        {
+          "start": 40,
+          "end": 54
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/workflows/update_communities.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/workflows/update_communities.py"
+    },
+    {
+      "citation_id": "S72",
+      "path": "packages/graphrag/graphrag/index/workflows/update_community_reports.py",
+      "sha256": "e22a356904fabe61d0c68f737e2811ddd10b40163fda166a242a97bfe8d5aefc",
+      "byte_length": 2336,
+      "line_count": 67,
+      "line_ranges": [
+        {
+          "start": 48,
+          "end": 67
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/workflows/update_community_reports.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/workflows/update_community_reports.py"
+    },
+    {
+      "citation_id": "S73",
+      "path": "packages/graphrag/graphrag/index/workflows/update_text_embeddings.py",
+      "sha256": "9d1ef0118fb9fd20b8b646f7db2dddc120b4dd546d8b219414b6433a1a0ff729",
+      "byte_length": 1630,
+      "line_count": 52,
+      "line_ranges": [
+        {
+          "start": 22,
+          "end": 52
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/workflows/update_text_embeddings.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/workflows/update_text_embeddings.py"
+    },
+    {
+      "citation_id": "S74",
+      "path": "packages/graphrag/graphrag/index/workflows/generate_text_embeddings.py",
+      "sha256": "f97877b3a2b3ff8113b80c4406fc2062494915d2e5147877ba743560d152ad40",
+      "byte_length": 5307,
+      "line_count": 162,
+      "line_ranges": [
+        {
+          "start": 52,
+          "end": 69
+        },
+        {
+          "start": 101,
+          "end": 156
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/workflows/generate_text_embeddings.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/workflows/generate_text_embeddings.py"
+    },
+    {
+      "citation_id": "S75",
+      "path": "packages/graphrag/graphrag/index/run/run_pipeline.py",
+      "sha256": "d9a75a91c36688c4fffff0794442ada02d6e1d3a5058716ba3a0b6c6716c6676",
+      "byte_length": 7108,
+      "line_count": 189,
+      "line_ranges": [
+        {
+          "start": 54,
+          "end": 90
+        },
+        {
+          "start": 131,
+          "end": 146
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/run/run_pipeline.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/run/run_pipeline.py"
+    },
+    {
+      "citation_id": "S76",
+      "path": "packages/graphrag/graphrag/cache/cache_key_creator.py",
+      "sha256": "4faf28eab3daf6dff8072d964cf96200115866f0f841b7295ecba19e6762d3c3",
+      "byte_length": 1345,
+      "line_count": 44,
+      "line_ranges": [
+        {
+          "start": 10,
+          "end": 44
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/cache/cache_key_creator.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/cache/cache_key_creator.py"
+    },
+    {
+      "citation_id": "S77",
+      "path": "packages/graphrag-llm/graphrag_llm/cache/create_cache_key.py",
+      "sha256": "9c38a5f3dde2251a46303fb63f3605690efaedf02b93c3a380caa04738d4985b",
+      "byte_length": 2013,
+      "line_count": 71,
+      "line_ranges": [
+        {
+          "start": 26,
+          "end": 71
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag-llm/graphrag_llm/cache/create_cache_key.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag-llm/graphrag_llm/cache/create_cache_key.py"
+    },
+    {
+      "citation_id": "S78",
+      "path": "packages/graphrag-llm/graphrag_llm/middleware/with_cache.py",
+      "sha256": "6a464c6d4f525c1a4a2a072fdb4cd3c0e3bbf07202406b7a2699038add407704",
+      "byte_length": 5473,
+      "line_count": 154,
+      "line_ranges": [
+        {
+          "start": 56,
+          "end": 152
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag-llm/graphrag_llm/middleware/with_cache.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag-llm/graphrag_llm/middleware/with_cache.py"
+    },
+    {
+      "citation_id": "S79",
+      "path": "docs/index/byog.md",
+      "sha256": "4a061f9f6ebf955a9d8a4a6f5628d3bab97562875d487ee118f494e2cb1ba7b0",
+      "byte_length": 3622,
+      "line_count": 68,
+      "line_ranges": [
+        {
+          "start": 3,
+          "end": 33
+        },
+        {
+          "start": 35,
+          "end": 68
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/docs/index/byog.md",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/docs/index/byog.md"
+    },
+    {
+      "citation_id": "S80",
+      "path": "packages/graphrag/graphrag/index/workflows/finalize_graph.py",
+      "sha256": "887e9350afb75a85bea98671e1f5498e8357768c8f924fadf90dd59101e3dafb",
+      "byte_length": 3849,
+      "line_count": 125,
+      "line_ranges": [
+        {
+          "start": 28,
+          "end": 59
+        },
+        {
+          "start": 62,
+          "end": 95
+        }
+      ],
+      "blob_url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/workflows/finalize_graph.py",
+      "raw_url": "https://raw.githubusercontent.com/microsoft/graphrag/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/workflows/finalize_graph.py"
     }
   ],
   "paper": {
@@ -861,5 +1400,64 @@
       "3.1.6",
       "4.1.1"
     ]
+  },
+  "code_retrieval_audit": {
+    "scope": "Static inspection of fixed v3.3.0 default standard/fast indexing, Local query, update loader/merge workflows, cache functions, and official BYOG documentation. No Microsoft code or model was run.",
+    "provenance_citations": [
+      "S49",
+      "S50",
+      "S53",
+      "S54",
+      "S55",
+      "S56",
+      "S57",
+      "S58"
+    ],
+    "identity_citations": [
+      "S08",
+      "S13",
+      "S49",
+      "S51",
+      "S52",
+      "S59",
+      "S60",
+      "S80"
+    ],
+    "local_budget_citations": [
+      "S07",
+      "S32",
+      "S33",
+      "S34",
+      "S58",
+      "S61",
+      "S62"
+    ],
+    "freshness_citations": [
+      "S27",
+      "S63",
+      "S64",
+      "S65",
+      "S66",
+      "S67",
+      "S68",
+      "S69",
+      "S70",
+      "S71",
+      "S72",
+      "S73",
+      "S74",
+      "S75",
+      "S76",
+      "S77",
+      "S78"
+    ],
+    "byog_citations": [
+      "S19",
+      "S49",
+      "S52",
+      "S62",
+      "S79"
+    ],
+    "limitations": "These findings concern the inspected default path, not all possible extensions, custom workflows or external program-analysis systems. No accuracy, latency, index-freshness execution or task-success result is claimed."
   }
 }

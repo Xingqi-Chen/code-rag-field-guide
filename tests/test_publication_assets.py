@@ -26,7 +26,7 @@ class PublicationAssets(unittest.TestCase):
         self.assertEqual(validator.prose_only(text),'[real](README.md)\nUse  here.')
 
     def test_png_corruption_and_metadata_are_rejected(self):
-        data=(ROOT/'docs/figures/01-ms-graphrag-pipeline.png').read_bytes()
+        data=(ROOT/'docs/figures/01-code-evidence-layer.png').read_bytes()
         for broken in [data[:-2],data+b'private payload',data[:45]+bytes([data[45]^1])+data[46:]]:
             with self.assertRaises(AssertionError):validator.check_png(broken)
         payload=b'Comment\0private metadata'; kind=b'tEXt'
@@ -34,7 +34,7 @@ class PublicationAssets(unittest.TestCase):
         with self.assertRaises(AssertionError):validator.check_png(data[:33]+chunk+data[33:])
 
     def test_svg_active_content_and_missing_description_are_rejected(self):
-        svg=(ROOT/'docs/figures/01-ms-graphrag-pipeline.svg').read_text()
+        svg=(ROOT/'docs/figures/01-code-evidence-layer.svg').read_text()
         for broken in [svg.replace('</svg>','<script>bad()</script></svg>'),
                        svg.replace('<svg ','<svg onload="bad()" ',1),
                        svg.replace('<desc id="desc">','<desc id="missing">',1)]:

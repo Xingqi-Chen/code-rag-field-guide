@@ -4,10 +4,10 @@
 
 | 内容 | PNG | SVG |
 | --- | --- | --- |
-| 从材料到社区报告与回答 | [预览](01-ms-graphrag-pipeline.png) | [编辑源](01-ms-graphrag-pipeline.svg) |
-| Basic、Local、Global、DRIFT | [预览](02-query-modes.png) | [编辑源](02-query-modes.svg) |
-| 文本关联不等于验证调用 | [预览](03-code-is-not-a-call-graph.png) | [编辑源](03-code-is-not-a-call-graph.svg) |
-| 实体、社区与社区报告 | [预览](04-communities-and-reports.png) | [编辑源](04-communities-and-reports.svg) |
+| 索引证据与下游开发工具的分工 | [预览](01-code-evidence-layer.png) | [编辑源](01-code-evidence-layer.svg) |
+| 小 feature 的函数、调用者、测试与约定 | [预览](02-feature-context.png) | [编辑源](02-feature-context.svg) |
+| 符号身份与更新新鲜度 | [预览](03-identity-and-freshness.png) | [编辑源](03-identity-and-freshness.svg) |
+| 默认、提示词定制、外接程序图 | [预览](04-three-variants.png) | [编辑源](04-three-variants.svg) |
 
 统一编辑[生成脚本](../../scripts/generate_principle_figures.py)，再生成两种格式。脚本仅依赖 [Pillow](../../requirements-figures.txt)，不调用模型或网络服务：
 
