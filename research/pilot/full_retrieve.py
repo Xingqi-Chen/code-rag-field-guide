@@ -99,6 +99,8 @@ def run():
     from graphrag_llm.embedding.embedding_factory import create_embedding
 
     runtime = transport.Runtime()
+    if (OUT/'contexts').exists():
+        raise transport.Halt('choose_a_new_results_directory_before_paid_query_embeddings')
     if runtime.ledger['status'] != 'index_complete':
         raise transport.Halt('index_not_complete')
     # This stage has no generation calls. Keep the original full-run deadline.

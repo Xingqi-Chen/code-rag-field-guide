@@ -69,11 +69,14 @@ def main():
             output_diagnostics.append({'sequence':seq,'operation':kind,
                 'ends_with_expected_complete_marker':text.rstrip().endswith('<|COMPLETE|>'),
                 'normalized_visible_output_sha256':hashlib.sha256(text.encode()).hexdigest()})
-        if seq==14:
+        recovery=next((r for r in state.get('recoveries',[]) if r['event']==seq
+                       and r.get('response_reused_without_resending')),None)
+        if recovery:
             event['recovery']='Complete reply independently validated and reused; original rejection retained.'
             event['usage']=reply['usage']
-            event['visible_output_common_tokens']=1220
-            event['requested_output_limit_exceeded']=True
+            event['visible_output_common_tokens']=recovery['visible_output_common_tokens']
+            event['requested_output_limit_exceeded']=(reply['usage']['completion_tokens']>2048
+                or recovery['visible_output_common_tokens']>2048)
     public['operation_counts']=dict(classifications)
     public['observed_usage_totals']=dict(usage_totals)
     public['known_embedding_input_estimate_usd']=str(Decimal(state['embedding_reserved_tokens'])*Decimal('.13')/1000000)
@@ -85,19 +88,26 @@ def main():
     public['request_timing']={'sum_supervised_request_seconds':sum(delays),
         'mean_supervised_request_seconds':statistics.mean(delays) if delays else None,
         'definition':'Client dispatch-to-worker-exit; includes transport and response validation overhead, excludes cache hits.'}
-    stopped=json.loads((RUN/'stopped-01.json').read_text()) if (RUN/'stopped-01.json').exists() else None
+    stops=[json.loads(p.read_text()) for p in sorted(RUN.glob('stopped-*.json'))]
     workflows=[]
-    recovery_end=None
-    if stopped:
-        recovery_end=next(e['started_utc'] for e in state['executions'] if e.get('resume'))
     for i,w in enumerate(state['workflows']):
         finish=w.get('finished_utc')
-        if finish is None and stopped and i<len(stopped['workflows']):finish=stopped['stopped_utc']
+        if finish is None:
+            stop=next((s for s in stops if i<len(s['workflows'])
+                       and s['workflows'][i]['started_utc']==w['started_utc']),None)
+            if stop:finish=stop['stopped_utc']
         workflows.append({**w,'measured_until_utc':finish,
                           'elapsed_seconds':seconds(w['started_utc'],finish) if finish else None})
     public['workflow_timing']=workflows
     public['active_index_workflow_seconds']=sum(w['elapsed_seconds'] for w in workflows if w['elapsed_seconds'] is not None)
-    public['diagnosed_stop_gap_seconds']=seconds(stopped['stopped_utc'],recovery_end) if stopped and recovery_end else 0
+    gaps=[]
+    for stop in stops:
+        resumed=next((e['started_utc'] for e in state['executions'] if e.get('resume')
+                      and e['started_utc']>stop['stopped_utc']),None)
+        gaps.append({'stopped_utc':stop['stopped_utc'],'reason':stop['stop_reason'],
+                     'resumed_utc':resumed,'seconds':seconds(stop['stopped_utc'],resumed) if resumed else None})
+    public['diagnosed_stop_gaps']=gaps
+    public['diagnosed_stop_gap_seconds']=sum(g['seconds'] for g in gaps if g['seconds'] is not None)
     public['index_elapsed_calendar_seconds']=seconds(state['started_utc'],state['index_finished_utc'])
     public['preparation_timing']='Earlier research, dependency installation, adapter development, review and approval were not precisely timed; excluded from active indexing. The diagnosed stop gap is separately recorded.'
     write('execution.json',public)
