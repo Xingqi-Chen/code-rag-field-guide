@@ -5,8 +5,9 @@
 - [研究计划](plan.md)：研究问题、直接证据标准与调用边界。
 - [官方原理与固定源码核对](implementation.md)、[版本与文件哈希](microsoft-version.json)。
 - [直接代码证据及排除项](direct-evidence.md)、[检索记录](search-log.md)。
-- [Requests真实项目准备包](pilot/README.md)：题集与协议、隔离输入、实际离线测试和成本测量；模型实验未执行。
-- [首次真实接口探测](pilot/probe-result.md)：含人工授权续批；初抽与两批embedding通过当前校验，补抽500后停止，后续明确授权的单次Responses补抽成功并结束，仍无检索效果结论。
+- [Requests真实项目准备包](pilot/README.md)：题集与协议、隔离输入、实际离线测试；正式模型索引已启动但尚未完成。
+- [接口探测历史](pilot/probe-result.md)：四批请求与失败单独记账，不当作检索效果。
+- [正式评测方法](pilot/full-run.md)、[执行范围](pilot/full-run-plan.json)、[真实中断记录](pilot/results/execution-interrupted.json)：158条成功回复已缓存，第159条超时；无完整索引、检索分数或功能成绩。
 - [本轮过程与发布检查](process.md)。
 - [旧版与正常 Git 历史](legacy.md)：旧自制代码图实验退出新版证据。
 

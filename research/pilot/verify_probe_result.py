@@ -80,6 +80,30 @@ def main():
             assert once["status"] == "single_glean_validated" and once["restart_permitted"] is False
             assert "supervisor_pid" not in once
             print("Authorized one-shot Responses glean: one 200/completed, no embeddings/retry, cumulative 4/17 and 2/3 verified offline.")
+            remaining_path=HERE/'remaining-result.json'
+            if remaining_path.exists():
+                remaining=json.loads(remaining_path.read_text())
+                plan=json.loads((HERE/'remaining-plan.json').read_text())
+                for name,sha in plan['sha256'].items():
+                    data=subprocess.check_output(['git','show',remaining['executed_source_commit']+':'+name],cwd=ROOT)
+                    assert hashlib.sha256(data).hexdigest()==sha,name
+                assert remaining['inherited']['reserved']==once['reserved']
+                events=remaining['events']
+                assert len(events)==12 and [e['sequence'] for e in events]==list(range(1,13))
+                assert all(e['service']=='generation' and e['status']=='validated'
+                           and e['http_status']==200 for e in events)
+                assert [e['cumulative_service_attempt'] for e in events]==list(range(5,17))
+                assert remaining['reserved']['generation_attempts']==once['reserved']['generation_attempts']+len(events)==16
+                assert remaining['reserved']['generation_input_tokens']==once['reserved']['generation_input_tokens']+sum(e['reserved_input_tokens'] for e in events)==40570
+                assert all(remaining['reserved'][k]==once['reserved'][k] for k in ('embedding_attempts','embedding_input_tokens','embedding_items'))
+                assert sum(e['entity_records'] for e in events)==remaining['extraction']['entity_records']==42
+                assert sum(e['relationship_records'] for e in events)==remaining['extraction']['relationship_records']==46
+                assert sum(e['input_ids'][1]=='initial' for e in events)+1==remaining['extraction']['initial_chunks_completed']==8
+                assert sum(e['input_ids'][1]=='glean' for e in events)+1==remaining['extraction']['glean_chunks_completed']==6
+                assert remaining['status']=='stopped' and remaining['stop_reason']=='invalid_input_size'
+                assert abs(remaining['cumulative_elapsed_seconds']-once['cumulative_elapsed_seconds']-remaining['elapsed_seconds'])<.002
+                assert Decimal(remaining['openai_reserved_input_cost_usd'])==Decimal(4327)*Decimal('.13')/1000000
+                print('Remaining probe: 12 validated generation calls, 42 entity/46 relation records, report stopped before dispatch; cumulative 16 generation, 2 embedding, 137.816 seconds verified offline.')
 
 
 if __name__ == "__main__":

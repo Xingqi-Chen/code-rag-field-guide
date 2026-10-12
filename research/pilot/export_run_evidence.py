@@ -28,14 +28,15 @@ def seconds(start,end):
 def main():
     import pandas as pd
     state=json.loads((RUN/'summary.json').read_text())
-    assert state['status'] in {'index_complete','retrieval_complete','generation_complete'}
+    assert state['status'] in {'stopped','index_complete','retrieval_complete','generation_complete'}
+    partial=state['status']=='stopped'
     public_keys=['run_id','created_utc','started_utc','limits','status','prior_probe_reserved',
         'prior_probe_elapsed_seconds','index_generation_attempts','feature_generation_attempts',
         'embedding_attempts','generation_input_tokens','embedding_reserved_tokens',
         'logical_completion_calls','completion_cache_hits','logical_embedding_calls',
         'embedding_cache_items','imported_successful_probe_cache','source_commit','workflows',
         'executions','recoveries','index_elapsed_seconds','index_finished_utc',
-        'retrieval_finished_utc','generation_finished_utc']
+        'retrieval_finished_utc','generation_finished_utc','stopped_utc','stop_reason']
     public={k:state[k] for k in public_keys if k in state}
     event_keys=['sequence','service','phase','workflow','input_tokens','items','status',
         'request_body_sha256','started_utc','source_commit','supervisor_reason','worker_exit',
@@ -89,6 +90,7 @@ def main():
         'mean_supervised_request_seconds':statistics.mean(delays) if delays else None,
         'definition':'Client dispatch-to-worker-exit; includes transport and response validation overhead, excludes cache hits.'}
     stops=[json.loads(p.read_text()) for p in sorted(RUN.glob('stopped-*.json'))]
+    if partial and not any(s.get('stopped_utc')==state['stopped_utc'] for s in stops):stops.append(state)
     workflows=[]
     for i,w in enumerate(state['workflows']):
         finish=w.get('finished_utc')
@@ -108,8 +110,16 @@ def main():
                      'resumed_utc':resumed,'seconds':seconds(stop['stopped_utc'],resumed) if resumed else None})
     public['diagnosed_stop_gaps']=gaps
     public['diagnosed_stop_gap_seconds']=sum(g['seconds'] for g in gaps if g['seconds'] is not None)
-    public['index_elapsed_calendar_seconds']=seconds(state['started_utc'],state['index_finished_utc'])
+    public['index_elapsed_calendar_seconds']=(seconds(state['started_utc'],state['index_finished_utc'])
+                                             if 'index_finished_utc' in state else None)
     public['preparation_timing']='Earlier research, dependency installation, adapter development, review and approval were not precisely timed; excluded from active indexing. The diagnosed stop gap is separately recorded.'
+    public['evaluation_complete']=state['status']=='generation_complete'
+    if partial:
+        public['evidence_boundary']='Interrupted index only. No retrieval or feature result; timeout is not evidence of retrieval quality.'
+        write('execution-interrupted.json',public)
+        print(json.dumps({'exported':'interrupted_execution_only','generation_attempts':state['index_generation_attempts'],
+                          'stop_reason':state['stop_reason'],'new_provider_calls':0}))
+        return
     write('execution.json',public)
     write('extraction-format-diagnostics.json',output_diagnostics)
     write('environment.json',json.loads((RUN/'environment.json').read_text()))
