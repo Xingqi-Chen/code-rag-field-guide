@@ -12,11 +12,11 @@ HERE=Path(__file__).resolve().parent
 from result_paths import OUT
 
 
-def validate(tokens=False, *, out=OUT, budgets=(4000,12000), include_features=True):
+def validate(tokens=False, *, out=OUT, budgets=(4000,12000), include_features=True, methods=None):
     OUT=out
     questions=json.loads((HERE/'questions.json').read_text())
     features=json.loads((HERE/'features.json').read_text())
-    methods=['bm25','hybrid','ms_basic','ms_local']
+    methods=methods or ['bm25','hybrid','ms_basic','ms_local']
     expected={(q['id'],m,b) for q in questions+(features if include_features else []) for m in methods
               for b in (budgets if q['id'].startswith('Q') else [4000])}
     data=json.loads((OUT/'retrieval.json').read_text())
@@ -59,7 +59,7 @@ def validate(tokens=False, *, out=OUT, budgets=(4000,12000), include_features=Tr
                 p=provenance[by_short[short_id]['input_id']]
                 assert hashlib.sha256(row['text'].encode()).hexdigest()==p['text_sha256']
                 raw_sources[short_id]={'text':row['text'],'provenance':p}
-                if context['method']=='ms_local':assert row['text'] in raw_text, 'source absent from actual raw context'
+                if context['method'].startswith('ms_local'):assert row['text'] in raw_text, 'source absent from actual raw context'
             if context['method']=='ms_basic' and raw_text:
                 parsed=list(csv.DictReader(io.StringIO(raw_text),delimiter='|',escapechar='\\'))
                 assert parsed==context['upstream_raw_records'].get('sources',[]), 'Basic raw CSV differs from records'
@@ -86,6 +86,8 @@ def validate(tokens=False, *, out=OUT, budgets=(4000,12000), include_features=Tr
             assert result[key]==context[key], 'summary auxiliary field differs: '+key
         if count:
             assert count(context['final_context'])==context['final_context_tokens'], 'token mismatch'
+            assert sum(count(row['text']) for table in context['final_tables'] if table['name']=='sources'
+                       for row in table['rows'])==context['source_text_tokens'], 'source token mismatch'
             if context['upstream_raw_context'] is not None:
                 raw=context['upstream_raw_context']
                 assert count('\n\n'.join(raw) if isinstance(raw,list) else raw)==context['raw_context_tokens']

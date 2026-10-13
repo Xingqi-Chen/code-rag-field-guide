@@ -25,7 +25,7 @@ def seconds(start,end):
     return (datetime.fromisoformat(end)-datetime.fromisoformat(start)).total_seconds()
 
 
-def main():
+def main(initial_prompts=None):
     import pandas as pd
     state=json.loads((RUN/'summary.json').read_text())
     assert state['status'] in {'stopped','index_complete','retrieval_complete','generation_complete'}
@@ -46,15 +46,17 @@ def main():
         'worker_source_sha256','response_byte_limit','response_bytes']
     public['events']=[{k:e[k] for k in event_keys if k in e} for e in state['events']]
     classifications=Counter()
-    initial_prompts={probe.prompt_values()['GRAPH_EXTRACTION_PROMPT'].format(
-        entity_types='organization,person,geo,event',input_text=json.loads(line)['text'].strip())
-        for line in (ROOT/'.cache/pilot/input/documents.jsonl').read_text().splitlines()}
+    if initial_prompts is None:
+        initial_prompts={probe.prompt_values()['GRAPH_EXTRACTION_PROMPT'].format(
+            entity_types='organization,person,geo,event',input_text=json.loads(line)['text'].strip())
+            for line in (ROOT/'.cache/pilot/input/documents.jsonl').read_text().splitlines()}
     output_diagnostics=[]
     usage_totals=Counter()
     for event in public['events']:
         seq=event['sequence']
         task=json.loads((RUN/f'request-{seq:02}.json').read_text())
-        envelope=json.loads((RUN/f'response-{seq:02}.json').read_text())
+        response_path=RUN/f'response-{seq:02}.json'
+        envelope=json.loads(response_path.read_text()) if response_path.exists() else {}
         body,reply=task['body'],envelope.get('response',{})
         if task['service']=='embedding':kind='embedding'
         elif event['phase']=='feature':kind='feature'
