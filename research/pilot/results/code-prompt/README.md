@@ -36,7 +36,7 @@
 - [本轮后续超时授权](timeout-retry-authorization.json)与[恢复控制器](../../resume_code_prompt_bounded.py)：每个相同请求最多两次额外重试，5／15秒退避；鉴权、权限、预算及非超时错误不重试。
 - [有限重试启动前独立复核](bounded-retry-review.json)、[第108次快照](execution-interrupted-04.json)和[第109次累计快照](execution-interrupted-05.json)：保留107→108→109精确请求关联、退避、实际时刻及未知用量。
 - [重试用尽后独立终审](retry-exhaustion-review.json)与[实际离线检查日志](verification-05.json)：核对五份快照、用量、计时、24项边界测试及公开文件检查。
-- [最初超时只读诊断](timeout-analysis.json)与[重试用尽后的诊断](timeout-exhaustion-diagnosis.json)：均为本机60秒硬定时器触发；没有保存到provider错误响应或部分流，无法判断具体卡在连接、等待首字节或接收响应阶段。120秒只是待批准建议，未实施。
+- [最初超时只读诊断](timeout-analysis.json)与[重试用尽后的诊断](timeout-exhaustion-diagnosis.json)：均为本机60秒硬定时器触发；没有保存到provider错误响应或部分流，无法判断具体卡在连接、等待首字节或接收响应阶段。这些历史诊断写成时，120秒尚是建议；现已按上文切换。
 - [运行前检查](preflight.json)、[配置](effective-config.json)、[依赖版本](environment.json)、[启动边界复核](preflight-review.json)。
 - [离线后处理复核](postprocessing-review.json)：80格／400行fixture、缓存验证与空图边界检查；是代码验证，**不是新实验分数**。
 - [旧图固定抽样](quality-sample-default.json)及[独立AI审阅](quality-review-default.json)：20个实体和20条关系，17／18条主要陈述受来源支持，另3／2条部分支持。精确代码符号另计，不能用事实支持率代替检索效果或外推全图精度。新图样本尚未产生。
