@@ -35,7 +35,7 @@
 
 大小见[size.json](size.json)，逐文件hash见[files.json](files.json)。前测实际输出见[回归日志](regression.log)、[F01](feature-F01-before.log)、[F02](feature-F02-before.log)。在用户指定的Mac mini上运行：Apple M4、10 CPU、16 GiB、macOS26.4.1、Python3.12.10。[准备环境](environment.json)与正式运行依赖的[固定版本列表](runtime-requirements.txt)分开保留；后者已经安装，没有下载模型权重。
 
-题目和必要证据已独立核证后冻结：[协议](protocol.md)、[问题](questions.json)、[证据](gold.json)、[功能规范](features.json)、[功能证据](feature-gold.json)、[哈希清单](freeze.json)。冻结日期为2026-10-12 14:16:24 UTC，早于模型执行。协议中“尚未安装／尚未选模型”等句子是当时状态，不回写历史；后续选择与授权分别由[selection.json](selection.json)和[full-run-plan.json](full-run-plan.json)记录。资源监控后来按用户要求关闭，峰值内存未测。
+题目和必要证据由AI研究助手依据源码拟定、独立审阅代理核证后冻结；没有独立人类标注或评分，但均可按源码复查：[协议](protocol.md)、[问题](questions.json)、[证据](gold.json)、[功能规范](features.json)、[功能证据](feature-gold.json)、[哈希清单](freeze.json)。冻结日期为2026-10-12 14:16:24 UTC，早于模型执行。协议中“尚未安装／尚未选模型”等句子是当时状态，不回写历史；后续选择与授权分别由[selection.json](selection.json)和[full-run-plan.json](full-run-plan.json)记录。资源监控后来按用户要求关闭，峰值内存未测。
 
 ## 已固定的比较
 
@@ -43,7 +43,7 @@
 
 生成模型为用户选定的one.fullstar.tech `gpt-5.6-luna`；三组向量部分使用官方OpenAI `text-embedding-3-large`，3072维。模型在远端运行，由Mac mini发起受控请求；代理实际后端映射不能独立核实。成功响应以精确参数缓存，失败不自动重放。正式阶段累计embedding预算$1，旧探针消耗计入；生成价格未知，次数、时间和输入量仍有明确上限。仓库外凭据不入库，见[说明](credentials.md)。
 
-每组对两个功能各生成一次补丁，只使用相同4000-token初始证据，不追加搜索或改错。先核对原始响应／补丁hash与修改范围，再对干净副本跑冻结验收、旧回归和人工需求检查。当前还没有生成这些补丁。检索覆盖和功能正确性分开报告；两个功能不能组成可靠的行业成功率。
+每组对两个功能各生成一次补丁，只使用相同4000-token初始证据，不追加搜索或改错。先核对原始响应／补丁hash与修改范围，再对干净副本跑冻结验收、旧回归和逐项需求检查。当前还没有生成这些补丁。检索覆盖和功能正确性分开报告；两个功能不能组成可靠的行业成功率。
 
 完整原理、预算、实现差异、安装、执行及复算命令统一见[技术附录](full-run.md)，避免维护两套命令。正在使用的检索、打分和补丁检查器已实现并做了合成边界测试；实际168份上下文尚未生成，不能说真实结果验收已通过。
 
