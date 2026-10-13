@@ -23,5 +23,20 @@
   "limitations": [
     "No real model calls made by reviewer",
     "Unknown prior provider outcomes remain unknown"
-  ]
+  ],
+  "followup_isolation": {
+    "reason": "Publication CI detected a change to a runtime frozen for the prior Global experiment. Restored full_runtime.py byte-for-byte; deadline behavior now belongs only to CodeRuntime. No baseline hash check relaxed.",
+    "full_runtime_sha256": "8763318bbccb05c59b5d1c4b7a9d415560a8bec8e0631c746a562009ad6d5e74",
+    "unit_tests": 31,
+    "global_result_check": "pass",
+    "limit": "Live controller was started under the earlier reviewed implementation; later subprocesses use the isolated variant, same timeout semantics.",
+    "independent_recheck": [
+      "Real SIGALRM armed then cleared in isolated process; no ledger writes",
+      "Finite stage timer preserved",
+      "Only ITIMER_REAL positive infinity mapped to zero; other timer types, duration, interval unchanged",
+      "Original signal API restored on success and exception",
+      "Frozen full_runtime.py restored exactly; verify_global passed54 calls,694712 input,49786 output"
+    ],
+    "code_prompt_experiment_sha256": "fa953b809de875a47ef3f1bf753352f695ce1bb28c2390dc5927c8458ca966e0"
+  }
 }

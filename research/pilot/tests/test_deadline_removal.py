@@ -3,6 +3,7 @@ from pathlib import Path
 import math
 import sys
 import unittest
+from unittest.mock import patch
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 import full_runtime
@@ -11,12 +12,25 @@ import resume_code_prompt_no_deadline as resumed
 
 class DeadlineRemovalTests(unittest.TestCase):
     def test_total_deadline_can_be_absent_without_changing_request_cap(self):
-        runtime=full_runtime.Runtime.__new__(full_runtime.Runtime)
+        runtime=resumed.variant.CodeRuntime.__new__(resumed.variant.CodeRuntime)
         runtime.ledger={'wall_deadline_removed':True,'started_utc':'2026-10-13T13:12:59.674100+00:00'}
         self.assertTrue(math.isinf(runtime.remaining_seconds()))
         self.assertEqual(resumed.POLICY['generation_request_seconds'],120)
         self.assertEqual(resumed.POLICY['embedding_request_seconds'],30)
         self.assertEqual(resumed.POLICY['max_additional_retries_per_request_hash'],2)
+
+    def test_only_synchronous_stage_timer_is_disabled_and_api_restored(self):
+        runtime=resumed.variant.CodeRuntime.__new__(resumed.variant.CodeRuntime)
+        runtime.ledger={'wall_deadline_removed':True}
+        calls=[]
+        def timer(which,seconds,*args):calls.append((which,seconds,*args))
+        def begin(self,stage,resume):
+            full_runtime.signal.setitimer(full_runtime.signal.ITIMER_REAL,self.remaining_seconds())
+        with patch.object(full_runtime.signal,'setitimer',timer):
+            with patch.object(resumed.variant.OriginalRuntime,'begin',begin):runtime.begin()
+            self.assertIs(full_runtime.signal.setitimer,timer)
+            full_runtime.signal.setitimer(full_runtime.signal.ITIMER_REAL,120)
+        self.assertEqual([c[1] for c in calls],[0,120])
 
     def test_checkpoint_requires_proof_of_no_dispatch(self):
         state={'status':'stopped','stop_reason':'authorized_deadline_policy_checkpoint',

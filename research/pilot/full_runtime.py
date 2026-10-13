@@ -8,7 +8,6 @@ import argparse
 from datetime import datetime, timezone, timedelta
 from decimal import Decimal
 import json
-import math
 import os
 import fcntl
 import signal
@@ -166,8 +165,6 @@ class Runtime:
         probe.save(RUN / 'summary.json', self.ledger)
 
     def remaining_seconds(self):
-        if self.ledger.get('wall_deadline_removed') is True:
-            return math.inf
         if 'window_deadline_utc' in self.ledger:
             return datetime.fromisoformat(self.ledger['window_deadline_utc']).timestamp()-time.time()
         return LIMITS['wall_seconds']-(time.time()-datetime.fromisoformat(self.ledger['started_utc']).timestamp())
@@ -220,7 +217,7 @@ class Runtime:
         remaining = self.remaining_seconds()
         self.check_deadline()
         signal.signal(signal.SIGALRM, lambda *_: self.fail('full_run_deadline'))
-        signal.setitimer(signal.ITIMER_REAL, remaining if math.isfinite(remaining) else 0)
+        signal.setitimer(signal.ITIMER_REAL, remaining)
 
     def fail(self, reason):
         if self.stopped:

@@ -47,6 +47,27 @@ def write(path, data):
 
 
 class CodeRuntime(OriginalRuntime):
+    def remaining_seconds(self):
+        if self.ledger.get('wall_deadline_removed') is True:
+            return math.inf
+        return super().remaining_seconds()
+
+    def begin(self, stage='index', resume=False):
+        if self.ledger.get('wall_deadline_removed') is not True:
+            return super().begin(stage, resume)
+        # Keep the baseline runtime frozen. Its synchronous begin installs the
+        # stage timer before any model worker starts. Translate only infinity
+        # into a disabled timer, then restore the standard signal API immediately.
+        set_timer = transport.signal.setitimer
+        def stage_timer(which, seconds, *args):
+            disabled = which == transport.signal.ITIMER_REAL and seconds == math.inf
+            return set_timer(which, 0 if disabled else seconds, *args)
+        transport.signal.setitimer = stage_timer
+        try:
+            return super().begin(stage, resume)
+        finally:
+            transport.signal.setitimer = set_timer
+
     def import_probes(self):
         # Called by parent constructor only for a fresh isolated run.
         old = read(OLD_RUN / 'summary.json')
