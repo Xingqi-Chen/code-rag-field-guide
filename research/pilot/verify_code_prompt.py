@@ -154,6 +154,23 @@ def main():
     assert resumed['cumulative_cache_hits_at_recovery']==480
     assert resumed['amendment_applied_utc']==amendment['applied_utc']
     assert 0<event110['elapsed_seconds']<60
+    removal=read(OUT/'deadline-removal-applied.json')
+    assert removal['total_wall_deadline_removed'] and not removal['cumulative_budgets_reset']
+    assert removal['generation_request_seconds']==120 and removal['embedding_request_seconds']==30
+    assert removal['non_dispatched_checkpoint_event']==195 and removal['first_possible_event']==196
+    assert removal['policy']['max_additional_retries_per_request_hash']==2
+    assert 'original_wall_deadline' not in removal['policy']['unchanged']
+    assert removal['policy']['previous_deadline_utc']==policy['original_deadline_utc']
+    progress=read(OUT/'deadline-removal-progress.json')
+    checkpoint,continued=progress['safe_checkpoint'],progress['first_resumed_event']
+    assert checkpoint['sequence']==195 and checkpoint['request_dispatched'] is False and checkpoint['policy_checkpoint']
+    assert continued['sequence']==196 and continued['status']=='validated' and continued['http_status']==200
+    assert checkpoint['request_body_sha256']==continued['request_body_sha256']
+    assert progress['lineage']['event']==195 and progress['lineage']['retry_event']==196
+    assert progress['lineage']['logical_retry_number']==0 and not progress['lineage']['remote_completion_and_cost_unknown']
+    assert progress['successful_responses_reused']==189 and progress['cumulative_cache_hits_at_recovery']==669
+    assert progress['unknown_usage_sequences_before_resume']==[75,96,107,108,109]
+    assert progress['wall_deadline_removed'] and progress['limits']['wall_seconds'] is None
     sample=read(OUT/'quality-sample-default.json');review=read(OUT/'quality-review-default.json')
     assert sha(OUT/'quality-sample-default.json')==review['inputs']['sample_sha256']
     units={u['ms_text_unit_id']:u for u in read(ROOT/'research/pilot/results/index/text-unit-provenance.json')}
@@ -172,7 +189,7 @@ def main():
             assert judged['evidence']
             for e in judged['evidence']:assert linked[e['input_id']]==e['source_title'] and e['snippet']
     assert not review['reviewer']['human_review'] and not review['reviewer']['blind_review']
-    print('Verified frozen inputs, five interruption snapshots, 104 successful generations and 5 unknown outcomes, approved75-to76,96-to97 and107-to108-to109 lineage, bounded retry exhaustion, subsequent authorized120-second policy and successful110 recovery, unchanged cumulative caps/deadline and 40 baseline audit records. No completed retrieval claim or model call.')
+    print('Verified frozen inputs, five historical interruption snapshots, bounded retry lineage, authorized120-second policy and successful110 recovery, subsequent removal of total deadline with non-dispatched195 and successful196, preserved cumulative caps and 40 baseline audit records. No completed retrieval claim or model call.')
 
 
 if __name__=='__main__':main()
