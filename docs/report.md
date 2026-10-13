@@ -31,6 +31,8 @@
 
 提示词、模型、语料、解析算法及指标保持不变，原累计预算不变。用户于15:30 UTC明确取消总截止；15:44 UTC在第195条发送前检查点切换，复用189份成功响应继续运行。195没有调用服务，不算新的未知结果；单次生成120秒、embedding30秒和有限重试仍保留。[取消总截止记录](../research/pilot/results/code-prompt/deadline-removal-applied.json)保留历史边界。**从110起，实验已采用不同客户端时限和重试策略**；必须同时披露这项运行条件变化，不能把最终完成率、用量、耗时或检索差异仅归于代码提示词。较早的五份中断快照保持原样，新配置与成功关联见[120秒切换记录](../research/pilot/results/code-prompt/timeout-amendment-120.json)和[110恢复证据](../research/pilot/results/code-prompt/recovery-progress-120.json)。
 
+四个在新运行前已固定的源码片段，提供了一点较早的局部证据：新抽取确实补出了具体字典方法、可见API调用链段与精确双下划线方法名，也区分了请求头输入键和准备后的键；但另有两处把片段末尾未显示的文档／测试行为写成可见事实。直接调用同版官方解析器复核还确认，四块各漏掉补抽首条实体记录。**这些是抽取与格式问题，不是最终图或检索得分。** [四段原文与8份完整响应](../research/pilot/results/code-prompt/preindex-fixed-witnesses.json)、[独立逐项复核](../research/pilot/results/code-prompt/preindex-witness-review.json)和[官方解析交叉检查](../research/pilot/results/code-prompt/preindex-official-parser-check.json)可直接核对。
+
 因此现在还不能用它支持或否定专用提示词的收益，也不能说提示词就是此前差距的主要原因。即使后续单次对比出现改善，也同时涉及提示词和实体类型，尚未隔离模型采样、独立建图差异或服务随时间的变化。正文中的默认版数值不代表代码专用配置。
 
 ## 先弄清：它实际索引了什么

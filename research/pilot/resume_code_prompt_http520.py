@@ -15,6 +15,7 @@ import resume_code_prompt_no_deadline as previous
 bounded=previous.bounded
 variant=previous.variant
 POLICY={**previous.POLICY,
+    'http520_human_approval_utc':'2026-10-13T16:18:23+00:00',
     'scope':'This code-prompt run only: retain no total deadline, original cumulative budgets and120-second generation requests. Once separately approved, timeout and HTTP520 outcomes share at most two additional physical attempts per request hash.',
     'http520_retry_extension':{'http_status':520,'max_additional_retries_per_request_hash':2,
         'shared_with_timeout_attempts':True,'other_http_errors_retry':False,
@@ -58,12 +59,14 @@ def controller(approved):
             'provider_completion_and_usage_for_272':'Unknown; HTTP520 has no complete model reply or usage.',
             'request_body_prompt_model_corpus_parser_and_metrics_changed':False,
             'explicit_separate_http520_recovery_approval_confirmed':True,
-            'approval_time_basis':'applied_utc records approval confirmation/config activation, not the original user-message timestamp.'}
+            'human_approval_utc':POLICY['http520_human_approval_utc'],
+            'approval_time_basis':'human_approval_utc is the user reply timestamp; applied_utc is configuration activation.'}
         assert not (variant.RUN/'http520-retry-amendment.json').exists()
         variant.write(variant.RUN/'before-http520-retry-amendment.json',state)
         state.setdefault('limit_amendments',[]).append(amendment)
         state['timeout_retry_policy']=POLICY
         state['http520_approval_recorded_utc']=amendment['applied_utc']
+        state['http520_human_approval_utc']=POLICY['http520_human_approval_utc']
         runtime.save()
         variant.write(variant.RUN/'http520-retry-amendment.json',amendment)
         variant.write(variant.OUT/'http520-retry-amendment.json',amendment)

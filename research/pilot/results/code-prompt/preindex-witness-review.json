@@ -1,0 +1,876 @@
+{
+  "schema_version": "1.0",
+  "review_date_utc": "2026-10-13",
+  "review_language": "zh-CN",
+  "review_scope": "独立离线审阅四块固定源码、对应新旧初抽与 glean 完整响应；只读证据，未调用模型或修改运行配置。",
+  "input_files": {
+    "new": "preindex-fixed-witnesses.json",
+    "old": "../failure-analysis/extraction-witnesses.json",
+    "new_file_sha256": "7e536db63baa426496fadfcd04f1f6f82874abd134e298823c2b981ef1fd6645",
+    "old_file_sha256": "00a8c8a2bea634ef68e64aaeb6e3245cf66e07d47d2ebb7b279f4afeb7fbaf1e"
+  },
+  "input_integrity": {
+    "source_units": 4,
+    "new_responses": 8,
+    "old_responses": 8,
+    "all_source_text_identical_between_runs": true,
+    "all_source_and_response_content_hashes_verified": true,
+    "note": "请求体 hash 仅为原文件元数据，本审阅不读取或重新核验请求体；未把私密路径、令牌或请求配置写入本记录。"
+  },
+  "pipeline_status_boundary": {
+    "reported_status": "父任务提供的状态：描述合并阶段第 272 次 HTTP 520 停止；尚无最终新图和 Local 检索结果。",
+    "independently_reaudited_run_ledger": false,
+    "allowed_conclusion": "这四块抽取文本与记录边界处理的局部变化。",
+    "disallowed_conclusions": [
+      "最终图质量已经改善",
+      "Local 检索或答案准确率已经提高",
+      "feature 实现成功率已经提高",
+      "代码提示词的一般性效果已获证明"
+    ]
+  },
+  "summary": {
+    "assessment": "新响应明显增加具体代码符号，四个旧诊断点中的核心表述均有局部纠正；同时出现截断边界之外的断言，官方直接拼接仍丢失每块 glean 的第一条实体记录。因此只能报告抽取层面的混合结果，不能报告最终检索收益。",
+    "corrected": [
+      "Q01 的具体字典方法与 lower-case 查找语义",
+      "Q07 的 get/options/head 到 request 再到 session.request 可见链段",
+      "Q13 的 bytes 输入键与准备后字符串键区别",
+      "G02 的精确 __getstate__/__setstate__ 方法名及主要行为"
+    ],
+    "remaining_or_new_issues": [
+      "Q07 的 post 返回文档断言超出本块",
+      "Q13 的末尾 leading-space 测试执行体断言超出本块",
+      "部分 IMPORTS/TESTS/CALLS 标签与源码证据类别不匹配",
+      "glean 以追加方式保留先前错误描述",
+      "四块 glean 首条 entity 均被无分隔拼接污染而不获识别"
+    ]
+  },
+  "case_reviews": [
+    {
+      "case_id": "Q01",
+      "focus": "字典具体方法与大小写不敏感读写",
+      "source_title": "src/requests/structures.py:L1-L99",
+      "verdict": "原先只抽到库名的主要遗漏已在响应文本中纠正；仍存在局部关系表达和拼接损失问题。",
+      "findings": [
+        {
+          "id": "Q01-1",
+          "status": "已纠正",
+          "assessment": "旧初抽只有 REQUESTS 组织实体，glean 没有补充；新初抽明确给出 CaseInsensitiveDict 的定义、具体方法和所属关系。__setitem__ 保留原始键并按小写键存储，__getitem__、__delitem__ 按小写键访问，lower_items 与 __eq__ 的描述均有源码支持。",
+          "source_evidence": [
+            {
+              "title": "src/requests/structures.py:L1-L99",
+              "line_start": 40,
+              "line_end": 80,
+              "evidence_summary": "self._store[key.lower()] = (key, value); return self._store[key.lower()][1]; return dict(self.lower_items()) == dict(other.lower_items())"
+            }
+          ],
+          "response_evidence": [
+            {
+              "run": "old",
+              "sequence": 121,
+              "operation": "extraction_initial",
+              "record_contains": "REQUESTS"
+            },
+            {
+              "run": "new",
+              "sequence": 126,
+              "operation": "extraction_initial",
+              "record_contains": "CaseInsensitiveDict.__setitem__"
+            },
+            {
+              "run": "new",
+              "sequence": 126,
+              "operation": "extraction_initial",
+              "record_contains": "CaseInsensitiveDict.__getitem__"
+            },
+            {
+              "run": "new",
+              "sequence": 126,
+              "operation": "extraction_initial",
+              "record_contains": "CaseInsensitiveDict.__eq__"
+            }
+          ],
+          "boundary": "只确认这些文本记录忠实且可被记录识别规则识别，不确认最终图中节点已完成合并，也不等于 Q01 检索命中。"
+        },
+        {
+          "id": "Q01-2",
+          "status": "仍有关系表达问题",
+          "assessment": "新初抽将 collections→OrderedDict、.compat→Mapping/MutableMapping 标为 IMPORTS。源码中的导入者是当前模块 requests.structures；这些边把导入来源模块放在了导入者的位置。描述保留了原句，但按有向 IMPORTS 读取时会误解。",
+          "source_evidence": [
+            {
+              "title": "src/requests/structures.py:L1-L99",
+              "line_start": 8,
+              "line_end": 10,
+              "evidence_summary": "from collections import OrderedDict; from .compat import Mapping, MutableMapping"
+            }
+          ],
+          "response_evidence": [
+            {
+              "run": "new",
+              "sequence": 126,
+              "operation": "extraction_initial",
+              "record_contains": "collections<|>OrderedDict<|>IMPORTS"
+            },
+            {
+              "run": "new",
+              "sequence": 126,
+              "operation": "extraction_initial",
+              "record_contains": ".compat<|>Mapping<|>IMPORTS"
+            }
+          ]
+        },
+        {
+          "id": "Q01-3",
+          "status": "文本已补但拼接会漏实体",
+          "assessment": "glean 增加 update 及 CaseInsensitiveDict.__init__→update，符合 self.update(data, **kwargs)。但 update 是该轮首条记录，官方直接拼接会丢其 entity 记录，后面的 CALLS 关系仍被识别。",
+          "source_evidence": [
+            {
+              "title": "src/requests/structures.py:L1-L99",
+              "line_start": 40,
+              "line_end": 44,
+              "evidence_summary": "self.update(data, **kwargs)"
+            }
+          ],
+          "response_evidence": [
+            {
+              "run": "new",
+              "sequence": 127,
+              "operation": "extraction_glean",
+              "record_contains": "update<|>external_symbol"
+            },
+            {
+              "run": "new",
+              "sequence": 127,
+              "operation": "extraction_glean",
+              "record_contains": "CaseInsensitiveDict.__init__<|>update<|>CALLS"
+            }
+          ],
+          "boundary": "只确认本块实体记录丢失；不能断言最终图永远没有 UPDATE，其他块或后续处理可能提供同名节点。"
+        }
+      ]
+    },
+    {
+      "case_id": "Q07",
+      "focus": "API 到 Session 的可见发送调用链",
+      "source_title": "src/requests/api.py:L1-L109",
+      "verdict": "可见链段已补出；跨文件完整发送链仍无法由本块确认，glean 对截断 post 文档新增了无依据陈述。",
+      "findings": [
+        {
+          "id": "Q07-1",
+          "status": "已纠正",
+          "assessment": "旧响应集中于 Requests 与版权人，没有函数调用链。新初抽给出 get/options/head→request、request→sessions.Session 和 request→session.request，分别对应实际调用表达式；同时保留 session.request 定义和运行时绑定未在本块可见的限制。",
+          "source_evidence": [
+            {
+              "title": "src/requests/api.py:L1-L109",
+              "line_start": 58,
+              "line_end": 59,
+              "evidence_summary": "with sessions.Session() as session: return session.request(method=method, url=url, **kwargs)"
+            },
+            {
+              "title": "src/requests/api.py:L1-L109",
+              "line_start": 73,
+              "line_end": 73,
+              "evidence_summary": "return request(\"get\", url, params=params, **kwargs)"
+            },
+            {
+              "title": "src/requests/api.py:L1-L109",
+              "line_start": 85,
+              "line_end": 85,
+              "evidence_summary": "return request(\"options\", url, **kwargs)"
+            },
+            {
+              "title": "src/requests/api.py:L1-L109",
+              "line_start": 99,
+              "line_end": 100,
+              "evidence_summary": "kwargs.setdefault(\"allow_redirects\", False); return request(\"head\", url, **kwargs)"
+            }
+          ],
+          "response_evidence": [
+            {
+              "run": "old",
+              "sequence": 61,
+              "operation": "extraction_initial",
+              "record_contains": "KENNETH REITZ"
+            },
+            {
+              "run": "new",
+              "sequence": 61,
+              "operation": "extraction_initial",
+              "record_contains": "get<|>request<|>CALLS"
+            },
+            {
+              "run": "new",
+              "sequence": 61,
+              "operation": "extraction_initial",
+              "record_contains": "request<|>session.request<|>CALLS"
+            }
+          ],
+          "boundary": "本块不含 Session.request、prepare_request、send 或 adapter.send 的实现；不能据此称完整真实调用链已恢复。"
+        },
+        {
+          "id": "Q07-2",
+          "status": "新增无源码依据的断言",
+          "assessment": "初抽正确承认 post 的正文被截断；glean 却新增 post→Response 的 RETURNS 和 post→requests.Response 的 REFERENCES，并声称可见 docstring 存在 return/rtype。提供的源码止于 post 的 json 参数说明，不含这两行。即使完整文件后面可能有这些内容，也不能作为当前块的可见证据。",
+          "source_evidence": [
+            {
+              "title": "src/requests/api.py:L1-L109",
+              "line_start": 103,
+              "line_end": 109,
+              "evidence_summary": "def post(url, data=None, json=None, **kwargs): ... :param json: (optional) A JSON serializable Python object to send in the body of the :class:`Request`."
+            }
+          ],
+          "response_evidence": [
+            {
+              "run": "new",
+              "sequence": 61,
+              "operation": "extraction_initial",
+              "record_contains": "post<|>function"
+            },
+            {
+              "run": "new",
+              "sequence": 62,
+              "operation": "extraction_glean",
+              "record_contains": "post<|>Response<|>RETURNS"
+            },
+            {
+              "run": "new",
+              "sequence": 62,
+              "operation": "extraction_glean",
+              "record_contains": "post<|>requests.Response<|>REFERENCES"
+            }
+          ]
+        },
+        {
+          "id": "Q07-3",
+          "status": "文档与执行证据仍需分开",
+          "assessment": "glean 将文档示例请求标为 requests→requests.request 的 CALLS，描述虽明确 documentation-only，关系标签仍与执行体 CALLS 混用；图消费者若只读端点和标签会丢失这个限定。",
+          "source_evidence": [
+            {
+              "title": "src/requests/api.py:L1-L109",
+              "line_start": 47,
+              "line_end": 51,
+              "evidence_summary": "Usage example: import requests; requests.request(...)"
+            }
+          ],
+          "response_evidence": [
+            {
+              "run": "new",
+              "sequence": 62,
+              "operation": "extraction_glean",
+              "record_contains": "requests<|>requests.request<|>CALLS"
+            }
+          ],
+          "boundary": "文档示例本身存在；这里不是断言示例凭空生成，而是关系的调用者与证据种类表达不足。"
+        }
+      ]
+    },
+    {
+      "case_id": "Q13",
+      "focus": "header 输入键、准备后键和 header 值的类型区分",
+      "source_title": "tests/test_requests.py:L1624-L1760",
+      "verdict": "原先将输入 bytes 键与准备后键混淆的描述已纠正；新响应仍越界补写截断测试执行体，并存在可见表达式误述。",
+      "findings": [
+        {
+          "id": "Q13-1",
+          "status": "已纠正",
+          "assessment": "旧 glean 的 NATIVE HEADER KEY HANDLING 称准备后的键可为 native string 或 byte-string，混合了输入与准备后状态。新初抽正确区分输入 headers 含字符串键与 bytes 键，并准确说断言检查准备后出现字符串 unicode 和 byte 键；没有继续声称保存 bytes 键。",
+          "source_evidence": [
+            {
+              "title": "tests/test_requests.py:L1624-L1760",
+              "line_start": 1687,
+              "line_end": 1695,
+              "evidence_summary": "headers = {\"unicode\": \"blah\", b\"byte\": \"blah\"}; p = r.prepare(); assert \"unicode\" in p.headers.keys(); assert \"byte\" in p.headers.keys()"
+            }
+          ],
+          "response_evidence": [
+            {
+              "run": "old",
+              "sequence": 187,
+              "operation": "extraction_glean",
+              "record_contains": "NATIVE HEADER KEY HANDLING"
+            },
+            {
+              "run": "new",
+              "sequence": 190,
+              "operation": "extraction_initial",
+              "record_contains": "test_header_keys_are_native"
+            }
+          ],
+          "boundary": "源码含作者说明 builtin strings，但断言本身是成员检查，没有 isinstance 或排除所有 bytes 键的检查；不把它外推成完整存储类型证明。"
+        },
+        {
+          "id": "Q13-2",
+          "status": "已保留正确类型区分",
+          "assessment": "新初抽保留 valid header 输入值与结果值相等，以及非字符串/非 bytes 值触发 InvalidHeader。这里说的是值，不是 header 键；源码明确接受 b\"fbbq\" 值，并列出整数、字典和列表为无效值。",
+          "source_evidence": [
+            {
+              "title": "tests/test_requests.py:L1624-L1760",
+              "line_start": 1697,
+              "line_end": 1707,
+              "evidence_summary": "valid_headers includes \"bar\": b\"fbbq\"; assert valid_headers[key] == r.request.headers[key]"
+            },
+            {
+              "title": "tests/test_requests.py:L1624-L1760",
+              "line_start": 1709,
+              "line_end": 1723,
+              "evidence_summary": "invalid values 3, {\"foo\": \"bar\"}, [\"foo\", \"bar\"]; with pytest.raises(InvalidHeader)"
+            }
+          ],
+          "response_evidence": [
+            {
+              "run": "new",
+              "sequence": 190,
+              "operation": "extraction_initial",
+              "record_contains": "test_header_validation"
+            },
+            {
+              "run": "new",
+              "sequence": 190,
+              "operation": "extraction_initial",
+              "record_contains": "test_header_value_not_str"
+            }
+          ],
+          "boundary": "新摘要没有逐一重列有效 bytes 值，仍应保留源文本作核验；不得把准备后字符串键规则套用到值。"
+        },
+        {
+          "id": "Q13-3",
+          "status": "新增无源码依据的执行体断言",
+          "assessment": "test_header_no_leading_space 在本块只出现参数化、函数头和 docstring，源码到关闭 docstring 即结束。新初抽却说 visible body 进入 pytest.raises 并调用 requests.get，相关关系也声称这些调用可见；glean 又添加该测试→httpbin 调用。这些执行语句不在所给块内。",
+          "source_evidence": [
+            {
+              "title": "tests/test_requests.py:L1624-L1760",
+              "line_start": 1745,
+              "line_end": 1760,
+              "evidence_summary": "@pytest.mark.parametrize(...); def test_header_no_leading_space(...): docstring ends at L1760"
+            }
+          ],
+          "response_evidence": [
+            {
+              "run": "new",
+              "sequence": 190,
+              "operation": "extraction_initial",
+              "record_contains": "test_header_no_leading_space<|>test"
+            },
+            {
+              "run": "new",
+              "sequence": 190,
+              "operation": "extraction_initial",
+              "record_contains": "test_header_no_leading_space<|>pytest.raises<|>CALLS"
+            },
+            {
+              "run": "new",
+              "sequence": 190,
+              "operation": "extraction_initial",
+              "record_contains": "test_header_no_leading_space<|>requests.get<|>CALLS"
+            },
+            {
+              "run": "new",
+              "sequence": 191,
+              "operation": "extraction_glean",
+              "record_contains": "test_header_no_leading_space<|>httpbin<|>CALLS"
+            }
+          ],
+          "boundary": "可保留 docstring 对预期行为的描述，但不能写成已经看到执行体或实际断言。"
+        },
+        {
+          "id": "Q13-4",
+          "status": "仍有表达式误述与局部不一致",
+          "assessment": "初抽的 test_header_value_not_str→requests.get 关系把可见调用改述为 requests.get(\"httpbin...\", ...) 并声称 URL 的完整调用不可见；L1722 实际完整展示 httpbin(\"get\")。glean 随后正确补出该 httpbin 调用，但初抽错误描述没有被删除。",
+          "source_evidence": [
+            {
+              "title": "tests/test_requests.py:L1624-L1760",
+              "line_start": 1721,
+              "line_end": 1723,
+              "evidence_summary": "with pytest.raises(InvalidHeader) as excinfo: requests.get(httpbin(\"get\"), headers=invalid_header)"
+            }
+          ],
+          "response_evidence": [
+            {
+              "run": "new",
+              "sequence": 190,
+              "operation": "extraction_initial",
+              "record_contains": "test_header_value_not_str<|>requests.get<|>CALLS"
+            },
+            {
+              "run": "new",
+              "sequence": 191,
+              "operation": "extraction_glean",
+              "record_contains": "test_header_value_not_str<|>httpbin<|>CALLS"
+            }
+          ]
+        },
+        {
+          "id": "Q13-5",
+          "status": "关系语义仍不精确",
+          "assessment": "三个 header 参数化测试与 pytest.mark.parametrize 的边均标为 TESTS，但源码证据是使用装饰器，不是测试 pytest 装饰器本身。",
+          "source_evidence": [
+            {
+              "title": "tests/test_requests.py:L1624-L1760",
+              "line_start": 1709,
+              "line_end": 1717,
+              "evidence_summary": "@pytest.mark.parametrize(...) decorating test_header_value_not_str"
+            },
+            {
+              "title": "tests/test_requests.py:L1624-L1760",
+              "line_start": 1725,
+              "line_end": 1738,
+              "evidence_summary": "@pytest.mark.parametrize(...) decorating test_header_no_return_chars"
+            },
+            {
+              "title": "tests/test_requests.py:L1624-L1760",
+              "line_start": 1745,
+              "line_end": 1757,
+              "evidence_summary": "@pytest.mark.parametrize(...) decorating test_header_no_leading_space"
+            }
+          ],
+          "response_evidence": [
+            {
+              "run": "new",
+              "sequence": 190,
+              "operation": "extraction_initial",
+              "record_contains": "test_header_value_not_str<|>pytest.mark.parametrize<|>TESTS"
+            }
+          ],
+          "boundary": "描述中的 decorated with 是准确的；问题在于将使用关系编码成测试目标关系。"
+        }
+      ]
+    },
+    {
+      "case_id": "G02",
+      "focus": "HTTPAdapter dunder 序列化方法",
+      "source_title": "src/requests/adapters.py:L156-L310",
+      "verdict": "精确 dunder 方法名及主要行为已纠正；仍有边类型和符号类别问题，拼接漏掉的 close 不会抹去初抽中的两个序列化方法。",
+      "findings": [
+        {
+          "id": "G02-1",
+          "status": "已纠正",
+          "assessment": "旧 glean 将方法名改为 HTTPADAPTER GETSTATE/SETSTATE 并归为 ORGANIZATION。新初抽保存 HTTPAdapter.__getstate__、HTTPAdapter.__setstate__ 和 method 类型；准确描述前者按 __attrs__ 调用 getattr 形成字典，后者重置 proxy_manager/config、逐项 setattr 并重新初始化连接池。",
+          "source_evidence": [
+            {
+              "title": "src/requests/adapters.py:L156-L310",
+              "line_start": 194,
+              "line_end": 200,
+              "evidence_summary": "__attrs__ = [\"max_retries\", \"config\", \"_pool_connections\", \"_pool_maxsize\", \"_pool_block\"]"
+            },
+            {
+              "title": "src/requests/adapters.py:L156-L310",
+              "line_start": 224,
+              "line_end": 238,
+              "evidence_summary": "def __getstate__(self): ...; def __setstate__(self, state): ... self.init_poolmanager(...)"
+            }
+          ],
+          "response_evidence": [
+            {
+              "run": "old",
+              "sequence": 52,
+              "operation": "extraction_glean",
+              "record_contains": "HTTPADAPTER GETSTATE"
+            },
+            {
+              "run": "old",
+              "sequence": 52,
+              "operation": "extraction_glean",
+              "record_contains": "HTTPADAPTER SETSTATE"
+            },
+            {
+              "run": "new",
+              "sequence": 51,
+              "operation": "extraction_initial",
+              "record_contains": "HTTPAdapter.__getstate__<|>method"
+            },
+            {
+              "run": "new",
+              "sequence": 51,
+              "operation": "extraction_initial",
+              "record_contains": "HTTPAdapter.__setstate__<|>method"
+            }
+          ],
+          "boundary": "官方解析会把名称转为大写，但点号和 dunder 下划线不会因此丢失；这不等于最终合并图已完成。"
+        },
+        {
+          "id": "G02-2",
+          "status": "仍有边类型/类别不精确",
+          "assessment": "glean 将 close→NotImplementedError 标为 CALLS，源码是 raise NotImplementedError，没有显式函数调用表达式；若用作源码调用链应区分抛出异常与显式调用。初抽还把可变类属性 __attrs__ 标为 constant，虽然其描述正确说它是列表。",
+          "source_evidence": [
+            {
+              "title": "src/requests/adapters.py:L156-L310",
+              "line_start": 162,
+              "line_end": 164,
+              "evidence_summary": "def close(self): ... raise NotImplementedError"
+            },
+            {
+              "title": "src/requests/adapters.py:L156-L310",
+              "line_start": 194,
+              "line_end": 200,
+              "evidence_summary": "__attrs__ = [...]"
+            }
+          ],
+          "response_evidence": [
+            {
+              "run": "new",
+              "sequence": 52,
+              "operation": "extraction_glean",
+              "record_contains": "close<|>NotImplementedError<|>CALLS"
+            },
+            {
+              "run": "new",
+              "sequence": 51,
+              "operation": "extraction_initial",
+              "record_contains": "HTTPAdapter.__attrs__<|>constant"
+            }
+          ],
+          "boundary": "raise 类对象在 Python 中涉及异常实例化，并不否认运行时可能构造对象；这里仅指出该边不等同源码中出现显式 call。"
+        },
+        {
+          "id": "G02-3",
+          "status": "正确保留块边界限制",
+          "assessment": "新初抽没有替不可见类头强行命名前一 close 的所属类；同时准确说 cert_verify 仅签名和文档可见，不补证书检查实现。",
+          "source_evidence": [
+            {
+              "title": "src/requests/adapters.py:L156-L310",
+              "line_start": 162,
+              "line_end": 167,
+              "evidence_summary": "def close(self): ...; class HTTPAdapter(BaseAdapter):"
+            },
+            {
+              "title": "src/requests/adapters.py:L156-L310",
+              "line_start": 304,
+              "line_end": 310,
+              "evidence_summary": "def cert_verify(self, conn, url, verify, cert): docstring only in this chunk"
+            }
+          ],
+          "response_evidence": [
+            {
+              "run": "new",
+              "sequence": 51,
+              "operation": "extraction_initial",
+              "record_contains": "NotImplementedError<|>external_symbol"
+            },
+            {
+              "run": "new",
+              "sequence": 51,
+              "operation": "extraction_initial",
+              "record_contains": "HTTPAdapter.cert_verify<|>method"
+            },
+            {
+              "run": "new",
+              "sequence": 52,
+              "operation": "extraction_glean",
+              "record_contains": "close<|>method"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "join_and_parser_review": {
+    "official_source": {
+      "repository": "microsoft/graphrag",
+      "commit": "5faaaf4f5685fa2056fa8c3bf9342cb089f2942f",
+      "title": "packages/graphrag/graphrag/index/operations/extract_graph/graph_extractor.py",
+      "url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/operations/extract_graph/graph_extractor.py",
+      "line_refs": [
+        {
+          "start": 107,
+          "end": 109,
+          "meaning": "results += response_text，初抽与 glean 间不自动加记录分隔符。"
+        },
+        {
+          "start": 135,
+          "end": 145,
+          "meaning": "只按 ## 分记录；仅在整条记录等于结束标记时跳过；随后要求首字段精确为 entity。"
+        },
+        {
+          "start": 156,
+          "end": 170,
+          "meaning": "关系按独立的 relationship 首字段识别，不要求两个端点在该块已有 entity 记录。"
+        }
+      ]
+    },
+    "method": "只用标准库离线复现上述拼接、分记录、去首尾括号及首字段/字段数识别条件，比较逐响应识别与原样拼接识别；未运行官方模型流程、未清洗响应、未改解析器。计数含重复记录，不是质量分数，也不是最终图节点/边数量。",
+    "new_runs_observation": "四块初抽均以 ## 后的 <|COMPLETE|> 结束，glean 直接以 entity 开始。拼接形成 <|COMPLETE|>(\"entity\"... 的非合法首字段，因此各丢一条 glean entity。新四块所有原本可识别 relationship 记录仍被识别。",
+    "new_lost_entity_records": [
+      {
+        "case_id": "Q01",
+        "entity": "update",
+        "affected_sequence": 127
+      },
+      {
+        "case_id": "Q07",
+        "entity": "requests",
+        "affected_sequence": 62
+      },
+      {
+        "case_id": "G02",
+        "entity": "close",
+        "affected_sequence": 52
+      },
+      {
+        "case_id": "Q13",
+        "entity": "requests",
+        "affected_sequence": 191
+      }
+    ],
+    "old_runs_observation": "同一静态检查下，旧 G02 丢 DEFAULT_POOLSIZE、旧 Q13 丢 REQUESTS SESSION；旧 Q01/Q07 不丢首条 glean 实体，因为这两份 glean 没有实体记录。旧 Q07 使用非标准完成标记且末条关系未以 ## 分开，末尾权重可能回退为 1.0；这属于格式问题，不改变本文列出的实体/关系记录数量。",
+    "impact_boundary": "丢失的是该块该次响应的实体记录，不能直接推断最终图全局缺节点；别的块可能提供同名实体，后续流程也可能另作处理。新增的字典具体方法、API 主要链段和 dunder 方法位于初抽，未被此次首条 glean 损失抹去。"
+  },
+  "unit_audits": [
+    {
+      "title": "src/requests/structures.py:L1-L99",
+      "source_text_sha256": "f886e6855cf4e92fb968f499b94b6167afba0fd5ce8d1b935c739a6d8d38d573",
+      "source_identical_between_runs": true,
+      "old_responses": [
+        {
+          "sequence": 121,
+          "operation": "extraction_initial",
+          "content_sha256": "ef11ca2e688dea5e09825a4e980e7169d1bf675c0ec25d0f262444073eb3e306"
+        },
+        {
+          "sequence": 122,
+          "operation": "extraction_glean",
+          "content_sha256": "c83329108146c2b5ff4be9c4817341810eb667f2f380478e47bc1c97f0568d47"
+        }
+      ],
+      "new_responses": [
+        {
+          "sequence": 126,
+          "operation": "extraction_initial",
+          "content_sha256": "398a6b2e96850ca285b7ab2c67ff656eae48ccb5e1c7f3056479b6428b90fc28"
+        },
+        {
+          "sequence": 127,
+          "operation": "extraction_glean",
+          "content_sha256": "fab6cc5d654825d88dde7e1198640e25e6ed2daed6e1e7d6c5ac9fc0ad3365b7"
+        }
+      ],
+      "old_parse_audit": {
+        "per_response_recognition_sum": {
+          "entity_records": 1,
+          "relationship_records": 0
+        },
+        "official_no_separator_join_recognition": {
+          "entity_records": 1,
+          "relationship_records": 0
+        },
+        "lost_records": [],
+        "boundary_excerpt": "p dictionaries.)<|COMPLETE|><|COMPLETE|>"
+      },
+      "new_parse_audit": {
+        "per_response_recognition_sum": {
+          "entity_records": 33,
+          "relationship_records": 43
+        },
+        "official_no_separator_join_recognition": {
+          "entity_records": 32,
+          "relationship_records": 43
+        },
+        "lost_records": [
+          {
+            "kind": "entity",
+            "name": "update",
+            "type_or_target": "external_symbol"
+          }
+        ],
+        "boundary_excerpt": " shown.<|>8)\n##\n<|COMPLETE|>(\"entity\"<|>update<|>external_symbol<|>`update` is explicitly called as `se"
+      }
+    },
+    {
+      "title": "src/requests/api.py:L1-L109",
+      "source_text_sha256": "41151fee6348bc4e82cd4e849e8016004951361258a3f58b9b1d9087438817f2",
+      "source_identical_between_runs": true,
+      "old_responses": [
+        {
+          "sequence": 61,
+          "operation": "extraction_initial",
+          "content_sha256": "dd061dcf026960b9670c4566c04837bde22897119d5a0a593c410aae4416b326"
+        },
+        {
+          "sequence": 62,
+          "operation": "extraction_glean",
+          "content_sha256": "aa0368c3f9921ce5af91c1d07f18f84f2898385c77dd33753018cd56845556a6"
+        }
+      ],
+      "new_responses": [
+        {
+          "sequence": 61,
+          "operation": "extraction_initial",
+          "content_sha256": "6430b84182e179468f1de2181aa6c0395941e509c501d531627669853ae1443f"
+        },
+        {
+          "sequence": 62,
+          "operation": "extraction_glean",
+          "content_sha256": "b62a03c8e523829bd053508be4a751da4c4d59aa7e9d48aff87f0a0bcb58203a"
+        }
+      ],
+      "old_parse_audit": {
+        "per_response_recognition_sum": {
+          "entity_records": 2,
+          "relationship_records": 1
+        },
+        "official_no_separator_join_recognition": {
+          "entity_records": 2,
+          "relationship_records": 1
+        },
+        "lost_records": [],
+        "boundary_excerpt": "library.<|>8)\n<|>COMPLETE<|><|>COMPLETE<|>"
+      },
+      "new_parse_audit": {
+        "per_response_recognition_sum": {
+          "entity_records": 15,
+          "relationship_records": 24
+        },
+        "official_no_separator_join_recognition": {
+          "entity_records": 14,
+          "relationship_records": 24
+        },
+        "lost_records": [
+          {
+            "kind": "entity",
+            "name": "requests",
+            "type_or_target": "module"
+          }
+        ],
+        "boundary_excerpt": "ption.<|>10)\n##\n<|COMPLETE|>(\"entity\"<|>requests<|>module<|>Explicitly referenced in the documentation "
+      }
+    },
+    {
+      "title": "src/requests/adapters.py:L156-L310",
+      "source_text_sha256": "63d1bf7a528d68a3a742f98b6641791cf245b01b3776b1ab0cf8b0725e90f602",
+      "source_identical_between_runs": true,
+      "old_responses": [
+        {
+          "sequence": 51,
+          "operation": "extraction_initial",
+          "content_sha256": "e15e1e06c9d5785d9c831e59d2cad34efe8bc4067ce0b4bb8f894778bc7264af"
+        },
+        {
+          "sequence": 52,
+          "operation": "extraction_glean",
+          "content_sha256": "b014c55f7d7f14e0e5613731032049838fea3391db70d21f259d2e27f3193dee"
+        }
+      ],
+      "new_responses": [
+        {
+          "sequence": 51,
+          "operation": "extraction_initial",
+          "content_sha256": "e11b4fea204b624d1697b6b2e3badfa3f46db3be7214f64fc629c74a2c9f11ec"
+        },
+        {
+          "sequence": 52,
+          "operation": "extraction_glean",
+          "content_sha256": "5b9c6a760b8e3bf148c8a36b28c04e96d2d3bd785e6eb3871a1cd74de4459243"
+        }
+      ],
+      "old_parse_audit": {
+        "per_response_recognition_sum": {
+          "entity_records": 21,
+          "relationship_records": 30
+        },
+        "official_no_separator_join_recognition": {
+          "entity_records": 20,
+          "relationship_records": 30
+        },
+        "lost_records": [
+          {
+            "kind": "entity",
+            "name": "DEFAULT_POOLSIZE",
+            "type_or_target": "organization"
+          }
+        ],
+        "boundary_excerpt": "nections<|>8)##\n<|COMPLETE|>(\"entity\"<|>DEFAULT_POOLSIZE<|>organization<|>Configuration constant defini"
+      },
+      "new_parse_audit": {
+        "per_response_recognition_sum": {
+          "entity_records": 27,
+          "relationship_records": 29
+        },
+        "official_no_separator_join_recognition": {
+          "entity_records": 26,
+          "relationship_records": 29
+        },
+        "lost_records": [
+          {
+            "kind": "entity",
+            "name": "close",
+            "type_or_target": "method"
+          }
+        ],
+        "boundary_excerpt": "`block`<|>8)\n##\n<|COMPLETE|>(\"entity\"<|>close<|>method<|>Defined method `close(self)` in the preceding,"
+      }
+    },
+    {
+      "title": "tests/test_requests.py:L1624-L1760",
+      "source_text_sha256": "5f99c6d18ca0d3408f9a895aacfc2e59cc41c4ff209ae07314270e7f5947a7d9",
+      "source_identical_between_runs": true,
+      "old_responses": [
+        {
+          "sequence": 186,
+          "operation": "extraction_initial",
+          "content_sha256": "d13a359e3a3ed8465252956ee144643eb6775cce32b3dc02f03d8a049a8b9c5f"
+        },
+        {
+          "sequence": 187,
+          "operation": "extraction_glean",
+          "content_sha256": "b87b34cd8fd805ff239943bc90e71fe829c9cfd2fd8081eac9da7d79e3331547"
+        }
+      ],
+      "new_responses": [
+        {
+          "sequence": 190,
+          "operation": "extraction_initial",
+          "content_sha256": "ff6c8555d5be5191579d4c928368a39d51442b9d21eb0af16e0b264d629bfb0d"
+        },
+        {
+          "sequence": 191,
+          "operation": "extraction_glean",
+          "content_sha256": "fa04400524a1db3230fe2fa5e74cb106cc5a306a8c72985f516b635261505be6"
+        }
+      ],
+      "old_parse_audit": {
+        "per_response_recognition_sum": {
+          "entity_records": 20,
+          "relationship_records": 30
+        },
+        "official_no_separator_join_recognition": {
+          "entity_records": 19,
+          "relationship_records": 30
+        },
+        "lost_records": [
+          {
+            "kind": "entity",
+            "name": "REQUESTS SESSION",
+            "type_or_target": "ORGANIZATION"
+          }
+        ],
+        "boundary_excerpt": "issue 3386<|>5)\n<|COMPLETE|>(\"entity\"<|>REQUESTS SESSION<|>ORGANIZATION<|>Requests Session is the sessi"
+      },
+      "new_parse_audit": {
+        "per_response_recognition_sum": {
+          "entity_records": 27,
+          "relationship_records": 39
+        },
+        "official_no_separator_join_recognition": {
+          "entity_records": 26,
+          "relationship_records": 39
+        },
+        "lost_records": [
+          {
+            "kind": "entity",
+            "name": "requests",
+            "type_or_target": "module"
+          }
+        ],
+        "boundary_excerpt": "ontext.<|>9)\n##\n<|COMPLETE|>(\"entity\"<|>requests<|>module<|>`requests` is an explicitly referenced exte"
+      }
+    }
+  ],
+  "limitations": [
+    "四例最初是旧实验事后诊断样本，本轮在新抽取前固定；不是随机样本或总体准确率测试。",
+    "只对提供的四段源码判断是否有依据，不借完整仓库中未提供的后续行替响应补证据。",
+    "同名符号合并、跨文件绑定、描述汇总、最终图和查询行为均未完成或未在本次审阅范围内；泛名 get/update/requests 的全局冲突仅是待核查事项。",
+    "记录数增长不能代表准确率或有用上下文增长；本记录没有更改原评分或给新检索分数。",
+    "这是现成响应的离线文本与格式检查，不新增模型调用、不重试失败请求、不改提示词、评分、模型调用或账本。"
+  ],
+  "source_evidence_note": "source_evidence 的 evidence_summary 为关键语句节选或摘要，行号对应原文件；完整逐字源码保留在固定 witness 的 source_text 中。",
+  "publication_note": "Only the old input path was resolved for GitHub navigation; findings unchanged from the independent review.",
+  "original_review_file_sha256": "a78efddbf0e3f3ba31a6ed7ee04b651ecdcef49dca67597ed98dfe39a05f1fca"
+}

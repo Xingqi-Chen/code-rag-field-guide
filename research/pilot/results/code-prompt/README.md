@@ -51,3 +51,13 @@
 目前**既不能支持，也不能否定“代码专用提示词可改善效果”**，更不能证明它是此前表现差的主要原因。旧默认版结论仍只适用于旧配置。
 
 离线复核：`python3 research/pilot/verify_code_prompt.py`。它核对冻结文件、五个中断快照、四条已获准恢复关联、重试上限、累计用量和40条旧图抽样，不调用模型或声称新检索结果。
+
+## 抽取已完成的四个固定案例
+
+[原文与8份完整新响应](preindex-fixed-witnesses.json)、[独立审阅的14条依据](preindex-witness-review.json)及[官方解析器交叉复核](preindex-official-parser-check.json)已完成。具体方法／链段有所补回，同时有截断边界之外的陈述；四块各漏掉补抽首条实体。这些不是最终图或Local结果，也不用于修改提示词和评分。
+
+安装固定依赖后，可完全离线复核这四块的官方解析计数：
+
+```bash
+.cache/graphrag-venv/bin/python research/pilot/diagnose_code_prompt.py witness-parse-check --check
+```

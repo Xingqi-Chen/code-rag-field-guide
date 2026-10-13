@@ -129,8 +129,34 @@ def witnesses():
     print('Exported four unchanged source witnesses and eight complete new extraction request/reply pairs.')
 
 
+def witness_parser_check(check=False):
+    """The four completed witnesses can be checked before the full index ends."""
+    from graphrag.index.operations.extract_graph.graph_extractor import GraphExtractor,TUPLE_DELIMITER,RECORD_DELIMITER
+    parser=GraphExtractor(model=None,prompt='',max_gleanings=0)
+    path=OUT/'preindex-fixed-witnesses.json';rows=[]
+    for unit in read(path)['units']:
+        first,second=[r['content'] for r in sorted(unit['replies'],key=lambda r:r['sequence'])]
+        e1,r1=parser._process_result(first,'x',TUPLE_DELIMITER,RECORD_DELIMITER)
+        e2,r2=parser._process_result(second,'x',TUPLE_DELIMITER,RECORD_DELIMITER)
+        ec,rc=parser._process_result(first+second,'x',TUPLE_DELIMITER,RECORD_DELIMITER)
+        rows.append({'source_title':unit.get('title',unit.get('source_title')),
+            'initial_sequence':min(r['sequence'] for r in unit['replies']),
+            'initial_entity_records':len(e1),'glean_entity_records':len(e2),'concatenated_entity_records':len(ec),
+            'entity_gap':len(e1)+len(e2)-len(ec),
+            'initial_relationship_records':len(r1),'glean_relationship_records':len(r2),'concatenated_relationship_records':len(rc),
+            'relationship_gap':len(r1)+len(r2)-len(rc)})
+    result={'scope':'Four fixed completed extraction witnesses, official unchanged parser invoked offline. Not a repaired graph or retrieval score.',
+        'new_model_calls':0,'source_witness_sha256':sha(path),'rows':rows}
+    destination=OUT/'preindex-official-parser-check.json'
+    if check:assert result==read(destination)
+    else:write(destination,result)
+    print('Verified four fixed witnesses with the unchanged official parser; no model calls.')
+
+
 if __name__=='__main__':
-    parser=argparse.ArgumentParser();parser.add_argument('action',choices=['parse','sample','witnesses']);args=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('action',choices=['parse','sample','witnesses','witness-parse-check']);parser.add_argument('--check',action='store_true');args=parser.parse_args()
+    assert not args.check or args.action=='witness-parse-check'
     if args.action=='parse':parse_comparison()
     elif args.action=='sample':sample()
-    else:witnesses()
+    elif args.action=='witnesses':witnesses()
+    else:witness_parser_check(args.check)
