@@ -127,6 +127,12 @@ def main():
     write('environment.json',json.loads((RUN/'environment.json').read_text()))
     write('effective-config.json',json.loads((RUN/'effective-config.json').read_text()))
     write('preflight.json',json.loads((RUN/'preflight.json').read_text()))
+    # Let readers resolve graph text-unit IDs even before query evaluation.
+    # This is the exact frozen mapping, not a newly inferred source position.
+    provenance=(ROOT/'.cache/pilot/provenance.json').read_bytes()
+    assert hashlib.sha256(provenance).hexdigest()==json.loads((HERE/'size.json').read_text())['provenance_sha256']
+    (OUT/'index').mkdir(exist_ok=True)
+    (OUT/'index/text-unit-provenance.json').write_bytes(provenance)
     tables={}
     for name in ['entities','relationships','communities','community_reports']:
         path=RUN/'output'/f'{name}.parquet'

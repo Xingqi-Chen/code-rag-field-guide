@@ -5,10 +5,10 @@
 - [研究计划](plan.md)：研究问题、直接证据标准与调用边界。
 - [官方原理与固定源码核对](implementation.md)、[版本与文件哈希](microsoft-version.json)。
 - [直接代码证据及排除项](direct-evidence.md)、[检索记录](search-log.md)。
-- [Requests真实项目准备包](pilot/README.md)：题集与协议、隔离输入、实际离线测试；正式模型索引已启动但尚未完成。
+- [Requests真实项目准备包](pilot/README.md)：题集与协议、隔离输入、实际离线测试；完整模型索引已完成，检索与功能阶段尚未完成。
 - [接口探测历史](pilot/probe-result.md)：四批请求与失败单独记账，不当作检索效果。
-- [正式评测方法](pilot/full-run.md)、[执行范围](pilot/full-run-plan.json)、[真实中断记录](pilot/results/execution-interrupted.json)：158条成功回复已缓存，第159条超时；无完整索引、检索分数或功能成绩。
+- [正式评测方法](pilot/full-run.md)、[执行范围](pilot/full-run-plan.json)、[完整索引账本](pilot/results/execution.json)、[真实中断记录](pilot/results/execution-interrupted.json)：639实体、1069关系、84社区报告；暂无检索分数或功能成绩。
 - [本轮过程与发布检查](process.md)。
 - [旧版与正常 Git 历史](legacy.md)：旧自制代码图实验退出新版证据。
 
-研究截止及访问日：2026-10-12。区分三种表述：**已确认的机制事实**由官方文档／固定源码支持；**效果证据**要求实际评测且身份可核实；**试点建议**是基于已知机制和证据缺口的判断，不能当作实测结果。
+文献检索截止及访问日：2026-10-12；执行状态更新至2026-10-13。区分三种表述：**已确认的机制事实**由官方文档／固定源码支持；**效果证据**要求实际评测且身份可核实；**试点建议**是基于已知机制和证据缺口的判断，不能当作实测结果。
