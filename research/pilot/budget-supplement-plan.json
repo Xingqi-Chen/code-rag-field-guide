@@ -1,0 +1,20 @@
+{
+  "purpose": "User requested a larger-context retrieval supplement on 2026-10-13; no new model calls or feature generations.",
+  "original_result_commit": "61d2dccc9ef681af14753541de87e9e3058a8bac",
+  "reuse_existing_budgets": [4000, 12000],
+  "new_budgets": [8000, 16000],
+  "new_context_count": 160,
+  "questions": "The same frozen 20 questions; preserve dev/test and Q19 exclusion. No new gold or score changes.",
+  "methods": ["bm25", "hybrid", "ms_basic", "ms_local"],
+  "unchanged_parameters": "Same corpus/chunks/index/query vectors; BM25 k1=1.5 b=0.75; hybrid depth20 RRF60; Basic k10 actual display order; Local source0.5 community0.15 entity10 relationship10 level2; same whole-row tail trim and common o200k budget.",
+  "external_model_calls_allowed": 0,
+  "feature_generations_allowed": 0,
+  "original_results": "Do not overwrite original contexts, scores or execution ledger. Add a separate budget-supplement directory.",
+  "additional_descriptive_metrics": {
+    "context_length": "Report actual final tokens and source-only tokens; table and metadata tokens count toward the common cap.",
+    "duplicate_source_lines": "Repeated (path,line) occurrences across returned source chunks divided by all returned source-line occurrences; empty context gives null. Also record duplicate text-unit IDs.",
+    "unjudged_source_lines": "Unique returned source lines outside the union of frozen necessary evidence spans divided by unique returned source lines. This is unjudged material, NOT a noise/irrelevance rate; Q19 has no gold and is excluded from its aggregate.",
+    "qualitative_scope": "Inspect pre-existing cases Q01, Q07, Q13, Q20 at 16000 for missing evidence and useful/nonessential material; no gold edits or overall noise estimate."
+  },
+  "interpretation": "A budget sensitivity check of this fixed pipeline, not a new independent test set or causal graph ablation. Basic may plateau at k10; Local source fractions and whole chunks may leave unused capacity. Keep extraction-format anomalies disclosed."
+}

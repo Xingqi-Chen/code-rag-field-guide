@@ -12,12 +12,13 @@ HERE=Path(__file__).resolve().parent
 from result_paths import OUT
 
 
-def validate(tokens=False):
+def validate(tokens=False, *, out=OUT, budgets=(4000,12000), include_features=True):
+    OUT=out
     questions=json.loads((HERE/'questions.json').read_text())
     features=json.loads((HERE/'features.json').read_text())
     methods=['bm25','hybrid','ms_basic','ms_local']
-    expected={(q['id'],m,b) for q in questions+features for m in methods
-              for b in ([4000,12000] if q['id'].startswith('Q') else [4000])}
+    expected={(q['id'],m,b) for q in questions+(features if include_features else []) for m in methods
+              for b in (budgets if q['id'].startswith('Q') else [4000])}
     data=json.loads((OUT/'retrieval.json').read_text())
     actual=[(r['question_id'],r['method'],r['budget']) for r in data['records']]
     assert len(actual)==len(set(actual)) and set(actual)==expected, 'incomplete/duplicate evaluation grid'
