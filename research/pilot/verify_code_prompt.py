@@ -117,6 +117,29 @@ def main():
     pending_review=read(OUT/'recovery-review-03.json')
     assert not pending_review['event107_authorization_received']
     assert pending_review['real_model_calls']==pending_review['real_ledger_mutations']==0
+    previous=third
+    for number,sequence,cache_hits in [(4,108,272),(5,109,376)]:
+        current=read(OUT/f'execution-interrupted-{number:02}.json')
+        assert current['status']=='stopped' and current['stop_reason']=='worker_wall_timeout'
+        assert current['events'][:-1]==previous['events']
+        assert current['index_generation_attempts']==len(current['events'])==sequence
+        assert current['completion_cache_hits']==cache_hits
+        assert current['limits']==third['limits'] and current['started_utc']==third['started_utc']
+        assert current['embedding_attempts']==0 and current['embedding_reserved_tokens']==206333
+        assert current['generation_input_tokens']==sum(e['input_tokens'] for e in current['events'])
+        assert current['observed_usage_totals']==third['observed_usage_totals']
+        assert current['unknown_usage_sequences']==[75,96,*range(107,sequence+1)]
+        last=current['events'][-1]
+        assert last['status']=='failed' and last['error_category']=='worker_wall_timeout' and 'usage' not in last
+        assert last['request_body_sha256']==latest[-1]['request_body_sha256']
+        rs=current['recoveries'];assert len(rs)==number-1 and rs[:-1]==previous['recoveries']
+        assert rs[-1]['event']==sequence-1 and rs[-1]['retry_event']==sequence
+        assert rs[-1]['logical_retry_number']==number-3 and rs[-1]['backoff_seconds']==[5,15][number-4]
+        policy=read(OUT/'timeout-retry-authorization.json')
+        assert current['timeout_retry_policy']==policy
+        assert policy['max_additional_retries_per_request_hash']==2
+        assert policy['generation_request_seconds']==60
+        previous=current
     sample=read(OUT/'quality-sample-default.json');review=read(OUT/'quality-review-default.json')
     assert sha(OUT/'quality-sample-default.json')==review['inputs']['sample_sha256']
     units={u['ms_text_unit_id']:u for u in read(ROOT/'research/pilot/results/index/text-unit-provenance.json')}
@@ -135,7 +158,7 @@ def main():
             assert judged['evidence']
             for e in judged['evidence']:assert linked[e['input_id']]==e['source_title'] and e['snippet']
     assert not review['reviewer']['human_review'] and not review['reviewer']['blind_review']
-    print('Verified frozen inputs, three interruption snapshots, 104 successful generations and 3 unknown outcomes, approved75-to76 and96-to97 retry lineage, unchanged cumulative limits and 40 baseline audit records. No new retrieval claim or model call.')
+    print('Verified frozen inputs, five interruption snapshots, 104 successful generations and 5 unknown outcomes, approved75-to76,96-to97 and107-to108-to109 lineage, bounded retry exhaustion, unchanged cumulative limits and 40 baseline audit records. No new retrieval claim or model call.')
 
 
 if __name__=='__main__':main()

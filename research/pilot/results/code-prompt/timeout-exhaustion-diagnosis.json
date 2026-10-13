@@ -1,0 +1,105 @@
+{
+  "checked_utc": "2026-10-13T14:58:08.008390+00:00",
+  "mode": "read_only_no_new_service_calls",
+  "input_snapshot": "execution-interrupted-05.json",
+  "diagnosis": "Five observed stops were local worker60-second SIGALRM timers; exact logical request107 timed out on all three physical attempts107,108,109.",
+  "unknown_events": [
+    {
+      "sequence": 75,
+      "elapsed_seconds": 60.149,
+      "error_category": "worker_wall_timeout",
+      "supervisor_reason": null,
+      "worker_exit": 0,
+      "http_status": null,
+      "request_body_sha256": "397841f60bb2c98e5aa396ad141b8e63b6dce707f14b4ccdb18a30d95d1de6a9"
+    },
+    {
+      "sequence": 96,
+      "elapsed_seconds": 60.158,
+      "error_category": "worker_wall_timeout",
+      "supervisor_reason": null,
+      "worker_exit": 0,
+      "http_status": null,
+      "request_body_sha256": "7f7c99d80fd0de658914e979b3d131adf35fbfbdb6fed5c7e41086f86806566a"
+    },
+    {
+      "sequence": 107,
+      "elapsed_seconds": 60.112,
+      "error_category": "worker_wall_timeout",
+      "supervisor_reason": null,
+      "worker_exit": 0,
+      "http_status": null,
+      "request_body_sha256": "824657e6c6f95af4c7c8c031c9e12edd10e05e6ae2d7c34997a074b5f7156fdc"
+    },
+    {
+      "sequence": 108,
+      "elapsed_seconds": 60.231,
+      "error_category": "worker_wall_timeout",
+      "supervisor_reason": null,
+      "worker_exit": 0,
+      "http_status": null,
+      "request_body_sha256": "824657e6c6f95af4c7c8c031c9e12edd10e05e6ae2d7c34997a074b5f7156fdc"
+    },
+    {
+      "sequence": 109,
+      "elapsed_seconds": 60.273,
+      "error_category": "worker_wall_timeout",
+      "supervisor_reason": null,
+      "worker_exit": 0,
+      "http_status": null,
+      "request_body_sha256": "824657e6c6f95af4c7c8c031c9e12edd10e05e6ae2d7c34997a074b5f7156fdc"
+    }
+  ],
+  "successful_latency_seconds": {
+    "n": 104,
+    "median": 19.5765,
+    "p95_nearest_rank": 34.97,
+    "max": 54.825,
+    "above45": 3
+  },
+  "implementation_evidence": {
+    "worker": "research/pilot/probe_runtime.py:366-390",
+    "controller": "research/pilot/full_runtime.py:316-328",
+    "timer": "SIGALRM/ITIMER_REAL=60; urllib socket timeout=60; outer supervisor request limit=62 and original total deadline",
+    "stream": "Requests set stream=true, but worker reads the response body completely before parsing/saving. No partial SSE progress or time-to-first-byte is persisted.",
+    "exit_zero": "Worker catches local Stop and writes an error envelope, then exits normally; exit0 is not a successful provider reply."
+  },
+  "limitations": [
+    "No persisted HTTP status, response body or usage exists for75,96,107,108,109. Cannot locate the stall in connect/headers/body, infer server cancellation, or distinguish queueing, generation and network delay.",
+    "Success-only latency statistics are censored by60 seconds and do not estimate the failed requests eventual completion times.",
+    "The approved identical-body retries76 and97 completed in34.485 and22.563 seconds; this is consistent with transient variability but does not identify its cause.",
+    "The client reads the entire stream before parsing. Without saved progress, cannot rule out waiting for EOF even if a terminal SSE event had arrived; no evidence shows that this happened."
+  ],
+  "recommendation": {
+    "generation_request_seconds": 120,
+    "status": "proposal_only_not_applied",
+    "rationale": "Allow twice the former client wait and more headroom above the observed54.825-second success tail;120 is an engineering bound, not an empirically established optimum or completion guarantee.",
+    "keep": [
+      "original16:12:59.674100UTC deadline",
+      "cumulative budgets",
+      "concurrency1",
+      "same prompts/model/payloads/score",
+      "bounded retries with backoff and unknown usage retained"
+    ],
+    "comparability": "Changing the client wait would leave prompt and retrieval parameters unchanged, but changes which responses complete and would create a mixed timeout policy. Record the exact boundary; compare retrieval descriptively, and do not attribute improved completion, latency/cost or retrieval solely to prompt changes.",
+    "exhausted_request": "Changing the timer does not reset attempt count; this exhausted request needs a separately defined decision before any further replay.",
+    "observability_for_next_authorized_attempt": "Record only safe timing and byte/event counters for first byte, last progress and completed terminal event. This can distinguish slow generation from a stream that does not close; do not publish credentials or partial internal reasoning. No instrumentation change was applied here."
+  },
+  "applied_change": "Only authorized retries108 and109 with5/15-second backoff. No timeout, cumulative budget, deadline or prompt changes.",
+  "retry_exhaustion": {
+    "original_event": 107,
+    "attempts": [
+      107,
+      108,
+      109
+    ],
+    "same_request_body_sha256": "824657e6c6f95af4c7c8c031c9e12edd10e05e6ae2d7c34997a074b5f7156fdc",
+    "extra_retries": 2,
+    "controller_stopped": true,
+    "no_event110": true,
+    "successful_cache_entries_verified": 104,
+    "imported_vector_hashes_verified": 134,
+    "cumulative_cache_hits": 376
+  },
+  "original_deadline_utc": "2026-10-13T16:12:59.674100+00:00"
+}
