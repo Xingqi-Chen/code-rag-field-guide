@@ -193,6 +193,45 @@ def main():
     assert stopped520['wall_deadline_removed'] and stopped520['limits']['wall_seconds'] is None
     assert stopped520['limits']['generation_request_seconds']==120
     assert stopped520['request_timing']['non_dispatched_supervised_seconds']==.214
+    approved520=read(OUT/'http520-authorization.json')
+    amendment520=read(OUT/'http520-retry-amendment.json')
+    progress520=read(OUT/'http520-recovery-progress.json')
+    assert approved520['human_approval_utc']==amendment520['human_approval_utc']==progress520['human_approval_utc']=='2026-10-13T16:18:23+00:00'
+    assert amendment520['first_possible_event']==273 and amendment520['trigger_event']==272
+    assert amendment520['explicit_separate_http520_recovery_approval_confirmed']
+    assert not amendment520['cumulative_budgets_reset'] and not amendment520['total_deadline_reintroduced']
+    assert approved520['timeout_and_http520_share_max_additional_attempts']==2
+    continued520=progress520['successful_retry']
+    assert continued520['sequence']==273 and continued520['status']=='validated' and continued520['http_status']==200
+    assert continued520['request_body_sha256']==events520[-1]['request_body_sha256']
+    assert progress520['lineage']['event']==272 and progress520['lineage']['retry_event']==273
+    assert progress520['lineage']['reason']=='http520_without_complete_model_response'
+    assert progress520['lineage']['authorization_utc']==approved520['human_approval_utc']
+    assert progress520['successful_generation_cache_reuse_this_recovery']==265 and progress520['cumulative_cache_hits_at_recovery']==934
+    assert progress520['prior_unknown_usage_sequences_retained']==stopped520['unknown_usage_sequences']
+    witnesses=read(OUT/'preindex-fixed-witnesses.json')
+    old_witnesses=read(ROOT/'research/pilot/results/failure-analysis/extraction-witnesses.json')
+    witness_review=read(OUT/'preindex-witness-review.json')
+    parser_check=read(OUT/'preindex-official-parser-check.json')
+    assert sha(OUT/'preindex-fixed-witnesses.json')==witness_review['input_files']['new_file_sha256']==parser_check['source_witness_sha256']
+    assert sha(ROOT/'research/pilot/results/failure-analysis/extraction-witnesses.json')==witness_review['input_files']['old_file_sha256']
+    assert len(witnesses['units'])==len(old_witnesses['units'])==len(parser_check['rows'])==4
+    response_map={'old':{},'new':{}}
+    for old_unit,new_unit in zip(old_witnesses['units'],witnesses['units'],strict=True):
+        assert new_unit['title']==old_unit['title'] and new_unit['source_text']==old_unit['source_text']
+        assert hashlib.sha256(new_unit['source_text'].encode()).hexdigest()==new_unit['source_text_sha256']
+        assert len(new_unit['replies'])==2
+        for reply in new_unit['replies']:
+            assert hashlib.sha256(reply['content'].encode()).hexdigest()==reply['content_sha256']
+            assert reply['request_body_sha256']==events520[reply['sequence']-1]['request_body_sha256']
+        for label,unit in [('old',old_unit),('new',new_unit)]:
+            for reply in unit['replies']:response_map[label][reply['sequence']]=reply['content']
+    assert sum(len(case['findings']) for case in witness_review['case_reviews'])==14
+    for case in witness_review['case_reviews']:
+        for finding in case['findings']:
+            for evidence in finding['response_evidence']:
+                assert evidence['record_contains'] in response_map[evidence['run']][evidence['sequence']]
+    assert all(r['entity_gap']==1 and r['relationship_gap']==0 for r in parser_check['rows'])
     sample=read(OUT/'quality-sample-default.json');review=read(OUT/'quality-review-default.json')
     assert sha(OUT/'quality-sample-default.json')==review['inputs']['sample_sha256']
     units={u['ms_text_unit_id']:u for u in read(ROOT/'research/pilot/results/index/text-unit-provenance.json')}
