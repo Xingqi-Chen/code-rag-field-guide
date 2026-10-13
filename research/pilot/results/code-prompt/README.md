@@ -1,6 +1,10 @@
 # 代码提示词实验：真实中断与恢复记录
 
-**当前状态：HTTP 520获准恢复，索引继续。** 用户16:18:23 UTC批准本轮HTTP 520与timeout共享每请求最多两次额外尝试。273与272请求哈希一致，2.906秒成功，265份缓存复用，累计缓存命中934。此前114块初抽／补抽已完成；尚无最终新图或Local评分。[授权](http520-authorization.json)、[配置生效](http520-retry-amendment.json)及[273成功关联](http520-recovery-progress.json)单独保存。以下为第272次暂停时的诊断事实。
+**当前状态：第623次HTTP 503暂停，等待单独有限恢复许可。** 16:53 UTC收到JSON错误，分类`model_related`，2.280秒；未保存完整错误正文，也没有模型回复或usage，因此不猜测具体故障。615份成功生成缓存和134个导入向量核验通过。此前只批准超时／HTTP 520，控制器没有重发503。[诊断](http503-diagnosis.json)、[累计623条记录](execution-interrupted-09.json)及[待批准恢复入口](../../resume_code_prompt_http503.py)、[独立复核](http503-recovery-review.json)和[实际离线检查](verification-09.json)可核对。新入口只允许同一逻辑请求的503与超时／520共享最多两次额外尝试；120秒、累计预算和无总截止状态不变，尚未执行。
+
+第554次因执行通道丢失而未写回账本，但HTTP 200完整回复已经落盘。恢复时离线验证547份成功回复和134个向量，554不重发；之后成功推进555–622。[恢复证据](host-recovery-554.json)记录原账本状态与未知耗时。准确的进程停止时刻未捕获，累计workflow时间含未知停机间隔，不是精确有效运行时间。
+
+更早的HTTP 520已经获准恢复：273与272请求哈希一致，2.906秒成功，265份缓存复用。[授权](http520-authorization.json)、[配置生效](http520-retry-amendment.json)及[273成功关联](http520-recovery-progress.json)单独保存。以下保留历史诊断与阶段快照。
 
 [HTTP 520诊断](http520-diagnosis.json)、[本次中断账本](execution-interrupted-07.json)及[恢复入口独立复核](http520-recovery-review.json)保留证据。272条预算记录中，195是未发送的行政占位，实际服务尝试271次；未知模型用量为75／96／107／108／109／272六条。文件编号跟随恢复次数，06是取消总截止前的行政停点，单独保存在[切换记录](deadline-removal-progress.json)。
 

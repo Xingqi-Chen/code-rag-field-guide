@@ -209,6 +209,31 @@ def main():
     assert progress520['lineage']['authorization_utc']==approved520['human_approval_utc']
     assert progress520['successful_generation_cache_reuse_this_recovery']==265 and progress520['cumulative_cache_hits_at_recovery']==934
     assert progress520['prior_unknown_usage_sequences_retained']==stopped520['unknown_usage_sequences']
+    host=read(OUT/'host-recovery-554.json');stopped503=read(OUT/'execution-interrupted-09.json')
+    events503=stopped503['events'];diagnosis503=read(OUT/'http503-diagnosis.json')
+    assert len(events503)==stopped503['index_generation_attempts']==623
+    assert stopped503['status']=='stopped' and stopped503['stop_reason']=='model_related'
+    assert events503[-1]['http_status']==503 and events503[-1]['error_category']=='model_related'
+    assert stopped503['unknown_usage_sequences']==[75,96,107,108,109,272,623]
+    assert stopped503['non_dispatched_reservations']==[195]
+    assert stopped503['provider_dispatch_attempts']=={'generation':622}
+    assert sum(e['status']=='validated' for e in events503)==diagnosis503['successful_generation_cache_entries_verified']==615
+    event554=events503[553]
+    assert event554['request_body_sha256']==host['event']['request_body_sha256']
+    assert sum(e['request_body_sha256']==event554['request_body_sha256'] for e in events503)==1
+    assert event554['usage']==host['event']['usage']=={'prompt_tokens':1811,'completion_tokens':97,'total_tokens':1908}
+    assert 'elapsed_seconds' not in event554 and host['recovery']['request_elapsed_seconds'] is None
+    assert host['recovery']['new_calls_for_recovery']==0 and host['recovery']['successful_responses_reused']==547
+    assert stopped503['request_timing']['missing_supervised_timing_sequences']==[554]
+    assert stopped503['host_interruption_timing']['actual_process_end_utc'] is None
+    assert stopped503['generation_input_tokens']==sum(e['input_tokens'] for e in events503)==755205
+    assert stopped503['completion_cache_hits']==1481 and stopped503['embedding_attempts']==0
+    assert stopped503['embedding_reserved_tokens']==206333 and stopped503['wall_deadline_removed']
+    totals=Counter()
+    for e in events503:
+        for k,v in e.get('usage',{}).items():
+            if type(v) is int:totals[e['service']+'_'+k]+=v
+    assert dict(totals)==stopped503['observed_usage_totals']
     witnesses=read(OUT/'preindex-fixed-witnesses.json')
     old_witnesses=read(ROOT/'research/pilot/results/failure-analysis/extraction-witnesses.json')
     witness_review=read(OUT/'preindex-witness-review.json')
@@ -250,7 +275,7 @@ def main():
             assert judged['evidence']
             for e in judged['evidence']:assert linked[e['input_id']]==e['source_title'] and e['snippet']
     assert not review['reviewer']['human_review'] and not review['reviewer']['blind_review']
-    print('Verified frozen inputs, five historical interruption snapshots, bounded retry lineage, authorized120-second policy and successful110 recovery, subsequent removal of total deadline with non-dispatched195 and successful196, preserved cumulative caps and 40 baseline audit records. No completed retrieval claim or model call.')
+    print('Verified frozen inputs, historical timeout/HTTP520/HTTP503 snapshots,554 complete-reply recovery without replay, preserved cumulative caps and timing uncertainty, fixed witnesses and40 baseline audit records. No completed retrieval claim or model call.')
 
 
 if __name__=='__main__':main()
