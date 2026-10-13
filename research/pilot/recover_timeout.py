@@ -20,7 +20,8 @@ def main():
     if (state['status']!='stopped' or state['stop_reason']!='worker_wall_timeout'
             or len(state['events'])!=159 or state['index_generation_attempts']!=159):
         raise full.Halt('not_the_diagnosed_event_159_timeout')
-    runtime.check_deadline()
+    # The old window expired overnight. The user explicitly authorized a new
+    # recovery window; it begins only when the actual resume process starts.
     if (run/'stopped-02.json').exists():raise full.Halt('recovery_already_attempted')
     for event in state['events'][:-1]:
         seq=event['sequence']
@@ -52,11 +53,14 @@ def main():
     state.setdefault('recoveries',[]).append({'time_utc':full.now(),'event':159,
         'reason':'worker_wall_timeout_without_complete_response',
         'explicit_one_time_retry_authorized':True,
+        'authorization_date_utc':'2026-10-13T00:24:00+00:00',
+        'new_recovery_window_seconds':7200,
         'remote_completion_and_cost_unknown':True,
         'successful_responses_reused':158,'snapshot':'stopped-02.json',
         'retry_request_body_sha256':last['request_body_sha256']})
     state['verified_resume_ready']=True
     state['verified_resume_number']=2
+    state['pending_recovery_window_seconds']=7200
     runtime.save()
     print(json.dumps({'offline_recovery_ready':True,'successful_cached_replies':158,
                       'uncertain_request_to_retry_once':159,'additional_provider_calls':0}))

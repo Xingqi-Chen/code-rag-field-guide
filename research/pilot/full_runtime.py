@@ -5,7 +5,7 @@ only supplies its supported LLM interfaces, transport, shared cache and ledger.
 Successful compatibility responses are reusable; failures are never cache hits.
 """
 import argparse
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from decimal import Decimal
 import json
 import os
@@ -158,9 +158,13 @@ class Runtime:
     def save(self):
         probe.save(RUN / 'summary.json', self.ledger)
 
+    def remaining_seconds(self):
+        if 'window_deadline_utc' in self.ledger:
+            return datetime.fromisoformat(self.ledger['window_deadline_utc']).timestamp()-time.time()
+        return LIMITS['wall_seconds']-(time.time()-datetime.fromisoformat(self.ledger['started_utc']).timestamp())
+
     def check_deadline(self):
-        if 'started_utc' in self.ledger and time.time() >= datetime.fromisoformat(
-                self.ledger['started_utc']).timestamp() + LIMITS['wall_seconds']:
+        if 'started_utc' in self.ledger and self.remaining_seconds()<=0:
             self.fail('full_run_deadline')
 
     def begin(self, stage='index', resume=False):
@@ -178,6 +182,14 @@ class Runtime:
         self.phase = stage
         if resume:self.ledger['verified_resume_ready']=False
         self.ledger.setdefault('started_utc', now())
+        if resume and self.ledger.pop('pending_recovery_window_seconds',None)==7200:
+            started=datetime.now(timezone.utc)
+            self.ledger['window_started_utc']=started.isoformat()
+            self.ledger['window_deadline_utc']=(started+timedelta(seconds=7200)).isoformat()
+            self.ledger.setdefault('execution_windows',[]).append({
+                'started_utc':self.ledger['window_started_utc'],
+                'deadline_utc':self.ledger['window_deadline_utc'],
+                'reason':'Explicitly authorized recovery on 2026-10-13; cumulative usage retained'})
         self.ledger['status'] = 'running'
         self.ledger.pop('stop_reason', None)
         self.ledger['source_commit'] = subprocess.check_output(
@@ -188,7 +200,7 @@ class Runtime:
         self.save()
         # A stage-wide timer also interrupts cache/local work. Per-request
         # supervision reaps its worker in finally when this fires.
-        remaining = LIMITS['wall_seconds'] - (time.time() - datetime.fromisoformat(self.ledger['started_utc']).timestamp())
+        remaining = self.remaining_seconds()
         self.check_deadline()
         signal.signal(signal.SIGALRM, lambda *_: self.fail('full_run_deadline'))
         signal.setitimer(signal.ITIMER_REAL, remaining)
@@ -244,11 +256,17 @@ class Runtime:
                 raise Halt('offline_cache_miss')
             if self.stopped or self.ledger['status'] != 'running':
                 self.fail('run_not_running')
-            started = datetime.fromisoformat(self.ledger['started_utc']).timestamp()
-            remaining = LIMITS['wall_seconds'] - (time.time() - started)
+            remaining = self.remaining_seconds()
             if remaining <= 0:
                 self.fail('full_run_deadline')
             validate_payload(service, body)
+            body_sha=probe.digest(probe.canonical(body).encode())
+            retry=None
+            if service=='generation' and any(e['request_body_sha256']==body_sha for e in self.ledger['events']):
+                retry=next((r for r in self.ledger.get('recoveries',[]) if
+                    r.get('explicit_one_time_retry_authorized') and r.get('retry_request_body_sha256')==body_sha
+                    and 'retry_event' not in r),None)
+                if retry is None:self.fail('duplicate_generation_without_unused_specific_retry_authorization')
             if service == 'generation':
                 key = self.phase + '_generation_attempts'
                 if self.ledger[key] >= LIMITS['generation_' + self.phase + '_attempts']:
@@ -269,10 +287,11 @@ class Runtime:
                 self.ledger['embedding_attempts'] += 1
                 self.ledger['embedding_reserved_tokens'] = total
             seq = len(self.ledger['events']) + 1
+            if retry is not None:retry['retry_event']=seq
             event = {'sequence': seq, 'service': service, 'phase': self.phase,
                      'workflow': self.workflow, 'input_tokens': sum(token_counts),
                      'items': len(token_counts), 'status': 'reserved_before_dispatch',
-                     'request_body_sha256': probe.digest(probe.canonical(body).encode()), 'started_utc': now(),
+                     'request_body_sha256': body_sha, 'started_utc': now(),
                      'source_commit': self.ledger['source_commit']}
             self.ledger['events'].append(event)
             request, response = RUN/f'request-{seq:02}.json', RUN/f'response-{seq:02}.json'
