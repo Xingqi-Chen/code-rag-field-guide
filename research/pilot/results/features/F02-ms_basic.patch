@@ -1,0 +1,78 @@
+--- a/src/requests/sessions.py
++++ b/src/requests/sessions.py
+@@ -32,6 +32,8 @@ from .utils import (
+ )
+ 
+ 
++_DEFAULT_TIMEOUT = object()
++
++
+ class SessionRedirectMixin:
+     def get_redirect_target(self, resp):
+         """Receives a Response. Returns a redirect URI or ``None``"""
+@@ -382,6 +384,7 @@ class SessionRedirectMixin:
+ 
+ 
+ class Session(SessionRedirectMixin):
++    __attrs__ = [
+     __attrs__ = [
+         "headers",
+         "cookies",
+@@ -396,6 +399,7 @@ class Session(SessionRedirectMixin):
+         "stream",
+         "trust_env",
+         "max_redirects",
++        "default_timeout",
+     ]
+ 
+     def __init__(self):
+@@ -418,6 +422,7 @@ class Session(SessionRedirectMixin):
+         self.stream = False
+         self.verify = True
+         self.cert = None
++        self.default_timeout = None
+         self.max_redirects = DEFAULT_REDIRECT_LIMIT
+         self.trust_env = True
+ 
+@@ -466,7 +471,7 @@ class Session(SessionRedirectMixin):
+         hooks=None,
+         stream=None,
+         verify=None,
+         cert=None,
+-        timeout=None,
++        timeout=_DEFAULT_TIMEOUT,
+         allow_redirects=True,
+         proxies=None,
+         json=None,
+@@ -476,6 +481,9 @@ class Session(SessionRedirectMixin):
+         :param method: method for the new :class:`Request` object.
+         :param url: URL for the new :class:`Request` object.
+         """
++        if timeout is _DEFAULT_TIMEOUT:
++            timeout = self.default_timeout
++
+         # Create the Request.
+         req = Request(
+             method=method.upper(),
+--- a/docs/user/advanced.rst
++++ b/docs/user/advanced.rst
+@@ -35,6 +35,15 @@ parameters override session parameters.
+ requests, even if using a session. This example will only send the cookies
+ with the first request, but not the second::
+ 
++Sessions also provide a mutable ``default_timeout`` attribute. When a timeout
++is omitted from a call to ``Session.request()`` or one of its method wrappers,
++the session's ``default_timeout`` is used. It is initialized to ``None``::
++
++    s = requests.Session()
++    s.default_timeout = 5
++    r = s.get('https://httpbin.org/delay/1')
++
++An explicitly supplied ``timeout``, including ``None``, takes precedence over
++``default_timeout``. The default applies to the request methods only; calling
++``Session.send()`` directly retains its existing timeout behavior.
++
+     s = requests.Session()
+ 
+     r = s.get('https://httpbin.org/cookies', cookies={'from-my': 'browser'})
+     print(r.text)

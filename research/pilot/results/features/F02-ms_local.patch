@@ -1,0 +1,61 @@
+diff --git a/src/requests/sessions.py b/src/requests/sessions.py
+--- a/src/requests/sessions.py
++++ b/src/requests/sessions.py
+@@ -1,6 +1,8 @@
+ # -*- coding: utf-8 -*-
+ 
++_DEFAULT_TIMEOUT = object()
++
++
+ class SessionRedirectMixin:
+     def resolve_redirects(
+         self,
+@@ -376,6 +378,7 @@ class Session(SessionRedirectMixin):
+         "stream",
+         "trust_env",
+         "max_redirects",
++        "default_timeout",
+     ]
+ 
+     def __init__(self):
+@@ -397,6 +400,7 @@ class Session(SessionRedirectMixin):
+         self.cert = None
+         self.max_redirects = DEFAULT_REDIRECT_LIMIT
+         self.trust_env = True
++        self.default_timeout = None
+ 
+         # Mounting the adapters...
+         self.adapters = OrderedDict()
+@@ -481,7 +485,7 @@ class Session(SessionRedirectMixin):
+         files=None,
+         auth=None,
+-        timeout=None,
++        timeout=_DEFAULT_TIMEOUT,
+         allow_redirects=True,
+         proxies=None,
+         hooks=None,
+@@ -530,6 +534,9 @@ class Session(SessionRedirectMixin):
+         :rtype: requests.Response
+         """
+ 
++        if timeout is _DEFAULT_TIMEOUT:
++            timeout = self.default_timeout
++
+         # Create the Request.
+         req = Request(
+             method=method.upper(),
+diff --git a/docs/user/advanced.rst b/docs/user/advanced.rst
+--- a/docs/user/advanced.rst
++++ b/docs/user/advanced.rst
+@@ -35,6 +35,11 @@ You can also pass a tuple to specify separate timeouts for the connect and read
+ requests.get('https://github.com', timeout=(3.05, 27))
+ ```
+ 
++When using a :class:`Session`, ``Session.default_timeout`` is used when the
++``timeout`` argument is omitted. It is initialized to ``None``. Passing
++``timeout=None`` explicitly takes precedence over ``Session.default_timeout``
++for that request.
++
+ If the remote server is very slow, you can tell Requests to wait forever for
+ a response, by passing ``None`` as the timeout value:
+ 

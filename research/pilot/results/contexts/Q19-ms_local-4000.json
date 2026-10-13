@@ -1,0 +1,501 @@
+{
+  "question_id": "Q19",
+  "method": "ms_local",
+  "budget": 4000,
+  "query": "Find the implementation of a class named AsyncSession in this indexed snapshot. If there is none, say it was not found rather than substitute a synchronous Session.",
+  "upstream_raw_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n21|SESSION|SESSION is a Requests library client object that manages persistent state and configuration while sending multiple HTTP and HTTPS requests. It stores and applies cookies, headers, authentication, proxy settings, hooks, environment settings, certificates, and TLS verification options. SESSION creates and mounts HTTPAdapter instances to contact HTTP and HTTPS URLs, maintaining separate connection pools when TLS configurations differ and providing connection pooling for efficient reuse. It prepares and sends requests, including prepared requests, resolves redirect chains subject to configured redirect limits, and manages the adapters used for network communication. SESSION also supports pickling and serves as the central mechanism for maintaining consistent request behavior across a series of HTTP operations.|14\n527|SESSION ADAPTER MATCHING TEST|The session adapter matching test verifies that Session.get_adapter selects the adapter matching the most specific URL prefix)<|2\n490|PREPARED FROM SESSION TEST|A test event that verifies a Session prepares a request with session-level authentication and sends the resulting authentication header.|1\n523|SESSION PICKLING TEST|The session pickling test serializes and restores a Session, configures its proxies, and sends a prepared request successfully)<|2\n531|SESSION ADAPTER PREFIX MATCHING|A test event verifying that a Requests Session selects the adapter mounted at the most specific matching URL prefix and ignores adapters for unrelated prefixes|2\n16|SESSION API DOCS|The Session API Docs provide additional documentation about the Requests Session object and its available values and methods.|1\n583|CUSTOM REDIRECT SESSION|A subclass of the Requests Session class that overrides get_redirect_target to follow valid redirects and certain malformed responses containing a different location header.|2\n487|SESSION HOOKS USED WITH NO REQUEST HOOKS TEST|A test event that verifies response hooks configured on a Session are inherited by a request without its own hooks.|1\n571|TEST_UNCONSUMED_SESSION_RESPONSE_CLOSES_CONNECTION|A test that verifies closing an unconsumed streamed session response closes its raw connection without marking its content as consumed|3\n573|TEST_SESSION_CLOSE_PROXY_CLEAR|A test that verifies closing a session clears all configured proxy managers|2\n488|SESSION HOOKS OVERRIDDEN BY REQUEST HOOKS TEST|A test event that verifies request-specific response hooks replace the response hooks configured on a Session.|1\n588|URLLIB3 POOL CONNECTION CLOSED TEST|A test event that verifies Requests reports that the connection pool is closed when a session uses zero pool connections and zero pool size|3\n381|THREADING EVENT|A synchronization event used to signal the test server that it may close after the request assertions finish.|1\n431|TEST HEADERS PRESERVE ORDER|A test event verifying that ordered session and request headers preserve their expected order while request headers override duplicate session headers|1\n535|CASE-SENSITIVE PARAMETER MERGING|A test event verifying that session parameters and per-request parameters with differently cased keys remain as separate parameters|1\n532|SESSION ADAPTER MIXED-CASE PREFIX MATCHING|A test event verifying that a mounted HTTPAdapter matches a URL whose scheme, host, and path prefix use mixed capitalization|2\n430|TEST HEADERS ON SESSION WITH NONE ARE NOT SENT|A test event verifying that session headers assigned a None value are omitted from prepared Requests requests|1\n533|SESSION ADAPTER CASE-INSENSITIVE MATCHING|A test event verifying that URL adapter prefix matching is case-insensitive when the mounted prefix and requested URL use different capitalization|2\n361|EVENT|Event is a threading synchronization utility used to coordinate release and shutdown of local test servers|2\n\n\n-----Relationships-----\nid|source|target|description|weight|links\n36|SESSION|REQUESTS|SESSION is a component of the REQUESTS library that manages and sends HTTP requests while preserving cookies and other state across multiple requests.|18.0|1\n10|REQUESTS|SESSION|Requests provides the `Session` object for persistent HTTP communication and session-level state. A Requests Session maintains parameters, cookies, HTTPS adapters, connection behavior, and connection pools across multiple HTTP requests. It is used throughout the tests to preserve configuration and efficiently manage persistent connections.|37.0|1\n176|SESSION|HTTPADAPTER|The `SESSION` class typically creates and mounts `HTTPADAPTER` instances for both HTTP and HTTPS protocols. It associates these adapters with URL prefixes, enabling `SESSION` to select the appropriate `HTTPADAPTER` when sending outgoing requests. The mounted adapters provide connection handling for HTTP and HTTPS connections.|28.0|1\n396|SESSION|RESPONSE|SESSION sends prepared requests and receives or returns RESPONSE objects. These responses may trigger redirect processing, and their status codes and request metadata can be inspected.|18.0|1\n350|RESPONSE|SESSION|The Response documentation references Session.resolve_redirects as the component that processes redirect chains.|7.0|1\n395|SESSION|REQUESTSCOOKIEJAR|SESSION creates and stores cookies in a REQUESTSCOOKIEJAR by default. The REQUESTSCOOKIEJAR persists cookies across requests, and SESSION merges its stored cookies with any cookies provided for individual requests.|18.0|1\n11|SESSION|REQUEST|SESSION manages and sends REQUEST objects over HTTP. It prepares each REQUEST and applies session-level configuration, including authentication, proxy settings, headers, cookies, and transport adapters, ensuring consistent behavior across requests.|27.0|1\n37|REQUEST|SESSION|A Request can be prepared by a Session so that session-level state is applied before sending.|1.0|1\n339|SESSION|PREPAREDREQUEST|SESSION converts a Request into a PREPAREDREQUEST before transmission. SESSION.send transmits PREPAREDREQUEST objects, and unpickled PREPAREDREQUEST instances remain valid and sendable. The PREPAREDREQUEST documentation demonstrates SESSION sending a prepared request to a server.|18.0|1\n824|PICKLE|SESSION|Pickle is used to serialize and restore Requests Session objects|1.0|1\n\n\n-----Sources-----\nid|text\n55|        #: session. By default it is a\n        #: :class:`RequestsCookieJar <requests.cookies.RequestsCookieJar>`, but\n        #: may be any other ``cookielib.CookieJar`` compatible object.\n        self.cookies = cookiejar_from_dict({})\n\n        # Default connection adapters.\n        self.adapters = OrderedDict()\n        self.mount(\"https://\", HTTPAdapter())\n        self.mount(\"http://\", HTTPAdapter())\n\n    def __enter__(self):\n        return self\n\n    def __exit__(self, *args):\n        self.close()\n\n    def prepare_request(self, request):\n        \"\"\"Constructs a :class:`PreparedRequest <PreparedRequest>` for\n        transmission and returns it. The :class:`PreparedRequest` has settings\n        merged from the :class:`Request <Request>` instance and those of the\n        :class:`Session`.\n\n        :param request: :class:`Request` instance to prepare with this\n            session's settings.\n        :rtype: requests.PreparedRequest\n        \"\"\"\n        cookies = request.cookies or {}\n\n        # Bootstrap CookieJar.\n        if not isinstance(cookies, cookielib.CookieJar):\n            cookies = cookiejar_from_dict(cookies)\n\n        # Merge with session cookies\n        merged_cookies = merge_cookies(\n            merge_cookies(RequestsCookieJar(), self.cookies), cookies\n        )\n\n        # Set environment's basic authentication if not explicitly set.\n        auth = request.auth\n        if self.trust_env and not auth and not self.auth:\n            auth = get_netrc_auth(request.url)\n\n        p = PreparedRequest()\n        p.prepare(\n            method=request.method.upper(),\n            url=request.url,\n            files=request.files,\n            data=request.data,\n            json=request.json,\n            headers=merge_setting(\n                request.headers, self.headers, dict_class=CaseInsensitiveDict\n            ),\n            params=merge_setting(request.params, self.params),\n            auth=merge_setting(auth, self.auth),\n            cookies=merged_cookies,\n            hooks=merge_hooks(request.hooks, self.hooks),\n        )\n        return p\n\n    def request(\n        self,\n        method,\n        url,\n        params=None,\n        data=None,\n        headers=None,\n        cookies=None,\n        files=None,\n        auth=None,\n        timeout=None,\n        allow_redirects=True,\n        proxies=None,\n        hooks=None,\n        stream=None,\n        verify=None,\n        cert=None,\n        json=None,\n    ):\n        \"\"\"Constructs a :class:`Request <Request>`, prepares it and sends it.\n        Returns :class:`Response <Response>` object.\n\n        :param method: method for the new :class:`Request` object.\n        :param url: URL for the new :class:`Request` object.\n        :param params: (optional) Dictionary or bytes to be sent in the query\n            string for the :class:`Request`.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param json: (optional) json to send in the body of the\n            :class:`Request`.\n        :param headers: (optional) Dictionary of HTTP Headers to send with the\n            :class:`Request`.\n        :param cookies: (optional) Dict or CookieJar object to send with the\n            :class:`Request`.\n        :param files: (optional) Dictionary of ``'filename': file-like-objects``\n            for multipart encoding upload.\n        :param auth: (optional) Auth tuple or callable to enable\n            Basic/Digest/Custom HTTP Auth.\n        :param timeout: (optional) How long to wait for the server to send\n            data before giving up, as a float, or a :ref:`(connect timeout,\n            read timeout) <timeouts>` tuple.\n        :type timeout: float or tuple\n        :param allow_redirects: (optional) Set to True by default.\n        :type allow_redirects: bool\n        :param proxies: (optional) Dictionary mapping protocol or protocol and\n            hostname to the URL of the proxy.\n        :param hooks: (optional) Dictionary mapping hook name to one event or\n            list of events, event must be callable.\n        :param stream: (optional) whether to immediately download the response\n            content. Defaults to ``False``.\n        :param verify: (optional) Either a boolean, in which case it controls whether we verify\n            the server's TLS certificate, or a string, in which case it must be a path\n            to a CA bundle to use. Defaults to ``True``. When set to\n            ``False``, requests will accept any TLS certificate presented by\n            the server, and will ignore hostname mismatches and/or expired\n            certificates, which will make your application vulnerable to\n            man-in-the-middle (MitM) attacks. Setting verify to ``False``\n            may be useful during local development or testing.\n        :param cert: (optional) if String, path to ssl client cert file (.pem).\n            If Tuple, ('cert', 'key') pair.\n        :rtype: requests.Response\n        \"\"\"\n        # Create the Request.\n        req = Request(\n            method=method.upper(),\n            url=url,\n            headers=headers,\n            files=files,\n            data=data or {},\n            json=json,\n            params=params or {},\n            auth=auth,\n            cookies=cookies,\n            hooks=hooks,\n        )\n        prep = self.prepare_request(req)\n\n        proxies = proxies or {}\n\n        settings = self.merge_environment_settings(\n            prep.url, proxies, stream, verify, cert\n        )\n\n        # Send the request.\n        send_kwargs = {\n            \"timeout\": timeout,\n            \"allow_redirects\": allow_redirects,\n        }\n        send_kwargs.update(settings)\n\n",
+  "upstream_raw_records": {
+    "relationships": [
+      {
+        "id": "36",
+        "source": "SESSION",
+        "target": "REQUESTS",
+        "description": "SESSION is a component of the REQUESTS library that manages and sends HTTP requests while preserving cookies and other state across multiple requests.",
+        "weight": "18.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "10",
+        "source": "REQUESTS",
+        "target": "SESSION",
+        "description": "Requests provides the `Session` object for persistent HTTP communication and session-level state. A Requests Session maintains parameters, cookies, HTTPS adapters, connection behavior, and connection pools across multiple HTTP requests. It is used throughout the tests to preserve configuration and efficiently manage persistent connections.",
+        "weight": "37.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "176",
+        "source": "SESSION",
+        "target": "HTTPADAPTER",
+        "description": "The `SESSION` class typically creates and mounts `HTTPADAPTER` instances for both HTTP and HTTPS protocols. It associates these adapters with URL prefixes, enabling `SESSION` to select the appropriate `HTTPADAPTER` when sending outgoing requests. The mounted adapters provide connection handling for HTTP and HTTPS connections.",
+        "weight": "28.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "396",
+        "source": "SESSION",
+        "target": "RESPONSE",
+        "description": "SESSION sends prepared requests and receives or returns RESPONSE objects. These responses may trigger redirect processing, and their status codes and request metadata can be inspected.",
+        "weight": "18.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "350",
+        "source": "RESPONSE",
+        "target": "SESSION",
+        "description": "The Response documentation references Session.resolve_redirects as the component that processes redirect chains.",
+        "weight": "7.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "395",
+        "source": "SESSION",
+        "target": "REQUESTSCOOKIEJAR",
+        "description": "SESSION creates and stores cookies in a REQUESTSCOOKIEJAR by default. The REQUESTSCOOKIEJAR persists cookies across requests, and SESSION merges its stored cookies with any cookies provided for individual requests.",
+        "weight": "18.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "11",
+        "source": "SESSION",
+        "target": "REQUEST",
+        "description": "SESSION manages and sends REQUEST objects over HTTP. It prepares each REQUEST and applies session-level configuration, including authentication, proxy settings, headers, cookies, and transport adapters, ensuring consistent behavior across requests.",
+        "weight": "27.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "37",
+        "source": "REQUEST",
+        "target": "SESSION",
+        "description": "A Request can be prepared by a Session so that session-level state is applied before sending.",
+        "weight": "1.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "339",
+        "source": "SESSION",
+        "target": "PREPAREDREQUEST",
+        "description": "SESSION converts a Request into a PREPAREDREQUEST before transmission. SESSION.send transmits PREPAREDREQUEST objects, and unpickled PREPAREDREQUEST instances remain valid and sendable. The PREPAREDREQUEST documentation demonstrates SESSION sending a prepared request to a server.",
+        "weight": "18.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "824",
+        "source": "PICKLE",
+        "target": "SESSION",
+        "description": "Pickle is used to serialize and restore Requests Session objects",
+        "weight": "1.0",
+        "links": "1",
+        "in_context": true
+      }
+    ],
+    "entities": [
+      {
+        "id": "21",
+        "entity": "SESSION",
+        "description": "SESSION is a Requests library client object that manages persistent state and configuration while sending multiple HTTP and HTTPS requests. It stores and applies cookies, headers, authentication, proxy settings, hooks, environment settings, certificates, and TLS verification options. SESSION creates and mounts HTTPAdapter instances to contact HTTP and HTTPS URLs, maintaining separate connection pools when TLS configurations differ and providing connection pooling for efficient reuse. It prepares and sends requests, including prepared requests, resolves redirect chains subject to configured redirect limits, and manages the adapters used for network communication. SESSION also supports pickling and serves as the central mechanism for maintaining consistent request behavior across a series of HTTP operations.",
+        "number of relationships": "14",
+        "in_context": true
+      },
+      {
+        "id": "527",
+        "entity": "SESSION ADAPTER MATCHING TEST",
+        "description": "The session adapter matching test verifies that Session.get_adapter selects the adapter matching the most specific URL prefix)<",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "490",
+        "entity": "PREPARED FROM SESSION TEST",
+        "description": "A test event that verifies a Session prepares a request with session-level authentication and sends the resulting authentication header.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "523",
+        "entity": "SESSION PICKLING TEST",
+        "description": "The session pickling test serializes and restores a Session, configures its proxies, and sends a prepared request successfully)<",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "531",
+        "entity": "SESSION ADAPTER PREFIX MATCHING",
+        "description": "A test event verifying that a Requests Session selects the adapter mounted at the most specific matching URL prefix and ignores adapters for unrelated prefixes",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "16",
+        "entity": "SESSION API DOCS",
+        "description": "The Session API Docs provide additional documentation about the Requests Session object and its available values and methods.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "583",
+        "entity": "CUSTOM REDIRECT SESSION",
+        "description": "A subclass of the Requests Session class that overrides get_redirect_target to follow valid redirects and certain malformed responses containing a different location header.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "487",
+        "entity": "SESSION HOOKS USED WITH NO REQUEST HOOKS TEST",
+        "description": "A test event that verifies response hooks configured on a Session are inherited by a request without its own hooks.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "571",
+        "entity": "TEST_UNCONSUMED_SESSION_RESPONSE_CLOSES_CONNECTION",
+        "description": "A test that verifies closing an unconsumed streamed session response closes its raw connection without marking its content as consumed",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "573",
+        "entity": "TEST_SESSION_CLOSE_PROXY_CLEAR",
+        "description": "A test that verifies closing a session clears all configured proxy managers",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "488",
+        "entity": "SESSION HOOKS OVERRIDDEN BY REQUEST HOOKS TEST",
+        "description": "A test event that verifies request-specific response hooks replace the response hooks configured on a Session.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "588",
+        "entity": "URLLIB3 POOL CONNECTION CLOSED TEST",
+        "description": "A test event that verifies Requests reports that the connection pool is closed when a session uses zero pool connections and zero pool size",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "381",
+        "entity": "THREADING EVENT",
+        "description": "A synchronization event used to signal the test server that it may close after the request assertions finish.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "431",
+        "entity": "TEST HEADERS PRESERVE ORDER",
+        "description": "A test event verifying that ordered session and request headers preserve their expected order while request headers override duplicate session headers",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "535",
+        "entity": "CASE-SENSITIVE PARAMETER MERGING",
+        "description": "A test event verifying that session parameters and per-request parameters with differently cased keys remain as separate parameters",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "532",
+        "entity": "SESSION ADAPTER MIXED-CASE PREFIX MATCHING",
+        "description": "A test event verifying that a mounted HTTPAdapter matches a URL whose scheme, host, and path prefix use mixed capitalization",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "430",
+        "entity": "TEST HEADERS ON SESSION WITH NONE ARE NOT SENT",
+        "description": "A test event verifying that session headers assigned a None value are omitted from prepared Requests requests",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "533",
+        "entity": "SESSION ADAPTER CASE-INSENSITIVE MATCHING",
+        "description": "A test event verifying that URL adapter prefix matching is case-insensitive when the mounted prefix and requested URL use different capitalization",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "361",
+        "entity": "EVENT",
+        "description": "Event is a threading synchronization utility used to coordinate release and shutdown of local test servers",
+        "number of relationships": "2",
+        "in_context": true
+      }
+    ],
+    "sources": [
+      {
+        "id": "55",
+        "text": "        #: session. By default it is a\n        #: :class:`RequestsCookieJar <requests.cookies.RequestsCookieJar>`, but\n        #: may be any other ``cookielib.CookieJar`` compatible object.\n        self.cookies = cookiejar_from_dict({})\n\n        # Default connection adapters.\n        self.adapters = OrderedDict()\n        self.mount(\"https://\", HTTPAdapter())\n        self.mount(\"http://\", HTTPAdapter())\n\n    def __enter__(self):\n        return self\n\n    def __exit__(self, *args):\n        self.close()\n\n    def prepare_request(self, request):\n        \"\"\"Constructs a :class:`PreparedRequest <PreparedRequest>` for\n        transmission and returns it. The :class:`PreparedRequest` has settings\n        merged from the :class:`Request <Request>` instance and those of the\n        :class:`Session`.\n\n        :param request: :class:`Request` instance to prepare with this\n            session's settings.\n        :rtype: requests.PreparedRequest\n        \"\"\"\n        cookies = request.cookies or {}\n\n        # Bootstrap CookieJar.\n        if not isinstance(cookies, cookielib.CookieJar):\n            cookies = cookiejar_from_dict(cookies)\n\n        # Merge with session cookies\n        merged_cookies = merge_cookies(\n            merge_cookies(RequestsCookieJar(), self.cookies), cookies\n        )\n\n        # Set environment's basic authentication if not explicitly set.\n        auth = request.auth\n        if self.trust_env and not auth and not self.auth:\n            auth = get_netrc_auth(request.url)\n\n        p = PreparedRequest()\n        p.prepare(\n            method=request.method.upper(),\n            url=request.url,\n            files=request.files,\n            data=request.data,\n            json=request.json,\n            headers=merge_setting(\n                request.headers, self.headers, dict_class=CaseInsensitiveDict\n            ),\n            params=merge_setting(request.params, self.params),\n            auth=merge_setting(auth, self.auth),\n            cookies=merged_cookies,\n            hooks=merge_hooks(request.hooks, self.hooks),\n        )\n        return p\n\n    def request(\n        self,\n        method,\n        url,\n        params=None,\n        data=None,\n        headers=None,\n        cookies=None,\n        files=None,\n        auth=None,\n        timeout=None,\n        allow_redirects=True,\n        proxies=None,\n        hooks=None,\n        stream=None,\n        verify=None,\n        cert=None,\n        json=None,\n    ):\n        \"\"\"Constructs a :class:`Request <Request>`, prepares it and sends it.\n        Returns :class:`Response <Response>` object.\n\n        :param method: method for the new :class:`Request` object.\n        :param url: URL for the new :class:`Request` object.\n        :param params: (optional) Dictionary or bytes to be sent in the query\n            string for the :class:`Request`.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param json: (optional) json to send in the body of the\n            :class:`Request`.\n        :param headers: (optional) Dictionary of HTTP Headers to send with the\n            :class:`Request`.\n        :param cookies: (optional) Dict or CookieJar object to send with the\n            :class:`Request`.\n        :param files: (optional) Dictionary of ``'filename': file-like-objects``\n            for multipart encoding upload.\n        :param auth: (optional) Auth tuple or callable to enable\n            Basic/Digest/Custom HTTP Auth.\n        :param timeout: (optional) How long to wait for the server to send\n            data before giving up, as a float, or a :ref:`(connect timeout,\n            read timeout) <timeouts>` tuple.\n        :type timeout: float or tuple\n        :param allow_redirects: (optional) Set to True by default.\n        :type allow_redirects: bool\n        :param proxies: (optional) Dictionary mapping protocol or protocol and\n            hostname to the URL of the proxy.\n        :param hooks: (optional) Dictionary mapping hook name to one event or\n            list of events, event must be callable.\n        :param stream: (optional) whether to immediately download the response\n            content. Defaults to ``False``.\n        :param verify: (optional) Either a boolean, in which case it controls whether we verify\n            the server's TLS certificate, or a string, in which case it must be a path\n            to a CA bundle to use. Defaults to ``True``. When set to\n            ``False``, requests will accept any TLS certificate presented by\n            the server, and will ignore hostname mismatches and/or expired\n            certificates, which will make your application vulnerable to\n            man-in-the-middle (MitM) attacks. Setting verify to ``False``\n            may be useful during local development or testing.\n        :param cert: (optional) if String, path to ssl client cert file (.pem).\n            If Tuple, ('cert', 'key') pair.\n        :rtype: requests.Response\n        \"\"\"\n        # Create the Request.\n        req = Request(\n            method=method.upper(),\n            url=url,\n            headers=headers,\n            files=files,\n            data=data or {},\n            json=json,\n            params=params or {},\n            auth=auth,\n            cookies=cookies,\n            hooks=hooks,\n        )\n        prep = self.prepare_request(req)\n\n        proxies = proxies or {}\n\n        settings = self.merge_environment_settings(\n            prep.url, proxies, stream, verify, cert\n        )\n\n        # Send the request.\n        send_kwargs = {\n            \"timeout\": timeout,\n            \"allow_redirects\": allow_redirects,\n        }\n        send_kwargs.update(settings)\n"
+      }
+    ]
+  },
+  "final_context": "-----Entities-----\nid|entity|description|number of relationships\n21|SESSION|SESSION is a Requests library client object that manages persistent state and configuration while sending multiple HTTP and HTTPS requests. It stores and applies cookies, headers, authentication, proxy settings, hooks, environment settings, certificates, and TLS verification options. SESSION creates and mounts HTTPAdapter instances to contact HTTP and HTTPS URLs, maintaining separate connection pools when TLS configurations differ and providing connection pooling for efficient reuse. It prepares and sends requests, including prepared requests, resolves redirect chains subject to configured redirect limits, and manages the adapters used for network communication. SESSION also supports pickling and serves as the central mechanism for maintaining consistent request behavior across a series of HTTP operations.|14\n527|SESSION ADAPTER MATCHING TEST|The session adapter matching test verifies that Session.get_adapter selects the adapter matching the most specific URL prefix)<|2\n490|PREPARED FROM SESSION TEST|A test event that verifies a Session prepares a request with session-level authentication and sends the resulting authentication header.|1\n523|SESSION PICKLING TEST|The session pickling test serializes and restores a Session, configures its proxies, and sends a prepared request successfully)<|2\n531|SESSION ADAPTER PREFIX MATCHING|A test event verifying that a Requests Session selects the adapter mounted at the most specific matching URL prefix and ignores adapters for unrelated prefixes|2\n16|SESSION API DOCS|The Session API Docs provide additional documentation about the Requests Session object and its available values and methods.|1\n583|CUSTOM REDIRECT SESSION|A subclass of the Requests Session class that overrides get_redirect_target to follow valid redirects and certain malformed responses containing a different location header.|2\n487|SESSION HOOKS USED WITH NO REQUEST HOOKS TEST|A test event that verifies response hooks configured on a Session are inherited by a request without its own hooks.|1\n571|TEST_UNCONSUMED_SESSION_RESPONSE_CLOSES_CONNECTION|A test that verifies closing an unconsumed streamed session response closes its raw connection without marking its content as consumed|3\n573|TEST_SESSION_CLOSE_PROXY_CLEAR|A test that verifies closing a session clears all configured proxy managers|2\n488|SESSION HOOKS OVERRIDDEN BY REQUEST HOOKS TEST|A test event that verifies request-specific response hooks replace the response hooks configured on a Session.|1\n588|URLLIB3 POOL CONNECTION CLOSED TEST|A test event that verifies Requests reports that the connection pool is closed when a session uses zero pool connections and zero pool size|3\n381|THREADING EVENT|A synchronization event used to signal the test server that it may close after the request assertions finish.|1\n431|TEST HEADERS PRESERVE ORDER|A test event verifying that ordered session and request headers preserve their expected order while request headers override duplicate session headers|1\n535|CASE-SENSITIVE PARAMETER MERGING|A test event verifying that session parameters and per-request parameters with differently cased keys remain as separate parameters|1\n532|SESSION ADAPTER MIXED-CASE PREFIX MATCHING|A test event verifying that a mounted HTTPAdapter matches a URL whose scheme, host, and path prefix use mixed capitalization|2\n430|TEST HEADERS ON SESSION WITH NONE ARE NOT SENT|A test event verifying that session headers assigned a None value are omitted from prepared Requests requests|1\n533|SESSION ADAPTER CASE-INSENSITIVE MATCHING|A test event verifying that URL adapter prefix matching is case-insensitive when the mounted prefix and requested URL use different capitalization|2\n361|EVENT|Event is a threading synchronization utility used to coordinate release and shutdown of local test servers|2\n\n-----Relationships-----\nid|source|target|description|weight|links\n36|SESSION|REQUESTS|SESSION is a component of the REQUESTS library that manages and sends HTTP requests while preserving cookies and other state across multiple requests.|18.0|1\n10|REQUESTS|SESSION|Requests provides the `Session` object for persistent HTTP communication and session-level state. A Requests Session maintains parameters, cookies, HTTPS adapters, connection behavior, and connection pools across multiple HTTP requests. It is used throughout the tests to preserve configuration and efficiently manage persistent connections.|37.0|1\n176|SESSION|HTTPADAPTER|The `SESSION` class typically creates and mounts `HTTPADAPTER` instances for both HTTP and HTTPS protocols. It associates these adapters with URL prefixes, enabling `SESSION` to select the appropriate `HTTPADAPTER` when sending outgoing requests. The mounted adapters provide connection handling for HTTP and HTTPS connections.|28.0|1\n396|SESSION|RESPONSE|SESSION sends prepared requests and receives or returns RESPONSE objects. These responses may trigger redirect processing, and their status codes and request metadata can be inspected.|18.0|1\n350|RESPONSE|SESSION|The Response documentation references Session.resolve_redirects as the component that processes redirect chains.|7.0|1\n395|SESSION|REQUESTSCOOKIEJAR|SESSION creates and stores cookies in a REQUESTSCOOKIEJAR by default. The REQUESTSCOOKIEJAR persists cookies across requests, and SESSION merges its stored cookies with any cookies provided for individual requests.|18.0|1\n11|SESSION|REQUEST|SESSION manages and sends REQUEST objects over HTTP. It prepares each REQUEST and applies session-level configuration, including authentication, proxy settings, headers, cookies, and transport adapters, ensuring consistent behavior across requests.|27.0|1\n37|REQUEST|SESSION|A Request can be prepared by a Session so that session-level state is applied before sending.|1.0|1\n339|SESSION|PREPAREDREQUEST|SESSION converts a Request into a PREPAREDREQUEST before transmission. SESSION.send transmits PREPAREDREQUEST objects, and unpickled PREPAREDREQUEST instances remain valid and sendable. The PREPAREDREQUEST documentation demonstrates SESSION sending a prepared request to a server.|18.0|1\n824|PICKLE|SESSION|Pickle is used to serialize and restore Requests Session objects|1.0|1\n\n-----Sources-----\nid|source|text\n55|src/requests/sessions.py:L441-L588|\"        #: session. By default it is a\n        #: :class:`RequestsCookieJar <requests.cookies.RequestsCookieJar>`, but\n        #: may be any other ``cookielib.CookieJar`` compatible object.\n        self.cookies = cookiejar_from_dict({})\n\n        # Default connection adapters.\n        self.adapters = OrderedDict()\n        self.mount(\"\"https://\"\", HTTPAdapter())\n        self.mount(\"\"http://\"\", HTTPAdapter())\n\n    def __enter__(self):\n        return self\n\n    def __exit__(self, *args):\n        self.close()\n\n    def prepare_request(self, request):\n        \"\"\"\"\"\"Constructs a :class:`PreparedRequest <PreparedRequest>` for\n        transmission and returns it. The :class:`PreparedRequest` has settings\n        merged from the :class:`Request <Request>` instance and those of the\n        :class:`Session`.\n\n        :param request: :class:`Request` instance to prepare with this\n            session's settings.\n        :rtype: requests.PreparedRequest\n        \"\"\"\"\"\"\n        cookies = request.cookies or {}\n\n        # Bootstrap CookieJar.\n        if not isinstance(cookies, cookielib.CookieJar):\n            cookies = cookiejar_from_dict(cookies)\n\n        # Merge with session cookies\n        merged_cookies = merge_cookies(\n            merge_cookies(RequestsCookieJar(), self.cookies), cookies\n        )\n\n        # Set environment's basic authentication if not explicitly set.\n        auth = request.auth\n        if self.trust_env and not auth and not self.auth:\n            auth = get_netrc_auth(request.url)\n\n        p = PreparedRequest()\n        p.prepare(\n            method=request.method.upper(),\n            url=request.url,\n            files=request.files,\n            data=request.data,\n            json=request.json,\n            headers=merge_setting(\n                request.headers, self.headers, dict_class=CaseInsensitiveDict\n            ),\n            params=merge_setting(request.params, self.params),\n            auth=merge_setting(auth, self.auth),\n            cookies=merged_cookies,\n            hooks=merge_hooks(request.hooks, self.hooks),\n        )\n        return p\n\n    def request(\n        self,\n        method,\n        url,\n        params=None,\n        data=None,\n        headers=None,\n        cookies=None,\n        files=None,\n        auth=None,\n        timeout=None,\n        allow_redirects=True,\n        proxies=None,\n        hooks=None,\n        stream=None,\n        verify=None,\n        cert=None,\n        json=None,\n    ):\n        \"\"\"\"\"\"Constructs a :class:`Request <Request>`, prepares it and sends it.\n        Returns :class:`Response <Response>` object.\n\n        :param method: method for the new :class:`Request` object.\n        :param url: URL for the new :class:`Request` object.\n        :param params: (optional) Dictionary or bytes to be sent in the query\n            string for the :class:`Request`.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param json: (optional) json to send in the body of the\n            :class:`Request`.\n        :param headers: (optional) Dictionary of HTTP Headers to send with the\n            :class:`Request`.\n        :param cookies: (optional) Dict or CookieJar object to send with the\n            :class:`Request`.\n        :param files: (optional) Dictionary of ``'filename': file-like-objects``\n            for multipart encoding upload.\n        :param auth: (optional) Auth tuple or callable to enable\n            Basic/Digest/Custom HTTP Auth.\n        :param timeout: (optional) How long to wait for the server to send\n            data before giving up, as a float, or a :ref:`(connect timeout,\n            read timeout) <timeouts>` tuple.\n        :type timeout: float or tuple\n        :param allow_redirects: (optional) Set to True by default.\n        :type allow_redirects: bool\n        :param proxies: (optional) Dictionary mapping protocol or protocol and\n            hostname to the URL of the proxy.\n        :param hooks: (optional) Dictionary mapping hook name to one event or\n            list of events, event must be callable.\n        :param stream: (optional) whether to immediately download the response\n            content. Defaults to ``False``.\n        :param verify: (optional) Either a boolean, in which case it controls whether we verify\n            the server's TLS certificate, or a string, in which case it must be a path\n            to a CA bundle to use. Defaults to ``True``. When set to\n            ``False``, requests will accept any TLS certificate presented by\n            the server, and will ignore hostname mismatches and/or expired\n            certificates, which will make your application vulnerable to\n            man-in-the-middle (MitM) attacks. Setting verify to ``False``\n            may be useful during local development or testing.\n        :param cert: (optional) if String, path to ssl client cert file (.pem).\n            If Tuple, ('cert', 'key') pair.\n        :rtype: requests.Response\n        \"\"\"\"\"\"\n        # Create the Request.\n        req = Request(\n            method=method.upper(),\n            url=url,\n            headers=headers,\n            files=files,\n            data=data or {},\n            json=json,\n            params=params or {},\n            auth=auth,\n            cookies=cookies,\n            hooks=hooks,\n        )\n        prep = self.prepare_request(req)\n\n        proxies = proxies or {}\n\n        settings = self.merge_environment_settings(\n            prep.url, proxies, stream, verify, cert\n        )\n\n        # Send the request.\n        send_kwargs = {\n            \"\"timeout\"\": timeout,\n            \"\"allow_redirects\"\": allow_redirects,\n        }\n        send_kwargs.update(settings)\n\"\n",
+  "final_tables": [
+    {
+      "name": "entities",
+      "columns": [
+        "id",
+        "entity",
+        "description",
+        "number of relationships"
+      ],
+      "rows": [
+        {
+          "id": "21",
+          "entity": "SESSION",
+          "description": "SESSION is a Requests library client object that manages persistent state and configuration while sending multiple HTTP and HTTPS requests. It stores and applies cookies, headers, authentication, proxy settings, hooks, environment settings, certificates, and TLS verification options. SESSION creates and mounts HTTPAdapter instances to contact HTTP and HTTPS URLs, maintaining separate connection pools when TLS configurations differ and providing connection pooling for efficient reuse. It prepares and sends requests, including prepared requests, resolves redirect chains subject to configured redirect limits, and manages the adapters used for network communication. SESSION also supports pickling and serves as the central mechanism for maintaining consistent request behavior across a series of HTTP operations.",
+          "number of relationships": "14"
+        },
+        {
+          "id": "527",
+          "entity": "SESSION ADAPTER MATCHING TEST",
+          "description": "The session adapter matching test verifies that Session.get_adapter selects the adapter matching the most specific URL prefix)<",
+          "number of relationships": "2"
+        },
+        {
+          "id": "490",
+          "entity": "PREPARED FROM SESSION TEST",
+          "description": "A test event that verifies a Session prepares a request with session-level authentication and sends the resulting authentication header.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "523",
+          "entity": "SESSION PICKLING TEST",
+          "description": "The session pickling test serializes and restores a Session, configures its proxies, and sends a prepared request successfully)<",
+          "number of relationships": "2"
+        },
+        {
+          "id": "531",
+          "entity": "SESSION ADAPTER PREFIX MATCHING",
+          "description": "A test event verifying that a Requests Session selects the adapter mounted at the most specific matching URL prefix and ignores adapters for unrelated prefixes",
+          "number of relationships": "2"
+        },
+        {
+          "id": "16",
+          "entity": "SESSION API DOCS",
+          "description": "The Session API Docs provide additional documentation about the Requests Session object and its available values and methods.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "583",
+          "entity": "CUSTOM REDIRECT SESSION",
+          "description": "A subclass of the Requests Session class that overrides get_redirect_target to follow valid redirects and certain malformed responses containing a different location header.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "487",
+          "entity": "SESSION HOOKS USED WITH NO REQUEST HOOKS TEST",
+          "description": "A test event that verifies response hooks configured on a Session are inherited by a request without its own hooks.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "571",
+          "entity": "TEST_UNCONSUMED_SESSION_RESPONSE_CLOSES_CONNECTION",
+          "description": "A test that verifies closing an unconsumed streamed session response closes its raw connection without marking its content as consumed",
+          "number of relationships": "3"
+        },
+        {
+          "id": "573",
+          "entity": "TEST_SESSION_CLOSE_PROXY_CLEAR",
+          "description": "A test that verifies closing a session clears all configured proxy managers",
+          "number of relationships": "2"
+        },
+        {
+          "id": "488",
+          "entity": "SESSION HOOKS OVERRIDDEN BY REQUEST HOOKS TEST",
+          "description": "A test event that verifies request-specific response hooks replace the response hooks configured on a Session.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "588",
+          "entity": "URLLIB3 POOL CONNECTION CLOSED TEST",
+          "description": "A test event that verifies Requests reports that the connection pool is closed when a session uses zero pool connections and zero pool size",
+          "number of relationships": "3"
+        },
+        {
+          "id": "381",
+          "entity": "THREADING EVENT",
+          "description": "A synchronization event used to signal the test server that it may close after the request assertions finish.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "431",
+          "entity": "TEST HEADERS PRESERVE ORDER",
+          "description": "A test event verifying that ordered session and request headers preserve their expected order while request headers override duplicate session headers",
+          "number of relationships": "1"
+        },
+        {
+          "id": "535",
+          "entity": "CASE-SENSITIVE PARAMETER MERGING",
+          "description": "A test event verifying that session parameters and per-request parameters with differently cased keys remain as separate parameters",
+          "number of relationships": "1"
+        },
+        {
+          "id": "532",
+          "entity": "SESSION ADAPTER MIXED-CASE PREFIX MATCHING",
+          "description": "A test event verifying that a mounted HTTPAdapter matches a URL whose scheme, host, and path prefix use mixed capitalization",
+          "number of relationships": "2"
+        },
+        {
+          "id": "430",
+          "entity": "TEST HEADERS ON SESSION WITH NONE ARE NOT SENT",
+          "description": "A test event verifying that session headers assigned a None value are omitted from prepared Requests requests",
+          "number of relationships": "1"
+        },
+        {
+          "id": "533",
+          "entity": "SESSION ADAPTER CASE-INSENSITIVE MATCHING",
+          "description": "A test event verifying that URL adapter prefix matching is case-insensitive when the mounted prefix and requested URL use different capitalization",
+          "number of relationships": "2"
+        },
+        {
+          "id": "361",
+          "entity": "EVENT",
+          "description": "Event is a threading synchronization utility used to coordinate release and shutdown of local test servers",
+          "number of relationships": "2"
+        }
+      ]
+    },
+    {
+      "name": "relationships",
+      "columns": [
+        "id",
+        "source",
+        "target",
+        "description",
+        "weight",
+        "links"
+      ],
+      "rows": [
+        {
+          "id": "36",
+          "source": "SESSION",
+          "target": "REQUESTS",
+          "description": "SESSION is a component of the REQUESTS library that manages and sends HTTP requests while preserving cookies and other state across multiple requests.",
+          "weight": "18.0",
+          "links": "1"
+        },
+        {
+          "id": "10",
+          "source": "REQUESTS",
+          "target": "SESSION",
+          "description": "Requests provides the `Session` object for persistent HTTP communication and session-level state. A Requests Session maintains parameters, cookies, HTTPS adapters, connection behavior, and connection pools across multiple HTTP requests. It is used throughout the tests to preserve configuration and efficiently manage persistent connections.",
+          "weight": "37.0",
+          "links": "1"
+        },
+        {
+          "id": "176",
+          "source": "SESSION",
+          "target": "HTTPADAPTER",
+          "description": "The `SESSION` class typically creates and mounts `HTTPADAPTER` instances for both HTTP and HTTPS protocols. It associates these adapters with URL prefixes, enabling `SESSION` to select the appropriate `HTTPADAPTER` when sending outgoing requests. The mounted adapters provide connection handling for HTTP and HTTPS connections.",
+          "weight": "28.0",
+          "links": "1"
+        },
+        {
+          "id": "396",
+          "source": "SESSION",
+          "target": "RESPONSE",
+          "description": "SESSION sends prepared requests and receives or returns RESPONSE objects. These responses may trigger redirect processing, and their status codes and request metadata can be inspected.",
+          "weight": "18.0",
+          "links": "1"
+        },
+        {
+          "id": "350",
+          "source": "RESPONSE",
+          "target": "SESSION",
+          "description": "The Response documentation references Session.resolve_redirects as the component that processes redirect chains.",
+          "weight": "7.0",
+          "links": "1"
+        },
+        {
+          "id": "395",
+          "source": "SESSION",
+          "target": "REQUESTSCOOKIEJAR",
+          "description": "SESSION creates and stores cookies in a REQUESTSCOOKIEJAR by default. The REQUESTSCOOKIEJAR persists cookies across requests, and SESSION merges its stored cookies with any cookies provided for individual requests.",
+          "weight": "18.0",
+          "links": "1"
+        },
+        {
+          "id": "11",
+          "source": "SESSION",
+          "target": "REQUEST",
+          "description": "SESSION manages and sends REQUEST objects over HTTP. It prepares each REQUEST and applies session-level configuration, including authentication, proxy settings, headers, cookies, and transport adapters, ensuring consistent behavior across requests.",
+          "weight": "27.0",
+          "links": "1"
+        },
+        {
+          "id": "37",
+          "source": "REQUEST",
+          "target": "SESSION",
+          "description": "A Request can be prepared by a Session so that session-level state is applied before sending.",
+          "weight": "1.0",
+          "links": "1"
+        },
+        {
+          "id": "339",
+          "source": "SESSION",
+          "target": "PREPAREDREQUEST",
+          "description": "SESSION converts a Request into a PREPAREDREQUEST before transmission. SESSION.send transmits PREPAREDREQUEST objects, and unpickled PREPAREDREQUEST instances remain valid and sendable. The PREPAREDREQUEST documentation demonstrates SESSION sending a prepared request to a server.",
+          "weight": "18.0",
+          "links": "1"
+        },
+        {
+          "id": "824",
+          "source": "PICKLE",
+          "target": "SESSION",
+          "description": "Pickle is used to serialize and restore Requests Session objects",
+          "weight": "1.0",
+          "links": "1"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "columns": [
+        "id",
+        "source",
+        "text"
+      ],
+      "rows": [
+        {
+          "id": "55",
+          "text": "        #: session. By default it is a\n        #: :class:`RequestsCookieJar <requests.cookies.RequestsCookieJar>`, but\n        #: may be any other ``cookielib.CookieJar`` compatible object.\n        self.cookies = cookiejar_from_dict({})\n\n        # Default connection adapters.\n        self.adapters = OrderedDict()\n        self.mount(\"https://\", HTTPAdapter())\n        self.mount(\"http://\", HTTPAdapter())\n\n    def __enter__(self):\n        return self\n\n    def __exit__(self, *args):\n        self.close()\n\n    def prepare_request(self, request):\n        \"\"\"Constructs a :class:`PreparedRequest <PreparedRequest>` for\n        transmission and returns it. The :class:`PreparedRequest` has settings\n        merged from the :class:`Request <Request>` instance and those of the\n        :class:`Session`.\n\n        :param request: :class:`Request` instance to prepare with this\n            session's settings.\n        :rtype: requests.PreparedRequest\n        \"\"\"\n        cookies = request.cookies or {}\n\n        # Bootstrap CookieJar.\n        if not isinstance(cookies, cookielib.CookieJar):\n            cookies = cookiejar_from_dict(cookies)\n\n        # Merge with session cookies\n        merged_cookies = merge_cookies(\n            merge_cookies(RequestsCookieJar(), self.cookies), cookies\n        )\n\n        # Set environment's basic authentication if not explicitly set.\n        auth = request.auth\n        if self.trust_env and not auth and not self.auth:\n            auth = get_netrc_auth(request.url)\n\n        p = PreparedRequest()\n        p.prepare(\n            method=request.method.upper(),\n            url=request.url,\n            files=request.files,\n            data=request.data,\n            json=request.json,\n            headers=merge_setting(\n                request.headers, self.headers, dict_class=CaseInsensitiveDict\n            ),\n            params=merge_setting(request.params, self.params),\n            auth=merge_setting(auth, self.auth),\n            cookies=merged_cookies,\n            hooks=merge_hooks(request.hooks, self.hooks),\n        )\n        return p\n\n    def request(\n        self,\n        method,\n        url,\n        params=None,\n        data=None,\n        headers=None,\n        cookies=None,\n        files=None,\n        auth=None,\n        timeout=None,\n        allow_redirects=True,\n        proxies=None,\n        hooks=None,\n        stream=None,\n        verify=None,\n        cert=None,\n        json=None,\n    ):\n        \"\"\"Constructs a :class:`Request <Request>`, prepares it and sends it.\n        Returns :class:`Response <Response>` object.\n\n        :param method: method for the new :class:`Request` object.\n        :param url: URL for the new :class:`Request` object.\n        :param params: (optional) Dictionary or bytes to be sent in the query\n            string for the :class:`Request`.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param json: (optional) json to send in the body of the\n            :class:`Request`.\n        :param headers: (optional) Dictionary of HTTP Headers to send with the\n            :class:`Request`.\n        :param cookies: (optional) Dict or CookieJar object to send with the\n            :class:`Request`.\n        :param files: (optional) Dictionary of ``'filename': file-like-objects``\n            for multipart encoding upload.\n        :param auth: (optional) Auth tuple or callable to enable\n            Basic/Digest/Custom HTTP Auth.\n        :param timeout: (optional) How long to wait for the server to send\n            data before giving up, as a float, or a :ref:`(connect timeout,\n            read timeout) <timeouts>` tuple.\n        :type timeout: float or tuple\n        :param allow_redirects: (optional) Set to True by default.\n        :type allow_redirects: bool\n        :param proxies: (optional) Dictionary mapping protocol or protocol and\n            hostname to the URL of the proxy.\n        :param hooks: (optional) Dictionary mapping hook name to one event or\n            list of events, event must be callable.\n        :param stream: (optional) whether to immediately download the response\n            content. Defaults to ``False``.\n        :param verify: (optional) Either a boolean, in which case it controls whether we verify\n            the server's TLS certificate, or a string, in which case it must be a path\n            to a CA bundle to use. Defaults to ``True``. When set to\n            ``False``, requests will accept any TLS certificate presented by\n            the server, and will ignore hostname mismatches and/or expired\n            certificates, which will make your application vulnerable to\n            man-in-the-middle (MitM) attacks. Setting verify to ``False``\n            may be useful during local development or testing.\n        :param cert: (optional) if String, path to ssl client cert file (.pem).\n            If Tuple, ('cert', 'key') pair.\n        :rtype: requests.Response\n        \"\"\"\n        # Create the Request.\n        req = Request(\n            method=method.upper(),\n            url=url,\n            headers=headers,\n            files=files,\n            data=data or {},\n            json=json,\n            params=params or {},\n            auth=auth,\n            cookies=cookies,\n            hooks=hooks,\n        )\n        prep = self.prepare_request(req)\n\n        proxies = proxies or {}\n\n        settings = self.merge_environment_settings(\n            prep.url, proxies, stream, verify, cert\n        )\n\n        # Send the request.\n        send_kwargs = {\n            \"timeout\": timeout,\n            \"allow_redirects\": allow_redirects,\n        }\n        send_kwargs.update(settings)\n",
+          "source": "src/requests/sessions.py:L441-L588"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "short_id": "55",
+      "text_unit_id": "cefa6c63ec4b1cd11e1927da93da580dd749ed4855250d8ae7b47ddf05c7f20fdc485ee142e75cea1d24912a49c84d7ee5ff6534440f3db90e2091db6a87ec4e",
+      "id": "be544364d6c7365dff9fd6c80742bdf27f6cef80ffbb10bad922126e1a776e05",
+      "title": "src/requests/sessions.py:L441-L588",
+      "path": "src/requests/sessions.py",
+      "start_line": 441,
+      "end_line": 588,
+      "tokens": 1192,
+      "text_sha256": "863e93e1d7007503aa75fe6ac8b1dd07b6aacef4bd4314b0839cfbe30fc9c9d5",
+      "ms_text_unit_id": "cefa6c63ec4b1cd11e1927da93da580dd749ed4855250d8ae7b47ddf05c7f20fdc485ee142e75cea1d24912a49c84d7ee5ff6534440f3db90e2091db6a87ec4e"
+    }
+  ],
+  "raw_context_tokens": 2441,
+  "final_context_tokens": 2460,
+  "source_text_tokens": 1192,
+  "source_chunks": 1,
+  "retrieval_compute_seconds": 0.011945166625082493,
+  "adaptation_seconds": 0.004233291372656822,
+  "empty_reason": null,
+  "community_level": 2,
+  "dropped_tail_rows": 0
+}

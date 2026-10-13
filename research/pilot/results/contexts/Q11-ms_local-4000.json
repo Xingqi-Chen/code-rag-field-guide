@@ -1,0 +1,501 @@
+{
+  "question_id": "Q11",
+  "method": "ms_local",
+  "budget": 4000,
+  "query": "How does a transport response header set the text encoding used by a Response, and what is the fallback if it remains unset?",
+  "upstream_raw_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n51|RFC 2616|RFC 2616 is the HTTP specification cited by Requests for the default ISO-8859-1 charset behavior when a text Content-Type lacks an explicit charset\"|2\n264|CHARACTER ENCODING DETECTION|Character encoding detection is the process of determining the encoding of response content with Chardet or another available detection library.|4\n628|TEST CONTENT ENCODING DETECTION|Test Content Encoding Detection is a test group that verifies detection of character encodings from HTML meta tags, XHTML declarations, XML declarations, and precedence among multiple declarations.|2\n38|CHARSET NORMALIZER|Charset Normalizer is an MIT-licensed Python package used to detect and infer character encodings, particularly when a response does not specify an explicit charset. Requests uses Charset Normalizer for this purpose in versions 2 and later but before version 4, where it is a required dependency; in other contexts, it may be installed and used as an optional encoding-detection package. When available, its installed version can be reported.|2\n265|UNICODE DECODING|Unicode decoding is the conversion of response bytes into text using the selected or detected character encoding.|3\n512|TESTRESPONSEREASONUNICODEFALLBACK|test_response_reason_unicode_fallback is a pytest test event that verifies raise_for_status decodes an encoded reason phrase using an ISO-8859-1 fallback|2\n270|TYPE ERROR|TypeError is an error event that can occur when the encoding value is None or otherwise has an incompatible type during response decoding.|1\n398|TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS|A test event that verifies Requests JSON decoding behavior and exception compatibility for alternate UTF encodings|3\n478|TEST DIFFERENT ENCODINGS DONT BREAK POST|A test event that verifies Requests successfully handles a multipart POST combining JSON data, query parameters, and a file under different data encodings|2\n112|CHARSET_NORMALIZER|CHARSET_NORMALIZER is an optional character-detection and encoding-detection library supported by Requests. It serves as an alternative to `chardet` for determining the apparent encoding of response content. Requests includes compatibility checks requiring `charset_normalizer` version 2.0.0 or later, but earlier than version 4.0.0.|3\n89|CODECS|CODECS is a Python standard-library module that provides codec and character-encoding support. Requests imports it to decode response content and can use it to create and register custom text encodings.|1\n578|TEST_EMPTY_STREAM_WITH_AUTH_DOES_NOT_SET_CONTENT_LENGTH_HEADER|A test that verifies an empty byte stream uses transfer encoding rather than setting an inappropriate Content-Length header|3\n256|CHUNKEDENCODINGERROR|ChunkedEncodingError is a Requests exception that reports failures in HTTP chunked transfer encoding. It is raised when urllib3 encounters a ProtocolError while iterating over the content of a response.|1\n351|INCOMPLETE CHUNKED RESPONSE HANDLER|A socket response-handler event that sends an HTTP 200 response declaring chunked transfer encoding but never provides valid terminating chunks, allowing the test to verify error handling|1\n564|TEST_REDIRECT_WITH_WRONG_GZIPPED_HEADER|A test that verifies Requests can follow a redirect when the response has an incorrectly applied gzip content-encoding header|3\n39|CHARDET|CHARDET is an optional, LGPL-licensed Python character-encoding detection library supported by Requests. Requests may import it through its compatibility layer and expose it under `requests.packages.chardet` or related compatibility utilities. When available—such as when the `use_chardet_on_py3` extra is installed—CHARDET helps Requests determine the apparent encoding of response content and guess the correct character encoding. Requests can also report CHARDET’s version and applies compatibility checks requiring a version of at least 3.0.2 and below 6.0.0.|7\n68|REQUESTS DOCUMENTATION|The Requests documentation explains transport adapters, blocking and non-blocking I/O, streaming responses, header ordering, and connection and read timeout configuration.|2\n248|HTTP RESPONSE|An HTTP response is the server-produced result represented by the Response class, including status code, headers, URL, cookies, content, and timing information.|1\n510|TESTRESPONSEDECODEUNICODE|test_response_decode_unicode is a pytest test event that verifies Response.iter_content returns Unicode strings when Unicode decoding is requested|2\n\n\n-----Relationships-----\nid|source|target|description|weight|links\n1040|TEST CONTENT ENCODING DETECTION|REQUESTS|The test group exercises Requests functionality for detecting encodings from document content.|9.0|3\n46|REQUESTS|CHARSET NORMALIZER|REQUESTS uses CHARSET NORMALIZER (`charset-normalizer`) as a runtime dependency for character-encoding detection. When installed, REQUESTS optionally imports CHARSET NORMALIZER and reports its version. It relies on CHARSET NORMALIZER when `chardet` is unavailable or not installed, using it to make a best-effort determination of the correct character encoding when response text decoding requires fallback detection.|34.0|3\n63|REQUESTS|RFC 2616|Requests follows RFC 2616 for the default ISO-8859-1 encoding when a text response lacks an explicit charset|9.0|3\n1045|TEST CONTENT ENCODING DETECTION|PYTEST|The test group uses Pytest parameterization and assertions to validate encoding detection behavior.|8.0|1\n358|RESPONSE|CHARACTER ENCODING DETECTION|A Response uses Chardet or Charset-normalizer to determine apparent encoding when no explicit encoding is available.|9.0|1\n371|CHARDET|CHARACTER ENCODING DETECTION|Chardet performs character encoding detection for response content.|9.0|1\n373|CHARACTER ENCODING DETECTION|UNICODE DECODING|The detected character encoding is used to decode response bytes into Unicode text.|1.0|1\n372|CHARSET_NORMALIZER|CHARACTER ENCODING DETECTION|Charset-normalizer is an alternative library used for character encoding detection.|9.0|1\n54|PYPI|CHARSET NORMALIZER|The Requests documentation links to PyPI for information about the Charset Normalizer package|7.0|1\n55|W3C|RFC 2616|The referenced RFC 2616 document is hosted on the W3C website|8.0|1\n\n\n-----Sources-----\nid|text\n6|    >>> requests.get('https://example.org')\n\n.. _socks:\n\nSOCKS\n^^^^^\n\n.. versionadded:: 2.10.0\n\nIn addition to basic HTTP proxies, Requests also supports proxies using the\nSOCKS protocol. This is an optional feature that requires that additional\nthird-party libraries be installed before use.\n\nYou can get the dependencies for this feature from ``pip``:\n\n.. code-block:: bash\n\n    $ python -m pip install requests[socks]\n\nOnce you've installed those dependencies, using a SOCKS proxy is just as easy\nas using a HTTP one::\n\n    proxies = {\n        'http': 'socks5://user:pass@host:port',\n        'https': 'socks5://user:pass@host:port'\n    }\n\nUsing the scheme ``socks5`` causes the DNS resolution to happen on the client, rather than on the proxy server. This is in line with curl, which uses the scheme to decide whether to do the DNS resolution on the client or proxy. If you want to resolve the domains on the proxy server, use ``socks5h`` as the scheme.\n\n.. _compliance:\n\nCompliance\n----------\n\nRequests is intended to be compliant with all relevant specifications and\nRFCs where that compliance will not cause difficulties for users. This\nattention to the specification can lead to some behaviour that may seem\nunusual to those not familiar with the relevant specification.\n\nEncodings\n^^^^^^^^^\n\nWhen you receive a response, Requests makes a guess at the encoding to\nuse for decoding the response when you access the :attr:`Response.text\n<requests.Response.text>` attribute. Requests will first check for an\nencoding in the HTTP header, and if none is present, will use\n`charset_normalizer <https://pypi.org/project/charset_normalizer/>`_\nor `chardet <https://github.com/chardet/chardet>`_ to attempt to\nguess the encoding.\n\nIf ``chardet`` is installed, ``requests`` uses it, however for python3\n``chardet`` is no longer a mandatory dependency. The ``chardet``\nlibrary is an LGPL-licenced dependency and some users of requests\ncannot depend on mandatory LGPL-licensed dependencies.\n\nWhen you install ``requests`` without specifying ``[use_chardet_on_py3]`` extra,\nand ``chardet`` is not already installed, ``requests`` uses ``charset-normalizer``\n(MIT-licensed) to guess the encoding.\n\nThe only time Requests will not guess the encoding is if no explicit charset\nis present in the HTTP headers **and** the ``Content-Type``\nheader contains ``text``. In this situation, `RFC 2616\n<https://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.7.1>`_ specifies\nthat the default charset must be ``ISO-8859-1``. Requests follows the\nspecification in this case. If you require a different encoding, you can\nmanually set the :attr:`Response.encoding <requests.Response.encoding>`\nproperty, or use the raw :attr:`Response.content <requests.Response.content>`.\n\n.. _http-verbs:\n\nHTTP Verbs\n----------\n\nRequests provides access to almost the full range of HTTP verbs: GET, OPTIONS,\nHEAD, POST, PUT, PATCH and DELETE. The following provides detailed examples of\nusing these various verbs in Requests, using the GitHub API.\n\nWe will begin with the verb most commonly used: GET. HTTP GET is an idempotent\nmethod that returns a resource from a given URL. As a result, it is the verb\nyou ought to use when attempting to retrieve data from a web location. An\nexample usage would be attempting to get information about a specific commit\nfrom GitHub. Suppose we wanted commit ``a050faf`` on Requests. We would get it\nlike so::\n\n    >>> import requests\n    >>> r = requests.get('https://api.github.com/repos/psf/requests/git/commits/a050faf084662f3a352dd1a941f2c7c9f886d4ad')\n\nWe should confirm that GitHub responded correctly. If it has, we want to work\nout what type of content it is. Do this like so::\n\n    >>> if r.status_code == requests.codes.ok:\n    ...     print(r.headers['content-type'])\n    ...\n    application/json; charset=utf-8\n\nSo, GitHub returns JSON. That's great, we can use the :meth:`r.json\n<requests.Response.json>` method to parse it into Python objects.\n\n::\n\n    >>> commit_data = r.json()\n\n    >>> print(commit_data.keys())\n    ['committer', 'author', 'url', 'tree', 'sha', 'parents', 'message']\n\n    >>> print(commit_data['committer'])\n    {'date': '2012-05-10T11:10:50-07:00', 'email': 'me@kennethreitz.com', 'name': 'Kenneth Reitz'}\n\n    >>> print(commit_data['message'])\n    makin' history\n\nSo far, so simple. Well, let's investigate the GitHub API a little bit. Now,\nwe could look at the documentation, but we might have a little more fun if we\nuse Requests instead. We can take advantage of the Requests OPTIONS verb to\nsee what kinds of HTTP methods are supported on the url we just used.\n\n::\n\n    >>> verbs = requests.options(r.url)\n    >>> verbs.status_code\n    500\n\nUh, what? That's unhelpful! Turns out GitHub, like many API providers, don't\nactually implement the OPTIONS method. This is an annoying oversight, but it's\nOK, we can just use the boring documentation. If GitHub had correctly\n\n",
+  "upstream_raw_records": {
+    "relationships": [
+      {
+        "id": "1040",
+        "source": "TEST CONTENT ENCODING DETECTION",
+        "target": "REQUESTS",
+        "description": "The test group exercises Requests functionality for detecting encodings from document content.",
+        "weight": "9.0",
+        "links": "3",
+        "in_context": true
+      },
+      {
+        "id": "46",
+        "source": "REQUESTS",
+        "target": "CHARSET NORMALIZER",
+        "description": "REQUESTS uses CHARSET NORMALIZER (`charset-normalizer`) as a runtime dependency for character-encoding detection. When installed, REQUESTS optionally imports CHARSET NORMALIZER and reports its version. It relies on CHARSET NORMALIZER when `chardet` is unavailable or not installed, using it to make a best-effort determination of the correct character encoding when response text decoding requires fallback detection.",
+        "weight": "34.0",
+        "links": "3",
+        "in_context": true
+      },
+      {
+        "id": "63",
+        "source": "REQUESTS",
+        "target": "RFC 2616",
+        "description": "Requests follows RFC 2616 for the default ISO-8859-1 encoding when a text response lacks an explicit charset",
+        "weight": "9.0",
+        "links": "3",
+        "in_context": true
+      },
+      {
+        "id": "1045",
+        "source": "TEST CONTENT ENCODING DETECTION",
+        "target": "PYTEST",
+        "description": "The test group uses Pytest parameterization and assertions to validate encoding detection behavior.",
+        "weight": "8.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "358",
+        "source": "RESPONSE",
+        "target": "CHARACTER ENCODING DETECTION",
+        "description": "A Response uses Chardet or Charset-normalizer to determine apparent encoding when no explicit encoding is available.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "371",
+        "source": "CHARDET",
+        "target": "CHARACTER ENCODING DETECTION",
+        "description": "Chardet performs character encoding detection for response content.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "373",
+        "source": "CHARACTER ENCODING DETECTION",
+        "target": "UNICODE DECODING",
+        "description": "The detected character encoding is used to decode response bytes into Unicode text.",
+        "weight": "1.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "372",
+        "source": "CHARSET_NORMALIZER",
+        "target": "CHARACTER ENCODING DETECTION",
+        "description": "Charset-normalizer is an alternative library used for character encoding detection.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "54",
+        "source": "PYPI",
+        "target": "CHARSET NORMALIZER",
+        "description": "The Requests documentation links to PyPI for information about the Charset Normalizer package",
+        "weight": "7.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "55",
+        "source": "W3C",
+        "target": "RFC 2616",
+        "description": "The referenced RFC 2616 document is hosted on the W3C website",
+        "weight": "8.0",
+        "links": "1",
+        "in_context": true
+      }
+    ],
+    "entities": [
+      {
+        "id": "51",
+        "entity": "RFC 2616",
+        "description": "RFC 2616 is the HTTP specification cited by Requests for the default ISO-8859-1 charset behavior when a text Content-Type lacks an explicit charset\"",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "264",
+        "entity": "CHARACTER ENCODING DETECTION",
+        "description": "Character encoding detection is the process of determining the encoding of response content with Chardet or another available detection library.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "628",
+        "entity": "TEST CONTENT ENCODING DETECTION",
+        "description": "Test Content Encoding Detection is a test group that verifies detection of character encodings from HTML meta tags, XHTML declarations, XML declarations, and precedence among multiple declarations.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "38",
+        "entity": "CHARSET NORMALIZER",
+        "description": "Charset Normalizer is an MIT-licensed Python package used to detect and infer character encodings, particularly when a response does not specify an explicit charset. Requests uses Charset Normalizer for this purpose in versions 2 and later but before version 4, where it is a required dependency; in other contexts, it may be installed and used as an optional encoding-detection package. When available, its installed version can be reported.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "265",
+        "entity": "UNICODE DECODING",
+        "description": "Unicode decoding is the conversion of response bytes into text using the selected or detected character encoding.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "512",
+        "entity": "TESTRESPONSEREASONUNICODEFALLBACK",
+        "description": "test_response_reason_unicode_fallback is a pytest test event that verifies raise_for_status decodes an encoded reason phrase using an ISO-8859-1 fallback",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "270",
+        "entity": "TYPE ERROR",
+        "description": "TypeError is an error event that can occur when the encoding value is None or otherwise has an incompatible type during response decoding.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "398",
+        "entity": "TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS",
+        "description": "A test event that verifies Requests JSON decoding behavior and exception compatibility for alternate UTF encodings",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "478",
+        "entity": "TEST DIFFERENT ENCODINGS DONT BREAK POST",
+        "description": "A test event that verifies Requests successfully handles a multipart POST combining JSON data, query parameters, and a file under different data encodings",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "112",
+        "entity": "CHARSET_NORMALIZER",
+        "description": "CHARSET_NORMALIZER is an optional character-detection and encoding-detection library supported by Requests. It serves as an alternative to `chardet` for determining the apparent encoding of response content. Requests includes compatibility checks requiring `charset_normalizer` version 2.0.0 or later, but earlier than version 4.0.0.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "89",
+        "entity": "CODECS",
+        "description": "CODECS is a Python standard-library module that provides codec and character-encoding support. Requests imports it to decode response content and can use it to create and register custom text encodings.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "578",
+        "entity": "TEST_EMPTY_STREAM_WITH_AUTH_DOES_NOT_SET_CONTENT_LENGTH_HEADER",
+        "description": "A test that verifies an empty byte stream uses transfer encoding rather than setting an inappropriate Content-Length header",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "256",
+        "entity": "CHUNKEDENCODINGERROR",
+        "description": "ChunkedEncodingError is a Requests exception that reports failures in HTTP chunked transfer encoding. It is raised when urllib3 encounters a ProtocolError while iterating over the content of a response.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "351",
+        "entity": "INCOMPLETE CHUNKED RESPONSE HANDLER",
+        "description": "A socket response-handler event that sends an HTTP 200 response declaring chunked transfer encoding but never provides valid terminating chunks, allowing the test to verify error handling",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "564",
+        "entity": "TEST_REDIRECT_WITH_WRONG_GZIPPED_HEADER",
+        "description": "A test that verifies Requests can follow a redirect when the response has an incorrectly applied gzip content-encoding header",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "39",
+        "entity": "CHARDET",
+        "description": "CHARDET is an optional, LGPL-licensed Python character-encoding detection library supported by Requests. Requests may import it through its compatibility layer and expose it under `requests.packages.chardet` or related compatibility utilities. When available—such as when the `use_chardet_on_py3` extra is installed—CHARDET helps Requests determine the apparent encoding of response content and guess the correct character encoding. Requests can also report CHARDET’s version and applies compatibility checks requiring a version of at least 3.0.2 and below 6.0.0.",
+        "number of relationships": "7",
+        "in_context": true
+      },
+      {
+        "id": "68",
+        "entity": "REQUESTS DOCUMENTATION",
+        "description": "The Requests documentation explains transport adapters, blocking and non-blocking I/O, streaming responses, header ordering, and connection and read timeout configuration.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "248",
+        "entity": "HTTP RESPONSE",
+        "description": "An HTTP response is the server-produced result represented by the Response class, including status code, headers, URL, cookies, content, and timing information.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "510",
+        "entity": "TESTRESPONSEDECODEUNICODE",
+        "description": "test_response_decode_unicode is a pytest test event that verifies Response.iter_content returns Unicode strings when Unicode decoding is requested",
+        "number of relationships": "2",
+        "in_context": true
+      }
+    ],
+    "sources": [
+      {
+        "id": "6",
+        "text": "    >>> requests.get('https://example.org')\n\n.. _socks:\n\nSOCKS\n^^^^^\n\n.. versionadded:: 2.10.0\n\nIn addition to basic HTTP proxies, Requests also supports proxies using the\nSOCKS protocol. This is an optional feature that requires that additional\nthird-party libraries be installed before use.\n\nYou can get the dependencies for this feature from ``pip``:\n\n.. code-block:: bash\n\n    $ python -m pip install requests[socks]\n\nOnce you've installed those dependencies, using a SOCKS proxy is just as easy\nas using a HTTP one::\n\n    proxies = {\n        'http': 'socks5://user:pass@host:port',\n        'https': 'socks5://user:pass@host:port'\n    }\n\nUsing the scheme ``socks5`` causes the DNS resolution to happen on the client, rather than on the proxy server. This is in line with curl, which uses the scheme to decide whether to do the DNS resolution on the client or proxy. If you want to resolve the domains on the proxy server, use ``socks5h`` as the scheme.\n\n.. _compliance:\n\nCompliance\n----------\n\nRequests is intended to be compliant with all relevant specifications and\nRFCs where that compliance will not cause difficulties for users. This\nattention to the specification can lead to some behaviour that may seem\nunusual to those not familiar with the relevant specification.\n\nEncodings\n^^^^^^^^^\n\nWhen you receive a response, Requests makes a guess at the encoding to\nuse for decoding the response when you access the :attr:`Response.text\n<requests.Response.text>` attribute. Requests will first check for an\nencoding in the HTTP header, and if none is present, will use\n`charset_normalizer <https://pypi.org/project/charset_normalizer/>`_\nor `chardet <https://github.com/chardet/chardet>`_ to attempt to\nguess the encoding.\n\nIf ``chardet`` is installed, ``requests`` uses it, however for python3\n``chardet`` is no longer a mandatory dependency. The ``chardet``\nlibrary is an LGPL-licenced dependency and some users of requests\ncannot depend on mandatory LGPL-licensed dependencies.\n\nWhen you install ``requests`` without specifying ``[use_chardet_on_py3]`` extra,\nand ``chardet`` is not already installed, ``requests`` uses ``charset-normalizer``\n(MIT-licensed) to guess the encoding.\n\nThe only time Requests will not guess the encoding is if no explicit charset\nis present in the HTTP headers **and** the ``Content-Type``\nheader contains ``text``. In this situation, `RFC 2616\n<https://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.7.1>`_ specifies\nthat the default charset must be ``ISO-8859-1``. Requests follows the\nspecification in this case. If you require a different encoding, you can\nmanually set the :attr:`Response.encoding <requests.Response.encoding>`\nproperty, or use the raw :attr:`Response.content <requests.Response.content>`.\n\n.. _http-verbs:\n\nHTTP Verbs\n----------\n\nRequests provides access to almost the full range of HTTP verbs: GET, OPTIONS,\nHEAD, POST, PUT, PATCH and DELETE. The following provides detailed examples of\nusing these various verbs in Requests, using the GitHub API.\n\nWe will begin with the verb most commonly used: GET. HTTP GET is an idempotent\nmethod that returns a resource from a given URL. As a result, it is the verb\nyou ought to use when attempting to retrieve data from a web location. An\nexample usage would be attempting to get information about a specific commit\nfrom GitHub. Suppose we wanted commit ``a050faf`` on Requests. We would get it\nlike so::\n\n    >>> import requests\n    >>> r = requests.get('https://api.github.com/repos/psf/requests/git/commits/a050faf084662f3a352dd1a941f2c7c9f886d4ad')\n\nWe should confirm that GitHub responded correctly. If it has, we want to work\nout what type of content it is. Do this like so::\n\n    >>> if r.status_code == requests.codes.ok:\n    ...     print(r.headers['content-type'])\n    ...\n    application/json; charset=utf-8\n\nSo, GitHub returns JSON. That's great, we can use the :meth:`r.json\n<requests.Response.json>` method to parse it into Python objects.\n\n::\n\n    >>> commit_data = r.json()\n\n    >>> print(commit_data.keys())\n    ['committer', 'author', 'url', 'tree', 'sha', 'parents', 'message']\n\n    >>> print(commit_data['committer'])\n    {'date': '2012-05-10T11:10:50-07:00', 'email': 'me@kennethreitz.com', 'name': 'Kenneth Reitz'}\n\n    >>> print(commit_data['message'])\n    makin' history\n\nSo far, so simple. Well, let's investigate the GitHub API a little bit. Now,\nwe could look at the documentation, but we might have a little more fun if we\nuse Requests instead. We can take advantage of the Requests OPTIONS verb to\nsee what kinds of HTTP methods are supported on the url we just used.\n\n::\n\n    >>> verbs = requests.options(r.url)\n    >>> verbs.status_code\n    500\n\nUh, what? That's unhelpful! Turns out GitHub, like many API providers, don't\nactually implement the OPTIONS method. This is an annoying oversight, but it's\nOK, we can just use the boring documentation. If GitHub had correctly\n"
+      }
+    ]
+  },
+  "final_context": "-----Entities-----\nid|entity|description|number of relationships\n51|RFC 2616|\"RFC 2616 is the HTTP specification cited by Requests for the default ISO-8859-1 charset behavior when a text Content-Type lacks an explicit charset\"\"\"|2\n264|CHARACTER ENCODING DETECTION|Character encoding detection is the process of determining the encoding of response content with Chardet or another available detection library.|4\n628|TEST CONTENT ENCODING DETECTION|Test Content Encoding Detection is a test group that verifies detection of character encodings from HTML meta tags, XHTML declarations, XML declarations, and precedence among multiple declarations.|2\n38|CHARSET NORMALIZER|Charset Normalizer is an MIT-licensed Python package used to detect and infer character encodings, particularly when a response does not specify an explicit charset. Requests uses Charset Normalizer for this purpose in versions 2 and later but before version 4, where it is a required dependency; in other contexts, it may be installed and used as an optional encoding-detection package. When available, its installed version can be reported.|2\n265|UNICODE DECODING|Unicode decoding is the conversion of response bytes into text using the selected or detected character encoding.|3\n512|TESTRESPONSEREASONUNICODEFALLBACK|test_response_reason_unicode_fallback is a pytest test event that verifies raise_for_status decodes an encoded reason phrase using an ISO-8859-1 fallback|2\n270|TYPE ERROR|TypeError is an error event that can occur when the encoding value is None or otherwise has an incompatible type during response decoding.|1\n398|TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS|A test event that verifies Requests JSON decoding behavior and exception compatibility for alternate UTF encodings|3\n478|TEST DIFFERENT ENCODINGS DONT BREAK POST|A test event that verifies Requests successfully handles a multipart POST combining JSON data, query parameters, and a file under different data encodings|2\n112|CHARSET_NORMALIZER|CHARSET_NORMALIZER is an optional character-detection and encoding-detection library supported by Requests. It serves as an alternative to `chardet` for determining the apparent encoding of response content. Requests includes compatibility checks requiring `charset_normalizer` version 2.0.0 or later, but earlier than version 4.0.0.|3\n89|CODECS|CODECS is a Python standard-library module that provides codec and character-encoding support. Requests imports it to decode response content and can use it to create and register custom text encodings.|1\n578|TEST_EMPTY_STREAM_WITH_AUTH_DOES_NOT_SET_CONTENT_LENGTH_HEADER|A test that verifies an empty byte stream uses transfer encoding rather than setting an inappropriate Content-Length header|3\n256|CHUNKEDENCODINGERROR|ChunkedEncodingError is a Requests exception that reports failures in HTTP chunked transfer encoding. It is raised when urllib3 encounters a ProtocolError while iterating over the content of a response.|1\n351|INCOMPLETE CHUNKED RESPONSE HANDLER|A socket response-handler event that sends an HTTP 200 response declaring chunked transfer encoding but never provides valid terminating chunks, allowing the test to verify error handling|1\n564|TEST_REDIRECT_WITH_WRONG_GZIPPED_HEADER|A test that verifies Requests can follow a redirect when the response has an incorrectly applied gzip content-encoding header|3\n39|CHARDET|CHARDET is an optional, LGPL-licensed Python character-encoding detection library supported by Requests. Requests may import it through its compatibility layer and expose it under `requests.packages.chardet` or related compatibility utilities. When available—such as when the `use_chardet_on_py3` extra is installed—CHARDET helps Requests determine the apparent encoding of response content and guess the correct character encoding. Requests can also report CHARDET’s version and applies compatibility checks requiring a version of at least 3.0.2 and below 6.0.0.|7\n68|REQUESTS DOCUMENTATION|The Requests documentation explains transport adapters, blocking and non-blocking I/O, streaming responses, header ordering, and connection and read timeout configuration.|2\n248|HTTP RESPONSE|An HTTP response is the server-produced result represented by the Response class, including status code, headers, URL, cookies, content, and timing information.|1\n510|TESTRESPONSEDECODEUNICODE|test_response_decode_unicode is a pytest test event that verifies Response.iter_content returns Unicode strings when Unicode decoding is requested|2\n\n-----Relationships-----\nid|source|target|description|weight|links\n1040|TEST CONTENT ENCODING DETECTION|REQUESTS|The test group exercises Requests functionality for detecting encodings from document content.|9.0|3\n46|REQUESTS|CHARSET NORMALIZER|REQUESTS uses CHARSET NORMALIZER (`charset-normalizer`) as a runtime dependency for character-encoding detection. When installed, REQUESTS optionally imports CHARSET NORMALIZER and reports its version. It relies on CHARSET NORMALIZER when `chardet` is unavailable or not installed, using it to make a best-effort determination of the correct character encoding when response text decoding requires fallback detection.|34.0|3\n63|REQUESTS|RFC 2616|Requests follows RFC 2616 for the default ISO-8859-1 encoding when a text response lacks an explicit charset|9.0|3\n1045|TEST CONTENT ENCODING DETECTION|PYTEST|The test group uses Pytest parameterization and assertions to validate encoding detection behavior.|8.0|1\n358|RESPONSE|CHARACTER ENCODING DETECTION|A Response uses Chardet or Charset-normalizer to determine apparent encoding when no explicit encoding is available.|9.0|1\n371|CHARDET|CHARACTER ENCODING DETECTION|Chardet performs character encoding detection for response content.|9.0|1\n373|CHARACTER ENCODING DETECTION|UNICODE DECODING|The detected character encoding is used to decode response bytes into Unicode text.|1.0|1\n372|CHARSET_NORMALIZER|CHARACTER ENCODING DETECTION|Charset-normalizer is an alternative library used for character encoding detection.|9.0|1\n54|PYPI|CHARSET NORMALIZER|The Requests documentation links to PyPI for information about the Charset Normalizer package|7.0|1\n55|W3C|RFC 2616|The referenced RFC 2616 document is hosted on the W3C website|8.0|1\n\n-----Sources-----\nid|source|text\n6|docs/user/advanced.rst:L667-L791|\"    >>> requests.get('https://example.org')\n\n.. _socks:\n\nSOCKS\n^^^^^\n\n.. versionadded:: 2.10.0\n\nIn addition to basic HTTP proxies, Requests also supports proxies using the\nSOCKS protocol. This is an optional feature that requires that additional\nthird-party libraries be installed before use.\n\nYou can get the dependencies for this feature from ``pip``:\n\n.. code-block:: bash\n\n    $ python -m pip install requests[socks]\n\nOnce you've installed those dependencies, using a SOCKS proxy is just as easy\nas using a HTTP one::\n\n    proxies = {\n        'http': 'socks5://user:pass@host:port',\n        'https': 'socks5://user:pass@host:port'\n    }\n\nUsing the scheme ``socks5`` causes the DNS resolution to happen on the client, rather than on the proxy server. This is in line with curl, which uses the scheme to decide whether to do the DNS resolution on the client or proxy. If you want to resolve the domains on the proxy server, use ``socks5h`` as the scheme.\n\n.. _compliance:\n\nCompliance\n----------\n\nRequests is intended to be compliant with all relevant specifications and\nRFCs where that compliance will not cause difficulties for users. This\nattention to the specification can lead to some behaviour that may seem\nunusual to those not familiar with the relevant specification.\n\nEncodings\n^^^^^^^^^\n\nWhen you receive a response, Requests makes a guess at the encoding to\nuse for decoding the response when you access the :attr:`Response.text\n<requests.Response.text>` attribute. Requests will first check for an\nencoding in the HTTP header, and if none is present, will use\n`charset_normalizer <https://pypi.org/project/charset_normalizer/>`_\nor `chardet <https://github.com/chardet/chardet>`_ to attempt to\nguess the encoding.\n\nIf ``chardet`` is installed, ``requests`` uses it, however for python3\n``chardet`` is no longer a mandatory dependency. The ``chardet``\nlibrary is an LGPL-licenced dependency and some users of requests\ncannot depend on mandatory LGPL-licensed dependencies.\n\nWhen you install ``requests`` without specifying ``[use_chardet_on_py3]`` extra,\nand ``chardet`` is not already installed, ``requests`` uses ``charset-normalizer``\n(MIT-licensed) to guess the encoding.\n\nThe only time Requests will not guess the encoding is if no explicit charset\nis present in the HTTP headers **and** the ``Content-Type``\nheader contains ``text``. In this situation, `RFC 2616\n<https://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.7.1>`_ specifies\nthat the default charset must be ``ISO-8859-1``. Requests follows the\nspecification in this case. If you require a different encoding, you can\nmanually set the :attr:`Response.encoding <requests.Response.encoding>`\nproperty, or use the raw :attr:`Response.content <requests.Response.content>`.\n\n.. _http-verbs:\n\nHTTP Verbs\n----------\n\nRequests provides access to almost the full range of HTTP verbs: GET, OPTIONS,\nHEAD, POST, PUT, PATCH and DELETE. The following provides detailed examples of\nusing these various verbs in Requests, using the GitHub API.\n\nWe will begin with the verb most commonly used: GET. HTTP GET is an idempotent\nmethod that returns a resource from a given URL. As a result, it is the verb\nyou ought to use when attempting to retrieve data from a web location. An\nexample usage would be attempting to get information about a specific commit\nfrom GitHub. Suppose we wanted commit ``a050faf`` on Requests. We would get it\nlike so::\n\n    >>> import requests\n    >>> r = requests.get('https://api.github.com/repos/psf/requests/git/commits/a050faf084662f3a352dd1a941f2c7c9f886d4ad')\n\nWe should confirm that GitHub responded correctly. If it has, we want to work\nout what type of content it is. Do this like so::\n\n    >>> if r.status_code == requests.codes.ok:\n    ...     print(r.headers['content-type'])\n    ...\n    application/json; charset=utf-8\n\nSo, GitHub returns JSON. That's great, we can use the :meth:`r.json\n<requests.Response.json>` method to parse it into Python objects.\n\n::\n\n    >>> commit_data = r.json()\n\n    >>> print(commit_data.keys())\n    ['committer', 'author', 'url', 'tree', 'sha', 'parents', 'message']\n\n    >>> print(commit_data['committer'])\n    {'date': '2012-05-10T11:10:50-07:00', 'email': 'me@kennethreitz.com', 'name': 'Kenneth Reitz'}\n\n    >>> print(commit_data['message'])\n    makin' history\n\nSo far, so simple. Well, let's investigate the GitHub API a little bit. Now,\nwe could look at the documentation, but we might have a little more fun if we\nuse Requests instead. We can take advantage of the Requests OPTIONS verb to\nsee what kinds of HTTP methods are supported on the url we just used.\n\n::\n\n    >>> verbs = requests.options(r.url)\n    >>> verbs.status_code\n    500\n\nUh, what? That's unhelpful! Turns out GitHub, like many API providers, don't\nactually implement the OPTIONS method. This is an annoying oversight, but it's\nOK, we can just use the boring documentation. If GitHub had correctly\n\"\n",
+  "final_tables": [
+    {
+      "name": "entities",
+      "columns": [
+        "id",
+        "entity",
+        "description",
+        "number of relationships"
+      ],
+      "rows": [
+        {
+          "id": "51",
+          "entity": "RFC 2616",
+          "description": "RFC 2616 is the HTTP specification cited by Requests for the default ISO-8859-1 charset behavior when a text Content-Type lacks an explicit charset\"",
+          "number of relationships": "2"
+        },
+        {
+          "id": "264",
+          "entity": "CHARACTER ENCODING DETECTION",
+          "description": "Character encoding detection is the process of determining the encoding of response content with Chardet or another available detection library.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "628",
+          "entity": "TEST CONTENT ENCODING DETECTION",
+          "description": "Test Content Encoding Detection is a test group that verifies detection of character encodings from HTML meta tags, XHTML declarations, XML declarations, and precedence among multiple declarations.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "38",
+          "entity": "CHARSET NORMALIZER",
+          "description": "Charset Normalizer is an MIT-licensed Python package used to detect and infer character encodings, particularly when a response does not specify an explicit charset. Requests uses Charset Normalizer for this purpose in versions 2 and later but before version 4, where it is a required dependency; in other contexts, it may be installed and used as an optional encoding-detection package. When available, its installed version can be reported.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "265",
+          "entity": "UNICODE DECODING",
+          "description": "Unicode decoding is the conversion of response bytes into text using the selected or detected character encoding.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "512",
+          "entity": "TESTRESPONSEREASONUNICODEFALLBACK",
+          "description": "test_response_reason_unicode_fallback is a pytest test event that verifies raise_for_status decodes an encoded reason phrase using an ISO-8859-1 fallback",
+          "number of relationships": "2"
+        },
+        {
+          "id": "270",
+          "entity": "TYPE ERROR",
+          "description": "TypeError is an error event that can occur when the encoding value is None or otherwise has an incompatible type during response decoding.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "398",
+          "entity": "TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS",
+          "description": "A test event that verifies Requests JSON decoding behavior and exception compatibility for alternate UTF encodings",
+          "number of relationships": "3"
+        },
+        {
+          "id": "478",
+          "entity": "TEST DIFFERENT ENCODINGS DONT BREAK POST",
+          "description": "A test event that verifies Requests successfully handles a multipart POST combining JSON data, query parameters, and a file under different data encodings",
+          "number of relationships": "2"
+        },
+        {
+          "id": "112",
+          "entity": "CHARSET_NORMALIZER",
+          "description": "CHARSET_NORMALIZER is an optional character-detection and encoding-detection library supported by Requests. It serves as an alternative to `chardet` for determining the apparent encoding of response content. Requests includes compatibility checks requiring `charset_normalizer` version 2.0.0 or later, but earlier than version 4.0.0.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "89",
+          "entity": "CODECS",
+          "description": "CODECS is a Python standard-library module that provides codec and character-encoding support. Requests imports it to decode response content and can use it to create and register custom text encodings.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "578",
+          "entity": "TEST_EMPTY_STREAM_WITH_AUTH_DOES_NOT_SET_CONTENT_LENGTH_HEADER",
+          "description": "A test that verifies an empty byte stream uses transfer encoding rather than setting an inappropriate Content-Length header",
+          "number of relationships": "3"
+        },
+        {
+          "id": "256",
+          "entity": "CHUNKEDENCODINGERROR",
+          "description": "ChunkedEncodingError is a Requests exception that reports failures in HTTP chunked transfer encoding. It is raised when urllib3 encounters a ProtocolError while iterating over the content of a response.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "351",
+          "entity": "INCOMPLETE CHUNKED RESPONSE HANDLER",
+          "description": "A socket response-handler event that sends an HTTP 200 response declaring chunked transfer encoding but never provides valid terminating chunks, allowing the test to verify error handling",
+          "number of relationships": "1"
+        },
+        {
+          "id": "564",
+          "entity": "TEST_REDIRECT_WITH_WRONG_GZIPPED_HEADER",
+          "description": "A test that verifies Requests can follow a redirect when the response has an incorrectly applied gzip content-encoding header",
+          "number of relationships": "3"
+        },
+        {
+          "id": "39",
+          "entity": "CHARDET",
+          "description": "CHARDET is an optional, LGPL-licensed Python character-encoding detection library supported by Requests. Requests may import it through its compatibility layer and expose it under `requests.packages.chardet` or related compatibility utilities. When available—such as when the `use_chardet_on_py3` extra is installed—CHARDET helps Requests determine the apparent encoding of response content and guess the correct character encoding. Requests can also report CHARDET’s version and applies compatibility checks requiring a version of at least 3.0.2 and below 6.0.0.",
+          "number of relationships": "7"
+        },
+        {
+          "id": "68",
+          "entity": "REQUESTS DOCUMENTATION",
+          "description": "The Requests documentation explains transport adapters, blocking and non-blocking I/O, streaming responses, header ordering, and connection and read timeout configuration.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "248",
+          "entity": "HTTP RESPONSE",
+          "description": "An HTTP response is the server-produced result represented by the Response class, including status code, headers, URL, cookies, content, and timing information.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "510",
+          "entity": "TESTRESPONSEDECODEUNICODE",
+          "description": "test_response_decode_unicode is a pytest test event that verifies Response.iter_content returns Unicode strings when Unicode decoding is requested",
+          "number of relationships": "2"
+        }
+      ]
+    },
+    {
+      "name": "relationships",
+      "columns": [
+        "id",
+        "source",
+        "target",
+        "description",
+        "weight",
+        "links"
+      ],
+      "rows": [
+        {
+          "id": "1040",
+          "source": "TEST CONTENT ENCODING DETECTION",
+          "target": "REQUESTS",
+          "description": "The test group exercises Requests functionality for detecting encodings from document content.",
+          "weight": "9.0",
+          "links": "3"
+        },
+        {
+          "id": "46",
+          "source": "REQUESTS",
+          "target": "CHARSET NORMALIZER",
+          "description": "REQUESTS uses CHARSET NORMALIZER (`charset-normalizer`) as a runtime dependency for character-encoding detection. When installed, REQUESTS optionally imports CHARSET NORMALIZER and reports its version. It relies on CHARSET NORMALIZER when `chardet` is unavailable or not installed, using it to make a best-effort determination of the correct character encoding when response text decoding requires fallback detection.",
+          "weight": "34.0",
+          "links": "3"
+        },
+        {
+          "id": "63",
+          "source": "REQUESTS",
+          "target": "RFC 2616",
+          "description": "Requests follows RFC 2616 for the default ISO-8859-1 encoding when a text response lacks an explicit charset",
+          "weight": "9.0",
+          "links": "3"
+        },
+        {
+          "id": "1045",
+          "source": "TEST CONTENT ENCODING DETECTION",
+          "target": "PYTEST",
+          "description": "The test group uses Pytest parameterization and assertions to validate encoding detection behavior.",
+          "weight": "8.0",
+          "links": "1"
+        },
+        {
+          "id": "358",
+          "source": "RESPONSE",
+          "target": "CHARACTER ENCODING DETECTION",
+          "description": "A Response uses Chardet or Charset-normalizer to determine apparent encoding when no explicit encoding is available.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "371",
+          "source": "CHARDET",
+          "target": "CHARACTER ENCODING DETECTION",
+          "description": "Chardet performs character encoding detection for response content.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "373",
+          "source": "CHARACTER ENCODING DETECTION",
+          "target": "UNICODE DECODING",
+          "description": "The detected character encoding is used to decode response bytes into Unicode text.",
+          "weight": "1.0",
+          "links": "1"
+        },
+        {
+          "id": "372",
+          "source": "CHARSET_NORMALIZER",
+          "target": "CHARACTER ENCODING DETECTION",
+          "description": "Charset-normalizer is an alternative library used for character encoding detection.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "54",
+          "source": "PYPI",
+          "target": "CHARSET NORMALIZER",
+          "description": "The Requests documentation links to PyPI for information about the Charset Normalizer package",
+          "weight": "7.0",
+          "links": "1"
+        },
+        {
+          "id": "55",
+          "source": "W3C",
+          "target": "RFC 2616",
+          "description": "The referenced RFC 2616 document is hosted on the W3C website",
+          "weight": "8.0",
+          "links": "1"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "columns": [
+        "id",
+        "source",
+        "text"
+      ],
+      "rows": [
+        {
+          "id": "6",
+          "text": "    >>> requests.get('https://example.org')\n\n.. _socks:\n\nSOCKS\n^^^^^\n\n.. versionadded:: 2.10.0\n\nIn addition to basic HTTP proxies, Requests also supports proxies using the\nSOCKS protocol. This is an optional feature that requires that additional\nthird-party libraries be installed before use.\n\nYou can get the dependencies for this feature from ``pip``:\n\n.. code-block:: bash\n\n    $ python -m pip install requests[socks]\n\nOnce you've installed those dependencies, using a SOCKS proxy is just as easy\nas using a HTTP one::\n\n    proxies = {\n        'http': 'socks5://user:pass@host:port',\n        'https': 'socks5://user:pass@host:port'\n    }\n\nUsing the scheme ``socks5`` causes the DNS resolution to happen on the client, rather than on the proxy server. This is in line with curl, which uses the scheme to decide whether to do the DNS resolution on the client or proxy. If you want to resolve the domains on the proxy server, use ``socks5h`` as the scheme.\n\n.. _compliance:\n\nCompliance\n----------\n\nRequests is intended to be compliant with all relevant specifications and\nRFCs where that compliance will not cause difficulties for users. This\nattention to the specification can lead to some behaviour that may seem\nunusual to those not familiar with the relevant specification.\n\nEncodings\n^^^^^^^^^\n\nWhen you receive a response, Requests makes a guess at the encoding to\nuse for decoding the response when you access the :attr:`Response.text\n<requests.Response.text>` attribute. Requests will first check for an\nencoding in the HTTP header, and if none is present, will use\n`charset_normalizer <https://pypi.org/project/charset_normalizer/>`_\nor `chardet <https://github.com/chardet/chardet>`_ to attempt to\nguess the encoding.\n\nIf ``chardet`` is installed, ``requests`` uses it, however for python3\n``chardet`` is no longer a mandatory dependency. The ``chardet``\nlibrary is an LGPL-licenced dependency and some users of requests\ncannot depend on mandatory LGPL-licensed dependencies.\n\nWhen you install ``requests`` without specifying ``[use_chardet_on_py3]`` extra,\nand ``chardet`` is not already installed, ``requests`` uses ``charset-normalizer``\n(MIT-licensed) to guess the encoding.\n\nThe only time Requests will not guess the encoding is if no explicit charset\nis present in the HTTP headers **and** the ``Content-Type``\nheader contains ``text``. In this situation, `RFC 2616\n<https://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.7.1>`_ specifies\nthat the default charset must be ``ISO-8859-1``. Requests follows the\nspecification in this case. If you require a different encoding, you can\nmanually set the :attr:`Response.encoding <requests.Response.encoding>`\nproperty, or use the raw :attr:`Response.content <requests.Response.content>`.\n\n.. _http-verbs:\n\nHTTP Verbs\n----------\n\nRequests provides access to almost the full range of HTTP verbs: GET, OPTIONS,\nHEAD, POST, PUT, PATCH and DELETE. The following provides detailed examples of\nusing these various verbs in Requests, using the GitHub API.\n\nWe will begin with the verb most commonly used: GET. HTTP GET is an idempotent\nmethod that returns a resource from a given URL. As a result, it is the verb\nyou ought to use when attempting to retrieve data from a web location. An\nexample usage would be attempting to get information about a specific commit\nfrom GitHub. Suppose we wanted commit ``a050faf`` on Requests. We would get it\nlike so::\n\n    >>> import requests\n    >>> r = requests.get('https://api.github.com/repos/psf/requests/git/commits/a050faf084662f3a352dd1a941f2c7c9f886d4ad')\n\nWe should confirm that GitHub responded correctly. If it has, we want to work\nout what type of content it is. Do this like so::\n\n    >>> if r.status_code == requests.codes.ok:\n    ...     print(r.headers['content-type'])\n    ...\n    application/json; charset=utf-8\n\nSo, GitHub returns JSON. That's great, we can use the :meth:`r.json\n<requests.Response.json>` method to parse it into Python objects.\n\n::\n\n    >>> commit_data = r.json()\n\n    >>> print(commit_data.keys())\n    ['committer', 'author', 'url', 'tree', 'sha', 'parents', 'message']\n\n    >>> print(commit_data['committer'])\n    {'date': '2012-05-10T11:10:50-07:00', 'email': 'me@kennethreitz.com', 'name': 'Kenneth Reitz'}\n\n    >>> print(commit_data['message'])\n    makin' history\n\nSo far, so simple. Well, let's investigate the GitHub API a little bit. Now,\nwe could look at the documentation, but we might have a little more fun if we\nuse Requests instead. We can take advantage of the Requests OPTIONS verb to\nsee what kinds of HTTP methods are supported on the url we just used.\n\n::\n\n    >>> verbs = requests.options(r.url)\n    >>> verbs.status_code\n    500\n\nUh, what? That's unhelpful! Turns out GitHub, like many API providers, don't\nactually implement the OPTIONS method. This is an annoying oversight, but it's\nOK, we can just use the boring documentation. If GitHub had correctly\n",
+          "source": "docs/user/advanced.rst:L667-L791"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "short_id": "6",
+      "text_unit_id": "08c52511252173a28e6e74cb828a3ae64b0bbe6fd625baa98b3265cdfc9a7a5e5dbb287add08d0d0311bb06af472b598016206f1842ea88e456ff072651703ed",
+      "id": "dead0055fc1342cb084a038a10548b7430af12326ec7474da6782c447f260afe",
+      "title": "docs/user/advanced.rst:L667-L791",
+      "path": "docs/user/advanced.rst",
+      "start_line": 667,
+      "end_line": 791,
+      "tokens": 1199,
+      "text_sha256": "671bf3537794f4c1b72b67abdda0cbd314f11098bd9f39193a3119bcd9586045",
+      "ms_text_unit_id": "08c52511252173a28e6e74cb828a3ae64b0bbe6fd625baa98b3265cdfc9a7a5e5dbb287add08d0d0311bb06af472b598016206f1842ea88e456ff072651703ed"
+    }
+  ],
+  "raw_context_tokens": 2580,
+  "final_context_tokens": 2594,
+  "source_text_tokens": 1199,
+  "source_chunks": 1,
+  "retrieval_compute_seconds": 0.013325749896466732,
+  "adaptation_seconds": 0.004701499827206135,
+  "empty_reason": null,
+  "community_level": 2,
+  "dropped_tail_rows": 0
+}

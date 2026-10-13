@@ -1,0 +1,73 @@
+diff --git a/src/requests/structures.py b/src/requests/structures.py
+--- a/src/requests/structures.py
++++ b/src/requests/structures.py
+@@ -18,6 +18,11 @@ class CaseInsensitiveDict(MutableMapping):
+ 
+     For example, ``headers['content-encoding']`` will return the
+     value of a ``'Content-Encoding'`` response header, regardless
+     of how the header name was originally stored.
++
++    Mapping union operators are supported: ``a | b``, ``dict | a``,
++    and ``a |= b``. They require mapping operands and preserve the
++    case-insensitive key order.
+ 
+     If the constructor, ``.update``, or equality comparison
+     operations are given keys that have equal ``.lower()``s, the
+@@ -65,6 +70,25 @@ class CaseInsensitiveDict(MutableMapping):
+         # Compare insensitively
+         return dict(self.lower_items()) == dict(other.lower_items())
+ 
++    def __or__(self, other):
++        if not isinstance(other, Mapping):
++            raise TypeError(
++                "unsupported operand type(s) for |: "
++                "'CaseInsensitiveDict' and '{}'".format(type(other).__name__)
++            )
++        result = self.copy()
++        result.update(other)
++        return result
++
++    def __ror__(self, other):
++        if not isinstance(other, Mapping):
++            raise TypeError(
++                "unsupported operand type(s) for |: "
++                "'{}' and 'CaseInsensitiveDict'".format(type(other).__name__)
++            )
++        result = CaseInsensitiveDict(other)
++        result.update(self)
++        return result
++
++    def __ior__(self, other):
++        if not isinstance(other, Mapping):
++            raise TypeError(
++                "unsupported operand type(s) for |=: "
++                "'CaseInsensitiveDict' and '{}'".format(type(other).__name__)
++            )
++        self.update(other)
++        return self
++
+     # Copy is required
+     def copy(self):
+         return CaseInsensitiveDict(self._store.values())
+diff --git a/docs/user/quickstart.rst b/docs/user/quickstart.rst
+--- a/docs/user/quickstart.rst
++++ b/docs/user/quickstart.rst
+@@ -52,6 +52,17 @@ It is also possible to access headers using any capitalization:
+ >>> r.headers['content-type']
+ 'application/json'
+ 
++Case-insensitive dictionary unions
++----------------------------------
++
++Requests' header mappings support case-insensitive mapping union operators::
++
++    combined = headers | {'Accept': 'application/json'}
++    combined = {'Accept': 'application/json'} | headers
++    headers |= {'User-Agent': 'requests'}
++
++These operations require mapping operands. Non-mutating unions return a new
++``CaseInsensitiveDict``; in-place unions update and return the left operand.
++
+ If you want to add HTTP headers to a request, simply pass in a ``dict`` to the
+ ``headers`` parameter. For example, we can specify the ``Content-Type`` in a
+ POST request:

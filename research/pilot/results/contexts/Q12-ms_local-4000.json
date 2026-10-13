@@ -1,0 +1,339 @@
+{
+  "question_id": "Q12",
+  "method": "ms_local",
+  "budget": 4000,
+  "query": "Follow response callback dispatch from Session.send. Does every registered callable necessarily return the Response that later steps use?",
+  "upstream_raw_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n488|SESSION HOOKS OVERRIDDEN BY REQUEST HOOKS TEST|A test event that verifies request-specific response hooks replace the response hooks configured on a Session.|1\n247|CALLABLE|Callable is a callable-object type abstraction used by RequestHooksMixin to validate hook functions before registering them.>|1\n21|SESSION|SESSION is a Requests library client object that manages persistent state and configuration while sending multiple HTTP and HTTPS requests. It stores and applies cookies, headers, authentication, proxy settings, hooks, environment settings, certificates, and TLS verification options. SESSION creates and mounts HTTPAdapter instances to contact HTTP and HTTPS URLs, maintaining separate connection pools when TLS configurations differ and providing connection pooling for efficient reuse. It prepares and sends requests, including prepared requests, resolves redirect chains subject to configured redirect limits, and manages the adapters used for network communication. SESSION also supports pickling and serves as the central mechanism for maintaining consistent request behavior across a series of HTTP operations.|14\n12|RESPONSE|The `RESPONSE` entity is the `Response` Python class in the Requests library, representing the HTTP result returned by a server after a request or prepared request is sent. It contains the originating request and response metadata, including the status code, URL, headers, cookies, encoding, body content, raw response, connection, and elapsed time. The `Response` object supports content access and decoding, iteration over response data, streaming, serialization, and context-manager behavior. It is also used during redirect handling to inspect response status codes and provides mechanisms for evaluating status behavior and raising errors for unsuccessful HTTP responses.|28\n214|HOOK|A hook is a callable callback registered in the Requests hooks system to process hook data, such as a response, and optionally return updated data.|2\n487|SESSION HOOKS USED WITH NO REQUEST HOOKS TEST|A test event that verifies response hooks configured on a Session are inherited by a request without its own hooks.|1\n583|CUSTOM REDIRECT SESSION|A subclass of the Requests Session class that overrides get_redirect_target to follow valid redirects and certain malformed responses containing a different location header.|2\n523|SESSION PICKLING TEST|The session pickling test serializes and restores a Session, configures its proxies, and sends a prepared request successfully)<|2\n215|HOOKS|Hooks are collections of callback functions associated with supported events in the Requests hooks system; the default configuration includes a response hook list.|2\n16|SESSION API DOCS|The Session API Docs provide additional documentation about the Requests Session object and its available values and methods.|1\n353|BASIC RESPONSE SERVER|A server configuration event created through Server.basic_response_server to provide a basic HTTP response while coordinating shutdown with a threading Event|2\n244|REQUESTHOOKSMIXIN|RequestHooksMixin is a requests software component that registers and deregisters callable hooks for supported request events.>|4\n430|TEST HEADERS ON SESSION WITH NONE ARE NOT SENT|A test event verifying that session headers assigned a None value are omitted from prepared Requests requests|1\n350|ECHO RESPONSE HANDLER|ECHO RESPONSE HANDLER is a socket response-handler event and test server handler used by the fragment test. It consumes an incoming HTTP request and returns it in an HTTP 200 response, using the received request content as the response body.|4\n581|CUSTOM REDIRECT MIXIN TEST|A test event verifying that a custom requests session follows a malformed redirect response with HTTP status 200 and a location header.|2\n577|TEST_RESPONSE_WITHOUT_RELEASE_CONN|A test that verifies Response.close works with a raw object that lacks a release_conn method|2\n531|SESSION ADAPTER PREFIX MATCHING|A test event verifying that a Requests Session selects the adapter mounted at the most specific matching URL prefix and ignores adapters for unrelated prefixes|2\n\n\n-----Relationships-----\nid|source|target|description|weight|links\n780|SESSION HOOKS OVERRIDDEN BY REQUEST HOOKS TEST|REQUESTS|The test verifies request-specific hook precedence in the Requests Session API.|9.0|1\n338|REQUESTHOOKSMIXIN|CALLABLE|RequestHooksMixin checks whether hooks are Callable objects before adding them to its event-specific hook lists.|8.0|1\n\n\n-----Sources-----\nid|text\n88|        ),\n    )\n    def test_unicode_multipart_post(self, httpbin, data):\n        with open(__file__, \"rb\") as f:\n            r = requests.post(\n                httpbin(\"post\"),\n                data=data,\n                files={\"file\": (\"test_requests.py\", f)},\n            )\n        assert r.status_code == 200\n\n    def test_unicode_multipart_post_fieldnames(self, httpbin):\n        filename = os.path.splitext(__file__)[0] + \".py\"\n        with open(filename, \"rb\") as f:\n            r = requests.Request(\n                method=\"POST\",\n                url=httpbin(\"post\"),\n                data={b\"stuff\": \"elixr\"},\n                files={\"file\": (\"test_requests.py\", f)},\n            )\n            prep = r.prepare()\n\n        assert b'name=\"stuff\"' in prep.body\n        assert b\"name=\\\"b'stuff'\\\"\" not in prep.body\n\n    def test_unicode_method_name(self, httpbin):\n        with open(__file__, \"rb\") as f:\n            files = {\"file\": f}\n            r = requests.request(\n                method=\"POST\",\n                url=httpbin(\"post\"),\n                files=files,\n            )\n        assert r.status_code == 200\n\n    def test_unicode_method_name_with_request_object(self, httpbin):\n        s = requests.Session()\n        with open(__file__, \"rb\") as f:\n            files = {\"file\": f}\n            req = requests.Request(\"POST\", httpbin(\"post\"), files=files)\n            prep = s.prepare_request(req)\n        assert isinstance(prep.method, builtin_str)\n        assert prep.method == \"POST\"\n\n        resp = s.send(prep)\n        assert resp.status_code == 200\n\n    def test_non_prepared_request_error(self):\n        s = requests.Session()\n        req = requests.Request(\"POST\", \"/\")\n\n        with pytest.raises(ValueError) as e:\n            s.send(req)\n        assert str(e.value) == \"You can only send PreparedRequests.\"\n\n    def test_custom_content_type(self, httpbin):\n        with open(__file__, \"rb\") as f1:\n            with open(__file__, \"rb\") as f2:\n                data = {\"stuff\": json.dumps({\"a\": 123})}\n                files = {\n                    \"file1\": (\"test_requests.py\", f1),\n                    \"file2\": (\"test_requests\", f2, \"text/py-content-type\"),\n                }\n                r = requests.post(httpbin(\"post\"), data=data, files=files)\n        assert r.status_code == 200\n        assert b\"text/py-content-type\" in r.request.body\n\n    def test_hook_receives_request_arguments(self, httpbin):\n        def hook(resp, **kwargs):\n            assert resp is not None\n            assert kwargs != {}\n\n        s = requests.Session()\n        r = requests.Request(\"GET\", httpbin(), hooks={\"response\": hook})\n        prep = s.prepare_request(r)\n        s.send(prep)\n\n    def test_session_hooks_are_used_with_no_request_hooks(self, httpbin):\n        def hook(*args, **kwargs):\n            pass\n\n        s = requests.Session()\n        s.hooks[\"response\"].append(hook)\n        r = requests.Request(\"GET\", httpbin())\n        prep = s.prepare_request(r)\n        assert prep.hooks[\"response\"] != []\n        assert prep.hooks[\"response\"] == [hook]\n\n    def test_session_hooks_are_overridden_by_request_hooks(self, httpbin):\n        def hook1(*args, **kwargs):\n            pass\n\n        def hook2(*args, **kwargs):\n            pass\n\n        assert hook1 is not hook2\n        s = requests.Session()\n        s.hooks[\"response\"].append(hook2)\n        r = requests.Request(\"GET\", httpbin(), hooks={\"response\": [hook1]})\n        prep = s.prepare_request(r)\n        assert prep.hooks[\"response\"] == [hook1]\n\n    def test_prepared_request_hook(self, httpbin):\n        def hook(resp, **kwargs):\n            resp.hook_working = True\n            return resp\n\n        req = requests.Request(\"GET\", httpbin(), hooks={\"response\": hook})\n        prep = req.prepare()\n\n        s = requests.Session()\n        s.proxies = getproxies()\n        resp = s.send(prep)\n\n        assert hasattr(resp, \"hook_working\")\n\n    def test_prepared_from_session(self, httpbin):\n        class DummyAuth(requests.auth.AuthBase):\n            def __call__(self, r):\n                r.headers[\"Dummy-Auth-Test\"] = \"dummy-auth-test-ok\"\n                return r\n\n        req = requests.Request(\"GET\", httpbin(\"headers\"))\n        assert not req.auth\n\n        s = requests.Session()\n        s.auth = DummyAuth()\n\n        prep = s.prepare_request(req)\n        resp = s.send(prep)\n\n        assert resp.json()[\"headers\"][\"Dummy-Auth-Test\"] == \"dummy-auth-test-ok\"\n\n    def test_prepare_request_with_bytestring_url(self):\n        req = requests.Request(\"GET\", b\"https://httpbin.org/\")\n        s = requests.Session()\n        prep = s.prepare_request(req)\n        assert prep.url == \"https://httpbin.org/\"\n\n    def test_request_with_bytestring_host(self, httpbin):\n        s = requests.Session()\n        resp = s.request(\n            \"GET\",\n            httpbin(\"cookies/set?cookie=value\"),\n            allow_redirects=False,\n            headers={\"Host\": b\"httpbin.org\"},\n        )\n        assert resp.cookies.get(\"cookie\") == \"value\"\n\n    def test_links(self):\n        r = requests.Response()\n        r.headers = {\n            \"cache-control\": \"public, max-age=60, s-maxage=60\",\n            \"connection\": \"keep-alive\",\n            \"content-encoding\": \"gzip\",\n\n",
+  "upstream_raw_records": {
+    "relationships": [
+      {
+        "id": "780",
+        "source": "SESSION HOOKS OVERRIDDEN BY REQUEST HOOKS TEST",
+        "target": "REQUESTS",
+        "description": "The test verifies request-specific hook precedence in the Requests Session API.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "338",
+        "source": "REQUESTHOOKSMIXIN",
+        "target": "CALLABLE",
+        "description": "RequestHooksMixin checks whether hooks are Callable objects before adding them to its event-specific hook lists.",
+        "weight": "8.0",
+        "links": "1",
+        "in_context": true
+      }
+    ],
+    "entities": [
+      {
+        "id": "488",
+        "entity": "SESSION HOOKS OVERRIDDEN BY REQUEST HOOKS TEST",
+        "description": "A test event that verifies request-specific response hooks replace the response hooks configured on a Session.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "247",
+        "entity": "CALLABLE",
+        "description": "Callable is a callable-object type abstraction used by RequestHooksMixin to validate hook functions before registering them.>",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "21",
+        "entity": "SESSION",
+        "description": "SESSION is a Requests library client object that manages persistent state and configuration while sending multiple HTTP and HTTPS requests. It stores and applies cookies, headers, authentication, proxy settings, hooks, environment settings, certificates, and TLS verification options. SESSION creates and mounts HTTPAdapter instances to contact HTTP and HTTPS URLs, maintaining separate connection pools when TLS configurations differ and providing connection pooling for efficient reuse. It prepares and sends requests, including prepared requests, resolves redirect chains subject to configured redirect limits, and manages the adapters used for network communication. SESSION also supports pickling and serves as the central mechanism for maintaining consistent request behavior across a series of HTTP operations.",
+        "number of relationships": "14",
+        "in_context": true
+      },
+      {
+        "id": "12",
+        "entity": "RESPONSE",
+        "description": "The `RESPONSE` entity is the `Response` Python class in the Requests library, representing the HTTP result returned by a server after a request or prepared request is sent. It contains the originating request and response metadata, including the status code, URL, headers, cookies, encoding, body content, raw response, connection, and elapsed time. The `Response` object supports content access and decoding, iteration over response data, streaming, serialization, and context-manager behavior. It is also used during redirect handling to inspect response status codes and provides mechanisms for evaluating status behavior and raising errors for unsuccessful HTTP responses.",
+        "number of relationships": "28",
+        "in_context": true
+      },
+      {
+        "id": "214",
+        "entity": "HOOK",
+        "description": "A hook is a callable callback registered in the Requests hooks system to process hook data, such as a response, and optionally return updated data.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "487",
+        "entity": "SESSION HOOKS USED WITH NO REQUEST HOOKS TEST",
+        "description": "A test event that verifies response hooks configured on a Session are inherited by a request without its own hooks.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "583",
+        "entity": "CUSTOM REDIRECT SESSION",
+        "description": "A subclass of the Requests Session class that overrides get_redirect_target to follow valid redirects and certain malformed responses containing a different location header.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "523",
+        "entity": "SESSION PICKLING TEST",
+        "description": "The session pickling test serializes and restores a Session, configures its proxies, and sends a prepared request successfully)<",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "215",
+        "entity": "HOOKS",
+        "description": "Hooks are collections of callback functions associated with supported events in the Requests hooks system; the default configuration includes a response hook list.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "16",
+        "entity": "SESSION API DOCS",
+        "description": "The Session API Docs provide additional documentation about the Requests Session object and its available values and methods.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "353",
+        "entity": "BASIC RESPONSE SERVER",
+        "description": "A server configuration event created through Server.basic_response_server to provide a basic HTTP response while coordinating shutdown with a threading Event",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "244",
+        "entity": "REQUESTHOOKSMIXIN",
+        "description": "RequestHooksMixin is a requests software component that registers and deregisters callable hooks for supported request events.>",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "430",
+        "entity": "TEST HEADERS ON SESSION WITH NONE ARE NOT SENT",
+        "description": "A test event verifying that session headers assigned a None value are omitted from prepared Requests requests",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "350",
+        "entity": "ECHO RESPONSE HANDLER",
+        "description": "ECHO RESPONSE HANDLER is a socket response-handler event and test server handler used by the fragment test. It consumes an incoming HTTP request and returns it in an HTTP 200 response, using the received request content as the response body.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "581",
+        "entity": "CUSTOM REDIRECT MIXIN TEST",
+        "description": "A test event verifying that a custom requests session follows a malformed redirect response with HTTP status 200 and a location header.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "577",
+        "entity": "TEST_RESPONSE_WITHOUT_RELEASE_CONN",
+        "description": "A test that verifies Response.close works with a raw object that lacks a release_conn method",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "531",
+        "entity": "SESSION ADAPTER PREFIX MATCHING",
+        "description": "A test event verifying that a Requests Session selects the adapter mounted at the most specific matching URL prefix and ignores adapters for unrelated prefixes",
+        "number of relationships": "2",
+        "in_context": true
+      }
+    ],
+    "sources": [
+      {
+        "id": "88",
+        "text": "        ),\n    )\n    def test_unicode_multipart_post(self, httpbin, data):\n        with open(__file__, \"rb\") as f:\n            r = requests.post(\n                httpbin(\"post\"),\n                data=data,\n                files={\"file\": (\"test_requests.py\", f)},\n            )\n        assert r.status_code == 200\n\n    def test_unicode_multipart_post_fieldnames(self, httpbin):\n        filename = os.path.splitext(__file__)[0] + \".py\"\n        with open(filename, \"rb\") as f:\n            r = requests.Request(\n                method=\"POST\",\n                url=httpbin(\"post\"),\n                data={b\"stuff\": \"elixr\"},\n                files={\"file\": (\"test_requests.py\", f)},\n            )\n            prep = r.prepare()\n\n        assert b'name=\"stuff\"' in prep.body\n        assert b\"name=\\\"b'stuff'\\\"\" not in prep.body\n\n    def test_unicode_method_name(self, httpbin):\n        with open(__file__, \"rb\") as f:\n            files = {\"file\": f}\n            r = requests.request(\n                method=\"POST\",\n                url=httpbin(\"post\"),\n                files=files,\n            )\n        assert r.status_code == 200\n\n    def test_unicode_method_name_with_request_object(self, httpbin):\n        s = requests.Session()\n        with open(__file__, \"rb\") as f:\n            files = {\"file\": f}\n            req = requests.Request(\"POST\", httpbin(\"post\"), files=files)\n            prep = s.prepare_request(req)\n        assert isinstance(prep.method, builtin_str)\n        assert prep.method == \"POST\"\n\n        resp = s.send(prep)\n        assert resp.status_code == 200\n\n    def test_non_prepared_request_error(self):\n        s = requests.Session()\n        req = requests.Request(\"POST\", \"/\")\n\n        with pytest.raises(ValueError) as e:\n            s.send(req)\n        assert str(e.value) == \"You can only send PreparedRequests.\"\n\n    def test_custom_content_type(self, httpbin):\n        with open(__file__, \"rb\") as f1:\n            with open(__file__, \"rb\") as f2:\n                data = {\"stuff\": json.dumps({\"a\": 123})}\n                files = {\n                    \"file1\": (\"test_requests.py\", f1),\n                    \"file2\": (\"test_requests\", f2, \"text/py-content-type\"),\n                }\n                r = requests.post(httpbin(\"post\"), data=data, files=files)\n        assert r.status_code == 200\n        assert b\"text/py-content-type\" in r.request.body\n\n    def test_hook_receives_request_arguments(self, httpbin):\n        def hook(resp, **kwargs):\n            assert resp is not None\n            assert kwargs != {}\n\n        s = requests.Session()\n        r = requests.Request(\"GET\", httpbin(), hooks={\"response\": hook})\n        prep = s.prepare_request(r)\n        s.send(prep)\n\n    def test_session_hooks_are_used_with_no_request_hooks(self, httpbin):\n        def hook(*args, **kwargs):\n            pass\n\n        s = requests.Session()\n        s.hooks[\"response\"].append(hook)\n        r = requests.Request(\"GET\", httpbin())\n        prep = s.prepare_request(r)\n        assert prep.hooks[\"response\"] != []\n        assert prep.hooks[\"response\"] == [hook]\n\n    def test_session_hooks_are_overridden_by_request_hooks(self, httpbin):\n        def hook1(*args, **kwargs):\n            pass\n\n        def hook2(*args, **kwargs):\n            pass\n\n        assert hook1 is not hook2\n        s = requests.Session()\n        s.hooks[\"response\"].append(hook2)\n        r = requests.Request(\"GET\", httpbin(), hooks={\"response\": [hook1]})\n        prep = s.prepare_request(r)\n        assert prep.hooks[\"response\"] == [hook1]\n\n    def test_prepared_request_hook(self, httpbin):\n        def hook(resp, **kwargs):\n            resp.hook_working = True\n            return resp\n\n        req = requests.Request(\"GET\", httpbin(), hooks={\"response\": hook})\n        prep = req.prepare()\n\n        s = requests.Session()\n        s.proxies = getproxies()\n        resp = s.send(prep)\n\n        assert hasattr(resp, \"hook_working\")\n\n    def test_prepared_from_session(self, httpbin):\n        class DummyAuth(requests.auth.AuthBase):\n            def __call__(self, r):\n                r.headers[\"Dummy-Auth-Test\"] = \"dummy-auth-test-ok\"\n                return r\n\n        req = requests.Request(\"GET\", httpbin(\"headers\"))\n        assert not req.auth\n\n        s = requests.Session()\n        s.auth = DummyAuth()\n\n        prep = s.prepare_request(req)\n        resp = s.send(prep)\n\n        assert resp.json()[\"headers\"][\"Dummy-Auth-Test\"] == \"dummy-auth-test-ok\"\n\n    def test_prepare_request_with_bytestring_url(self):\n        req = requests.Request(\"GET\", b\"https://httpbin.org/\")\n        s = requests.Session()\n        prep = s.prepare_request(req)\n        assert prep.url == \"https://httpbin.org/\"\n\n    def test_request_with_bytestring_host(self, httpbin):\n        s = requests.Session()\n        resp = s.request(\n            \"GET\",\n            httpbin(\"cookies/set?cookie=value\"),\n            allow_redirects=False,\n            headers={\"Host\": b\"httpbin.org\"},\n        )\n        assert resp.cookies.get(\"cookie\") == \"value\"\n\n    def test_links(self):\n        r = requests.Response()\n        r.headers = {\n            \"cache-control\": \"public, max-age=60, s-maxage=60\",\n            \"connection\": \"keep-alive\",\n            \"content-encoding\": \"gzip\",\n"
+      }
+    ]
+  },
+  "final_context": "-----Entities-----\nid|entity|description|number of relationships\n488|SESSION HOOKS OVERRIDDEN BY REQUEST HOOKS TEST|A test event that verifies request-specific response hooks replace the response hooks configured on a Session.|1\n247|CALLABLE|Callable is a callable-object type abstraction used by RequestHooksMixin to validate hook functions before registering them.>|1\n21|SESSION|SESSION is a Requests library client object that manages persistent state and configuration while sending multiple HTTP and HTTPS requests. It stores and applies cookies, headers, authentication, proxy settings, hooks, environment settings, certificates, and TLS verification options. SESSION creates and mounts HTTPAdapter instances to contact HTTP and HTTPS URLs, maintaining separate connection pools when TLS configurations differ and providing connection pooling for efficient reuse. It prepares and sends requests, including prepared requests, resolves redirect chains subject to configured redirect limits, and manages the adapters used for network communication. SESSION also supports pickling and serves as the central mechanism for maintaining consistent request behavior across a series of HTTP operations.|14\n12|RESPONSE|The `RESPONSE` entity is the `Response` Python class in the Requests library, representing the HTTP result returned by a server after a request or prepared request is sent. It contains the originating request and response metadata, including the status code, URL, headers, cookies, encoding, body content, raw response, connection, and elapsed time. The `Response` object supports content access and decoding, iteration over response data, streaming, serialization, and context-manager behavior. It is also used during redirect handling to inspect response status codes and provides mechanisms for evaluating status behavior and raising errors for unsuccessful HTTP responses.|28\n214|HOOK|A hook is a callable callback registered in the Requests hooks system to process hook data, such as a response, and optionally return updated data.|2\n487|SESSION HOOKS USED WITH NO REQUEST HOOKS TEST|A test event that verifies response hooks configured on a Session are inherited by a request without its own hooks.|1\n583|CUSTOM REDIRECT SESSION|A subclass of the Requests Session class that overrides get_redirect_target to follow valid redirects and certain malformed responses containing a different location header.|2\n523|SESSION PICKLING TEST|The session pickling test serializes and restores a Session, configures its proxies, and sends a prepared request successfully)<|2\n215|HOOKS|Hooks are collections of callback functions associated with supported events in the Requests hooks system; the default configuration includes a response hook list.|2\n16|SESSION API DOCS|The Session API Docs provide additional documentation about the Requests Session object and its available values and methods.|1\n353|BASIC RESPONSE SERVER|A server configuration event created through Server.basic_response_server to provide a basic HTTP response while coordinating shutdown with a threading Event|2\n244|REQUESTHOOKSMIXIN|RequestHooksMixin is a requests software component that registers and deregisters callable hooks for supported request events.>|4\n430|TEST HEADERS ON SESSION WITH NONE ARE NOT SENT|A test event verifying that session headers assigned a None value are omitted from prepared Requests requests|1\n350|ECHO RESPONSE HANDLER|ECHO RESPONSE HANDLER is a socket response-handler event and test server handler used by the fragment test. It consumes an incoming HTTP request and returns it in an HTTP 200 response, using the received request content as the response body.|4\n581|CUSTOM REDIRECT MIXIN TEST|A test event verifying that a custom requests session follows a malformed redirect response with HTTP status 200 and a location header.|2\n577|TEST_RESPONSE_WITHOUT_RELEASE_CONN|A test that verifies Response.close works with a raw object that lacks a release_conn method|2\n531|SESSION ADAPTER PREFIX MATCHING|A test event verifying that a Requests Session selects the adapter mounted at the most specific matching URL prefix and ignores adapters for unrelated prefixes|2\n\n-----Relationships-----\nid|source|target|description|weight|links\n780|SESSION HOOKS OVERRIDDEN BY REQUEST HOOKS TEST|REQUESTS|The test verifies request-specific hook precedence in the Requests Session API.|9.0|1\n338|REQUESTHOOKSMIXIN|CALLABLE|RequestHooksMixin checks whether hooks are Callable objects before adding them to its event-specific hook lists.|8.0|1\n\n-----Sources-----\nid|source|text\n88|tests/test_requests.py:L1057-L1211|\"        ),\n    )\n    def test_unicode_multipart_post(self, httpbin, data):\n        with open(__file__, \"\"rb\"\") as f:\n            r = requests.post(\n                httpbin(\"\"post\"\"),\n                data=data,\n                files={\"\"file\"\": (\"\"test_requests.py\"\", f)},\n            )\n        assert r.status_code == 200\n\n    def test_unicode_multipart_post_fieldnames(self, httpbin):\n        filename = os.path.splitext(__file__)[0] + \"\".py\"\"\n        with open(filename, \"\"rb\"\") as f:\n            r = requests.Request(\n                method=\"\"POST\"\",\n                url=httpbin(\"\"post\"\"),\n                data={b\"\"stuff\"\": \"\"elixr\"\"},\n                files={\"\"file\"\": (\"\"test_requests.py\"\", f)},\n            )\n            prep = r.prepare()\n\n        assert b'name=\"\"stuff\"\"' in prep.body\n        assert b\"\"name=\\\"\"b'stuff'\\\"\"\"\" not in prep.body\n\n    def test_unicode_method_name(self, httpbin):\n        with open(__file__, \"\"rb\"\") as f:\n            files = {\"\"file\"\": f}\n            r = requests.request(\n                method=\"\"POST\"\",\n                url=httpbin(\"\"post\"\"),\n                files=files,\n            )\n        assert r.status_code == 200\n\n    def test_unicode_method_name_with_request_object(self, httpbin):\n        s = requests.Session()\n        with open(__file__, \"\"rb\"\") as f:\n            files = {\"\"file\"\": f}\n            req = requests.Request(\"\"POST\"\", httpbin(\"\"post\"\"), files=files)\n            prep = s.prepare_request(req)\n        assert isinstance(prep.method, builtin_str)\n        assert prep.method == \"\"POST\"\"\n\n        resp = s.send(prep)\n        assert resp.status_code == 200\n\n    def test_non_prepared_request_error(self):\n        s = requests.Session()\n        req = requests.Request(\"\"POST\"\", \"\"/\"\")\n\n        with pytest.raises(ValueError) as e:\n            s.send(req)\n        assert str(e.value) == \"\"You can only send PreparedRequests.\"\"\n\n    def test_custom_content_type(self, httpbin):\n        with open(__file__, \"\"rb\"\") as f1:\n            with open(__file__, \"\"rb\"\") as f2:\n                data = {\"\"stuff\"\": json.dumps({\"\"a\"\": 123})}\n                files = {\n                    \"\"file1\"\": (\"\"test_requests.py\"\", f1),\n                    \"\"file2\"\": (\"\"test_requests\"\", f2, \"\"text/py-content-type\"\"),\n                }\n                r = requests.post(httpbin(\"\"post\"\"), data=data, files=files)\n        assert r.status_code == 200\n        assert b\"\"text/py-content-type\"\" in r.request.body\n\n    def test_hook_receives_request_arguments(self, httpbin):\n        def hook(resp, **kwargs):\n            assert resp is not None\n            assert kwargs != {}\n\n        s = requests.Session()\n        r = requests.Request(\"\"GET\"\", httpbin(), hooks={\"\"response\"\": hook})\n        prep = s.prepare_request(r)\n        s.send(prep)\n\n    def test_session_hooks_are_used_with_no_request_hooks(self, httpbin):\n        def hook(*args, **kwargs):\n            pass\n\n        s = requests.Session()\n        s.hooks[\"\"response\"\"].append(hook)\n        r = requests.Request(\"\"GET\"\", httpbin())\n        prep = s.prepare_request(r)\n        assert prep.hooks[\"\"response\"\"] != []\n        assert prep.hooks[\"\"response\"\"] == [hook]\n\n    def test_session_hooks_are_overridden_by_request_hooks(self, httpbin):\n        def hook1(*args, **kwargs):\n            pass\n\n        def hook2(*args, **kwargs):\n            pass\n\n        assert hook1 is not hook2\n        s = requests.Session()\n        s.hooks[\"\"response\"\"].append(hook2)\n        r = requests.Request(\"\"GET\"\", httpbin(), hooks={\"\"response\"\": [hook1]})\n        prep = s.prepare_request(r)\n        assert prep.hooks[\"\"response\"\"] == [hook1]\n\n    def test_prepared_request_hook(self, httpbin):\n        def hook(resp, **kwargs):\n            resp.hook_working = True\n            return resp\n\n        req = requests.Request(\"\"GET\"\", httpbin(), hooks={\"\"response\"\": hook})\n        prep = req.prepare()\n\n        s = requests.Session()\n        s.proxies = getproxies()\n        resp = s.send(prep)\n\n        assert hasattr(resp, \"\"hook_working\"\")\n\n    def test_prepared_from_session(self, httpbin):\n        class DummyAuth(requests.auth.AuthBase):\n            def __call__(self, r):\n                r.headers[\"\"Dummy-Auth-Test\"\"] = \"\"dummy-auth-test-ok\"\"\n                return r\n\n        req = requests.Request(\"\"GET\"\", httpbin(\"\"headers\"\"))\n        assert not req.auth\n\n        s = requests.Session()\n        s.auth = DummyAuth()\n\n        prep = s.prepare_request(req)\n        resp = s.send(prep)\n\n        assert resp.json()[\"\"headers\"\"][\"\"Dummy-Auth-Test\"\"] == \"\"dummy-auth-test-ok\"\"\n\n    def test_prepare_request_with_bytestring_url(self):\n        req = requests.Request(\"\"GET\"\", b\"\"https://httpbin.org/\"\")\n        s = requests.Session()\n        prep = s.prepare_request(req)\n        assert prep.url == \"\"https://httpbin.org/\"\"\n\n    def test_request_with_bytestring_host(self, httpbin):\n        s = requests.Session()\n        resp = s.request(\n            \"\"GET\"\",\n            httpbin(\"\"cookies/set?cookie=value\"\"),\n            allow_redirects=False,\n            headers={\"\"Host\"\": b\"\"httpbin.org\"\"},\n        )\n        assert resp.cookies.get(\"\"cookie\"\") == \"\"value\"\"\n\n    def test_links(self):\n        r = requests.Response()\n        r.headers = {\n            \"\"cache-control\"\": \"\"public, max-age=60, s-maxage=60\"\",\n            \"\"connection\"\": \"\"keep-alive\"\",\n            \"\"content-encoding\"\": \"\"gzip\"\",\n\"\n",
+  "final_tables": [
+    {
+      "name": "entities",
+      "columns": [
+        "id",
+        "entity",
+        "description",
+        "number of relationships"
+      ],
+      "rows": [
+        {
+          "id": "488",
+          "entity": "SESSION HOOKS OVERRIDDEN BY REQUEST HOOKS TEST",
+          "description": "A test event that verifies request-specific response hooks replace the response hooks configured on a Session.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "247",
+          "entity": "CALLABLE",
+          "description": "Callable is a callable-object type abstraction used by RequestHooksMixin to validate hook functions before registering them.>",
+          "number of relationships": "1"
+        },
+        {
+          "id": "21",
+          "entity": "SESSION",
+          "description": "SESSION is a Requests library client object that manages persistent state and configuration while sending multiple HTTP and HTTPS requests. It stores and applies cookies, headers, authentication, proxy settings, hooks, environment settings, certificates, and TLS verification options. SESSION creates and mounts HTTPAdapter instances to contact HTTP and HTTPS URLs, maintaining separate connection pools when TLS configurations differ and providing connection pooling for efficient reuse. It prepares and sends requests, including prepared requests, resolves redirect chains subject to configured redirect limits, and manages the adapters used for network communication. SESSION also supports pickling and serves as the central mechanism for maintaining consistent request behavior across a series of HTTP operations.",
+          "number of relationships": "14"
+        },
+        {
+          "id": "12",
+          "entity": "RESPONSE",
+          "description": "The `RESPONSE` entity is the `Response` Python class in the Requests library, representing the HTTP result returned by a server after a request or prepared request is sent. It contains the originating request and response metadata, including the status code, URL, headers, cookies, encoding, body content, raw response, connection, and elapsed time. The `Response` object supports content access and decoding, iteration over response data, streaming, serialization, and context-manager behavior. It is also used during redirect handling to inspect response status codes and provides mechanisms for evaluating status behavior and raising errors for unsuccessful HTTP responses.",
+          "number of relationships": "28"
+        },
+        {
+          "id": "214",
+          "entity": "HOOK",
+          "description": "A hook is a callable callback registered in the Requests hooks system to process hook data, such as a response, and optionally return updated data.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "487",
+          "entity": "SESSION HOOKS USED WITH NO REQUEST HOOKS TEST",
+          "description": "A test event that verifies response hooks configured on a Session are inherited by a request without its own hooks.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "583",
+          "entity": "CUSTOM REDIRECT SESSION",
+          "description": "A subclass of the Requests Session class that overrides get_redirect_target to follow valid redirects and certain malformed responses containing a different location header.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "523",
+          "entity": "SESSION PICKLING TEST",
+          "description": "The session pickling test serializes and restores a Session, configures its proxies, and sends a prepared request successfully)<",
+          "number of relationships": "2"
+        },
+        {
+          "id": "215",
+          "entity": "HOOKS",
+          "description": "Hooks are collections of callback functions associated with supported events in the Requests hooks system; the default configuration includes a response hook list.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "16",
+          "entity": "SESSION API DOCS",
+          "description": "The Session API Docs provide additional documentation about the Requests Session object and its available values and methods.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "353",
+          "entity": "BASIC RESPONSE SERVER",
+          "description": "A server configuration event created through Server.basic_response_server to provide a basic HTTP response while coordinating shutdown with a threading Event",
+          "number of relationships": "2"
+        },
+        {
+          "id": "244",
+          "entity": "REQUESTHOOKSMIXIN",
+          "description": "RequestHooksMixin is a requests software component that registers and deregisters callable hooks for supported request events.>",
+          "number of relationships": "4"
+        },
+        {
+          "id": "430",
+          "entity": "TEST HEADERS ON SESSION WITH NONE ARE NOT SENT",
+          "description": "A test event verifying that session headers assigned a None value are omitted from prepared Requests requests",
+          "number of relationships": "1"
+        },
+        {
+          "id": "350",
+          "entity": "ECHO RESPONSE HANDLER",
+          "description": "ECHO RESPONSE HANDLER is a socket response-handler event and test server handler used by the fragment test. It consumes an incoming HTTP request and returns it in an HTTP 200 response, using the received request content as the response body.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "581",
+          "entity": "CUSTOM REDIRECT MIXIN TEST",
+          "description": "A test event verifying that a custom requests session follows a malformed redirect response with HTTP status 200 and a location header.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "577",
+          "entity": "TEST_RESPONSE_WITHOUT_RELEASE_CONN",
+          "description": "A test that verifies Response.close works with a raw object that lacks a release_conn method",
+          "number of relationships": "2"
+        },
+        {
+          "id": "531",
+          "entity": "SESSION ADAPTER PREFIX MATCHING",
+          "description": "A test event verifying that a Requests Session selects the adapter mounted at the most specific matching URL prefix and ignores adapters for unrelated prefixes",
+          "number of relationships": "2"
+        }
+      ]
+    },
+    {
+      "name": "relationships",
+      "columns": [
+        "id",
+        "source",
+        "target",
+        "description",
+        "weight",
+        "links"
+      ],
+      "rows": [
+        {
+          "id": "780",
+          "source": "SESSION HOOKS OVERRIDDEN BY REQUEST HOOKS TEST",
+          "target": "REQUESTS",
+          "description": "The test verifies request-specific hook precedence in the Requests Session API.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "338",
+          "source": "REQUESTHOOKSMIXIN",
+          "target": "CALLABLE",
+          "description": "RequestHooksMixin checks whether hooks are Callable objects before adding them to its event-specific hook lists.",
+          "weight": "8.0",
+          "links": "1"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "columns": [
+        "id",
+        "source",
+        "text"
+      ],
+      "rows": [
+        {
+          "id": "88",
+          "text": "        ),\n    )\n    def test_unicode_multipart_post(self, httpbin, data):\n        with open(__file__, \"rb\") as f:\n            r = requests.post(\n                httpbin(\"post\"),\n                data=data,\n                files={\"file\": (\"test_requests.py\", f)},\n            )\n        assert r.status_code == 200\n\n    def test_unicode_multipart_post_fieldnames(self, httpbin):\n        filename = os.path.splitext(__file__)[0] + \".py\"\n        with open(filename, \"rb\") as f:\n            r = requests.Request(\n                method=\"POST\",\n                url=httpbin(\"post\"),\n                data={b\"stuff\": \"elixr\"},\n                files={\"file\": (\"test_requests.py\", f)},\n            )\n            prep = r.prepare()\n\n        assert b'name=\"stuff\"' in prep.body\n        assert b\"name=\\\"b'stuff'\\\"\" not in prep.body\n\n    def test_unicode_method_name(self, httpbin):\n        with open(__file__, \"rb\") as f:\n            files = {\"file\": f}\n            r = requests.request(\n                method=\"POST\",\n                url=httpbin(\"post\"),\n                files=files,\n            )\n        assert r.status_code == 200\n\n    def test_unicode_method_name_with_request_object(self, httpbin):\n        s = requests.Session()\n        with open(__file__, \"rb\") as f:\n            files = {\"file\": f}\n            req = requests.Request(\"POST\", httpbin(\"post\"), files=files)\n            prep = s.prepare_request(req)\n        assert isinstance(prep.method, builtin_str)\n        assert prep.method == \"POST\"\n\n        resp = s.send(prep)\n        assert resp.status_code == 200\n\n    def test_non_prepared_request_error(self):\n        s = requests.Session()\n        req = requests.Request(\"POST\", \"/\")\n\n        with pytest.raises(ValueError) as e:\n            s.send(req)\n        assert str(e.value) == \"You can only send PreparedRequests.\"\n\n    def test_custom_content_type(self, httpbin):\n        with open(__file__, \"rb\") as f1:\n            with open(__file__, \"rb\") as f2:\n                data = {\"stuff\": json.dumps({\"a\": 123})}\n                files = {\n                    \"file1\": (\"test_requests.py\", f1),\n                    \"file2\": (\"test_requests\", f2, \"text/py-content-type\"),\n                }\n                r = requests.post(httpbin(\"post\"), data=data, files=files)\n        assert r.status_code == 200\n        assert b\"text/py-content-type\" in r.request.body\n\n    def test_hook_receives_request_arguments(self, httpbin):\n        def hook(resp, **kwargs):\n            assert resp is not None\n            assert kwargs != {}\n\n        s = requests.Session()\n        r = requests.Request(\"GET\", httpbin(), hooks={\"response\": hook})\n        prep = s.prepare_request(r)\n        s.send(prep)\n\n    def test_session_hooks_are_used_with_no_request_hooks(self, httpbin):\n        def hook(*args, **kwargs):\n            pass\n\n        s = requests.Session()\n        s.hooks[\"response\"].append(hook)\n        r = requests.Request(\"GET\", httpbin())\n        prep = s.prepare_request(r)\n        assert prep.hooks[\"response\"] != []\n        assert prep.hooks[\"response\"] == [hook]\n\n    def test_session_hooks_are_overridden_by_request_hooks(self, httpbin):\n        def hook1(*args, **kwargs):\n            pass\n\n        def hook2(*args, **kwargs):\n            pass\n\n        assert hook1 is not hook2\n        s = requests.Session()\n        s.hooks[\"response\"].append(hook2)\n        r = requests.Request(\"GET\", httpbin(), hooks={\"response\": [hook1]})\n        prep = s.prepare_request(r)\n        assert prep.hooks[\"response\"] == [hook1]\n\n    def test_prepared_request_hook(self, httpbin):\n        def hook(resp, **kwargs):\n            resp.hook_working = True\n            return resp\n\n        req = requests.Request(\"GET\", httpbin(), hooks={\"response\": hook})\n        prep = req.prepare()\n\n        s = requests.Session()\n        s.proxies = getproxies()\n        resp = s.send(prep)\n\n        assert hasattr(resp, \"hook_working\")\n\n    def test_prepared_from_session(self, httpbin):\n        class DummyAuth(requests.auth.AuthBase):\n            def __call__(self, r):\n                r.headers[\"Dummy-Auth-Test\"] = \"dummy-auth-test-ok\"\n                return r\n\n        req = requests.Request(\"GET\", httpbin(\"headers\"))\n        assert not req.auth\n\n        s = requests.Session()\n        s.auth = DummyAuth()\n\n        prep = s.prepare_request(req)\n        resp = s.send(prep)\n\n        assert resp.json()[\"headers\"][\"Dummy-Auth-Test\"] == \"dummy-auth-test-ok\"\n\n    def test_prepare_request_with_bytestring_url(self):\n        req = requests.Request(\"GET\", b\"https://httpbin.org/\")\n        s = requests.Session()\n        prep = s.prepare_request(req)\n        assert prep.url == \"https://httpbin.org/\"\n\n    def test_request_with_bytestring_host(self, httpbin):\n        s = requests.Session()\n        resp = s.request(\n            \"GET\",\n            httpbin(\"cookies/set?cookie=value\"),\n            allow_redirects=False,\n            headers={\"Host\": b\"httpbin.org\"},\n        )\n        assert resp.cookies.get(\"cookie\") == \"value\"\n\n    def test_links(self):\n        r = requests.Response()\n        r.headers = {\n            \"cache-control\": \"public, max-age=60, s-maxage=60\",\n            \"connection\": \"keep-alive\",\n            \"content-encoding\": \"gzip\",\n",
+          "source": "tests/test_requests.py:L1057-L1211"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "short_id": "88",
+      "text_unit_id": "62f6b63e7654b78533aa887e37a3cdf87006f34f17cde879863bf85910912e8d66f14c06bc6eec94866cfc5805b624dfdee1ef6ef469951d5c7917a09c8a04b4",
+      "id": "caea88e0de4b28a43b6dd9aa53871811bf93476525f684fdb14310a1cf2506ad",
+      "title": "tests/test_requests.py:L1057-L1211",
+      "path": "tests/test_requests.py",
+      "start_line": 1057,
+      "end_line": 1211,
+      "tokens": 1187,
+      "text_sha256": "e2e099694a57b016302d8ca79a61582ba4c5a23a02c2db89c783ffcea4caa5c4",
+      "ms_text_unit_id": "62f6b63e7654b78533aa887e37a3cdf87006f34f17cde879863bf85910912e8d66f14c06bc6eec94866cfc5805b624dfdee1ef6ef469951d5c7917a09c8a04b4"
+    }
+  ],
+  "raw_context_tokens": 2080,
+  "final_context_tokens": 2156,
+  "source_text_tokens": 1187,
+  "source_chunks": 1,
+  "retrieval_compute_seconds": 0.012476999312639236,
+  "adaptation_seconds": 0.0026360005140304565,
+  "empty_reason": null,
+  "community_level": 2,
+  "dropped_tail_rows": 0
+}

@@ -1,0 +1,54 @@
+diff --git a/src/requests/sessions.py b/src/requests/sessions.py
+--- a/src/requests/sessions.py
++++ b/src/requests/sessions.py
+@@ -30,6 +30,7 @@ from .utils import (
+ 
+ REDIRECT_STATI = (codes.moved, codes.found, codes.other, codes.temporary, codes.permanent)
+ DEFAULT_REDIRECT_LIMIT = 30
++_DEFAULT_TIMEOUT = object()
+ 
+ 
+ class SessionRedirectMixin:
+@@ -430,6 +431,7 @@ class Session(SessionRedirectMixin):
+         self.cert = None
+ 
+         self.max_redirects = DEFAULT_REDIRECT_LIMIT
++        self.default_timeout = None
+         self.trust_env = True
+ 
+         self.cookies = cookiejar_from_dict({})
+@@ -490,7 +492,7 @@ class Session(SessionRedirectMixin):
+         files=None,
+         auth=None,
+-        timeout=None,
++        timeout=_DEFAULT_TIMEOUT,
+         allow_redirects=True,
+         proxies=None,
+         hooks=None,
+@@ -512,6 +514,9 @@ class Session(SessionRedirectMixin):
+         :rtype: requests.Response
+         """
+ 
++        if timeout is _DEFAULT_TIMEOUT:
++            timeout = self.default_timeout
++
+         # Create the Request.
+         req = Request(
+             method=method.upper(),
+diff --git a/docs/user/advanced.rst b/docs/user/advanced.rst
+--- a/docs/user/advanced.rst
++++ b/docs/user/advanced.rst
+@@ -1081,6 +1081,12 @@ Most requests to external servers should have a timeout attached, in case the
+ server is not responding in a timely manner. By default, requests do not time
+ out unless a timeout value is set explicitly. Without a timeout, your code may
+ hang for minutes or more.
+ 
++When using a :class:`Session <requests.Session>`, omitting the ``timeout``
++argument uses the session's :attr:`Session.default_timeout
++<requests.Session.default_timeout>` value, which is ``None`` by default.
++Passing ``timeout=None`` explicitly disables the timeout for that request, even
++when the session has a non-``None`` default.
++
+ The **connect** timeout is the number of seconds Requests will wait for your
+ client to establish a connection to a remote machine (corresponding to the
+ `connect()`_) call on the socket. It's a good practice to set connect timeouts

@@ -1,0 +1,70 @@
+--- a/src/requests/structures.py
++++ b/src/requests/structures.py
+@@ -1,6 +1,6 @@
+ from collections import OrderedDict
+ 
+-from requests.compat import Mapping, MutableMapping
++from requests.compat import Mapping, MutableMapping
+ 
+ 
+ class CaseInsensitiveDict(MutableMapping):
+@@ -31,6 +31,27 @@ class CaseInsensitiveDict(MutableMapping):
+             data = {}
+         self.update(data, **kwargs)
+ 
++    def __or__(self, other):
++        if not isinstance(other, Mapping):
++            raise TypeError(
++                "unsupported operand type(s) for |: "
++                "'CaseInsensitiveDict' and '{}'".format(type(other).__name__)
++            )
++        result = self.copy()
++        result.update(other)
++        return result
++
++    def __ror__(self, other):
++        if not isinstance(other, Mapping):
++            raise TypeError(
++                "unsupported operand type(s) for |: "
++                "'{}' and 'CaseInsensitiveDict'".format(type(other).__name__)
++            )
++        result = CaseInsensitiveDict(other)
++        result.update(self)
++        return result
++
++    def __ior__(self, other):
++        if not isinstance(other, Mapping):
++            raise TypeError(
++                "unsupported operand type(s) for |=: "
++                "'CaseInsensitiveDict' and '{}'".format(type(other).__name__)
++            )
++        self.update(other)
++        return self
++
+     def __setitem__(self, key, value):
+         # Use the lowercased key for lookups, but store the actual key alongside
+         # the value.
+--- a/docs/user/quickstart.rst
++++ b/docs/user/quickstart.rst
+@@ -1,5 +1,18 @@
+ Quickstart
+ ==========
+ 
++Case-Insensitive Header Mappings
++--------------------------------
++
++``CaseInsensitiveDict`` supports mapping union operations. Both operands must
++be mappings:
++
++    >>> merged = response.headers | {"X-Request-ID": "123"}
++    >>> merged = {"X-Request-ID": "123"} | response.headers
++    >>> response.headers |= {"Accept": "application/json"}
++
++The non-mutating operations return a ``CaseInsensitiveDict`` and leave their
++inputs unchanged. The in-place operation returns the same mapping object.
++When keys differ only by case, the right-hand value and spelling are used;
++existing key order is retained and new keys follow right-hand order.
++
+ Eager to get started? This page gives a good introduction to Requests. It
+ assumes you already have Requests installed. If not, head over to the
+ :ref:`installation` section.

@@ -1,0 +1,55 @@
+--- a/src/requests/structures.py
++++ b/src/requests/structures.py
+@@ -23,6 +23,30 @@ class CaseInsensitiveDict(MutableMapping):
+             data = {}
+         self.update(data, **kwargs)
+ 
++    def __or__(self, other):
++        if not isinstance(other, Mapping):
++            raise TypeError("unsupported operand type(s) for |")
++        result = CaseInsensitiveDict(self)
++        result.update(other)
++        return result
++
++    def __ror__(self, other):
++        if not isinstance(other, Mapping):
++            raise TypeError("unsupported operand type(s) for |")
++        result = CaseInsensitiveDict(other)
++        result.update(self)
++        return result
++
++    def __ior__(self, other):
++        if not isinstance(other, Mapping):
++            raise TypeError("unsupported operand type(s) for |=")
++        self.update(other)
++        return self
++
+     def __setitem__(self, key, value):
+         # Use the lowercased key for lookups, but store the actual key alongside
+         # the value.
+         self._store[key.lower()] = (key, value)
+--- a/docs/user/advanced.rst
++++ b/docs/user/advanced.rst
+@@ -5,6 +5,20 @@ Advanced Usage
+ 
+ This document covers some of the more advanced features of Requests.
+ 
++Case-Insensitive Dictionary
++~~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++``CaseInsensitiveDict`` supports mapping union operations:
++
++* ``a | b`` and ``dict | a`` return a new ``CaseInsensitiveDict``.
++* ``a |= b`` updates ``a`` in place and preserves its identity.
++
++The operands must be mappings. When keys differ only by case, the
++right-hand value and spelling win. Existing key order is preserved, and
++new keys are appended in right-hand order.
++
+ Session Objects
+ ---------------
+ 
+ The Session object allows you to persist certain parameters across requests. It also persists cookies across all requests made from the Session instance, and will use ``urllib3``'s connection pooling. So if you’re making several requests to the same server, the underlying TCP connection will be reused, which can result in a significant performance increase (see HTTP persistent connection).
+ 
+-s = requests.Session()
++s = requests.Session()

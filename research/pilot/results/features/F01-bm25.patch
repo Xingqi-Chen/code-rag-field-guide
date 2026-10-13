@@ -1,0 +1,74 @@
+--- a/src/requests/structures.py
++++ b/src/requests/structures.py
+@@ -27,6 +27,10 @@ class CaseInsensitiveDict(MutableMapping):
+     If the constructor, `.update`, or equality comparison
+     operations are given keys that have equal `.lower()`s, the
+     behavior is undefined.
++
++    Mapping union operators are supported. The result of ``|`` is a new
++    ``CaseInsensitiveDict``, while ``|=`` updates the existing instance.
+     """"""
+ 
+     def __init__(self, data=None, **kwargs):
+@@ -68,6 +72,25 @@ class CaseInsensitiveDict(MutableMapping):
+         # Compare insensitively
+         return dict(self.lower_items()) == dict(other.lower_items())
+ 
++    def __or__(self, other):
++        if not isinstance(other, Mapping):
++            raise TypeError(
++                "unsupported operand type(s) for |: "
++                "'CaseInsensitiveDict' and '{}'".format(type(other).__name__)
++            )
++        result = self.copy()
++        result.update(other)
++        return result
++
++    def __ror__(self, other):
++        if not isinstance(other, Mapping):
++            raise TypeError(
++                "unsupported operand type(s) for |: "
++                "'{}' and 'CaseInsensitiveDict'".format(type(other).__name__)
++            )
++        result = CaseInsensitiveDict(other)
++        result.update(self)
++        return result
++
++    def __ior__(self, other):
++        if not isinstance(other, Mapping):
++            raise TypeError(
++                "unsupported operand type(s) for |=: "
++                "'CaseInsensitiveDict' and '{}'".format(type(other).__name__)
++            )
++        self.update(other)
++        return self
++
+     # Copy is required
+     def copy(self):
+         return CaseInsensitiveDict(self._store.values())
+--- a/docs/user/advanced.rst
++++ b/docs/user/advanced.rst
+@@ -5,6 +5,20 @@ Advanced Usage
+ 
+ This document covers some of the more advanced features of Requests.
+ 
++Case-Insensitive Dictionaries
++-----------------------------
++
++Requests' ``CaseInsensitiveDict`` supports mapping union operators. Both
++operands must be mappings:
++
++.. code-block:: python
++
++    combined = headers | overrides
++    combined = overrides | headers
++    headers |= overrides
++
++The non-mutating ``|`` operation returns a new ``CaseInsensitiveDict`` and
++does not modify either operand. The in-place ``|=`` operation returns and
++updates its left-hand operand. When keys differ only by case, the
++right-hand value and spelling take precedence.
++
+ Session Objects
+ ---------------
+ The Session object allows you to persist certain parameters across requests.

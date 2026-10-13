@@ -19,7 +19,7 @@
     "concurrency": 1,
     "retries": 0
   },
-  "status": "index_complete",
+  "status": "generation_complete",
   "prior_probe_reserved": {
     "generation_attempts": 16,
     "embedding_attempts": 2,
@@ -29,20 +29,20 @@
   },
   "prior_probe_elapsed_seconds": 137.816,
   "index_generation_attempts": 518,
-  "feature_generation_attempts": 0,
-  "embedding_attempts": 46,
-  "generation_input_tokens": 931885,
-  "embedding_reserved_tokens": 205727,
-  "logical_completion_calls": 691,
+  "feature_generation_attempts": 8,
+  "embedding_attempts": 47,
+  "generation_input_tokens": 960206,
+  "embedding_reserved_tokens": 206333,
+  "logical_completion_calls": 699,
   "completion_cache_hits": 172,
-  "logical_embedding_calls": 46,
-  "embedding_cache_items": 8,
+  "logical_embedding_calls": 131,
+  "embedding_cache_items": 96,
   "imported_successful_probe_cache": {
     "generation": 13,
     "embedding_items": 12,
     "generation_transport_mismatch_skipped": 1
   },
-  "source_commit": "07e87d4f0ecf471da9cbd3d50bc43766df00a093",
+  "source_commit": "539d675116f2e525d837f723bb072771ee588d23",
   "workflows": [
     {
       "name": "load_input_documents",
@@ -173,6 +173,20 @@
       "started_utc": "2026-10-13T00:25:50.671110+00:00",
       "source_commit": "07e87d4f0ecf471da9cbd3d50bc43766df00a093",
       "next_event_sequence": 160
+    },
+    {
+      "stage": "retrieval",
+      "resume": false,
+      "started_utc": "2026-10-13T02:41:34.394750+00:00",
+      "source_commit": "539d675116f2e525d837f723bb072771ee588d23",
+      "next_event_sequence": 565
+    },
+    {
+      "stage": "feature",
+      "resume": false,
+      "started_utc": "2026-10-13T02:42:12.058271+00:00",
+      "source_commit": "539d675116f2e525d837f723bb072771ee588d23",
+      "next_event_sequence": 566
     }
   ],
   "recoveries": [
@@ -207,16 +221,32 @@
   ],
   "index_elapsed_seconds": 2685.093,
   "index_finished_utc": "2026-10-13T01:10:35.807078+00:00",
+  "retrieval_finished_utc": "2026-10-13T02:41:45.782948+00:00",
+  "generation_finished_utc": "2026-10-13T02:46:20.027477+00:00",
   "stopped_utc": "2026-10-12T16:52:18.594232+00:00",
-  "window_started_utc": "2026-10-13T00:25:50.654878+00:00",
-  "window_deadline_utc": "2026-10-13T02:25:50.654878+00:00",
+  "window_started_utc": "2026-10-13T02:41:34.379114+00:00",
+  "window_deadline_utc": "2026-10-13T04:41:34.379114+00:00",
   "execution_windows": [
     {
       "started_utc": "2026-10-13T00:25:50.654878+00:00",
       "deadline_utc": "2026-10-13T02:25:50.654878+00:00",
       "reason": "Explicitly authorized recovery on 2026-10-13; cumulative usage retained"
+    },
+    {
+      "started_utc": "2026-10-13T02:41:34.379114+00:00",
+      "deadline_utc": "2026-10-13T04:41:34.379114+00:00",
+      "reason": "Fresh user authorization at 2026-10-13 02:35:52 UTC for remaining evaluation; cumulative usage retained"
     }
   ],
+  "evaluation_authorization": {
+    "confirmed_utc": "2026-10-13T02:35:52+00:00",
+    "remaining_query_items": 18,
+    "maximum_feature_generation_attempts": 8,
+    "cumulative_openai_budget_usd": "1.00",
+    "automatic_retries": 0,
+    "window_seconds_from_retrieval_start": 7200,
+    "generation_price": "not estimated"
+  },
   "events": [
     {
       "sequence": 1,
@@ -15239,6 +15269,273 @@
       "response_byte_limit": 4194304,
       "response_bytes": 242290,
       "operation": "embedding"
+    },
+    {
+      "sequence": 565,
+      "service": "embedding",
+      "phase": "retrieval",
+      "workflow": "shared_query_embeddings",
+      "input_tokens": 606,
+      "items": 18,
+      "status": "validated",
+      "request_body_sha256": "512eaea0b57653c11bfdbbf2687abbcef63e360a3549b4902a218b242a2a30ae",
+      "started_utc": "2026-10-13T02:41:35.393164+00:00",
+      "source_commit": "539d675116f2e525d837f723bb072771ee588d23",
+      "supervisor_reason": null,
+      "worker_exit": 0,
+      "elapsed_seconds": 3.527,
+      "http_status": 200,
+      "usage": {
+        "prompt_tokens": 606,
+        "total_tokens": 606
+      },
+      "worker_source_sha256": {
+        "full_runtime.py": "8763318bbccb05c59b5d1c4b7a9d415560a8bec8e0631c746a562009ad6d5e74",
+        "probe_runtime.py": "6489f4d87d3bc0f2e6f55e3d6e9b70db6105212f8da6fcc60d8f3c99a5211820"
+      },
+      "response_byte_limit": 4194304,
+      "response_bytes": 1089463,
+      "operation": "embedding"
+    },
+    {
+      "sequence": 566,
+      "service": "generation",
+      "phase": "feature",
+      "workflow": "feature_single_attempt",
+      "input_tokens": 3554,
+      "items": 1,
+      "status": "validated",
+      "request_body_sha256": "8f3a79c4de33b1ad871e0964e3dbe0ab5cd860fd246063a8acaaa4327517e096",
+      "started_utc": "2026-10-13T02:42:12.067963+00:00",
+      "source_commit": "539d675116f2e525d837f723bb072771ee588d23",
+      "supervisor_reason": null,
+      "worker_exit": 0,
+      "elapsed_seconds": 15.049,
+      "http_status": 200,
+      "usage": {
+        "prompt_tokens": 5184,
+        "completion_tokens": 1571,
+        "total_tokens": 6755
+      },
+      "visible_output_common_tokens": 594,
+      "requested_output_limit_exceeded": false,
+      "worker_source_sha256": {
+        "full_runtime.py": "8763318bbccb05c59b5d1c4b7a9d415560a8bec8e0631c746a562009ad6d5e74",
+        "probe_runtime.py": "6489f4d87d3bc0f2e6f55e3d6e9b70db6105212f8da6fcc60d8f3c99a5211820"
+      },
+      "response_byte_limit": 2097152,
+      "response_bytes": 238261,
+      "operation": "feature"
+    },
+    {
+      "sequence": 567,
+      "service": "generation",
+      "phase": "feature",
+      "workflow": "feature_single_attempt",
+      "input_tokens": 3543,
+      "items": 1,
+      "status": "validated",
+      "request_body_sha256": "be6d5b6da240ccba4d1ddeaacc080732900809b84cecaf6b178ac84228403e98",
+      "started_utc": "2026-10-13T02:42:27.144608+00:00",
+      "source_commit": "539d675116f2e525d837f723bb072771ee588d23",
+      "supervisor_reason": null,
+      "worker_exit": 0,
+      "elapsed_seconds": 18.409,
+      "http_status": 200,
+      "usage": {
+        "prompt_tokens": 5173,
+        "completion_tokens": 2202,
+        "total_tokens": 7375
+      },
+      "visible_output_common_tokens": 670,
+      "requested_output_limit_exceeded": true,
+      "worker_source_sha256": {
+        "full_runtime.py": "8763318bbccb05c59b5d1c4b7a9d415560a8bec8e0631c746a562009ad6d5e74",
+        "probe_runtime.py": "6489f4d87d3bc0f2e6f55e3d6e9b70db6105212f8da6fcc60d8f3c99a5211820"
+      },
+      "response_byte_limit": 2097152,
+      "response_bytes": 285779,
+      "operation": "feature"
+    },
+    {
+      "sequence": 568,
+      "service": "generation",
+      "phase": "feature",
+      "workflow": "feature_single_attempt",
+      "input_tokens": 3808,
+      "items": 1,
+      "status": "validated",
+      "request_body_sha256": "23dfb4d43008ec06a8843d21f31ba1f472dee004e9e6a10b1821a0416962e27d",
+      "started_utc": "2026-10-13T02:42:45.578124+00:00",
+      "source_commit": "539d675116f2e525d837f723bb072771ee588d23",
+      "supervisor_reason": null,
+      "worker_exit": 0,
+      "elapsed_seconds": 46.056,
+      "http_status": 200,
+      "usage": {
+        "prompt_tokens": 5438,
+        "completion_tokens": 2447,
+        "total_tokens": 7885
+      },
+      "visible_output_common_tokens": 492,
+      "requested_output_limit_exceeded": true,
+      "worker_source_sha256": {
+        "full_runtime.py": "8763318bbccb05c59b5d1c4b7a9d415560a8bec8e0631c746a562009ad6d5e74",
+        "probe_runtime.py": "6489f4d87d3bc0f2e6f55e3d6e9b70db6105212f8da6fcc60d8f3c99a5211820"
+      },
+      "response_byte_limit": 2097152,
+      "response_bytes": 198679,
+      "operation": "feature"
+    },
+    {
+      "sequence": 569,
+      "service": "generation",
+      "phase": "feature",
+      "workflow": "feature_single_attempt",
+      "input_tokens": 3051,
+      "items": 1,
+      "status": "validated",
+      "request_body_sha256": "91047b5baa279a72a217096e0fb37d69d59b2b9cd28443862a74d0dd2992fd2c",
+      "started_utc": "2026-10-13T02:43:31.655382+00:00",
+      "source_commit": "539d675116f2e525d837f723bb072771ee588d23",
+      "supervisor_reason": null,
+      "worker_exit": 0,
+      "elapsed_seconds": 49.122,
+      "http_status": 200,
+      "usage": {
+        "prompt_tokens": 4681,
+        "completion_tokens": 2624,
+        "total_tokens": 7305
+      },
+      "visible_output_common_tokens": 572,
+      "requested_output_limit_exceeded": true,
+      "worker_source_sha256": {
+        "full_runtime.py": "8763318bbccb05c59b5d1c4b7a9d415560a8bec8e0631c746a562009ad6d5e74",
+        "probe_runtime.py": "6489f4d87d3bc0f2e6f55e3d6e9b70db6105212f8da6fcc60d8f3c99a5211820"
+      },
+      "response_byte_limit": 2097152,
+      "response_bytes": 220890,
+      "operation": "feature"
+    },
+    {
+      "sequence": 570,
+      "service": "generation",
+      "phase": "feature",
+      "workflow": "feature_single_attempt",
+      "input_tokens": 3888,
+      "items": 1,
+      "status": "validated",
+      "request_body_sha256": "2745f5f8fdbeebaebbbdfee25cada120690727b405b5056cb7dcc6c6c08273a0",
+      "started_utc": "2026-10-13T02:44:20.800563+00:00",
+      "source_commit": "539d675116f2e525d837f723bb072771ee588d23",
+      "supervisor_reason": null,
+      "worker_exit": 0,
+      "elapsed_seconds": 19.033,
+      "http_status": 200,
+      "usage": {
+        "prompt_tokens": 5518,
+        "completion_tokens": 2247,
+        "total_tokens": 7765
+      },
+      "visible_output_common_tokens": 502,
+      "requested_output_limit_exceeded": true,
+      "worker_source_sha256": {
+        "full_runtime.py": "8763318bbccb05c59b5d1c4b7a9d415560a8bec8e0631c746a562009ad6d5e74",
+        "probe_runtime.py": "6489f4d87d3bc0f2e6f55e3d6e9b70db6105212f8da6fcc60d8f3c99a5211820"
+      },
+      "response_byte_limit": 2097152,
+      "response_bytes": 255560,
+      "operation": "feature"
+    },
+    {
+      "sequence": 571,
+      "service": "generation",
+      "phase": "feature",
+      "workflow": "feature_single_attempt",
+      "input_tokens": 3913,
+      "items": 1,
+      "status": "validated",
+      "request_body_sha256": "c1c4924a5f02e0a16d6eec683d45cbf92d821b00bccef8fcfe9cc4b633978887",
+      "started_utc": "2026-10-13T02:44:39.856387+00:00",
+      "source_commit": "539d675116f2e525d837f723bb072771ee588d23",
+      "supervisor_reason": null,
+      "worker_exit": 0,
+      "elapsed_seconds": 20.07,
+      "http_status": 200,
+      "usage": {
+        "prompt_tokens": 5543,
+        "completion_tokens": 2095,
+        "total_tokens": 7638
+      },
+      "visible_output_common_tokens": 465,
+      "requested_output_limit_exceeded": true,
+      "worker_source_sha256": {
+        "full_runtime.py": "8763318bbccb05c59b5d1c4b7a9d415560a8bec8e0631c746a562009ad6d5e74",
+        "probe_runtime.py": "6489f4d87d3bc0f2e6f55e3d6e9b70db6105212f8da6fcc60d8f3c99a5211820"
+      },
+      "response_byte_limit": 2097152,
+      "response_bytes": 241694,
+      "operation": "feature"
+    },
+    {
+      "sequence": 572,
+      "service": "generation",
+      "phase": "feature",
+      "workflow": "feature_single_attempt",
+      "input_tokens": 3971,
+      "items": 1,
+      "status": "validated",
+      "request_body_sha256": "755008cb67c83897cc86898d15bd9c31fb4764d14ba9fa7ac14d898f48878723",
+      "started_utc": "2026-10-13T02:44:59.939413+00:00",
+      "source_commit": "539d675116f2e525d837f723bb072771ee588d23",
+      "supervisor_reason": null,
+      "worker_exit": 0,
+      "elapsed_seconds": 23.217,
+      "http_status": 200,
+      "usage": {
+        "prompt_tokens": 5601,
+        "completion_tokens": 2390,
+        "total_tokens": 7991
+      },
+      "visible_output_common_tokens": 599,
+      "requested_output_limit_exceeded": true,
+      "worker_source_sha256": {
+        "full_runtime.py": "8763318bbccb05c59b5d1c4b7a9d415560a8bec8e0631c746a562009ad6d5e74",
+        "probe_runtime.py": "6489f4d87d3bc0f2e6f55e3d6e9b70db6105212f8da6fcc60d8f3c99a5211820"
+      },
+      "response_byte_limit": 2097152,
+      "response_bytes": 282771,
+      "operation": "feature"
+    },
+    {
+      "sequence": 573,
+      "service": "generation",
+      "phase": "feature",
+      "workflow": "feature_single_attempt",
+      "input_tokens": 2593,
+      "items": 1,
+      "status": "validated",
+      "request_body_sha256": "d46cae7f945e78dc4a67977893a1a475b3b14132ede4b4497b5c6558875a20ef",
+      "started_utc": "2026-10-13T02:45:23.182078+00:00",
+      "source_commit": "539d675116f2e525d837f723bb072771ee588d23",
+      "supervisor_reason": null,
+      "worker_exit": 0,
+      "elapsed_seconds": 56.833,
+      "http_status": 200,
+      "usage": {
+        "prompt_tokens": 4223,
+        "completion_tokens": 2995,
+        "total_tokens": 7218
+      },
+      "visible_output_common_tokens": 471,
+      "requested_output_limit_exceeded": true,
+      "worker_source_sha256": {
+        "full_runtime.py": "8763318bbccb05c59b5d1c4b7a9d415560a8bec8e0631c746a562009ad6d5e74",
+        "probe_runtime.py": "6489f4d87d3bc0f2e6f55e3d6e9b70db6105212f8da6fcc60d8f3c99a5211820"
+      },
+      "response_byte_limit": 2097152,
+      "response_bytes": 203599,
+      "operation": "feature"
     }
   ],
   "operation_counts": {
@@ -15246,23 +15543,24 @@
     "extraction_glean": 114,
     "description_summary": 205,
     "community_report": 84,
-    "embedding": 46
+    "embedding": 47,
+    "feature": 8
   },
   "observed_usage_totals": {
-    "generation_prompt_tokens": 1773954,
-    "generation_completion_tokens": 316241,
-    "generation_total_tokens": 2090195,
-    "embedding_prompt_tokens": 201400,
-    "embedding_total_tokens": 201400
+    "generation_prompt_tokens": 1815315,
+    "generation_completion_tokens": 334812,
+    "generation_total_tokens": 2150127,
+    "embedding_prompt_tokens": 202006,
+    "embedding_total_tokens": 202006
   },
-  "known_embedding_input_estimate_usd": "0.02674451",
+  "known_embedding_input_estimate_usd": "0.02682329",
   "cost_notes": "Embedding estimate includes prior probes at USD0.13/million input tokens, not a verified invoice. Generation price unknown. Missing usage is unknown, never inferred as zero.",
   "memory_measurement": "Not measured at user request; upstream zero memory fields are instrumentation placeholders.",
   "provider_identity": "Requested and reported model name; proxy internal backend mapping not independently verified.",
-  "output_limit_exceedances": 20,
+  "output_limit_exceedances": 27,
   "request_timing": {
-    "sum_supervised_request_seconds": 4255.994,
-    "mean_supervised_request_seconds": 7.546088652482269,
+    "sum_supervised_request_seconds": 4507.31,
+    "mean_supervised_request_seconds": 7.866160558464223,
     "definition": "Client dispatch-to-worker-exit; includes transport and response validation overhead, excludes cache hits."
   },
   "workflow_timing": [
@@ -15427,5 +15725,5 @@
   "diagnosed_stop_gap_seconds": 27475.08782,
   "index_elapsed_calendar_seconds": 31751.888006,
   "preparation_timing": "Earlier research, dependency installation, adapter development, review and approval were not precisely timed; excluded from active indexing. The diagnosed stop gap is separately recorded.",
-  "evaluation_complete": false
+  "evaluation_complete": true
 }

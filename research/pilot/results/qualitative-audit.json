@@ -1,0 +1,246 @@
+{
+  "schema_version": 1,
+  "submitted_utc": "2026-10-13T02:48:58.791484+00:00",
+  "reviewer": "独立 AI 审阅代理 /root/audit",
+  "scope": "预先声明的 Q01 与 Q07；4000 token 预算；每题匿名 A–D 上下文。",
+  "blinding": {
+    "method_key_read_before_submission": false,
+    "original_result_contexts_read_before_submission": false,
+    "scores_read_before_submission": false,
+    "limitation": "这是 AI 审阅，不是人类盲评；表格和版式可能泄露方法。审阅者此前审计过运行与索引，但本次提交前未查看匿名标签对应方法。"
+  },
+  "judgment_scale": {
+    "充分": "返回的直接源码足以支持完整问题的必要实现或调用链。",
+    "部分": "直接源码支持一个核心行为或阶段，但缺少完整问题所需的实现或调用点。",
+    "不足": "仅有相关接口、文档、摘要或旁支佐证，无法据此复原所问的主要实现或调用链。"
+  },
+  "evidence_policy": "冻结 gold 仅用于标明必要锚点是否出现；可说明额外源码的定性价值，不增改 gold、不改变机械评分。生成摘要和关系不视为已核实的程序事实。",
+  "verification": "逐个 Sources CSV 行与冻结源码对应行段逐字一致；Q01/Q07 的冻结 gold 行段 SHA256 与原码一致。",
+  "inputs": [
+    {
+      "question_id": "Q01",
+      "anonymous_input_sha256": "492b8082899c1d1cc355f5dd091a2c2f4808523b790fcab4040fac57edadf966"
+    },
+    {
+      "question_id": "Q07",
+      "anonymous_input_sha256": "1026b5f9ce9535d699536e974509e63d797f13f9b542b5562812b1f0cb7788e1"
+    }
+  ],
+  "reviews": [
+    {
+      "question_id": "Q01",
+      "label": "A",
+      "judgment": "充分",
+      "gold_evidence_present": [
+        "Q01-E1",
+        "Q01-E2",
+        "Q01-E3"
+      ],
+      "gold_evidence_missing": [],
+      "supports": [
+        "首个源码片段 structures.py:1–99 包含 __setitem__、__getitem__、__iter__：按 key.lower() 存取，同时在值元组中覆盖保存最近一次写入的原始 key；迭代返回该原始拼写。可以直接定位并解释所问实现。",
+        "test_structures.py 的测试进一步支持大小写无关访问和保留键拼写的行为。"
+      ],
+      "missing": [],
+      "misleading_or_irrelevant": [
+        "utils.py 的键值列表转换及 HTTP 头字符串解析不实现这个字典的存储机制；requests 测试中的适配器前缀、参数合并、头值校验和 URL 认证多属旁支。不要将这些独立的大小写或头处理行为当作该实现。"
+      ],
+      "source_basis": [
+        "src/requests/structures.py:46–49",
+        "src/requests/structures.py:51–52",
+        "src/requests/structures.py:57–58",
+        "tests/test_structures.py:1–78"
+      ]
+    },
+    {
+      "question_id": "Q01",
+      "label": "B",
+      "judgment": "充分",
+      "gold_evidence_present": [
+        "Q01-E1",
+        "Q01-E2",
+        "Q01-E3"
+      ],
+      "gold_evidence_missing": [],
+      "supports": [
+        "第三个源码片段 structures.py:1–99 包含完整的 CaseInsensitiveDict 存储、查询和迭代实现，足以解释小写索引与最近键拼写同时保留。"
+      ],
+      "missing": [],
+      "misleading_or_irrelevant": [
+        "advanced.rst 的 Header Ordering 讨论顺序，不是键拼写保留；重试、阻塞 I/O 和超时也不回答该实现问题。",
+        "cookies.py 的 RequestsCookieJar 字典接口围绕 cookie 名称、域及路径；不能据此推断 HTTP 头的大小写规则。"
+      ],
+      "source_basis": [
+        "src/requests/structures.py:46–49",
+        "src/requests/structures.py:51–52",
+        "src/requests/structures.py:57–58"
+      ]
+    },
+    {
+      "question_id": "Q01",
+      "label": "C",
+      "judgment": "充分",
+      "gold_evidence_present": [
+        "Q01-E1",
+        "Q01-E2",
+        "Q01-E3"
+      ],
+      "gold_evidence_missing": [],
+      "supports": [
+        "首个片段 structures.py:1–99 直接包含全部必要实现：小写索引、最近原始键拼写的覆盖存储，以及按保留拼写迭代。",
+        "tests/test_requests.py:2360 起的 test_preserve_last_key_case 通过 update 和赋值把键改为 ACCEPT、USER-AGENT，再检查 items、keys 与迭代，直接补充验证“最后一次拼写”。这属于额外佐证，不改变冻结 gold。"
+      ],
+      "missing": [],
+      "misleading_or_irrelevant": [
+        "同块中的 cookie 过期测试，以及 utils.py 的列表/字典转换和头字符串解析，占用了与所问实现无直接关系的材料。LookupDict 是另外的类。"
+      ],
+      "source_basis": [
+        "src/requests/structures.py:46–49",
+        "src/requests/structures.py:51–52",
+        "src/requests/structures.py:57–58",
+        "tests/test_requests.py:2360–2384"
+      ]
+    },
+    {
+      "question_id": "Q01",
+      "label": "D",
+      "judgment": "部分",
+      "gold_evidence_present": [],
+      "gold_evidence_missing": [
+        "Q01-E1",
+        "Q01-E2",
+        "Q01-E3"
+      ],
+      "supports": [
+        "实体描述能指出 CaseInsensitiveDict 及 requests.structures；唯一源码片段 tests/test_requests.py:2157–2294 中的测试直接支持键查询大小写无关。",
+        "test_fixes_649（2266 行起）连续写入 spam、Spam、sPAM、SPAM 后验证最新值及 keys()==[\"SPAM\"]，直接支持保留最近键拼写的行为。"
+      ],
+      "missing": [
+        "缺少 structures.py 中的真实实现，不能从当前源码证据说明 lower() 索引、(key,value) 存储和 __iter__ 的具体实现位置。完整回答“在哪里实现、如何保留”仍需要这些证据。"
+      ],
+      "misleading_or_irrelevant": [
+        "实体和关系描述是生成摘要，不能代替实现源码或作为已核实调用边。",
+        "HEADER UPDATE TEST 描述含解析残留字符；围绕适配器 OrderedDict、头值校验、HTTPBin 和其他测试的材料不能补足缺失的字典实现。唯一源码块前半部分的请求体、重定向和认证测试也偏离目标。"
+      ],
+      "source_basis": [
+        "tests/test_requests.py:2266–2276",
+        "tests/test_requests.py:2157–2294"
+      ]
+    },
+    {
+      "question_id": "Q07",
+      "label": "A",
+      "judgment": "不足",
+      "gold_evidence_present": [],
+      "gold_evidence_missing": [
+        "Q07-E1",
+        "Q07-E2",
+        "Q07-E3",
+        "Q07-E4",
+        "Q07-E5"
+      ],
+      "supports": [
+        "文档说明会话挂载传输适配器、默认 HTTP/HTTPS 适配器及最长前缀匹配；测试提供 PreparedRequest 可发送、未准备 Request 被拒绝和挂载前缀顺序的相关佐证。",
+        "adapters.py:1–169 给出 BaseAdapter.send 的参数契约和抽象接口。"
+      ],
+      "missing": [
+        "没有 api.get→api.request→Session.request 的源码，也没有 Session.request 中 prepare_request→send，以及 Session.send 中 get_adapter→adapter.send 的调用语句。无法据此完成所要求的源码调用链。"
+      ],
+      "misleading_or_irrelevant": [
+        "BaseAdapter.send 是抛出 NotImplementedError 的抽象方法，不是已选适配器被调用的现场。默认 HTTPAdapter 不意味着每个 URL 都必须使用它，用户可自定义挂载。",
+        "自定义 HTTP 动词、Link 头、TLS 示例、重试及 pickle/重定向测试主要是旁支。"
+      ],
+      "source_basis": [
+        "docs/user/advanced.rst:929–1057",
+        "src/requests/adapters.py:1–169",
+        "tests/test_requests.py:1488–1634"
+      ]
+    },
+    {
+      "question_id": "Q07",
+      "label": "B",
+      "judgment": "不足",
+      "gold_evidence_present": [],
+      "gold_evidence_missing": [
+        "Q07-E1",
+        "Q07-E2",
+        "Q07-E3",
+        "Q07-E4",
+        "Q07-E5"
+      ],
+      "supports": [
+        "文档和适配器源码可说明挂载机制、默认适配器接口，以及 HTTPAdapter 构造、连接池和代理管理的局部职责。"
+      ],
+      "missing": [
+        "缺少公共 get 包装层、Session.request 的准备和发送步骤，以及 Session.send 对选中适配器的 send 调用。连接池初始化不能填补这些调用关系。"
+      ],
+      "misleading_or_irrelevant": [
+        "两个 adapters.py 片段在 156–169 行重叠；返回的 BaseAdapter.send 是抽象接口。大量 TLS/代理/连接池配置不证明入口到 adapter.send 的路径。"
+      ],
+      "source_basis": [
+        "docs/user/advanced.rst:929–1057",
+        "src/requests/adapters.py:1–169",
+        "src/requests/adapters.py:156–310"
+      ]
+    },
+    {
+      "question_id": "Q07",
+      "label": "C",
+      "judgment": "不足",
+      "gold_evidence_present": [],
+      "gold_evidence_missing": [
+        "Q07-E1",
+        "Q07-E2",
+        "Q07-E3",
+        "Q07-E4",
+        "Q07-E5"
+      ],
+      "supports": [
+        "实体描述为 HTTPAdapter、PreparedRequest 和适配器前缀匹配提供方向性说明；唯一源码 adapters.py:156–310 可核实 HTTPAdapter 的构造和部分池/代理管理。"
+      ],
+      "missing": [
+        "没有公共包装层或 Session 准备、发送、选择适配器的源码调用点；也没有关系表可供追踪。生成实体摘要不能提供所需的实际调用顺序。"
+      ],
+      "misleading_or_irrelevant": [
+        "REQUESTS 等宽泛实体描述涵盖认证、cookies、错误、文档等大量旁支；部分测试实体描述有解析残留字符。摘要中提到相关类，并不能证明这些类在本题执行路径上的连接。"
+      ],
+      "source_basis": [
+        "src/requests/adapters.py:156–310"
+      ]
+    },
+    {
+      "question_id": "Q07",
+      "label": "D",
+      "judgment": "部分",
+      "gold_evidence_present": [],
+      "gold_evidence_missing": [
+        "Q07-E1",
+        "Q07-E2",
+        "Q07-E3",
+        "Q07-E4",
+        "Q07-E5"
+      ],
+      "supports": [
+        "sessions.py:781 起的 get_adapter 实现直接显示按挂载顺序进行 URL 前缀匹配并返回适配器；799 行起的 mount 按前缀长度排序。因此可用源码解释选择哪个适配器这一局部步骤。",
+        "文档补充默认挂载和自定义挂载用法。该选择辅助方法证据有用，虽不属于冻结调用点 gold。"
+      ],
+      "missing": [
+        "sessions.py 片段从 704 行开始，恰好缺少 697–703 行的 get_adapter(request.url) 与 adapter.send 调用现场。也缺公共包装层和 Session.request 中的 prepare_request/send，因此完整所需调用链仍不充分。"
+      ],
+      "misleading_or_irrelevant": [
+        "片段开始的响应计时、hooks、cookie 和重定向处理位于所要求停止点之后，不能据此认定 adapter.send 调用本身已被展示。quickstart 的 JSON、流读取、自定义头和表单内容大多与调用链无关。"
+      ],
+      "source_basis": [
+        "src/requests/sessions.py:704–831",
+        "src/requests/sessions.py:781–796",
+        "src/requests/sessions.py:799–807",
+        "docs/user/advanced.rst:929–1057"
+      ]
+    }
+  ],
+  "limits": [
+    "仅评价这两道预先声明题的已返回上下文，不推广为总体效果结论。",
+    "充分性判断不同于固定 gold 覆盖率；例如 Q07-D 的选择辅助方法具有局部价值，但五个冻结调用点均缺失。",
+    "没有修改题集、gold、评分、上下文或补丁，也没有发起模型请求。"
+  ]
+}

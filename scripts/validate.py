@@ -102,7 +102,7 @@ def main():
             for target in re.findall(r'\]\(([^)]+)\)',s):
                 if '://' in target or target.startswith('mailto:'):continue
                 target,_,fragment=target.partition('#');linked=p.parent/target if target else p
-                assert linked.is_file(),(rel,target)
+                assert linked.is_file() or (linked.is_dir() and not fragment),(rel,target)
                 if re.fullmatch(r'L\d+',fragment):
                     assert 1<=int(fragment[1:])<=len(linked.read_text().splitlines()),(rel,target,fragment)
                 elif fragment and linked.suffix=='.md':

@@ -1,0 +1,633 @@
+{
+  "question_id": "Q13",
+  "method": "ms_local",
+  "budget": 4000,
+  "query": "If case-insensitive header key storage changes, identify the container operations, preparation consumer, and existing tests that must be inspected; do not claim they all require edits.",
+  "upstream_raw_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n524|HEADER UPDATE TEST|The header update test verifies that header updates are handled case-insensitively)<|2\n534|CASE-INSENSITIVE HEADER REMOVAL|A test event verifying that passing a differently cased header name with a null value removes the existing header from a prepared request|1\n582|CASE-INSENSITIVE DICT TEST|A group of tests validating case-insensitive initialization, lookup, assignment, deletion, membership, length, and retrieval behavior for a case-insensitive dictionary.|1\n537|NATIVE HEADER KEY HANDLING|A test event verifying that prepared request header keys remain usable as native string or byte-string keys|1\n535|CASE-SENSITIVE PARAMETER MERGING|A test event verifying that session parameters and per-request parameters with differently cased keys remain as separate parameters|1\n138|CASEINSENSITIVEDICT|CASEINSENSITIVEDICT is a dictionary implementation used by Requests to store, merge, and represent HTTP headers. It treats keys case-insensitively, allowing headers with different capitalization to be accessed as the same key, while preserving the spelling of the most recently assigned key.|5\n528|ISSUE 1321|Issue 1321 is a reported Requests behavior concerning case-insensitive removal of HTTP headers|1\n431|TEST HEADERS PRESERVE ORDER|A test event verifying that ordered session and request headers preserve their expected order while request headers override duplicate session headers|1\n538|HEADER VALIDATION|A test event verifying that valid string and byte header values, including spaces and empty values, are accepted and preserved\"|1\n539|NON-STRING HEADER VALUE VALIDATION|A parameterized test event verifying that integer, mapping, and list header values raise InvalidHeader|2\n234|REQUESTS STRUCTURES|REQUESTS STRUCTURES provides `CaseInsensitiveDict`, a dictionary-like, case-insensitive mapping designed for handling HTTP headers and other keys where capitalization should not affect lookup or comparison. It is also imported for testing purposes.|1\n607|TESTCASEINSENSITIVEDICT|TestCaseInsensitiveDict is a pytest test class that verifies the behavior of Requests' CaseInsensitiveDict, including case-insensitive access and deletion, iteration, representation, copying, equality, and lowercase items|2\n541|HEADER LEADING-WHITESPACE VALIDATION|A parameterized test event verifying that leading whitespace in HTTP header names or values raises InvalidHeader before a request is sent|2\n533|SESSION ADAPTER CASE-INSENSITIVE MATCHING|A test event verifying that URL adapter prefix matching is case-insensitive when the mounted prefix and requested URL use different capitalization|2\n250|CASE-INSENSITIVE DICTIONARY|CaseInsensitiveDict is the mapping used by Response to store HTTP headers without regard to capitalization.|1\n498|COOKIE DICTIONARY KEYS TEST|A test that verifies cookie keys can be iterated repeatedly and produce consistent results|1\n529|ISSUE 3386|Issue 3386 concerns validation of HTTP header values and requires header values to be strings or bytes|2\n540|HEADER RETURN-CHARACTER VALIDATION|A parameterized test event verifying that carriage returns and newline characters in header names or values raise InvalidHeader|2\n532|SESSION ADAPTER MIXED-CASE PREFIX MATCHING|A test event verifying that a mounted HTTPAdapter matches a URL whose scheme, host, and path prefix use mixed capitalization|2\n633|COOKIE-JAR COMPATIBILITY TESTS|Tests verifying that dictionaries can be added correctly to both standard CookieJar and RequestsCookieJar instances|1\n\n\n-----Relationships-----\nid|source|target|description|weight|links\n1019|TESTCASEINSENSITIVEDICT|CASEINSENSITIVEDICT|TestCaseInsensitiveDict contains tests for CaseInsensitiveDict behavior|10.0|1\n953|CASE-INSENSITIVE DICT TEST|CASEINSENSITIVEDICT|The test group exercises the CaseInsensitiveDict implementation and its case-insensitive mapping behavior.|9.0|1\n954|CASEINSENSITIVEDICT|REQUESTS|CASEINSENSITIVEDICT is a data structure provided by REQUESTS for handling HTTP headers in a case-insensitive manner. It is imported from `requests.structures` and tested as part of the REQUESTS library’s data structures.|18.0|5\n833|HEADER UPDATE TEST|REQUESTS|The header update test verifies case-insensitive header behavior in Requests|1.0|5\n654|TEST HEADERS PRESERVE ORDER|REQUESTS|The test verifies ordered header handling and duplicate-header override behavior in Requests|9.0|5\n850|ISSUE 1321|REQUESTS|The test for case-insensitive header removal was added to verify behavior associated with Requests issue 1321|8.0|5\n320|REQUESTS|REQUESTS STRUCTURES|REQUESTS includes the REQUESTS STRUCTURES component, which provides the `CaseInsensitiveDict` type. REQUESTS imports `CaseInsensitiveDict` from REQUESTS STRUCTURES to support case-insensitive mappings, and the type is also used by the Requests test suite.|16.0|5\n846|HEADER UPDATE TEST|PYTEST|Pytest executes the case-insensitive header update checks|1.0|3\n1021|TESTCASEINSENSITIVEDICT|PYTEST|TestCaseInsensitiveDict uses pytest fixtures and parameterization to run its tests|9.0|3\n868|PYTEST|NON-STRING HEADER VALUE VALIDATION|Pytest parameterizes and asserts the expected InvalidHeader exceptions|8.0|3\n857|CASE-INSENSITIVE HEADER REMOVAL|HTTPBIN|The test sends the request to HTTPBin and inspects the resulting request headers|8.0|2\n858|CASE-SENSITIVE PARAMETER MERGING|HTTPBIN|The test uses HTTPBin's echoed arguments to verify the resulting query parameters|8.0|2\n860|NATIVE HEADER KEY HANDLING|REQUEST|The test verifies the native key types retained by a prepared Request's headers|8.0|2\n861|HEADER VALIDATION|REQUEST|The test sends valid headers through the Requests request API and checks the prepared request headers|8.0|2\n204|RESPONSE|CASEINSENSITIVEDICT|Response stores its HTTP headers in a CaseInsensitiveDict so header names can be accessed without regard to case.|9.0|1\n401|SESSION|CASEINSENSITIVEDICT|Session uses CaseInsensitiveDict when merging request and session headers|8.0|1\n862|NON-STRING HEADER VALUE VALIDATION|INVALIDHEADER|The test confirms that unsupported non-string and non-byte header values raise InvalidHeader|9.0|1\n\n\n-----Sources-----\nid|text\n91|        pr = pickle.loads(pickle.dumps(r))\n        assert r.request.url == pr.request.url\n        assert r.request.headers == pr.request.headers\n\n    def test_prepared_request_is_pickleable(self, httpbin):\n        p = requests.Request(\"GET\", httpbin(\"get\")).prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_file_is_pickleable(self, httpbin):\n        with open(__file__, \"rb\") as f:\n            r = requests.Request(\"POST\", httpbin(\"post\"), files={\"file\": f})\n            p = r.prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_hook_is_pickleable(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"), hooks=default_hooks())\n        p = r.prepare()\n\n        # Verify PreparedRequest can be pickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n        assert r.hooks == p.hooks\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_cannot_send_unprepared_requests(self, httpbin):\n        r = requests.Request(url=httpbin())\n        with pytest.raises(ValueError):\n            requests.Session().send(r)\n\n    def test_http_error(self):\n        error = requests.exceptions.HTTPError()\n        assert not error.response\n        response = requests.Response()\n        error = requests.exceptions.HTTPError(response=response)\n        assert error.response == response\n        error = requests.exceptions.HTTPError(\"message\", response=response)\n        assert str(error) == \"message\"\n        assert error.response == response\n\n    def test_session_pickling(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"))\n        s = requests.Session()\n\n        s = pickle.loads(pickle.dumps(s))\n        s.proxies = getproxies()\n\n        r = s.send(r.prepare())\n        assert r.status_code == 200\n\n    def test_fixes_1329(self, httpbin):\n        \"\"\"Ensure that header updates are done case-insensitively.\"\"\"\n        s = requests.Session()\n        s.headers.update({\"ACCEPT\": \"BOGUS\"})\n        s.headers.update({\"accept\": \"application/json\"})\n        r = s.get(httpbin(\"get\"))\n        headers = r.request.headers\n        assert headers[\"accept\"] == \"application/json\"\n        assert headers[\"Accept\"] == \"application/json\"\n        assert headers[\"ACCEPT\"] == \"application/json\"\n\n    def test_uppercase_scheme_redirect(self, httpbin):\n        parts = urlparse(httpbin(\"html\"))\n        url = \"HTTP://\" + parts.netloc + parts.path\n        r = requests.get(httpbin(\"redirect-to\"), params={\"url\": url})\n        assert r.status_code == 200\n        assert r.url.lower() == url.lower()\n\n    def test_transport_adapter_ordering(self):\n        s = requests.Session()\n        order = [\"https://\", \"http://\"]\n        assert order == list(s.adapters)\n        s.mount(\"http://git\", HTTPAdapter())\n        s.mount(\"http://github\", HTTPAdapter())\n        s.mount(\"http://github.com\", HTTPAdapter())\n        s.mount(\"http://github.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://github.com\",\n            \"http://github\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s.mount(\"http://gittip\", HTTPAdapter())\n        s.mount(\"http://gittip.com\", HTTPAdapter())\n        s.mount(\"http://gittip.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://gittip.com/about/\",\n            \"http://github.com\",\n            \"http://gittip.com\",\n            \"http://github\",\n            \"http://gittip\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s2 = requests.Session()\n        s2.adapters = {\"http://\": HTTPAdapter()}\n        s2.mount(\"https://\", HTTPAdapter())\n        assert \"http://\" in s2.adapters\n        assert \"https://\" in s2.adapters\n\n    def test_session_get_adapter_prefix_matching(self):\n        prefix = \"https://example.com\"\n        more_specific_prefix = prefix + \"/some/path\"\n\n        url_matching_only_prefix = prefix + \"/another/path\"\n        url_matching_more_specific_prefix = more_specific_prefix + \"/longer/path\"\n        url_not_matching_prefix = \"https://another.example.com/\"\n\n        s = requests.Session()\n        prefix_adapter = HTTPAdapter()\n        more_specific_prefix_adapter = HTTPAdapter()\n        s.mount(prefix, prefix_adapter)\n        s.mount(more_specific_prefix, more_specific_prefix_adapter)\n\n        assert s.get_adapter(url_matching_only_prefix) is prefix_adapter\n        assert (\n\n",
+  "upstream_raw_records": {
+    "relationships": [
+      {
+        "id": "1019",
+        "source": "TESTCASEINSENSITIVEDICT",
+        "target": "CASEINSENSITIVEDICT",
+        "description": "TestCaseInsensitiveDict contains tests for CaseInsensitiveDict behavior",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "953",
+        "source": "CASE-INSENSITIVE DICT TEST",
+        "target": "CASEINSENSITIVEDICT",
+        "description": "The test group exercises the CaseInsensitiveDict implementation and its case-insensitive mapping behavior.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "954",
+        "source": "CASEINSENSITIVEDICT",
+        "target": "REQUESTS",
+        "description": "CASEINSENSITIVEDICT is a data structure provided by REQUESTS for handling HTTP headers in a case-insensitive manner. It is imported from `requests.structures` and tested as part of the REQUESTS library’s data structures.",
+        "weight": "18.0",
+        "links": "5",
+        "in_context": true
+      },
+      {
+        "id": "833",
+        "source": "HEADER UPDATE TEST",
+        "target": "REQUESTS",
+        "description": "The header update test verifies case-insensitive header behavior in Requests",
+        "weight": "1.0",
+        "links": "5",
+        "in_context": true
+      },
+      {
+        "id": "654",
+        "source": "TEST HEADERS PRESERVE ORDER",
+        "target": "REQUESTS",
+        "description": "The test verifies ordered header handling and duplicate-header override behavior in Requests",
+        "weight": "9.0",
+        "links": "5",
+        "in_context": true
+      },
+      {
+        "id": "850",
+        "source": "ISSUE 1321",
+        "target": "REQUESTS",
+        "description": "The test for case-insensitive header removal was added to verify behavior associated with Requests issue 1321",
+        "weight": "8.0",
+        "links": "5",
+        "in_context": true
+      },
+      {
+        "id": "320",
+        "source": "REQUESTS",
+        "target": "REQUESTS STRUCTURES",
+        "description": "REQUESTS includes the REQUESTS STRUCTURES component, which provides the `CaseInsensitiveDict` type. REQUESTS imports `CaseInsensitiveDict` from REQUESTS STRUCTURES to support case-insensitive mappings, and the type is also used by the Requests test suite.",
+        "weight": "16.0",
+        "links": "5",
+        "in_context": true
+      },
+      {
+        "id": "846",
+        "source": "HEADER UPDATE TEST",
+        "target": "PYTEST",
+        "description": "Pytest executes the case-insensitive header update checks",
+        "weight": "1.0",
+        "links": "3",
+        "in_context": true
+      },
+      {
+        "id": "1021",
+        "source": "TESTCASEINSENSITIVEDICT",
+        "target": "PYTEST",
+        "description": "TestCaseInsensitiveDict uses pytest fixtures and parameterization to run its tests",
+        "weight": "9.0",
+        "links": "3",
+        "in_context": true
+      },
+      {
+        "id": "868",
+        "source": "PYTEST",
+        "target": "NON-STRING HEADER VALUE VALIDATION",
+        "description": "Pytest parameterizes and asserts the expected InvalidHeader exceptions",
+        "weight": "8.0",
+        "links": "3",
+        "in_context": true
+      },
+      {
+        "id": "857",
+        "source": "CASE-INSENSITIVE HEADER REMOVAL",
+        "target": "HTTPBIN",
+        "description": "The test sends the request to HTTPBin and inspects the resulting request headers",
+        "weight": "8.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "858",
+        "source": "CASE-SENSITIVE PARAMETER MERGING",
+        "target": "HTTPBIN",
+        "description": "The test uses HTTPBin's echoed arguments to verify the resulting query parameters",
+        "weight": "8.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "860",
+        "source": "NATIVE HEADER KEY HANDLING",
+        "target": "REQUEST",
+        "description": "The test verifies the native key types retained by a prepared Request's headers",
+        "weight": "8.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "861",
+        "source": "HEADER VALIDATION",
+        "target": "REQUEST",
+        "description": "The test sends valid headers through the Requests request API and checks the prepared request headers",
+        "weight": "8.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "204",
+        "source": "RESPONSE",
+        "target": "CASEINSENSITIVEDICT",
+        "description": "Response stores its HTTP headers in a CaseInsensitiveDict so header names can be accessed without regard to case.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "401",
+        "source": "SESSION",
+        "target": "CASEINSENSITIVEDICT",
+        "description": "Session uses CaseInsensitiveDict when merging request and session headers",
+        "weight": "8.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "862",
+        "source": "NON-STRING HEADER VALUE VALIDATION",
+        "target": "INVALIDHEADER",
+        "description": "The test confirms that unsupported non-string and non-byte header values raise InvalidHeader",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      }
+    ],
+    "entities": [
+      {
+        "id": "524",
+        "entity": "HEADER UPDATE TEST",
+        "description": "The header update test verifies that header updates are handled case-insensitively)<",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "534",
+        "entity": "CASE-INSENSITIVE HEADER REMOVAL",
+        "description": "A test event verifying that passing a differently cased header name with a null value removes the existing header from a prepared request",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "582",
+        "entity": "CASE-INSENSITIVE DICT TEST",
+        "description": "A group of tests validating case-insensitive initialization, lookup, assignment, deletion, membership, length, and retrieval behavior for a case-insensitive dictionary.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "537",
+        "entity": "NATIVE HEADER KEY HANDLING",
+        "description": "A test event verifying that prepared request header keys remain usable as native string or byte-string keys",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "535",
+        "entity": "CASE-SENSITIVE PARAMETER MERGING",
+        "description": "A test event verifying that session parameters and per-request parameters with differently cased keys remain as separate parameters",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "138",
+        "entity": "CASEINSENSITIVEDICT",
+        "description": "CASEINSENSITIVEDICT is a dictionary implementation used by Requests to store, merge, and represent HTTP headers. It treats keys case-insensitively, allowing headers with different capitalization to be accessed as the same key, while preserving the spelling of the most recently assigned key.",
+        "number of relationships": "5",
+        "in_context": true
+      },
+      {
+        "id": "528",
+        "entity": "ISSUE 1321",
+        "description": "Issue 1321 is a reported Requests behavior concerning case-insensitive removal of HTTP headers",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "431",
+        "entity": "TEST HEADERS PRESERVE ORDER",
+        "description": "A test event verifying that ordered session and request headers preserve their expected order while request headers override duplicate session headers",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "538",
+        "entity": "HEADER VALIDATION",
+        "description": "A test event verifying that valid string and byte header values, including spaces and empty values, are accepted and preserved\"",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "539",
+        "entity": "NON-STRING HEADER VALUE VALIDATION",
+        "description": "A parameterized test event verifying that integer, mapping, and list header values raise InvalidHeader",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "234",
+        "entity": "REQUESTS STRUCTURES",
+        "description": "REQUESTS STRUCTURES provides `CaseInsensitiveDict`, a dictionary-like, case-insensitive mapping designed for handling HTTP headers and other keys where capitalization should not affect lookup or comparison. It is also imported for testing purposes.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "607",
+        "entity": "TESTCASEINSENSITIVEDICT",
+        "description": "TestCaseInsensitiveDict is a pytest test class that verifies the behavior of Requests' CaseInsensitiveDict, including case-insensitive access and deletion, iteration, representation, copying, equality, and lowercase items",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "541",
+        "entity": "HEADER LEADING-WHITESPACE VALIDATION",
+        "description": "A parameterized test event verifying that leading whitespace in HTTP header names or values raises InvalidHeader before a request is sent",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "533",
+        "entity": "SESSION ADAPTER CASE-INSENSITIVE MATCHING",
+        "description": "A test event verifying that URL adapter prefix matching is case-insensitive when the mounted prefix and requested URL use different capitalization",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "250",
+        "entity": "CASE-INSENSITIVE DICTIONARY",
+        "description": "CaseInsensitiveDict is the mapping used by Response to store HTTP headers without regard to capitalization.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "498",
+        "entity": "COOKIE DICTIONARY KEYS TEST",
+        "description": "A test that verifies cookie keys can be iterated repeatedly and produce consistent results",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "529",
+        "entity": "ISSUE 3386",
+        "description": "Issue 3386 concerns validation of HTTP header values and requires header values to be strings or bytes",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "540",
+        "entity": "HEADER RETURN-CHARACTER VALIDATION",
+        "description": "A parameterized test event verifying that carriage returns and newline characters in header names or values raise InvalidHeader",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "532",
+        "entity": "SESSION ADAPTER MIXED-CASE PREFIX MATCHING",
+        "description": "A test event verifying that a mounted HTTPAdapter matches a URL whose scheme, host, and path prefix use mixed capitalization",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "633",
+        "entity": "COOKIE-JAR COMPATIBILITY TESTS",
+        "description": "Tests verifying that dictionaries can be added correctly to both standard CookieJar and RequestsCookieJar instances",
+        "number of relationships": "1",
+        "in_context": true
+      }
+    ],
+    "sources": [
+      {
+        "id": "91",
+        "text": "        pr = pickle.loads(pickle.dumps(r))\n        assert r.request.url == pr.request.url\n        assert r.request.headers == pr.request.headers\n\n    def test_prepared_request_is_pickleable(self, httpbin):\n        p = requests.Request(\"GET\", httpbin(\"get\")).prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_file_is_pickleable(self, httpbin):\n        with open(__file__, \"rb\") as f:\n            r = requests.Request(\"POST\", httpbin(\"post\"), files={\"file\": f})\n            p = r.prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_hook_is_pickleable(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"), hooks=default_hooks())\n        p = r.prepare()\n\n        # Verify PreparedRequest can be pickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n        assert r.hooks == p.hooks\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_cannot_send_unprepared_requests(self, httpbin):\n        r = requests.Request(url=httpbin())\n        with pytest.raises(ValueError):\n            requests.Session().send(r)\n\n    def test_http_error(self):\n        error = requests.exceptions.HTTPError()\n        assert not error.response\n        response = requests.Response()\n        error = requests.exceptions.HTTPError(response=response)\n        assert error.response == response\n        error = requests.exceptions.HTTPError(\"message\", response=response)\n        assert str(error) == \"message\"\n        assert error.response == response\n\n    def test_session_pickling(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"))\n        s = requests.Session()\n\n        s = pickle.loads(pickle.dumps(s))\n        s.proxies = getproxies()\n\n        r = s.send(r.prepare())\n        assert r.status_code == 200\n\n    def test_fixes_1329(self, httpbin):\n        \"\"\"Ensure that header updates are done case-insensitively.\"\"\"\n        s = requests.Session()\n        s.headers.update({\"ACCEPT\": \"BOGUS\"})\n        s.headers.update({\"accept\": \"application/json\"})\n        r = s.get(httpbin(\"get\"))\n        headers = r.request.headers\n        assert headers[\"accept\"] == \"application/json\"\n        assert headers[\"Accept\"] == \"application/json\"\n        assert headers[\"ACCEPT\"] == \"application/json\"\n\n    def test_uppercase_scheme_redirect(self, httpbin):\n        parts = urlparse(httpbin(\"html\"))\n        url = \"HTTP://\" + parts.netloc + parts.path\n        r = requests.get(httpbin(\"redirect-to\"), params={\"url\": url})\n        assert r.status_code == 200\n        assert r.url.lower() == url.lower()\n\n    def test_transport_adapter_ordering(self):\n        s = requests.Session()\n        order = [\"https://\", \"http://\"]\n        assert order == list(s.adapters)\n        s.mount(\"http://git\", HTTPAdapter())\n        s.mount(\"http://github\", HTTPAdapter())\n        s.mount(\"http://github.com\", HTTPAdapter())\n        s.mount(\"http://github.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://github.com\",\n            \"http://github\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s.mount(\"http://gittip\", HTTPAdapter())\n        s.mount(\"http://gittip.com\", HTTPAdapter())\n        s.mount(\"http://gittip.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://gittip.com/about/\",\n            \"http://github.com\",\n            \"http://gittip.com\",\n            \"http://github\",\n            \"http://gittip\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s2 = requests.Session()\n        s2.adapters = {\"http://\": HTTPAdapter()}\n        s2.mount(\"https://\", HTTPAdapter())\n        assert \"http://\" in s2.adapters\n        assert \"https://\" in s2.adapters\n\n    def test_session_get_adapter_prefix_matching(self):\n        prefix = \"https://example.com\"\n        more_specific_prefix = prefix + \"/some/path\"\n\n        url_matching_only_prefix = prefix + \"/another/path\"\n        url_matching_more_specific_prefix = more_specific_prefix + \"/longer/path\"\n        url_not_matching_prefix = \"https://another.example.com/\"\n\n        s = requests.Session()\n        prefix_adapter = HTTPAdapter()\n        more_specific_prefix_adapter = HTTPAdapter()\n        s.mount(prefix, prefix_adapter)\n        s.mount(more_specific_prefix, more_specific_prefix_adapter)\n\n        assert s.get_adapter(url_matching_only_prefix) is prefix_adapter\n        assert (\n"
+      }
+    ]
+  },
+  "final_context": "-----Entities-----\nid|entity|description|number of relationships\n524|HEADER UPDATE TEST|The header update test verifies that header updates are handled case-insensitively)<|2\n534|CASE-INSENSITIVE HEADER REMOVAL|A test event verifying that passing a differently cased header name with a null value removes the existing header from a prepared request|1\n582|CASE-INSENSITIVE DICT TEST|A group of tests validating case-insensitive initialization, lookup, assignment, deletion, membership, length, and retrieval behavior for a case-insensitive dictionary.|1\n537|NATIVE HEADER KEY HANDLING|A test event verifying that prepared request header keys remain usable as native string or byte-string keys|1\n535|CASE-SENSITIVE PARAMETER MERGING|A test event verifying that session parameters and per-request parameters with differently cased keys remain as separate parameters|1\n138|CASEINSENSITIVEDICT|CASEINSENSITIVEDICT is a dictionary implementation used by Requests to store, merge, and represent HTTP headers. It treats keys case-insensitively, allowing headers with different capitalization to be accessed as the same key, while preserving the spelling of the most recently assigned key.|5\n528|ISSUE 1321|Issue 1321 is a reported Requests behavior concerning case-insensitive removal of HTTP headers|1\n431|TEST HEADERS PRESERVE ORDER|A test event verifying that ordered session and request headers preserve their expected order while request headers override duplicate session headers|1\n538|HEADER VALIDATION|\"A test event verifying that valid string and byte header values, including spaces and empty values, are accepted and preserved\"\"\"|1\n539|NON-STRING HEADER VALUE VALIDATION|A parameterized test event verifying that integer, mapping, and list header values raise InvalidHeader|2\n234|REQUESTS STRUCTURES|REQUESTS STRUCTURES provides `CaseInsensitiveDict`, a dictionary-like, case-insensitive mapping designed for handling HTTP headers and other keys where capitalization should not affect lookup or comparison. It is also imported for testing purposes.|1\n607|TESTCASEINSENSITIVEDICT|TestCaseInsensitiveDict is a pytest test class that verifies the behavior of Requests' CaseInsensitiveDict, including case-insensitive access and deletion, iteration, representation, copying, equality, and lowercase items|2\n541|HEADER LEADING-WHITESPACE VALIDATION|A parameterized test event verifying that leading whitespace in HTTP header names or values raises InvalidHeader before a request is sent|2\n533|SESSION ADAPTER CASE-INSENSITIVE MATCHING|A test event verifying that URL adapter prefix matching is case-insensitive when the mounted prefix and requested URL use different capitalization|2\n250|CASE-INSENSITIVE DICTIONARY|CaseInsensitiveDict is the mapping used by Response to store HTTP headers without regard to capitalization.|1\n498|COOKIE DICTIONARY KEYS TEST|A test that verifies cookie keys can be iterated repeatedly and produce consistent results|1\n529|ISSUE 3386|Issue 3386 concerns validation of HTTP header values and requires header values to be strings or bytes|2\n540|HEADER RETURN-CHARACTER VALIDATION|A parameterized test event verifying that carriage returns and newline characters in header names or values raise InvalidHeader|2\n532|SESSION ADAPTER MIXED-CASE PREFIX MATCHING|A test event verifying that a mounted HTTPAdapter matches a URL whose scheme, host, and path prefix use mixed capitalization|2\n633|COOKIE-JAR COMPATIBILITY TESTS|Tests verifying that dictionaries can be added correctly to both standard CookieJar and RequestsCookieJar instances|1\n\n-----Relationships-----\nid|source|target|description|weight|links\n1019|TESTCASEINSENSITIVEDICT|CASEINSENSITIVEDICT|TestCaseInsensitiveDict contains tests for CaseInsensitiveDict behavior|10.0|1\n953|CASE-INSENSITIVE DICT TEST|CASEINSENSITIVEDICT|The test group exercises the CaseInsensitiveDict implementation and its case-insensitive mapping behavior.|9.0|1\n954|CASEINSENSITIVEDICT|REQUESTS|CASEINSENSITIVEDICT is a data structure provided by REQUESTS for handling HTTP headers in a case-insensitive manner. It is imported from `requests.structures` and tested as part of the REQUESTS library’s data structures.|18.0|5\n833|HEADER UPDATE TEST|REQUESTS|The header update test verifies case-insensitive header behavior in Requests|1.0|5\n654|TEST HEADERS PRESERVE ORDER|REQUESTS|The test verifies ordered header handling and duplicate-header override behavior in Requests|9.0|5\n850|ISSUE 1321|REQUESTS|The test for case-insensitive header removal was added to verify behavior associated with Requests issue 1321|8.0|5\n320|REQUESTS|REQUESTS STRUCTURES|REQUESTS includes the REQUESTS STRUCTURES component, which provides the `CaseInsensitiveDict` type. REQUESTS imports `CaseInsensitiveDict` from REQUESTS STRUCTURES to support case-insensitive mappings, and the type is also used by the Requests test suite.|16.0|5\n846|HEADER UPDATE TEST|PYTEST|Pytest executes the case-insensitive header update checks|1.0|3\n1021|TESTCASEINSENSITIVEDICT|PYTEST|TestCaseInsensitiveDict uses pytest fixtures and parameterization to run its tests|9.0|3\n868|PYTEST|NON-STRING HEADER VALUE VALIDATION|Pytest parameterizes and asserts the expected InvalidHeader exceptions|8.0|3\n857|CASE-INSENSITIVE HEADER REMOVAL|HTTPBIN|The test sends the request to HTTPBin and inspects the resulting request headers|8.0|2\n858|CASE-SENSITIVE PARAMETER MERGING|HTTPBIN|The test uses HTTPBin's echoed arguments to verify the resulting query parameters|8.0|2\n860|NATIVE HEADER KEY HANDLING|REQUEST|The test verifies the native key types retained by a prepared Request's headers|8.0|2\n861|HEADER VALIDATION|REQUEST|The test sends valid headers through the Requests request API and checks the prepared request headers|8.0|2\n204|RESPONSE|CASEINSENSITIVEDICT|Response stores its HTTP headers in a CaseInsensitiveDict so header names can be accessed without regard to case.|9.0|1\n401|SESSION|CASEINSENSITIVEDICT|Session uses CaseInsensitiveDict when merging request and session headers|8.0|1\n862|NON-STRING HEADER VALUE VALIDATION|INVALIDHEADER|The test confirms that unsupported non-string and non-byte header values raise InvalidHeader|9.0|1\n\n-----Sources-----\nid|source|text\n91|tests/test_requests.py:L1488-L1634|\"        pr = pickle.loads(pickle.dumps(r))\n        assert r.request.url == pr.request.url\n        assert r.request.headers == pr.request.headers\n\n    def test_prepared_request_is_pickleable(self, httpbin):\n        p = requests.Request(\"\"GET\"\", httpbin(\"\"get\"\")).prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_file_is_pickleable(self, httpbin):\n        with open(__file__, \"\"rb\"\") as f:\n            r = requests.Request(\"\"POST\"\", httpbin(\"\"post\"\"), files={\"\"file\"\": f})\n            p = r.prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_hook_is_pickleable(self, httpbin):\n        r = requests.Request(\"\"GET\"\", httpbin(\"\"get\"\"), hooks=default_hooks())\n        p = r.prepare()\n\n        # Verify PreparedRequest can be pickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n        assert r.hooks == p.hooks\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_cannot_send_unprepared_requests(self, httpbin):\n        r = requests.Request(url=httpbin())\n        with pytest.raises(ValueError):\n            requests.Session().send(r)\n\n    def test_http_error(self):\n        error = requests.exceptions.HTTPError()\n        assert not error.response\n        response = requests.Response()\n        error = requests.exceptions.HTTPError(response=response)\n        assert error.response == response\n        error = requests.exceptions.HTTPError(\"\"message\"\", response=response)\n        assert str(error) == \"\"message\"\"\n        assert error.response == response\n\n    def test_session_pickling(self, httpbin):\n        r = requests.Request(\"\"GET\"\", httpbin(\"\"get\"\"))\n        s = requests.Session()\n\n        s = pickle.loads(pickle.dumps(s))\n        s.proxies = getproxies()\n\n        r = s.send(r.prepare())\n        assert r.status_code == 200\n\n    def test_fixes_1329(self, httpbin):\n        \"\"\"\"\"\"Ensure that header updates are done case-insensitively.\"\"\"\"\"\"\n        s = requests.Session()\n        s.headers.update({\"\"ACCEPT\"\": \"\"BOGUS\"\"})\n        s.headers.update({\"\"accept\"\": \"\"application/json\"\"})\n        r = s.get(httpbin(\"\"get\"\"))\n        headers = r.request.headers\n        assert headers[\"\"accept\"\"] == \"\"application/json\"\"\n        assert headers[\"\"Accept\"\"] == \"\"application/json\"\"\n        assert headers[\"\"ACCEPT\"\"] == \"\"application/json\"\"\n\n    def test_uppercase_scheme_redirect(self, httpbin):\n        parts = urlparse(httpbin(\"\"html\"\"))\n        url = \"\"HTTP://\"\" + parts.netloc + parts.path\n        r = requests.get(httpbin(\"\"redirect-to\"\"), params={\"\"url\"\": url})\n        assert r.status_code == 200\n        assert r.url.lower() == url.lower()\n\n    def test_transport_adapter_ordering(self):\n        s = requests.Session()\n        order = [\"\"https://\"\", \"\"http://\"\"]\n        assert order == list(s.adapters)\n        s.mount(\"\"http://git\"\", HTTPAdapter())\n        s.mount(\"\"http://github\"\", HTTPAdapter())\n        s.mount(\"\"http://github.com\"\", HTTPAdapter())\n        s.mount(\"\"http://github.com/about/\"\", HTTPAdapter())\n        order = [\n            \"\"http://github.com/about/\"\",\n            \"\"http://github.com\"\",\n            \"\"http://github\"\",\n            \"\"http://git\"\",\n            \"\"https://\"\",\n            \"\"http://\"\",\n        ]\n        assert order == list(s.adapters)\n        s.mount(\"\"http://gittip\"\", HTTPAdapter())\n        s.mount(\"\"http://gittip.com\"\", HTTPAdapter())\n        s.mount(\"\"http://gittip.com/about/\"\", HTTPAdapter())\n        order = [\n            \"\"http://github.com/about/\"\",\n            \"\"http://gittip.com/about/\"\",\n            \"\"http://github.com\"\",\n            \"\"http://gittip.com\"\",\n            \"\"http://github\"\",\n            \"\"http://gittip\"\",\n            \"\"http://git\"\",\n            \"\"https://\"\",\n            \"\"http://\"\",\n        ]\n        assert order == list(s.adapters)\n        s2 = requests.Session()\n        s2.adapters = {\"\"http://\"\": HTTPAdapter()}\n        s2.mount(\"\"https://\"\", HTTPAdapter())\n        assert \"\"http://\"\" in s2.adapters\n        assert \"\"https://\"\" in s2.adapters\n\n    def test_session_get_adapter_prefix_matching(self):\n        prefix = \"\"https://example.com\"\"\n        more_specific_prefix = prefix + \"\"/some/path\"\"\n\n        url_matching_only_prefix = prefix + \"\"/another/path\"\"\n        url_matching_more_specific_prefix = more_specific_prefix + \"\"/longer/path\"\"\n        url_not_matching_prefix = \"\"https://another.example.com/\"\"\n\n        s = requests.Session()\n        prefix_adapter = HTTPAdapter()\n        more_specific_prefix_adapter = HTTPAdapter()\n        s.mount(prefix, prefix_adapter)\n        s.mount(more_specific_prefix, more_specific_prefix_adapter)\n\n        assert s.get_adapter(url_matching_only_prefix) is prefix_adapter\n        assert (\n\"\n",
+  "final_tables": [
+    {
+      "name": "entities",
+      "columns": [
+        "id",
+        "entity",
+        "description",
+        "number of relationships"
+      ],
+      "rows": [
+        {
+          "id": "524",
+          "entity": "HEADER UPDATE TEST",
+          "description": "The header update test verifies that header updates are handled case-insensitively)<",
+          "number of relationships": "2"
+        },
+        {
+          "id": "534",
+          "entity": "CASE-INSENSITIVE HEADER REMOVAL",
+          "description": "A test event verifying that passing a differently cased header name with a null value removes the existing header from a prepared request",
+          "number of relationships": "1"
+        },
+        {
+          "id": "582",
+          "entity": "CASE-INSENSITIVE DICT TEST",
+          "description": "A group of tests validating case-insensitive initialization, lookup, assignment, deletion, membership, length, and retrieval behavior for a case-insensitive dictionary.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "537",
+          "entity": "NATIVE HEADER KEY HANDLING",
+          "description": "A test event verifying that prepared request header keys remain usable as native string or byte-string keys",
+          "number of relationships": "1"
+        },
+        {
+          "id": "535",
+          "entity": "CASE-SENSITIVE PARAMETER MERGING",
+          "description": "A test event verifying that session parameters and per-request parameters with differently cased keys remain as separate parameters",
+          "number of relationships": "1"
+        },
+        {
+          "id": "138",
+          "entity": "CASEINSENSITIVEDICT",
+          "description": "CASEINSENSITIVEDICT is a dictionary implementation used by Requests to store, merge, and represent HTTP headers. It treats keys case-insensitively, allowing headers with different capitalization to be accessed as the same key, while preserving the spelling of the most recently assigned key.",
+          "number of relationships": "5"
+        },
+        {
+          "id": "528",
+          "entity": "ISSUE 1321",
+          "description": "Issue 1321 is a reported Requests behavior concerning case-insensitive removal of HTTP headers",
+          "number of relationships": "1"
+        },
+        {
+          "id": "431",
+          "entity": "TEST HEADERS PRESERVE ORDER",
+          "description": "A test event verifying that ordered session and request headers preserve their expected order while request headers override duplicate session headers",
+          "number of relationships": "1"
+        },
+        {
+          "id": "538",
+          "entity": "HEADER VALIDATION",
+          "description": "A test event verifying that valid string and byte header values, including spaces and empty values, are accepted and preserved\"",
+          "number of relationships": "1"
+        },
+        {
+          "id": "539",
+          "entity": "NON-STRING HEADER VALUE VALIDATION",
+          "description": "A parameterized test event verifying that integer, mapping, and list header values raise InvalidHeader",
+          "number of relationships": "2"
+        },
+        {
+          "id": "234",
+          "entity": "REQUESTS STRUCTURES",
+          "description": "REQUESTS STRUCTURES provides `CaseInsensitiveDict`, a dictionary-like, case-insensitive mapping designed for handling HTTP headers and other keys where capitalization should not affect lookup or comparison. It is also imported for testing purposes.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "607",
+          "entity": "TESTCASEINSENSITIVEDICT",
+          "description": "TestCaseInsensitiveDict is a pytest test class that verifies the behavior of Requests' CaseInsensitiveDict, including case-insensitive access and deletion, iteration, representation, copying, equality, and lowercase items",
+          "number of relationships": "2"
+        },
+        {
+          "id": "541",
+          "entity": "HEADER LEADING-WHITESPACE VALIDATION",
+          "description": "A parameterized test event verifying that leading whitespace in HTTP header names or values raises InvalidHeader before a request is sent",
+          "number of relationships": "2"
+        },
+        {
+          "id": "533",
+          "entity": "SESSION ADAPTER CASE-INSENSITIVE MATCHING",
+          "description": "A test event verifying that URL adapter prefix matching is case-insensitive when the mounted prefix and requested URL use different capitalization",
+          "number of relationships": "2"
+        },
+        {
+          "id": "250",
+          "entity": "CASE-INSENSITIVE DICTIONARY",
+          "description": "CaseInsensitiveDict is the mapping used by Response to store HTTP headers without regard to capitalization.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "498",
+          "entity": "COOKIE DICTIONARY KEYS TEST",
+          "description": "A test that verifies cookie keys can be iterated repeatedly and produce consistent results",
+          "number of relationships": "1"
+        },
+        {
+          "id": "529",
+          "entity": "ISSUE 3386",
+          "description": "Issue 3386 concerns validation of HTTP header values and requires header values to be strings or bytes",
+          "number of relationships": "2"
+        },
+        {
+          "id": "540",
+          "entity": "HEADER RETURN-CHARACTER VALIDATION",
+          "description": "A parameterized test event verifying that carriage returns and newline characters in header names or values raise InvalidHeader",
+          "number of relationships": "2"
+        },
+        {
+          "id": "532",
+          "entity": "SESSION ADAPTER MIXED-CASE PREFIX MATCHING",
+          "description": "A test event verifying that a mounted HTTPAdapter matches a URL whose scheme, host, and path prefix use mixed capitalization",
+          "number of relationships": "2"
+        },
+        {
+          "id": "633",
+          "entity": "COOKIE-JAR COMPATIBILITY TESTS",
+          "description": "Tests verifying that dictionaries can be added correctly to both standard CookieJar and RequestsCookieJar instances",
+          "number of relationships": "1"
+        }
+      ]
+    },
+    {
+      "name": "relationships",
+      "columns": [
+        "id",
+        "source",
+        "target",
+        "description",
+        "weight",
+        "links"
+      ],
+      "rows": [
+        {
+          "id": "1019",
+          "source": "TESTCASEINSENSITIVEDICT",
+          "target": "CASEINSENSITIVEDICT",
+          "description": "TestCaseInsensitiveDict contains tests for CaseInsensitiveDict behavior",
+          "weight": "10.0",
+          "links": "1"
+        },
+        {
+          "id": "953",
+          "source": "CASE-INSENSITIVE DICT TEST",
+          "target": "CASEINSENSITIVEDICT",
+          "description": "The test group exercises the CaseInsensitiveDict implementation and its case-insensitive mapping behavior.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "954",
+          "source": "CASEINSENSITIVEDICT",
+          "target": "REQUESTS",
+          "description": "CASEINSENSITIVEDICT is a data structure provided by REQUESTS for handling HTTP headers in a case-insensitive manner. It is imported from `requests.structures` and tested as part of the REQUESTS library’s data structures.",
+          "weight": "18.0",
+          "links": "5"
+        },
+        {
+          "id": "833",
+          "source": "HEADER UPDATE TEST",
+          "target": "REQUESTS",
+          "description": "The header update test verifies case-insensitive header behavior in Requests",
+          "weight": "1.0",
+          "links": "5"
+        },
+        {
+          "id": "654",
+          "source": "TEST HEADERS PRESERVE ORDER",
+          "target": "REQUESTS",
+          "description": "The test verifies ordered header handling and duplicate-header override behavior in Requests",
+          "weight": "9.0",
+          "links": "5"
+        },
+        {
+          "id": "850",
+          "source": "ISSUE 1321",
+          "target": "REQUESTS",
+          "description": "The test for case-insensitive header removal was added to verify behavior associated with Requests issue 1321",
+          "weight": "8.0",
+          "links": "5"
+        },
+        {
+          "id": "320",
+          "source": "REQUESTS",
+          "target": "REQUESTS STRUCTURES",
+          "description": "REQUESTS includes the REQUESTS STRUCTURES component, which provides the `CaseInsensitiveDict` type. REQUESTS imports `CaseInsensitiveDict` from REQUESTS STRUCTURES to support case-insensitive mappings, and the type is also used by the Requests test suite.",
+          "weight": "16.0",
+          "links": "5"
+        },
+        {
+          "id": "846",
+          "source": "HEADER UPDATE TEST",
+          "target": "PYTEST",
+          "description": "Pytest executes the case-insensitive header update checks",
+          "weight": "1.0",
+          "links": "3"
+        },
+        {
+          "id": "1021",
+          "source": "TESTCASEINSENSITIVEDICT",
+          "target": "PYTEST",
+          "description": "TestCaseInsensitiveDict uses pytest fixtures and parameterization to run its tests",
+          "weight": "9.0",
+          "links": "3"
+        },
+        {
+          "id": "868",
+          "source": "PYTEST",
+          "target": "NON-STRING HEADER VALUE VALIDATION",
+          "description": "Pytest parameterizes and asserts the expected InvalidHeader exceptions",
+          "weight": "8.0",
+          "links": "3"
+        },
+        {
+          "id": "857",
+          "source": "CASE-INSENSITIVE HEADER REMOVAL",
+          "target": "HTTPBIN",
+          "description": "The test sends the request to HTTPBin and inspects the resulting request headers",
+          "weight": "8.0",
+          "links": "2"
+        },
+        {
+          "id": "858",
+          "source": "CASE-SENSITIVE PARAMETER MERGING",
+          "target": "HTTPBIN",
+          "description": "The test uses HTTPBin's echoed arguments to verify the resulting query parameters",
+          "weight": "8.0",
+          "links": "2"
+        },
+        {
+          "id": "860",
+          "source": "NATIVE HEADER KEY HANDLING",
+          "target": "REQUEST",
+          "description": "The test verifies the native key types retained by a prepared Request's headers",
+          "weight": "8.0",
+          "links": "2"
+        },
+        {
+          "id": "861",
+          "source": "HEADER VALIDATION",
+          "target": "REQUEST",
+          "description": "The test sends valid headers through the Requests request API and checks the prepared request headers",
+          "weight": "8.0",
+          "links": "2"
+        },
+        {
+          "id": "204",
+          "source": "RESPONSE",
+          "target": "CASEINSENSITIVEDICT",
+          "description": "Response stores its HTTP headers in a CaseInsensitiveDict so header names can be accessed without regard to case.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "401",
+          "source": "SESSION",
+          "target": "CASEINSENSITIVEDICT",
+          "description": "Session uses CaseInsensitiveDict when merging request and session headers",
+          "weight": "8.0",
+          "links": "1"
+        },
+        {
+          "id": "862",
+          "source": "NON-STRING HEADER VALUE VALIDATION",
+          "target": "INVALIDHEADER",
+          "description": "The test confirms that unsupported non-string and non-byte header values raise InvalidHeader",
+          "weight": "9.0",
+          "links": "1"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "columns": [
+        "id",
+        "source",
+        "text"
+      ],
+      "rows": [
+        {
+          "id": "91",
+          "text": "        pr = pickle.loads(pickle.dumps(r))\n        assert r.request.url == pr.request.url\n        assert r.request.headers == pr.request.headers\n\n    def test_prepared_request_is_pickleable(self, httpbin):\n        p = requests.Request(\"GET\", httpbin(\"get\")).prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_file_is_pickleable(self, httpbin):\n        with open(__file__, \"rb\") as f:\n            r = requests.Request(\"POST\", httpbin(\"post\"), files={\"file\": f})\n            p = r.prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_hook_is_pickleable(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"), hooks=default_hooks())\n        p = r.prepare()\n\n        # Verify PreparedRequest can be pickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n        assert r.hooks == p.hooks\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_cannot_send_unprepared_requests(self, httpbin):\n        r = requests.Request(url=httpbin())\n        with pytest.raises(ValueError):\n            requests.Session().send(r)\n\n    def test_http_error(self):\n        error = requests.exceptions.HTTPError()\n        assert not error.response\n        response = requests.Response()\n        error = requests.exceptions.HTTPError(response=response)\n        assert error.response == response\n        error = requests.exceptions.HTTPError(\"message\", response=response)\n        assert str(error) == \"message\"\n        assert error.response == response\n\n    def test_session_pickling(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"))\n        s = requests.Session()\n\n        s = pickle.loads(pickle.dumps(s))\n        s.proxies = getproxies()\n\n        r = s.send(r.prepare())\n        assert r.status_code == 200\n\n    def test_fixes_1329(self, httpbin):\n        \"\"\"Ensure that header updates are done case-insensitively.\"\"\"\n        s = requests.Session()\n        s.headers.update({\"ACCEPT\": \"BOGUS\"})\n        s.headers.update({\"accept\": \"application/json\"})\n        r = s.get(httpbin(\"get\"))\n        headers = r.request.headers\n        assert headers[\"accept\"] == \"application/json\"\n        assert headers[\"Accept\"] == \"application/json\"\n        assert headers[\"ACCEPT\"] == \"application/json\"\n\n    def test_uppercase_scheme_redirect(self, httpbin):\n        parts = urlparse(httpbin(\"html\"))\n        url = \"HTTP://\" + parts.netloc + parts.path\n        r = requests.get(httpbin(\"redirect-to\"), params={\"url\": url})\n        assert r.status_code == 200\n        assert r.url.lower() == url.lower()\n\n    def test_transport_adapter_ordering(self):\n        s = requests.Session()\n        order = [\"https://\", \"http://\"]\n        assert order == list(s.adapters)\n        s.mount(\"http://git\", HTTPAdapter())\n        s.mount(\"http://github\", HTTPAdapter())\n        s.mount(\"http://github.com\", HTTPAdapter())\n        s.mount(\"http://github.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://github.com\",\n            \"http://github\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s.mount(\"http://gittip\", HTTPAdapter())\n        s.mount(\"http://gittip.com\", HTTPAdapter())\n        s.mount(\"http://gittip.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://gittip.com/about/\",\n            \"http://github.com\",\n            \"http://gittip.com\",\n            \"http://github\",\n            \"http://gittip\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s2 = requests.Session()\n        s2.adapters = {\"http://\": HTTPAdapter()}\n        s2.mount(\"https://\", HTTPAdapter())\n        assert \"http://\" in s2.adapters\n        assert \"https://\" in s2.adapters\n\n    def test_session_get_adapter_prefix_matching(self):\n        prefix = \"https://example.com\"\n        more_specific_prefix = prefix + \"/some/path\"\n\n        url_matching_only_prefix = prefix + \"/another/path\"\n        url_matching_more_specific_prefix = more_specific_prefix + \"/longer/path\"\n        url_not_matching_prefix = \"https://another.example.com/\"\n\n        s = requests.Session()\n        prefix_adapter = HTTPAdapter()\n        more_specific_prefix_adapter = HTTPAdapter()\n        s.mount(prefix, prefix_adapter)\n        s.mount(more_specific_prefix, more_specific_prefix_adapter)\n\n        assert s.get_adapter(url_matching_only_prefix) is prefix_adapter\n        assert (\n",
+          "source": "tests/test_requests.py:L1488-L1634"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "short_id": "91",
+      "text_unit_id": "b4fc31fa0398c423c77ca05d45d3311d21c64d32090eb4a80186e559ba11c7f9857fc547284a1b9e915fb677bf5dcdb6dbb8f2c2edb68f5d45dd5f1b87c1171d",
+      "id": "738fe173f86a3ea0fd04fd1badf08b7af0573474d3cadc7105cab638a4925afc",
+      "title": "tests/test_requests.py:L1488-L1634",
+      "path": "tests/test_requests.py",
+      "start_line": 1488,
+      "end_line": 1634,
+      "tokens": 1191,
+      "text_sha256": "ba556710077543acb07ee95b0ea7f2ca76e248ccaa9baaae1319722182791a75",
+      "ms_text_unit_id": "b4fc31fa0398c423c77ca05d45d3311d21c64d32090eb4a80186e559ba11c7f9857fc547284a1b9e915fb677bf5dcdb6dbb8f2c2edb68f5d45dd5f1b87c1171d"
+    }
+  ],
+  "raw_context_tokens": 2594,
+  "final_context_tokens": 2652,
+  "source_text_tokens": 1191,
+  "source_chunks": 1,
+  "retrieval_compute_seconds": 0.015493209473788738,
+  "adaptation_seconds": 0.005328833125531673,
+  "empty_reason": null,
+  "community_level": 2,
+  "dropped_tail_rows": 0
+}

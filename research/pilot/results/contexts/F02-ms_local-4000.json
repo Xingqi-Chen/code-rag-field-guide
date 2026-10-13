@@ -1,0 +1,356 @@
+{
+  "question_id": "F02",
+  "method": "ms_local",
+  "budget": 4000,
+  "query": "Add a per-instance mutable Session.default_timeout attribute, initialized to None. Calls through Session.request/get/post and other existing method wrappers that OMIT timeout must use that attribute. An explicitly supplied timeout, including None, must win. Support the existing float and (connect, read) timeout shapes without adding validation rules. Redirects must keep the effective timeout. Preserve the direct Session.send contract; do not introduce global defaults or change Session constructor arguments. Document the distinction between omitted timeout and explicit None. This is an original exploratory feature, not an upstream issue.",
+  "upstream_raw_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n583|CUSTOM REDIRECT SESSION|A subclass of the Requests Session class that overrides get_redirect_target to follow valid redirects and certain malformed responses containing a different location header.|2\n430|TEST HEADERS ON SESSION WITH NONE ARE NOT SENT|A test event verifying that session headers assigned a None value are omitted from prepared Requests requests|1\n21|SESSION|SESSION is a Requests library client object that manages persistent state and configuration while sending multiple HTTP and HTTPS requests. It stores and applies cookies, headers, authentication, proxy settings, hooks, environment settings, certificates, and TLS verification options. SESSION creates and mounts HTTPAdapter instances to contact HTTP and HTTPS URLs, maintaining separate connection pools when TLS configurations differ and providing connection pooling for efficient reuse. It prepares and sends requests, including prepared requests, resolves redirect chains subject to configured redirect limits, and manages the adapters used for network communication. SESSION also supports pickling and serves as the central mechanism for maintaining consistent request behavior across a series of HTTP operations.|14\n93|REQUEST TIMEOUT|A timeout event that occurs when Requests receives no bytes from the underlying connection for the configured timeout interval)|1\n68|REQUESTS DOCUMENTATION|The Requests documentation explains transport adapters, blocking and non-blocking I/O, streaming responses, header ordering, and connection and read timeout configuration.|2\n254|READTIMEOUTERROR|ReadTimeoutError is a urllib3 exception raised when reading streamed response content takes longer than the permitted timeout. It is also used to verify that the Requests library converts read timeouts into a ConnectionError.|1\n414|TEST_HTTP_302_TOO_MANY_REDIRECTS_WITH_PARAMS|A test verifying that a customized maximum redirect count is honored by a Requests session.|3\n118|REQUESTS EXCEPTIONS|Requests Exceptions defines the exception and warning hierarchy used by the Requests library to represent failures across HTTP communication and response processing. It includes the base `RequestException` class and specialized errors for connection failures (`ConnectionError`, `ConnectTimeout`), timeouts (`Timeout`, `ReadTimeout`), HTTP status failures (`HTTPError`), and excessive redirects (`TooManyRedirects`). The module also covers errors associated with invalid URLs, unsupported schemas, proxy configuration, response decoding, JSON parsing, stream consumption, and other connection, URL, HTTP, and data-processing problems. These classes provide structured error reporting for invalid requests, failed connections, timeout conditions, redirect issues, proxy and schema errors, and failures while decoding or consuming response content.|2\n427|GH 3579|A GitHub issue referenced as the regression context for handling non-Requests cookie jars during redirect resolution|1\n240|DEFAULT REDIRECT LIMIT|DEFAULT_REDIRECT_LIMIT is a Requests configuration constant that limits automatic redirect processing to 30 redirects.|1\n426|TEST COOKIELIB COOKIEJAR ON REDIRECT|A test event verifying that redirect handling correctly merges a standard cookielib CookieJar with session cookies without converting it into a RequestsCookieJar|2\n276|REQUESTS ISSUE 3490|Requests issue 3490 is referenced in a comment concerning removal of request body headers during redirects|1\n422|TEST REQUEST COOKIE OVERRIDES SESSION COOKIE|A test event verifying that a cookie supplied on an individual request overrides the same cookie stored in the Requests session without modifying the session cookie|2\n316|SNIMISSINGWARNING|SNIMissingWarning is a warning associated with missing Server Name Indication support in urllib3 1.x. The Requests test suite configures it to always be emitted.|3\n275|REQUESTS ISSUE 1084|Requests issue 1084 is referenced in a comment concerning removal of request body headers during redirects|1\n278|ORDEREDDICT|OrderedDict is an ordered mapping implementation from Python’s `collections` package. In Requests, it is used by the `Session` object to store HTTP and HTTPS connection adapters while preserving their insertion order.|2\n16|SESSION API DOCS|The Session API Docs provide additional documentation about the Requests Session object and its available values and methods.|1\n\n\n-----Relationships-----\nid|source|target|description|weight|links\n952|CUSTOM REDIRECT SESSION|REQUESTS|CustomRedirectSession subclasses requests.Session and customizes redirect-target handling.|9.0|2\n653|TEST HEADERS ON SESSION WITH NONE ARE NOT SENT|REQUESTS|The test verifies omission of None-valued headers during Requests request preparation|9.0|2\n951|CUSTOM REDIRECT MIXIN TEST|CUSTOM REDIRECT SESSION|The test creates and exercises the CustomRedirectSession subclass to handle malformed redirect responses.|9.0|1\n\n\n-----Sources-----\nid|text\n96|        \"\"\"Ensure that a byte stream with size 0 will not set both a Content-Length\n        and Transfer-Encoding header.\n        \"\"\"\n        auth = (\"user\", \"pass\")\n        url = httpbin(\"post\")\n        file_obj = io.BytesIO(b\"\")\n        r = requests.Request(\"POST\", url, auth=auth, data=file_obj)\n        prepared_request = r.prepare()\n        assert \"Transfer-Encoding\" in prepared_request.headers\n        assert \"Content-Length\" not in prepared_request.headers\n\n    def test_stream_with_auth_does_not_set_transfer_encoding_header(self, httpbin):\n        \"\"\"Ensure that a byte stream with size > 0 will not set both a Content-Length\n        and Transfer-Encoding header.\n        \"\"\"\n        auth = (\"user\", \"pass\")\n        url = httpbin(\"post\")\n        file_obj = io.BytesIO(b\"test data\")\n        r = requests.Request(\"POST\", url, auth=auth, data=file_obj)\n        prepared_request = r.prepare()\n        assert \"Transfer-Encoding\" not in prepared_request.headers\n        assert \"Content-Length\" in prepared_request.headers\n\n    def test_chunked_upload_does_not_set_content_length_header(self, httpbin):\n        \"\"\"Ensure that requests with a generator body stream using\n        Transfer-Encoding: chunked, not a Content-Length header.\n        \"\"\"\n        data = (i for i in [b\"a\", b\"b\", b\"c\"])\n        url = httpbin(\"post\")\n        r = requests.Request(\"POST\", url, data=data)\n        prepared_request = r.prepare()\n        assert \"Transfer-Encoding\" in prepared_request.headers\n        assert \"Content-Length\" not in prepared_request.headers\n\n    def test_custom_redirect_mixin(self, httpbin):\n        \"\"\"Tests a custom mixin to overwrite ``get_redirect_target``.\n\n        Ensures a subclassed ``requests.Session`` can handle a certain type of\n        malformed redirect responses.\n\n        1. original request receives a proper response: 302 redirect\n        2. following the redirect, a malformed response is given:\n            status code = HTTP 200\n            location = alternate url\n        3. the custom session catches the edge case and follows the redirect\n        \"\"\"\n        url_final = httpbin(\"html\")\n        querystring_malformed = urlencode({\"location\": url_final})\n        url_redirect_malformed = httpbin(\"response-headers?%s\" % querystring_malformed)\n        querystring_redirect = urlencode({\"url\": url_redirect_malformed})\n        url_redirect = httpbin(\"redirect-to?%s\" % querystring_redirect)\n        urls_test = [\n            url_redirect,\n            url_redirect_malformed,\n            url_final,\n        ]\n\n        class CustomRedirectSession(requests.Session):\n            def get_redirect_target(self, resp):\n                # default behavior\n                if resp.is_redirect:\n                    return resp.headers[\"location\"]\n                # edge case - check to see if 'location' is in headers anyways\n                location = resp.headers.get(\"location\")\n                if location and (location != resp.url):\n                    return location\n                return None\n\n        session = CustomRedirectSession()\n        r = session.get(urls_test[0])\n        assert len(r.history) == 2\n        assert r.status_code == 200\n        assert r.history[0].status_code == 302\n        assert r.history[0].is_redirect\n        assert r.history[1].status_code == 200\n        assert not r.history[1].is_redirect\n        assert r.url == urls_test[2]\n\n\nclass TestCaseInsensitiveDict:\n    @pytest.mark.parametrize(\n        \"cid\",\n        (\n            CaseInsensitiveDict({\"Foo\": \"foo\", \"BAr\": \"bar\"}),\n            CaseInsensitiveDict([(\"Foo\", \"foo\"), (\"BAr\", \"bar\")]),\n            CaseInsensitiveDict(FOO=\"foo\", BAr=\"bar\"),\n        ),\n    )\n    def test_init(self, cid):\n        assert len(cid) == 2\n        assert \"foo\" in cid\n        assert \"bar\" in cid\n\n    def test_docstring_example(self):\n        cid = CaseInsensitiveDict()\n        cid[\"Accept\"] = \"application/json\"\n        assert cid[\"aCCEPT\"] == \"application/json\"\n        assert list(cid) == [\"Accept\"]\n\n    def test_len(self):\n        cid = CaseInsensitiveDict({\"a\": \"a\", \"b\": \"b\"})\n        cid[\"A\"] = \"a\"\n        assert len(cid) == 2\n\n    def test_getitem(self):\n        cid = CaseInsensitiveDict({\"Spam\": \"blueval\"})\n        assert cid[\"spam\"] == \"blueval\"\n        assert cid[\"SPAM\"] == \"blueval\"\n\n    def test_fixes_649(self):\n        \"\"\"__setitem__ should behave case-insensitively.\"\"\"\n        cid = CaseInsensitiveDict()\n        cid[\"spam\"] = \"oneval\"\n        cid[\"Spam\"] = \"twoval\"\n        cid[\"sPAM\"] = \"redval\"\n        cid[\"SPAM\"] = \"blueval\"\n        assert cid[\"spam\"] == \"blueval\"\n        assert cid[\"SPAM\"] == \"blueval\"\n        assert list(cid.keys()) == [\"SPAM\"]\n\n    def test_delitem(self):\n        cid = CaseInsensitiveDict()\n        cid[\"Spam\"] = \"someval\"\n        del cid[\"sPam\"]\n        assert \"spam\" not in cid\n        assert len(cid) == 0\n\n    def test_contains(self):\n        cid = CaseInsensitiveDict()\n        cid[\"Spam\"] = \"someval\"\n        assert \"Spam\" in cid\n        assert \"spam\" in cid\n        assert \"SPAM\" in cid\n        assert \"sPam\" in cid\n        assert \"notspam\" not in cid\n\n    def test_get(self):\n        cid = CaseInsensitiveDict()\n\n",
+  "upstream_raw_records": {
+    "relationships": [
+      {
+        "id": "952",
+        "source": "CUSTOM REDIRECT SESSION",
+        "target": "REQUESTS",
+        "description": "CustomRedirectSession subclasses requests.Session and customizes redirect-target handling.",
+        "weight": "9.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "653",
+        "source": "TEST HEADERS ON SESSION WITH NONE ARE NOT SENT",
+        "target": "REQUESTS",
+        "description": "The test verifies omission of None-valued headers during Requests request preparation",
+        "weight": "9.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "951",
+        "source": "CUSTOM REDIRECT MIXIN TEST",
+        "target": "CUSTOM REDIRECT SESSION",
+        "description": "The test creates and exercises the CustomRedirectSession subclass to handle malformed redirect responses.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      }
+    ],
+    "entities": [
+      {
+        "id": "583",
+        "entity": "CUSTOM REDIRECT SESSION",
+        "description": "A subclass of the Requests Session class that overrides get_redirect_target to follow valid redirects and certain malformed responses containing a different location header.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "430",
+        "entity": "TEST HEADERS ON SESSION WITH NONE ARE NOT SENT",
+        "description": "A test event verifying that session headers assigned a None value are omitted from prepared Requests requests",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "21",
+        "entity": "SESSION",
+        "description": "SESSION is a Requests library client object that manages persistent state and configuration while sending multiple HTTP and HTTPS requests. It stores and applies cookies, headers, authentication, proxy settings, hooks, environment settings, certificates, and TLS verification options. SESSION creates and mounts HTTPAdapter instances to contact HTTP and HTTPS URLs, maintaining separate connection pools when TLS configurations differ and providing connection pooling for efficient reuse. It prepares and sends requests, including prepared requests, resolves redirect chains subject to configured redirect limits, and manages the adapters used for network communication. SESSION also supports pickling and serves as the central mechanism for maintaining consistent request behavior across a series of HTTP operations.",
+        "number of relationships": "14",
+        "in_context": true
+      },
+      {
+        "id": "93",
+        "entity": "REQUEST TIMEOUT",
+        "description": "A timeout event that occurs when Requests receives no bytes from the underlying connection for the configured timeout interval)",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "68",
+        "entity": "REQUESTS DOCUMENTATION",
+        "description": "The Requests documentation explains transport adapters, blocking and non-blocking I/O, streaming responses, header ordering, and connection and read timeout configuration.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "254",
+        "entity": "READTIMEOUTERROR",
+        "description": "ReadTimeoutError is a urllib3 exception raised when reading streamed response content takes longer than the permitted timeout. It is also used to verify that the Requests library converts read timeouts into a ConnectionError.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "414",
+        "entity": "TEST_HTTP_302_TOO_MANY_REDIRECTS_WITH_PARAMS",
+        "description": "A test verifying that a customized maximum redirect count is honored by a Requests session.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "118",
+        "entity": "REQUESTS EXCEPTIONS",
+        "description": "Requests Exceptions defines the exception and warning hierarchy used by the Requests library to represent failures across HTTP communication and response processing. It includes the base `RequestException` class and specialized errors for connection failures (`ConnectionError`, `ConnectTimeout`), timeouts (`Timeout`, `ReadTimeout`), HTTP status failures (`HTTPError`), and excessive redirects (`TooManyRedirects`). The module also covers errors associated with invalid URLs, unsupported schemas, proxy configuration, response decoding, JSON parsing, stream consumption, and other connection, URL, HTTP, and data-processing problems. These classes provide structured error reporting for invalid requests, failed connections, timeout conditions, redirect issues, proxy and schema errors, and failures while decoding or consuming response content.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "427",
+        "entity": "GH 3579",
+        "description": "A GitHub issue referenced as the regression context for handling non-Requests cookie jars during redirect resolution",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "240",
+        "entity": "DEFAULT REDIRECT LIMIT",
+        "description": "DEFAULT_REDIRECT_LIMIT is a Requests configuration constant that limits automatic redirect processing to 30 redirects.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "426",
+        "entity": "TEST COOKIELIB COOKIEJAR ON REDIRECT",
+        "description": "A test event verifying that redirect handling correctly merges a standard cookielib CookieJar with session cookies without converting it into a RequestsCookieJar",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "276",
+        "entity": "REQUESTS ISSUE 3490",
+        "description": "Requests issue 3490 is referenced in a comment concerning removal of request body headers during redirects",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "422",
+        "entity": "TEST REQUEST COOKIE OVERRIDES SESSION COOKIE",
+        "description": "A test event verifying that a cookie supplied on an individual request overrides the same cookie stored in the Requests session without modifying the session cookie",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "316",
+        "entity": "SNIMISSINGWARNING",
+        "description": "SNIMissingWarning is a warning associated with missing Server Name Indication support in urllib3 1.x. The Requests test suite configures it to always be emitted.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "275",
+        "entity": "REQUESTS ISSUE 1084",
+        "description": "Requests issue 1084 is referenced in a comment concerning removal of request body headers during redirects",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "278",
+        "entity": "ORDEREDDICT",
+        "description": "OrderedDict is an ordered mapping implementation from Python’s `collections` package. In Requests, it is used by the `Session` object to store HTTP and HTTPS connection adapters while preserving their insertion order.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "16",
+        "entity": "SESSION API DOCS",
+        "description": "The Session API Docs provide additional documentation about the Requests Session object and its available values and methods.",
+        "number of relationships": "1",
+        "in_context": true
+      }
+    ],
+    "sources": [
+      {
+        "id": "96",
+        "text": "        \"\"\"Ensure that a byte stream with size 0 will not set both a Content-Length\n        and Transfer-Encoding header.\n        \"\"\"\n        auth = (\"user\", \"pass\")\n        url = httpbin(\"post\")\n        file_obj = io.BytesIO(b\"\")\n        r = requests.Request(\"POST\", url, auth=auth, data=file_obj)\n        prepared_request = r.prepare()\n        assert \"Transfer-Encoding\" in prepared_request.headers\n        assert \"Content-Length\" not in prepared_request.headers\n\n    def test_stream_with_auth_does_not_set_transfer_encoding_header(self, httpbin):\n        \"\"\"Ensure that a byte stream with size > 0 will not set both a Content-Length\n        and Transfer-Encoding header.\n        \"\"\"\n        auth = (\"user\", \"pass\")\n        url = httpbin(\"post\")\n        file_obj = io.BytesIO(b\"test data\")\n        r = requests.Request(\"POST\", url, auth=auth, data=file_obj)\n        prepared_request = r.prepare()\n        assert \"Transfer-Encoding\" not in prepared_request.headers\n        assert \"Content-Length\" in prepared_request.headers\n\n    def test_chunked_upload_does_not_set_content_length_header(self, httpbin):\n        \"\"\"Ensure that requests with a generator body stream using\n        Transfer-Encoding: chunked, not a Content-Length header.\n        \"\"\"\n        data = (i for i in [b\"a\", b\"b\", b\"c\"])\n        url = httpbin(\"post\")\n        r = requests.Request(\"POST\", url, data=data)\n        prepared_request = r.prepare()\n        assert \"Transfer-Encoding\" in prepared_request.headers\n        assert \"Content-Length\" not in prepared_request.headers\n\n    def test_custom_redirect_mixin(self, httpbin):\n        \"\"\"Tests a custom mixin to overwrite ``get_redirect_target``.\n\n        Ensures a subclassed ``requests.Session`` can handle a certain type of\n        malformed redirect responses.\n\n        1. original request receives a proper response: 302 redirect\n        2. following the redirect, a malformed response is given:\n            status code = HTTP 200\n            location = alternate url\n        3. the custom session catches the edge case and follows the redirect\n        \"\"\"\n        url_final = httpbin(\"html\")\n        querystring_malformed = urlencode({\"location\": url_final})\n        url_redirect_malformed = httpbin(\"response-headers?%s\" % querystring_malformed)\n        querystring_redirect = urlencode({\"url\": url_redirect_malformed})\n        url_redirect = httpbin(\"redirect-to?%s\" % querystring_redirect)\n        urls_test = [\n            url_redirect,\n            url_redirect_malformed,\n            url_final,\n        ]\n\n        class CustomRedirectSession(requests.Session):\n            def get_redirect_target(self, resp):\n                # default behavior\n                if resp.is_redirect:\n                    return resp.headers[\"location\"]\n                # edge case - check to see if 'location' is in headers anyways\n                location = resp.headers.get(\"location\")\n                if location and (location != resp.url):\n                    return location\n                return None\n\n        session = CustomRedirectSession()\n        r = session.get(urls_test[0])\n        assert len(r.history) == 2\n        assert r.status_code == 200\n        assert r.history[0].status_code == 302\n        assert r.history[0].is_redirect\n        assert r.history[1].status_code == 200\n        assert not r.history[1].is_redirect\n        assert r.url == urls_test[2]\n\n\nclass TestCaseInsensitiveDict:\n    @pytest.mark.parametrize(\n        \"cid\",\n        (\n            CaseInsensitiveDict({\"Foo\": \"foo\", \"BAr\": \"bar\"}),\n            CaseInsensitiveDict([(\"Foo\", \"foo\"), (\"BAr\", \"bar\")]),\n            CaseInsensitiveDict(FOO=\"foo\", BAr=\"bar\"),\n        ),\n    )\n    def test_init(self, cid):\n        assert len(cid) == 2\n        assert \"foo\" in cid\n        assert \"bar\" in cid\n\n    def test_docstring_example(self):\n        cid = CaseInsensitiveDict()\n        cid[\"Accept\"] = \"application/json\"\n        assert cid[\"aCCEPT\"] == \"application/json\"\n        assert list(cid) == [\"Accept\"]\n\n    def test_len(self):\n        cid = CaseInsensitiveDict({\"a\": \"a\", \"b\": \"b\"})\n        cid[\"A\"] = \"a\"\n        assert len(cid) == 2\n\n    def test_getitem(self):\n        cid = CaseInsensitiveDict({\"Spam\": \"blueval\"})\n        assert cid[\"spam\"] == \"blueval\"\n        assert cid[\"SPAM\"] == \"blueval\"\n\n    def test_fixes_649(self):\n        \"\"\"__setitem__ should behave case-insensitively.\"\"\"\n        cid = CaseInsensitiveDict()\n        cid[\"spam\"] = \"oneval\"\n        cid[\"Spam\"] = \"twoval\"\n        cid[\"sPAM\"] = \"redval\"\n        cid[\"SPAM\"] = \"blueval\"\n        assert cid[\"spam\"] == \"blueval\"\n        assert cid[\"SPAM\"] == \"blueval\"\n        assert list(cid.keys()) == [\"SPAM\"]\n\n    def test_delitem(self):\n        cid = CaseInsensitiveDict()\n        cid[\"Spam\"] = \"someval\"\n        del cid[\"sPam\"]\n        assert \"spam\" not in cid\n        assert len(cid) == 0\n\n    def test_contains(self):\n        cid = CaseInsensitiveDict()\n        cid[\"Spam\"] = \"someval\"\n        assert \"Spam\" in cid\n        assert \"spam\" in cid\n        assert \"SPAM\" in cid\n        assert \"sPam\" in cid\n        assert \"notspam\" not in cid\n\n    def test_get(self):\n        cid = CaseInsensitiveDict()\n"
+      }
+    ]
+  },
+  "final_context": "-----Entities-----\nid|entity|description|number of relationships\n583|CUSTOM REDIRECT SESSION|A subclass of the Requests Session class that overrides get_redirect_target to follow valid redirects and certain malformed responses containing a different location header.|2\n430|TEST HEADERS ON SESSION WITH NONE ARE NOT SENT|A test event verifying that session headers assigned a None value are omitted from prepared Requests requests|1\n21|SESSION|SESSION is a Requests library client object that manages persistent state and configuration while sending multiple HTTP and HTTPS requests. It stores and applies cookies, headers, authentication, proxy settings, hooks, environment settings, certificates, and TLS verification options. SESSION creates and mounts HTTPAdapter instances to contact HTTP and HTTPS URLs, maintaining separate connection pools when TLS configurations differ and providing connection pooling for efficient reuse. It prepares and sends requests, including prepared requests, resolves redirect chains subject to configured redirect limits, and manages the adapters used for network communication. SESSION also supports pickling and serves as the central mechanism for maintaining consistent request behavior across a series of HTTP operations.|14\n93|REQUEST TIMEOUT|A timeout event that occurs when Requests receives no bytes from the underlying connection for the configured timeout interval)|1\n68|REQUESTS DOCUMENTATION|The Requests documentation explains transport adapters, blocking and non-blocking I/O, streaming responses, header ordering, and connection and read timeout configuration.|2\n254|READTIMEOUTERROR|ReadTimeoutError is a urllib3 exception raised when reading streamed response content takes longer than the permitted timeout. It is also used to verify that the Requests library converts read timeouts into a ConnectionError.|1\n414|TEST_HTTP_302_TOO_MANY_REDIRECTS_WITH_PARAMS|A test verifying that a customized maximum redirect count is honored by a Requests session.|3\n118|REQUESTS EXCEPTIONS|Requests Exceptions defines the exception and warning hierarchy used by the Requests library to represent failures across HTTP communication and response processing. It includes the base `RequestException` class and specialized errors for connection failures (`ConnectionError`, `ConnectTimeout`), timeouts (`Timeout`, `ReadTimeout`), HTTP status failures (`HTTPError`), and excessive redirects (`TooManyRedirects`). The module also covers errors associated with invalid URLs, unsupported schemas, proxy configuration, response decoding, JSON parsing, stream consumption, and other connection, URL, HTTP, and data-processing problems. These classes provide structured error reporting for invalid requests, failed connections, timeout conditions, redirect issues, proxy and schema errors, and failures while decoding or consuming response content.|2\n427|GH 3579|A GitHub issue referenced as the regression context for handling non-Requests cookie jars during redirect resolution|1\n240|DEFAULT REDIRECT LIMIT|DEFAULT_REDIRECT_LIMIT is a Requests configuration constant that limits automatic redirect processing to 30 redirects.|1\n426|TEST COOKIELIB COOKIEJAR ON REDIRECT|A test event verifying that redirect handling correctly merges a standard cookielib CookieJar with session cookies without converting it into a RequestsCookieJar|2\n276|REQUESTS ISSUE 3490|Requests issue 3490 is referenced in a comment concerning removal of request body headers during redirects|1\n422|TEST REQUEST COOKIE OVERRIDES SESSION COOKIE|A test event verifying that a cookie supplied on an individual request overrides the same cookie stored in the Requests session without modifying the session cookie|2\n316|SNIMISSINGWARNING|SNIMissingWarning is a warning associated with missing Server Name Indication support in urllib3 1.x. The Requests test suite configures it to always be emitted.|3\n275|REQUESTS ISSUE 1084|Requests issue 1084 is referenced in a comment concerning removal of request body headers during redirects|1\n278|ORDEREDDICT|OrderedDict is an ordered mapping implementation from Python’s `collections` package. In Requests, it is used by the `Session` object to store HTTP and HTTPS connection adapters while preserving their insertion order.|2\n16|SESSION API DOCS|The Session API Docs provide additional documentation about the Requests Session object and its available values and methods.|1\n\n-----Relationships-----\nid|source|target|description|weight|links\n952|CUSTOM REDIRECT SESSION|REQUESTS|CustomRedirectSession subclasses requests.Session and customizes redirect-target handling.|9.0|2\n653|TEST HEADERS ON SESSION WITH NONE ARE NOT SENT|REQUESTS|The test verifies omission of None-valued headers during Requests request preparation|9.0|2\n951|CUSTOM REDIRECT MIXIN TEST|CUSTOM REDIRECT SESSION|The test creates and exercises the CustomRedirectSession subclass to handle malformed redirect responses.|9.0|1\n\n-----Sources-----\nid|source|text\n96|tests/test_requests.py:L2157-L2294|\"        \"\"\"\"\"\"Ensure that a byte stream with size 0 will not set both a Content-Length\n        and Transfer-Encoding header.\n        \"\"\"\"\"\"\n        auth = (\"\"user\"\", \"\"pass\"\")\n        url = httpbin(\"\"post\"\")\n        file_obj = io.BytesIO(b\"\"\"\")\n        r = requests.Request(\"\"POST\"\", url, auth=auth, data=file_obj)\n        prepared_request = r.prepare()\n        assert \"\"Transfer-Encoding\"\" in prepared_request.headers\n        assert \"\"Content-Length\"\" not in prepared_request.headers\n\n    def test_stream_with_auth_does_not_set_transfer_encoding_header(self, httpbin):\n        \"\"\"\"\"\"Ensure that a byte stream with size > 0 will not set both a Content-Length\n        and Transfer-Encoding header.\n        \"\"\"\"\"\"\n        auth = (\"\"user\"\", \"\"pass\"\")\n        url = httpbin(\"\"post\"\")\n        file_obj = io.BytesIO(b\"\"test data\"\")\n        r = requests.Request(\"\"POST\"\", url, auth=auth, data=file_obj)\n        prepared_request = r.prepare()\n        assert \"\"Transfer-Encoding\"\" not in prepared_request.headers\n        assert \"\"Content-Length\"\" in prepared_request.headers\n\n    def test_chunked_upload_does_not_set_content_length_header(self, httpbin):\n        \"\"\"\"\"\"Ensure that requests with a generator body stream using\n        Transfer-Encoding: chunked, not a Content-Length header.\n        \"\"\"\"\"\"\n        data = (i for i in [b\"\"a\"\", b\"\"b\"\", b\"\"c\"\"])\n        url = httpbin(\"\"post\"\")\n        r = requests.Request(\"\"POST\"\", url, data=data)\n        prepared_request = r.prepare()\n        assert \"\"Transfer-Encoding\"\" in prepared_request.headers\n        assert \"\"Content-Length\"\" not in prepared_request.headers\n\n    def test_custom_redirect_mixin(self, httpbin):\n        \"\"\"\"\"\"Tests a custom mixin to overwrite ``get_redirect_target``.\n\n        Ensures a subclassed ``requests.Session`` can handle a certain type of\n        malformed redirect responses.\n\n        1. original request receives a proper response: 302 redirect\n        2. following the redirect, a malformed response is given:\n            status code = HTTP 200\n            location = alternate url\n        3. the custom session catches the edge case and follows the redirect\n        \"\"\"\"\"\"\n        url_final = httpbin(\"\"html\"\")\n        querystring_malformed = urlencode({\"\"location\"\": url_final})\n        url_redirect_malformed = httpbin(\"\"response-headers?%s\"\" % querystring_malformed)\n        querystring_redirect = urlencode({\"\"url\"\": url_redirect_malformed})\n        url_redirect = httpbin(\"\"redirect-to?%s\"\" % querystring_redirect)\n        urls_test = [\n            url_redirect,\n            url_redirect_malformed,\n            url_final,\n        ]\n\n        class CustomRedirectSession(requests.Session):\n            def get_redirect_target(self, resp):\n                # default behavior\n                if resp.is_redirect:\n                    return resp.headers[\"\"location\"\"]\n                # edge case - check to see if 'location' is in headers anyways\n                location = resp.headers.get(\"\"location\"\")\n                if location and (location != resp.url):\n                    return location\n                return None\n\n        session = CustomRedirectSession()\n        r = session.get(urls_test[0])\n        assert len(r.history) == 2\n        assert r.status_code == 200\n        assert r.history[0].status_code == 302\n        assert r.history[0].is_redirect\n        assert r.history[1].status_code == 200\n        assert not r.history[1].is_redirect\n        assert r.url == urls_test[2]\n\n\nclass TestCaseInsensitiveDict:\n    @pytest.mark.parametrize(\n        \"\"cid\"\",\n        (\n            CaseInsensitiveDict({\"\"Foo\"\": \"\"foo\"\", \"\"BAr\"\": \"\"bar\"\"}),\n            CaseInsensitiveDict([(\"\"Foo\"\", \"\"foo\"\"), (\"\"BAr\"\", \"\"bar\"\")]),\n            CaseInsensitiveDict(FOO=\"\"foo\"\", BAr=\"\"bar\"\"),\n        ),\n    )\n    def test_init(self, cid):\n        assert len(cid) == 2\n        assert \"\"foo\"\" in cid\n        assert \"\"bar\"\" in cid\n\n    def test_docstring_example(self):\n        cid = CaseInsensitiveDict()\n        cid[\"\"Accept\"\"] = \"\"application/json\"\"\n        assert cid[\"\"aCCEPT\"\"] == \"\"application/json\"\"\n        assert list(cid) == [\"\"Accept\"\"]\n\n    def test_len(self):\n        cid = CaseInsensitiveDict({\"\"a\"\": \"\"a\"\", \"\"b\"\": \"\"b\"\"})\n        cid[\"\"A\"\"] = \"\"a\"\"\n        assert len(cid) == 2\n\n    def test_getitem(self):\n        cid = CaseInsensitiveDict({\"\"Spam\"\": \"\"blueval\"\"})\n        assert cid[\"\"spam\"\"] == \"\"blueval\"\"\n        assert cid[\"\"SPAM\"\"] == \"\"blueval\"\"\n\n    def test_fixes_649(self):\n        \"\"\"\"\"\"__setitem__ should behave case-insensitively.\"\"\"\"\"\"\n        cid = CaseInsensitiveDict()\n        cid[\"\"spam\"\"] = \"\"oneval\"\"\n        cid[\"\"Spam\"\"] = \"\"twoval\"\"\n        cid[\"\"sPAM\"\"] = \"\"redval\"\"\n        cid[\"\"SPAM\"\"] = \"\"blueval\"\"\n        assert cid[\"\"spam\"\"] == \"\"blueval\"\"\n        assert cid[\"\"SPAM\"\"] == \"\"blueval\"\"\n        assert list(cid.keys()) == [\"\"SPAM\"\"]\n\n    def test_delitem(self):\n        cid = CaseInsensitiveDict()\n        cid[\"\"Spam\"\"] = \"\"someval\"\"\n        del cid[\"\"sPam\"\"]\n        assert \"\"spam\"\" not in cid\n        assert len(cid) == 0\n\n    def test_contains(self):\n        cid = CaseInsensitiveDict()\n        cid[\"\"Spam\"\"] = \"\"someval\"\"\n        assert \"\"Spam\"\" in cid\n        assert \"\"spam\"\" in cid\n        assert \"\"SPAM\"\" in cid\n        assert \"\"sPam\"\" in cid\n        assert \"\"notspam\"\" not in cid\n\n    def test_get(self):\n        cid = CaseInsensitiveDict()\n\"\n",
+  "final_tables": [
+    {
+      "name": "entities",
+      "columns": [
+        "id",
+        "entity",
+        "description",
+        "number of relationships"
+      ],
+      "rows": [
+        {
+          "id": "583",
+          "entity": "CUSTOM REDIRECT SESSION",
+          "description": "A subclass of the Requests Session class that overrides get_redirect_target to follow valid redirects and certain malformed responses containing a different location header.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "430",
+          "entity": "TEST HEADERS ON SESSION WITH NONE ARE NOT SENT",
+          "description": "A test event verifying that session headers assigned a None value are omitted from prepared Requests requests",
+          "number of relationships": "1"
+        },
+        {
+          "id": "21",
+          "entity": "SESSION",
+          "description": "SESSION is a Requests library client object that manages persistent state and configuration while sending multiple HTTP and HTTPS requests. It stores and applies cookies, headers, authentication, proxy settings, hooks, environment settings, certificates, and TLS verification options. SESSION creates and mounts HTTPAdapter instances to contact HTTP and HTTPS URLs, maintaining separate connection pools when TLS configurations differ and providing connection pooling for efficient reuse. It prepares and sends requests, including prepared requests, resolves redirect chains subject to configured redirect limits, and manages the adapters used for network communication. SESSION also supports pickling and serves as the central mechanism for maintaining consistent request behavior across a series of HTTP operations.",
+          "number of relationships": "14"
+        },
+        {
+          "id": "93",
+          "entity": "REQUEST TIMEOUT",
+          "description": "A timeout event that occurs when Requests receives no bytes from the underlying connection for the configured timeout interval)",
+          "number of relationships": "1"
+        },
+        {
+          "id": "68",
+          "entity": "REQUESTS DOCUMENTATION",
+          "description": "The Requests documentation explains transport adapters, blocking and non-blocking I/O, streaming responses, header ordering, and connection and read timeout configuration.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "254",
+          "entity": "READTIMEOUTERROR",
+          "description": "ReadTimeoutError is a urllib3 exception raised when reading streamed response content takes longer than the permitted timeout. It is also used to verify that the Requests library converts read timeouts into a ConnectionError.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "414",
+          "entity": "TEST_HTTP_302_TOO_MANY_REDIRECTS_WITH_PARAMS",
+          "description": "A test verifying that a customized maximum redirect count is honored by a Requests session.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "118",
+          "entity": "REQUESTS EXCEPTIONS",
+          "description": "Requests Exceptions defines the exception and warning hierarchy used by the Requests library to represent failures across HTTP communication and response processing. It includes the base `RequestException` class and specialized errors for connection failures (`ConnectionError`, `ConnectTimeout`), timeouts (`Timeout`, `ReadTimeout`), HTTP status failures (`HTTPError`), and excessive redirects (`TooManyRedirects`). The module also covers errors associated with invalid URLs, unsupported schemas, proxy configuration, response decoding, JSON parsing, stream consumption, and other connection, URL, HTTP, and data-processing problems. These classes provide structured error reporting for invalid requests, failed connections, timeout conditions, redirect issues, proxy and schema errors, and failures while decoding or consuming response content.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "427",
+          "entity": "GH 3579",
+          "description": "A GitHub issue referenced as the regression context for handling non-Requests cookie jars during redirect resolution",
+          "number of relationships": "1"
+        },
+        {
+          "id": "240",
+          "entity": "DEFAULT REDIRECT LIMIT",
+          "description": "DEFAULT_REDIRECT_LIMIT is a Requests configuration constant that limits automatic redirect processing to 30 redirects.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "426",
+          "entity": "TEST COOKIELIB COOKIEJAR ON REDIRECT",
+          "description": "A test event verifying that redirect handling correctly merges a standard cookielib CookieJar with session cookies without converting it into a RequestsCookieJar",
+          "number of relationships": "2"
+        },
+        {
+          "id": "276",
+          "entity": "REQUESTS ISSUE 3490",
+          "description": "Requests issue 3490 is referenced in a comment concerning removal of request body headers during redirects",
+          "number of relationships": "1"
+        },
+        {
+          "id": "422",
+          "entity": "TEST REQUEST COOKIE OVERRIDES SESSION COOKIE",
+          "description": "A test event verifying that a cookie supplied on an individual request overrides the same cookie stored in the Requests session without modifying the session cookie",
+          "number of relationships": "2"
+        },
+        {
+          "id": "316",
+          "entity": "SNIMISSINGWARNING",
+          "description": "SNIMissingWarning is a warning associated with missing Server Name Indication support in urllib3 1.x. The Requests test suite configures it to always be emitted.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "275",
+          "entity": "REQUESTS ISSUE 1084",
+          "description": "Requests issue 1084 is referenced in a comment concerning removal of request body headers during redirects",
+          "number of relationships": "1"
+        },
+        {
+          "id": "278",
+          "entity": "ORDEREDDICT",
+          "description": "OrderedDict is an ordered mapping implementation from Python’s `collections` package. In Requests, it is used by the `Session` object to store HTTP and HTTPS connection adapters while preserving their insertion order.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "16",
+          "entity": "SESSION API DOCS",
+          "description": "The Session API Docs provide additional documentation about the Requests Session object and its available values and methods.",
+          "number of relationships": "1"
+        }
+      ]
+    },
+    {
+      "name": "relationships",
+      "columns": [
+        "id",
+        "source",
+        "target",
+        "description",
+        "weight",
+        "links"
+      ],
+      "rows": [
+        {
+          "id": "952",
+          "source": "CUSTOM REDIRECT SESSION",
+          "target": "REQUESTS",
+          "description": "CustomRedirectSession subclasses requests.Session and customizes redirect-target handling.",
+          "weight": "9.0",
+          "links": "2"
+        },
+        {
+          "id": "653",
+          "source": "TEST HEADERS ON SESSION WITH NONE ARE NOT SENT",
+          "target": "REQUESTS",
+          "description": "The test verifies omission of None-valued headers during Requests request preparation",
+          "weight": "9.0",
+          "links": "2"
+        },
+        {
+          "id": "951",
+          "source": "CUSTOM REDIRECT MIXIN TEST",
+          "target": "CUSTOM REDIRECT SESSION",
+          "description": "The test creates and exercises the CustomRedirectSession subclass to handle malformed redirect responses.",
+          "weight": "9.0",
+          "links": "1"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "columns": [
+        "id",
+        "source",
+        "text"
+      ],
+      "rows": [
+        {
+          "id": "96",
+          "text": "        \"\"\"Ensure that a byte stream with size 0 will not set both a Content-Length\n        and Transfer-Encoding header.\n        \"\"\"\n        auth = (\"user\", \"pass\")\n        url = httpbin(\"post\")\n        file_obj = io.BytesIO(b\"\")\n        r = requests.Request(\"POST\", url, auth=auth, data=file_obj)\n        prepared_request = r.prepare()\n        assert \"Transfer-Encoding\" in prepared_request.headers\n        assert \"Content-Length\" not in prepared_request.headers\n\n    def test_stream_with_auth_does_not_set_transfer_encoding_header(self, httpbin):\n        \"\"\"Ensure that a byte stream with size > 0 will not set both a Content-Length\n        and Transfer-Encoding header.\n        \"\"\"\n        auth = (\"user\", \"pass\")\n        url = httpbin(\"post\")\n        file_obj = io.BytesIO(b\"test data\")\n        r = requests.Request(\"POST\", url, auth=auth, data=file_obj)\n        prepared_request = r.prepare()\n        assert \"Transfer-Encoding\" not in prepared_request.headers\n        assert \"Content-Length\" in prepared_request.headers\n\n    def test_chunked_upload_does_not_set_content_length_header(self, httpbin):\n        \"\"\"Ensure that requests with a generator body stream using\n        Transfer-Encoding: chunked, not a Content-Length header.\n        \"\"\"\n        data = (i for i in [b\"a\", b\"b\", b\"c\"])\n        url = httpbin(\"post\")\n        r = requests.Request(\"POST\", url, data=data)\n        prepared_request = r.prepare()\n        assert \"Transfer-Encoding\" in prepared_request.headers\n        assert \"Content-Length\" not in prepared_request.headers\n\n    def test_custom_redirect_mixin(self, httpbin):\n        \"\"\"Tests a custom mixin to overwrite ``get_redirect_target``.\n\n        Ensures a subclassed ``requests.Session`` can handle a certain type of\n        malformed redirect responses.\n\n        1. original request receives a proper response: 302 redirect\n        2. following the redirect, a malformed response is given:\n            status code = HTTP 200\n            location = alternate url\n        3. the custom session catches the edge case and follows the redirect\n        \"\"\"\n        url_final = httpbin(\"html\")\n        querystring_malformed = urlencode({\"location\": url_final})\n        url_redirect_malformed = httpbin(\"response-headers?%s\" % querystring_malformed)\n        querystring_redirect = urlencode({\"url\": url_redirect_malformed})\n        url_redirect = httpbin(\"redirect-to?%s\" % querystring_redirect)\n        urls_test = [\n            url_redirect,\n            url_redirect_malformed,\n            url_final,\n        ]\n\n        class CustomRedirectSession(requests.Session):\n            def get_redirect_target(self, resp):\n                # default behavior\n                if resp.is_redirect:\n                    return resp.headers[\"location\"]\n                # edge case - check to see if 'location' is in headers anyways\n                location = resp.headers.get(\"location\")\n                if location and (location != resp.url):\n                    return location\n                return None\n\n        session = CustomRedirectSession()\n        r = session.get(urls_test[0])\n        assert len(r.history) == 2\n        assert r.status_code == 200\n        assert r.history[0].status_code == 302\n        assert r.history[0].is_redirect\n        assert r.history[1].status_code == 200\n        assert not r.history[1].is_redirect\n        assert r.url == urls_test[2]\n\n\nclass TestCaseInsensitiveDict:\n    @pytest.mark.parametrize(\n        \"cid\",\n        (\n            CaseInsensitiveDict({\"Foo\": \"foo\", \"BAr\": \"bar\"}),\n            CaseInsensitiveDict([(\"Foo\", \"foo\"), (\"BAr\", \"bar\")]),\n            CaseInsensitiveDict(FOO=\"foo\", BAr=\"bar\"),\n        ),\n    )\n    def test_init(self, cid):\n        assert len(cid) == 2\n        assert \"foo\" in cid\n        assert \"bar\" in cid\n\n    def test_docstring_example(self):\n        cid = CaseInsensitiveDict()\n        cid[\"Accept\"] = \"application/json\"\n        assert cid[\"aCCEPT\"] == \"application/json\"\n        assert list(cid) == [\"Accept\"]\n\n    def test_len(self):\n        cid = CaseInsensitiveDict({\"a\": \"a\", \"b\": \"b\"})\n        cid[\"A\"] = \"a\"\n        assert len(cid) == 2\n\n    def test_getitem(self):\n        cid = CaseInsensitiveDict({\"Spam\": \"blueval\"})\n        assert cid[\"spam\"] == \"blueval\"\n        assert cid[\"SPAM\"] == \"blueval\"\n\n    def test_fixes_649(self):\n        \"\"\"__setitem__ should behave case-insensitively.\"\"\"\n        cid = CaseInsensitiveDict()\n        cid[\"spam\"] = \"oneval\"\n        cid[\"Spam\"] = \"twoval\"\n        cid[\"sPAM\"] = \"redval\"\n        cid[\"SPAM\"] = \"blueval\"\n        assert cid[\"spam\"] == \"blueval\"\n        assert cid[\"SPAM\"] == \"blueval\"\n        assert list(cid.keys()) == [\"SPAM\"]\n\n    def test_delitem(self):\n        cid = CaseInsensitiveDict()\n        cid[\"Spam\"] = \"someval\"\n        del cid[\"sPam\"]\n        assert \"spam\" not in cid\n        assert len(cid) == 0\n\n    def test_contains(self):\n        cid = CaseInsensitiveDict()\n        cid[\"Spam\"] = \"someval\"\n        assert \"Spam\" in cid\n        assert \"spam\" in cid\n        assert \"SPAM\" in cid\n        assert \"sPam\" in cid\n        assert \"notspam\" not in cid\n\n    def test_get(self):\n        cid = CaseInsensitiveDict()\n",
+          "source": "tests/test_requests.py:L2157-L2294"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "short_id": "96",
+      "text_unit_id": "f099a5259968e7f0c3ea8ded913a61b2f82d89d21a5a8807ff2c378ebc5fa824638ee90fe30ae7d44779bcb11c893f2c32a96f5c56401a8c546b29941a9c08c7",
+      "id": "fd90685c9e724b676907132ffaad000d0fb0e55cc718e046928dbb37f66687bd",
+      "title": "tests/test_requests.py:L2157-L2294",
+      "path": "tests/test_requests.py",
+      "start_line": 2157,
+      "end_line": 2294,
+      "tokens": 1195,
+      "text_sha256": "6f9a73d155beb00e3f67fe6829e7c996918bf86028ce47061e49a4cc57bf741d",
+      "ms_text_unit_id": "f099a5259968e7f0c3ea8ded913a61b2f82d89d21a5a8807ff2c378ebc5fa824638ee90fe30ae7d44779bcb11c893f2c32a96f5c56401a8c546b29941a9c08c7"
+    }
+  ],
+  "raw_context_tokens": 2157,
+  "final_context_tokens": 2255,
+  "source_text_tokens": 1195,
+  "source_chunks": 1,
+  "retrieval_compute_seconds": 0.01457916758954525,
+  "adaptation_seconds": 0.00315979216247797,
+  "empty_reason": null,
+  "community_level": 2,
+  "dropped_tail_rows": 0
+}

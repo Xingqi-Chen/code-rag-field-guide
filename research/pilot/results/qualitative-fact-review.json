@@ -1,0 +1,206 @@
+{
+  "schema_version": 1,
+  "reviewer": "independent AI factual review",
+  "completed_at_utc": "2026-10-13T02:48:25.993858+00:00",
+  "context_budget_tokens": 4000,
+  "input_sha256": {
+    "Q13": "e40b98e1913a4d795f40bdc69af54c4fbd2cfe7f056eee8fda6b1cdd35e24b2d",
+    "Q20": "27c9532826ac43e55e0bd65d17f1433a3e5474e64ea750f28544114061aa735e"
+  },
+  "blinding": {
+    "method_labels_masked": true,
+    "qualitative_key_read_before_submission": false,
+    "full_results_contexts_read_before_submission": false,
+    "limitation": "这是 AI 定性审阅，不是人类盲评；Sources/Entities/Relationships 等版式可能提示方法。未按推测方法命名或调整评价。"
+  },
+  "scope": [
+    "仅审阅 Q13/Q20 的匿名 A–D、4000 token 档上下文；冻结问题与 gold 未修改，量化评分未修改。",
+    "已只读核对必要原码；两题各上下文的全部 Sources 文本均与固定语料对应行范围一致。核查时看到而未被检索到的原码不计为上下文已提供的证据。",
+    "充分/部分/不足评价针对冻结参考要求的必要证据与可核查定位；它不是生成答案准确率或新的量化分数。Q20 对应 unknown 的边界可以有充分文档支持，同时完整派发链原码仍不充分。",
+    "冻结 gold 是有界参考；额外有效测试、文档和消费者单独承认，不将未标注材料一概视为无关。"
+  ],
+  "judgment_rubric": {
+    "充分": "核心必要证据均可在该上下文中核查，且保留题目要求的结论边界。",
+    "部分": "已有直接相关的核心机制、测试或文档支持，但至少一项必要定位/原码链缺失。",
+    "不足": "虽有外围相关材料，但无法定位题目核心实现及其消费者链。"
+  },
+  "reviews": [
+    {
+      "question_id": "Q13",
+      "label": "A",
+      "necessary_evidence_judgment": "不足",
+      "supports": [
+        "Sources 83 的 test_headers_preserve_order、test_headers_on_session_with_None_are_not_sent 和 test_user_agent_transfers 提供有价值的请求头集成测试候选；大小写变体的 User-Agent 传递尤其相关。",
+        "Sources 82 的重定向请求头移除测试可作额外回归范围参考，但不能据此认定必须修改这些测试。"
+      ],
+      "missing": [
+        "没有 CaseInsensitiveDict.__setitem__/__getitem__ 的存储与查找实现。",
+        "没有 PreparedRequest.prepare_headers，也没有冻结证据中的 tests/test_structures.py 大小写变体测试。"
+      ],
+      "misleading_or_irrelevant": [
+        "大量 CookieJar、cookie 持久化/域名冲突、链接解析及重定向方法测试与本题核心较远；不能把这些邻接测试全部当作必要修改范围。"
+      ],
+      "frozen_gold_spans_present_in_sources": [],
+      "summary": "能补充集成测试清单，无法从所给材料完成容器操作—准备消费者—针对性测试的完整定位。",
+      "context_sha256": "ff0200746e17a1c53af7040f9e8d671e11c9a4d5511de138333fa03a582ce127"
+    },
+    {
+      "question_id": "Q13",
+      "label": "B",
+      "necessary_evidence_judgment": "部分",
+      "supports": [
+        "Sources 60 直接给出小写 key 作为内部索引、保存原始拼写和值的 __setitem__，以及按小写 key 查找的 __getitem__；还可检查删除、迭代和复制。",
+        "Sources 26 的 HTTPAdapter.build_response 确实把响应头包装成 CaseInsensitiveDict，是冻结 gold 之外有效的响应侧消费者。"
+      ],
+      "missing": [
+        "没有 PreparedRequest.prepare_headers，不能用响应侧 build_response 代替题目要求的请求准备消费者。",
+        "没有相关测试实现，尤其缺少 tests/test_structures.py 的大小写变体参数化测试。"
+      ],
+      "misleading_or_irrelevant": [
+        "Sources 26 的证书校验和连接池说明、Sources 12 的原始响应/POST 教程占据较多上下文；一般自定义请求头说明不能证明具体准备函数的实现。"
+      ],
+      "frozen_gold_spans_present_in_sources": [
+        "Q13-E1",
+        "Q13-E2"
+      ],
+      "summary": "容器操作的原码依据充分；准备消费者与测试链不完整。",
+      "context_sha256": "64e382e61a88bd7e9719fbec9b08d8cc709fd3c2b6f6cb683e4d144454be6e82"
+    },
+    {
+      "question_id": "Q13",
+      "label": "C",
+      "necessary_evidence_judgment": "部分",
+      "supports": [
+        "Entities 的 CASEINSENSITIVEDICT 描述正确概括大小写无关查找和最近写入拼写保留；TESTCASEINSENSITIVEDICT 及关系提供测试类线索，但不是对应原码定位。",
+        "Sources 91 的 test_fixes_1329 实际验证连续更新 ACCEPT/accept 后，通过三种大小写都能取到新值；这是冻结 gold 之外直接相关的集成回归证据。"
+      ],
+      "missing": [
+        "Sources 未给出容器 __setitem__/__getitem__、PreparedRequest.prepare_headers 或冻结的 tests/test_structures.py 测试原码。",
+        "实体与关系表没有把上述概念串成可核查的请求准备调用链。"
+      ],
+      "misleading_or_irrelevant": [
+        "适配器 URL 前缀的大小写匹配、查询参数大小写、cookie 键迭代不能直接证明请求头存储行为。",
+        "大量 pickling、HTTPError 和 adapter ordering 原码属于邻近材料；概念命中或测试类名称命中不等于已经取回该类的证据。",
+        "部分描述残留 )< 或引号，提示生成文本有格式噪声；不能把关系权重当作静态依赖或必须修改的强度。"
+      ],
+      "frozen_gold_spans_present_in_sources": [],
+      "summary": "可解释核心概念并找到一项真实回归测试；缺少本题要求的实现与准备消费者证据。",
+      "context_sha256": "780302107f77c6288d01e4304635edd3bb9dfe17fabd9792788408ad113f1556"
+    },
+    {
+      "question_id": "Q13",
+      "label": "D",
+      "necessary_evidence_judgment": "部分",
+      "supports": [
+        "Sources 60 提供 CaseInsensitiveDict 的写入、查找及相关容器操作原码。",
+        "Sources 103 提供冻结的大小写变体参数化测试，并包含拼写保留、删除、复制、比较等测试；Sources 96 还给出 test_fixes_649 和 docstring example，明确检查重复大小写赋值后的值与键拼写。",
+        "Sources 26 的 build_response 是额外有效的响应侧消费者。"
+      ],
+      "missing": [
+        "缺少 PreparedRequest.prepare_headers；尚不能完成请求准备消费者的原码定位。"
+      ],
+      "misleading_or_irrelevant": [
+        "响应构建不等同于请求准备。Sources 96 前段的自定义重定向、流式上传，以及 Sources 26 的 TLS 校验/连接池细节不构成本题核心依赖证明。",
+        "检索到这些操作和测试只说明应检查，不能推出都必须修改。"
+      ],
+      "frozen_gold_spans_present_in_sources": [
+        "Q13-E1",
+        "Q13-E2",
+        "Q13-E4"
+      ],
+      "summary": "容器和测试两部分有直接原码支撑；请求准备消费者仍缺失。",
+      "context_sha256": "cb7924a1d76298d8f4b27e1d9e7e06eaa1a9e43b8e4bbcf19e79b9f83a7f4def"
+    },
+    {
+      "question_id": "Q20",
+      "label": "A",
+      "necessary_evidence_judgment": "部分",
+      "supports": [
+        "Sources 91 的 adapter ordering 与 prefix matching 测试展示挂载不同适配器实例、按 URL 前缀选取实例；所给 prefix matching 测试在块末被截断，只完整显示其中一次 get_adapter 断言。",
+        "实体描述给出默认 HTTPAdapter 和可扩展适配器的线索；这些只能说明仓库内的机制或测试对象。"
+      ],
+      "missing": [
+        "没有 Session.mount 的注册赋值、Session.get_adapter 的选择循环及 Session.send 中 adapter.send 的实际调用点。",
+        "没有题中应用的运行时挂载实例、匹配 URL 或自定义类定义，因此精确目标类必须保留未知。"
+      ],
+      "misleading_or_irrelevant": [
+        "BASEADAPTER 描述把证书验证也说成其定义的操作，容易过度理解；核对原码后，BaseAdapter 实际只有构造函数及抛 NotImplementedError 的 send/close，证书验证实现属于 HTTPAdapter。",
+        "仓库测试创建 HTTPAdapter 不代表用户应用的自定义适配器也是该类；关系表也没有证明该应用的运行时派发目标。",
+        "序列化、GitHub 示例提交、代理认证等实体与精确运行时目标关系较远。"
+      ],
+      "frozen_gold_spans_present_in_sources": [],
+      "runtime_target_conclusion": "unknown",
+      "summary": "提供注册/选择的测试线索，但缺少实际派发链原码，绝不能据默认类或测试类猜测用户插件。",
+      "context_sha256": "a116cc15d731bbf1ae9cd99accdc4847c9b40d2b4563a413984db590860eb72c"
+    },
+    {
+      "question_id": "Q20",
+      "label": "B",
+      "necessary_evidence_judgment": "部分",
+      "supports": [
+        "Sources 8 的 Transport Adapters 官方仓库文档明确说明用户可提供自己的适配器实例，并按最长 URL 前缀挂载和选择；这足以支持不能从默认类确定外部应用目标的边界。",
+        "Sources 24 显示 BaseAdapter.send 接口抛 NotImplementedError，以及 HTTPAdapter 继承 BaseAdapter；可说明接口与默认实现的区分。"
+      ],
+      "missing": [
+        "未给出 Session.mount/get_adapter/adapter.send 的冻结原码证据。",
+        "应用实际挂载实例和匹配 URL 不在材料中，不能确定执行 send 的确切类或方法所属类。"
+      ],
+      "misleading_or_irrelevant": [
+        "MyAdapter 和 Ssl3HttpAdapter 是文档示例，HTTPAdapter 是默认实现；三者均不能据此认定为题中应用的实际类。",
+        "Sources 7 的 GitHub HTTP 动词教程、Sources 18 的打包/格式配置，以及 Sources 24 的 TLS 辅助函数对本题派发链定位贡献有限。"
+      ],
+      "frozen_gold_spans_present_in_sources": [],
+      "runtime_target_conclusion": "unknown",
+      "summary": "文档充分支持应保留运行时未知这一结论，但按冻结参考定位完整源码链的证据仍部分缺失。",
+      "context_sha256": "8efc436804e208aee5c962bfa934d22134d256eaff96d36bb241a26e48c5423a"
+    },
+    {
+      "question_id": "Q20",
+      "label": "C",
+      "necessary_evidence_judgment": "部分",
+      "supports": [
+        "Sources 8 明确展示自定义适配器实例的挂载和最长前缀选择规则，支持说明运行时配置决定目标、仓库默认实现不能决定外部应用的确切类。"
+      ],
+      "missing": [
+        "没有 Session.mount/get_adapter/adapter.send 的原码，也没有 BaseAdapter/HTTPAdapter 的接口定义原码。",
+        "没有题中应用的实际挂载对象和 URL；精确类不可从这些通用文档恢复。"
+      ],
+      "misleading_or_irrelevant": [
+        "不能把文档里的 MyAdapter 或 Ssl3HttpAdapter 示例当作用户插件的身份。",
+        "两个 quickstart 块主要是 HTTP 方法、参数、响应解码、请求头及 POST 入门材料，对定位适配器动态派发贡献很少。"
+      ],
+      "frozen_gold_spans_present_in_sources": [],
+      "runtime_target_conclusion": "unknown",
+      "summary": "对保留未知有明确文档依据，对所要求的源码派发链定位仍不完整。",
+      "context_sha256": "7b368102b030ffcedb547f679944604f839eede1e3011553f77f76c9d1cb2679"
+    },
+    {
+      "question_id": "Q20",
+      "label": "D",
+      "necessary_evidence_judgment": "部分",
+      "supports": [
+        "Sources 8 给出挂载自定义实例、最长前缀匹配的文档依据，支持运行时目标未知。",
+        "Sources 53 显示 resolve_redirects 在继续请求时调用 self.send，可解释重定向重新进入发送流程，但这不是最终的 adapter.send 调用点。"
+      ],
+      "missing": [
+        "没有 Session.mount 的注册语句、get_adapter 的查找循环，也没有 Session.send 中调用 adapter.send 的原码。",
+        "题中应用的实际自定义类和匹配 URL 未提供，不能推断精确目标。"
+      ],
+      "misleading_or_irrelevant": [
+        "不能把 resolve_redirects 的 self.send 当作已定位到适配器 send 的完整调用链。",
+        "MyAdapter、Ssl3HttpAdapter 与默认 HTTPAdapter 均只具有文档示例或默认实现身份，不能据此判定用户插件。",
+        "GitHub HTTP 动词教程以及重定向 cookie/auth 处理占据较多非核心上下文。"
+      ],
+      "frozen_gold_spans_present_in_sources": [],
+      "runtime_target_conclusion": "unknown",
+      "summary": "有可靠的扩展机制说明和一个上游调用片段，但缺少最终注册—选取—派发链原码。",
+      "context_sha256": "8a62d48ca0aac32a63fb57dd4f8202dc6ad5430962bb2f361446f48d36177639"
+    }
+  ],
+  "overall_limits": [
+    "两题定性案例不能代表所有题、所有仓库或整体方法排序。",
+    "Q13 无一匿名上下文包含 PreparedRequest.prepare_headers；检查清单不等于必改清单。",
+    "Q20 所有匿名上下文均缺少冻结的三处原码，但部分文档/测试有效支持保留运行时目标未知；不得由静态默认类、测试对象或示例类猜测应用插件。",
+    "审阅只评价取回材料能支持什么；未调用回答模型、执行第三方代码或访问服务。"
+  ]
+}

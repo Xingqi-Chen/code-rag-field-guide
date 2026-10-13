@@ -1,0 +1,412 @@
+{
+  "question_id": "Q20",
+  "method": "ms_local",
+  "budget": 4000,
+  "query": "An application mounts a custom adapter at runtime. From this repository alone, identify the exact class whose send method runs for that application.",
+  "upstream_raw_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n526|TRANSPORT ADAPTER ORDERING TEST|The transport adapter ordering test verifies that mounted HTTPAdapter prefixes are ordered from most specific to least specific)<|2\n57|BASEADAPTER|BASEADAPTER, also known as `BaseAdapter`, is an abstract transport adapter class used by the Requests library. It defines the fundamental operations required for transport adapters, including certificate verification and closing connections. The class is intended to be subclassed when implementing custom Requests transport adapters. Because it provides an interface rather than a complete implementation, some of its methods may raise `NotImplementedError` until they are overridden by a concrete subclass.|1\n144|REQUESTS ADAPTERS|Requests adapters are the transport-level components of the Requests module responsible for handling HTTP requests and managing HTTP transport behavior. The `requests.adapters` module defines the `HTTPAdapter`, which provides the adapter implementation used to connect Requests with HTTP transport mechanisms and is also used by the test suite.|1\n56|HTTPADAPTER|HTTPADAPTER is the built-in Requests transport adapter for HTTP and HTTPS URLs. It is mounted on URL prefixes, typically through a Requests session, to deliver requests through the underlying urllib3 transport layer. HTTPADAPTER creates and manages connection pools and urllib3 connections, supports proxy managers, applies TLS and SSL certificate verification settings, and provides standard request-related connection methods. It also manages serialization state and adapter-specific cleanup. As the default adapter for HTTP and HTTPS, HTTPADAPTER can be configured with retry behavior, including retry-enabled handling for HTTPS requests, and can be extended for custom SSL or other connection settings.|32\n531|SESSION ADAPTER PREFIX MATCHING|A test event verifying that a Requests Session selects the adapter mounted at the most specific matching URL prefix and ignores adapters for unrelated prefixes|2\n532|SESSION ADAPTER MIXED-CASE PREFIX MATCHING|A test event verifying that a mounted HTTPAdapter matches a URL whose scheme, host, and path prefix use mixed capitalization|2\n527|SESSION ADAPTER MATCHING TEST|The session adapter matching test verifies that Session.get_adapter selects the adapter matching the most specific URL prefix)<|2\n533|SESSION ADAPTER CASE-INSENSITIVE MATCHING|A test event verifying that URL adapter prefix matching is case-insensitive when the mounted prefix and requested URL use different capitalization|2\n131|TRANSPORT ADAPTER INTERFACE|Interface implemented by Requests transport adapters, defining operations for connection setup, certificate verification, and adapter cleanup|1\n133|HTTPADAPTER GETSTATE|HTTPAdapter serialization method that returns the configured adapter attributes needed to preserve its state|2\n518|GITTIP|Gittip is a host name used in the tests to verify ordering of overlapping HTTPAdapter URL prefixes)<|1\n68|REQUESTS DOCUMENTATION|The Requests documentation explains transport adapters, blocking and non-blocking I/O, streaming responses, header ordering, and connection and read timeout configuration.|2\n132|HTTPADAPTER INIT|HTTPAdapter constructor that configures retry behavior, proxy manager storage, connection pool sizing, pool blocking, and pool manager initialization|1\n311|GOOGLE APP ENGINE|Google App Engine is the platform referenced by the comment describing an App Engine-specific compatibility workaround|1\n40|A050FAF|A050FAF is a specific commit associated with the Requests project and retrieved through the GitHub API; its full identifier is A050FAF084662F3A352DD1A941F2C7C9F886D4AD|3\n134|HTTPADAPTER SETSTATE|HTTPAdapter deserialization method that restores adapter state, recreates proxy and configuration dictionaries, and reinitializes the pool manager|2\n21|SESSION|SESSION is a Requests library client object that manages persistent state and configuration while sending multiple HTTP and HTTPS requests. It stores and applies cookies, headers, authentication, proxy settings, hooks, environment settings, certificates, and TLS verification options. SESSION creates and mounts HTTPAdapter instances to contact HTTP and HTTPS URLs, maintaining separate connection pools when TLS configurations differ and providing connection pooling for efficient reuse. It prepares and sends requests, including prepared requests, resolves redirect chains subject to configured redirect limits, and manages the adapters used for network communication. SESSION also supports pickling and serves as the central mechanism for maintaining consistent request behavior across a series of HTTP operations.|14\n59|RETRY|RETRY is the urllib3 utility class used by Requests to configure automatic retry behavior through an HTTPAdapter. It controls the number of retry attempts for failures such as DNS lookup errors, socket connection failures, and connection timeouts. RETRY also defines backoff behavior, status-based retry conditions, and the HTTP methods eligible for retrying.|4\n574|TEST_PROXY_AUTH|A test that verifies an HTTP adapter generates the expected Proxy-Authorization header for credentials containing a username and password|2\n55|SSLV3|SSLv3 is an SSL protocol version used in the example of configuring a Requests transport adapter for services incompatible with the default SSL version.|2\n\n\n-----Relationships-----\nid|source|target|description|weight|links\n82|HTTPADAPTER|BASEADAPTER|HTTPADAPTER is a transport-adapter implementation and subclass of BASEADAPTER. It implements the transport adapter interface defined by BASEADAPTER.|18.0|2\n208|HTTPADAPTER|REQUESTS ADAPTERS|HTTPAdapter is defined and exposed by the requests.adapters module.|10.0|2\n835|TRANSPORT ADAPTER ORDERING TEST|REQUESTS|The transport adapter ordering test verifies Requests adapter mounting behavior|1.0|1\n848|TRANSPORT ADAPTER ORDERING TEST|PYTEST|Pytest executes the adapter ordering checks|1.0|1\n\n\n-----Sources-----\nid|text\n91|        pr = pickle.loads(pickle.dumps(r))\n        assert r.request.url == pr.request.url\n        assert r.request.headers == pr.request.headers\n\n    def test_prepared_request_is_pickleable(self, httpbin):\n        p = requests.Request(\"GET\", httpbin(\"get\")).prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_file_is_pickleable(self, httpbin):\n        with open(__file__, \"rb\") as f:\n            r = requests.Request(\"POST\", httpbin(\"post\"), files={\"file\": f})\n            p = r.prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_hook_is_pickleable(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"), hooks=default_hooks())\n        p = r.prepare()\n\n        # Verify PreparedRequest can be pickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n        assert r.hooks == p.hooks\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_cannot_send_unprepared_requests(self, httpbin):\n        r = requests.Request(url=httpbin())\n        with pytest.raises(ValueError):\n            requests.Session().send(r)\n\n    def test_http_error(self):\n        error = requests.exceptions.HTTPError()\n        assert not error.response\n        response = requests.Response()\n        error = requests.exceptions.HTTPError(response=response)\n        assert error.response == response\n        error = requests.exceptions.HTTPError(\"message\", response=response)\n        assert str(error) == \"message\"\n        assert error.response == response\n\n    def test_session_pickling(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"))\n        s = requests.Session()\n\n        s = pickle.loads(pickle.dumps(s))\n        s.proxies = getproxies()\n\n        r = s.send(r.prepare())\n        assert r.status_code == 200\n\n    def test_fixes_1329(self, httpbin):\n        \"\"\"Ensure that header updates are done case-insensitively.\"\"\"\n        s = requests.Session()\n        s.headers.update({\"ACCEPT\": \"BOGUS\"})\n        s.headers.update({\"accept\": \"application/json\"})\n        r = s.get(httpbin(\"get\"))\n        headers = r.request.headers\n        assert headers[\"accept\"] == \"application/json\"\n        assert headers[\"Accept\"] == \"application/json\"\n        assert headers[\"ACCEPT\"] == \"application/json\"\n\n    def test_uppercase_scheme_redirect(self, httpbin):\n        parts = urlparse(httpbin(\"html\"))\n        url = \"HTTP://\" + parts.netloc + parts.path\n        r = requests.get(httpbin(\"redirect-to\"), params={\"url\": url})\n        assert r.status_code == 200\n        assert r.url.lower() == url.lower()\n\n    def test_transport_adapter_ordering(self):\n        s = requests.Session()\n        order = [\"https://\", \"http://\"]\n        assert order == list(s.adapters)\n        s.mount(\"http://git\", HTTPAdapter())\n        s.mount(\"http://github\", HTTPAdapter())\n        s.mount(\"http://github.com\", HTTPAdapter())\n        s.mount(\"http://github.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://github.com\",\n            \"http://github\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s.mount(\"http://gittip\", HTTPAdapter())\n        s.mount(\"http://gittip.com\", HTTPAdapter())\n        s.mount(\"http://gittip.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://gittip.com/about/\",\n            \"http://github.com\",\n            \"http://gittip.com\",\n            \"http://github\",\n            \"http://gittip\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s2 = requests.Session()\n        s2.adapters = {\"http://\": HTTPAdapter()}\n        s2.mount(\"https://\", HTTPAdapter())\n        assert \"http://\" in s2.adapters\n        assert \"https://\" in s2.adapters\n\n    def test_session_get_adapter_prefix_matching(self):\n        prefix = \"https://example.com\"\n        more_specific_prefix = prefix + \"/some/path\"\n\n        url_matching_only_prefix = prefix + \"/another/path\"\n        url_matching_more_specific_prefix = more_specific_prefix + \"/longer/path\"\n        url_not_matching_prefix = \"https://another.example.com/\"\n\n        s = requests.Session()\n        prefix_adapter = HTTPAdapter()\n        more_specific_prefix_adapter = HTTPAdapter()\n        s.mount(prefix, prefix_adapter)\n        s.mount(more_specific_prefix, more_specific_prefix_adapter)\n\n        assert s.get_adapter(url_matching_only_prefix) is prefix_adapter\n        assert (\n\n",
+  "upstream_raw_records": {
+    "relationships": [
+      {
+        "id": "82",
+        "source": "HTTPADAPTER",
+        "target": "BASEADAPTER",
+        "description": "HTTPADAPTER is a transport-adapter implementation and subclass of BASEADAPTER. It implements the transport adapter interface defined by BASEADAPTER.",
+        "weight": "18.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "208",
+        "source": "HTTPADAPTER",
+        "target": "REQUESTS ADAPTERS",
+        "description": "HTTPAdapter is defined and exposed by the requests.adapters module.",
+        "weight": "10.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "835",
+        "source": "TRANSPORT ADAPTER ORDERING TEST",
+        "target": "REQUESTS",
+        "description": "The transport adapter ordering test verifies Requests adapter mounting behavior",
+        "weight": "1.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "848",
+        "source": "TRANSPORT ADAPTER ORDERING TEST",
+        "target": "PYTEST",
+        "description": "Pytest executes the adapter ordering checks",
+        "weight": "1.0",
+        "links": "1",
+        "in_context": true
+      }
+    ],
+    "entities": [
+      {
+        "id": "526",
+        "entity": "TRANSPORT ADAPTER ORDERING TEST",
+        "description": "The transport adapter ordering test verifies that mounted HTTPAdapter prefixes are ordered from most specific to least specific)<",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "57",
+        "entity": "BASEADAPTER",
+        "description": "BASEADAPTER, also known as `BaseAdapter`, is an abstract transport adapter class used by the Requests library. It defines the fundamental operations required for transport adapters, including certificate verification and closing connections. The class is intended to be subclassed when implementing custom Requests transport adapters. Because it provides an interface rather than a complete implementation, some of its methods may raise `NotImplementedError` until they are overridden by a concrete subclass.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "144",
+        "entity": "REQUESTS ADAPTERS",
+        "description": "Requests adapters are the transport-level components of the Requests module responsible for handling HTTP requests and managing HTTP transport behavior. The `requests.adapters` module defines the `HTTPAdapter`, which provides the adapter implementation used to connect Requests with HTTP transport mechanisms and is also used by the test suite.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "56",
+        "entity": "HTTPADAPTER",
+        "description": "HTTPADAPTER is the built-in Requests transport adapter for HTTP and HTTPS URLs. It is mounted on URL prefixes, typically through a Requests session, to deliver requests through the underlying urllib3 transport layer. HTTPADAPTER creates and manages connection pools and urllib3 connections, supports proxy managers, applies TLS and SSL certificate verification settings, and provides standard request-related connection methods. It also manages serialization state and adapter-specific cleanup. As the default adapter for HTTP and HTTPS, HTTPADAPTER can be configured with retry behavior, including retry-enabled handling for HTTPS requests, and can be extended for custom SSL or other connection settings.",
+        "number of relationships": "32",
+        "in_context": true
+      },
+      {
+        "id": "531",
+        "entity": "SESSION ADAPTER PREFIX MATCHING",
+        "description": "A test event verifying that a Requests Session selects the adapter mounted at the most specific matching URL prefix and ignores adapters for unrelated prefixes",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "532",
+        "entity": "SESSION ADAPTER MIXED-CASE PREFIX MATCHING",
+        "description": "A test event verifying that a mounted HTTPAdapter matches a URL whose scheme, host, and path prefix use mixed capitalization",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "527",
+        "entity": "SESSION ADAPTER MATCHING TEST",
+        "description": "The session adapter matching test verifies that Session.get_adapter selects the adapter matching the most specific URL prefix)<",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "533",
+        "entity": "SESSION ADAPTER CASE-INSENSITIVE MATCHING",
+        "description": "A test event verifying that URL adapter prefix matching is case-insensitive when the mounted prefix and requested URL use different capitalization",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "131",
+        "entity": "TRANSPORT ADAPTER INTERFACE",
+        "description": "Interface implemented by Requests transport adapters, defining operations for connection setup, certificate verification, and adapter cleanup",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "133",
+        "entity": "HTTPADAPTER GETSTATE",
+        "description": "HTTPAdapter serialization method that returns the configured adapter attributes needed to preserve its state",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "518",
+        "entity": "GITTIP",
+        "description": "Gittip is a host name used in the tests to verify ordering of overlapping HTTPAdapter URL prefixes)<",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "68",
+        "entity": "REQUESTS DOCUMENTATION",
+        "description": "The Requests documentation explains transport adapters, blocking and non-blocking I/O, streaming responses, header ordering, and connection and read timeout configuration.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "132",
+        "entity": "HTTPADAPTER INIT",
+        "description": "HTTPAdapter constructor that configures retry behavior, proxy manager storage, connection pool sizing, pool blocking, and pool manager initialization",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "311",
+        "entity": "GOOGLE APP ENGINE",
+        "description": "Google App Engine is the platform referenced by the comment describing an App Engine-specific compatibility workaround",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "40",
+        "entity": "A050FAF",
+        "description": "A050FAF is a specific commit associated with the Requests project and retrieved through the GitHub API; its full identifier is A050FAF084662F3A352DD1A941F2C7C9F886D4AD",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "134",
+        "entity": "HTTPADAPTER SETSTATE",
+        "description": "HTTPAdapter deserialization method that restores adapter state, recreates proxy and configuration dictionaries, and reinitializes the pool manager",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "21",
+        "entity": "SESSION",
+        "description": "SESSION is a Requests library client object that manages persistent state and configuration while sending multiple HTTP and HTTPS requests. It stores and applies cookies, headers, authentication, proxy settings, hooks, environment settings, certificates, and TLS verification options. SESSION creates and mounts HTTPAdapter instances to contact HTTP and HTTPS URLs, maintaining separate connection pools when TLS configurations differ and providing connection pooling for efficient reuse. It prepares and sends requests, including prepared requests, resolves redirect chains subject to configured redirect limits, and manages the adapters used for network communication. SESSION also supports pickling and serves as the central mechanism for maintaining consistent request behavior across a series of HTTP operations.",
+        "number of relationships": "14",
+        "in_context": true
+      },
+      {
+        "id": "59",
+        "entity": "RETRY",
+        "description": "RETRY is the urllib3 utility class used by Requests to configure automatic retry behavior through an HTTPAdapter. It controls the number of retry attempts for failures such as DNS lookup errors, socket connection failures, and connection timeouts. RETRY also defines backoff behavior, status-based retry conditions, and the HTTP methods eligible for retrying.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "574",
+        "entity": "TEST_PROXY_AUTH",
+        "description": "A test that verifies an HTTP adapter generates the expected Proxy-Authorization header for credentials containing a username and password",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "55",
+        "entity": "SSLV3",
+        "description": "SSLv3 is an SSL protocol version used in the example of configuring a Requests transport adapter for services incompatible with the default SSL version.",
+        "number of relationships": "2",
+        "in_context": true
+      }
+    ],
+    "sources": [
+      {
+        "id": "91",
+        "text": "        pr = pickle.loads(pickle.dumps(r))\n        assert r.request.url == pr.request.url\n        assert r.request.headers == pr.request.headers\n\n    def test_prepared_request_is_pickleable(self, httpbin):\n        p = requests.Request(\"GET\", httpbin(\"get\")).prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_file_is_pickleable(self, httpbin):\n        with open(__file__, \"rb\") as f:\n            r = requests.Request(\"POST\", httpbin(\"post\"), files={\"file\": f})\n            p = r.prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_hook_is_pickleable(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"), hooks=default_hooks())\n        p = r.prepare()\n\n        # Verify PreparedRequest can be pickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n        assert r.hooks == p.hooks\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_cannot_send_unprepared_requests(self, httpbin):\n        r = requests.Request(url=httpbin())\n        with pytest.raises(ValueError):\n            requests.Session().send(r)\n\n    def test_http_error(self):\n        error = requests.exceptions.HTTPError()\n        assert not error.response\n        response = requests.Response()\n        error = requests.exceptions.HTTPError(response=response)\n        assert error.response == response\n        error = requests.exceptions.HTTPError(\"message\", response=response)\n        assert str(error) == \"message\"\n        assert error.response == response\n\n    def test_session_pickling(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"))\n        s = requests.Session()\n\n        s = pickle.loads(pickle.dumps(s))\n        s.proxies = getproxies()\n\n        r = s.send(r.prepare())\n        assert r.status_code == 200\n\n    def test_fixes_1329(self, httpbin):\n        \"\"\"Ensure that header updates are done case-insensitively.\"\"\"\n        s = requests.Session()\n        s.headers.update({\"ACCEPT\": \"BOGUS\"})\n        s.headers.update({\"accept\": \"application/json\"})\n        r = s.get(httpbin(\"get\"))\n        headers = r.request.headers\n        assert headers[\"accept\"] == \"application/json\"\n        assert headers[\"Accept\"] == \"application/json\"\n        assert headers[\"ACCEPT\"] == \"application/json\"\n\n    def test_uppercase_scheme_redirect(self, httpbin):\n        parts = urlparse(httpbin(\"html\"))\n        url = \"HTTP://\" + parts.netloc + parts.path\n        r = requests.get(httpbin(\"redirect-to\"), params={\"url\": url})\n        assert r.status_code == 200\n        assert r.url.lower() == url.lower()\n\n    def test_transport_adapter_ordering(self):\n        s = requests.Session()\n        order = [\"https://\", \"http://\"]\n        assert order == list(s.adapters)\n        s.mount(\"http://git\", HTTPAdapter())\n        s.mount(\"http://github\", HTTPAdapter())\n        s.mount(\"http://github.com\", HTTPAdapter())\n        s.mount(\"http://github.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://github.com\",\n            \"http://github\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s.mount(\"http://gittip\", HTTPAdapter())\n        s.mount(\"http://gittip.com\", HTTPAdapter())\n        s.mount(\"http://gittip.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://gittip.com/about/\",\n            \"http://github.com\",\n            \"http://gittip.com\",\n            \"http://github\",\n            \"http://gittip\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s2 = requests.Session()\n        s2.adapters = {\"http://\": HTTPAdapter()}\n        s2.mount(\"https://\", HTTPAdapter())\n        assert \"http://\" in s2.adapters\n        assert \"https://\" in s2.adapters\n\n    def test_session_get_adapter_prefix_matching(self):\n        prefix = \"https://example.com\"\n        more_specific_prefix = prefix + \"/some/path\"\n\n        url_matching_only_prefix = prefix + \"/another/path\"\n        url_matching_more_specific_prefix = more_specific_prefix + \"/longer/path\"\n        url_not_matching_prefix = \"https://another.example.com/\"\n\n        s = requests.Session()\n        prefix_adapter = HTTPAdapter()\n        more_specific_prefix_adapter = HTTPAdapter()\n        s.mount(prefix, prefix_adapter)\n        s.mount(more_specific_prefix, more_specific_prefix_adapter)\n\n        assert s.get_adapter(url_matching_only_prefix) is prefix_adapter\n        assert (\n"
+      }
+    ]
+  },
+  "final_context": "-----Entities-----\nid|entity|description|number of relationships\n526|TRANSPORT ADAPTER ORDERING TEST|The transport adapter ordering test verifies that mounted HTTPAdapter prefixes are ordered from most specific to least specific)<|2\n57|BASEADAPTER|BASEADAPTER, also known as `BaseAdapter`, is an abstract transport adapter class used by the Requests library. It defines the fundamental operations required for transport adapters, including certificate verification and closing connections. The class is intended to be subclassed when implementing custom Requests transport adapters. Because it provides an interface rather than a complete implementation, some of its methods may raise `NotImplementedError` until they are overridden by a concrete subclass.|1\n144|REQUESTS ADAPTERS|Requests adapters are the transport-level components of the Requests module responsible for handling HTTP requests and managing HTTP transport behavior. The `requests.adapters` module defines the `HTTPAdapter`, which provides the adapter implementation used to connect Requests with HTTP transport mechanisms and is also used by the test suite.|1\n56|HTTPADAPTER|HTTPADAPTER is the built-in Requests transport adapter for HTTP and HTTPS URLs. It is mounted on URL prefixes, typically through a Requests session, to deliver requests through the underlying urllib3 transport layer. HTTPADAPTER creates and manages connection pools and urllib3 connections, supports proxy managers, applies TLS and SSL certificate verification settings, and provides standard request-related connection methods. It also manages serialization state and adapter-specific cleanup. As the default adapter for HTTP and HTTPS, HTTPADAPTER can be configured with retry behavior, including retry-enabled handling for HTTPS requests, and can be extended for custom SSL or other connection settings.|32\n531|SESSION ADAPTER PREFIX MATCHING|A test event verifying that a Requests Session selects the adapter mounted at the most specific matching URL prefix and ignores adapters for unrelated prefixes|2\n532|SESSION ADAPTER MIXED-CASE PREFIX MATCHING|A test event verifying that a mounted HTTPAdapter matches a URL whose scheme, host, and path prefix use mixed capitalization|2\n527|SESSION ADAPTER MATCHING TEST|The session adapter matching test verifies that Session.get_adapter selects the adapter matching the most specific URL prefix)<|2\n533|SESSION ADAPTER CASE-INSENSITIVE MATCHING|A test event verifying that URL adapter prefix matching is case-insensitive when the mounted prefix and requested URL use different capitalization|2\n131|TRANSPORT ADAPTER INTERFACE|Interface implemented by Requests transport adapters, defining operations for connection setup, certificate verification, and adapter cleanup|1\n133|HTTPADAPTER GETSTATE|HTTPAdapter serialization method that returns the configured adapter attributes needed to preserve its state|2\n518|GITTIP|Gittip is a host name used in the tests to verify ordering of overlapping HTTPAdapter URL prefixes)<|1\n68|REQUESTS DOCUMENTATION|The Requests documentation explains transport adapters, blocking and non-blocking I/O, streaming responses, header ordering, and connection and read timeout configuration.|2\n132|HTTPADAPTER INIT|HTTPAdapter constructor that configures retry behavior, proxy manager storage, connection pool sizing, pool blocking, and pool manager initialization|1\n311|GOOGLE APP ENGINE|Google App Engine is the platform referenced by the comment describing an App Engine-specific compatibility workaround|1\n40|A050FAF|A050FAF is a specific commit associated with the Requests project and retrieved through the GitHub API; its full identifier is A050FAF084662F3A352DD1A941F2C7C9F886D4AD|3\n134|HTTPADAPTER SETSTATE|HTTPAdapter deserialization method that restores adapter state, recreates proxy and configuration dictionaries, and reinitializes the pool manager|2\n21|SESSION|SESSION is a Requests library client object that manages persistent state and configuration while sending multiple HTTP and HTTPS requests. It stores and applies cookies, headers, authentication, proxy settings, hooks, environment settings, certificates, and TLS verification options. SESSION creates and mounts HTTPAdapter instances to contact HTTP and HTTPS URLs, maintaining separate connection pools when TLS configurations differ and providing connection pooling for efficient reuse. It prepares and sends requests, including prepared requests, resolves redirect chains subject to configured redirect limits, and manages the adapters used for network communication. SESSION also supports pickling and serves as the central mechanism for maintaining consistent request behavior across a series of HTTP operations.|14\n59|RETRY|RETRY is the urllib3 utility class used by Requests to configure automatic retry behavior through an HTTPAdapter. It controls the number of retry attempts for failures such as DNS lookup errors, socket connection failures, and connection timeouts. RETRY also defines backoff behavior, status-based retry conditions, and the HTTP methods eligible for retrying.|4\n574|TEST_PROXY_AUTH|A test that verifies an HTTP adapter generates the expected Proxy-Authorization header for credentials containing a username and password|2\n55|SSLV3|SSLv3 is an SSL protocol version used in the example of configuring a Requests transport adapter for services incompatible with the default SSL version.|2\n\n-----Relationships-----\nid|source|target|description|weight|links\n82|HTTPADAPTER|BASEADAPTER|HTTPADAPTER is a transport-adapter implementation and subclass of BASEADAPTER. It implements the transport adapter interface defined by BASEADAPTER.|18.0|2\n208|HTTPADAPTER|REQUESTS ADAPTERS|HTTPAdapter is defined and exposed by the requests.adapters module.|10.0|2\n835|TRANSPORT ADAPTER ORDERING TEST|REQUESTS|The transport adapter ordering test verifies Requests adapter mounting behavior|1.0|1\n848|TRANSPORT ADAPTER ORDERING TEST|PYTEST|Pytest executes the adapter ordering checks|1.0|1\n\n-----Sources-----\nid|source|text\n91|tests/test_requests.py:L1488-L1634|\"        pr = pickle.loads(pickle.dumps(r))\n        assert r.request.url == pr.request.url\n        assert r.request.headers == pr.request.headers\n\n    def test_prepared_request_is_pickleable(self, httpbin):\n        p = requests.Request(\"\"GET\"\", httpbin(\"\"get\"\")).prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_file_is_pickleable(self, httpbin):\n        with open(__file__, \"\"rb\"\") as f:\n            r = requests.Request(\"\"POST\"\", httpbin(\"\"post\"\"), files={\"\"file\"\": f})\n            p = r.prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_hook_is_pickleable(self, httpbin):\n        r = requests.Request(\"\"GET\"\", httpbin(\"\"get\"\"), hooks=default_hooks())\n        p = r.prepare()\n\n        # Verify PreparedRequest can be pickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n        assert r.hooks == p.hooks\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_cannot_send_unprepared_requests(self, httpbin):\n        r = requests.Request(url=httpbin())\n        with pytest.raises(ValueError):\n            requests.Session().send(r)\n\n    def test_http_error(self):\n        error = requests.exceptions.HTTPError()\n        assert not error.response\n        response = requests.Response()\n        error = requests.exceptions.HTTPError(response=response)\n        assert error.response == response\n        error = requests.exceptions.HTTPError(\"\"message\"\", response=response)\n        assert str(error) == \"\"message\"\"\n        assert error.response == response\n\n    def test_session_pickling(self, httpbin):\n        r = requests.Request(\"\"GET\"\", httpbin(\"\"get\"\"))\n        s = requests.Session()\n\n        s = pickle.loads(pickle.dumps(s))\n        s.proxies = getproxies()\n\n        r = s.send(r.prepare())\n        assert r.status_code == 200\n\n    def test_fixes_1329(self, httpbin):\n        \"\"\"\"\"\"Ensure that header updates are done case-insensitively.\"\"\"\"\"\"\n        s = requests.Session()\n        s.headers.update({\"\"ACCEPT\"\": \"\"BOGUS\"\"})\n        s.headers.update({\"\"accept\"\": \"\"application/json\"\"})\n        r = s.get(httpbin(\"\"get\"\"))\n        headers = r.request.headers\n        assert headers[\"\"accept\"\"] == \"\"application/json\"\"\n        assert headers[\"\"Accept\"\"] == \"\"application/json\"\"\n        assert headers[\"\"ACCEPT\"\"] == \"\"application/json\"\"\n\n    def test_uppercase_scheme_redirect(self, httpbin):\n        parts = urlparse(httpbin(\"\"html\"\"))\n        url = \"\"HTTP://\"\" + parts.netloc + parts.path\n        r = requests.get(httpbin(\"\"redirect-to\"\"), params={\"\"url\"\": url})\n        assert r.status_code == 200\n        assert r.url.lower() == url.lower()\n\n    def test_transport_adapter_ordering(self):\n        s = requests.Session()\n        order = [\"\"https://\"\", \"\"http://\"\"]\n        assert order == list(s.adapters)\n        s.mount(\"\"http://git\"\", HTTPAdapter())\n        s.mount(\"\"http://github\"\", HTTPAdapter())\n        s.mount(\"\"http://github.com\"\", HTTPAdapter())\n        s.mount(\"\"http://github.com/about/\"\", HTTPAdapter())\n        order = [\n            \"\"http://github.com/about/\"\",\n            \"\"http://github.com\"\",\n            \"\"http://github\"\",\n            \"\"http://git\"\",\n            \"\"https://\"\",\n            \"\"http://\"\",\n        ]\n        assert order == list(s.adapters)\n        s.mount(\"\"http://gittip\"\", HTTPAdapter())\n        s.mount(\"\"http://gittip.com\"\", HTTPAdapter())\n        s.mount(\"\"http://gittip.com/about/\"\", HTTPAdapter())\n        order = [\n            \"\"http://github.com/about/\"\",\n            \"\"http://gittip.com/about/\"\",\n            \"\"http://github.com\"\",\n            \"\"http://gittip.com\"\",\n            \"\"http://github\"\",\n            \"\"http://gittip\"\",\n            \"\"http://git\"\",\n            \"\"https://\"\",\n            \"\"http://\"\",\n        ]\n        assert order == list(s.adapters)\n        s2 = requests.Session()\n        s2.adapters = {\"\"http://\"\": HTTPAdapter()}\n        s2.mount(\"\"https://\"\", HTTPAdapter())\n        assert \"\"http://\"\" in s2.adapters\n        assert \"\"https://\"\" in s2.adapters\n\n    def test_session_get_adapter_prefix_matching(self):\n        prefix = \"\"https://example.com\"\"\n        more_specific_prefix = prefix + \"\"/some/path\"\"\n\n        url_matching_only_prefix = prefix + \"\"/another/path\"\"\n        url_matching_more_specific_prefix = more_specific_prefix + \"\"/longer/path\"\"\n        url_not_matching_prefix = \"\"https://another.example.com/\"\"\n\n        s = requests.Session()\n        prefix_adapter = HTTPAdapter()\n        more_specific_prefix_adapter = HTTPAdapter()\n        s.mount(prefix, prefix_adapter)\n        s.mount(more_specific_prefix, more_specific_prefix_adapter)\n\n        assert s.get_adapter(url_matching_only_prefix) is prefix_adapter\n        assert (\n\"\n",
+  "final_tables": [
+    {
+      "name": "entities",
+      "columns": [
+        "id",
+        "entity",
+        "description",
+        "number of relationships"
+      ],
+      "rows": [
+        {
+          "id": "526",
+          "entity": "TRANSPORT ADAPTER ORDERING TEST",
+          "description": "The transport adapter ordering test verifies that mounted HTTPAdapter prefixes are ordered from most specific to least specific)<",
+          "number of relationships": "2"
+        },
+        {
+          "id": "57",
+          "entity": "BASEADAPTER",
+          "description": "BASEADAPTER, also known as `BaseAdapter`, is an abstract transport adapter class used by the Requests library. It defines the fundamental operations required for transport adapters, including certificate verification and closing connections. The class is intended to be subclassed when implementing custom Requests transport adapters. Because it provides an interface rather than a complete implementation, some of its methods may raise `NotImplementedError` until they are overridden by a concrete subclass.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "144",
+          "entity": "REQUESTS ADAPTERS",
+          "description": "Requests adapters are the transport-level components of the Requests module responsible for handling HTTP requests and managing HTTP transport behavior. The `requests.adapters` module defines the `HTTPAdapter`, which provides the adapter implementation used to connect Requests with HTTP transport mechanisms and is also used by the test suite.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "56",
+          "entity": "HTTPADAPTER",
+          "description": "HTTPADAPTER is the built-in Requests transport adapter for HTTP and HTTPS URLs. It is mounted on URL prefixes, typically through a Requests session, to deliver requests through the underlying urllib3 transport layer. HTTPADAPTER creates and manages connection pools and urllib3 connections, supports proxy managers, applies TLS and SSL certificate verification settings, and provides standard request-related connection methods. It also manages serialization state and adapter-specific cleanup. As the default adapter for HTTP and HTTPS, HTTPADAPTER can be configured with retry behavior, including retry-enabled handling for HTTPS requests, and can be extended for custom SSL or other connection settings.",
+          "number of relationships": "32"
+        },
+        {
+          "id": "531",
+          "entity": "SESSION ADAPTER PREFIX MATCHING",
+          "description": "A test event verifying that a Requests Session selects the adapter mounted at the most specific matching URL prefix and ignores adapters for unrelated prefixes",
+          "number of relationships": "2"
+        },
+        {
+          "id": "532",
+          "entity": "SESSION ADAPTER MIXED-CASE PREFIX MATCHING",
+          "description": "A test event verifying that a mounted HTTPAdapter matches a URL whose scheme, host, and path prefix use mixed capitalization",
+          "number of relationships": "2"
+        },
+        {
+          "id": "527",
+          "entity": "SESSION ADAPTER MATCHING TEST",
+          "description": "The session adapter matching test verifies that Session.get_adapter selects the adapter matching the most specific URL prefix)<",
+          "number of relationships": "2"
+        },
+        {
+          "id": "533",
+          "entity": "SESSION ADAPTER CASE-INSENSITIVE MATCHING",
+          "description": "A test event verifying that URL adapter prefix matching is case-insensitive when the mounted prefix and requested URL use different capitalization",
+          "number of relationships": "2"
+        },
+        {
+          "id": "131",
+          "entity": "TRANSPORT ADAPTER INTERFACE",
+          "description": "Interface implemented by Requests transport adapters, defining operations for connection setup, certificate verification, and adapter cleanup",
+          "number of relationships": "1"
+        },
+        {
+          "id": "133",
+          "entity": "HTTPADAPTER GETSTATE",
+          "description": "HTTPAdapter serialization method that returns the configured adapter attributes needed to preserve its state",
+          "number of relationships": "2"
+        },
+        {
+          "id": "518",
+          "entity": "GITTIP",
+          "description": "Gittip is a host name used in the tests to verify ordering of overlapping HTTPAdapter URL prefixes)<",
+          "number of relationships": "1"
+        },
+        {
+          "id": "68",
+          "entity": "REQUESTS DOCUMENTATION",
+          "description": "The Requests documentation explains transport adapters, blocking and non-blocking I/O, streaming responses, header ordering, and connection and read timeout configuration.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "132",
+          "entity": "HTTPADAPTER INIT",
+          "description": "HTTPAdapter constructor that configures retry behavior, proxy manager storage, connection pool sizing, pool blocking, and pool manager initialization",
+          "number of relationships": "1"
+        },
+        {
+          "id": "311",
+          "entity": "GOOGLE APP ENGINE",
+          "description": "Google App Engine is the platform referenced by the comment describing an App Engine-specific compatibility workaround",
+          "number of relationships": "1"
+        },
+        {
+          "id": "40",
+          "entity": "A050FAF",
+          "description": "A050FAF is a specific commit associated with the Requests project and retrieved through the GitHub API; its full identifier is A050FAF084662F3A352DD1A941F2C7C9F886D4AD",
+          "number of relationships": "3"
+        },
+        {
+          "id": "134",
+          "entity": "HTTPADAPTER SETSTATE",
+          "description": "HTTPAdapter deserialization method that restores adapter state, recreates proxy and configuration dictionaries, and reinitializes the pool manager",
+          "number of relationships": "2"
+        },
+        {
+          "id": "21",
+          "entity": "SESSION",
+          "description": "SESSION is a Requests library client object that manages persistent state and configuration while sending multiple HTTP and HTTPS requests. It stores and applies cookies, headers, authentication, proxy settings, hooks, environment settings, certificates, and TLS verification options. SESSION creates and mounts HTTPAdapter instances to contact HTTP and HTTPS URLs, maintaining separate connection pools when TLS configurations differ and providing connection pooling for efficient reuse. It prepares and sends requests, including prepared requests, resolves redirect chains subject to configured redirect limits, and manages the adapters used for network communication. SESSION also supports pickling and serves as the central mechanism for maintaining consistent request behavior across a series of HTTP operations.",
+          "number of relationships": "14"
+        },
+        {
+          "id": "59",
+          "entity": "RETRY",
+          "description": "RETRY is the urllib3 utility class used by Requests to configure automatic retry behavior through an HTTPAdapter. It controls the number of retry attempts for failures such as DNS lookup errors, socket connection failures, and connection timeouts. RETRY also defines backoff behavior, status-based retry conditions, and the HTTP methods eligible for retrying.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "574",
+          "entity": "TEST_PROXY_AUTH",
+          "description": "A test that verifies an HTTP adapter generates the expected Proxy-Authorization header for credentials containing a username and password",
+          "number of relationships": "2"
+        },
+        {
+          "id": "55",
+          "entity": "SSLV3",
+          "description": "SSLv3 is an SSL protocol version used in the example of configuring a Requests transport adapter for services incompatible with the default SSL version.",
+          "number of relationships": "2"
+        }
+      ]
+    },
+    {
+      "name": "relationships",
+      "columns": [
+        "id",
+        "source",
+        "target",
+        "description",
+        "weight",
+        "links"
+      ],
+      "rows": [
+        {
+          "id": "82",
+          "source": "HTTPADAPTER",
+          "target": "BASEADAPTER",
+          "description": "HTTPADAPTER is a transport-adapter implementation and subclass of BASEADAPTER. It implements the transport adapter interface defined by BASEADAPTER.",
+          "weight": "18.0",
+          "links": "2"
+        },
+        {
+          "id": "208",
+          "source": "HTTPADAPTER",
+          "target": "REQUESTS ADAPTERS",
+          "description": "HTTPAdapter is defined and exposed by the requests.adapters module.",
+          "weight": "10.0",
+          "links": "2"
+        },
+        {
+          "id": "835",
+          "source": "TRANSPORT ADAPTER ORDERING TEST",
+          "target": "REQUESTS",
+          "description": "The transport adapter ordering test verifies Requests adapter mounting behavior",
+          "weight": "1.0",
+          "links": "1"
+        },
+        {
+          "id": "848",
+          "source": "TRANSPORT ADAPTER ORDERING TEST",
+          "target": "PYTEST",
+          "description": "Pytest executes the adapter ordering checks",
+          "weight": "1.0",
+          "links": "1"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "columns": [
+        "id",
+        "source",
+        "text"
+      ],
+      "rows": [
+        {
+          "id": "91",
+          "text": "        pr = pickle.loads(pickle.dumps(r))\n        assert r.request.url == pr.request.url\n        assert r.request.headers == pr.request.headers\n\n    def test_prepared_request_is_pickleable(self, httpbin):\n        p = requests.Request(\"GET\", httpbin(\"get\")).prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_file_is_pickleable(self, httpbin):\n        with open(__file__, \"rb\") as f:\n            r = requests.Request(\"POST\", httpbin(\"post\"), files={\"file\": f})\n            p = r.prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_hook_is_pickleable(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"), hooks=default_hooks())\n        p = r.prepare()\n\n        # Verify PreparedRequest can be pickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n        assert r.hooks == p.hooks\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_cannot_send_unprepared_requests(self, httpbin):\n        r = requests.Request(url=httpbin())\n        with pytest.raises(ValueError):\n            requests.Session().send(r)\n\n    def test_http_error(self):\n        error = requests.exceptions.HTTPError()\n        assert not error.response\n        response = requests.Response()\n        error = requests.exceptions.HTTPError(response=response)\n        assert error.response == response\n        error = requests.exceptions.HTTPError(\"message\", response=response)\n        assert str(error) == \"message\"\n        assert error.response == response\n\n    def test_session_pickling(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"))\n        s = requests.Session()\n\n        s = pickle.loads(pickle.dumps(s))\n        s.proxies = getproxies()\n\n        r = s.send(r.prepare())\n        assert r.status_code == 200\n\n    def test_fixes_1329(self, httpbin):\n        \"\"\"Ensure that header updates are done case-insensitively.\"\"\"\n        s = requests.Session()\n        s.headers.update({\"ACCEPT\": \"BOGUS\"})\n        s.headers.update({\"accept\": \"application/json\"})\n        r = s.get(httpbin(\"get\"))\n        headers = r.request.headers\n        assert headers[\"accept\"] == \"application/json\"\n        assert headers[\"Accept\"] == \"application/json\"\n        assert headers[\"ACCEPT\"] == \"application/json\"\n\n    def test_uppercase_scheme_redirect(self, httpbin):\n        parts = urlparse(httpbin(\"html\"))\n        url = \"HTTP://\" + parts.netloc + parts.path\n        r = requests.get(httpbin(\"redirect-to\"), params={\"url\": url})\n        assert r.status_code == 200\n        assert r.url.lower() == url.lower()\n\n    def test_transport_adapter_ordering(self):\n        s = requests.Session()\n        order = [\"https://\", \"http://\"]\n        assert order == list(s.adapters)\n        s.mount(\"http://git\", HTTPAdapter())\n        s.mount(\"http://github\", HTTPAdapter())\n        s.mount(\"http://github.com\", HTTPAdapter())\n        s.mount(\"http://github.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://github.com\",\n            \"http://github\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s.mount(\"http://gittip\", HTTPAdapter())\n        s.mount(\"http://gittip.com\", HTTPAdapter())\n        s.mount(\"http://gittip.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://gittip.com/about/\",\n            \"http://github.com\",\n            \"http://gittip.com\",\n            \"http://github\",\n            \"http://gittip\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s2 = requests.Session()\n        s2.adapters = {\"http://\": HTTPAdapter()}\n        s2.mount(\"https://\", HTTPAdapter())\n        assert \"http://\" in s2.adapters\n        assert \"https://\" in s2.adapters\n\n    def test_session_get_adapter_prefix_matching(self):\n        prefix = \"https://example.com\"\n        more_specific_prefix = prefix + \"/some/path\"\n\n        url_matching_only_prefix = prefix + \"/another/path\"\n        url_matching_more_specific_prefix = more_specific_prefix + \"/longer/path\"\n        url_not_matching_prefix = \"https://another.example.com/\"\n\n        s = requests.Session()\n        prefix_adapter = HTTPAdapter()\n        more_specific_prefix_adapter = HTTPAdapter()\n        s.mount(prefix, prefix_adapter)\n        s.mount(more_specific_prefix, more_specific_prefix_adapter)\n\n        assert s.get_adapter(url_matching_only_prefix) is prefix_adapter\n        assert (\n",
+          "source": "tests/test_requests.py:L1488-L1634"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "short_id": "91",
+      "text_unit_id": "b4fc31fa0398c423c77ca05d45d3311d21c64d32090eb4a80186e559ba11c7f9857fc547284a1b9e915fb677bf5dcdb6dbb8f2c2edb68f5d45dd5f1b87c1171d",
+      "id": "738fe173f86a3ea0fd04fd1badf08b7af0573474d3cadc7105cab638a4925afc",
+      "title": "tests/test_requests.py:L1488-L1634",
+      "path": "tests/test_requests.py",
+      "start_line": 1488,
+      "end_line": 1634,
+      "tokens": 1191,
+      "text_sha256": "ba556710077543acb07ee95b0ea7f2ca76e248ccaa9baaae1319722182791a75",
+      "ms_text_unit_id": "b4fc31fa0398c423c77ca05d45d3311d21c64d32090eb4a80186e559ba11c7f9857fc547284a1b9e915fb677bf5dcdb6dbb8f2c2edb68f5d45dd5f1b87c1171d"
+    }
+  ],
+  "raw_context_tokens": 2381,
+  "final_context_tokens": 2438,
+  "source_text_tokens": 1191,
+  "source_chunks": 1,
+  "retrieval_compute_seconds": 0.012567791156470776,
+  "adaptation_seconds": 0.003616667352616787,
+  "empty_reason": null,
+  "community_level": 2,
+  "dropped_tail_rows": 0
+}

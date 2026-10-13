@@ -1,0 +1,180 @@
+{
+  "schema_version": 1,
+  "reviewed_utc": "2026-10-13T02:53:16.825328+00:00",
+  "reviewer": "独立 AI 审阅代理 /root/audit；不是外部人类审计",
+  "outcome": "未发现阻碍发布这些已观察检索分数和补丁应用失败事实的问题。",
+  "scope": {
+    "unique_contexts": 168,
+    "retrieval_score_rows": 160,
+    "separate_feature_evidence_rows": 8,
+    "methods": [
+      "bm25",
+      "hybrid",
+      "ms_basic",
+      "ms_local"
+    ],
+    "retrieval_token_budgets": [
+      4000,
+      12000
+    ],
+    "feature_token_budget": 4000,
+    "frozen_source_chunks": 114,
+    "frozen_input_files": 41,
+    "frozen_evidence_spans": 71,
+    "test_questions": 16,
+    "scorable_test_questions": 15,
+    "dev_questions": 4
+  },
+  "checks": [
+    {
+      "check": "冻结与原文",
+      "result": "verify.py --source 通过；独立逐段核对全部 114 provenance 源码块及冻结 gold 行段 SHA256。"
+    },
+    {
+      "check": "实际上下文与公平预算",
+      "result": "score_results.py --check --tokens 通过。168 网格完整且唯一；所有实际表格渲染、Sources 原文及路径行号映射、统一 o200k token 上限、微软原始记录到适配后整行前缀检查通过。"
+    },
+    {
+      "check": "独立机械复算",
+      "result": "另用未调用评分函数的实现，从 final_tables 和闭区间源码行集合重算 160 主行、8 feature 行的 80%/100% 覆盖、Recall@5/@10、MRR；所有保存的分题指标、各 split/kind 聚合及 paired 差值均一致。未将无 gold 的 Q19 加入分母；feature 未混入主聚合。"
+    },
+    {
+      "check": "排名与证据口径",
+      "result": "MRR/Recall 按最终实际展示的源码块计数；实体、关系和报告未冒充源码命中。四方法共享最终 token 上限和来源标识格式。Basic 保留官方实际展示顺序；Local 在全部当前上下文中没有被适配器额外删除尾行。"
+    },
+    {
+      "check": "功能生成绑定",
+      "result": "全部 8 份 task/context→prompt SHA、response SHA、extract_diff→原始 patch SHA、review 与 evaluation 绑定一致；每项记录一次物理尝试。独立核对 prompt token 数。verify_feature_results.py 通过，并核对累计尝试数与 execution。"
+    },
+    {
+      "check": "功能应用失败",
+      "result": "逐项重新执行只读 git apply --check，八项均复现保存的 corrupt patch 诊断和退出码 128。各独立候选的 41 输入文件仍与冻结源码哈希一致；suites 全空，未执行候选代码。"
+    },
+    {
+      "check": "定性审阅揭示",
+      "result": "qualitative-audit.json 提交前未读取方法对应表、原始结果上下文或分数文件；提交后核对 Q01/Q07 的 8 个匿名文本与已公开方法映射逐字相同，已提交评价哈希未变化。"
+    },
+    {
+      "check": "报告数值",
+      "result": "README、docs/report.md 与 full-run.md 中所核对的两档主覆盖、MRR、实际 token/块数、Local 对 hybrid 的胜平负、Q01/Q07 案例、F01/F02 覆盖、8/8 应用失败及未进入测试的表述，与结果一致。"
+    }
+  ],
+  "test_coverage80": [
+    {
+      "method": "bm25",
+      "budget4000": 0.35333333333333333,
+      "budget12000": 0.6433333333333333
+    },
+    {
+      "method": "hybrid",
+      "budget4000": 0.4288888888888889,
+      "budget12000": 0.71
+    },
+    {
+      "method": "ms_basic",
+      "budget4000": 0.35777777777777775,
+      "budget12000": 0.5744444444444444
+    },
+    {
+      "method": "ms_local",
+      "budget4000": 0.05555555555555555,
+      "budget12000": 0.21
+    }
+  ],
+  "paired_local_vs_hybrid_test": [
+    {
+      "budget": 4000,
+      "wins": 0,
+      "ties": 7,
+      "losses": 8,
+      "mean_difference_percentage_points": -37.333333333333336
+    },
+    {
+      "budget": 12000,
+      "wins": 0,
+      "ties": 2,
+      "losses": 13,
+      "mean_difference_percentage_points": -50.0
+    }
+  ],
+  "feature_patch_checks": [
+    {
+      "feature_id": "F01",
+      "method": "bm25",
+      "status": "patch_did_not_apply",
+      "corrupt_patch_line": 13,
+      "tests_executed": false
+    },
+    {
+      "feature_id": "F01",
+      "method": "hybrid",
+      "status": "patch_did_not_apply",
+      "corrupt_patch_line": 16,
+      "tests_executed": false
+    },
+    {
+      "feature_id": "F01",
+      "method": "ms_basic",
+      "status": "patch_did_not_apply",
+      "corrupt_patch_line": 33,
+      "tests_executed": false
+    },
+    {
+      "feature_id": "F01",
+      "method": "ms_local",
+      "status": "patch_did_not_apply",
+      "corrupt_patch_line": 49,
+      "tests_executed": false
+    },
+    {
+      "feature_id": "F02",
+      "method": "bm25",
+      "status": "patch_did_not_apply",
+      "corrupt_patch_line": 28,
+      "tests_executed": false
+    },
+    {
+      "feature_id": "F02",
+      "method": "hybrid",
+      "status": "patch_did_not_apply",
+      "corrupt_patch_line": 29,
+      "tests_executed": false
+    },
+    {
+      "feature_id": "F02",
+      "method": "ms_basic",
+      "status": "patch_did_not_apply",
+      "corrupt_patch_line": 13,
+      "tests_executed": false
+    },
+    {
+      "feature_id": "F02",
+      "method": "ms_local",
+      "status": "patch_did_not_apply",
+      "corrupt_patch_line": 13,
+      "tests_executed": false
+    }
+  ],
+  "feature_observed_usage": {
+    "provider_prompt_tokens": 41361,
+    "provider_completion_tokens": 18571,
+    "completed_responses_exceeding_requested_output_limit": 7
+  },
+  "blocking_findings": [],
+  "limitations": [
+    "只评固定 Requests 小样本上的预标必要源码证据覆盖；不是生成答案准确率、完整调用图正确率、总体噪声率或跨仓库泛化结果。",
+    "相同 token 上限不保证每组装入相同源码量，也不是去图因果消融。Local 的份额分配、完整块及候选排序影响可见原文量。",
+    "功能失败停在原样补丁应用阶段，没有功能正确性或回归测试成绩；不能由八项共同格式失败推断检索方法等效。",
+    "单轮热缓存计时不能当生产吞吐比较；定性审阅由 AI 完成，版式可能泄露方法，且每题仅一位代理审阅。",
+    "本复核未重新调用生成/embedding 服务，也未重建官方索引或重跑付费检索；复算基于公开结果、冻结源码和现有原始证据。"
+  ],
+  "actions": {
+    "model_or_network_requests": 0,
+    "credential_files_read": false,
+    "patches_modified": false,
+    "candidate_code_executed": false,
+    "gold_or_scoring_changed": false,
+    "main_report_modified": false
+  },
+  "qualitative_review_sha256": "93b6cfda52df1861703a99db28884224db054e8d39e12d0becc7bb7344669d93"
+}

@@ -1,6 +1,6 @@
 # Requests：冻结语料、题目和评估入口
 
-**完整索引已完成，正式检索与功能评测尚未完成。** 114块官方索引于2026-10-13结束，得到639实体、1069关系、84社区报告；后续查询受执行许可检查阻拦，未发新请求。[完整执行记录](results/execution.json)、[中断历史](results/execution-interrupted.json)和[接口探测](probe-result.md)分别保存，不能用索引规模推断检索效果。
+**完整索引、168份检索上下文和8次功能尝试已完成。** 四组检索效果见[主报告](../../docs/report.md)及[逐题分数](results/scores.json)。八份原始补丁均损坏、无法应用，所以候选功能与回归测试未执行；这不是检索质量的单独因果证据。[完整账本](results/execution.json)、[中断历史](results/execution-interrupted.json)和[接口探测](probe-result.md)分别保存。
 
 可以把准备过程理解成先备好同一批书、同一张考卷和评分规则，再让关键词、普通向量和微软图检索参加比较。没有按方法表现换题或改分。
 
@@ -43,9 +43,9 @@
 
 生成模型为用户选定的one.fullstar.tech `gpt-5.6-luna`；三组向量部分使用官方OpenAI `text-embedding-3-large`，3072维。模型在远端运行，由Mac mini发起受控请求；代理实际后端映射不能独立核实。成功响应以精确参数缓存，失败不自动重放。正式阶段累计embedding预算$1，旧探针消耗计入；生成价格未知，次数、时间和输入量仍有明确上限。仓库外凭据不入库，见[说明](credentials.md)。
 
-每组对两个功能各生成一次补丁，只使用相同4000-token初始证据，不追加搜索或改错。先核对原始响应／补丁hash与修改范围，再对干净副本跑冻结验收、旧回归和逐项需求检查。当前还没有生成这些补丁。检索覆盖和功能正确性分开报告；两个功能不能组成可靠的行业成功率。
+每组对两个功能各生成一次补丁，只使用相同4000-token初始证据，不追加搜索或改错。先核对原始响应／补丁hash与修改范围，再对干净副本跑冻结验收、旧回归和逐项需求检查。实际八份补丁均在应用检查失败，没有修补或追加调用；保留[原输出及诊断](results/features)。检索覆盖和功能正确性分开报告；两个功能不能组成可靠的行业成功率。
 
-完整原理、预算、实现差异、安装、执行及复算命令统一见[技术附录](full-run.md)，避免维护两套命令。正在使用的检索、打分和补丁检查器已实现并做了合成边界测试；实际168份上下文尚未生成，不能说真实结果验收已通过。
+完整原理、预算、实现差异、安装、执行及复算命令统一见[技术附录](full-run.md)，避免维护两套命令。实际168份上下文的完整网格、源码来源、预算和得分复算均已通过检查。
 
 ## 现阶段能够离线核验什么
 
@@ -53,6 +53,9 @@
 
 ```bash
 python3 research/pilot/verify.py
+python3 research/pilot/verify_results.py
+python3 research/pilot/score_results.py --check
+python3 research/pilot/verify_feature_results.py
 python3 research/pilot/verify_selection.py
 python3 research/pilot/verify_probe_result.py
 python3 -m unittest discover -s tests
@@ -62,4 +65,4 @@ python3 scripts/validate.py
 
 已有Requests缓存时，可加 `verify.py --source` 重验71段标注源码。重新获取源码、运行59项原版回归和新功能前测的命令见[技术附录](full-run.md)及[受控测试入口](run_tests.py)；F01/F02在原版预期失败。测试入口的TCP／DNS阻断与个人netrc／proxy隔离是对已审代码的保护，不是任意未知补丁的安全沙箱。
 
-完整结果生成后才运行 `verify_results.py --tokens` 与 `score_results.py --check --tokens`。二者会从实际上下文校验唯一完整网格、原文hash、来源行号、总token和分数；现在缺少结果，不能伪造验收通过。CI只做离线轻量检查。
+已使用 `verify_results.py --tokens` 与 `score_results.py --check --tokens` 校验实际唯一网格、原文hash、来源行号、总token和分数；精确token重数需要本地tokenizer。CI只做无需模型的轻量检查。

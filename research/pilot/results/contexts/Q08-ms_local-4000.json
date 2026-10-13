@@ -1,0 +1,582 @@
+{
+  "question_id": "Q08",
+  "method": "ms_local",
+  "budget": 4000,
+  "query": "Trace session-level and request-level headers into the prepared request and then to header validation.",
+  "upstream_raw_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n431|TEST HEADERS PRESERVE ORDER|A test event verifying that ordered session and request headers preserve their expected order while request headers override duplicate session headers|1\n490|PREPARED FROM SESSION TEST|A test event that verifies a Session prepares a request with session-level authentication and sends the resulting authentication header.|1\n430|TEST HEADERS ON SESSION WITH NONE ARE NOT SENT|A test event verifying that session headers assigned a None value are omitted from prepared Requests requests|1\n541|HEADER LEADING-WHITESPACE VALIDATION|A parameterized test event verifying that leading whitespace in HTTP header names or values raises InvalidHeader before a request is sent|2\n534|CASE-INSENSITIVE HEADER REMOVAL|A test event verifying that passing a differently cased header name with a null value removes the existing header from a prepared request|1\n586|PREPARED REQUEST COPY TEST|A test event that verifies copying a prepared request preserves its method, URL, headers, cookies, body, and hooks|2\n538|HEADER VALIDATION|A test event verifying that valid string and byte header values, including spaces and empty values, are accepted and preserved\"|1\n537|NATIVE HEADER KEY HANDLING|A test event verifying that prepared request header keys remain usable as native string or byte-string keys|1\n445|RESPECT PROXY ENVIRONMENT ON SEND SESSION-PREPARED REQUEST TEST|A test event that verifies a Requests session honors the HTTP proxy environment variable when sending a session-prepared request.|2\n249|PREPARED REQUEST|PreparedRequest is the request object associated with a Response and represents the prepared HTTP request that produced that response or the next request in a redirect chain.|2\n444|RESPECT PROXY ENVIRONMENT ON SEND SELF-PREPARED REQUEST TEST|A test event that verifies a Requests session honors the HTTP proxy environment variable when sending a manually prepared request.|2\n519|PICKLEABLE REQUEST TESTS|The pickleable request tests serialize and deserialize Request, PreparedRequest, and Session objects and verify that their properties and behavior are preserved)<|2\n529|ISSUE 3386|Issue 3386 concerns validation of HTTP header values and requires header values to be strings or bytes|2\n489|PREPARED REQUEST HOOK TEST|PREPARED REQUEST HOOK TEST is a test event that verifies hooks attached to a prepared request function correctly. It confirms that request hooks survive pickling and unpickling, that the unpickled prepared request can be sent successfully, and that an associated response hook can modify the returned response.|3\n449|PROXY AUTHORIZATION PRESERVATION TEST|A test event that verifies a Proxy-Authorization header configured on a Requests session is preserved and sent to httpbin.|3\n539|NON-STRING HEADER VALUE VALIDATION|A parameterized test event verifying that integer, mapping, and list header values raise InvalidHeader|2\n13|PREPAREDREQUEST|PREPAREDREQUEST is a Requests library object that represents a fully prepared HTTP request ready for transmission through a connection to a server. It is created from a `Request` or `Session` after Requests processes the HTTP method, URL, query parameters, headers, authentication, cookies, files, form data, JSON payload, body, and hooks. The object stores the exact request data that will be sent, including its final URL, headers, cookies, and body, while retaining request encoding and hook functionality.\n\nAlthough prepared for transmission, PREPAREDREQUEST remains mutable and can be modified before it is sent. It is associated with the resulting `Response`, may represent the next request in a redirect chain, and supports serialization and restoration through pickle testing.|11\n528|ISSUE 1321|Issue 1321 is a reported Requests behavior concerning case-insensitive removal of HTTP headers|1\n275|REQUESTS ISSUE 1084|Requests issue 1084 is referenced in a comment concerning removal of request body headers during redirects|1\n520|PREPARED REQUEST FILE TEST|The prepared request file test prepares a POST request containing an open file, pickles and unpickles it, and verifies that it can still be sent)<|3\n\n\n-----Relationships-----\nid|source|target|description|weight|links\n960|PREPARED REQUEST COPY TEST|REQUESTS|The test checks copying behavior for Requests PreparedRequest objects|8.0|5\n689|REQUESTS|RESPECT PROXY ENVIRONMENT ON SEND SESSION-PREPARED REQUEST TEST|The test verifies Requests applies proxy environment settings to a prepared session request.|9.0|5\n653|TEST HEADERS ON SESSION WITH NONE ARE NOT SENT|REQUESTS|The test verifies omission of None-valued headers during Requests request preparation|9.0|5\n654|TEST HEADERS PRESERVE ORDER|REQUESTS|The test verifies ordered header handling and duplicate-header override behavior in Requests|9.0|5\n782|PREPARED FROM SESSION TEST|REQUESTS|The test verifies Requests session-level authentication during request preparation and sending.|9.0|5\n961|PREPARED REQUEST COPY TEST|PYTEST|pytest runs the prepared-request copy checks with several request configurations|7.0|3\n688|PYTEST|RESPECT PROXY ENVIRONMENT ON SEND SESSION-PREPARED REQUEST TEST|Pytest executes the environment-proxy test for a session-prepared request.|9.0|3\n870|PYTEST|HEADER LEADING-WHITESPACE VALIDATION|Pytest parameterizes whitespace cases and asserts that InvalidHeader is raised|1.0|3\n860|NATIVE HEADER KEY HANDLING|REQUEST|The test verifies the native key types retained by a prepared Request's headers|8.0|2\n861|HEADER VALIDATION|REQUEST|The test sends valid headers through the Requests request API and checks the prepared request headers|8.0|2\n857|CASE-INSENSITIVE HEADER REMOVAL|HTTPBIN|The test sends the request to HTTPBin and inspects the resulting request headers|8.0|1\n347|RESPONSE|PREPARED REQUEST|The Response request attribute contains the PreparedRequest associated with the response.|9.0|1\n349|HTTP REDIRECT|PREPARED REQUEST|A redirect response can expose a PreparedRequest for the next request through the next property.|8.0|1\n864|HEADER LEADING-WHITESPACE VALIDATION|INVALIDHEADER|The test confirms that leading whitespace in header names or values raises InvalidHeader before transmission|9.0|1\n\n\n-----Sources-----\nid|text\n83|        assert s.cookies[\"foo\"] == '\"bar:baz\"'\n\n    def test_cookie_persists_via_api(self, httpbin):\n        s = requests.session()\n        r = s.get(httpbin(\"redirect/1\"), cookies={\"foo\": \"bar\"})\n        assert \"foo\" in r.request.headers[\"Cookie\"]\n        assert \"foo\" in r.history[0].request.headers[\"Cookie\"]\n\n    def test_request_cookie_overrides_session_cookie(self, httpbin):\n        s = requests.session()\n        s.cookies[\"foo\"] = \"bar\"\n        r = s.get(httpbin(\"cookies\"), cookies={\"foo\": \"baz\"})\n        assert r.json()[\"cookies\"][\"foo\"] == \"baz\"\n        # Session cookie should not be modified\n        assert s.cookies[\"foo\"] == \"bar\"\n\n    def test_request_cookies_not_persisted(self, httpbin):\n        s = requests.session()\n        s.get(httpbin(\"cookies\"), cookies={\"foo\": \"baz\"})\n        # Sending a request with cookies should not add cookies to the session\n        assert not s.cookies\n\n    def test_generic_cookiejar_works(self, httpbin):\n        cj = cookielib.CookieJar()\n        cookiejar_from_dict({\"foo\": \"bar\"}, cj)\n        s = requests.session()\n        s.cookies = cj\n        r = s.get(httpbin(\"cookies\"))\n        # Make sure the cookie was sent\n        assert r.json()[\"cookies\"][\"foo\"] == \"bar\"\n        # Make sure the session cj is still the custom one\n        assert s.cookies is cj\n\n    def test_param_cookiejar_works(self, httpbin):\n        cj = cookielib.CookieJar()\n        cookiejar_from_dict({\"foo\": \"bar\"}, cj)\n        s = requests.session()\n        r = s.get(httpbin(\"cookies\"), cookies=cj)\n        # Make sure the cookie was sent\n        assert r.json()[\"cookies\"][\"foo\"] == \"bar\"\n\n    def test_cookielib_cookiejar_on_redirect(self, httpbin):\n        \"\"\"Tests resolve_redirect doesn't fail when merging cookies\n        with non-RequestsCookieJar cookiejar.\n\n        See GH #3579\n        \"\"\"\n        cj = cookiejar_from_dict({\"foo\": \"bar\"}, cookielib.CookieJar())\n        s = requests.Session()\n        s.cookies = cookiejar_from_dict({\"cookie\": \"tasty\"})\n\n        # Prepare request without using Session\n        req = requests.Request(\"GET\", httpbin(\"headers\"), cookies=cj)\n        prep_req = req.prepare()\n\n        # Send request and simulate redirect\n        resp = s.send(prep_req)\n        resp.status_code = 302\n        resp.headers[\"location\"] = httpbin(\"get\")\n        redirects = s.resolve_redirects(resp, prep_req)\n        resp = next(redirects)\n\n        # Verify CookieJar isn't being converted to RequestsCookieJar\n        assert isinstance(prep_req._cookies, cookielib.CookieJar)\n        assert isinstance(resp.request._cookies, cookielib.CookieJar)\n        assert not isinstance(resp.request._cookies, requests.cookies.RequestsCookieJar)\n\n        cookies = {}\n        for c in resp.request._cookies:\n            cookies[c.name] = c.value\n        assert cookies[\"foo\"] == \"bar\"\n        assert cookies[\"cookie\"] == \"tasty\"\n\n    def test_requests_in_history_are_not_overridden(self, httpbin):\n        resp = requests.get(httpbin(\"redirect/3\"))\n        urls = [r.url for r in resp.history]\n        req_urls = [r.request.url for r in resp.history]\n        assert urls == req_urls\n\n    def test_history_is_always_a_list(self, httpbin):\n        \"\"\"Show that even with redirects, Response.history is always a list.\"\"\"\n        resp = requests.get(httpbin(\"get\"))\n        assert isinstance(resp.history, list)\n        resp = requests.get(httpbin(\"redirect/1\"))\n        assert isinstance(resp.history, list)\n        assert not isinstance(resp.history, tuple)\n\n    def test_headers_on_session_with_None_are_not_sent(self, httpbin):\n        \"\"\"Do not send headers in Session.headers with None values.\"\"\"\n        ses = requests.Session()\n        ses.headers[\"Accept-Encoding\"] = None\n        req = requests.Request(\"GET\", httpbin(\"get\"))\n        prep = ses.prepare_request(req)\n        assert \"Accept-Encoding\" not in prep.headers\n\n    def test_headers_preserve_order(self, httpbin):\n        \"\"\"Preserve order when headers provided as OrderedDict.\"\"\"\n        ses = requests.Session()\n        ses.headers = collections.OrderedDict()\n        ses.headers[\"Accept-Encoding\"] = \"identity\"\n        ses.headers[\"First\"] = \"1\"\n        ses.headers[\"Second\"] = \"2\"\n        headers = collections.OrderedDict([(\"Third\", \"3\"), (\"Fourth\", \"4\")])\n        headers[\"Fifth\"] = \"5\"\n        headers[\"Second\"] = \"222\"\n        req = requests.Request(\"GET\", httpbin(\"get\"), headers=headers)\n        prep = ses.prepare_request(req)\n        items = list(prep.headers.items())\n        assert items[0] == (\"Accept-Encoding\", \"identity\")\n        assert items[1] == (\"First\", \"1\")\n        assert items[2] == (\"Second\", \"222\")\n        assert items[3] == (\"Third\", \"3\")\n        assert items[4] == (\"Fourth\", \"4\")\n        assert items[5] == (\"Fifth\", \"5\")\n\n    @pytest.mark.parametrize(\"key\", (\"User-agent\", \"user-agent\"))\n    def test_user_agent_transfers(self, httpbin, key):\n        heads = {key: \"Mozilla/5.0 (github.com/psf/requests)\"}\n\n        r = requests.get(httpbin(\"user-agent\"), headers=heads)\n        assert heads[key] in r.text\n\n    def test_HTTP_200_OK_HEAD(self, httpbin):\n\n",
+  "upstream_raw_records": {
+    "relationships": [
+      {
+        "id": "960",
+        "source": "PREPARED REQUEST COPY TEST",
+        "target": "REQUESTS",
+        "description": "The test checks copying behavior for Requests PreparedRequest objects",
+        "weight": "8.0",
+        "links": "5",
+        "in_context": true
+      },
+      {
+        "id": "689",
+        "source": "REQUESTS",
+        "target": "RESPECT PROXY ENVIRONMENT ON SEND SESSION-PREPARED REQUEST TEST",
+        "description": "The test verifies Requests applies proxy environment settings to a prepared session request.",
+        "weight": "9.0",
+        "links": "5",
+        "in_context": true
+      },
+      {
+        "id": "653",
+        "source": "TEST HEADERS ON SESSION WITH NONE ARE NOT SENT",
+        "target": "REQUESTS",
+        "description": "The test verifies omission of None-valued headers during Requests request preparation",
+        "weight": "9.0",
+        "links": "5",
+        "in_context": true
+      },
+      {
+        "id": "654",
+        "source": "TEST HEADERS PRESERVE ORDER",
+        "target": "REQUESTS",
+        "description": "The test verifies ordered header handling and duplicate-header override behavior in Requests",
+        "weight": "9.0",
+        "links": "5",
+        "in_context": true
+      },
+      {
+        "id": "782",
+        "source": "PREPARED FROM SESSION TEST",
+        "target": "REQUESTS",
+        "description": "The test verifies Requests session-level authentication during request preparation and sending.",
+        "weight": "9.0",
+        "links": "5",
+        "in_context": true
+      },
+      {
+        "id": "961",
+        "source": "PREPARED REQUEST COPY TEST",
+        "target": "PYTEST",
+        "description": "pytest runs the prepared-request copy checks with several request configurations",
+        "weight": "7.0",
+        "links": "3",
+        "in_context": true
+      },
+      {
+        "id": "688",
+        "source": "PYTEST",
+        "target": "RESPECT PROXY ENVIRONMENT ON SEND SESSION-PREPARED REQUEST TEST",
+        "description": "Pytest executes the environment-proxy test for a session-prepared request.",
+        "weight": "9.0",
+        "links": "3",
+        "in_context": true
+      },
+      {
+        "id": "870",
+        "source": "PYTEST",
+        "target": "HEADER LEADING-WHITESPACE VALIDATION",
+        "description": "Pytest parameterizes whitespace cases and asserts that InvalidHeader is raised",
+        "weight": "1.0",
+        "links": "3",
+        "in_context": true
+      },
+      {
+        "id": "860",
+        "source": "NATIVE HEADER KEY HANDLING",
+        "target": "REQUEST",
+        "description": "The test verifies the native key types retained by a prepared Request's headers",
+        "weight": "8.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "861",
+        "source": "HEADER VALIDATION",
+        "target": "REQUEST",
+        "description": "The test sends valid headers through the Requests request API and checks the prepared request headers",
+        "weight": "8.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "857",
+        "source": "CASE-INSENSITIVE HEADER REMOVAL",
+        "target": "HTTPBIN",
+        "description": "The test sends the request to HTTPBin and inspects the resulting request headers",
+        "weight": "8.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "347",
+        "source": "RESPONSE",
+        "target": "PREPARED REQUEST",
+        "description": "The Response request attribute contains the PreparedRequest associated with the response.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "349",
+        "source": "HTTP REDIRECT",
+        "target": "PREPARED REQUEST",
+        "description": "A redirect response can expose a PreparedRequest for the next request through the next property.",
+        "weight": "8.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "864",
+        "source": "HEADER LEADING-WHITESPACE VALIDATION",
+        "target": "INVALIDHEADER",
+        "description": "The test confirms that leading whitespace in header names or values raises InvalidHeader before transmission",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      }
+    ],
+    "entities": [
+      {
+        "id": "431",
+        "entity": "TEST HEADERS PRESERVE ORDER",
+        "description": "A test event verifying that ordered session and request headers preserve their expected order while request headers override duplicate session headers",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "490",
+        "entity": "PREPARED FROM SESSION TEST",
+        "description": "A test event that verifies a Session prepares a request with session-level authentication and sends the resulting authentication header.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "430",
+        "entity": "TEST HEADERS ON SESSION WITH NONE ARE NOT SENT",
+        "description": "A test event verifying that session headers assigned a None value are omitted from prepared Requests requests",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "541",
+        "entity": "HEADER LEADING-WHITESPACE VALIDATION",
+        "description": "A parameterized test event verifying that leading whitespace in HTTP header names or values raises InvalidHeader before a request is sent",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "534",
+        "entity": "CASE-INSENSITIVE HEADER REMOVAL",
+        "description": "A test event verifying that passing a differently cased header name with a null value removes the existing header from a prepared request",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "586",
+        "entity": "PREPARED REQUEST COPY TEST",
+        "description": "A test event that verifies copying a prepared request preserves its method, URL, headers, cookies, body, and hooks",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "538",
+        "entity": "HEADER VALIDATION",
+        "description": "A test event verifying that valid string and byte header values, including spaces and empty values, are accepted and preserved\"",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "537",
+        "entity": "NATIVE HEADER KEY HANDLING",
+        "description": "A test event verifying that prepared request header keys remain usable as native string or byte-string keys",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "445",
+        "entity": "RESPECT PROXY ENVIRONMENT ON SEND SESSION-PREPARED REQUEST TEST",
+        "description": "A test event that verifies a Requests session honors the HTTP proxy environment variable when sending a session-prepared request.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "249",
+        "entity": "PREPARED REQUEST",
+        "description": "PreparedRequest is the request object associated with a Response and represents the prepared HTTP request that produced that response or the next request in a redirect chain.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "444",
+        "entity": "RESPECT PROXY ENVIRONMENT ON SEND SELF-PREPARED REQUEST TEST",
+        "description": "A test event that verifies a Requests session honors the HTTP proxy environment variable when sending a manually prepared request.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "519",
+        "entity": "PICKLEABLE REQUEST TESTS",
+        "description": "The pickleable request tests serialize and deserialize Request, PreparedRequest, and Session objects and verify that their properties and behavior are preserved)<",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "529",
+        "entity": "ISSUE 3386",
+        "description": "Issue 3386 concerns validation of HTTP header values and requires header values to be strings or bytes",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "489",
+        "entity": "PREPARED REQUEST HOOK TEST",
+        "description": "PREPARED REQUEST HOOK TEST is a test event that verifies hooks attached to a prepared request function correctly. It confirms that request hooks survive pickling and unpickling, that the unpickled prepared request can be sent successfully, and that an associated response hook can modify the returned response.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "449",
+        "entity": "PROXY AUTHORIZATION PRESERVATION TEST",
+        "description": "A test event that verifies a Proxy-Authorization header configured on a Requests session is preserved and sent to httpbin.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "539",
+        "entity": "NON-STRING HEADER VALUE VALIDATION",
+        "description": "A parameterized test event verifying that integer, mapping, and list header values raise InvalidHeader",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "13",
+        "entity": "PREPAREDREQUEST",
+        "description": "PREPAREDREQUEST is a Requests library object that represents a fully prepared HTTP request ready for transmission through a connection to a server. It is created from a `Request` or `Session` after Requests processes the HTTP method, URL, query parameters, headers, authentication, cookies, files, form data, JSON payload, body, and hooks. The object stores the exact request data that will be sent, including its final URL, headers, cookies, and body, while retaining request encoding and hook functionality.\n\nAlthough prepared for transmission, PREPAREDREQUEST remains mutable and can be modified before it is sent. It is associated with the resulting `Response`, may represent the next request in a redirect chain, and supports serialization and restoration through pickle testing.",
+        "number of relationships": "11",
+        "in_context": true
+      },
+      {
+        "id": "528",
+        "entity": "ISSUE 1321",
+        "description": "Issue 1321 is a reported Requests behavior concerning case-insensitive removal of HTTP headers",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "275",
+        "entity": "REQUESTS ISSUE 1084",
+        "description": "Requests issue 1084 is referenced in a comment concerning removal of request body headers during redirects",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "520",
+        "entity": "PREPARED REQUEST FILE TEST",
+        "description": "The prepared request file test prepares a POST request containing an open file, pickles and unpickles it, and verifies that it can still be sent)<",
+        "number of relationships": "3",
+        "in_context": true
+      }
+    ],
+    "sources": [
+      {
+        "id": "83",
+        "text": "        assert s.cookies[\"foo\"] == '\"bar:baz\"'\n\n    def test_cookie_persists_via_api(self, httpbin):\n        s = requests.session()\n        r = s.get(httpbin(\"redirect/1\"), cookies={\"foo\": \"bar\"})\n        assert \"foo\" in r.request.headers[\"Cookie\"]\n        assert \"foo\" in r.history[0].request.headers[\"Cookie\"]\n\n    def test_request_cookie_overrides_session_cookie(self, httpbin):\n        s = requests.session()\n        s.cookies[\"foo\"] = \"bar\"\n        r = s.get(httpbin(\"cookies\"), cookies={\"foo\": \"baz\"})\n        assert r.json()[\"cookies\"][\"foo\"] == \"baz\"\n        # Session cookie should not be modified\n        assert s.cookies[\"foo\"] == \"bar\"\n\n    def test_request_cookies_not_persisted(self, httpbin):\n        s = requests.session()\n        s.get(httpbin(\"cookies\"), cookies={\"foo\": \"baz\"})\n        # Sending a request with cookies should not add cookies to the session\n        assert not s.cookies\n\n    def test_generic_cookiejar_works(self, httpbin):\n        cj = cookielib.CookieJar()\n        cookiejar_from_dict({\"foo\": \"bar\"}, cj)\n        s = requests.session()\n        s.cookies = cj\n        r = s.get(httpbin(\"cookies\"))\n        # Make sure the cookie was sent\n        assert r.json()[\"cookies\"][\"foo\"] == \"bar\"\n        # Make sure the session cj is still the custom one\n        assert s.cookies is cj\n\n    def test_param_cookiejar_works(self, httpbin):\n        cj = cookielib.CookieJar()\n        cookiejar_from_dict({\"foo\": \"bar\"}, cj)\n        s = requests.session()\n        r = s.get(httpbin(\"cookies\"), cookies=cj)\n        # Make sure the cookie was sent\n        assert r.json()[\"cookies\"][\"foo\"] == \"bar\"\n\n    def test_cookielib_cookiejar_on_redirect(self, httpbin):\n        \"\"\"Tests resolve_redirect doesn't fail when merging cookies\n        with non-RequestsCookieJar cookiejar.\n\n        See GH #3579\n        \"\"\"\n        cj = cookiejar_from_dict({\"foo\": \"bar\"}, cookielib.CookieJar())\n        s = requests.Session()\n        s.cookies = cookiejar_from_dict({\"cookie\": \"tasty\"})\n\n        # Prepare request without using Session\n        req = requests.Request(\"GET\", httpbin(\"headers\"), cookies=cj)\n        prep_req = req.prepare()\n\n        # Send request and simulate redirect\n        resp = s.send(prep_req)\n        resp.status_code = 302\n        resp.headers[\"location\"] = httpbin(\"get\")\n        redirects = s.resolve_redirects(resp, prep_req)\n        resp = next(redirects)\n\n        # Verify CookieJar isn't being converted to RequestsCookieJar\n        assert isinstance(prep_req._cookies, cookielib.CookieJar)\n        assert isinstance(resp.request._cookies, cookielib.CookieJar)\n        assert not isinstance(resp.request._cookies, requests.cookies.RequestsCookieJar)\n\n        cookies = {}\n        for c in resp.request._cookies:\n            cookies[c.name] = c.value\n        assert cookies[\"foo\"] == \"bar\"\n        assert cookies[\"cookie\"] == \"tasty\"\n\n    def test_requests_in_history_are_not_overridden(self, httpbin):\n        resp = requests.get(httpbin(\"redirect/3\"))\n        urls = [r.url for r in resp.history]\n        req_urls = [r.request.url for r in resp.history]\n        assert urls == req_urls\n\n    def test_history_is_always_a_list(self, httpbin):\n        \"\"\"Show that even with redirects, Response.history is always a list.\"\"\"\n        resp = requests.get(httpbin(\"get\"))\n        assert isinstance(resp.history, list)\n        resp = requests.get(httpbin(\"redirect/1\"))\n        assert isinstance(resp.history, list)\n        assert not isinstance(resp.history, tuple)\n\n    def test_headers_on_session_with_None_are_not_sent(self, httpbin):\n        \"\"\"Do not send headers in Session.headers with None values.\"\"\"\n        ses = requests.Session()\n        ses.headers[\"Accept-Encoding\"] = None\n        req = requests.Request(\"GET\", httpbin(\"get\"))\n        prep = ses.prepare_request(req)\n        assert \"Accept-Encoding\" not in prep.headers\n\n    def test_headers_preserve_order(self, httpbin):\n        \"\"\"Preserve order when headers provided as OrderedDict.\"\"\"\n        ses = requests.Session()\n        ses.headers = collections.OrderedDict()\n        ses.headers[\"Accept-Encoding\"] = \"identity\"\n        ses.headers[\"First\"] = \"1\"\n        ses.headers[\"Second\"] = \"2\"\n        headers = collections.OrderedDict([(\"Third\", \"3\"), (\"Fourth\", \"4\")])\n        headers[\"Fifth\"] = \"5\"\n        headers[\"Second\"] = \"222\"\n        req = requests.Request(\"GET\", httpbin(\"get\"), headers=headers)\n        prep = ses.prepare_request(req)\n        items = list(prep.headers.items())\n        assert items[0] == (\"Accept-Encoding\", \"identity\")\n        assert items[1] == (\"First\", \"1\")\n        assert items[2] == (\"Second\", \"222\")\n        assert items[3] == (\"Third\", \"3\")\n        assert items[4] == (\"Fourth\", \"4\")\n        assert items[5] == (\"Fifth\", \"5\")\n\n    @pytest.mark.parametrize(\"key\", (\"User-agent\", \"user-agent\"))\n    def test_user_agent_transfers(self, httpbin, key):\n        heads = {key: \"Mozilla/5.0 (github.com/psf/requests)\"}\n\n        r = requests.get(httpbin(\"user-agent\"), headers=heads)\n        assert heads[key] in r.text\n\n    def test_HTTP_200_OK_HEAD(self, httpbin):\n"
+      }
+    ]
+  },
+  "final_context": "-----Entities-----\nid|entity|description|number of relationships\n431|TEST HEADERS PRESERVE ORDER|A test event verifying that ordered session and request headers preserve their expected order while request headers override duplicate session headers|1\n490|PREPARED FROM SESSION TEST|A test event that verifies a Session prepares a request with session-level authentication and sends the resulting authentication header.|1\n430|TEST HEADERS ON SESSION WITH NONE ARE NOT SENT|A test event verifying that session headers assigned a None value are omitted from prepared Requests requests|1\n541|HEADER LEADING-WHITESPACE VALIDATION|A parameterized test event verifying that leading whitespace in HTTP header names or values raises InvalidHeader before a request is sent|2\n534|CASE-INSENSITIVE HEADER REMOVAL|A test event verifying that passing a differently cased header name with a null value removes the existing header from a prepared request|1\n586|PREPARED REQUEST COPY TEST|A test event that verifies copying a prepared request preserves its method, URL, headers, cookies, body, and hooks|2\n538|HEADER VALIDATION|\"A test event verifying that valid string and byte header values, including spaces and empty values, are accepted and preserved\"\"\"|1\n537|NATIVE HEADER KEY HANDLING|A test event verifying that prepared request header keys remain usable as native string or byte-string keys|1\n445|RESPECT PROXY ENVIRONMENT ON SEND SESSION-PREPARED REQUEST TEST|A test event that verifies a Requests session honors the HTTP proxy environment variable when sending a session-prepared request.|2\n249|PREPARED REQUEST|PreparedRequest is the request object associated with a Response and represents the prepared HTTP request that produced that response or the next request in a redirect chain.|2\n444|RESPECT PROXY ENVIRONMENT ON SEND SELF-PREPARED REQUEST TEST|A test event that verifies a Requests session honors the HTTP proxy environment variable when sending a manually prepared request.|2\n519|PICKLEABLE REQUEST TESTS|The pickleable request tests serialize and deserialize Request, PreparedRequest, and Session objects and verify that their properties and behavior are preserved)<|2\n529|ISSUE 3386|Issue 3386 concerns validation of HTTP header values and requires header values to be strings or bytes|2\n489|PREPARED REQUEST HOOK TEST|PREPARED REQUEST HOOK TEST is a test event that verifies hooks attached to a prepared request function correctly. It confirms that request hooks survive pickling and unpickling, that the unpickled prepared request can be sent successfully, and that an associated response hook can modify the returned response.|3\n449|PROXY AUTHORIZATION PRESERVATION TEST|A test event that verifies a Proxy-Authorization header configured on a Requests session is preserved and sent to httpbin.|3\n539|NON-STRING HEADER VALUE VALIDATION|A parameterized test event verifying that integer, mapping, and list header values raise InvalidHeader|2\n13|PREPAREDREQUEST|\"PREPAREDREQUEST is a Requests library object that represents a fully prepared HTTP request ready for transmission through a connection to a server. It is created from a `Request` or `Session` after Requests processes the HTTP method, URL, query parameters, headers, authentication, cookies, files, form data, JSON payload, body, and hooks. The object stores the exact request data that will be sent, including its final URL, headers, cookies, and body, while retaining request encoding and hook functionality.\n\nAlthough prepared for transmission, PREPAREDREQUEST remains mutable and can be modified before it is sent. It is associated with the resulting `Response`, may represent the next request in a redirect chain, and supports serialization and restoration through pickle testing.\"|11\n528|ISSUE 1321|Issue 1321 is a reported Requests behavior concerning case-insensitive removal of HTTP headers|1\n275|REQUESTS ISSUE 1084|Requests issue 1084 is referenced in a comment concerning removal of request body headers during redirects|1\n520|PREPARED REQUEST FILE TEST|The prepared request file test prepares a POST request containing an open file, pickles and unpickles it, and verifies that it can still be sent)<|3\n\n-----Relationships-----\nid|source|target|description|weight|links\n960|PREPARED REQUEST COPY TEST|REQUESTS|The test checks copying behavior for Requests PreparedRequest objects|8.0|5\n689|REQUESTS|RESPECT PROXY ENVIRONMENT ON SEND SESSION-PREPARED REQUEST TEST|The test verifies Requests applies proxy environment settings to a prepared session request.|9.0|5\n653|TEST HEADERS ON SESSION WITH NONE ARE NOT SENT|REQUESTS|The test verifies omission of None-valued headers during Requests request preparation|9.0|5\n654|TEST HEADERS PRESERVE ORDER|REQUESTS|The test verifies ordered header handling and duplicate-header override behavior in Requests|9.0|5\n782|PREPARED FROM SESSION TEST|REQUESTS|The test verifies Requests session-level authentication during request preparation and sending.|9.0|5\n961|PREPARED REQUEST COPY TEST|PYTEST|pytest runs the prepared-request copy checks with several request configurations|7.0|3\n688|PYTEST|RESPECT PROXY ENVIRONMENT ON SEND SESSION-PREPARED REQUEST TEST|Pytest executes the environment-proxy test for a session-prepared request.|9.0|3\n870|PYTEST|HEADER LEADING-WHITESPACE VALIDATION|Pytest parameterizes whitespace cases and asserts that InvalidHeader is raised|1.0|3\n860|NATIVE HEADER KEY HANDLING|REQUEST|The test verifies the native key types retained by a prepared Request's headers|8.0|2\n861|HEADER VALIDATION|REQUEST|The test sends valid headers through the Requests request API and checks the prepared request headers|8.0|2\n857|CASE-INSENSITIVE HEADER REMOVAL|HTTPBIN|The test sends the request to HTTPBin and inspects the resulting request headers|8.0|1\n347|RESPONSE|PREPARED REQUEST|The Response request attribute contains the PreparedRequest associated with the response.|9.0|1\n349|HTTP REDIRECT|PREPARED REQUEST|A redirect response can expose a PreparedRequest for the next request through the next property.|8.0|1\n864|HEADER LEADING-WHITESPACE VALIDATION|INVALIDHEADER|The test confirms that leading whitespace in header names or values raises InvalidHeader before transmission|9.0|1\n\n-----Sources-----\nid|source|text\n83|tests/test_requests.py:L397-L519|\"        assert s.cookies[\"\"foo\"\"] == '\"\"bar:baz\"\"'\n\n    def test_cookie_persists_via_api(self, httpbin):\n        s = requests.session()\n        r = s.get(httpbin(\"\"redirect/1\"\"), cookies={\"\"foo\"\": \"\"bar\"\"})\n        assert \"\"foo\"\" in r.request.headers[\"\"Cookie\"\"]\n        assert \"\"foo\"\" in r.history[0].request.headers[\"\"Cookie\"\"]\n\n    def test_request_cookie_overrides_session_cookie(self, httpbin):\n        s = requests.session()\n        s.cookies[\"\"foo\"\"] = \"\"bar\"\"\n        r = s.get(httpbin(\"\"cookies\"\"), cookies={\"\"foo\"\": \"\"baz\"\"})\n        assert r.json()[\"\"cookies\"\"][\"\"foo\"\"] == \"\"baz\"\"\n        # Session cookie should not be modified\n        assert s.cookies[\"\"foo\"\"] == \"\"bar\"\"\n\n    def test_request_cookies_not_persisted(self, httpbin):\n        s = requests.session()\n        s.get(httpbin(\"\"cookies\"\"), cookies={\"\"foo\"\": \"\"baz\"\"})\n        # Sending a request with cookies should not add cookies to the session\n        assert not s.cookies\n\n    def test_generic_cookiejar_works(self, httpbin):\n        cj = cookielib.CookieJar()\n        cookiejar_from_dict({\"\"foo\"\": \"\"bar\"\"}, cj)\n        s = requests.session()\n        s.cookies = cj\n        r = s.get(httpbin(\"\"cookies\"\"))\n        # Make sure the cookie was sent\n        assert r.json()[\"\"cookies\"\"][\"\"foo\"\"] == \"\"bar\"\"\n        # Make sure the session cj is still the custom one\n        assert s.cookies is cj\n\n    def test_param_cookiejar_works(self, httpbin):\n        cj = cookielib.CookieJar()\n        cookiejar_from_dict({\"\"foo\"\": \"\"bar\"\"}, cj)\n        s = requests.session()\n        r = s.get(httpbin(\"\"cookies\"\"), cookies=cj)\n        # Make sure the cookie was sent\n        assert r.json()[\"\"cookies\"\"][\"\"foo\"\"] == \"\"bar\"\"\n\n    def test_cookielib_cookiejar_on_redirect(self, httpbin):\n        \"\"\"\"\"\"Tests resolve_redirect doesn't fail when merging cookies\n        with non-RequestsCookieJar cookiejar.\n\n        See GH #3579\n        \"\"\"\"\"\"\n        cj = cookiejar_from_dict({\"\"foo\"\": \"\"bar\"\"}, cookielib.CookieJar())\n        s = requests.Session()\n        s.cookies = cookiejar_from_dict({\"\"cookie\"\": \"\"tasty\"\"})\n\n        # Prepare request without using Session\n        req = requests.Request(\"\"GET\"\", httpbin(\"\"headers\"\"), cookies=cj)\n        prep_req = req.prepare()\n\n        # Send request and simulate redirect\n        resp = s.send(prep_req)\n        resp.status_code = 302\n        resp.headers[\"\"location\"\"] = httpbin(\"\"get\"\")\n        redirects = s.resolve_redirects(resp, prep_req)\n        resp = next(redirects)\n\n        # Verify CookieJar isn't being converted to RequestsCookieJar\n        assert isinstance(prep_req._cookies, cookielib.CookieJar)\n        assert isinstance(resp.request._cookies, cookielib.CookieJar)\n        assert not isinstance(resp.request._cookies, requests.cookies.RequestsCookieJar)\n\n        cookies = {}\n        for c in resp.request._cookies:\n            cookies[c.name] = c.value\n        assert cookies[\"\"foo\"\"] == \"\"bar\"\"\n        assert cookies[\"\"cookie\"\"] == \"\"tasty\"\"\n\n    def test_requests_in_history_are_not_overridden(self, httpbin):\n        resp = requests.get(httpbin(\"\"redirect/3\"\"))\n        urls = [r.url for r in resp.history]\n        req_urls = [r.request.url for r in resp.history]\n        assert urls == req_urls\n\n    def test_history_is_always_a_list(self, httpbin):\n        \"\"\"\"\"\"Show that even with redirects, Response.history is always a list.\"\"\"\"\"\"\n        resp = requests.get(httpbin(\"\"get\"\"))\n        assert isinstance(resp.history, list)\n        resp = requests.get(httpbin(\"\"redirect/1\"\"))\n        assert isinstance(resp.history, list)\n        assert not isinstance(resp.history, tuple)\n\n    def test_headers_on_session_with_None_are_not_sent(self, httpbin):\n        \"\"\"\"\"\"Do not send headers in Session.headers with None values.\"\"\"\"\"\"\n        ses = requests.Session()\n        ses.headers[\"\"Accept-Encoding\"\"] = None\n        req = requests.Request(\"\"GET\"\", httpbin(\"\"get\"\"))\n        prep = ses.prepare_request(req)\n        assert \"\"Accept-Encoding\"\" not in prep.headers\n\n    def test_headers_preserve_order(self, httpbin):\n        \"\"\"\"\"\"Preserve order when headers provided as OrderedDict.\"\"\"\"\"\"\n        ses = requests.Session()\n        ses.headers = collections.OrderedDict()\n        ses.headers[\"\"Accept-Encoding\"\"] = \"\"identity\"\"\n        ses.headers[\"\"First\"\"] = \"\"1\"\"\n        ses.headers[\"\"Second\"\"] = \"\"2\"\"\n        headers = collections.OrderedDict([(\"\"Third\"\", \"\"3\"\"), (\"\"Fourth\"\", \"\"4\"\")])\n        headers[\"\"Fifth\"\"] = \"\"5\"\"\n        headers[\"\"Second\"\"] = \"\"222\"\"\n        req = requests.Request(\"\"GET\"\", httpbin(\"\"get\"\"), headers=headers)\n        prep = ses.prepare_request(req)\n        items = list(prep.headers.items())\n        assert items[0] == (\"\"Accept-Encoding\"\", \"\"identity\"\")\n        assert items[1] == (\"\"First\"\", \"\"1\"\")\n        assert items[2] == (\"\"Second\"\", \"\"222\"\")\n        assert items[3] == (\"\"Third\"\", \"\"3\"\")\n        assert items[4] == (\"\"Fourth\"\", \"\"4\"\")\n        assert items[5] == (\"\"Fifth\"\", \"\"5\"\")\n\n    @pytest.mark.parametrize(\"\"key\"\", (\"\"User-agent\"\", \"\"user-agent\"\"))\n    def test_user_agent_transfers(self, httpbin, key):\n        heads = {key: \"\"Mozilla/5.0 (github.com/psf/requests)\"\"}\n\n        r = requests.get(httpbin(\"\"user-agent\"\"), headers=heads)\n        assert heads[key] in r.text\n\n    def test_HTTP_200_OK_HEAD(self, httpbin):\n\"\n",
+  "final_tables": [
+    {
+      "name": "entities",
+      "columns": [
+        "id",
+        "entity",
+        "description",
+        "number of relationships"
+      ],
+      "rows": [
+        {
+          "id": "431",
+          "entity": "TEST HEADERS PRESERVE ORDER",
+          "description": "A test event verifying that ordered session and request headers preserve their expected order while request headers override duplicate session headers",
+          "number of relationships": "1"
+        },
+        {
+          "id": "490",
+          "entity": "PREPARED FROM SESSION TEST",
+          "description": "A test event that verifies a Session prepares a request with session-level authentication and sends the resulting authentication header.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "430",
+          "entity": "TEST HEADERS ON SESSION WITH NONE ARE NOT SENT",
+          "description": "A test event verifying that session headers assigned a None value are omitted from prepared Requests requests",
+          "number of relationships": "1"
+        },
+        {
+          "id": "541",
+          "entity": "HEADER LEADING-WHITESPACE VALIDATION",
+          "description": "A parameterized test event verifying that leading whitespace in HTTP header names or values raises InvalidHeader before a request is sent",
+          "number of relationships": "2"
+        },
+        {
+          "id": "534",
+          "entity": "CASE-INSENSITIVE HEADER REMOVAL",
+          "description": "A test event verifying that passing a differently cased header name with a null value removes the existing header from a prepared request",
+          "number of relationships": "1"
+        },
+        {
+          "id": "586",
+          "entity": "PREPARED REQUEST COPY TEST",
+          "description": "A test event that verifies copying a prepared request preserves its method, URL, headers, cookies, body, and hooks",
+          "number of relationships": "2"
+        },
+        {
+          "id": "538",
+          "entity": "HEADER VALIDATION",
+          "description": "A test event verifying that valid string and byte header values, including spaces and empty values, are accepted and preserved\"",
+          "number of relationships": "1"
+        },
+        {
+          "id": "537",
+          "entity": "NATIVE HEADER KEY HANDLING",
+          "description": "A test event verifying that prepared request header keys remain usable as native string or byte-string keys",
+          "number of relationships": "1"
+        },
+        {
+          "id": "445",
+          "entity": "RESPECT PROXY ENVIRONMENT ON SEND SESSION-PREPARED REQUEST TEST",
+          "description": "A test event that verifies a Requests session honors the HTTP proxy environment variable when sending a session-prepared request.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "249",
+          "entity": "PREPARED REQUEST",
+          "description": "PreparedRequest is the request object associated with a Response and represents the prepared HTTP request that produced that response or the next request in a redirect chain.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "444",
+          "entity": "RESPECT PROXY ENVIRONMENT ON SEND SELF-PREPARED REQUEST TEST",
+          "description": "A test event that verifies a Requests session honors the HTTP proxy environment variable when sending a manually prepared request.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "519",
+          "entity": "PICKLEABLE REQUEST TESTS",
+          "description": "The pickleable request tests serialize and deserialize Request, PreparedRequest, and Session objects and verify that their properties and behavior are preserved)<",
+          "number of relationships": "2"
+        },
+        {
+          "id": "529",
+          "entity": "ISSUE 3386",
+          "description": "Issue 3386 concerns validation of HTTP header values and requires header values to be strings or bytes",
+          "number of relationships": "2"
+        },
+        {
+          "id": "489",
+          "entity": "PREPARED REQUEST HOOK TEST",
+          "description": "PREPARED REQUEST HOOK TEST is a test event that verifies hooks attached to a prepared request function correctly. It confirms that request hooks survive pickling and unpickling, that the unpickled prepared request can be sent successfully, and that an associated response hook can modify the returned response.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "449",
+          "entity": "PROXY AUTHORIZATION PRESERVATION TEST",
+          "description": "A test event that verifies a Proxy-Authorization header configured on a Requests session is preserved and sent to httpbin.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "539",
+          "entity": "NON-STRING HEADER VALUE VALIDATION",
+          "description": "A parameterized test event verifying that integer, mapping, and list header values raise InvalidHeader",
+          "number of relationships": "2"
+        },
+        {
+          "id": "13",
+          "entity": "PREPAREDREQUEST",
+          "description": "PREPAREDREQUEST is a Requests library object that represents a fully prepared HTTP request ready for transmission through a connection to a server. It is created from a `Request` or `Session` after Requests processes the HTTP method, URL, query parameters, headers, authentication, cookies, files, form data, JSON payload, body, and hooks. The object stores the exact request data that will be sent, including its final URL, headers, cookies, and body, while retaining request encoding and hook functionality.\n\nAlthough prepared for transmission, PREPAREDREQUEST remains mutable and can be modified before it is sent. It is associated with the resulting `Response`, may represent the next request in a redirect chain, and supports serialization and restoration through pickle testing.",
+          "number of relationships": "11"
+        },
+        {
+          "id": "528",
+          "entity": "ISSUE 1321",
+          "description": "Issue 1321 is a reported Requests behavior concerning case-insensitive removal of HTTP headers",
+          "number of relationships": "1"
+        },
+        {
+          "id": "275",
+          "entity": "REQUESTS ISSUE 1084",
+          "description": "Requests issue 1084 is referenced in a comment concerning removal of request body headers during redirects",
+          "number of relationships": "1"
+        },
+        {
+          "id": "520",
+          "entity": "PREPARED REQUEST FILE TEST",
+          "description": "The prepared request file test prepares a POST request containing an open file, pickles and unpickles it, and verifies that it can still be sent)<",
+          "number of relationships": "3"
+        }
+      ]
+    },
+    {
+      "name": "relationships",
+      "columns": [
+        "id",
+        "source",
+        "target",
+        "description",
+        "weight",
+        "links"
+      ],
+      "rows": [
+        {
+          "id": "960",
+          "source": "PREPARED REQUEST COPY TEST",
+          "target": "REQUESTS",
+          "description": "The test checks copying behavior for Requests PreparedRequest objects",
+          "weight": "8.0",
+          "links": "5"
+        },
+        {
+          "id": "689",
+          "source": "REQUESTS",
+          "target": "RESPECT PROXY ENVIRONMENT ON SEND SESSION-PREPARED REQUEST TEST",
+          "description": "The test verifies Requests applies proxy environment settings to a prepared session request.",
+          "weight": "9.0",
+          "links": "5"
+        },
+        {
+          "id": "653",
+          "source": "TEST HEADERS ON SESSION WITH NONE ARE NOT SENT",
+          "target": "REQUESTS",
+          "description": "The test verifies omission of None-valued headers during Requests request preparation",
+          "weight": "9.0",
+          "links": "5"
+        },
+        {
+          "id": "654",
+          "source": "TEST HEADERS PRESERVE ORDER",
+          "target": "REQUESTS",
+          "description": "The test verifies ordered header handling and duplicate-header override behavior in Requests",
+          "weight": "9.0",
+          "links": "5"
+        },
+        {
+          "id": "782",
+          "source": "PREPARED FROM SESSION TEST",
+          "target": "REQUESTS",
+          "description": "The test verifies Requests session-level authentication during request preparation and sending.",
+          "weight": "9.0",
+          "links": "5"
+        },
+        {
+          "id": "961",
+          "source": "PREPARED REQUEST COPY TEST",
+          "target": "PYTEST",
+          "description": "pytest runs the prepared-request copy checks with several request configurations",
+          "weight": "7.0",
+          "links": "3"
+        },
+        {
+          "id": "688",
+          "source": "PYTEST",
+          "target": "RESPECT PROXY ENVIRONMENT ON SEND SESSION-PREPARED REQUEST TEST",
+          "description": "Pytest executes the environment-proxy test for a session-prepared request.",
+          "weight": "9.0",
+          "links": "3"
+        },
+        {
+          "id": "870",
+          "source": "PYTEST",
+          "target": "HEADER LEADING-WHITESPACE VALIDATION",
+          "description": "Pytest parameterizes whitespace cases and asserts that InvalidHeader is raised",
+          "weight": "1.0",
+          "links": "3"
+        },
+        {
+          "id": "860",
+          "source": "NATIVE HEADER KEY HANDLING",
+          "target": "REQUEST",
+          "description": "The test verifies the native key types retained by a prepared Request's headers",
+          "weight": "8.0",
+          "links": "2"
+        },
+        {
+          "id": "861",
+          "source": "HEADER VALIDATION",
+          "target": "REQUEST",
+          "description": "The test sends valid headers through the Requests request API and checks the prepared request headers",
+          "weight": "8.0",
+          "links": "2"
+        },
+        {
+          "id": "857",
+          "source": "CASE-INSENSITIVE HEADER REMOVAL",
+          "target": "HTTPBIN",
+          "description": "The test sends the request to HTTPBin and inspects the resulting request headers",
+          "weight": "8.0",
+          "links": "1"
+        },
+        {
+          "id": "347",
+          "source": "RESPONSE",
+          "target": "PREPARED REQUEST",
+          "description": "The Response request attribute contains the PreparedRequest associated with the response.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "349",
+          "source": "HTTP REDIRECT",
+          "target": "PREPARED REQUEST",
+          "description": "A redirect response can expose a PreparedRequest for the next request through the next property.",
+          "weight": "8.0",
+          "links": "1"
+        },
+        {
+          "id": "864",
+          "source": "HEADER LEADING-WHITESPACE VALIDATION",
+          "target": "INVALIDHEADER",
+          "description": "The test confirms that leading whitespace in header names or values raises InvalidHeader before transmission",
+          "weight": "9.0",
+          "links": "1"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "columns": [
+        "id",
+        "source",
+        "text"
+      ],
+      "rows": [
+        {
+          "id": "83",
+          "text": "        assert s.cookies[\"foo\"] == '\"bar:baz\"'\n\n    def test_cookie_persists_via_api(self, httpbin):\n        s = requests.session()\n        r = s.get(httpbin(\"redirect/1\"), cookies={\"foo\": \"bar\"})\n        assert \"foo\" in r.request.headers[\"Cookie\"]\n        assert \"foo\" in r.history[0].request.headers[\"Cookie\"]\n\n    def test_request_cookie_overrides_session_cookie(self, httpbin):\n        s = requests.session()\n        s.cookies[\"foo\"] = \"bar\"\n        r = s.get(httpbin(\"cookies\"), cookies={\"foo\": \"baz\"})\n        assert r.json()[\"cookies\"][\"foo\"] == \"baz\"\n        # Session cookie should not be modified\n        assert s.cookies[\"foo\"] == \"bar\"\n\n    def test_request_cookies_not_persisted(self, httpbin):\n        s = requests.session()\n        s.get(httpbin(\"cookies\"), cookies={\"foo\": \"baz\"})\n        # Sending a request with cookies should not add cookies to the session\n        assert not s.cookies\n\n    def test_generic_cookiejar_works(self, httpbin):\n        cj = cookielib.CookieJar()\n        cookiejar_from_dict({\"foo\": \"bar\"}, cj)\n        s = requests.session()\n        s.cookies = cj\n        r = s.get(httpbin(\"cookies\"))\n        # Make sure the cookie was sent\n        assert r.json()[\"cookies\"][\"foo\"] == \"bar\"\n        # Make sure the session cj is still the custom one\n        assert s.cookies is cj\n\n    def test_param_cookiejar_works(self, httpbin):\n        cj = cookielib.CookieJar()\n        cookiejar_from_dict({\"foo\": \"bar\"}, cj)\n        s = requests.session()\n        r = s.get(httpbin(\"cookies\"), cookies=cj)\n        # Make sure the cookie was sent\n        assert r.json()[\"cookies\"][\"foo\"] == \"bar\"\n\n    def test_cookielib_cookiejar_on_redirect(self, httpbin):\n        \"\"\"Tests resolve_redirect doesn't fail when merging cookies\n        with non-RequestsCookieJar cookiejar.\n\n        See GH #3579\n        \"\"\"\n        cj = cookiejar_from_dict({\"foo\": \"bar\"}, cookielib.CookieJar())\n        s = requests.Session()\n        s.cookies = cookiejar_from_dict({\"cookie\": \"tasty\"})\n\n        # Prepare request without using Session\n        req = requests.Request(\"GET\", httpbin(\"headers\"), cookies=cj)\n        prep_req = req.prepare()\n\n        # Send request and simulate redirect\n        resp = s.send(prep_req)\n        resp.status_code = 302\n        resp.headers[\"location\"] = httpbin(\"get\")\n        redirects = s.resolve_redirects(resp, prep_req)\n        resp = next(redirects)\n\n        # Verify CookieJar isn't being converted to RequestsCookieJar\n        assert isinstance(prep_req._cookies, cookielib.CookieJar)\n        assert isinstance(resp.request._cookies, cookielib.CookieJar)\n        assert not isinstance(resp.request._cookies, requests.cookies.RequestsCookieJar)\n\n        cookies = {}\n        for c in resp.request._cookies:\n            cookies[c.name] = c.value\n        assert cookies[\"foo\"] == \"bar\"\n        assert cookies[\"cookie\"] == \"tasty\"\n\n    def test_requests_in_history_are_not_overridden(self, httpbin):\n        resp = requests.get(httpbin(\"redirect/3\"))\n        urls = [r.url for r in resp.history]\n        req_urls = [r.request.url for r in resp.history]\n        assert urls == req_urls\n\n    def test_history_is_always_a_list(self, httpbin):\n        \"\"\"Show that even with redirects, Response.history is always a list.\"\"\"\n        resp = requests.get(httpbin(\"get\"))\n        assert isinstance(resp.history, list)\n        resp = requests.get(httpbin(\"redirect/1\"))\n        assert isinstance(resp.history, list)\n        assert not isinstance(resp.history, tuple)\n\n    def test_headers_on_session_with_None_are_not_sent(self, httpbin):\n        \"\"\"Do not send headers in Session.headers with None values.\"\"\"\n        ses = requests.Session()\n        ses.headers[\"Accept-Encoding\"] = None\n        req = requests.Request(\"GET\", httpbin(\"get\"))\n        prep = ses.prepare_request(req)\n        assert \"Accept-Encoding\" not in prep.headers\n\n    def test_headers_preserve_order(self, httpbin):\n        \"\"\"Preserve order when headers provided as OrderedDict.\"\"\"\n        ses = requests.Session()\n        ses.headers = collections.OrderedDict()\n        ses.headers[\"Accept-Encoding\"] = \"identity\"\n        ses.headers[\"First\"] = \"1\"\n        ses.headers[\"Second\"] = \"2\"\n        headers = collections.OrderedDict([(\"Third\", \"3\"), (\"Fourth\", \"4\")])\n        headers[\"Fifth\"] = \"5\"\n        headers[\"Second\"] = \"222\"\n        req = requests.Request(\"GET\", httpbin(\"get\"), headers=headers)\n        prep = ses.prepare_request(req)\n        items = list(prep.headers.items())\n        assert items[0] == (\"Accept-Encoding\", \"identity\")\n        assert items[1] == (\"First\", \"1\")\n        assert items[2] == (\"Second\", \"222\")\n        assert items[3] == (\"Third\", \"3\")\n        assert items[4] == (\"Fourth\", \"4\")\n        assert items[5] == (\"Fifth\", \"5\")\n\n    @pytest.mark.parametrize(\"key\", (\"User-agent\", \"user-agent\"))\n    def test_user_agent_transfers(self, httpbin, key):\n        heads = {key: \"Mozilla/5.0 (github.com/psf/requests)\"}\n\n        r = requests.get(httpbin(\"user-agent\"), headers=heads)\n        assert heads[key] in r.text\n\n    def test_HTTP_200_OK_HEAD(self, httpbin):\n",
+          "source": "tests/test_requests.py:L397-L519"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "short_id": "83",
+      "text_unit_id": "ebcec01851c6de400d256bec2306e9a5dbabb310f35df8afcf6940e0a619aab0eebad1e48eb1b3dc5755e9092b9e83e06052eb0c71ac2fe8e4482000a7c8bf0d",
+      "id": "d990cc1c1e966f6e504c2b701dcab3dc28d04eb97af585d787a78dbbf45d457b",
+      "title": "tests/test_requests.py:L397-L519",
+      "path": "tests/test_requests.py",
+      "start_line": 397,
+      "end_line": 519,
+      "tokens": 1197,
+      "text_sha256": "cdb73c5739bc970ac655501b87fe88200321ad55d0a1a71467724ef0321518b5",
+      "ms_text_unit_id": "ebcec01851c6de400d256bec2306e9a5dbabb310f35df8afcf6940e0a619aab0eebad1e48eb1b3dc5755e9092b9e83e06052eb0c71ac2fe8e4482000a7c8bf0d"
+    }
+  ],
+  "raw_context_tokens": 2564,
+  "final_context_tokens": 2683,
+  "source_text_tokens": 1197,
+  "source_chunks": 1,
+  "retrieval_compute_seconds": 0.014705667272210121,
+  "adaptation_seconds": 0.00489554088562727,
+  "empty_reason": null,
+  "community_level": 2,
+  "dropped_tail_rows": 0
+}

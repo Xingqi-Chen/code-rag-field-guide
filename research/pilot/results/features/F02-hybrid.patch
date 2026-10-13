@@ -1,0 +1,58 @@
+diff --git a/src/requests/sessions.py b/src/requests/sessions.py
+--- a/src/requests/sessions.py
++++ b/src/requests/sessions.py
+@@ -48,6 +48,8 @@ from .utils import (
+ 
+ DEFAULT_REDIRECT_LIMIT = 30
+ 
++_DEFAULT_TIMEOUT = object()
++
+ 
+ class SessionRedirectMixin:
+     def get_redirect_target(self, resp):
+@@ -432,6 +434,7 @@ class Session(SessionRedirectMixin):
+         self.cert = None
+         self.max_redirects = DEFAULT_REDIRECT_LIMIT
+         self.trust_env = True
++        self.default_timeout = None
+ 
+         self.cookies = cookiejar_from_dict({})
+ 
+@@ -475,7 +478,7 @@ class Session(SessionRedirectMixin):
+         files=None,
+         auth=None,
+-        timeout=None,
++        timeout=_DEFAULT_TIMEOUT,
+         allow_redirects=True,
+         proxies=None,
+         hooks=None,
+@@ -486,6 +489,9 @@ class Session(SessionRedirectMixin):
+         json=None,
+     ):
+         # Create the Request.
++        if timeout is _DEFAULT_TIMEOUT:
++            timeout = self.default_timeout
++
+         req = Request(
+             method=method.upper(),
+             url=url,
+diff --git a/docs/user/advanced.rst b/docs/user/advanced.rst
+--- a/docs/user/advanced.rst
++++ b/docs/user/advanced.rst
+@@ -1058,6 +1058,17 @@ time out unless a timeout value is set explicitly. Without a timeout, your code
+ may hang for minutes or more.
+ 
++Sessions can provide a mutable default timeout for calls where ``timeout`` is
++omitted::
++
++    s = requests.Session()
++    s.default_timeout = 5
++    r = s.get('https://github.com')
++
++The session default is used only when the ``timeout`` argument is omitted.
++Passing ``timeout=None`` explicitly overrides the session default and disables
++the timeout for that request.
++
+ The **connect** timeout is the number of seconds Requests will wait for your
+ client to establish a connection to a remote machine (corresponding to the
+ `connect()`_) call on the socket. It's a good practice to set connect timeouts
