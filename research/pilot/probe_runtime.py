@@ -347,6 +347,7 @@ def worker(request_path, response_path):
             return
         task = json.loads(request_path.read_text())
         service, body = task["service"], task["body"]
+        response_byte_limit=(4 if service == "embedding" else 2)*1024**2
         validate_payload(service, body)
         if digest(canonical(body).encode()) != ledger["events"][-1]["request_body_sha256"]:
             raise Stop("reserved_payload_changed")
@@ -369,14 +370,15 @@ def worker(request_path, response_path):
         save(marker, {"dispatch_slot_claimed": True, "dispatch_started": True})
         try:
             with opener.open(req, timeout=LIMITS[service + "_request_seconds"]) as r:
-                data = r.read(2 * 1024**2 + 1)
-                if len(data) > 2 * 1024**2:
+                data = r.read(response_byte_limit + 1)
+                if len(data) > response_byte_limit:
                     raise Stop("response_byte_cap_exceeded")
                 # Never retain response headers. Exact credential redaction is a final safeguard.
                 raw = data.decode().replace(key, "[REDACTED]")
                 parsed = (decode_generation(raw, r.headers.get("Content-Type")) if service == "generation"
                           else json.loads(raw))
-                result = {"http_status": r.status, "response": parsed}
+                result = {"http_status": r.status, "response": parsed,
+                          "response_byte_limit":response_byte_limit,"response_bytes":len(data)}
         except urllib.error.HTTPError as e:
             result = {"http_status": e.code, **error_summary(e.read(65536))}
         except urllib.error.URLError:

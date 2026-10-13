@@ -42,7 +42,8 @@ def main():
     event_keys=['sequence','service','phase','workflow','input_tokens','items','status',
         'request_body_sha256','started_utc','source_commit','supervisor_reason','worker_exit',
         'elapsed_seconds','http_status','error_category','response_format','validation_reason',
-        'usage','visible_output_common_tokens','requested_output_limit_exceeded']
+        'usage','visible_output_common_tokens','requested_output_limit_exceeded',
+        'worker_source_sha256','response_byte_limit','response_bytes']
     public['events']=[{k:e[k] for k in event_keys if k in e} for e in state['events']]
     classifications=Counter()
     initial_prompts={probe.prompt_values()['GRAPH_EXTRACTION_PROMPT'].format(

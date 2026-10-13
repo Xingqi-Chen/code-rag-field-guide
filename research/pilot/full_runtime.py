@@ -104,6 +104,8 @@ def validate_payload(service, body):
 def worker(request, response):
     # Reuse the already tested one-shot HTTP worker with this stage's directory
     # and payload rules. Credentials remain worker-only; no SDK retries exist.
+    source_hashes={Path(__file__).name:probe.digest(Path(__file__).read_bytes()),
+                   Path(probe.__file__).name:probe.digest(Path(probe.__file__).read_bytes())}
     original_validate = probe.validate_payload
     def checked(service, body):
         if service == 'embedding':
@@ -113,6 +115,10 @@ def worker(request, response):
     probe.LIMITS = LIMITS
     probe.validate_payload = checked
     probe.worker(request, response)
+    if response.exists():
+        envelope=json.loads(response.read_text())
+        envelope['worker_source_sha256']=source_hashes
+        probe.save(response,envelope)
 
 
 class Runtime:
