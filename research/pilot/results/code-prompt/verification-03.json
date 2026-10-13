@@ -1,0 +1,30 @@
+{
+  "verified_utc": "2026-10-13T14:43:06.394220+00:00",
+  "scope": "Offline publication validation of third interrupted code-prompt run; no model calls or index completion.",
+  "checks": [
+    {
+      "command": "python3 research/pilot/verify_code_prompt.py",
+      "exit_code": 0,
+      "output": "Verified frozen inputs, three interruption snapshots, 104 successful generations and 3 unknown outcomes, approved75-to76 and96-to97 retry lineage, unchanged cumulative limits and 40 baseline audit records. No new retrieval claim or model call.",
+      "stderr": ""
+    },
+    {
+      "command": "python3 research/pilot/analyze_failure_chains.py --check",
+      "exit_code": 0,
+      "output": "{\"status\": \"verified\", \"preserved_original_files\": 479, \"selected_extraction_units\": 4, \"new_generation_calls\": 0, \"new_embedding_calls\": 0, \"scope\": \"Offline public-evidence reconstruction\"}",
+      "stderr": ""
+    },
+    {
+      "command": "python3 scripts/validate.py",
+      "exit_code": 0,
+      "output": "Validated 641 public files, 351 local links/anchors, 4 PNG/SVG pairs, 6 Mermaid flowcharts, source pin and privacy patterns.",
+      "stderr": ""
+    },
+    {
+      "command": "git diff --check",
+      "exit_code": 0,
+      "output": "",
+      "stderr": ""
+    }
+  ]
+}

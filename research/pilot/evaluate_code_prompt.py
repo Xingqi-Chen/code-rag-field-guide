@@ -39,18 +39,26 @@ def export():
     variant.configure()
     variant.check_frozen()
     import export_run_evidence as exporter
-    exporter.RUN, exporter.OUT = RUN, OUT
+    state = read(RUN/'summary.json')
+    partial = state['status']=='stopped'
+    stop_number = len(state.get('recoveries',[]))+1
+    # Preserve the historical public interruption snapshots across resumptions.
+    destination = OUT/('execution-interrupted.json' if stop_number==1 else f'execution-interrupted-{stop_number:02}.json')
+    scratch = RUN/f'public-export-stop-{stop_number:02}' if partial else OUT
+    exporter.RUN, exporter.OUT = RUN, scratch
     documents = [json.loads(x) for x in (ROOT/'.cache/pilot/input/documents.jsonl').read_text().splitlines()]
     prompts = {variant.PROMPT.read_text().format(entity_types=','.join(variant.TYPES), input_text=d['text'].strip()) for d in documents}
     exporter.main(initial_prompts=prompts)
-    path = OUT/('execution.json' if read(RUN/'summary.json')['status']=='index_complete' else 'execution-interrupted.json')
+    path = scratch/('execution-interrupted.json' if partial else 'execution.json')
     public = read(path)
     public.update(variant='code-prompt', prior_cumulative_embedding_tokens=206333,
         cost_notes='Cumulative estimate includes 206333 prior baseline/probe/query tokens. Only new graph embeddings incur new calls; source/query vectors reused. No Fullstar fee estimate. Unknown usage is not zero.',
         evaluation_complete=False)
-    write(path, public)
-    if public['status']=='stopped':
+    if partial:
+        assert not destination.exists(), 'Refuse to replace a published interruption snapshot'
+        write(destination, public)
         return
+    write(path, public)
     # Preserve the original unit provenance including exact Microsoft IDs.
     (OUT/'index/text-unit-provenance.json').write_bytes((BASE/'index/text-unit-provenance.json').read_bytes())
     write(OUT/'imported-embedding-cache.json', read(RUN/'imported-embedding-cache.json'))

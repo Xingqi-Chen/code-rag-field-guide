@@ -47,3 +47,5 @@ python3 research/pilot/verify_code_prompt.py
 重新调用模型不是离线复算。它需要先按[原运行附录](../full-run.md)准备同版微软依赖、固定语料及已经核验的旧图和源码／问题向量，另备新的工作副本和输出目录，保留发布版结果后才运行 `code_prompt_experiment.py prepare`、`index`。入口对已有运行／输出拒绝覆盖；没有“一条命令删掉旧结果再跑”的捷径。远端输出不能保证逐字重现，预算与原失败记录均需单独保留。
 
 本次单次恢复授权于 **2026-10-13 13:55:34 UTC** 收到。`recover_code_prompt_timeout.py authorize --user-approved-specific-retry`只登记这一明确授权并保存中断快照；`resume`消费一次对应请求哈希的许可并继续原运行。这个开关不是未来所有重试的授权。第75次原始未知结果继续保留，新事件编号记录唯一重发的 lineage；截止时间仍是16:12:59 UTC。
+
+后续第96次也遇到未知结果；用户于14:25:48 UTC明确批准仅重发96一次，由专门的 `recover_code_prompt_timeout96.py` 登记并执行，96→97成功。随后第107次未知结果再次停止；`recover_code_prompt_timeout107.py` 已离线复核，尚无运行授权。每次恢复均保留旧快照、累计预算和原截止时间；[当前状态及完整证据](../results/code-prompt/README.md)单独记录。
