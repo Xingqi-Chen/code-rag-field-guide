@@ -33,7 +33,7 @@
     "automatic_retries": 0
   },
   "failure_policy": "Stop on new transport, output-validation, schema, provenance or budget failure. Do not automatically replay uncertain calls. Diagnose locally; any authorized resumption must retain successful cache and failure history.",
-  "known_output_limit_risk": "User explicitly accepts that the upstream may ignore the requested 2048 output limit, and a client timeout may not stop remote generation. The initial runner stopped on a complete response reporting 2278 output tokens (visible text 1220); after diagnosis, retain complete valid replies and record cap violations without truncation or resending. Requested output remains 2048; 2 MiB response-byte, attempt and wall limits remain enforced.",
+  "known_output_limit_risk": "User explicitly accepts that the upstream may ignore the requested 2048 output limit, and a client timeout may not stop remote generation. The initial runner stopped on a complete response reporting 2278 output tokens (visible text 1220); after diagnosis, retain complete valid replies and record cap violations without truncation or resending. Requested output remains 2048; 2 MiB generation / 4 MiB embedding response-byte, attempt and wall limits remain enforced.",
   "resource_monitoring": "Disabled at user request, including upstream tracemalloc instrumentation. Wall time and artifact sizes remain measurable; memory fields in upstream stats are unmeasured placeholders, never measured zero.",
   "official_integration": "Supported custom LLM provider registration only; pinned upstream prompts, entity types, extraction, merging, clustering and context builders. Common o200k tokenizer and identical prepared chunks are declared evaluation adaptations. Direct Responses transport is not the upstream LiteLLM transport.",
   "seed": 20261012,
@@ -64,6 +64,7 @@
     "worker_source_sha256": {
       "full_runtime.py": "fcc3bfc6039176fb0ca7467521d9cc9efc7758071cea8825b1552c29fac356f8",
       "probe_runtime.py": "6489f4d87d3bc0f2e6f55e3d6e9b70db6105212f8da6fcc60d8f3c99a5211820"
-    }
+    },
+    "first_observed_event_with_worker_hash": 287
   }
 }
