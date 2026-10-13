@@ -98,7 +98,39 @@ def sample():
     print('Frozen hash-selected 20 entities and 20 relationships from each graph for source audit.')
 
 
+def witnesses():
+    """Export the same four already-selected source chunks, never select by new outcome."""
+    assert read(RUN/'summary.json')['status']=='index_complete'
+    variant.check_frozen()
+    previous=read(BASE/'failure-analysis/extraction-witnesses.json')
+    diagnostics=read(OUT/'extraction-format-diagnostics.json')
+    events={e['sequence']:e for e in read(OUT/'execution.json')['events']}
+    units=[]
+    for old in previous['units']:
+        unit={k:v for k,v in old.items() if k not in {'replies','prompt_source_check'}}
+        replies=[]
+        for d in diagnostics:
+            seq=d['sequence'];request=read(RUN/f'request-{seq:02}.json')
+            body=request['body'];prompt=body['input'][0]['content'][0]['text']
+            if old['source_text'].strip() not in prompt:continue
+            response=read(RUN/f'response-{seq:02}.json')['response']
+            choice=response['choices'][0];content=choice['message']['content']
+            assert hashlib.sha256(content.encode()).hexdigest()==d['normalized_visible_output_sha256']
+            assert variant.probe.digest(variant.probe.canonical(body).encode())==events[seq]['request_body_sha256']
+            replies.append({'sequence':seq,'operation':d['operation'],
+                'normalized_finish_reason':choice['finish_reason'],'content':content,
+                'content_sha256':hashlib.sha256(content.encode()).hexdigest(),
+                'request_body':body,'request_body_sha256':events[seq]['request_body_sha256']})
+        assert len(replies)==2 and {r['operation'] for r in replies}=={'extraction_initial','extraction_glean'}
+        unit.update(replies=replies,prompt_source_check='Frozen code prompt includes the same exact source_text.strip(); no source positions injected.')
+        units.append(unit)
+    write(OUT/'extraction-witnesses.json',{'selection':'The same four previously published default-run chunks for Q01/Q07/Q13/G02; selected before viewing new results, not a representative sample.',
+        'units':units,'new_model_calls':0})
+    print('Exported four unchanged source witnesses and eight complete new extraction request/reply pairs.')
+
+
 if __name__=='__main__':
-    parser=argparse.ArgumentParser();parser.add_argument('action',choices=['parse','sample']);args=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('action',choices=['parse','sample','witnesses']);args=parser.parse_args()
     if args.action=='parse':parse_comparison()
-    else:sample()
+    elif args.action=='sample':sample()
+    else:witnesses()

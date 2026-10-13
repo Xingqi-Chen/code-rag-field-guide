@@ -49,6 +49,33 @@ def main():
     assert len(diagnosis['cache_verification'])==74
     for e,c in zip(es[:-1],diagnosis['cache_verification'],strict=True):
         assert c['sequence']==e['sequence'] and c['request_body_sha256']==e['request_body_sha256']
+    second=read(OUT/'execution-interrupted-02.json');events=second['events']
+    assert second['status']=='stopped' and second['stop_reason']=='worker_wall_timeout'
+    assert len(events)==second['index_generation_attempts']==96 and events[:75]==es
+    assert [e['sequence'] for e in events if e['status']=='failed']==[75,96]
+    valid=[e for e in events if e['status']=='validated'];assert len(valid)==94
+    assert all('usage' not in events[i-1] for i in [75,96])
+    assert second['unknown_usage_sequences']==[75,96] and second['limits']==x['limits']
+    assert second['generation_input_tokens']==sum(e['input_tokens'] for e in events)
+    assert second['embedding_attempts']==0 and second['embedding_reserved_tokens']==206333
+    assert second['completion_cache_hits']==74
+    totals=Counter()
+    for e in valid:
+        for k,v in e['usage'].items():
+            if type(v) is int:totals['generation_'+k]+=v
+    assert dict(totals)==second['observed_usage_totals']
+    recovery=second['recoveries'];assert len(recovery)==1
+    assert recovery[0]['event']==75 and recovery[0]['retry_event']==76
+    assert events[74]['request_body_sha256']==events[75]['request_body_sha256']
+    assert events[75]['status']=='validated' and recovery[0]['explicit_one_time_retry_authorized']
+    progress=read(OUT/'recovery-progress.json')
+    assert progress['retry_event']['request_body_sha256']==events[75]['request_body_sha256']
+    assert progress['retry_event']['usage']==events[75]['usage'] and progress['lineage']==recovery[0]
+    next_diagnosis=read(OUT/'timeout-diagnosis-02.json')
+    assert next_diagnosis['unknown_event']==96 and next_diagnosis['successful_cached_responses']==94
+    assert next_diagnosis['unknown_request_body_sha256']==events[-1]['request_body_sha256']
+    for e,c in zip(valid,next_diagnosis['cache_verification'],strict=True):
+        assert c['sequence']==e['sequence'] and c['request_body_sha256']==e['request_body_sha256']
     sample=read(OUT/'quality-sample-default.json');review=read(OUT/'quality-review-default.json')
     assert sha(OUT/'quality-sample-default.json')==review['inputs']['sample_sha256']
     units={u['ms_text_unit_id']:u for u in read(ROOT/'research/pilot/results/index/text-unit-provenance.json')}
@@ -67,7 +94,7 @@ def main():
             assert judged['evidence']
             for e in judged['evidence']:assert linked[e['input_id']]==e['source_title'] and e['snippet']
     assert not review['reviewer']['human_review'] and not review['reviewer']['blind_review']
-    print('Verified frozen inputs, 75-event interrupted ledger with 1 unknown outcome, cumulative cost reserve and 40 fixed baseline audit records. No new retrieval claim or model call.')
+    print('Verified frozen inputs, both interruption snapshots, 94 successful generations and 2 unknown outcomes, exact75-to76 approved retry lineage, unchanged cumulative limits and 40 baseline audit records. No new retrieval claim or model call.')
 
 
 if __name__=='__main__':main()
