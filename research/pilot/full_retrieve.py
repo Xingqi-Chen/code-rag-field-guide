@@ -103,7 +103,8 @@ def run():
         raise transport.Halt('choose_a_new_results_directory_before_paid_query_embeddings')
     if runtime.ledger['status'] != 'index_complete':
         raise transport.Halt('index_not_complete')
-    # This stage has no generation calls. Keep the original full-run deadline.
+    # No generation calls. Only a separately authorized pending window can
+    # replace an expired deadline; feature generation inherits that window.
     runtime.begin('retrieval')
     transport.register(runtime)
     config = full_index.make_config()

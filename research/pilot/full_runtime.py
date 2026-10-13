@@ -196,6 +196,14 @@ class Runtime:
                 'started_utc':self.ledger['window_started_utc'],
                 'deadline_utc':self.ledger['window_deadline_utc'],
                 'reason':'Explicitly authorized recovery on 2026-10-13; cumulative usage retained'})
+        if stage == 'retrieval' and self.ledger.pop('pending_evaluation_window_seconds', None) == 7200:
+            started = datetime.now(timezone.utc)
+            self.ledger['window_started_utc'] = started.isoformat()
+            self.ledger['window_deadline_utc'] = (started + timedelta(seconds=7200)).isoformat()
+            self.ledger.setdefault('execution_windows', []).append({
+                'started_utc': self.ledger['window_started_utc'],
+                'deadline_utc': self.ledger['window_deadline_utc'],
+                'reason': 'Fresh user authorization at 2026-10-13 02:35:52 UTC for remaining evaluation; cumulative usage retained'})
         self.ledger['status'] = 'running'
         self.ledger.pop('stop_reason', None)
         self.ledger['source_commit'] = subprocess.check_output(
