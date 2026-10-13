@@ -12,7 +12,6 @@ import json
 import math
 import os
 from pathlib import Path
-import socket
 import subprocess
 import sys
 import time
@@ -28,8 +27,7 @@ import probe_runtime as probe
 
 ROOT = probe.ROOT
 RUN = ROOT/'.cache/pilot/full-20261012'
-BASE = ROOT/'research/pilot/results'
-OUT = BASE/'budget-supplement'
+from result_paths import OUT as BASE, SUPPLEMENT as OUT
 BUDGETS = [8000, 16000]
 
 

@@ -1,0 +1,849 @@
+{
+  "question_id": "Q18",
+  "method": "ms_local",
+  "budget": 8000,
+  "query": "If response callbacks are changed to replace data even when they return None, identify the dispatch rule, downstream cookie consumer and an existing test that this threatens.",
+  "upstream_raw_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n422|TEST REQUEST COOKIE OVERRIDES SESSION COOKIE|A test event verifying that a cookie supplied on an individual request overrides the same cookie stored in the Requests session without modifying the session cookie|2\n427|GH 3579|A GitHub issue referenced as the regression context for handling non-Requests cookie jars during redirect resolution|1\n426|TEST COOKIELIB COOKIEJAR ON REDIRECT|A test event verifying that redirect handling correctly merges a standard cookielib CookieJar with session cookies without converting it into a RequestsCookieJar|2\n430|TEST HEADERS ON SESSION WITH NONE ARE NOT SENT|A test event verifying that session headers assigned a None value are omitted from prepared Requests requests|1\n423|TEST REQUEST COOKIES NOT PERSISTED|A test event verifying that cookies supplied for one request are sent with that request but are not added to the Requests session|2\n488|SESSION HOOKS OVERRIDDEN BY REQUEST HOOKS TEST|A test event that verifies request-specific response hooks replace the response hooks configured on a Session.|1\n424|TEST GENERIC COOKIEJAR WORKS|A test event verifying that Requests sessions can use a standard cookielib CookieJar and send its cookies to HTTPBin|2\n501|DUPLICATE COOKIE NAMES TEST|A test that stores cookies with the same name on different domains and verifies domain-specific lookup behavior and CookieConflictError handling|1\n428|TEST REQUESTS IN HISTORY ARE NOT OVERRIDDEN|A test event verifying that URLs in a response's redirect history match the URLs on their associated requests|1\n633|COOKIE-JAR COMPATIBILITY TESTS|Tests verifying that dictionaries can be added correctly to both standard CookieJar and RequestsCookieJar instances|1\n492|REQUEST WITH BYTESTRING HOST TEST|A test event that verifies a request with a bytestring Host header can set and retrieve a cookie while redirects are disabled.|1\n188|MOCKRESPONSE|MockResponse is a compatibility wrapper around response headers that exposes the info and getheaders methods expected by cookiejar.|3\n506|TESTCOOKIEPOLICYCOPY|test_cookie_policy_copy is a pytest test event that verifies copying a RequestsCookieJar preserves its configured cookie-policy class|2\n497|COOKIE DICTIONARY ITEMS TEST|A test that verifies cookie values and items remain accessible when a RequestsCookieJar is converted to dictionaries through different iteration methods|1\n425|TEST PARAM COOKIEJAR WORKS|A test event verifying that a standard CookieJar can be supplied directly as request cookies and transmitted to HTTPBin|2\n276|REQUESTS ISSUE 3490|Requests issue 3490 is referenced in a comment concerning removal of request body headers during redirects|1\n551|TEST SHOULD STRIP AUTH HOST CHANGE|A pytest test that verifies Requests determines that authentication should be removed when a redirect changes the host|2\n528|ISSUE 1321|Issue 1321 is a reported Requests behavior concerning case-insensitive removal of HTTP headers|1\n508|TESTEMPTYRESPONSEHASCONTENTNONE|test_empty_response_has_content_none is a pytest test event that verifies a newly created Response has no content|2\n\n\n-----Relationships-----\nid|source|target|description|weight|links\n650|TEST COOKIELIB COOKIEJAR ON REDIRECT|GH 3579|The test is explicitly documented as addressing the regression tracked by GitHub issue 3579|9.0|1\n641|TEST REQUEST COOKIE OVERRIDES SESSION COOKIE|REQUESTS|The test verifies Requests request-level cookie precedence over session cookies|9.0|14\n643|TEST REQUEST COOKIES NOT PERSISTED|REQUESTS|The test verifies that Requests does not persist request-only cookies in a session|9.0|14\n645|TEST GENERIC COOKIEJAR WORKS|REQUESTS|The test verifies that Requests sessions accept and preserve a generic cookielib CookieJar|9.0|14\n647|TEST PARAM COOKIEJAR WORKS|REQUESTS|The test verifies that Requests accepts a generic CookieJar as per-request cookies|9.0|14\n649|TEST COOKIELIB COOKIEJAR ON REDIRECT|REQUESTS|The test exercises Requests redirect resolution and cookie merging|10.0|14\n893|TEST SHOULD STRIP AUTH HOST CHANGE|REQUESTS|This test directly verifies Requests identifies a host change as a reason to strip authentication|9.0|14\n651|TEST REQUESTS IN HISTORY ARE NOT OVERRIDDEN|REQUESTS|The test verifies that Requests preserves the original URLs of response-history requests|9.0|14\n653|TEST HEADERS ON SESSION WITH NONE ARE NOT SENT|REQUESTS|The test verifies omission of None-valued headers during Requests request preparation|9.0|14\n780|SESSION HOOKS OVERRIDDEN BY REQUEST HOOKS TEST|REQUESTS|The test verifies request-specific hook precedence in the Requests Session API.|9.0|14\n784|REQUEST WITH BYTESTRING HOST TEST|REQUESTS|The test verifies Requests handling of a bytestring Host header, cookies, and redirects.|9.0|14\n789|COOKIE DICTIONARY ITEMS TEST|REQUESTS|The test verifies cookie item and value access through RequestsCookieJar conversions|8.0|14\n793|DUPLICATE COOKIE NAMES TEST|REQUESTS|The test verifies Requests cookie conflict behavior when identical cookie names exist on different domains|1.0|14\n850|ISSUE 1321|REQUESTS|The test for case-insensitive header removal was added to verify behavior associated with Requests issue 1321|8.0|14\n394|REQUESTS|REQUESTS ISSUE 3490|Requests issue 3490 is cited in the Requests redirect implementation|7.0|14\n894|TEST SHOULD STRIP AUTH HOST CHANGE|PYTEST|Pytest executes this authentication policy test|8.0|4\n800|PYTEST|TESTCOOKIEPOLICYCOPY|Pytest runs the test that verifies cookie-policy copying|8.0|4\n802|PYTEST|TESTEMPTYRESPONSEHASCONTENTNONE|Pytest runs the test that verifies empty Response content|8.0|4\n1053|PYTEST|COOKIE-JAR COMPATIBILITY TESTS|Pytest executes the parameterized cookie-jar compatibility tests|9.0|4\n642|TEST REQUEST COOKIE OVERRIDES SESSION COOKIE|HTTPBIN|The test sends the cookie override request to an HTTPBin cookies endpoint|8.0|4\n644|TEST REQUEST COOKIES NOT PERSISTED|HTTPBIN|The test sends a request-only cookie to an HTTPBin cookies endpoint|8.0|4\n646|TEST GENERIC COOKIEJAR WORKS|HTTPBIN|The test verifies cookie transmission through an HTTPBin cookies endpoint|8.0|4\n648|TEST PARAM COOKIEJAR WORKS|HTTPBIN|The test sends the CookieJar to an HTTPBin cookies endpoint|8.0|4\n813|TESTEMPTYRESPONSEHASCONTENTNONE|RESPONSE|The test creates a Response and verifies that its content is None|9.0|1\n811|TESTCOOKIEPOLICYCOPY|REQUESTSCOOKIEJAR|The test configures a RequestsCookieJar with MyCookiePolicy and verifies that copying preserves its policy|9.0|1\n248|EXTRACT_COOKIES_TO_JAR|MOCKRESPONSE|extract_cookies_to_jar creates a MockResponse around the original response headers before extracting cookies.|9.0|1\n245|MOCKRESPONSE|HTTPLIB.HTTPMESSAGE|MockResponse wraps an HTTPMessage-like header object and exposes it through info and getheaders methods.|9.0|1\n246|MOCKRESPONSE|URLLIB.ADDINFOURL|MockResponse emulates the response interface expected from urllib.addinfourl by cookie-management code.|8.0|1\n\n\n-----Sources-----\nid|text\n83|        assert s.cookies[\"foo\"] == '\"bar:baz\"'\n\n    def test_cookie_persists_via_api(self, httpbin):\n        s = requests.session()\n        r = s.get(httpbin(\"redirect/1\"), cookies={\"foo\": \"bar\"})\n        assert \"foo\" in r.request.headers[\"Cookie\"]\n        assert \"foo\" in r.history[0].request.headers[\"Cookie\"]\n\n    def test_request_cookie_overrides_session_cookie(self, httpbin):\n        s = requests.session()\n        s.cookies[\"foo\"] = \"bar\"\n        r = s.get(httpbin(\"cookies\"), cookies={\"foo\": \"baz\"})\n        assert r.json()[\"cookies\"][\"foo\"] == \"baz\"\n        # Session cookie should not be modified\n        assert s.cookies[\"foo\"] == \"bar\"\n\n    def test_request_cookies_not_persisted(self, httpbin):\n        s = requests.session()\n        s.get(httpbin(\"cookies\"), cookies={\"foo\": \"baz\"})\n        # Sending a request with cookies should not add cookies to the session\n        assert not s.cookies\n\n    def test_generic_cookiejar_works(self, httpbin):\n        cj = cookielib.CookieJar()\n        cookiejar_from_dict({\"foo\": \"bar\"}, cj)\n        s = requests.session()\n        s.cookies = cj\n        r = s.get(httpbin(\"cookies\"))\n        # Make sure the cookie was sent\n        assert r.json()[\"cookies\"][\"foo\"] == \"bar\"\n        # Make sure the session cj is still the custom one\n        assert s.cookies is cj\n\n    def test_param_cookiejar_works(self, httpbin):\n        cj = cookielib.CookieJar()\n        cookiejar_from_dict({\"foo\": \"bar\"}, cj)\n        s = requests.session()\n        r = s.get(httpbin(\"cookies\"), cookies=cj)\n        # Make sure the cookie was sent\n        assert r.json()[\"cookies\"][\"foo\"] == \"bar\"\n\n    def test_cookielib_cookiejar_on_redirect(self, httpbin):\n        \"\"\"Tests resolve_redirect doesn't fail when merging cookies\n        with non-RequestsCookieJar cookiejar.\n\n        See GH #3579\n        \"\"\"\n        cj = cookiejar_from_dict({\"foo\": \"bar\"}, cookielib.CookieJar())\n        s = requests.Session()\n        s.cookies = cookiejar_from_dict({\"cookie\": \"tasty\"})\n\n        # Prepare request without using Session\n        req = requests.Request(\"GET\", httpbin(\"headers\"), cookies=cj)\n        prep_req = req.prepare()\n\n        # Send request and simulate redirect\n        resp = s.send(prep_req)\n        resp.status_code = 302\n        resp.headers[\"location\"] = httpbin(\"get\")\n        redirects = s.resolve_redirects(resp, prep_req)\n        resp = next(redirects)\n\n        # Verify CookieJar isn't being converted to RequestsCookieJar\n        assert isinstance(prep_req._cookies, cookielib.CookieJar)\n        assert isinstance(resp.request._cookies, cookielib.CookieJar)\n        assert not isinstance(resp.request._cookies, requests.cookies.RequestsCookieJar)\n\n        cookies = {}\n        for c in resp.request._cookies:\n            cookies[c.name] = c.value\n        assert cookies[\"foo\"] == \"bar\"\n        assert cookies[\"cookie\"] == \"tasty\"\n\n    def test_requests_in_history_are_not_overridden(self, httpbin):\n        resp = requests.get(httpbin(\"redirect/3\"))\n        urls = [r.url for r in resp.history]\n        req_urls = [r.request.url for r in resp.history]\n        assert urls == req_urls\n\n    def test_history_is_always_a_list(self, httpbin):\n        \"\"\"Show that even with redirects, Response.history is always a list.\"\"\"\n        resp = requests.get(httpbin(\"get\"))\n        assert isinstance(resp.history, list)\n        resp = requests.get(httpbin(\"redirect/1\"))\n        assert isinstance(resp.history, list)\n        assert not isinstance(resp.history, tuple)\n\n    def test_headers_on_session_with_None_are_not_sent(self, httpbin):\n        \"\"\"Do not send headers in Session.headers with None values.\"\"\"\n        ses = requests.Session()\n        ses.headers[\"Accept-Encoding\"] = None\n        req = requests.Request(\"GET\", httpbin(\"get\"))\n        prep = ses.prepare_request(req)\n        assert \"Accept-Encoding\" not in prep.headers\n\n    def test_headers_preserve_order(self, httpbin):\n        \"\"\"Preserve order when headers provided as OrderedDict.\"\"\"\n        ses = requests.Session()\n        ses.headers = collections.OrderedDict()\n        ses.headers[\"Accept-Encoding\"] = \"identity\"\n        ses.headers[\"First\"] = \"1\"\n        ses.headers[\"Second\"] = \"2\"\n        headers = collections.OrderedDict([(\"Third\", \"3\"), (\"Fourth\", \"4\")])\n        headers[\"Fifth\"] = \"5\"\n        headers[\"Second\"] = \"222\"\n        req = requests.Request(\"GET\", httpbin(\"get\"), headers=headers)\n        prep = ses.prepare_request(req)\n        items = list(prep.headers.items())\n        assert items[0] == (\"Accept-Encoding\", \"identity\")\n        assert items[1] == (\"First\", \"1\")\n        assert items[2] == (\"Second\", \"222\")\n        assert items[3] == (\"Third\", \"3\")\n        assert items[4] == (\"Fourth\", \"4\")\n        assert items[5] == (\"Fifth\", \"5\")\n\n    @pytest.mark.parametrize(\"key\", (\"User-agent\", \"user-agent\"))\n    def test_user_agent_transfers(self, httpbin, key):\n        heads = {key: \"Mozilla/5.0 (github.com/psf/requests)\"}\n\n        r = requests.get(httpbin(\"user-agent\"), headers=heads)\n        assert heads[key] in r.text\n\n    def test_HTTP_200_OK_HEAD(self, httpbin):\n\n88|        ),\n    )\n    def test_unicode_multipart_post(self, httpbin, data):\n        with open(__file__, \"rb\") as f:\n            r = requests.post(\n                httpbin(\"post\"),\n                data=data,\n                files={\"file\": (\"test_requests.py\", f)},\n            )\n        assert r.status_code == 200\n\n    def test_unicode_multipart_post_fieldnames(self, httpbin):\n        filename = os.path.splitext(__file__)[0] + \".py\"\n        with open(filename, \"rb\") as f:\n            r = requests.Request(\n                method=\"POST\",\n                url=httpbin(\"post\"),\n                data={b\"stuff\": \"elixr\"},\n                files={\"file\": (\"test_requests.py\", f)},\n            )\n            prep = r.prepare()\n\n        assert b'name=\"stuff\"' in prep.body\n        assert b\"name=\\\"b'stuff'\\\"\" not in prep.body\n\n    def test_unicode_method_name(self, httpbin):\n        with open(__file__, \"rb\") as f:\n            files = {\"file\": f}\n            r = requests.request(\n                method=\"POST\",\n                url=httpbin(\"post\"),\n                files=files,\n            )\n        assert r.status_code == 200\n\n    def test_unicode_method_name_with_request_object(self, httpbin):\n        s = requests.Session()\n        with open(__file__, \"rb\") as f:\n            files = {\"file\": f}\n            req = requests.Request(\"POST\", httpbin(\"post\"), files=files)\n            prep = s.prepare_request(req)\n        assert isinstance(prep.method, builtin_str)\n        assert prep.method == \"POST\"\n\n        resp = s.send(prep)\n        assert resp.status_code == 200\n\n    def test_non_prepared_request_error(self):\n        s = requests.Session()\n        req = requests.Request(\"POST\", \"/\")\n\n        with pytest.raises(ValueError) as e:\n            s.send(req)\n        assert str(e.value) == \"You can only send PreparedRequests.\"\n\n    def test_custom_content_type(self, httpbin):\n        with open(__file__, \"rb\") as f1:\n            with open(__file__, \"rb\") as f2:\n                data = {\"stuff\": json.dumps({\"a\": 123})}\n                files = {\n                    \"file1\": (\"test_requests.py\", f1),\n                    \"file2\": (\"test_requests\", f2, \"text/py-content-type\"),\n                }\n                r = requests.post(httpbin(\"post\"), data=data, files=files)\n        assert r.status_code == 200\n        assert b\"text/py-content-type\" in r.request.body\n\n    def test_hook_receives_request_arguments(self, httpbin):\n        def hook(resp, **kwargs):\n            assert resp is not None\n            assert kwargs != {}\n\n        s = requests.Session()\n        r = requests.Request(\"GET\", httpbin(), hooks={\"response\": hook})\n        prep = s.prepare_request(r)\n        s.send(prep)\n\n    def test_session_hooks_are_used_with_no_request_hooks(self, httpbin):\n        def hook(*args, **kwargs):\n            pass\n\n        s = requests.Session()\n        s.hooks[\"response\"].append(hook)\n        r = requests.Request(\"GET\", httpbin())\n        prep = s.prepare_request(r)\n        assert prep.hooks[\"response\"] != []\n        assert prep.hooks[\"response\"] == [hook]\n\n    def test_session_hooks_are_overridden_by_request_hooks(self, httpbin):\n        def hook1(*args, **kwargs):\n            pass\n\n        def hook2(*args, **kwargs):\n            pass\n\n        assert hook1 is not hook2\n        s = requests.Session()\n        s.hooks[\"response\"].append(hook2)\n        r = requests.Request(\"GET\", httpbin(), hooks={\"response\": [hook1]})\n        prep = s.prepare_request(r)\n        assert prep.hooks[\"response\"] == [hook1]\n\n    def test_prepared_request_hook(self, httpbin):\n        def hook(resp, **kwargs):\n            resp.hook_working = True\n            return resp\n\n        req = requests.Request(\"GET\", httpbin(), hooks={\"response\": hook})\n        prep = req.prepare()\n\n        s = requests.Session()\n        s.proxies = getproxies()\n        resp = s.send(prep)\n\n        assert hasattr(resp, \"hook_working\")\n\n    def test_prepared_from_session(self, httpbin):\n        class DummyAuth(requests.auth.AuthBase):\n            def __call__(self, r):\n                r.headers[\"Dummy-Auth-Test\"] = \"dummy-auth-test-ok\"\n                return r\n\n        req = requests.Request(\"GET\", httpbin(\"headers\"))\n        assert not req.auth\n\n        s = requests.Session()\n        s.auth = DummyAuth()\n\n        prep = s.prepare_request(req)\n        resp = s.send(prep)\n\n        assert resp.json()[\"headers\"][\"Dummy-Auth-Test\"] == \"dummy-auth-test-ok\"\n\n    def test_prepare_request_with_bytestring_url(self):\n        req = requests.Request(\"GET\", b\"https://httpbin.org/\")\n        s = requests.Session()\n        prep = s.prepare_request(req)\n        assert prep.url == \"https://httpbin.org/\"\n\n    def test_request_with_bytestring_host(self, httpbin):\n        s = requests.Session()\n        resp = s.request(\n            \"GET\",\n            httpbin(\"cookies/set?cookie=value\"),\n            allow_redirects=False,\n            headers={\"Host\": b\"httpbin.org\"},\n        )\n        assert resp.cookies.get(\"cookie\") == \"value\"\n\n    def test_links(self):\n        r = requests.Response()\n        r.headers = {\n            \"cache-control\": \"public, max-age=60, s-maxage=60\",\n            \"connection\": \"keep-alive\",\n            \"content-encoding\": \"gzip\",\n\n89|            \"GET\",\n            httpbin(\"cookies/set?cookie=value\"),\n            allow_redirects=False,\n            headers={\"Host\": b\"httpbin.org\"},\n        )\n        assert resp.cookies.get(\"cookie\") == \"value\"\n\n    def test_links(self):\n        r = requests.Response()\n        r.headers = {\n            \"cache-control\": \"public, max-age=60, s-maxage=60\",\n            \"connection\": \"keep-alive\",\n            \"content-encoding\": \"gzip\",\n            \"content-type\": \"application/json; charset=utf-8\",\n            \"date\": \"Sat, 26 Jan 2013 16:47:56 GMT\",\n            \"etag\": '\"6ff6a73c0e446c1f61614769e3ceb778\"',\n            \"last-modified\": \"Sat, 26 Jan 2013 16:22:39 GMT\",\n            \"link\": (\n                \"<https://api.github.com/users/kennethreitz/repos?\"\n                'page=2&per_page=10>; rel=\"next\", <https://api.github.'\n                \"com/users/kennethreitz/repos?page=7&per_page=10>; \"\n                ' rel=\"last\"'\n            ),\n            \"server\": \"GitHub.com\",\n            \"status\": \"200 OK\",\n            \"vary\": \"Accept\",\n            \"x-content-type-options\": \"nosniff\",\n            \"x-github-media-type\": \"github.beta\",\n            \"x-ratelimit-limit\": \"60\",\n            \"x-ratelimit-remaining\": \"57\",\n        }\n        assert r.links[\"next\"][\"rel\"] == \"next\"\n\n    def test_cookie_parameters(self):\n        key = \"some_cookie\"\n        value = \"some_value\"\n        secure = True\n        domain = \"test.com\"\n        rest = {\"HttpOnly\": True}\n\n        jar = requests.cookies.RequestsCookieJar()\n        jar.set(key, value, secure=secure, domain=domain, rest=rest)\n\n        assert len(jar) == 1\n        assert \"some_cookie\" in jar\n\n        cookie = list(jar)[0]\n        assert cookie.secure == secure\n        assert cookie.domain == domain\n        assert cookie._rest[\"HttpOnly\"] == rest[\"HttpOnly\"]\n\n    def test_cookie_as_dict_keeps_len(self):\n        key = \"some_cookie\"\n        value = \"some_value\"\n\n        key1 = \"some_cookie1\"\n        value1 = \"some_value1\"\n\n        jar = requests.cookies.RequestsCookieJar()\n        jar.set(key, value)\n        jar.set(key1, value1)\n\n        d1 = dict(jar)\n        d2 = dict(jar.iteritems())\n        d3 = dict(jar.items())\n\n        assert len(jar) == 2\n        assert len(d1) == 2\n        assert len(d2) == 2\n        assert len(d3) == 2\n\n    def test_cookie_as_dict_keeps_items(self):\n        key = \"some_cookie\"\n        value = \"some_value\"\n\n        key1 = \"some_cookie1\"\n        value1 = \"some_value1\"\n\n        jar = requests.cookies.RequestsCookieJar()\n        jar.set(key, value)\n        jar.set(key1, value1)\n\n        d1 = dict(jar)\n        d2 = dict(jar.iteritems())\n        d3 = dict(jar.items())\n\n        assert d1[\"some_cookie\"] == \"some_value\"\n        assert d2[\"some_cookie\"] == \"some_value\"\n        assert d3[\"some_cookie1\"] == \"some_value1\"\n\n    def test_cookie_as_dict_keys(self):\n        key = \"some_cookie\"\n        value = \"some_value\"\n\n        key1 = \"some_cookie1\"\n        value1 = \"some_value1\"\n\n        jar = requests.cookies.RequestsCookieJar()\n        jar.set(key, value)\n        jar.set(key1, value1)\n\n        keys = jar.keys()\n        assert keys == list(keys)\n        # make sure one can use keys multiple times\n        assert list(keys) == list(keys)\n\n    def test_cookie_as_dict_values(self):\n        key = \"some_cookie\"\n        value = \"some_value\"\n\n        key1 = \"some_cookie1\"\n        value1 = \"some_value1\"\n\n        jar = requests.cookies.RequestsCookieJar()\n        jar.set(key, value)\n        jar.set(key1, value1)\n\n        values = jar.values()\n        assert values == list(values)\n        # make sure one can use values multiple times\n        assert list(values) == list(values)\n\n    def test_cookie_as_dict_items(self):\n        key = \"some_cookie\"\n        value = \"some_value\"\n\n        key1 = \"some_cookie1\"\n        value1 = \"some_value1\"\n\n        jar = requests.cookies.RequestsCookieJar()\n        jar.set(key, value)\n        jar.set(key1, value1)\n\n        items = jar.items()\n        assert items == list(items)\n        # make sure one can use items multiple times\n        assert list(items) == list(items)\n\n    def test_cookie_duplicate_names_different_domains(self):\n        key = \"some_cookie\"\n        value = \"some_value\"\n        domain1 = \"test1.com\"\n        domain2 = \"test2.com\"\n\n        jar = requests.cookies.RequestsCookieJar()\n        jar.set(key, value, domain=domain1)\n        jar.set(key, value, domain=domain2)\n        assert key in jar\n        items = jar.items()\n        assert len(items) == 2\n\n        # Verify that CookieConflictError is raised if domain is not specified\n        with pytest.raises(requests.cookies.CookieConflictError):\n            jar.get(key)\n\n        # Verify that CookieConflictError is not raised if domain is specified\n        cookie = jar.get(key, domain=domain1)\n        assert cookie == value\n\n\n",
+  "upstream_raw_records": {
+    "relationships": [
+      {
+        "id": "650",
+        "source": "TEST COOKIELIB COOKIEJAR ON REDIRECT",
+        "target": "GH 3579",
+        "description": "The test is explicitly documented as addressing the regression tracked by GitHub issue 3579",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "641",
+        "source": "TEST REQUEST COOKIE OVERRIDES SESSION COOKIE",
+        "target": "REQUESTS",
+        "description": "The test verifies Requests request-level cookie precedence over session cookies",
+        "weight": "9.0",
+        "links": "14",
+        "in_context": true
+      },
+      {
+        "id": "643",
+        "source": "TEST REQUEST COOKIES NOT PERSISTED",
+        "target": "REQUESTS",
+        "description": "The test verifies that Requests does not persist request-only cookies in a session",
+        "weight": "9.0",
+        "links": "14",
+        "in_context": true
+      },
+      {
+        "id": "645",
+        "source": "TEST GENERIC COOKIEJAR WORKS",
+        "target": "REQUESTS",
+        "description": "The test verifies that Requests sessions accept and preserve a generic cookielib CookieJar",
+        "weight": "9.0",
+        "links": "14",
+        "in_context": true
+      },
+      {
+        "id": "647",
+        "source": "TEST PARAM COOKIEJAR WORKS",
+        "target": "REQUESTS",
+        "description": "The test verifies that Requests accepts a generic CookieJar as per-request cookies",
+        "weight": "9.0",
+        "links": "14",
+        "in_context": true
+      },
+      {
+        "id": "649",
+        "source": "TEST COOKIELIB COOKIEJAR ON REDIRECT",
+        "target": "REQUESTS",
+        "description": "The test exercises Requests redirect resolution and cookie merging",
+        "weight": "10.0",
+        "links": "14",
+        "in_context": true
+      },
+      {
+        "id": "893",
+        "source": "TEST SHOULD STRIP AUTH HOST CHANGE",
+        "target": "REQUESTS",
+        "description": "This test directly verifies Requests identifies a host change as a reason to strip authentication",
+        "weight": "9.0",
+        "links": "14",
+        "in_context": true
+      },
+      {
+        "id": "651",
+        "source": "TEST REQUESTS IN HISTORY ARE NOT OVERRIDDEN",
+        "target": "REQUESTS",
+        "description": "The test verifies that Requests preserves the original URLs of response-history requests",
+        "weight": "9.0",
+        "links": "14",
+        "in_context": true
+      },
+      {
+        "id": "653",
+        "source": "TEST HEADERS ON SESSION WITH NONE ARE NOT SENT",
+        "target": "REQUESTS",
+        "description": "The test verifies omission of None-valued headers during Requests request preparation",
+        "weight": "9.0",
+        "links": "14",
+        "in_context": true
+      },
+      {
+        "id": "780",
+        "source": "SESSION HOOKS OVERRIDDEN BY REQUEST HOOKS TEST",
+        "target": "REQUESTS",
+        "description": "The test verifies request-specific hook precedence in the Requests Session API.",
+        "weight": "9.0",
+        "links": "14",
+        "in_context": true
+      },
+      {
+        "id": "784",
+        "source": "REQUEST WITH BYTESTRING HOST TEST",
+        "target": "REQUESTS",
+        "description": "The test verifies Requests handling of a bytestring Host header, cookies, and redirects.",
+        "weight": "9.0",
+        "links": "14",
+        "in_context": true
+      },
+      {
+        "id": "789",
+        "source": "COOKIE DICTIONARY ITEMS TEST",
+        "target": "REQUESTS",
+        "description": "The test verifies cookie item and value access through RequestsCookieJar conversions",
+        "weight": "8.0",
+        "links": "14",
+        "in_context": true
+      },
+      {
+        "id": "793",
+        "source": "DUPLICATE COOKIE NAMES TEST",
+        "target": "REQUESTS",
+        "description": "The test verifies Requests cookie conflict behavior when identical cookie names exist on different domains",
+        "weight": "1.0",
+        "links": "14",
+        "in_context": true
+      },
+      {
+        "id": "850",
+        "source": "ISSUE 1321",
+        "target": "REQUESTS",
+        "description": "The test for case-insensitive header removal was added to verify behavior associated with Requests issue 1321",
+        "weight": "8.0",
+        "links": "14",
+        "in_context": true
+      },
+      {
+        "id": "394",
+        "source": "REQUESTS",
+        "target": "REQUESTS ISSUE 3490",
+        "description": "Requests issue 3490 is cited in the Requests redirect implementation",
+        "weight": "7.0",
+        "links": "14",
+        "in_context": true
+      },
+      {
+        "id": "894",
+        "source": "TEST SHOULD STRIP AUTH HOST CHANGE",
+        "target": "PYTEST",
+        "description": "Pytest executes this authentication policy test",
+        "weight": "8.0",
+        "links": "4",
+        "in_context": true
+      },
+      {
+        "id": "800",
+        "source": "PYTEST",
+        "target": "TESTCOOKIEPOLICYCOPY",
+        "description": "Pytest runs the test that verifies cookie-policy copying",
+        "weight": "8.0",
+        "links": "4",
+        "in_context": true
+      },
+      {
+        "id": "802",
+        "source": "PYTEST",
+        "target": "TESTEMPTYRESPONSEHASCONTENTNONE",
+        "description": "Pytest runs the test that verifies empty Response content",
+        "weight": "8.0",
+        "links": "4",
+        "in_context": true
+      },
+      {
+        "id": "1053",
+        "source": "PYTEST",
+        "target": "COOKIE-JAR COMPATIBILITY TESTS",
+        "description": "Pytest executes the parameterized cookie-jar compatibility tests",
+        "weight": "9.0",
+        "links": "4",
+        "in_context": true
+      },
+      {
+        "id": "642",
+        "source": "TEST REQUEST COOKIE OVERRIDES SESSION COOKIE",
+        "target": "HTTPBIN",
+        "description": "The test sends the cookie override request to an HTTPBin cookies endpoint",
+        "weight": "8.0",
+        "links": "4",
+        "in_context": true
+      },
+      {
+        "id": "644",
+        "source": "TEST REQUEST COOKIES NOT PERSISTED",
+        "target": "HTTPBIN",
+        "description": "The test sends a request-only cookie to an HTTPBin cookies endpoint",
+        "weight": "8.0",
+        "links": "4",
+        "in_context": true
+      },
+      {
+        "id": "646",
+        "source": "TEST GENERIC COOKIEJAR WORKS",
+        "target": "HTTPBIN",
+        "description": "The test verifies cookie transmission through an HTTPBin cookies endpoint",
+        "weight": "8.0",
+        "links": "4",
+        "in_context": true
+      },
+      {
+        "id": "648",
+        "source": "TEST PARAM COOKIEJAR WORKS",
+        "target": "HTTPBIN",
+        "description": "The test sends the CookieJar to an HTTPBin cookies endpoint",
+        "weight": "8.0",
+        "links": "4",
+        "in_context": true
+      },
+      {
+        "id": "813",
+        "source": "TESTEMPTYRESPONSEHASCONTENTNONE",
+        "target": "RESPONSE",
+        "description": "The test creates a Response and verifies that its content is None",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "811",
+        "source": "TESTCOOKIEPOLICYCOPY",
+        "target": "REQUESTSCOOKIEJAR",
+        "description": "The test configures a RequestsCookieJar with MyCookiePolicy and verifies that copying preserves its policy",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "248",
+        "source": "EXTRACT_COOKIES_TO_JAR",
+        "target": "MOCKRESPONSE",
+        "description": "extract_cookies_to_jar creates a MockResponse around the original response headers before extracting cookies.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "245",
+        "source": "MOCKRESPONSE",
+        "target": "HTTPLIB.HTTPMESSAGE",
+        "description": "MockResponse wraps an HTTPMessage-like header object and exposes it through info and getheaders methods.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "246",
+        "source": "MOCKRESPONSE",
+        "target": "URLLIB.ADDINFOURL",
+        "description": "MockResponse emulates the response interface expected from urllib.addinfourl by cookie-management code.",
+        "weight": "8.0",
+        "links": "1",
+        "in_context": true
+      }
+    ],
+    "entities": [
+      {
+        "id": "422",
+        "entity": "TEST REQUEST COOKIE OVERRIDES SESSION COOKIE",
+        "description": "A test event verifying that a cookie supplied on an individual request overrides the same cookie stored in the Requests session without modifying the session cookie",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "427",
+        "entity": "GH 3579",
+        "description": "A GitHub issue referenced as the regression context for handling non-Requests cookie jars during redirect resolution",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "426",
+        "entity": "TEST COOKIELIB COOKIEJAR ON REDIRECT",
+        "description": "A test event verifying that redirect handling correctly merges a standard cookielib CookieJar with session cookies without converting it into a RequestsCookieJar",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "430",
+        "entity": "TEST HEADERS ON SESSION WITH NONE ARE NOT SENT",
+        "description": "A test event verifying that session headers assigned a None value are omitted from prepared Requests requests",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "423",
+        "entity": "TEST REQUEST COOKIES NOT PERSISTED",
+        "description": "A test event verifying that cookies supplied for one request are sent with that request but are not added to the Requests session",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "488",
+        "entity": "SESSION HOOKS OVERRIDDEN BY REQUEST HOOKS TEST",
+        "description": "A test event that verifies request-specific response hooks replace the response hooks configured on a Session.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "424",
+        "entity": "TEST GENERIC COOKIEJAR WORKS",
+        "description": "A test event verifying that Requests sessions can use a standard cookielib CookieJar and send its cookies to HTTPBin",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "501",
+        "entity": "DUPLICATE COOKIE NAMES TEST",
+        "description": "A test that stores cookies with the same name on different domains and verifies domain-specific lookup behavior and CookieConflictError handling",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "428",
+        "entity": "TEST REQUESTS IN HISTORY ARE NOT OVERRIDDEN",
+        "description": "A test event verifying that URLs in a response's redirect history match the URLs on their associated requests",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "633",
+        "entity": "COOKIE-JAR COMPATIBILITY TESTS",
+        "description": "Tests verifying that dictionaries can be added correctly to both standard CookieJar and RequestsCookieJar instances",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "492",
+        "entity": "REQUEST WITH BYTESTRING HOST TEST",
+        "description": "A test event that verifies a request with a bytestring Host header can set and retrieve a cookie while redirects are disabled.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "188",
+        "entity": "MOCKRESPONSE",
+        "description": "MockResponse is a compatibility wrapper around response headers that exposes the info and getheaders methods expected by cookiejar.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "506",
+        "entity": "TESTCOOKIEPOLICYCOPY",
+        "description": "test_cookie_policy_copy is a pytest test event that verifies copying a RequestsCookieJar preserves its configured cookie-policy class",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "497",
+        "entity": "COOKIE DICTIONARY ITEMS TEST",
+        "description": "A test that verifies cookie values and items remain accessible when a RequestsCookieJar is converted to dictionaries through different iteration methods",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "425",
+        "entity": "TEST PARAM COOKIEJAR WORKS",
+        "description": "A test event verifying that a standard CookieJar can be supplied directly as request cookies and transmitted to HTTPBin",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "276",
+        "entity": "REQUESTS ISSUE 3490",
+        "description": "Requests issue 3490 is referenced in a comment concerning removal of request body headers during redirects",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "551",
+        "entity": "TEST SHOULD STRIP AUTH HOST CHANGE",
+        "description": "A pytest test that verifies Requests determines that authentication should be removed when a redirect changes the host",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "528",
+        "entity": "ISSUE 1321",
+        "description": "Issue 1321 is a reported Requests behavior concerning case-insensitive removal of HTTP headers",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "508",
+        "entity": "TESTEMPTYRESPONSEHASCONTENTNONE",
+        "description": "test_empty_response_has_content_none is a pytest test event that verifies a newly created Response has no content",
+        "number of relationships": "2",
+        "in_context": true
+      }
+    ],
+    "sources": [
+      {
+        "id": "83",
+        "text": "        assert s.cookies[\"foo\"] == '\"bar:baz\"'\n\n    def test_cookie_persists_via_api(self, httpbin):\n        s = requests.session()\n        r = s.get(httpbin(\"redirect/1\"), cookies={\"foo\": \"bar\"})\n        assert \"foo\" in r.request.headers[\"Cookie\"]\n        assert \"foo\" in r.history[0].request.headers[\"Cookie\"]\n\n    def test_request_cookie_overrides_session_cookie(self, httpbin):\n        s = requests.session()\n        s.cookies[\"foo\"] = \"bar\"\n        r = s.get(httpbin(\"cookies\"), cookies={\"foo\": \"baz\"})\n        assert r.json()[\"cookies\"][\"foo\"] == \"baz\"\n        # Session cookie should not be modified\n        assert s.cookies[\"foo\"] == \"bar\"\n\n    def test_request_cookies_not_persisted(self, httpbin):\n        s = requests.session()\n        s.get(httpbin(\"cookies\"), cookies={\"foo\": \"baz\"})\n        # Sending a request with cookies should not add cookies to the session\n        assert not s.cookies\n\n    def test_generic_cookiejar_works(self, httpbin):\n        cj = cookielib.CookieJar()\n        cookiejar_from_dict({\"foo\": \"bar\"}, cj)\n        s = requests.session()\n        s.cookies = cj\n        r = s.get(httpbin(\"cookies\"))\n        # Make sure the cookie was sent\n        assert r.json()[\"cookies\"][\"foo\"] == \"bar\"\n        # Make sure the session cj is still the custom one\n        assert s.cookies is cj\n\n    def test_param_cookiejar_works(self, httpbin):\n        cj = cookielib.CookieJar()\n        cookiejar_from_dict({\"foo\": \"bar\"}, cj)\n        s = requests.session()\n        r = s.get(httpbin(\"cookies\"), cookies=cj)\n        # Make sure the cookie was sent\n        assert r.json()[\"cookies\"][\"foo\"] == \"bar\"\n\n    def test_cookielib_cookiejar_on_redirect(self, httpbin):\n        \"\"\"Tests resolve_redirect doesn't fail when merging cookies\n        with non-RequestsCookieJar cookiejar.\n\n        See GH #3579\n        \"\"\"\n        cj = cookiejar_from_dict({\"foo\": \"bar\"}, cookielib.CookieJar())\n        s = requests.Session()\n        s.cookies = cookiejar_from_dict({\"cookie\": \"tasty\"})\n\n        # Prepare request without using Session\n        req = requests.Request(\"GET\", httpbin(\"headers\"), cookies=cj)\n        prep_req = req.prepare()\n\n        # Send request and simulate redirect\n        resp = s.send(prep_req)\n        resp.status_code = 302\n        resp.headers[\"location\"] = httpbin(\"get\")\n        redirects = s.resolve_redirects(resp, prep_req)\n        resp = next(redirects)\n\n        # Verify CookieJar isn't being converted to RequestsCookieJar\n        assert isinstance(prep_req._cookies, cookielib.CookieJar)\n        assert isinstance(resp.request._cookies, cookielib.CookieJar)\n        assert not isinstance(resp.request._cookies, requests.cookies.RequestsCookieJar)\n\n        cookies = {}\n        for c in resp.request._cookies:\n            cookies[c.name] = c.value\n        assert cookies[\"foo\"] == \"bar\"\n        assert cookies[\"cookie\"] == \"tasty\"\n\n    def test_requests_in_history_are_not_overridden(self, httpbin):\n        resp = requests.get(httpbin(\"redirect/3\"))\n        urls = [r.url for r in resp.history]\n        req_urls = [r.request.url for r in resp.history]\n        assert urls == req_urls\n\n    def test_history_is_always_a_list(self, httpbin):\n        \"\"\"Show that even with redirects, Response.history is always a list.\"\"\"\n        resp = requests.get(httpbin(\"get\"))\n        assert isinstance(resp.history, list)\n        resp = requests.get(httpbin(\"redirect/1\"))\n        assert isinstance(resp.history, list)\n        assert not isinstance(resp.history, tuple)\n\n    def test_headers_on_session_with_None_are_not_sent(self, httpbin):\n        \"\"\"Do not send headers in Session.headers with None values.\"\"\"\n        ses = requests.Session()\n        ses.headers[\"Accept-Encoding\"] = None\n        req = requests.Request(\"GET\", httpbin(\"get\"))\n        prep = ses.prepare_request(req)\n        assert \"Accept-Encoding\" not in prep.headers\n\n    def test_headers_preserve_order(self, httpbin):\n        \"\"\"Preserve order when headers provided as OrderedDict.\"\"\"\n        ses = requests.Session()\n        ses.headers = collections.OrderedDict()\n        ses.headers[\"Accept-Encoding\"] = \"identity\"\n        ses.headers[\"First\"] = \"1\"\n        ses.headers[\"Second\"] = \"2\"\n        headers = collections.OrderedDict([(\"Third\", \"3\"), (\"Fourth\", \"4\")])\n        headers[\"Fifth\"] = \"5\"\n        headers[\"Second\"] = \"222\"\n        req = requests.Request(\"GET\", httpbin(\"get\"), headers=headers)\n        prep = ses.prepare_request(req)\n        items = list(prep.headers.items())\n        assert items[0] == (\"Accept-Encoding\", \"identity\")\n        assert items[1] == (\"First\", \"1\")\n        assert items[2] == (\"Second\", \"222\")\n        assert items[3] == (\"Third\", \"3\")\n        assert items[4] == (\"Fourth\", \"4\")\n        assert items[5] == (\"Fifth\", \"5\")\n\n    @pytest.mark.parametrize(\"key\", (\"User-agent\", \"user-agent\"))\n    def test_user_agent_transfers(self, httpbin, key):\n        heads = {key: \"Mozilla/5.0 (github.com/psf/requests)\"}\n\n        r = requests.get(httpbin(\"user-agent\"), headers=heads)\n        assert heads[key] in r.text\n\n    def test_HTTP_200_OK_HEAD(self, httpbin):\n"
+      },
+      {
+        "id": "88",
+        "text": "        ),\n    )\n    def test_unicode_multipart_post(self, httpbin, data):\n        with open(__file__, \"rb\") as f:\n            r = requests.post(\n                httpbin(\"post\"),\n                data=data,\n                files={\"file\": (\"test_requests.py\", f)},\n            )\n        assert r.status_code == 200\n\n    def test_unicode_multipart_post_fieldnames(self, httpbin):\n        filename = os.path.splitext(__file__)[0] + \".py\"\n        with open(filename, \"rb\") as f:\n            r = requests.Request(\n                method=\"POST\",\n                url=httpbin(\"post\"),\n                data={b\"stuff\": \"elixr\"},\n                files={\"file\": (\"test_requests.py\", f)},\n            )\n            prep = r.prepare()\n\n        assert b'name=\"stuff\"' in prep.body\n        assert b\"name=\\\"b'stuff'\\\"\" not in prep.body\n\n    def test_unicode_method_name(self, httpbin):\n        with open(__file__, \"rb\") as f:\n            files = {\"file\": f}\n            r = requests.request(\n                method=\"POST\",\n                url=httpbin(\"post\"),\n                files=files,\n            )\n        assert r.status_code == 200\n\n    def test_unicode_method_name_with_request_object(self, httpbin):\n        s = requests.Session()\n        with open(__file__, \"rb\") as f:\n            files = {\"file\": f}\n            req = requests.Request(\"POST\", httpbin(\"post\"), files=files)\n            prep = s.prepare_request(req)\n        assert isinstance(prep.method, builtin_str)\n        assert prep.method == \"POST\"\n\n        resp = s.send(prep)\n        assert resp.status_code == 200\n\n    def test_non_prepared_request_error(self):\n        s = requests.Session()\n        req = requests.Request(\"POST\", \"/\")\n\n        with pytest.raises(ValueError) as e:\n            s.send(req)\n        assert str(e.value) == \"You can only send PreparedRequests.\"\n\n    def test_custom_content_type(self, httpbin):\n        with open(__file__, \"rb\") as f1:\n            with open(__file__, \"rb\") as f2:\n                data = {\"stuff\": json.dumps({\"a\": 123})}\n                files = {\n                    \"file1\": (\"test_requests.py\", f1),\n                    \"file2\": (\"test_requests\", f2, \"text/py-content-type\"),\n                }\n                r = requests.post(httpbin(\"post\"), data=data, files=files)\n        assert r.status_code == 200\n        assert b\"text/py-content-type\" in r.request.body\n\n    def test_hook_receives_request_arguments(self, httpbin):\n        def hook(resp, **kwargs):\n            assert resp is not None\n            assert kwargs != {}\n\n        s = requests.Session()\n        r = requests.Request(\"GET\", httpbin(), hooks={\"response\": hook})\n        prep = s.prepare_request(r)\n        s.send(prep)\n\n    def test_session_hooks_are_used_with_no_request_hooks(self, httpbin):\n        def hook(*args, **kwargs):\n            pass\n\n        s = requests.Session()\n        s.hooks[\"response\"].append(hook)\n        r = requests.Request(\"GET\", httpbin())\n        prep = s.prepare_request(r)\n        assert prep.hooks[\"response\"] != []\n        assert prep.hooks[\"response\"] == [hook]\n\n    def test_session_hooks_are_overridden_by_request_hooks(self, httpbin):\n        def hook1(*args, **kwargs):\n            pass\n\n        def hook2(*args, **kwargs):\n            pass\n\n        assert hook1 is not hook2\n        s = requests.Session()\n        s.hooks[\"response\"].append(hook2)\n        r = requests.Request(\"GET\", httpbin(), hooks={\"response\": [hook1]})\n        prep = s.prepare_request(r)\n        assert prep.hooks[\"response\"] == [hook1]\n\n    def test_prepared_request_hook(self, httpbin):\n        def hook(resp, **kwargs):\n            resp.hook_working = True\n            return resp\n\n        req = requests.Request(\"GET\", httpbin(), hooks={\"response\": hook})\n        prep = req.prepare()\n\n        s = requests.Session()\n        s.proxies = getproxies()\n        resp = s.send(prep)\n\n        assert hasattr(resp, \"hook_working\")\n\n    def test_prepared_from_session(self, httpbin):\n        class DummyAuth(requests.auth.AuthBase):\n            def __call__(self, r):\n                r.headers[\"Dummy-Auth-Test\"] = \"dummy-auth-test-ok\"\n                return r\n\n        req = requests.Request(\"GET\", httpbin(\"headers\"))\n        assert not req.auth\n\n        s = requests.Session()\n        s.auth = DummyAuth()\n\n        prep = s.prepare_request(req)\n        resp = s.send(prep)\n\n        assert resp.json()[\"headers\"][\"Dummy-Auth-Test\"] == \"dummy-auth-test-ok\"\n\n    def test_prepare_request_with_bytestring_url(self):\n        req = requests.Request(\"GET\", b\"https://httpbin.org/\")\n        s = requests.Session()\n        prep = s.prepare_request(req)\n        assert prep.url == \"https://httpbin.org/\"\n\n    def test_request_with_bytestring_host(self, httpbin):\n        s = requests.Session()\n        resp = s.request(\n            \"GET\",\n            httpbin(\"cookies/set?cookie=value\"),\n            allow_redirects=False,\n            headers={\"Host\": b\"httpbin.org\"},\n        )\n        assert resp.cookies.get(\"cookie\") == \"value\"\n\n    def test_links(self):\n        r = requests.Response()\n        r.headers = {\n            \"cache-control\": \"public, max-age=60, s-maxage=60\",\n            \"connection\": \"keep-alive\",\n            \"content-encoding\": \"gzip\",\n"
+      },
+      {
+        "id": "89",
+        "text": "            \"GET\",\n            httpbin(\"cookies/set?cookie=value\"),\n            allow_redirects=False,\n            headers={\"Host\": b\"httpbin.org\"},\n        )\n        assert resp.cookies.get(\"cookie\") == \"value\"\n\n    def test_links(self):\n        r = requests.Response()\n        r.headers = {\n            \"cache-control\": \"public, max-age=60, s-maxage=60\",\n            \"connection\": \"keep-alive\",\n            \"content-encoding\": \"gzip\",\n            \"content-type\": \"application/json; charset=utf-8\",\n            \"date\": \"Sat, 26 Jan 2013 16:47:56 GMT\",\n            \"etag\": '\"6ff6a73c0e446c1f61614769e3ceb778\"',\n            \"last-modified\": \"Sat, 26 Jan 2013 16:22:39 GMT\",\n            \"link\": (\n                \"<https://api.github.com/users/kennethreitz/repos?\"\n                'page=2&per_page=10>; rel=\"next\", <https://api.github.'\n                \"com/users/kennethreitz/repos?page=7&per_page=10>; \"\n                ' rel=\"last\"'\n            ),\n            \"server\": \"GitHub.com\",\n            \"status\": \"200 OK\",\n            \"vary\": \"Accept\",\n            \"x-content-type-options\": \"nosniff\",\n            \"x-github-media-type\": \"github.beta\",\n            \"x-ratelimit-limit\": \"60\",\n            \"x-ratelimit-remaining\": \"57\",\n        }\n        assert r.links[\"next\"][\"rel\"] == \"next\"\n\n    def test_cookie_parameters(self):\n        key = \"some_cookie\"\n        value = \"some_value\"\n        secure = True\n        domain = \"test.com\"\n        rest = {\"HttpOnly\": True}\n\n        jar = requests.cookies.RequestsCookieJar()\n        jar.set(key, value, secure=secure, domain=domain, rest=rest)\n\n        assert len(jar) == 1\n        assert \"some_cookie\" in jar\n\n        cookie = list(jar)[0]\n        assert cookie.secure == secure\n        assert cookie.domain == domain\n        assert cookie._rest[\"HttpOnly\"] == rest[\"HttpOnly\"]\n\n    def test_cookie_as_dict_keeps_len(self):\n        key = \"some_cookie\"\n        value = \"some_value\"\n\n        key1 = \"some_cookie1\"\n        value1 = \"some_value1\"\n\n        jar = requests.cookies.RequestsCookieJar()\n        jar.set(key, value)\n        jar.set(key1, value1)\n\n        d1 = dict(jar)\n        d2 = dict(jar.iteritems())\n        d3 = dict(jar.items())\n\n        assert len(jar) == 2\n        assert len(d1) == 2\n        assert len(d2) == 2\n        assert len(d3) == 2\n\n    def test_cookie_as_dict_keeps_items(self):\n        key = \"some_cookie\"\n        value = \"some_value\"\n\n        key1 = \"some_cookie1\"\n        value1 = \"some_value1\"\n\n        jar = requests.cookies.RequestsCookieJar()\n        jar.set(key, value)\n        jar.set(key1, value1)\n\n        d1 = dict(jar)\n        d2 = dict(jar.iteritems())\n        d3 = dict(jar.items())\n\n        assert d1[\"some_cookie\"] == \"some_value\"\n        assert d2[\"some_cookie\"] == \"some_value\"\n        assert d3[\"some_cookie1\"] == \"some_value1\"\n\n    def test_cookie_as_dict_keys(self):\n        key = \"some_cookie\"\n        value = \"some_value\"\n\n        key1 = \"some_cookie1\"\n        value1 = \"some_value1\"\n\n        jar = requests.cookies.RequestsCookieJar()\n        jar.set(key, value)\n        jar.set(key1, value1)\n\n        keys = jar.keys()\n        assert keys == list(keys)\n        # make sure one can use keys multiple times\n        assert list(keys) == list(keys)\n\n    def test_cookie_as_dict_values(self):\n        key = \"some_cookie\"\n        value = \"some_value\"\n\n        key1 = \"some_cookie1\"\n        value1 = \"some_value1\"\n\n        jar = requests.cookies.RequestsCookieJar()\n        jar.set(key, value)\n        jar.set(key1, value1)\n\n        values = jar.values()\n        assert values == list(values)\n        # make sure one can use values multiple times\n        assert list(values) == list(values)\n\n    def test_cookie_as_dict_items(self):\n        key = \"some_cookie\"\n        value = \"some_value\"\n\n        key1 = \"some_cookie1\"\n        value1 = \"some_value1\"\n\n        jar = requests.cookies.RequestsCookieJar()\n        jar.set(key, value)\n        jar.set(key1, value1)\n\n        items = jar.items()\n        assert items == list(items)\n        # make sure one can use items multiple times\n        assert list(items) == list(items)\n\n    def test_cookie_duplicate_names_different_domains(self):\n        key = \"some_cookie\"\n        value = \"some_value\"\n        domain1 = \"test1.com\"\n        domain2 = \"test2.com\"\n\n        jar = requests.cookies.RequestsCookieJar()\n        jar.set(key, value, domain=domain1)\n        jar.set(key, value, domain=domain2)\n        assert key in jar\n        items = jar.items()\n        assert len(items) == 2\n\n        # Verify that CookieConflictError is raised if domain is not specified\n        with pytest.raises(requests.cookies.CookieConflictError):\n            jar.get(key)\n\n        # Verify that CookieConflictError is not raised if domain is specified\n        cookie = jar.get(key, domain=domain1)\n        assert cookie == value\n\n"
+      }
+    ]
+  },
+  "final_context": "-----Entities-----\nid|entity|description|number of relationships\n422|TEST REQUEST COOKIE OVERRIDES SESSION COOKIE|A test event verifying that a cookie supplied on an individual request overrides the same cookie stored in the Requests session without modifying the session cookie|2\n427|GH 3579|A GitHub issue referenced as the regression context for handling non-Requests cookie jars during redirect resolution|1\n426|TEST COOKIELIB COOKIEJAR ON REDIRECT|A test event verifying that redirect handling correctly merges a standard cookielib CookieJar with session cookies without converting it into a RequestsCookieJar|2\n430|TEST HEADERS ON SESSION WITH NONE ARE NOT SENT|A test event verifying that session headers assigned a None value are omitted from prepared Requests requests|1\n423|TEST REQUEST COOKIES NOT PERSISTED|A test event verifying that cookies supplied for one request are sent with that request but are not added to the Requests session|2\n488|SESSION HOOKS OVERRIDDEN BY REQUEST HOOKS TEST|A test event that verifies request-specific response hooks replace the response hooks configured on a Session.|1\n424|TEST GENERIC COOKIEJAR WORKS|A test event verifying that Requests sessions can use a standard cookielib CookieJar and send its cookies to HTTPBin|2\n501|DUPLICATE COOKIE NAMES TEST|A test that stores cookies with the same name on different domains and verifies domain-specific lookup behavior and CookieConflictError handling|1\n428|TEST REQUESTS IN HISTORY ARE NOT OVERRIDDEN|A test event verifying that URLs in a response's redirect history match the URLs on their associated requests|1\n633|COOKIE-JAR COMPATIBILITY TESTS|Tests verifying that dictionaries can be added correctly to both standard CookieJar and RequestsCookieJar instances|1\n492|REQUEST WITH BYTESTRING HOST TEST|A test event that verifies a request with a bytestring Host header can set and retrieve a cookie while redirects are disabled.|1\n188|MOCKRESPONSE|MockResponse is a compatibility wrapper around response headers that exposes the info and getheaders methods expected by cookiejar.|3\n506|TESTCOOKIEPOLICYCOPY|test_cookie_policy_copy is a pytest test event that verifies copying a RequestsCookieJar preserves its configured cookie-policy class|2\n497|COOKIE DICTIONARY ITEMS TEST|A test that verifies cookie values and items remain accessible when a RequestsCookieJar is converted to dictionaries through different iteration methods|1\n425|TEST PARAM COOKIEJAR WORKS|A test event verifying that a standard CookieJar can be supplied directly as request cookies and transmitted to HTTPBin|2\n276|REQUESTS ISSUE 3490|Requests issue 3490 is referenced in a comment concerning removal of request body headers during redirects|1\n551|TEST SHOULD STRIP AUTH HOST CHANGE|A pytest test that verifies Requests determines that authentication should be removed when a redirect changes the host|2\n528|ISSUE 1321|Issue 1321 is a reported Requests behavior concerning case-insensitive removal of HTTP headers|1\n508|TESTEMPTYRESPONSEHASCONTENTNONE|test_empty_response_has_content_none is a pytest test event that verifies a newly created Response has no content|2\n\n-----Relationships-----\nid|source|target|description|weight|links\n650|TEST COOKIELIB COOKIEJAR ON REDIRECT|GH 3579|The test is explicitly documented as addressing the regression tracked by GitHub issue 3579|9.0|1\n641|TEST REQUEST COOKIE OVERRIDES SESSION COOKIE|REQUESTS|The test verifies Requests request-level cookie precedence over session cookies|9.0|14\n643|TEST REQUEST COOKIES NOT PERSISTED|REQUESTS|The test verifies that Requests does not persist request-only cookies in a session|9.0|14\n645|TEST GENERIC COOKIEJAR WORKS|REQUESTS|The test verifies that Requests sessions accept and preserve a generic cookielib CookieJar|9.0|14\n647|TEST PARAM COOKIEJAR WORKS|REQUESTS|The test verifies that Requests accepts a generic CookieJar as per-request cookies|9.0|14\n649|TEST COOKIELIB COOKIEJAR ON REDIRECT|REQUESTS|The test exercises Requests redirect resolution and cookie merging|10.0|14\n893|TEST SHOULD STRIP AUTH HOST CHANGE|REQUESTS|This test directly verifies Requests identifies a host change as a reason to strip authentication|9.0|14\n651|TEST REQUESTS IN HISTORY ARE NOT OVERRIDDEN|REQUESTS|The test verifies that Requests preserves the original URLs of response-history requests|9.0|14\n653|TEST HEADERS ON SESSION WITH NONE ARE NOT SENT|REQUESTS|The test verifies omission of None-valued headers during Requests request preparation|9.0|14\n780|SESSION HOOKS OVERRIDDEN BY REQUEST HOOKS TEST|REQUESTS|The test verifies request-specific hook precedence in the Requests Session API.|9.0|14\n784|REQUEST WITH BYTESTRING HOST TEST|REQUESTS|The test verifies Requests handling of a bytestring Host header, cookies, and redirects.|9.0|14\n789|COOKIE DICTIONARY ITEMS TEST|REQUESTS|The test verifies cookie item and value access through RequestsCookieJar conversions|8.0|14\n793|DUPLICATE COOKIE NAMES TEST|REQUESTS|The test verifies Requests cookie conflict behavior when identical cookie names exist on different domains|1.0|14\n850|ISSUE 1321|REQUESTS|The test for case-insensitive header removal was added to verify behavior associated with Requests issue 1321|8.0|14\n394|REQUESTS|REQUESTS ISSUE 3490|Requests issue 3490 is cited in the Requests redirect implementation|7.0|14\n894|TEST SHOULD STRIP AUTH HOST CHANGE|PYTEST|Pytest executes this authentication policy test|8.0|4\n800|PYTEST|TESTCOOKIEPOLICYCOPY|Pytest runs the test that verifies cookie-policy copying|8.0|4\n802|PYTEST|TESTEMPTYRESPONSEHASCONTENTNONE|Pytest runs the test that verifies empty Response content|8.0|4\n1053|PYTEST|COOKIE-JAR COMPATIBILITY TESTS|Pytest executes the parameterized cookie-jar compatibility tests|9.0|4\n642|TEST REQUEST COOKIE OVERRIDES SESSION COOKIE|HTTPBIN|The test sends the cookie override request to an HTTPBin cookies endpoint|8.0|4\n644|TEST REQUEST COOKIES NOT PERSISTED|HTTPBIN|The test sends a request-only cookie to an HTTPBin cookies endpoint|8.0|4\n646|TEST GENERIC COOKIEJAR WORKS|HTTPBIN|The test verifies cookie transmission through an HTTPBin cookies endpoint|8.0|4\n648|TEST PARAM COOKIEJAR WORKS|HTTPBIN|The test sends the CookieJar to an HTTPBin cookies endpoint|8.0|4\n813|TESTEMPTYRESPONSEHASCONTENTNONE|RESPONSE|The test creates a Response and verifies that its content is None|9.0|1\n811|TESTCOOKIEPOLICYCOPY|REQUESTSCOOKIEJAR|The test configures a RequestsCookieJar with MyCookiePolicy and verifies that copying preserves its policy|9.0|1\n248|EXTRACT_COOKIES_TO_JAR|MOCKRESPONSE|extract_cookies_to_jar creates a MockResponse around the original response headers before extracting cookies.|9.0|1\n245|MOCKRESPONSE|HTTPLIB.HTTPMESSAGE|MockResponse wraps an HTTPMessage-like header object and exposes it through info and getheaders methods.|9.0|1\n246|MOCKRESPONSE|URLLIB.ADDINFOURL|MockResponse emulates the response interface expected from urllib.addinfourl by cookie-management code.|8.0|1\n\n-----Sources-----\nid|source|text\n83|tests/test_requests.py:L397-L519|\"        assert s.cookies[\"\"foo\"\"] == '\"\"bar:baz\"\"'\n\n    def test_cookie_persists_via_api(self, httpbin):\n        s = requests.session()\n        r = s.get(httpbin(\"\"redirect/1\"\"), cookies={\"\"foo\"\": \"\"bar\"\"})\n        assert \"\"foo\"\" in r.request.headers[\"\"Cookie\"\"]\n        assert \"\"foo\"\" in r.history[0].request.headers[\"\"Cookie\"\"]\n\n    def test_request_cookie_overrides_session_cookie(self, httpbin):\n        s = requests.session()\n        s.cookies[\"\"foo\"\"] = \"\"bar\"\"\n        r = s.get(httpbin(\"\"cookies\"\"), cookies={\"\"foo\"\": \"\"baz\"\"})\n        assert r.json()[\"\"cookies\"\"][\"\"foo\"\"] == \"\"baz\"\"\n        # Session cookie should not be modified\n        assert s.cookies[\"\"foo\"\"] == \"\"bar\"\"\n\n    def test_request_cookies_not_persisted(self, httpbin):\n        s = requests.session()\n        s.get(httpbin(\"\"cookies\"\"), cookies={\"\"foo\"\": \"\"baz\"\"})\n        # Sending a request with cookies should not add cookies to the session\n        assert not s.cookies\n\n    def test_generic_cookiejar_works(self, httpbin):\n        cj = cookielib.CookieJar()\n        cookiejar_from_dict({\"\"foo\"\": \"\"bar\"\"}, cj)\n        s = requests.session()\n        s.cookies = cj\n        r = s.get(httpbin(\"\"cookies\"\"))\n        # Make sure the cookie was sent\n        assert r.json()[\"\"cookies\"\"][\"\"foo\"\"] == \"\"bar\"\"\n        # Make sure the session cj is still the custom one\n        assert s.cookies is cj\n\n    def test_param_cookiejar_works(self, httpbin):\n        cj = cookielib.CookieJar()\n        cookiejar_from_dict({\"\"foo\"\": \"\"bar\"\"}, cj)\n        s = requests.session()\n        r = s.get(httpbin(\"\"cookies\"\"), cookies=cj)\n        # Make sure the cookie was sent\n        assert r.json()[\"\"cookies\"\"][\"\"foo\"\"] == \"\"bar\"\"\n\n    def test_cookielib_cookiejar_on_redirect(self, httpbin):\n        \"\"\"\"\"\"Tests resolve_redirect doesn't fail when merging cookies\n        with non-RequestsCookieJar cookiejar.\n\n        See GH #3579\n        \"\"\"\"\"\"\n        cj = cookiejar_from_dict({\"\"foo\"\": \"\"bar\"\"}, cookielib.CookieJar())\n        s = requests.Session()\n        s.cookies = cookiejar_from_dict({\"\"cookie\"\": \"\"tasty\"\"})\n\n        # Prepare request without using Session\n        req = requests.Request(\"\"GET\"\", httpbin(\"\"headers\"\"), cookies=cj)\n        prep_req = req.prepare()\n\n        # Send request and simulate redirect\n        resp = s.send(prep_req)\n        resp.status_code = 302\n        resp.headers[\"\"location\"\"] = httpbin(\"\"get\"\")\n        redirects = s.resolve_redirects(resp, prep_req)\n        resp = next(redirects)\n\n        # Verify CookieJar isn't being converted to RequestsCookieJar\n        assert isinstance(prep_req._cookies, cookielib.CookieJar)\n        assert isinstance(resp.request._cookies, cookielib.CookieJar)\n        assert not isinstance(resp.request._cookies, requests.cookies.RequestsCookieJar)\n\n        cookies = {}\n        for c in resp.request._cookies:\n            cookies[c.name] = c.value\n        assert cookies[\"\"foo\"\"] == \"\"bar\"\"\n        assert cookies[\"\"cookie\"\"] == \"\"tasty\"\"\n\n    def test_requests_in_history_are_not_overridden(self, httpbin):\n        resp = requests.get(httpbin(\"\"redirect/3\"\"))\n        urls = [r.url for r in resp.history]\n        req_urls = [r.request.url for r in resp.history]\n        assert urls == req_urls\n\n    def test_history_is_always_a_list(self, httpbin):\n        \"\"\"\"\"\"Show that even with redirects, Response.history is always a list.\"\"\"\"\"\"\n        resp = requests.get(httpbin(\"\"get\"\"))\n        assert isinstance(resp.history, list)\n        resp = requests.get(httpbin(\"\"redirect/1\"\"))\n        assert isinstance(resp.history, list)\n        assert not isinstance(resp.history, tuple)\n\n    def test_headers_on_session_with_None_are_not_sent(self, httpbin):\n        \"\"\"\"\"\"Do not send headers in Session.headers with None values.\"\"\"\"\"\"\n        ses = requests.Session()\n        ses.headers[\"\"Accept-Encoding\"\"] = None\n        req = requests.Request(\"\"GET\"\", httpbin(\"\"get\"\"))\n        prep = ses.prepare_request(req)\n        assert \"\"Accept-Encoding\"\" not in prep.headers\n\n    def test_headers_preserve_order(self, httpbin):\n        \"\"\"\"\"\"Preserve order when headers provided as OrderedDict.\"\"\"\"\"\"\n        ses = requests.Session()\n        ses.headers = collections.OrderedDict()\n        ses.headers[\"\"Accept-Encoding\"\"] = \"\"identity\"\"\n        ses.headers[\"\"First\"\"] = \"\"1\"\"\n        ses.headers[\"\"Second\"\"] = \"\"2\"\"\n        headers = collections.OrderedDict([(\"\"Third\"\", \"\"3\"\"), (\"\"Fourth\"\", \"\"4\"\")])\n        headers[\"\"Fifth\"\"] = \"\"5\"\"\n        headers[\"\"Second\"\"] = \"\"222\"\"\n        req = requests.Request(\"\"GET\"\", httpbin(\"\"get\"\"), headers=headers)\n        prep = ses.prepare_request(req)\n        items = list(prep.headers.items())\n        assert items[0] == (\"\"Accept-Encoding\"\", \"\"identity\"\")\n        assert items[1] == (\"\"First\"\", \"\"1\"\")\n        assert items[2] == (\"\"Second\"\", \"\"222\"\")\n        assert items[3] == (\"\"Third\"\", \"\"3\"\")\n        assert items[4] == (\"\"Fourth\"\", \"\"4\"\")\n        assert items[5] == (\"\"Fifth\"\", \"\"5\"\")\n\n    @pytest.mark.parametrize(\"\"key\"\", (\"\"User-agent\"\", \"\"user-agent\"\"))\n    def test_user_agent_transfers(self, httpbin, key):\n        heads = {key: \"\"Mozilla/5.0 (github.com/psf/requests)\"\"}\n\n        r = requests.get(httpbin(\"\"user-agent\"\"), headers=heads)\n        assert heads[key] in r.text\n\n    def test_HTTP_200_OK_HEAD(self, httpbin):\n\"\n88|tests/test_requests.py:L1057-L1211|\"        ),\n    )\n    def test_unicode_multipart_post(self, httpbin, data):\n        with open(__file__, \"\"rb\"\") as f:\n            r = requests.post(\n                httpbin(\"\"post\"\"),\n                data=data,\n                files={\"\"file\"\": (\"\"test_requests.py\"\", f)},\n            )\n        assert r.status_code == 200\n\n    def test_unicode_multipart_post_fieldnames(self, httpbin):\n        filename = os.path.splitext(__file__)[0] + \"\".py\"\"\n        with open(filename, \"\"rb\"\") as f:\n            r = requests.Request(\n                method=\"\"POST\"\",\n                url=httpbin(\"\"post\"\"),\n                data={b\"\"stuff\"\": \"\"elixr\"\"},\n                files={\"\"file\"\": (\"\"test_requests.py\"\", f)},\n            )\n            prep = r.prepare()\n\n        assert b'name=\"\"stuff\"\"' in prep.body\n        assert b\"\"name=\\\"\"b'stuff'\\\"\"\"\" not in prep.body\n\n    def test_unicode_method_name(self, httpbin):\n        with open(__file__, \"\"rb\"\") as f:\n            files = {\"\"file\"\": f}\n            r = requests.request(\n                method=\"\"POST\"\",\n                url=httpbin(\"\"post\"\"),\n                files=files,\n            )\n        assert r.status_code == 200\n\n    def test_unicode_method_name_with_request_object(self, httpbin):\n        s = requests.Session()\n        with open(__file__, \"\"rb\"\") as f:\n            files = {\"\"file\"\": f}\n            req = requests.Request(\"\"POST\"\", httpbin(\"\"post\"\"), files=files)\n            prep = s.prepare_request(req)\n        assert isinstance(prep.method, builtin_str)\n        assert prep.method == \"\"POST\"\"\n\n        resp = s.send(prep)\n        assert resp.status_code == 200\n\n    def test_non_prepared_request_error(self):\n        s = requests.Session()\n        req = requests.Request(\"\"POST\"\", \"\"/\"\")\n\n        with pytest.raises(ValueError) as e:\n            s.send(req)\n        assert str(e.value) == \"\"You can only send PreparedRequests.\"\"\n\n    def test_custom_content_type(self, httpbin):\n        with open(__file__, \"\"rb\"\") as f1:\n            with open(__file__, \"\"rb\"\") as f2:\n                data = {\"\"stuff\"\": json.dumps({\"\"a\"\": 123})}\n                files = {\n                    \"\"file1\"\": (\"\"test_requests.py\"\", f1),\n                    \"\"file2\"\": (\"\"test_requests\"\", f2, \"\"text/py-content-type\"\"),\n                }\n                r = requests.post(httpbin(\"\"post\"\"), data=data, files=files)\n        assert r.status_code == 200\n        assert b\"\"text/py-content-type\"\" in r.request.body\n\n    def test_hook_receives_request_arguments(self, httpbin):\n        def hook(resp, **kwargs):\n            assert resp is not None\n            assert kwargs != {}\n\n        s = requests.Session()\n        r = requests.Request(\"\"GET\"\", httpbin(), hooks={\"\"response\"\": hook})\n        prep = s.prepare_request(r)\n        s.send(prep)\n\n    def test_session_hooks_are_used_with_no_request_hooks(self, httpbin):\n        def hook(*args, **kwargs):\n            pass\n\n        s = requests.Session()\n        s.hooks[\"\"response\"\"].append(hook)\n        r = requests.Request(\"\"GET\"\", httpbin())\n        prep = s.prepare_request(r)\n        assert prep.hooks[\"\"response\"\"] != []\n        assert prep.hooks[\"\"response\"\"] == [hook]\n\n    def test_session_hooks_are_overridden_by_request_hooks(self, httpbin):\n        def hook1(*args, **kwargs):\n            pass\n\n        def hook2(*args, **kwargs):\n            pass\n\n        assert hook1 is not hook2\n        s = requests.Session()\n        s.hooks[\"\"response\"\"].append(hook2)\n        r = requests.Request(\"\"GET\"\", httpbin(), hooks={\"\"response\"\": [hook1]})\n        prep = s.prepare_request(r)\n        assert prep.hooks[\"\"response\"\"] == [hook1]\n\n    def test_prepared_request_hook(self, httpbin):\n        def hook(resp, **kwargs):\n            resp.hook_working = True\n            return resp\n\n        req = requests.Request(\"\"GET\"\", httpbin(), hooks={\"\"response\"\": hook})\n        prep = req.prepare()\n\n        s = requests.Session()\n        s.proxies = getproxies()\n        resp = s.send(prep)\n\n        assert hasattr(resp, \"\"hook_working\"\")\n\n    def test_prepared_from_session(self, httpbin):\n        class DummyAuth(requests.auth.AuthBase):\n            def __call__(self, r):\n                r.headers[\"\"Dummy-Auth-Test\"\"] = \"\"dummy-auth-test-ok\"\"\n                return r\n\n        req = requests.Request(\"\"GET\"\", httpbin(\"\"headers\"\"))\n        assert not req.auth\n\n        s = requests.Session()\n        s.auth = DummyAuth()\n\n        prep = s.prepare_request(req)\n        resp = s.send(prep)\n\n        assert resp.json()[\"\"headers\"\"][\"\"Dummy-Auth-Test\"\"] == \"\"dummy-auth-test-ok\"\"\n\n    def test_prepare_request_with_bytestring_url(self):\n        req = requests.Request(\"\"GET\"\", b\"\"https://httpbin.org/\"\")\n        s = requests.Session()\n        prep = s.prepare_request(req)\n        assert prep.url == \"\"https://httpbin.org/\"\"\n\n    def test_request_with_bytestring_host(self, httpbin):\n        s = requests.Session()\n        resp = s.request(\n            \"\"GET\"\",\n            httpbin(\"\"cookies/set?cookie=value\"\"),\n            allow_redirects=False,\n            headers={\"\"Host\"\": b\"\"httpbin.org\"\"},\n        )\n        assert resp.cookies.get(\"\"cookie\"\") == \"\"value\"\"\n\n    def test_links(self):\n        r = requests.Response()\n        r.headers = {\n            \"\"cache-control\"\": \"\"public, max-age=60, s-maxage=60\"\",\n            \"\"connection\"\": \"\"keep-alive\"\",\n            \"\"content-encoding\"\": \"\"gzip\"\",\n\"\n89|tests/test_requests.py:L1199-L1357|\"            \"\"GET\"\",\n            httpbin(\"\"cookies/set?cookie=value\"\"),\n            allow_redirects=False,\n            headers={\"\"Host\"\": b\"\"httpbin.org\"\"},\n        )\n        assert resp.cookies.get(\"\"cookie\"\") == \"\"value\"\"\n\n    def test_links(self):\n        r = requests.Response()\n        r.headers = {\n            \"\"cache-control\"\": \"\"public, max-age=60, s-maxage=60\"\",\n            \"\"connection\"\": \"\"keep-alive\"\",\n            \"\"content-encoding\"\": \"\"gzip\"\",\n            \"\"content-type\"\": \"\"application/json; charset=utf-8\"\",\n            \"\"date\"\": \"\"Sat, 26 Jan 2013 16:47:56 GMT\"\",\n            \"\"etag\"\": '\"\"6ff6a73c0e446c1f61614769e3ceb778\"\"',\n            \"\"last-modified\"\": \"\"Sat, 26 Jan 2013 16:22:39 GMT\"\",\n            \"\"link\"\": (\n                \"\"<https://api.github.com/users/kennethreitz/repos?\"\"\n                'page=2&per_page=10>; rel=\"\"next\"\", <https://api.github.'\n                \"\"com/users/kennethreitz/repos?page=7&per_page=10>; \"\"\n                ' rel=\"\"last\"\"'\n            ),\n            \"\"server\"\": \"\"GitHub.com\"\",\n            \"\"status\"\": \"\"200 OK\"\",\n            \"\"vary\"\": \"\"Accept\"\",\n            \"\"x-content-type-options\"\": \"\"nosniff\"\",\n            \"\"x-github-media-type\"\": \"\"github.beta\"\",\n            \"\"x-ratelimit-limit\"\": \"\"60\"\",\n            \"\"x-ratelimit-remaining\"\": \"\"57\"\",\n        }\n        assert r.links[\"\"next\"\"][\"\"rel\"\"] == \"\"next\"\"\n\n    def test_cookie_parameters(self):\n        key = \"\"some_cookie\"\"\n        value = \"\"some_value\"\"\n        secure = True\n        domain = \"\"test.com\"\"\n        rest = {\"\"HttpOnly\"\": True}\n\n        jar = requests.cookies.RequestsCookieJar()\n        jar.set(key, value, secure=secure, domain=domain, rest=rest)\n\n        assert len(jar) == 1\n        assert \"\"some_cookie\"\" in jar\n\n        cookie = list(jar)[0]\n        assert cookie.secure == secure\n        assert cookie.domain == domain\n        assert cookie._rest[\"\"HttpOnly\"\"] == rest[\"\"HttpOnly\"\"]\n\n    def test_cookie_as_dict_keeps_len(self):\n        key = \"\"some_cookie\"\"\n        value = \"\"some_value\"\"\n\n        key1 = \"\"some_cookie1\"\"\n        value1 = \"\"some_value1\"\"\n\n        jar = requests.cookies.RequestsCookieJar()\n        jar.set(key, value)\n        jar.set(key1, value1)\n\n        d1 = dict(jar)\n        d2 = dict(jar.iteritems())\n        d3 = dict(jar.items())\n\n        assert len(jar) == 2\n        assert len(d1) == 2\n        assert len(d2) == 2\n        assert len(d3) == 2\n\n    def test_cookie_as_dict_keeps_items(self):\n        key = \"\"some_cookie\"\"\n        value = \"\"some_value\"\"\n\n        key1 = \"\"some_cookie1\"\"\n        value1 = \"\"some_value1\"\"\n\n        jar = requests.cookies.RequestsCookieJar()\n        jar.set(key, value)\n        jar.set(key1, value1)\n\n        d1 = dict(jar)\n        d2 = dict(jar.iteritems())\n        d3 = dict(jar.items())\n\n        assert d1[\"\"some_cookie\"\"] == \"\"some_value\"\"\n        assert d2[\"\"some_cookie\"\"] == \"\"some_value\"\"\n        assert d3[\"\"some_cookie1\"\"] == \"\"some_value1\"\"\n\n    def test_cookie_as_dict_keys(self):\n        key = \"\"some_cookie\"\"\n        value = \"\"some_value\"\"\n\n        key1 = \"\"some_cookie1\"\"\n        value1 = \"\"some_value1\"\"\n\n        jar = requests.cookies.RequestsCookieJar()\n        jar.set(key, value)\n        jar.set(key1, value1)\n\n        keys = jar.keys()\n        assert keys == list(keys)\n        # make sure one can use keys multiple times\n        assert list(keys) == list(keys)\n\n    def test_cookie_as_dict_values(self):\n        key = \"\"some_cookie\"\"\n        value = \"\"some_value\"\"\n\n        key1 = \"\"some_cookie1\"\"\n        value1 = \"\"some_value1\"\"\n\n        jar = requests.cookies.RequestsCookieJar()\n        jar.set(key, value)\n        jar.set(key1, value1)\n\n        values = jar.values()\n        assert values == list(values)\n        # make sure one can use values multiple times\n        assert list(values) == list(values)\n\n    def test_cookie_as_dict_items(self):\n        key = \"\"some_cookie\"\"\n        value = \"\"some_value\"\"\n\n        key1 = \"\"some_cookie1\"\"\n        value1 = \"\"some_value1\"\"\n\n        jar = requests.cookies.RequestsCookieJar()\n        jar.set(key, value)\n        jar.set(key1, value1)\n\n        items = jar.items()\n        assert items == list(items)\n        # make sure one can use items multiple times\n        assert list(items) == list(items)\n\n    def test_cookie_duplicate_names_different_domains(self):\n        key = \"\"some_cookie\"\"\n        value = \"\"some_value\"\"\n        domain1 = \"\"test1.com\"\"\n        domain2 = \"\"test2.com\"\"\n\n        jar = requests.cookies.RequestsCookieJar()\n        jar.set(key, value, domain=domain1)\n        jar.set(key, value, domain=domain2)\n        assert key in jar\n        items = jar.items()\n        assert len(items) == 2\n\n        # Verify that CookieConflictError is raised if domain is not specified\n        with pytest.raises(requests.cookies.CookieConflictError):\n            jar.get(key)\n\n        # Verify that CookieConflictError is not raised if domain is specified\n        cookie = jar.get(key, domain=domain1)\n        assert cookie == value\n\n\"\n",
+  "final_tables": [
+    {
+      "name": "entities",
+      "columns": [
+        "id",
+        "entity",
+        "description",
+        "number of relationships"
+      ],
+      "rows": [
+        {
+          "id": "422",
+          "entity": "TEST REQUEST COOKIE OVERRIDES SESSION COOKIE",
+          "description": "A test event verifying that a cookie supplied on an individual request overrides the same cookie stored in the Requests session without modifying the session cookie",
+          "number of relationships": "2"
+        },
+        {
+          "id": "427",
+          "entity": "GH 3579",
+          "description": "A GitHub issue referenced as the regression context for handling non-Requests cookie jars during redirect resolution",
+          "number of relationships": "1"
+        },
+        {
+          "id": "426",
+          "entity": "TEST COOKIELIB COOKIEJAR ON REDIRECT",
+          "description": "A test event verifying that redirect handling correctly merges a standard cookielib CookieJar with session cookies without converting it into a RequestsCookieJar",
+          "number of relationships": "2"
+        },
+        {
+          "id": "430",
+          "entity": "TEST HEADERS ON SESSION WITH NONE ARE NOT SENT",
+          "description": "A test event verifying that session headers assigned a None value are omitted from prepared Requests requests",
+          "number of relationships": "1"
+        },
+        {
+          "id": "423",
+          "entity": "TEST REQUEST COOKIES NOT PERSISTED",
+          "description": "A test event verifying that cookies supplied for one request are sent with that request but are not added to the Requests session",
+          "number of relationships": "2"
+        },
+        {
+          "id": "488",
+          "entity": "SESSION HOOKS OVERRIDDEN BY REQUEST HOOKS TEST",
+          "description": "A test event that verifies request-specific response hooks replace the response hooks configured on a Session.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "424",
+          "entity": "TEST GENERIC COOKIEJAR WORKS",
+          "description": "A test event verifying that Requests sessions can use a standard cookielib CookieJar and send its cookies to HTTPBin",
+          "number of relationships": "2"
+        },
+        {
+          "id": "501",
+          "entity": "DUPLICATE COOKIE NAMES TEST",
+          "description": "A test that stores cookies with the same name on different domains and verifies domain-specific lookup behavior and CookieConflictError handling",
+          "number of relationships": "1"
+        },
+        {
+          "id": "428",
+          "entity": "TEST REQUESTS IN HISTORY ARE NOT OVERRIDDEN",
+          "description": "A test event verifying that URLs in a response's redirect history match the URLs on their associated requests",
+          "number of relationships": "1"
+        },
+        {
+          "id": "633",
+          "entity": "COOKIE-JAR COMPATIBILITY TESTS",
+          "description": "Tests verifying that dictionaries can be added correctly to both standard CookieJar and RequestsCookieJar instances",
+          "number of relationships": "1"
+        },
+        {
+          "id": "492",
+          "entity": "REQUEST WITH BYTESTRING HOST TEST",
+          "description": "A test event that verifies a request with a bytestring Host header can set and retrieve a cookie while redirects are disabled.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "188",
+          "entity": "MOCKRESPONSE",
+          "description": "MockResponse is a compatibility wrapper around response headers that exposes the info and getheaders methods expected by cookiejar.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "506",
+          "entity": "TESTCOOKIEPOLICYCOPY",
+          "description": "test_cookie_policy_copy is a pytest test event that verifies copying a RequestsCookieJar preserves its configured cookie-policy class",
+          "number of relationships": "2"
+        },
+        {
+          "id": "497",
+          "entity": "COOKIE DICTIONARY ITEMS TEST",
+          "description": "A test that verifies cookie values and items remain accessible when a RequestsCookieJar is converted to dictionaries through different iteration methods",
+          "number of relationships": "1"
+        },
+        {
+          "id": "425",
+          "entity": "TEST PARAM COOKIEJAR WORKS",
+          "description": "A test event verifying that a standard CookieJar can be supplied directly as request cookies and transmitted to HTTPBin",
+          "number of relationships": "2"
+        },
+        {
+          "id": "276",
+          "entity": "REQUESTS ISSUE 3490",
+          "description": "Requests issue 3490 is referenced in a comment concerning removal of request body headers during redirects",
+          "number of relationships": "1"
+        },
+        {
+          "id": "551",
+          "entity": "TEST SHOULD STRIP AUTH HOST CHANGE",
+          "description": "A pytest test that verifies Requests determines that authentication should be removed when a redirect changes the host",
+          "number of relationships": "2"
+        },
+        {
+          "id": "528",
+          "entity": "ISSUE 1321",
+          "description": "Issue 1321 is a reported Requests behavior concerning case-insensitive removal of HTTP headers",
+          "number of relationships": "1"
+        },
+        {
+          "id": "508",
+          "entity": "TESTEMPTYRESPONSEHASCONTENTNONE",
+          "description": "test_empty_response_has_content_none is a pytest test event that verifies a newly created Response has no content",
+          "number of relationships": "2"
+        }
+      ]
+    },
+    {
+      "name": "relationships",
+      "columns": [
+        "id",
+        "source",
+        "target",
+        "description",
+        "weight",
+        "links"
+      ],
+      "rows": [
+        {
+          "id": "650",
+          "source": "TEST COOKIELIB COOKIEJAR ON REDIRECT",
+          "target": "GH 3579",
+          "description": "The test is explicitly documented as addressing the regression tracked by GitHub issue 3579",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "641",
+          "source": "TEST REQUEST COOKIE OVERRIDES SESSION COOKIE",
+          "target": "REQUESTS",
+          "description": "The test verifies Requests request-level cookie precedence over session cookies",
+          "weight": "9.0",
+          "links": "14"
+        },
+        {
+          "id": "643",
+          "source": "TEST REQUEST COOKIES NOT PERSISTED",
+          "target": "REQUESTS",
+          "description": "The test verifies that Requests does not persist request-only cookies in a session",
+          "weight": "9.0",
+          "links": "14"
+        },
+        {
+          "id": "645",
+          "source": "TEST GENERIC COOKIEJAR WORKS",
+          "target": "REQUESTS",
+          "description": "The test verifies that Requests sessions accept and preserve a generic cookielib CookieJar",
+          "weight": "9.0",
+          "links": "14"
+        },
+        {
+          "id": "647",
+          "source": "TEST PARAM COOKIEJAR WORKS",
+          "target": "REQUESTS",
+          "description": "The test verifies that Requests accepts a generic CookieJar as per-request cookies",
+          "weight": "9.0",
+          "links": "14"
+        },
+        {
+          "id": "649",
+          "source": "TEST COOKIELIB COOKIEJAR ON REDIRECT",
+          "target": "REQUESTS",
+          "description": "The test exercises Requests redirect resolution and cookie merging",
+          "weight": "10.0",
+          "links": "14"
+        },
+        {
+          "id": "893",
+          "source": "TEST SHOULD STRIP AUTH HOST CHANGE",
+          "target": "REQUESTS",
+          "description": "This test directly verifies Requests identifies a host change as a reason to strip authentication",
+          "weight": "9.0",
+          "links": "14"
+        },
+        {
+          "id": "651",
+          "source": "TEST REQUESTS IN HISTORY ARE NOT OVERRIDDEN",
+          "target": "REQUESTS",
+          "description": "The test verifies that Requests preserves the original URLs of response-history requests",
+          "weight": "9.0",
+          "links": "14"
+        },
+        {
+          "id": "653",
+          "source": "TEST HEADERS ON SESSION WITH NONE ARE NOT SENT",
+          "target": "REQUESTS",
+          "description": "The test verifies omission of None-valued headers during Requests request preparation",
+          "weight": "9.0",
+          "links": "14"
+        },
+        {
+          "id": "780",
+          "source": "SESSION HOOKS OVERRIDDEN BY REQUEST HOOKS TEST",
+          "target": "REQUESTS",
+          "description": "The test verifies request-specific hook precedence in the Requests Session API.",
+          "weight": "9.0",
+          "links": "14"
+        },
+        {
+          "id": "784",
+          "source": "REQUEST WITH BYTESTRING HOST TEST",
+          "target": "REQUESTS",
+          "description": "The test verifies Requests handling of a bytestring Host header, cookies, and redirects.",
+          "weight": "9.0",
+          "links": "14"
+        },
+        {
+          "id": "789",
+          "source": "COOKIE DICTIONARY ITEMS TEST",
+          "target": "REQUESTS",
+          "description": "The test verifies cookie item and value access through RequestsCookieJar conversions",
+          "weight": "8.0",
+          "links": "14"
+        },
+        {
+          "id": "793",
+          "source": "DUPLICATE COOKIE NAMES TEST",
+          "target": "REQUESTS",
+          "description": "The test verifies Requests cookie conflict behavior when identical cookie names exist on different domains",
+          "weight": "1.0",
+          "links": "14"
+        },
+        {
+          "id": "850",
+          "source": "ISSUE 1321",
+          "target": "REQUESTS",
+          "description": "The test for case-insensitive header removal was added to verify behavior associated with Requests issue 1321",
+          "weight": "8.0",
+          "links": "14"
+        },
+        {
+          "id": "394",
+          "source": "REQUESTS",
+          "target": "REQUESTS ISSUE 3490",
+          "description": "Requests issue 3490 is cited in the Requests redirect implementation",
+          "weight": "7.0",
+          "links": "14"
+        },
+        {
+          "id": "894",
+          "source": "TEST SHOULD STRIP AUTH HOST CHANGE",
+          "target": "PYTEST",
+          "description": "Pytest executes this authentication policy test",
+          "weight": "8.0",
+          "links": "4"
+        },
+        {
+          "id": "800",
+          "source": "PYTEST",
+          "target": "TESTCOOKIEPOLICYCOPY",
+          "description": "Pytest runs the test that verifies cookie-policy copying",
+          "weight": "8.0",
+          "links": "4"
+        },
+        {
+          "id": "802",
+          "source": "PYTEST",
+          "target": "TESTEMPTYRESPONSEHASCONTENTNONE",
+          "description": "Pytest runs the test that verifies empty Response content",
+          "weight": "8.0",
+          "links": "4"
+        },
+        {
+          "id": "1053",
+          "source": "PYTEST",
+          "target": "COOKIE-JAR COMPATIBILITY TESTS",
+          "description": "Pytest executes the parameterized cookie-jar compatibility tests",
+          "weight": "9.0",
+          "links": "4"
+        },
+        {
+          "id": "642",
+          "source": "TEST REQUEST COOKIE OVERRIDES SESSION COOKIE",
+          "target": "HTTPBIN",
+          "description": "The test sends the cookie override request to an HTTPBin cookies endpoint",
+          "weight": "8.0",
+          "links": "4"
+        },
+        {
+          "id": "644",
+          "source": "TEST REQUEST COOKIES NOT PERSISTED",
+          "target": "HTTPBIN",
+          "description": "The test sends a request-only cookie to an HTTPBin cookies endpoint",
+          "weight": "8.0",
+          "links": "4"
+        },
+        {
+          "id": "646",
+          "source": "TEST GENERIC COOKIEJAR WORKS",
+          "target": "HTTPBIN",
+          "description": "The test verifies cookie transmission through an HTTPBin cookies endpoint",
+          "weight": "8.0",
+          "links": "4"
+        },
+        {
+          "id": "648",
+          "source": "TEST PARAM COOKIEJAR WORKS",
+          "target": "HTTPBIN",
+          "description": "The test sends the CookieJar to an HTTPBin cookies endpoint",
+          "weight": "8.0",
+          "links": "4"
+        },
+        {
+          "id": "813",
+          "source": "TESTEMPTYRESPONSEHASCONTENTNONE",
+          "target": "RESPONSE",
+          "description": "The test creates a Response and verifies that its content is None",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "811",
+          "source": "TESTCOOKIEPOLICYCOPY",
+          "target": "REQUESTSCOOKIEJAR",
+          "description": "The test configures a RequestsCookieJar with MyCookiePolicy and verifies that copying preserves its policy",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "248",
+          "source": "EXTRACT_COOKIES_TO_JAR",
+          "target": "MOCKRESPONSE",
+          "description": "extract_cookies_to_jar creates a MockResponse around the original response headers before extracting cookies.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "245",
+          "source": "MOCKRESPONSE",
+          "target": "HTTPLIB.HTTPMESSAGE",
+          "description": "MockResponse wraps an HTTPMessage-like header object and exposes it through info and getheaders methods.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "246",
+          "source": "MOCKRESPONSE",
+          "target": "URLLIB.ADDINFOURL",
+          "description": "MockResponse emulates the response interface expected from urllib.addinfourl by cookie-management code.",
+          "weight": "8.0",
+          "links": "1"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "columns": [
+        "id",
+        "source",
+        "text"
+      ],
+      "rows": [
+        {
+          "id": "83",
+          "text": "        assert s.cookies[\"foo\"] == '\"bar:baz\"'\n\n    def test_cookie_persists_via_api(self, httpbin):\n        s = requests.session()\n        r = s.get(httpbin(\"redirect/1\"), cookies={\"foo\": \"bar\"})\n        assert \"foo\" in r.request.headers[\"Cookie\"]\n        assert \"foo\" in r.history[0].request.headers[\"Cookie\"]\n\n    def test_request_cookie_overrides_session_cookie(self, httpbin):\n        s = requests.session()\n        s.cookies[\"foo\"] = \"bar\"\n        r = s.get(httpbin(\"cookies\"), cookies={\"foo\": \"baz\"})\n        assert r.json()[\"cookies\"][\"foo\"] == \"baz\"\n        # Session cookie should not be modified\n        assert s.cookies[\"foo\"] == \"bar\"\n\n    def test_request_cookies_not_persisted(self, httpbin):\n        s = requests.session()\n        s.get(httpbin(\"cookies\"), cookies={\"foo\": \"baz\"})\n        # Sending a request with cookies should not add cookies to the session\n        assert not s.cookies\n\n    def test_generic_cookiejar_works(self, httpbin):\n        cj = cookielib.CookieJar()\n        cookiejar_from_dict({\"foo\": \"bar\"}, cj)\n        s = requests.session()\n        s.cookies = cj\n        r = s.get(httpbin(\"cookies\"))\n        # Make sure the cookie was sent\n        assert r.json()[\"cookies\"][\"foo\"] == \"bar\"\n        # Make sure the session cj is still the custom one\n        assert s.cookies is cj\n\n    def test_param_cookiejar_works(self, httpbin):\n        cj = cookielib.CookieJar()\n        cookiejar_from_dict({\"foo\": \"bar\"}, cj)\n        s = requests.session()\n        r = s.get(httpbin(\"cookies\"), cookies=cj)\n        # Make sure the cookie was sent\n        assert r.json()[\"cookies\"][\"foo\"] == \"bar\"\n\n    def test_cookielib_cookiejar_on_redirect(self, httpbin):\n        \"\"\"Tests resolve_redirect doesn't fail when merging cookies\n        with non-RequestsCookieJar cookiejar.\n\n        See GH #3579\n        \"\"\"\n        cj = cookiejar_from_dict({\"foo\": \"bar\"}, cookielib.CookieJar())\n        s = requests.Session()\n        s.cookies = cookiejar_from_dict({\"cookie\": \"tasty\"})\n\n        # Prepare request without using Session\n        req = requests.Request(\"GET\", httpbin(\"headers\"), cookies=cj)\n        prep_req = req.prepare()\n\n        # Send request and simulate redirect\n        resp = s.send(prep_req)\n        resp.status_code = 302\n        resp.headers[\"location\"] = httpbin(\"get\")\n        redirects = s.resolve_redirects(resp, prep_req)\n        resp = next(redirects)\n\n        # Verify CookieJar isn't being converted to RequestsCookieJar\n        assert isinstance(prep_req._cookies, cookielib.CookieJar)\n        assert isinstance(resp.request._cookies, cookielib.CookieJar)\n        assert not isinstance(resp.request._cookies, requests.cookies.RequestsCookieJar)\n\n        cookies = {}\n        for c in resp.request._cookies:\n            cookies[c.name] = c.value\n        assert cookies[\"foo\"] == \"bar\"\n        assert cookies[\"cookie\"] == \"tasty\"\n\n    def test_requests_in_history_are_not_overridden(self, httpbin):\n        resp = requests.get(httpbin(\"redirect/3\"))\n        urls = [r.url for r in resp.history]\n        req_urls = [r.request.url for r in resp.history]\n        assert urls == req_urls\n\n    def test_history_is_always_a_list(self, httpbin):\n        \"\"\"Show that even with redirects, Response.history is always a list.\"\"\"\n        resp = requests.get(httpbin(\"get\"))\n        assert isinstance(resp.history, list)\n        resp = requests.get(httpbin(\"redirect/1\"))\n        assert isinstance(resp.history, list)\n        assert not isinstance(resp.history, tuple)\n\n    def test_headers_on_session_with_None_are_not_sent(self, httpbin):\n        \"\"\"Do not send headers in Session.headers with None values.\"\"\"\n        ses = requests.Session()\n        ses.headers[\"Accept-Encoding\"] = None\n        req = requests.Request(\"GET\", httpbin(\"get\"))\n        prep = ses.prepare_request(req)\n        assert \"Accept-Encoding\" not in prep.headers\n\n    def test_headers_preserve_order(self, httpbin):\n        \"\"\"Preserve order when headers provided as OrderedDict.\"\"\"\n        ses = requests.Session()\n        ses.headers = collections.OrderedDict()\n        ses.headers[\"Accept-Encoding\"] = \"identity\"\n        ses.headers[\"First\"] = \"1\"\n        ses.headers[\"Second\"] = \"2\"\n        headers = collections.OrderedDict([(\"Third\", \"3\"), (\"Fourth\", \"4\")])\n        headers[\"Fifth\"] = \"5\"\n        headers[\"Second\"] = \"222\"\n        req = requests.Request(\"GET\", httpbin(\"get\"), headers=headers)\n        prep = ses.prepare_request(req)\n        items = list(prep.headers.items())\n        assert items[0] == (\"Accept-Encoding\", \"identity\")\n        assert items[1] == (\"First\", \"1\")\n        assert items[2] == (\"Second\", \"222\")\n        assert items[3] == (\"Third\", \"3\")\n        assert items[4] == (\"Fourth\", \"4\")\n        assert items[5] == (\"Fifth\", \"5\")\n\n    @pytest.mark.parametrize(\"key\", (\"User-agent\", \"user-agent\"))\n    def test_user_agent_transfers(self, httpbin, key):\n        heads = {key: \"Mozilla/5.0 (github.com/psf/requests)\"}\n\n        r = requests.get(httpbin(\"user-agent\"), headers=heads)\n        assert heads[key] in r.text\n\n    def test_HTTP_200_OK_HEAD(self, httpbin):\n",
+          "source": "tests/test_requests.py:L397-L519"
+        },
+        {
+          "id": "88",
+          "text": "        ),\n    )\n    def test_unicode_multipart_post(self, httpbin, data):\n        with open(__file__, \"rb\") as f:\n            r = requests.post(\n                httpbin(\"post\"),\n                data=data,\n                files={\"file\": (\"test_requests.py\", f)},\n            )\n        assert r.status_code == 200\n\n    def test_unicode_multipart_post_fieldnames(self, httpbin):\n        filename = os.path.splitext(__file__)[0] + \".py\"\n        with open(filename, \"rb\") as f:\n            r = requests.Request(\n                method=\"POST\",\n                url=httpbin(\"post\"),\n                data={b\"stuff\": \"elixr\"},\n                files={\"file\": (\"test_requests.py\", f)},\n            )\n            prep = r.prepare()\n\n        assert b'name=\"stuff\"' in prep.body\n        assert b\"name=\\\"b'stuff'\\\"\" not in prep.body\n\n    def test_unicode_method_name(self, httpbin):\n        with open(__file__, \"rb\") as f:\n            files = {\"file\": f}\n            r = requests.request(\n                method=\"POST\",\n                url=httpbin(\"post\"),\n                files=files,\n            )\n        assert r.status_code == 200\n\n    def test_unicode_method_name_with_request_object(self, httpbin):\n        s = requests.Session()\n        with open(__file__, \"rb\") as f:\n            files = {\"file\": f}\n            req = requests.Request(\"POST\", httpbin(\"post\"), files=files)\n            prep = s.prepare_request(req)\n        assert isinstance(prep.method, builtin_str)\n        assert prep.method == \"POST\"\n\n        resp = s.send(prep)\n        assert resp.status_code == 200\n\n    def test_non_prepared_request_error(self):\n        s = requests.Session()\n        req = requests.Request(\"POST\", \"/\")\n\n        with pytest.raises(ValueError) as e:\n            s.send(req)\n        assert str(e.value) == \"You can only send PreparedRequests.\"\n\n    def test_custom_content_type(self, httpbin):\n        with open(__file__, \"rb\") as f1:\n            with open(__file__, \"rb\") as f2:\n                data = {\"stuff\": json.dumps({\"a\": 123})}\n                files = {\n                    \"file1\": (\"test_requests.py\", f1),\n                    \"file2\": (\"test_requests\", f2, \"text/py-content-type\"),\n                }\n                r = requests.post(httpbin(\"post\"), data=data, files=files)\n        assert r.status_code == 200\n        assert b\"text/py-content-type\" in r.request.body\n\n    def test_hook_receives_request_arguments(self, httpbin):\n        def hook(resp, **kwargs):\n            assert resp is not None\n            assert kwargs != {}\n\n        s = requests.Session()\n        r = requests.Request(\"GET\", httpbin(), hooks={\"response\": hook})\n        prep = s.prepare_request(r)\n        s.send(prep)\n\n    def test_session_hooks_are_used_with_no_request_hooks(self, httpbin):\n        def hook(*args, **kwargs):\n            pass\n\n        s = requests.Session()\n        s.hooks[\"response\"].append(hook)\n        r = requests.Request(\"GET\", httpbin())\n        prep = s.prepare_request(r)\n        assert prep.hooks[\"response\"] != []\n        assert prep.hooks[\"response\"] == [hook]\n\n    def test_session_hooks_are_overridden_by_request_hooks(self, httpbin):\n        def hook1(*args, **kwargs):\n            pass\n\n        def hook2(*args, **kwargs):\n            pass\n\n        assert hook1 is not hook2\n        s = requests.Session()\n        s.hooks[\"response\"].append(hook2)\n        r = requests.Request(\"GET\", httpbin(), hooks={\"response\": [hook1]})\n        prep = s.prepare_request(r)\n        assert prep.hooks[\"response\"] == [hook1]\n\n    def test_prepared_request_hook(self, httpbin):\n        def hook(resp, **kwargs):\n            resp.hook_working = True\n            return resp\n\n        req = requests.Request(\"GET\", httpbin(), hooks={\"response\": hook})\n        prep = req.prepare()\n\n        s = requests.Session()\n        s.proxies = getproxies()\n        resp = s.send(prep)\n\n        assert hasattr(resp, \"hook_working\")\n\n    def test_prepared_from_session(self, httpbin):\n        class DummyAuth(requests.auth.AuthBase):\n            def __call__(self, r):\n                r.headers[\"Dummy-Auth-Test\"] = \"dummy-auth-test-ok\"\n                return r\n\n        req = requests.Request(\"GET\", httpbin(\"headers\"))\n        assert not req.auth\n\n        s = requests.Session()\n        s.auth = DummyAuth()\n\n        prep = s.prepare_request(req)\n        resp = s.send(prep)\n\n        assert resp.json()[\"headers\"][\"Dummy-Auth-Test\"] == \"dummy-auth-test-ok\"\n\n    def test_prepare_request_with_bytestring_url(self):\n        req = requests.Request(\"GET\", b\"https://httpbin.org/\")\n        s = requests.Session()\n        prep = s.prepare_request(req)\n        assert prep.url == \"https://httpbin.org/\"\n\n    def test_request_with_bytestring_host(self, httpbin):\n        s = requests.Session()\n        resp = s.request(\n            \"GET\",\n            httpbin(\"cookies/set?cookie=value\"),\n            allow_redirects=False,\n            headers={\"Host\": b\"httpbin.org\"},\n        )\n        assert resp.cookies.get(\"cookie\") == \"value\"\n\n    def test_links(self):\n        r = requests.Response()\n        r.headers = {\n            \"cache-control\": \"public, max-age=60, s-maxage=60\",\n            \"connection\": \"keep-alive\",\n            \"content-encoding\": \"gzip\",\n",
+          "source": "tests/test_requests.py:L1057-L1211"
+        },
+        {
+          "id": "89",
+          "text": "            \"GET\",\n            httpbin(\"cookies/set?cookie=value\"),\n            allow_redirects=False,\n            headers={\"Host\": b\"httpbin.org\"},\n        )\n        assert resp.cookies.get(\"cookie\") == \"value\"\n\n    def test_links(self):\n        r = requests.Response()\n        r.headers = {\n            \"cache-control\": \"public, max-age=60, s-maxage=60\",\n            \"connection\": \"keep-alive\",\n            \"content-encoding\": \"gzip\",\n            \"content-type\": \"application/json; charset=utf-8\",\n            \"date\": \"Sat, 26 Jan 2013 16:47:56 GMT\",\n            \"etag\": '\"6ff6a73c0e446c1f61614769e3ceb778\"',\n            \"last-modified\": \"Sat, 26 Jan 2013 16:22:39 GMT\",\n            \"link\": (\n                \"<https://api.github.com/users/kennethreitz/repos?\"\n                'page=2&per_page=10>; rel=\"next\", <https://api.github.'\n                \"com/users/kennethreitz/repos?page=7&per_page=10>; \"\n                ' rel=\"last\"'\n            ),\n            \"server\": \"GitHub.com\",\n            \"status\": \"200 OK\",\n            \"vary\": \"Accept\",\n            \"x-content-type-options\": \"nosniff\",\n            \"x-github-media-type\": \"github.beta\",\n            \"x-ratelimit-limit\": \"60\",\n            \"x-ratelimit-remaining\": \"57\",\n        }\n        assert r.links[\"next\"][\"rel\"] == \"next\"\n\n    def test_cookie_parameters(self):\n        key = \"some_cookie\"\n        value = \"some_value\"\n        secure = True\n        domain = \"test.com\"\n        rest = {\"HttpOnly\": True}\n\n        jar = requests.cookies.RequestsCookieJar()\n        jar.set(key, value, secure=secure, domain=domain, rest=rest)\n\n        assert len(jar) == 1\n        assert \"some_cookie\" in jar\n\n        cookie = list(jar)[0]\n        assert cookie.secure == secure\n        assert cookie.domain == domain\n        assert cookie._rest[\"HttpOnly\"] == rest[\"HttpOnly\"]\n\n    def test_cookie_as_dict_keeps_len(self):\n        key = \"some_cookie\"\n        value = \"some_value\"\n\n        key1 = \"some_cookie1\"\n        value1 = \"some_value1\"\n\n        jar = requests.cookies.RequestsCookieJar()\n        jar.set(key, value)\n        jar.set(key1, value1)\n\n        d1 = dict(jar)\n        d2 = dict(jar.iteritems())\n        d3 = dict(jar.items())\n\n        assert len(jar) == 2\n        assert len(d1) == 2\n        assert len(d2) == 2\n        assert len(d3) == 2\n\n    def test_cookie_as_dict_keeps_items(self):\n        key = \"some_cookie\"\n        value = \"some_value\"\n\n        key1 = \"some_cookie1\"\n        value1 = \"some_value1\"\n\n        jar = requests.cookies.RequestsCookieJar()\n        jar.set(key, value)\n        jar.set(key1, value1)\n\n        d1 = dict(jar)\n        d2 = dict(jar.iteritems())\n        d3 = dict(jar.items())\n\n        assert d1[\"some_cookie\"] == \"some_value\"\n        assert d2[\"some_cookie\"] == \"some_value\"\n        assert d3[\"some_cookie1\"] == \"some_value1\"\n\n    def test_cookie_as_dict_keys(self):\n        key = \"some_cookie\"\n        value = \"some_value\"\n\n        key1 = \"some_cookie1\"\n        value1 = \"some_value1\"\n\n        jar = requests.cookies.RequestsCookieJar()\n        jar.set(key, value)\n        jar.set(key1, value1)\n\n        keys = jar.keys()\n        assert keys == list(keys)\n        # make sure one can use keys multiple times\n        assert list(keys) == list(keys)\n\n    def test_cookie_as_dict_values(self):\n        key = \"some_cookie\"\n        value = \"some_value\"\n\n        key1 = \"some_cookie1\"\n        value1 = \"some_value1\"\n\n        jar = requests.cookies.RequestsCookieJar()\n        jar.set(key, value)\n        jar.set(key1, value1)\n\n        values = jar.values()\n        assert values == list(values)\n        # make sure one can use values multiple times\n        assert list(values) == list(values)\n\n    def test_cookie_as_dict_items(self):\n        key = \"some_cookie\"\n        value = \"some_value\"\n\n        key1 = \"some_cookie1\"\n        value1 = \"some_value1\"\n\n        jar = requests.cookies.RequestsCookieJar()\n        jar.set(key, value)\n        jar.set(key1, value1)\n\n        items = jar.items()\n        assert items == list(items)\n        # make sure one can use items multiple times\n        assert list(items) == list(items)\n\n    def test_cookie_duplicate_names_different_domains(self):\n        key = \"some_cookie\"\n        value = \"some_value\"\n        domain1 = \"test1.com\"\n        domain2 = \"test2.com\"\n\n        jar = requests.cookies.RequestsCookieJar()\n        jar.set(key, value, domain=domain1)\n        jar.set(key, value, domain=domain2)\n        assert key in jar\n        items = jar.items()\n        assert len(items) == 2\n\n        # Verify that CookieConflictError is raised if domain is not specified\n        with pytest.raises(requests.cookies.CookieConflictError):\n            jar.get(key)\n\n        # Verify that CookieConflictError is not raised if domain is specified\n        cookie = jar.get(key, domain=domain1)\n        assert cookie == value\n\n",
+          "source": "tests/test_requests.py:L1199-L1357"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "short_id": "83",
+      "text_unit_id": "ebcec01851c6de400d256bec2306e9a5dbabb310f35df8afcf6940e0a619aab0eebad1e48eb1b3dc5755e9092b9e83e06052eb0c71ac2fe8e4482000a7c8bf0d",
+      "id": "d990cc1c1e966f6e504c2b701dcab3dc28d04eb97af585d787a78dbbf45d457b",
+      "title": "tests/test_requests.py:L397-L519",
+      "path": "tests/test_requests.py",
+      "start_line": 397,
+      "end_line": 519,
+      "tokens": 1197,
+      "text_sha256": "cdb73c5739bc970ac655501b87fe88200321ad55d0a1a71467724ef0321518b5",
+      "ms_text_unit_id": "ebcec01851c6de400d256bec2306e9a5dbabb310f35df8afcf6940e0a619aab0eebad1e48eb1b3dc5755e9092b9e83e06052eb0c71ac2fe8e4482000a7c8bf0d"
+    },
+    {
+      "short_id": "88",
+      "text_unit_id": "62f6b63e7654b78533aa887e37a3cdf87006f34f17cde879863bf85910912e8d66f14c06bc6eec94866cfc5805b624dfdee1ef6ef469951d5c7917a09c8a04b4",
+      "id": "caea88e0de4b28a43b6dd9aa53871811bf93476525f684fdb14310a1cf2506ad",
+      "title": "tests/test_requests.py:L1057-L1211",
+      "path": "tests/test_requests.py",
+      "start_line": 1057,
+      "end_line": 1211,
+      "tokens": 1187,
+      "text_sha256": "e2e099694a57b016302d8ca79a61582ba4c5a23a02c2db89c783ffcea4caa5c4",
+      "ms_text_unit_id": "62f6b63e7654b78533aa887e37a3cdf87006f34f17cde879863bf85910912e8d66f14c06bc6eec94866cfc5805b624dfdee1ef6ef469951d5c7917a09c8a04b4"
+    },
+    {
+      "short_id": "89",
+      "text_unit_id": "c12dd73892da8f7956afba5b681fdd3d256fd98a7c84f75cde1c01324d463868d03bff0395397b8559f93eacbd71bd94698152221036f76befd2c140c678f86c",
+      "id": "bf9975b174cb6e2e795f5a1b0f81a035c29341cbeb936076b1082ac797d87654",
+      "title": "tests/test_requests.py:L1199-L1357",
+      "path": "tests/test_requests.py",
+      "start_line": 1199,
+      "end_line": 1357,
+      "tokens": 1199,
+      "text_sha256": "2277897e0ce6c0a5d034bc5a07e681cab7862ba7634ee78d2afee0ebd6b1b8aa",
+      "ms_text_unit_id": "c12dd73892da8f7956afba5b681fdd3d256fd98a7c84f75cde1c01324d463868d03bff0395397b8559f93eacbd71bd94698152221036f76befd2c140c678f86c"
+    }
+  ],
+  "raw_context_tokens": 5251,
+  "final_context_tokens": 5511,
+  "source_text_tokens": 3583,
+  "source_chunks": 3,
+  "retrieval_compute_seconds": 0.013735209591686726,
+  "adaptation_seconds": 0.01008212473243475,
+  "empty_reason": null,
+  "community_level": 2,
+  "dropped_tail_rows": 0
+}

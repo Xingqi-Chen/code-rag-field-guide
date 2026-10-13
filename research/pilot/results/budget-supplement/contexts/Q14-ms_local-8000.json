@@ -1,0 +1,1100 @@
+{
+  "question_id": "Q14",
+  "method": "ms_local",
+  "budget": 8000,
+  "query": "If JSON Unicode detection changes, identify its direct response-decoding consumer and the existing focused detection test.",
+  "upstream_raw_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n629|TEST GUESS JSON UTF|Test Guess JSON UTF is a test group that verifies detection of JSON encodings from byte order marks and UTF-like byte patterns.|2\n398|TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS|A test event that verifies Requests JSON decoding behavior and exception compatibility for alternate UTF encodings|3\n265|UNICODE DECODING|Unicode decoding is the conversion of response bytes into text using the selected or detected character encoding.|3\n597|TEST JSON DECODE PERSISTS DOC ATTR|A test event that verifies the JSONDecodeError preserves the response text in its doc attribute|3\n264|CHARACTER ENCODING DETECTION|Character encoding detection is the process of determining the encoding of response content with Chardet or another available detection library.|4\n628|TEST CONTENT ENCODING DETECTION|Test Content Encoding Detection is a test group that verifies detection of character encodings from HTML meta tags, XHTML declarations, XML declarations, and precedence among multiple declarations.|2\n604|TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE|The entity “TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE” refers to a pytest test event that verifies `Requests JSONDecodeError` exceptions support serialization and deserialization. The test creates a `Requests JSONDecodeError`, serializes it with Python’s `pickle` module, deserializes the resulting data, and confirms that the original and reconstructed exceptions have matching representations.|3\n268|UNICODE DECODE ERROR|UnicodeDecodeError is an error event that occurs when the detected character encoding cannot decode response content correctly.|1\n512|TESTRESPONSEREASONUNICODEFALLBACK|test_response_reason_unicode_fallback is a pytest test event that verifies raise_for_status decodes an encoded reason phrase using an ISO-8859-1 fallback|2\n596|TEST JSON DECODE COMPATIBILITY|A test event that verifies an invalid response body raises Requests' JSONDecodeError compatible with both RequestException and JSONDecodeError|3\n510|TESTRESPONSEDECODEUNICODE|test_response_decode_unicode is a pytest test event that verifies Response.iter_content returns Unicode strings when Unicode decoding is requested|2\n511|TESTRESPONSEREASONUNICODE|test_response_reason_unicode is a pytest test event that checks status handling when an HTTP reason phrase contains encoded Unicode text|1\n395|JSONDECODEERROR|JSONDECODEERROR, also known as `JSONDecodeError`, is an exception type associated with the Requests library. It is raised when a response contains an alternate UTF encoding that cannot be decoded successfully as JSON. Its serialization and deserialization behavior is covered by the relevant documentation tests.|3\n478|TEST DIFFERENT ENCODINGS DONT BREAK POST|A test event that verifies Requests successfully handles a multipart POST combining JSON data, query parameters, and a file under different data encodings|2\n482|UNICODE METHOD NAME TEST|A test event that verifies Requests can send a request whose HTTP method is specified as the Unicode string POST.|1\n479|TEST UNICODE MULTIPART POST|A parametrized test event that verifies Requests accepts Unicode strings, encoded strings, and byte values in multipart POST data|2\n162|JSON|JSON is a data interchange format and Python standard-library module used for processing, encoding, and decoding JSON content. In the Requests context, it serves as the fallback compatibility library when `simplejson` is unavailable and provides the `JSONDecodeError` exception used in response-decoding behavior and its serialization and deserialization tests.|2\n483|UNICODE METHOD NAME WITH REQUEST OBJECT TEST|A test event that verifies a Request object preserves the POST method as a native string when prepared and sent through a Session.|1\n537|NATIVE HEADER KEY HANDLING|A test event verifying that prepared request header keys remain usable as native string or byte-string keys|1\n576|TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE|A test that verifies a response with no content returns None for content and raises ValueError when JSON decoding is attempted|3\n\n\n-----Relationships-----\nid|source|target|description|weight|links\n373|CHARACTER ENCODING DETECTION|UNICODE DECODING|The detected character encoding is used to decode response bytes into Unicode text.|1.0|1\n593|TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS|JSONDECODEERROR|The test expects JSONDecodeError to be raised when decoding the response body|9.0|1\n929|TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE|REQUESTS|The test validates Requests response content and JSON decoding behavior for an empty response|9.0|15\n977|TEST JSON DECODE COMPATIBILITY|REQUESTS|The test calls a Requests response's json method and checks exception compatibility|9.0|15\n978|TEST JSON DECODE PERSISTS DOC ATTR|REQUESTS|The test checks a JSON decoding exception produced by a Requests response|9.0|15\n1007|TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE|REQUESTS|The test for “TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE” verifies that `REQUESTS` `JSONDecodeError` instances can be serialized and deserialized successfully. It constructs a `Requests` `JSONDecodeError`, validates its serialization, and confirms that the resulting serialized representation can be deserialized correctly.|10.0|15\n370|REQUESTS|UNICODE DECODING|Requests decodes response bytes into text through the text property and selected encoding.|9.0|15\n591|REQUESTS|TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS|The test exercises Requests response JSON decoding and exception behavior|9.0|15\n998|REQUESTS|JSONDECODEERROR|Requests defines and tests its JSONDecodeError exception behavior.|8.0|15\n759|TEST DIFFERENT ENCODINGS DONT BREAK POST|REQUESTS|This test verifies Requests handles multipart POST data with JSON, query parameters, and files|9.0|15\n760|TEST UNICODE MULTIPART POST|REQUESTS|This test verifies Requests handles Unicode and byte-valued multipart POST data|9.0|15\n1040|TEST CONTENT ENCODING DETECTION|REQUESTS|The test group exercises Requests functionality for detecting encodings from document content.|9.0|15\n1041|TEST GUESS JSON UTF|REQUESTS|The test group exercises Requests functionality for identifying JSON encodings from byte data and byte order marks.|9.0|15\n288|REQUESTS|JSON|Requests uses JSON compatibility utilities to encode and decode JSON data and to define JSON-related exceptions. It also uses the JSON module in its bug-report helper to format and print collected diagnostic information as JSON.|16.0|15\n774|UNICODE METHOD NAME TEST|REQUESTS|The test uses the Requests request function to send a Unicode POST method.|9.0|15\n775|UNICODE METHOD NAME WITH REQUEST OBJECT TEST|REQUESTS|The test uses Requests Request and Session objects to prepare and send a POST request.|9.0|15\n377|REQUESTS|UNICODE DECODE ERROR|Requests catches UnicodeDecodeError when the detected response encoding is incorrect and then falls back to another decoding path.|8.0|15\n1012|TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE|PYTEST|PYTEST defines and executes the test for “TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE,” verifying that JSON decode errors can be serialized and deserialized successfully.|2.0|10\n590|PYTEST|TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS|Pytest executes the test that checks alternate UTF encoding JSON-decoding behavior|9.0|10\n946|PYTEST|TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE|Pytest executes the no-content JSON behavior test|9.0|10\n987|PYTEST|TEST JSON DECODE COMPATIBILITY|Pytest executes the JSON decoding compatibility test|9.0|10\n988|PYTEST|TEST JSON DECODE PERSISTS DOC ATTR|Pytest executes the JSON exception attribute persistence test|9.0|10\n1045|TEST CONTENT ENCODING DETECTION|PYTEST|The test group uses Pytest parameterization and assertions to validate encoding detection behavior.|8.0|10\n1046|TEST GUESS JSON UTF|PYTEST|The test group uses Pytest parameterization and assertions to validate JSON encoding detection behavior.|8.0|10\n804|PYTEST|TESTRESPONSEDECODEUNICODE|Pytest runs the test that verifies Unicode response decoding|8.0|10\n806|PYTEST|TESTRESPONSEREASONUNICODEFALLBACK|Pytest runs the test that verifies ISO-8859-1 reason fallback behavior|8.0|10\n805|PYTEST|TESTRESPONSEREASONUNICODE|Pytest runs the test that verifies Unicode HTTP status reasons|8.0|10\n930|TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE|HTTPBIN|The test obtains a no-content response from an Httpbin status endpoint|8.0|5\n992|TEST JSON DECODE COMPATIBILITY|HTTPBIN|The test obtains invalid byte content from an httpbin endpoint to trigger JSON decoding failure|8.0|5\n993|TEST JSON DECODE PERSISTS DOC ATTR|HTTPBIN|The test obtains the response text from an httpbin byte-response endpoint|1.0|5\n770|TEST DIFFERENT ENCODINGS DONT BREAK POST|HTTPBIN|The test sends multipart data to an HTTPBin POST endpoint|8.0|5\n771|TEST UNICODE MULTIPART POST|HTTPBIN|The test sends Unicode multipart data to an HTTPBin POST endpoint|8.0|5\n358|RESPONSE|CHARACTER ENCODING DETECTION|A Response uses Chardet or Charset-normalizer to determine apparent encoding when no explicit encoding is available.|9.0|3\n359|RESPONSE|UNICODE DECODING|A Response decodes byte content into text using its declared or detected encoding.|9.0|3\n815|TESTRESPONSEDECODEUNICODE|RESPONSE|The test verifies that Response.iter_content returns strings when decoding is enabled|9.0|3\n860|NATIVE HEADER KEY HANDLING|REQUEST|The test verifies the native key types retained by a prepared Request's headers|8.0|1\n371|CHARDET|CHARACTER ENCODING DETECTION|Chardet performs character encoding detection for response content.|9.0|1\n1014|TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE|PICKLE|The test uses pickle to serialize and deserialize the JSON decoding error|1.0|1\n372|CHARSET_NORMALIZER|CHARACTER ENCODING DETECTION|Charset-normalizer is an alternative library used for character encoding detection.|9.0|1\n592|JSONDECODEERROR|REQUESTEXCEPTION|The JSON decoding error is verified to also be a Requests exception|9.0|1\n816|TESTRESPONSEREASONUNICODEFALLBACK|HTTPEXCEPTION|The test invokes Response.raise_for_status and expects an HTTPError containing the decoded reason phrase|9.0|1\n227|SIMPLEJSON|JSON|simplejson and the standard json module are alternative JSON implementations selected by requests.compat|7.0|1\n\n\n-----Sources-----\nid|text\n107|        result = guess_filename(obj)\n        assert result == value\n        assert isinstance(result, expected_type)\n\n\nclass TestExtractZippedPaths:\n    @pytest.mark.parametrize(\n        \"path\",\n        (\n            \"/\",\n            __file__,\n            pytest.__file__,\n            \"/etc/invalid/location\",\n        ),\n    )\n    def test_unzipped_paths_unchanged(self, path):\n        assert path == extract_zipped_paths(path)\n\n    def test_zipped_paths_extracted(self, tmpdir):\n        zipped_py = tmpdir.join(\"test.zip\")\n        with zipfile.ZipFile(zipped_py.strpath, \"w\") as f:\n            f.write(__file__)\n\n        _, name = os.path.splitdrive(__file__)\n        zipped_path = os.path.join(zipped_py.strpath, name.lstrip(r\"\\/\"))\n        extracted_path = extract_zipped_paths(zipped_path)\n\n        assert extracted_path != zipped_path\n        assert os.path.exists(extracted_path)\n        assert filecmp.cmp(extracted_path, __file__)\n\n    def test_invalid_unc_path(self):\n        path = r\"\\\\localhost\\invalid\\location\"\n        assert extract_zipped_paths(path) == path\n\n\nclass TestContentEncodingDetection:\n    def test_none(self):\n        encodings = get_encodings_from_content(\"\")\n        assert not len(encodings)\n\n    @pytest.mark.parametrize(\n        \"content\",\n        (\n            # HTML5 meta charset attribute\n            '<meta charset=\"UTF-8\">',\n            # HTML4 pragma directive\n            '<meta http-equiv=\"Content-type\" content=\"text/html;charset=UTF-8\">',\n            # XHTML 1.x served with text/html MIME type\n            '<meta http-equiv=\"Content-type\" content=\"text/html;charset=UTF-8\" />',\n            # XHTML 1.x served as XML\n            '<?xml version=\"1.0\" encoding=\"UTF-8\"?>',\n        ),\n    )\n    def test_pragmas(self, content):\n        encodings = get_encodings_from_content(content)\n        assert len(encodings) == 1\n        assert encodings[0] == \"UTF-8\"\n\n    def test_precedence(self):\n        content = \"\"\"\n        <?xml version=\"1.0\" encoding=\"XML\"?>\n        <meta charset=\"HTML5\">\n        <meta http-equiv=\"Content-type\" content=\"text/html;charset=HTML4\" />\n        \"\"\".strip()\n        assert get_encodings_from_content(content) == [\"HTML5\", \"HTML4\", \"XML\"]\n\n\nclass TestGuessJSONUTF:\n    @pytest.mark.parametrize(\n        \"encoding\",\n        (\n            \"utf-32\",\n            \"utf-8-sig\",\n            \"utf-16\",\n            \"utf-8\",\n            \"utf-16-be\",\n            \"utf-16-le\",\n            \"utf-32-be\",\n            \"utf-32-le\",\n        ),\n    )\n    def test_encoded(self, encoding):\n        data = \"{}\".encode(encoding)\n        assert guess_json_utf(data) == encoding\n\n    def test_bad_utf_like_encoding(self):\n        assert guess_json_utf(b\"\\x00\\x00\\x00\\x00\") is None\n\n    @pytest.mark.parametrize(\n        (\"encoding\", \"expected\"),\n        (\n            (\"utf-16-be\", \"utf-16\"),\n            (\"utf-16-le\", \"utf-16\"),\n            (\"utf-32-be\", \"utf-32\"),\n            (\"utf-32-le\", \"utf-32\"),\n        ),\n    )\n    def test_guess_by_bom(self, encoding, expected):\n        data = \"\\ufeff{}\".encode(encoding)\n        assert guess_json_utf(data) == expected\n\n\nUSER = PASSWORD = \"%!*'();:@&=+$,/?#[] \"\nENCODED_USER = compat.quote(USER, \"\")\nENCODED_PASSWORD = compat.quote(PASSWORD, \"\")\n\n\n@pytest.mark.parametrize(\n    \"url, auth\",\n    (\n        (\n            f\"http://{ENCODED_USER}:{ENCODED_PASSWORD}@request.com/url.html#test\",\n            (USER, PASSWORD),\n        ),\n        (\"http://user:pass@complex.url.com/path?query=yes\", (\"user\", \"pass\")),\n        (\n            \"http://user:pass%20pass@complex.url.com/path?query=yes\",\n            (\"user\", \"pass pass\"),\n        ),\n        (\"http://user:pass pass@complex.url.com/path?query=yes\", (\"user\", \"pass pass\")),\n        (\n            \"http://user%25user:pass@complex.url.com/path?query=yes\",\n            (\"user%user\", \"pass\"),\n        ),\n        (\n            \"http://user:pass%23pass@complex.url.com/path?query=yes\",\n            (\"user\", \"pass#pass\"),\n        ),\n        (\"http://complex.url.com/path?query=yes\", (\"\", \"\")),\n    ),\n)\ndef test_get_auth_from_url(url, auth):\n    assert get_auth_from_url(url) == auth\n\n\n@pytest.mark.parametrize(\n    \"uri, expected\",\n    (\n        (\n            # Ensure requoting doesn't break expectations\n            \"http://example.com/fiz?buz=%25ppicture\",\n            \"http://example.com/fiz?buz=%25ppicture\",\n        ),\n        (\n            # Ensure we handle unquoted percent signs in redirects\n            \"http://example.com/fiz?buz=%ppicture\",\n            \"http://example.com/fiz?buz=%25ppicture\",\n        ),\n    ),\n)\ndef test_requote_uri_with_unquoted_percents(uri, expected):\n    \"\"\"See: https://github.com/psf/requests/issues/2356\"\"\"\n    assert requote_uri(uri) == expected\n\n\n@pytest.mark.parametrize(\n    \"uri, expected\",\n    (\n        (\n            # Illegal bytes\n            \"http://example.com/?a=%--\",\n            \"http://example.com/?a=%--\",\n        ),\n        (\n\n78|            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /final-url/\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/path/to/thing/#view=edit&token=hunter2'\n        r = requests.get(url)\n\n        assert r.status_code == 200\n        assert len(r.history) == 2\n        assert r.history[0].request.url == url\n\n        # Verify we haven't overwritten the location with our previous fragment.\n        assert r.history[1].request.url == f'http://{host}:{port}/get#relevant-section'\n        # Verify previous fragment is used and not the original.\n        assert r.url == f'http://{host}:{port}/final-url/#relevant-section'\n\n        close_server.set()\n\n\ndef test_json_decode_compatibility_for_alt_utf_encodings():\n\n    def response_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n'\n            b'Content-Length: 18\\r\\n\\r\\n'\n            b'\\xff\\xfe{\\x00\"\\x00K0\"\\x00=\\x00\"\\x00\\xab0\"\\x00\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url)\n    r.encoding = None\n    with pytest.raises(requests.exceptions.JSONDecodeError) as excinfo:\n        r.json()\n    assert isinstance(excinfo.value, requests.exceptions.RequestException)\n    assert isinstance(excinfo.value, JSONDecodeError)\n    assert r.text not in str(excinfo.value)\n\n49|    def is_permanent_redirect(self):\n        \"\"\"True if this Response one of the permanent versions of redirect.\"\"\"\n        return \"location\" in self.headers and self.status_code in (\n            codes.moved_permanently,\n            codes.permanent_redirect,\n        )\n\n    @property\n    def next(self):\n        \"\"\"Returns a PreparedRequest for the next request in a redirect chain, if there is one.\"\"\"\n        return self._next\n\n    @property\n    def apparent_encoding(self):\n        \"\"\"The apparent encoding, provided by the charset_normalizer or chardet libraries.\"\"\"\n        if chardet is not None:\n            return chardet.detect(self.content)[\"encoding\"]\n        else:\n            # If no character detection library is available, we'll fall back\n            # to a standard Python utf-8 str.\n            return \"utf-8\"\n\n    def iter_content(self, chunk_size=1, decode_unicode=False):\n        \"\"\"Iterates over the response data.  When stream=True is set on the\n        request, this avoids reading the content at once into memory for\n        large responses.  The chunk size is the number of bytes it should\n        read into memory.  This is not necessarily the length of each item\n        returned as decoding can take place.\n\n        chunk_size must be of type int or None. A value of None will\n        function differently depending on the value of `stream`.\n        stream=True will read data as it arrives in whatever size the\n        chunks are received. If stream=False, data is returned as\n        a single chunk.\n\n        If decode_unicode is True, content will be decoded using the best\n        available encoding based on the response.\n        \"\"\"\n\n        def generate():\n            # Special case for urllib3.\n            if hasattr(self.raw, \"stream\"):\n                try:\n                    yield from self.raw.stream(chunk_size, decode_content=True)\n                except ProtocolError as e:\n                    raise ChunkedEncodingError(e)\n                except DecodeError as e:\n                    raise ContentDecodingError(e)\n                except ReadTimeoutError as e:\n                    raise ConnectionError(e)\n                except SSLError as e:\n                    raise RequestsSSLError(e)\n            else:\n                # Standard file-like object.\n                while True:\n                    chunk = self.raw.read(chunk_size)\n                    if not chunk:\n                        break\n                    yield chunk\n\n            self._content_consumed = True\n\n        if self._content_consumed and isinstance(self._content, bool):\n            raise StreamConsumedError()\n        elif chunk_size is not None and not isinstance(chunk_size, int):\n            raise TypeError(\n                f\"chunk_size must be an int, it is instead a {type(chunk_size)}.\"\n            )\n        # simulate reading small chunks of the content\n        reused_chunks = iter_slices(self._content, chunk_size)\n\n        stream_chunks = generate()\n\n        chunks = reused_chunks if self._content_consumed else stream_chunks\n\n        if decode_unicode:\n            chunks = stream_decode_response_unicode(chunks, self)\n\n        return chunks\n\n    def iter_lines(\n        self, chunk_size=ITER_CHUNK_SIZE, decode_unicode=False, delimiter=None\n    ):\n        \"\"\"Iterates over the response data, one line at a time.  When\n        stream=True is set on the request, this avoids reading the\n        content at once into memory for large responses.\n\n        .. note:: This method is not reentrant safe.\n        \"\"\"\n\n        pending = None\n\n        for chunk in self.iter_content(\n            chunk_size=chunk_size, decode_unicode=decode_unicode\n        ):\n            if pending is not None:\n                chunk = pending + chunk\n\n            if delimiter:\n                lines = chunk.split(delimiter)\n            else:\n                lines = chunk.splitlines()\n\n            if lines and lines[-1] and chunk and lines[-1][-1] == chunk[-1]:\n                pending = lines.pop()\n            else:\n                pending = None\n\n            yield from lines\n\n        if pending is not None:\n            yield pending\n\n    @property\n    def content(self):\n        \"\"\"Content of the response, in bytes.\"\"\"\n\n        if self._content is False:\n            # Read the contents.\n            if self._content_consumed:\n                raise RuntimeError(\"The content for this response was already consumed\")\n\n            if self.status_code == 0 or self.raw is None:\n                self._content = None\n            else:\n                self._content = b\"\".join(self.iter_content(CONTENT_CHUNK_SIZE)) or b\"\"\n\n        self._content_consumed = True\n        # don't need to release the connection; that's been handled by urllib3\n        # since we exhausted the data.\n        return self._content\n\n    @property\n    def text(self):\n        \"\"\"Content of the response, in unicode.\n\n        If Response.encoding is None, encoding will be guessed using\n        ``charset_normalizer`` or ``chardet``.\n\n        The encoding of the response content is determined based solely on HTTP\n        headers, following RFC 2616 to the letter. If you can take advantage of\n        non-HTTP knowledge to make a better guess at the encoding, you should\n        set ``r.encoding`` appropriately before accessing this property.\n        \"\"\"\n\n        # Try charset from content-type\n        content = None\n        encoding = self.encoding\n\n        if not self.content:\n            return \"\"\n\n        # Fallback to auto-detected encoding.\n        if self.encoding is None:\n            encoding = self.apparent_encoding\n\n        # Decode unicode from given encoding.\n        try:\n            content = str(self.content, encoding, errors=\"replace\")\n        except (LookupError, TypeError):\n            # A LookupError is raised if the encoding was not found which could\n            # indicate a misspelling or similar mistake.\n            #\n            # A TypeError can be raised if encoding is None\n            #\n            # So we try blindly encoding.\n\n",
+  "upstream_raw_records": {
+    "relationships": [
+      {
+        "id": "373",
+        "source": "CHARACTER ENCODING DETECTION",
+        "target": "UNICODE DECODING",
+        "description": "The detected character encoding is used to decode response bytes into Unicode text.",
+        "weight": "1.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "593",
+        "source": "TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS",
+        "target": "JSONDECODEERROR",
+        "description": "The test expects JSONDecodeError to be raised when decoding the response body",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "929",
+        "source": "TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE",
+        "target": "REQUESTS",
+        "description": "The test validates Requests response content and JSON decoding behavior for an empty response",
+        "weight": "9.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "977",
+        "source": "TEST JSON DECODE COMPATIBILITY",
+        "target": "REQUESTS",
+        "description": "The test calls a Requests response's json method and checks exception compatibility",
+        "weight": "9.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "978",
+        "source": "TEST JSON DECODE PERSISTS DOC ATTR",
+        "target": "REQUESTS",
+        "description": "The test checks a JSON decoding exception produced by a Requests response",
+        "weight": "9.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "1007",
+        "source": "TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE",
+        "target": "REQUESTS",
+        "description": "The test for “TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE” verifies that `REQUESTS` `JSONDecodeError` instances can be serialized and deserialized successfully. It constructs a `Requests` `JSONDecodeError`, validates its serialization, and confirms that the resulting serialized representation can be deserialized correctly.",
+        "weight": "10.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "370",
+        "source": "REQUESTS",
+        "target": "UNICODE DECODING",
+        "description": "Requests decodes response bytes into text through the text property and selected encoding.",
+        "weight": "9.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "591",
+        "source": "REQUESTS",
+        "target": "TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS",
+        "description": "The test exercises Requests response JSON decoding and exception behavior",
+        "weight": "9.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "998",
+        "source": "REQUESTS",
+        "target": "JSONDECODEERROR",
+        "description": "Requests defines and tests its JSONDecodeError exception behavior.",
+        "weight": "8.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "759",
+        "source": "TEST DIFFERENT ENCODINGS DONT BREAK POST",
+        "target": "REQUESTS",
+        "description": "This test verifies Requests handles multipart POST data with JSON, query parameters, and files",
+        "weight": "9.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "760",
+        "source": "TEST UNICODE MULTIPART POST",
+        "target": "REQUESTS",
+        "description": "This test verifies Requests handles Unicode and byte-valued multipart POST data",
+        "weight": "9.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "1040",
+        "source": "TEST CONTENT ENCODING DETECTION",
+        "target": "REQUESTS",
+        "description": "The test group exercises Requests functionality for detecting encodings from document content.",
+        "weight": "9.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "1041",
+        "source": "TEST GUESS JSON UTF",
+        "target": "REQUESTS",
+        "description": "The test group exercises Requests functionality for identifying JSON encodings from byte data and byte order marks.",
+        "weight": "9.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "288",
+        "source": "REQUESTS",
+        "target": "JSON",
+        "description": "Requests uses JSON compatibility utilities to encode and decode JSON data and to define JSON-related exceptions. It also uses the JSON module in its bug-report helper to format and print collected diagnostic information as JSON.",
+        "weight": "16.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "774",
+        "source": "UNICODE METHOD NAME TEST",
+        "target": "REQUESTS",
+        "description": "The test uses the Requests request function to send a Unicode POST method.",
+        "weight": "9.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "775",
+        "source": "UNICODE METHOD NAME WITH REQUEST OBJECT TEST",
+        "target": "REQUESTS",
+        "description": "The test uses Requests Request and Session objects to prepare and send a POST request.",
+        "weight": "9.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "377",
+        "source": "REQUESTS",
+        "target": "UNICODE DECODE ERROR",
+        "description": "Requests catches UnicodeDecodeError when the detected response encoding is incorrect and then falls back to another decoding path.",
+        "weight": "8.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "1012",
+        "source": "TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE",
+        "target": "PYTEST",
+        "description": "PYTEST defines and executes the test for “TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE,” verifying that JSON decode errors can be serialized and deserialized successfully.",
+        "weight": "2.0",
+        "links": "10",
+        "in_context": true
+      },
+      {
+        "id": "590",
+        "source": "PYTEST",
+        "target": "TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS",
+        "description": "Pytest executes the test that checks alternate UTF encoding JSON-decoding behavior",
+        "weight": "9.0",
+        "links": "10",
+        "in_context": true
+      },
+      {
+        "id": "946",
+        "source": "PYTEST",
+        "target": "TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE",
+        "description": "Pytest executes the no-content JSON behavior test",
+        "weight": "9.0",
+        "links": "10",
+        "in_context": true
+      },
+      {
+        "id": "987",
+        "source": "PYTEST",
+        "target": "TEST JSON DECODE COMPATIBILITY",
+        "description": "Pytest executes the JSON decoding compatibility test",
+        "weight": "9.0",
+        "links": "10",
+        "in_context": true
+      },
+      {
+        "id": "988",
+        "source": "PYTEST",
+        "target": "TEST JSON DECODE PERSISTS DOC ATTR",
+        "description": "Pytest executes the JSON exception attribute persistence test",
+        "weight": "9.0",
+        "links": "10",
+        "in_context": true
+      },
+      {
+        "id": "1045",
+        "source": "TEST CONTENT ENCODING DETECTION",
+        "target": "PYTEST",
+        "description": "The test group uses Pytest parameterization and assertions to validate encoding detection behavior.",
+        "weight": "8.0",
+        "links": "10",
+        "in_context": true
+      },
+      {
+        "id": "1046",
+        "source": "TEST GUESS JSON UTF",
+        "target": "PYTEST",
+        "description": "The test group uses Pytest parameterization and assertions to validate JSON encoding detection behavior.",
+        "weight": "8.0",
+        "links": "10",
+        "in_context": true
+      },
+      {
+        "id": "804",
+        "source": "PYTEST",
+        "target": "TESTRESPONSEDECODEUNICODE",
+        "description": "Pytest runs the test that verifies Unicode response decoding",
+        "weight": "8.0",
+        "links": "10",
+        "in_context": true
+      },
+      {
+        "id": "806",
+        "source": "PYTEST",
+        "target": "TESTRESPONSEREASONUNICODEFALLBACK",
+        "description": "Pytest runs the test that verifies ISO-8859-1 reason fallback behavior",
+        "weight": "8.0",
+        "links": "10",
+        "in_context": true
+      },
+      {
+        "id": "805",
+        "source": "PYTEST",
+        "target": "TESTRESPONSEREASONUNICODE",
+        "description": "Pytest runs the test that verifies Unicode HTTP status reasons",
+        "weight": "8.0",
+        "links": "10",
+        "in_context": true
+      },
+      {
+        "id": "930",
+        "source": "TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE",
+        "target": "HTTPBIN",
+        "description": "The test obtains a no-content response from an Httpbin status endpoint",
+        "weight": "8.0",
+        "links": "5",
+        "in_context": true
+      },
+      {
+        "id": "992",
+        "source": "TEST JSON DECODE COMPATIBILITY",
+        "target": "HTTPBIN",
+        "description": "The test obtains invalid byte content from an httpbin endpoint to trigger JSON decoding failure",
+        "weight": "8.0",
+        "links": "5",
+        "in_context": true
+      },
+      {
+        "id": "993",
+        "source": "TEST JSON DECODE PERSISTS DOC ATTR",
+        "target": "HTTPBIN",
+        "description": "The test obtains the response text from an httpbin byte-response endpoint",
+        "weight": "1.0",
+        "links": "5",
+        "in_context": true
+      },
+      {
+        "id": "770",
+        "source": "TEST DIFFERENT ENCODINGS DONT BREAK POST",
+        "target": "HTTPBIN",
+        "description": "The test sends multipart data to an HTTPBin POST endpoint",
+        "weight": "8.0",
+        "links": "5",
+        "in_context": true
+      },
+      {
+        "id": "771",
+        "source": "TEST UNICODE MULTIPART POST",
+        "target": "HTTPBIN",
+        "description": "The test sends Unicode multipart data to an HTTPBin POST endpoint",
+        "weight": "8.0",
+        "links": "5",
+        "in_context": true
+      },
+      {
+        "id": "358",
+        "source": "RESPONSE",
+        "target": "CHARACTER ENCODING DETECTION",
+        "description": "A Response uses Chardet or Charset-normalizer to determine apparent encoding when no explicit encoding is available.",
+        "weight": "9.0",
+        "links": "3",
+        "in_context": true
+      },
+      {
+        "id": "359",
+        "source": "RESPONSE",
+        "target": "UNICODE DECODING",
+        "description": "A Response decodes byte content into text using its declared or detected encoding.",
+        "weight": "9.0",
+        "links": "3",
+        "in_context": true
+      },
+      {
+        "id": "815",
+        "source": "TESTRESPONSEDECODEUNICODE",
+        "target": "RESPONSE",
+        "description": "The test verifies that Response.iter_content returns strings when decoding is enabled",
+        "weight": "9.0",
+        "links": "3",
+        "in_context": true
+      },
+      {
+        "id": "860",
+        "source": "NATIVE HEADER KEY HANDLING",
+        "target": "REQUEST",
+        "description": "The test verifies the native key types retained by a prepared Request's headers",
+        "weight": "8.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "371",
+        "source": "CHARDET",
+        "target": "CHARACTER ENCODING DETECTION",
+        "description": "Chardet performs character encoding detection for response content.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "1014",
+        "source": "TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE",
+        "target": "PICKLE",
+        "description": "The test uses pickle to serialize and deserialize the JSON decoding error",
+        "weight": "1.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "372",
+        "source": "CHARSET_NORMALIZER",
+        "target": "CHARACTER ENCODING DETECTION",
+        "description": "Charset-normalizer is an alternative library used for character encoding detection.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "592",
+        "source": "JSONDECODEERROR",
+        "target": "REQUESTEXCEPTION",
+        "description": "The JSON decoding error is verified to also be a Requests exception",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "816",
+        "source": "TESTRESPONSEREASONUNICODEFALLBACK",
+        "target": "HTTPEXCEPTION",
+        "description": "The test invokes Response.raise_for_status and expects an HTTPError containing the decoded reason phrase",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "227",
+        "source": "SIMPLEJSON",
+        "target": "JSON",
+        "description": "simplejson and the standard json module are alternative JSON implementations selected by requests.compat",
+        "weight": "7.0",
+        "links": "1",
+        "in_context": true
+      }
+    ],
+    "entities": [
+      {
+        "id": "629",
+        "entity": "TEST GUESS JSON UTF",
+        "description": "Test Guess JSON UTF is a test group that verifies detection of JSON encodings from byte order marks and UTF-like byte patterns.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "398",
+        "entity": "TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS",
+        "description": "A test event that verifies Requests JSON decoding behavior and exception compatibility for alternate UTF encodings",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "265",
+        "entity": "UNICODE DECODING",
+        "description": "Unicode decoding is the conversion of response bytes into text using the selected or detected character encoding.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "597",
+        "entity": "TEST JSON DECODE PERSISTS DOC ATTR",
+        "description": "A test event that verifies the JSONDecodeError preserves the response text in its doc attribute",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "264",
+        "entity": "CHARACTER ENCODING DETECTION",
+        "description": "Character encoding detection is the process of determining the encoding of response content with Chardet or another available detection library.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "628",
+        "entity": "TEST CONTENT ENCODING DETECTION",
+        "description": "Test Content Encoding Detection is a test group that verifies detection of character encodings from HTML meta tags, XHTML declarations, XML declarations, and precedence among multiple declarations.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "604",
+        "entity": "TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE",
+        "description": "The entity “TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE” refers to a pytest test event that verifies `Requests JSONDecodeError` exceptions support serialization and deserialization. The test creates a `Requests JSONDecodeError`, serializes it with Python’s `pickle` module, deserializes the resulting data, and confirms that the original and reconstructed exceptions have matching representations.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "268",
+        "entity": "UNICODE DECODE ERROR",
+        "description": "UnicodeDecodeError is an error event that occurs when the detected character encoding cannot decode response content correctly.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "512",
+        "entity": "TESTRESPONSEREASONUNICODEFALLBACK",
+        "description": "test_response_reason_unicode_fallback is a pytest test event that verifies raise_for_status decodes an encoded reason phrase using an ISO-8859-1 fallback",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "596",
+        "entity": "TEST JSON DECODE COMPATIBILITY",
+        "description": "A test event that verifies an invalid response body raises Requests' JSONDecodeError compatible with both RequestException and JSONDecodeError",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "510",
+        "entity": "TESTRESPONSEDECODEUNICODE",
+        "description": "test_response_decode_unicode is a pytest test event that verifies Response.iter_content returns Unicode strings when Unicode decoding is requested",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "511",
+        "entity": "TESTRESPONSEREASONUNICODE",
+        "description": "test_response_reason_unicode is a pytest test event that checks status handling when an HTTP reason phrase contains encoded Unicode text",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "395",
+        "entity": "JSONDECODEERROR",
+        "description": "JSONDECODEERROR, also known as `JSONDecodeError`, is an exception type associated with the Requests library. It is raised when a response contains an alternate UTF encoding that cannot be decoded successfully as JSON. Its serialization and deserialization behavior is covered by the relevant documentation tests.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "478",
+        "entity": "TEST DIFFERENT ENCODINGS DONT BREAK POST",
+        "description": "A test event that verifies Requests successfully handles a multipart POST combining JSON data, query parameters, and a file under different data encodings",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "482",
+        "entity": "UNICODE METHOD NAME TEST",
+        "description": "A test event that verifies Requests can send a request whose HTTP method is specified as the Unicode string POST.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "479",
+        "entity": "TEST UNICODE MULTIPART POST",
+        "description": "A parametrized test event that verifies Requests accepts Unicode strings, encoded strings, and byte values in multipart POST data",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "162",
+        "entity": "JSON",
+        "description": "JSON is a data interchange format and Python standard-library module used for processing, encoding, and decoding JSON content. In the Requests context, it serves as the fallback compatibility library when `simplejson` is unavailable and provides the `JSONDecodeError` exception used in response-decoding behavior and its serialization and deserialization tests.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "483",
+        "entity": "UNICODE METHOD NAME WITH REQUEST OBJECT TEST",
+        "description": "A test event that verifies a Request object preserves the POST method as a native string when prepared and sent through a Session.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "537",
+        "entity": "NATIVE HEADER KEY HANDLING",
+        "description": "A test event verifying that prepared request header keys remain usable as native string or byte-string keys",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "576",
+        "entity": "TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE",
+        "description": "A test that verifies a response with no content returns None for content and raises ValueError when JSON decoding is attempted",
+        "number of relationships": "3",
+        "in_context": true
+      }
+    ],
+    "sources": [
+      {
+        "id": "107",
+        "text": "        result = guess_filename(obj)\n        assert result == value\n        assert isinstance(result, expected_type)\n\n\nclass TestExtractZippedPaths:\n    @pytest.mark.parametrize(\n        \"path\",\n        (\n            \"/\",\n            __file__,\n            pytest.__file__,\n            \"/etc/invalid/location\",\n        ),\n    )\n    def test_unzipped_paths_unchanged(self, path):\n        assert path == extract_zipped_paths(path)\n\n    def test_zipped_paths_extracted(self, tmpdir):\n        zipped_py = tmpdir.join(\"test.zip\")\n        with zipfile.ZipFile(zipped_py.strpath, \"w\") as f:\n            f.write(__file__)\n\n        _, name = os.path.splitdrive(__file__)\n        zipped_path = os.path.join(zipped_py.strpath, name.lstrip(r\"\\/\"))\n        extracted_path = extract_zipped_paths(zipped_path)\n\n        assert extracted_path != zipped_path\n        assert os.path.exists(extracted_path)\n        assert filecmp.cmp(extracted_path, __file__)\n\n    def test_invalid_unc_path(self):\n        path = r\"\\\\localhost\\invalid\\location\"\n        assert extract_zipped_paths(path) == path\n\n\nclass TestContentEncodingDetection:\n    def test_none(self):\n        encodings = get_encodings_from_content(\"\")\n        assert not len(encodings)\n\n    @pytest.mark.parametrize(\n        \"content\",\n        (\n            # HTML5 meta charset attribute\n            '<meta charset=\"UTF-8\">',\n            # HTML4 pragma directive\n            '<meta http-equiv=\"Content-type\" content=\"text/html;charset=UTF-8\">',\n            # XHTML 1.x served with text/html MIME type\n            '<meta http-equiv=\"Content-type\" content=\"text/html;charset=UTF-8\" />',\n            # XHTML 1.x served as XML\n            '<?xml version=\"1.0\" encoding=\"UTF-8\"?>',\n        ),\n    )\n    def test_pragmas(self, content):\n        encodings = get_encodings_from_content(content)\n        assert len(encodings) == 1\n        assert encodings[0] == \"UTF-8\"\n\n    def test_precedence(self):\n        content = \"\"\"\n        <?xml version=\"1.0\" encoding=\"XML\"?>\n        <meta charset=\"HTML5\">\n        <meta http-equiv=\"Content-type\" content=\"text/html;charset=HTML4\" />\n        \"\"\".strip()\n        assert get_encodings_from_content(content) == [\"HTML5\", \"HTML4\", \"XML\"]\n\n\nclass TestGuessJSONUTF:\n    @pytest.mark.parametrize(\n        \"encoding\",\n        (\n            \"utf-32\",\n            \"utf-8-sig\",\n            \"utf-16\",\n            \"utf-8\",\n            \"utf-16-be\",\n            \"utf-16-le\",\n            \"utf-32-be\",\n            \"utf-32-le\",\n        ),\n    )\n    def test_encoded(self, encoding):\n        data = \"{}\".encode(encoding)\n        assert guess_json_utf(data) == encoding\n\n    def test_bad_utf_like_encoding(self):\n        assert guess_json_utf(b\"\\x00\\x00\\x00\\x00\") is None\n\n    @pytest.mark.parametrize(\n        (\"encoding\", \"expected\"),\n        (\n            (\"utf-16-be\", \"utf-16\"),\n            (\"utf-16-le\", \"utf-16\"),\n            (\"utf-32-be\", \"utf-32\"),\n            (\"utf-32-le\", \"utf-32\"),\n        ),\n    )\n    def test_guess_by_bom(self, encoding, expected):\n        data = \"\\ufeff{}\".encode(encoding)\n        assert guess_json_utf(data) == expected\n\n\nUSER = PASSWORD = \"%!*'();:@&=+$,/?#[] \"\nENCODED_USER = compat.quote(USER, \"\")\nENCODED_PASSWORD = compat.quote(PASSWORD, \"\")\n\n\n@pytest.mark.parametrize(\n    \"url, auth\",\n    (\n        (\n            f\"http://{ENCODED_USER}:{ENCODED_PASSWORD}@request.com/url.html#test\",\n            (USER, PASSWORD),\n        ),\n        (\"http://user:pass@complex.url.com/path?query=yes\", (\"user\", \"pass\")),\n        (\n            \"http://user:pass%20pass@complex.url.com/path?query=yes\",\n            (\"user\", \"pass pass\"),\n        ),\n        (\"http://user:pass pass@complex.url.com/path?query=yes\", (\"user\", \"pass pass\")),\n        (\n            \"http://user%25user:pass@complex.url.com/path?query=yes\",\n            (\"user%user\", \"pass\"),\n        ),\n        (\n            \"http://user:pass%23pass@complex.url.com/path?query=yes\",\n            (\"user\", \"pass#pass\"),\n        ),\n        (\"http://complex.url.com/path?query=yes\", (\"\", \"\")),\n    ),\n)\ndef test_get_auth_from_url(url, auth):\n    assert get_auth_from_url(url) == auth\n\n\n@pytest.mark.parametrize(\n    \"uri, expected\",\n    (\n        (\n            # Ensure requoting doesn't break expectations\n            \"http://example.com/fiz?buz=%25ppicture\",\n            \"http://example.com/fiz?buz=%25ppicture\",\n        ),\n        (\n            # Ensure we handle unquoted percent signs in redirects\n            \"http://example.com/fiz?buz=%ppicture\",\n            \"http://example.com/fiz?buz=%25ppicture\",\n        ),\n    ),\n)\ndef test_requote_uri_with_unquoted_percents(uri, expected):\n    \"\"\"See: https://github.com/psf/requests/issues/2356\"\"\"\n    assert requote_uri(uri) == expected\n\n\n@pytest.mark.parametrize(\n    \"uri, expected\",\n    (\n        (\n            # Illegal bytes\n            \"http://example.com/?a=%--\",\n            \"http://example.com/?a=%--\",\n        ),\n        (\n"
+      },
+      {
+        "id": "78",
+        "text": "            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /final-url/\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/path/to/thing/#view=edit&token=hunter2'\n        r = requests.get(url)\n\n        assert r.status_code == 200\n        assert len(r.history) == 2\n        assert r.history[0].request.url == url\n\n        # Verify we haven't overwritten the location with our previous fragment.\n        assert r.history[1].request.url == f'http://{host}:{port}/get#relevant-section'\n        # Verify previous fragment is used and not the original.\n        assert r.url == f'http://{host}:{port}/final-url/#relevant-section'\n\n        close_server.set()\n\n\ndef test_json_decode_compatibility_for_alt_utf_encodings():\n\n    def response_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n'\n            b'Content-Length: 18\\r\\n\\r\\n'\n            b'\\xff\\xfe{\\x00\"\\x00K0\"\\x00=\\x00\"\\x00\\xab0\"\\x00\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url)\n    r.encoding = None\n    with pytest.raises(requests.exceptions.JSONDecodeError) as excinfo:\n        r.json()\n    assert isinstance(excinfo.value, requests.exceptions.RequestException)\n    assert isinstance(excinfo.value, JSONDecodeError)\n    assert r.text not in str(excinfo.value)\n"
+      },
+      {
+        "id": "49",
+        "text": "    def is_permanent_redirect(self):\n        \"\"\"True if this Response one of the permanent versions of redirect.\"\"\"\n        return \"location\" in self.headers and self.status_code in (\n            codes.moved_permanently,\n            codes.permanent_redirect,\n        )\n\n    @property\n    def next(self):\n        \"\"\"Returns a PreparedRequest for the next request in a redirect chain, if there is one.\"\"\"\n        return self._next\n\n    @property\n    def apparent_encoding(self):\n        \"\"\"The apparent encoding, provided by the charset_normalizer or chardet libraries.\"\"\"\n        if chardet is not None:\n            return chardet.detect(self.content)[\"encoding\"]\n        else:\n            # If no character detection library is available, we'll fall back\n            # to a standard Python utf-8 str.\n            return \"utf-8\"\n\n    def iter_content(self, chunk_size=1, decode_unicode=False):\n        \"\"\"Iterates over the response data.  When stream=True is set on the\n        request, this avoids reading the content at once into memory for\n        large responses.  The chunk size is the number of bytes it should\n        read into memory.  This is not necessarily the length of each item\n        returned as decoding can take place.\n\n        chunk_size must be of type int or None. A value of None will\n        function differently depending on the value of `stream`.\n        stream=True will read data as it arrives in whatever size the\n        chunks are received. If stream=False, data is returned as\n        a single chunk.\n\n        If decode_unicode is True, content will be decoded using the best\n        available encoding based on the response.\n        \"\"\"\n\n        def generate():\n            # Special case for urllib3.\n            if hasattr(self.raw, \"stream\"):\n                try:\n                    yield from self.raw.stream(chunk_size, decode_content=True)\n                except ProtocolError as e:\n                    raise ChunkedEncodingError(e)\n                except DecodeError as e:\n                    raise ContentDecodingError(e)\n                except ReadTimeoutError as e:\n                    raise ConnectionError(e)\n                except SSLError as e:\n                    raise RequestsSSLError(e)\n            else:\n                # Standard file-like object.\n                while True:\n                    chunk = self.raw.read(chunk_size)\n                    if not chunk:\n                        break\n                    yield chunk\n\n            self._content_consumed = True\n\n        if self._content_consumed and isinstance(self._content, bool):\n            raise StreamConsumedError()\n        elif chunk_size is not None and not isinstance(chunk_size, int):\n            raise TypeError(\n                f\"chunk_size must be an int, it is instead a {type(chunk_size)}.\"\n            )\n        # simulate reading small chunks of the content\n        reused_chunks = iter_slices(self._content, chunk_size)\n\n        stream_chunks = generate()\n\n        chunks = reused_chunks if self._content_consumed else stream_chunks\n\n        if decode_unicode:\n            chunks = stream_decode_response_unicode(chunks, self)\n\n        return chunks\n\n    def iter_lines(\n        self, chunk_size=ITER_CHUNK_SIZE, decode_unicode=False, delimiter=None\n    ):\n        \"\"\"Iterates over the response data, one line at a time.  When\n        stream=True is set on the request, this avoids reading the\n        content at once into memory for large responses.\n\n        .. note:: This method is not reentrant safe.\n        \"\"\"\n\n        pending = None\n\n        for chunk in self.iter_content(\n            chunk_size=chunk_size, decode_unicode=decode_unicode\n        ):\n            if pending is not None:\n                chunk = pending + chunk\n\n            if delimiter:\n                lines = chunk.split(delimiter)\n            else:\n                lines = chunk.splitlines()\n\n            if lines and lines[-1] and chunk and lines[-1][-1] == chunk[-1]:\n                pending = lines.pop()\n            else:\n                pending = None\n\n            yield from lines\n\n        if pending is not None:\n            yield pending\n\n    @property\n    def content(self):\n        \"\"\"Content of the response, in bytes.\"\"\"\n\n        if self._content is False:\n            # Read the contents.\n            if self._content_consumed:\n                raise RuntimeError(\"The content for this response was already consumed\")\n\n            if self.status_code == 0 or self.raw is None:\n                self._content = None\n            else:\n                self._content = b\"\".join(self.iter_content(CONTENT_CHUNK_SIZE)) or b\"\"\n\n        self._content_consumed = True\n        # don't need to release the connection; that's been handled by urllib3\n        # since we exhausted the data.\n        return self._content\n\n    @property\n    def text(self):\n        \"\"\"Content of the response, in unicode.\n\n        If Response.encoding is None, encoding will be guessed using\n        ``charset_normalizer`` or ``chardet``.\n\n        The encoding of the response content is determined based solely on HTTP\n        headers, following RFC 2616 to the letter. If you can take advantage of\n        non-HTTP knowledge to make a better guess at the encoding, you should\n        set ``r.encoding`` appropriately before accessing this property.\n        \"\"\"\n\n        # Try charset from content-type\n        content = None\n        encoding = self.encoding\n\n        if not self.content:\n            return \"\"\n\n        # Fallback to auto-detected encoding.\n        if self.encoding is None:\n            encoding = self.apparent_encoding\n\n        # Decode unicode from given encoding.\n        try:\n            content = str(self.content, encoding, errors=\"replace\")\n        except (LookupError, TypeError):\n            # A LookupError is raised if the encoding was not found which could\n            # indicate a misspelling or similar mistake.\n            #\n            # A TypeError can be raised if encoding is None\n            #\n            # So we try blindly encoding.\n"
+      }
+    ]
+  },
+  "final_context": "-----Entities-----\nid|entity|description|number of relationships\n629|TEST GUESS JSON UTF|Test Guess JSON UTF is a test group that verifies detection of JSON encodings from byte order marks and UTF-like byte patterns.|2\n398|TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS|A test event that verifies Requests JSON decoding behavior and exception compatibility for alternate UTF encodings|3\n265|UNICODE DECODING|Unicode decoding is the conversion of response bytes into text using the selected or detected character encoding.|3\n597|TEST JSON DECODE PERSISTS DOC ATTR|A test event that verifies the JSONDecodeError preserves the response text in its doc attribute|3\n264|CHARACTER ENCODING DETECTION|Character encoding detection is the process of determining the encoding of response content with Chardet or another available detection library.|4\n628|TEST CONTENT ENCODING DETECTION|Test Content Encoding Detection is a test group that verifies detection of character encodings from HTML meta tags, XHTML declarations, XML declarations, and precedence among multiple declarations.|2\n604|TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE|The entity “TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE” refers to a pytest test event that verifies `Requests JSONDecodeError` exceptions support serialization and deserialization. The test creates a `Requests JSONDecodeError`, serializes it with Python’s `pickle` module, deserializes the resulting data, and confirms that the original and reconstructed exceptions have matching representations.|3\n268|UNICODE DECODE ERROR|UnicodeDecodeError is an error event that occurs when the detected character encoding cannot decode response content correctly.|1\n512|TESTRESPONSEREASONUNICODEFALLBACK|test_response_reason_unicode_fallback is a pytest test event that verifies raise_for_status decodes an encoded reason phrase using an ISO-8859-1 fallback|2\n596|TEST JSON DECODE COMPATIBILITY|A test event that verifies an invalid response body raises Requests' JSONDecodeError compatible with both RequestException and JSONDecodeError|3\n510|TESTRESPONSEDECODEUNICODE|test_response_decode_unicode is a pytest test event that verifies Response.iter_content returns Unicode strings when Unicode decoding is requested|2\n511|TESTRESPONSEREASONUNICODE|test_response_reason_unicode is a pytest test event that checks status handling when an HTTP reason phrase contains encoded Unicode text|1\n395|JSONDECODEERROR|JSONDECODEERROR, also known as `JSONDecodeError`, is an exception type associated with the Requests library. It is raised when a response contains an alternate UTF encoding that cannot be decoded successfully as JSON. Its serialization and deserialization behavior is covered by the relevant documentation tests.|3\n478|TEST DIFFERENT ENCODINGS DONT BREAK POST|A test event that verifies Requests successfully handles a multipart POST combining JSON data, query parameters, and a file under different data encodings|2\n482|UNICODE METHOD NAME TEST|A test event that verifies Requests can send a request whose HTTP method is specified as the Unicode string POST.|1\n479|TEST UNICODE MULTIPART POST|A parametrized test event that verifies Requests accepts Unicode strings, encoded strings, and byte values in multipart POST data|2\n162|JSON|JSON is a data interchange format and Python standard-library module used for processing, encoding, and decoding JSON content. In the Requests context, it serves as the fallback compatibility library when `simplejson` is unavailable and provides the `JSONDecodeError` exception used in response-decoding behavior and its serialization and deserialization tests.|2\n483|UNICODE METHOD NAME WITH REQUEST OBJECT TEST|A test event that verifies a Request object preserves the POST method as a native string when prepared and sent through a Session.|1\n537|NATIVE HEADER KEY HANDLING|A test event verifying that prepared request header keys remain usable as native string or byte-string keys|1\n576|TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE|A test that verifies a response with no content returns None for content and raises ValueError when JSON decoding is attempted|3\n\n-----Relationships-----\nid|source|target|description|weight|links\n373|CHARACTER ENCODING DETECTION|UNICODE DECODING|The detected character encoding is used to decode response bytes into Unicode text.|1.0|1\n593|TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS|JSONDECODEERROR|The test expects JSONDecodeError to be raised when decoding the response body|9.0|1\n929|TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE|REQUESTS|The test validates Requests response content and JSON decoding behavior for an empty response|9.0|15\n977|TEST JSON DECODE COMPATIBILITY|REQUESTS|The test calls a Requests response's json method and checks exception compatibility|9.0|15\n978|TEST JSON DECODE PERSISTS DOC ATTR|REQUESTS|The test checks a JSON decoding exception produced by a Requests response|9.0|15\n1007|TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE|REQUESTS|The test for “TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE” verifies that `REQUESTS` `JSONDecodeError` instances can be serialized and deserialized successfully. It constructs a `Requests` `JSONDecodeError`, validates its serialization, and confirms that the resulting serialized representation can be deserialized correctly.|10.0|15\n370|REQUESTS|UNICODE DECODING|Requests decodes response bytes into text through the text property and selected encoding.|9.0|15\n591|REQUESTS|TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS|The test exercises Requests response JSON decoding and exception behavior|9.0|15\n998|REQUESTS|JSONDECODEERROR|Requests defines and tests its JSONDecodeError exception behavior.|8.0|15\n759|TEST DIFFERENT ENCODINGS DONT BREAK POST|REQUESTS|This test verifies Requests handles multipart POST data with JSON, query parameters, and files|9.0|15\n760|TEST UNICODE MULTIPART POST|REQUESTS|This test verifies Requests handles Unicode and byte-valued multipart POST data|9.0|15\n1040|TEST CONTENT ENCODING DETECTION|REQUESTS|The test group exercises Requests functionality for detecting encodings from document content.|9.0|15\n1041|TEST GUESS JSON UTF|REQUESTS|The test group exercises Requests functionality for identifying JSON encodings from byte data and byte order marks.|9.0|15\n288|REQUESTS|JSON|Requests uses JSON compatibility utilities to encode and decode JSON data and to define JSON-related exceptions. It also uses the JSON module in its bug-report helper to format and print collected diagnostic information as JSON.|16.0|15\n774|UNICODE METHOD NAME TEST|REQUESTS|The test uses the Requests request function to send a Unicode POST method.|9.0|15\n775|UNICODE METHOD NAME WITH REQUEST OBJECT TEST|REQUESTS|The test uses Requests Request and Session objects to prepare and send a POST request.|9.0|15\n377|REQUESTS|UNICODE DECODE ERROR|Requests catches UnicodeDecodeError when the detected response encoding is incorrect and then falls back to another decoding path.|8.0|15\n1012|TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE|PYTEST|PYTEST defines and executes the test for “TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE,” verifying that JSON decode errors can be serialized and deserialized successfully.|2.0|10\n590|PYTEST|TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS|Pytest executes the test that checks alternate UTF encoding JSON-decoding behavior|9.0|10\n946|PYTEST|TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE|Pytest executes the no-content JSON behavior test|9.0|10\n987|PYTEST|TEST JSON DECODE COMPATIBILITY|Pytest executes the JSON decoding compatibility test|9.0|10\n988|PYTEST|TEST JSON DECODE PERSISTS DOC ATTR|Pytest executes the JSON exception attribute persistence test|9.0|10\n1045|TEST CONTENT ENCODING DETECTION|PYTEST|The test group uses Pytest parameterization and assertions to validate encoding detection behavior.|8.0|10\n1046|TEST GUESS JSON UTF|PYTEST|The test group uses Pytest parameterization and assertions to validate JSON encoding detection behavior.|8.0|10\n804|PYTEST|TESTRESPONSEDECODEUNICODE|Pytest runs the test that verifies Unicode response decoding|8.0|10\n806|PYTEST|TESTRESPONSEREASONUNICODEFALLBACK|Pytest runs the test that verifies ISO-8859-1 reason fallback behavior|8.0|10\n805|PYTEST|TESTRESPONSEREASONUNICODE|Pytest runs the test that verifies Unicode HTTP status reasons|8.0|10\n930|TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE|HTTPBIN|The test obtains a no-content response from an Httpbin status endpoint|8.0|5\n992|TEST JSON DECODE COMPATIBILITY|HTTPBIN|The test obtains invalid byte content from an httpbin endpoint to trigger JSON decoding failure|8.0|5\n993|TEST JSON DECODE PERSISTS DOC ATTR|HTTPBIN|The test obtains the response text from an httpbin byte-response endpoint|1.0|5\n770|TEST DIFFERENT ENCODINGS DONT BREAK POST|HTTPBIN|The test sends multipart data to an HTTPBin POST endpoint|8.0|5\n771|TEST UNICODE MULTIPART POST|HTTPBIN|The test sends Unicode multipart data to an HTTPBin POST endpoint|8.0|5\n358|RESPONSE|CHARACTER ENCODING DETECTION|A Response uses Chardet or Charset-normalizer to determine apparent encoding when no explicit encoding is available.|9.0|3\n359|RESPONSE|UNICODE DECODING|A Response decodes byte content into text using its declared or detected encoding.|9.0|3\n815|TESTRESPONSEDECODEUNICODE|RESPONSE|The test verifies that Response.iter_content returns strings when decoding is enabled|9.0|3\n860|NATIVE HEADER KEY HANDLING|REQUEST|The test verifies the native key types retained by a prepared Request's headers|8.0|1\n371|CHARDET|CHARACTER ENCODING DETECTION|Chardet performs character encoding detection for response content.|9.0|1\n1014|TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE|PICKLE|The test uses pickle to serialize and deserialize the JSON decoding error|1.0|1\n372|CHARSET_NORMALIZER|CHARACTER ENCODING DETECTION|Charset-normalizer is an alternative library used for character encoding detection.|9.0|1\n592|JSONDECODEERROR|REQUESTEXCEPTION|The JSON decoding error is verified to also be a Requests exception|9.0|1\n816|TESTRESPONSEREASONUNICODEFALLBACK|HTTPEXCEPTION|The test invokes Response.raise_for_status and expects an HTTPError containing the decoded reason phrase|9.0|1\n227|SIMPLEJSON|JSON|simplejson and the standard json module are alternative JSON implementations selected by requests.compat|7.0|1\n\n-----Sources-----\nid|source|text\n107|tests/test_utils.py:L308-L472|\"        result = guess_filename(obj)\n        assert result == value\n        assert isinstance(result, expected_type)\n\n\nclass TestExtractZippedPaths:\n    @pytest.mark.parametrize(\n        \"\"path\"\",\n        (\n            \"\"/\"\",\n            __file__,\n            pytest.__file__,\n            \"\"/etc/invalid/location\"\",\n        ),\n    )\n    def test_unzipped_paths_unchanged(self, path):\n        assert path == extract_zipped_paths(path)\n\n    def test_zipped_paths_extracted(self, tmpdir):\n        zipped_py = tmpdir.join(\"\"test.zip\"\")\n        with zipfile.ZipFile(zipped_py.strpath, \"\"w\"\") as f:\n            f.write(__file__)\n\n        _, name = os.path.splitdrive(__file__)\n        zipped_path = os.path.join(zipped_py.strpath, name.lstrip(r\"\"\\/\"\"))\n        extracted_path = extract_zipped_paths(zipped_path)\n\n        assert extracted_path != zipped_path\n        assert os.path.exists(extracted_path)\n        assert filecmp.cmp(extracted_path, __file__)\n\n    def test_invalid_unc_path(self):\n        path = r\"\"\\\\localhost\\invalid\\location\"\"\n        assert extract_zipped_paths(path) == path\n\n\nclass TestContentEncodingDetection:\n    def test_none(self):\n        encodings = get_encodings_from_content(\"\"\"\")\n        assert not len(encodings)\n\n    @pytest.mark.parametrize(\n        \"\"content\"\",\n        (\n            # HTML5 meta charset attribute\n            '<meta charset=\"\"UTF-8\"\">',\n            # HTML4 pragma directive\n            '<meta http-equiv=\"\"Content-type\"\" content=\"\"text/html;charset=UTF-8\"\">',\n            # XHTML 1.x served with text/html MIME type\n            '<meta http-equiv=\"\"Content-type\"\" content=\"\"text/html;charset=UTF-8\"\" />',\n            # XHTML 1.x served as XML\n            '<?xml version=\"\"1.0\"\" encoding=\"\"UTF-8\"\"?>',\n        ),\n    )\n    def test_pragmas(self, content):\n        encodings = get_encodings_from_content(content)\n        assert len(encodings) == 1\n        assert encodings[0] == \"\"UTF-8\"\"\n\n    def test_precedence(self):\n        content = \"\"\"\"\"\"\n        <?xml version=\"\"1.0\"\" encoding=\"\"XML\"\"?>\n        <meta charset=\"\"HTML5\"\">\n        <meta http-equiv=\"\"Content-type\"\" content=\"\"text/html;charset=HTML4\"\" />\n        \"\"\"\"\"\".strip()\n        assert get_encodings_from_content(content) == [\"\"HTML5\"\", \"\"HTML4\"\", \"\"XML\"\"]\n\n\nclass TestGuessJSONUTF:\n    @pytest.mark.parametrize(\n        \"\"encoding\"\",\n        (\n            \"\"utf-32\"\",\n            \"\"utf-8-sig\"\",\n            \"\"utf-16\"\",\n            \"\"utf-8\"\",\n            \"\"utf-16-be\"\",\n            \"\"utf-16-le\"\",\n            \"\"utf-32-be\"\",\n            \"\"utf-32-le\"\",\n        ),\n    )\n    def test_encoded(self, encoding):\n        data = \"\"{}\"\".encode(encoding)\n        assert guess_json_utf(data) == encoding\n\n    def test_bad_utf_like_encoding(self):\n        assert guess_json_utf(b\"\"\\x00\\x00\\x00\\x00\"\") is None\n\n    @pytest.mark.parametrize(\n        (\"\"encoding\"\", \"\"expected\"\"),\n        (\n            (\"\"utf-16-be\"\", \"\"utf-16\"\"),\n            (\"\"utf-16-le\"\", \"\"utf-16\"\"),\n            (\"\"utf-32-be\"\", \"\"utf-32\"\"),\n            (\"\"utf-32-le\"\", \"\"utf-32\"\"),\n        ),\n    )\n    def test_guess_by_bom(self, encoding, expected):\n        data = \"\"\\ufeff{}\"\".encode(encoding)\n        assert guess_json_utf(data) == expected\n\n\nUSER = PASSWORD = \"\"%!*'();:@&=+$,/?#[] \"\"\nENCODED_USER = compat.quote(USER, \"\"\"\")\nENCODED_PASSWORD = compat.quote(PASSWORD, \"\"\"\")\n\n\n@pytest.mark.parametrize(\n    \"\"url, auth\"\",\n    (\n        (\n            f\"\"http://{ENCODED_USER}:{ENCODED_PASSWORD}@request.com/url.html#test\"\",\n            (USER, PASSWORD),\n        ),\n        (\"\"http://user:pass@complex.url.com/path?query=yes\"\", (\"\"user\"\", \"\"pass\"\")),\n        (\n            \"\"http://user:pass%20pass@complex.url.com/path?query=yes\"\",\n            (\"\"user\"\", \"\"pass pass\"\"),\n        ),\n        (\"\"http://user:pass pass@complex.url.com/path?query=yes\"\", (\"\"user\"\", \"\"pass pass\"\")),\n        (\n            \"\"http://user%25user:pass@complex.url.com/path?query=yes\"\",\n            (\"\"user%user\"\", \"\"pass\"\"),\n        ),\n        (\n            \"\"http://user:pass%23pass@complex.url.com/path?query=yes\"\",\n            (\"\"user\"\", \"\"pass#pass\"\"),\n        ),\n        (\"\"http://complex.url.com/path?query=yes\"\", (\"\"\"\", \"\"\"\")),\n    ),\n)\ndef test_get_auth_from_url(url, auth):\n    assert get_auth_from_url(url) == auth\n\n\n@pytest.mark.parametrize(\n    \"\"uri, expected\"\",\n    (\n        (\n            # Ensure requoting doesn't break expectations\n            \"\"http://example.com/fiz?buz=%25ppicture\"\",\n            \"\"http://example.com/fiz?buz=%25ppicture\"\",\n        ),\n        (\n            # Ensure we handle unquoted percent signs in redirects\n            \"\"http://example.com/fiz?buz=%ppicture\"\",\n            \"\"http://example.com/fiz?buz=%25ppicture\"\",\n        ),\n    ),\n)\ndef test_requote_uri_with_unquoted_percents(uri, expected):\n    \"\"\"\"\"\"See: https://github.com/psf/requests/issues/2356\"\"\"\"\"\"\n    assert requote_uri(uri) == expected\n\n\n@pytest.mark.parametrize(\n    \"\"uri, expected\"\",\n    (\n        (\n            # Illegal bytes\n            \"\"http://example.com/?a=%--\"\",\n            \"\"http://example.com/?a=%--\"\",\n        ),\n        (\n\"\n78|tests/test_lowlevel.py:L379-L428|\"            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /final-url/\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/path/to/thing/#view=edit&token=hunter2'\n        r = requests.get(url)\n\n        assert r.status_code == 200\n        assert len(r.history) == 2\n        assert r.history[0].request.url == url\n\n        # Verify we haven't overwritten the location with our previous fragment.\n        assert r.history[1].request.url == f'http://{host}:{port}/get#relevant-section'\n        # Verify previous fragment is used and not the original.\n        assert r.url == f'http://{host}:{port}/final-url/#relevant-section'\n\n        close_server.set()\n\n\ndef test_json_decode_compatibility_for_alt_utf_encodings():\n\n    def response_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n'\n            b'Content-Length: 18\\r\\n\\r\\n'\n            b'\\xff\\xfe{\\x00\"\"\\x00K0\"\"\\x00=\\x00\"\"\\x00\\xab0\"\"\\x00\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url)\n    r.encoding = None\n    with pytest.raises(requests.exceptions.JSONDecodeError) as excinfo:\n        r.json()\n    assert isinstance(excinfo.value, requests.exceptions.RequestException)\n    assert isinstance(excinfo.value, JSONDecodeError)\n    assert r.text not in str(excinfo.value)\n\"\n49|src/requests/models.py:L777-L942|\"    def is_permanent_redirect(self):\n        \"\"\"\"\"\"True if this Response one of the permanent versions of redirect.\"\"\"\"\"\"\n        return \"\"location\"\" in self.headers and self.status_code in (\n            codes.moved_permanently,\n            codes.permanent_redirect,\n        )\n\n    @property\n    def next(self):\n        \"\"\"\"\"\"Returns a PreparedRequest for the next request in a redirect chain, if there is one.\"\"\"\"\"\"\n        return self._next\n\n    @property\n    def apparent_encoding(self):\n        \"\"\"\"\"\"The apparent encoding, provided by the charset_normalizer or chardet libraries.\"\"\"\"\"\"\n        if chardet is not None:\n            return chardet.detect(self.content)[\"\"encoding\"\"]\n        else:\n            # If no character detection library is available, we'll fall back\n            # to a standard Python utf-8 str.\n            return \"\"utf-8\"\"\n\n    def iter_content(self, chunk_size=1, decode_unicode=False):\n        \"\"\"\"\"\"Iterates over the response data.  When stream=True is set on the\n        request, this avoids reading the content at once into memory for\n        large responses.  The chunk size is the number of bytes it should\n        read into memory.  This is not necessarily the length of each item\n        returned as decoding can take place.\n\n        chunk_size must be of type int or None. A value of None will\n        function differently depending on the value of `stream`.\n        stream=True will read data as it arrives in whatever size the\n        chunks are received. If stream=False, data is returned as\n        a single chunk.\n\n        If decode_unicode is True, content will be decoded using the best\n        available encoding based on the response.\n        \"\"\"\"\"\"\n\n        def generate():\n            # Special case for urllib3.\n            if hasattr(self.raw, \"\"stream\"\"):\n                try:\n                    yield from self.raw.stream(chunk_size, decode_content=True)\n                except ProtocolError as e:\n                    raise ChunkedEncodingError(e)\n                except DecodeError as e:\n                    raise ContentDecodingError(e)\n                except ReadTimeoutError as e:\n                    raise ConnectionError(e)\n                except SSLError as e:\n                    raise RequestsSSLError(e)\n            else:\n                # Standard file-like object.\n                while True:\n                    chunk = self.raw.read(chunk_size)\n                    if not chunk:\n                        break\n                    yield chunk\n\n            self._content_consumed = True\n\n        if self._content_consumed and isinstance(self._content, bool):\n            raise StreamConsumedError()\n        elif chunk_size is not None and not isinstance(chunk_size, int):\n            raise TypeError(\n                f\"\"chunk_size must be an int, it is instead a {type(chunk_size)}.\"\"\n            )\n        # simulate reading small chunks of the content\n        reused_chunks = iter_slices(self._content, chunk_size)\n\n        stream_chunks = generate()\n\n        chunks = reused_chunks if self._content_consumed else stream_chunks\n\n        if decode_unicode:\n            chunks = stream_decode_response_unicode(chunks, self)\n\n        return chunks\n\n    def iter_lines(\n        self, chunk_size=ITER_CHUNK_SIZE, decode_unicode=False, delimiter=None\n    ):\n        \"\"\"\"\"\"Iterates over the response data, one line at a time.  When\n        stream=True is set on the request, this avoids reading the\n        content at once into memory for large responses.\n\n        .. note:: This method is not reentrant safe.\n        \"\"\"\"\"\"\n\n        pending = None\n\n        for chunk in self.iter_content(\n            chunk_size=chunk_size, decode_unicode=decode_unicode\n        ):\n            if pending is not None:\n                chunk = pending + chunk\n\n            if delimiter:\n                lines = chunk.split(delimiter)\n            else:\n                lines = chunk.splitlines()\n\n            if lines and lines[-1] and chunk and lines[-1][-1] == chunk[-1]:\n                pending = lines.pop()\n            else:\n                pending = None\n\n            yield from lines\n\n        if pending is not None:\n            yield pending\n\n    @property\n    def content(self):\n        \"\"\"\"\"\"Content of the response, in bytes.\"\"\"\"\"\"\n\n        if self._content is False:\n            # Read the contents.\n            if self._content_consumed:\n                raise RuntimeError(\"\"The content for this response was already consumed\"\")\n\n            if self.status_code == 0 or self.raw is None:\n                self._content = None\n            else:\n                self._content = b\"\"\"\".join(self.iter_content(CONTENT_CHUNK_SIZE)) or b\"\"\"\"\n\n        self._content_consumed = True\n        # don't need to release the connection; that's been handled by urllib3\n        # since we exhausted the data.\n        return self._content\n\n    @property\n    def text(self):\n        \"\"\"\"\"\"Content of the response, in unicode.\n\n        If Response.encoding is None, encoding will be guessed using\n        ``charset_normalizer`` or ``chardet``.\n\n        The encoding of the response content is determined based solely on HTTP\n        headers, following RFC 2616 to the letter. If you can take advantage of\n        non-HTTP knowledge to make a better guess at the encoding, you should\n        set ``r.encoding`` appropriately before accessing this property.\n        \"\"\"\"\"\"\n\n        # Try charset from content-type\n        content = None\n        encoding = self.encoding\n\n        if not self.content:\n            return \"\"\"\"\n\n        # Fallback to auto-detected encoding.\n        if self.encoding is None:\n            encoding = self.apparent_encoding\n\n        # Decode unicode from given encoding.\n        try:\n            content = str(self.content, encoding, errors=\"\"replace\"\")\n        except (LookupError, TypeError):\n            # A LookupError is raised if the encoding was not found which could\n            # indicate a misspelling or similar mistake.\n            #\n            # A TypeError can be raised if encoding is None\n            #\n            # So we try blindly encoding.\n\"\n",
+  "final_tables": [
+    {
+      "name": "entities",
+      "columns": [
+        "id",
+        "entity",
+        "description",
+        "number of relationships"
+      ],
+      "rows": [
+        {
+          "id": "629",
+          "entity": "TEST GUESS JSON UTF",
+          "description": "Test Guess JSON UTF is a test group that verifies detection of JSON encodings from byte order marks and UTF-like byte patterns.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "398",
+          "entity": "TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS",
+          "description": "A test event that verifies Requests JSON decoding behavior and exception compatibility for alternate UTF encodings",
+          "number of relationships": "3"
+        },
+        {
+          "id": "265",
+          "entity": "UNICODE DECODING",
+          "description": "Unicode decoding is the conversion of response bytes into text using the selected or detected character encoding.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "597",
+          "entity": "TEST JSON DECODE PERSISTS DOC ATTR",
+          "description": "A test event that verifies the JSONDecodeError preserves the response text in its doc attribute",
+          "number of relationships": "3"
+        },
+        {
+          "id": "264",
+          "entity": "CHARACTER ENCODING DETECTION",
+          "description": "Character encoding detection is the process of determining the encoding of response content with Chardet or another available detection library.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "628",
+          "entity": "TEST CONTENT ENCODING DETECTION",
+          "description": "Test Content Encoding Detection is a test group that verifies detection of character encodings from HTML meta tags, XHTML declarations, XML declarations, and precedence among multiple declarations.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "604",
+          "entity": "TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE",
+          "description": "The entity “TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE” refers to a pytest test event that verifies `Requests JSONDecodeError` exceptions support serialization and deserialization. The test creates a `Requests JSONDecodeError`, serializes it with Python’s `pickle` module, deserializes the resulting data, and confirms that the original and reconstructed exceptions have matching representations.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "268",
+          "entity": "UNICODE DECODE ERROR",
+          "description": "UnicodeDecodeError is an error event that occurs when the detected character encoding cannot decode response content correctly.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "512",
+          "entity": "TESTRESPONSEREASONUNICODEFALLBACK",
+          "description": "test_response_reason_unicode_fallback is a pytest test event that verifies raise_for_status decodes an encoded reason phrase using an ISO-8859-1 fallback",
+          "number of relationships": "2"
+        },
+        {
+          "id": "596",
+          "entity": "TEST JSON DECODE COMPATIBILITY",
+          "description": "A test event that verifies an invalid response body raises Requests' JSONDecodeError compatible with both RequestException and JSONDecodeError",
+          "number of relationships": "3"
+        },
+        {
+          "id": "510",
+          "entity": "TESTRESPONSEDECODEUNICODE",
+          "description": "test_response_decode_unicode is a pytest test event that verifies Response.iter_content returns Unicode strings when Unicode decoding is requested",
+          "number of relationships": "2"
+        },
+        {
+          "id": "511",
+          "entity": "TESTRESPONSEREASONUNICODE",
+          "description": "test_response_reason_unicode is a pytest test event that checks status handling when an HTTP reason phrase contains encoded Unicode text",
+          "number of relationships": "1"
+        },
+        {
+          "id": "395",
+          "entity": "JSONDECODEERROR",
+          "description": "JSONDECODEERROR, also known as `JSONDecodeError`, is an exception type associated with the Requests library. It is raised when a response contains an alternate UTF encoding that cannot be decoded successfully as JSON. Its serialization and deserialization behavior is covered by the relevant documentation tests.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "478",
+          "entity": "TEST DIFFERENT ENCODINGS DONT BREAK POST",
+          "description": "A test event that verifies Requests successfully handles a multipart POST combining JSON data, query parameters, and a file under different data encodings",
+          "number of relationships": "2"
+        },
+        {
+          "id": "482",
+          "entity": "UNICODE METHOD NAME TEST",
+          "description": "A test event that verifies Requests can send a request whose HTTP method is specified as the Unicode string POST.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "479",
+          "entity": "TEST UNICODE MULTIPART POST",
+          "description": "A parametrized test event that verifies Requests accepts Unicode strings, encoded strings, and byte values in multipart POST data",
+          "number of relationships": "2"
+        },
+        {
+          "id": "162",
+          "entity": "JSON",
+          "description": "JSON is a data interchange format and Python standard-library module used for processing, encoding, and decoding JSON content. In the Requests context, it serves as the fallback compatibility library when `simplejson` is unavailable and provides the `JSONDecodeError` exception used in response-decoding behavior and its serialization and deserialization tests.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "483",
+          "entity": "UNICODE METHOD NAME WITH REQUEST OBJECT TEST",
+          "description": "A test event that verifies a Request object preserves the POST method as a native string when prepared and sent through a Session.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "537",
+          "entity": "NATIVE HEADER KEY HANDLING",
+          "description": "A test event verifying that prepared request header keys remain usable as native string or byte-string keys",
+          "number of relationships": "1"
+        },
+        {
+          "id": "576",
+          "entity": "TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE",
+          "description": "A test that verifies a response with no content returns None for content and raises ValueError when JSON decoding is attempted",
+          "number of relationships": "3"
+        }
+      ]
+    },
+    {
+      "name": "relationships",
+      "columns": [
+        "id",
+        "source",
+        "target",
+        "description",
+        "weight",
+        "links"
+      ],
+      "rows": [
+        {
+          "id": "373",
+          "source": "CHARACTER ENCODING DETECTION",
+          "target": "UNICODE DECODING",
+          "description": "The detected character encoding is used to decode response bytes into Unicode text.",
+          "weight": "1.0",
+          "links": "1"
+        },
+        {
+          "id": "593",
+          "source": "TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS",
+          "target": "JSONDECODEERROR",
+          "description": "The test expects JSONDecodeError to be raised when decoding the response body",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "929",
+          "source": "TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE",
+          "target": "REQUESTS",
+          "description": "The test validates Requests response content and JSON decoding behavior for an empty response",
+          "weight": "9.0",
+          "links": "15"
+        },
+        {
+          "id": "977",
+          "source": "TEST JSON DECODE COMPATIBILITY",
+          "target": "REQUESTS",
+          "description": "The test calls a Requests response's json method and checks exception compatibility",
+          "weight": "9.0",
+          "links": "15"
+        },
+        {
+          "id": "978",
+          "source": "TEST JSON DECODE PERSISTS DOC ATTR",
+          "target": "REQUESTS",
+          "description": "The test checks a JSON decoding exception produced by a Requests response",
+          "weight": "9.0",
+          "links": "15"
+        },
+        {
+          "id": "1007",
+          "source": "TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE",
+          "target": "REQUESTS",
+          "description": "The test for “TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE” verifies that `REQUESTS` `JSONDecodeError` instances can be serialized and deserialized successfully. It constructs a `Requests` `JSONDecodeError`, validates its serialization, and confirms that the resulting serialized representation can be deserialized correctly.",
+          "weight": "10.0",
+          "links": "15"
+        },
+        {
+          "id": "370",
+          "source": "REQUESTS",
+          "target": "UNICODE DECODING",
+          "description": "Requests decodes response bytes into text through the text property and selected encoding.",
+          "weight": "9.0",
+          "links": "15"
+        },
+        {
+          "id": "591",
+          "source": "REQUESTS",
+          "target": "TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS",
+          "description": "The test exercises Requests response JSON decoding and exception behavior",
+          "weight": "9.0",
+          "links": "15"
+        },
+        {
+          "id": "998",
+          "source": "REQUESTS",
+          "target": "JSONDECODEERROR",
+          "description": "Requests defines and tests its JSONDecodeError exception behavior.",
+          "weight": "8.0",
+          "links": "15"
+        },
+        {
+          "id": "759",
+          "source": "TEST DIFFERENT ENCODINGS DONT BREAK POST",
+          "target": "REQUESTS",
+          "description": "This test verifies Requests handles multipart POST data with JSON, query parameters, and files",
+          "weight": "9.0",
+          "links": "15"
+        },
+        {
+          "id": "760",
+          "source": "TEST UNICODE MULTIPART POST",
+          "target": "REQUESTS",
+          "description": "This test verifies Requests handles Unicode and byte-valued multipart POST data",
+          "weight": "9.0",
+          "links": "15"
+        },
+        {
+          "id": "1040",
+          "source": "TEST CONTENT ENCODING DETECTION",
+          "target": "REQUESTS",
+          "description": "The test group exercises Requests functionality for detecting encodings from document content.",
+          "weight": "9.0",
+          "links": "15"
+        },
+        {
+          "id": "1041",
+          "source": "TEST GUESS JSON UTF",
+          "target": "REQUESTS",
+          "description": "The test group exercises Requests functionality for identifying JSON encodings from byte data and byte order marks.",
+          "weight": "9.0",
+          "links": "15"
+        },
+        {
+          "id": "288",
+          "source": "REQUESTS",
+          "target": "JSON",
+          "description": "Requests uses JSON compatibility utilities to encode and decode JSON data and to define JSON-related exceptions. It also uses the JSON module in its bug-report helper to format and print collected diagnostic information as JSON.",
+          "weight": "16.0",
+          "links": "15"
+        },
+        {
+          "id": "774",
+          "source": "UNICODE METHOD NAME TEST",
+          "target": "REQUESTS",
+          "description": "The test uses the Requests request function to send a Unicode POST method.",
+          "weight": "9.0",
+          "links": "15"
+        },
+        {
+          "id": "775",
+          "source": "UNICODE METHOD NAME WITH REQUEST OBJECT TEST",
+          "target": "REQUESTS",
+          "description": "The test uses Requests Request and Session objects to prepare and send a POST request.",
+          "weight": "9.0",
+          "links": "15"
+        },
+        {
+          "id": "377",
+          "source": "REQUESTS",
+          "target": "UNICODE DECODE ERROR",
+          "description": "Requests catches UnicodeDecodeError when the detected response encoding is incorrect and then falls back to another decoding path.",
+          "weight": "8.0",
+          "links": "15"
+        },
+        {
+          "id": "1012",
+          "source": "TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE",
+          "target": "PYTEST",
+          "description": "PYTEST defines and executes the test for “TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE,” verifying that JSON decode errors can be serialized and deserialized successfully.",
+          "weight": "2.0",
+          "links": "10"
+        },
+        {
+          "id": "590",
+          "source": "PYTEST",
+          "target": "TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS",
+          "description": "Pytest executes the test that checks alternate UTF encoding JSON-decoding behavior",
+          "weight": "9.0",
+          "links": "10"
+        },
+        {
+          "id": "946",
+          "source": "PYTEST",
+          "target": "TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE",
+          "description": "Pytest executes the no-content JSON behavior test",
+          "weight": "9.0",
+          "links": "10"
+        },
+        {
+          "id": "987",
+          "source": "PYTEST",
+          "target": "TEST JSON DECODE COMPATIBILITY",
+          "description": "Pytest executes the JSON decoding compatibility test",
+          "weight": "9.0",
+          "links": "10"
+        },
+        {
+          "id": "988",
+          "source": "PYTEST",
+          "target": "TEST JSON DECODE PERSISTS DOC ATTR",
+          "description": "Pytest executes the JSON exception attribute persistence test",
+          "weight": "9.0",
+          "links": "10"
+        },
+        {
+          "id": "1045",
+          "source": "TEST CONTENT ENCODING DETECTION",
+          "target": "PYTEST",
+          "description": "The test group uses Pytest parameterization and assertions to validate encoding detection behavior.",
+          "weight": "8.0",
+          "links": "10"
+        },
+        {
+          "id": "1046",
+          "source": "TEST GUESS JSON UTF",
+          "target": "PYTEST",
+          "description": "The test group uses Pytest parameterization and assertions to validate JSON encoding detection behavior.",
+          "weight": "8.0",
+          "links": "10"
+        },
+        {
+          "id": "804",
+          "source": "PYTEST",
+          "target": "TESTRESPONSEDECODEUNICODE",
+          "description": "Pytest runs the test that verifies Unicode response decoding",
+          "weight": "8.0",
+          "links": "10"
+        },
+        {
+          "id": "806",
+          "source": "PYTEST",
+          "target": "TESTRESPONSEREASONUNICODEFALLBACK",
+          "description": "Pytest runs the test that verifies ISO-8859-1 reason fallback behavior",
+          "weight": "8.0",
+          "links": "10"
+        },
+        {
+          "id": "805",
+          "source": "PYTEST",
+          "target": "TESTRESPONSEREASONUNICODE",
+          "description": "Pytest runs the test that verifies Unicode HTTP status reasons",
+          "weight": "8.0",
+          "links": "10"
+        },
+        {
+          "id": "930",
+          "source": "TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE",
+          "target": "HTTPBIN",
+          "description": "The test obtains a no-content response from an Httpbin status endpoint",
+          "weight": "8.0",
+          "links": "5"
+        },
+        {
+          "id": "992",
+          "source": "TEST JSON DECODE COMPATIBILITY",
+          "target": "HTTPBIN",
+          "description": "The test obtains invalid byte content from an httpbin endpoint to trigger JSON decoding failure",
+          "weight": "8.0",
+          "links": "5"
+        },
+        {
+          "id": "993",
+          "source": "TEST JSON DECODE PERSISTS DOC ATTR",
+          "target": "HTTPBIN",
+          "description": "The test obtains the response text from an httpbin byte-response endpoint",
+          "weight": "1.0",
+          "links": "5"
+        },
+        {
+          "id": "770",
+          "source": "TEST DIFFERENT ENCODINGS DONT BREAK POST",
+          "target": "HTTPBIN",
+          "description": "The test sends multipart data to an HTTPBin POST endpoint",
+          "weight": "8.0",
+          "links": "5"
+        },
+        {
+          "id": "771",
+          "source": "TEST UNICODE MULTIPART POST",
+          "target": "HTTPBIN",
+          "description": "The test sends Unicode multipart data to an HTTPBin POST endpoint",
+          "weight": "8.0",
+          "links": "5"
+        },
+        {
+          "id": "358",
+          "source": "RESPONSE",
+          "target": "CHARACTER ENCODING DETECTION",
+          "description": "A Response uses Chardet or Charset-normalizer to determine apparent encoding when no explicit encoding is available.",
+          "weight": "9.0",
+          "links": "3"
+        },
+        {
+          "id": "359",
+          "source": "RESPONSE",
+          "target": "UNICODE DECODING",
+          "description": "A Response decodes byte content into text using its declared or detected encoding.",
+          "weight": "9.0",
+          "links": "3"
+        },
+        {
+          "id": "815",
+          "source": "TESTRESPONSEDECODEUNICODE",
+          "target": "RESPONSE",
+          "description": "The test verifies that Response.iter_content returns strings when decoding is enabled",
+          "weight": "9.0",
+          "links": "3"
+        },
+        {
+          "id": "860",
+          "source": "NATIVE HEADER KEY HANDLING",
+          "target": "REQUEST",
+          "description": "The test verifies the native key types retained by a prepared Request's headers",
+          "weight": "8.0",
+          "links": "1"
+        },
+        {
+          "id": "371",
+          "source": "CHARDET",
+          "target": "CHARACTER ENCODING DETECTION",
+          "description": "Chardet performs character encoding detection for response content.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "1014",
+          "source": "TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE",
+          "target": "PICKLE",
+          "description": "The test uses pickle to serialize and deserialize the JSON decoding error",
+          "weight": "1.0",
+          "links": "1"
+        },
+        {
+          "id": "372",
+          "source": "CHARSET_NORMALIZER",
+          "target": "CHARACTER ENCODING DETECTION",
+          "description": "Charset-normalizer is an alternative library used for character encoding detection.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "592",
+          "source": "JSONDECODEERROR",
+          "target": "REQUESTEXCEPTION",
+          "description": "The JSON decoding error is verified to also be a Requests exception",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "816",
+          "source": "TESTRESPONSEREASONUNICODEFALLBACK",
+          "target": "HTTPEXCEPTION",
+          "description": "The test invokes Response.raise_for_status and expects an HTTPError containing the decoded reason phrase",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "227",
+          "source": "SIMPLEJSON",
+          "target": "JSON",
+          "description": "simplejson and the standard json module are alternative JSON implementations selected by requests.compat",
+          "weight": "7.0",
+          "links": "1"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "columns": [
+        "id",
+        "source",
+        "text"
+      ],
+      "rows": [
+        {
+          "id": "107",
+          "text": "        result = guess_filename(obj)\n        assert result == value\n        assert isinstance(result, expected_type)\n\n\nclass TestExtractZippedPaths:\n    @pytest.mark.parametrize(\n        \"path\",\n        (\n            \"/\",\n            __file__,\n            pytest.__file__,\n            \"/etc/invalid/location\",\n        ),\n    )\n    def test_unzipped_paths_unchanged(self, path):\n        assert path == extract_zipped_paths(path)\n\n    def test_zipped_paths_extracted(self, tmpdir):\n        zipped_py = tmpdir.join(\"test.zip\")\n        with zipfile.ZipFile(zipped_py.strpath, \"w\") as f:\n            f.write(__file__)\n\n        _, name = os.path.splitdrive(__file__)\n        zipped_path = os.path.join(zipped_py.strpath, name.lstrip(r\"\\/\"))\n        extracted_path = extract_zipped_paths(zipped_path)\n\n        assert extracted_path != zipped_path\n        assert os.path.exists(extracted_path)\n        assert filecmp.cmp(extracted_path, __file__)\n\n    def test_invalid_unc_path(self):\n        path = r\"\\\\localhost\\invalid\\location\"\n        assert extract_zipped_paths(path) == path\n\n\nclass TestContentEncodingDetection:\n    def test_none(self):\n        encodings = get_encodings_from_content(\"\")\n        assert not len(encodings)\n\n    @pytest.mark.parametrize(\n        \"content\",\n        (\n            # HTML5 meta charset attribute\n            '<meta charset=\"UTF-8\">',\n            # HTML4 pragma directive\n            '<meta http-equiv=\"Content-type\" content=\"text/html;charset=UTF-8\">',\n            # XHTML 1.x served with text/html MIME type\n            '<meta http-equiv=\"Content-type\" content=\"text/html;charset=UTF-8\" />',\n            # XHTML 1.x served as XML\n            '<?xml version=\"1.0\" encoding=\"UTF-8\"?>',\n        ),\n    )\n    def test_pragmas(self, content):\n        encodings = get_encodings_from_content(content)\n        assert len(encodings) == 1\n        assert encodings[0] == \"UTF-8\"\n\n    def test_precedence(self):\n        content = \"\"\"\n        <?xml version=\"1.0\" encoding=\"XML\"?>\n        <meta charset=\"HTML5\">\n        <meta http-equiv=\"Content-type\" content=\"text/html;charset=HTML4\" />\n        \"\"\".strip()\n        assert get_encodings_from_content(content) == [\"HTML5\", \"HTML4\", \"XML\"]\n\n\nclass TestGuessJSONUTF:\n    @pytest.mark.parametrize(\n        \"encoding\",\n        (\n            \"utf-32\",\n            \"utf-8-sig\",\n            \"utf-16\",\n            \"utf-8\",\n            \"utf-16-be\",\n            \"utf-16-le\",\n            \"utf-32-be\",\n            \"utf-32-le\",\n        ),\n    )\n    def test_encoded(self, encoding):\n        data = \"{}\".encode(encoding)\n        assert guess_json_utf(data) == encoding\n\n    def test_bad_utf_like_encoding(self):\n        assert guess_json_utf(b\"\\x00\\x00\\x00\\x00\") is None\n\n    @pytest.mark.parametrize(\n        (\"encoding\", \"expected\"),\n        (\n            (\"utf-16-be\", \"utf-16\"),\n            (\"utf-16-le\", \"utf-16\"),\n            (\"utf-32-be\", \"utf-32\"),\n            (\"utf-32-le\", \"utf-32\"),\n        ),\n    )\n    def test_guess_by_bom(self, encoding, expected):\n        data = \"\\ufeff{}\".encode(encoding)\n        assert guess_json_utf(data) == expected\n\n\nUSER = PASSWORD = \"%!*'();:@&=+$,/?#[] \"\nENCODED_USER = compat.quote(USER, \"\")\nENCODED_PASSWORD = compat.quote(PASSWORD, \"\")\n\n\n@pytest.mark.parametrize(\n    \"url, auth\",\n    (\n        (\n            f\"http://{ENCODED_USER}:{ENCODED_PASSWORD}@request.com/url.html#test\",\n            (USER, PASSWORD),\n        ),\n        (\"http://user:pass@complex.url.com/path?query=yes\", (\"user\", \"pass\")),\n        (\n            \"http://user:pass%20pass@complex.url.com/path?query=yes\",\n            (\"user\", \"pass pass\"),\n        ),\n        (\"http://user:pass pass@complex.url.com/path?query=yes\", (\"user\", \"pass pass\")),\n        (\n            \"http://user%25user:pass@complex.url.com/path?query=yes\",\n            (\"user%user\", \"pass\"),\n        ),\n        (\n            \"http://user:pass%23pass@complex.url.com/path?query=yes\",\n            (\"user\", \"pass#pass\"),\n        ),\n        (\"http://complex.url.com/path?query=yes\", (\"\", \"\")),\n    ),\n)\ndef test_get_auth_from_url(url, auth):\n    assert get_auth_from_url(url) == auth\n\n\n@pytest.mark.parametrize(\n    \"uri, expected\",\n    (\n        (\n            # Ensure requoting doesn't break expectations\n            \"http://example.com/fiz?buz=%25ppicture\",\n            \"http://example.com/fiz?buz=%25ppicture\",\n        ),\n        (\n            # Ensure we handle unquoted percent signs in redirects\n            \"http://example.com/fiz?buz=%ppicture\",\n            \"http://example.com/fiz?buz=%25ppicture\",\n        ),\n    ),\n)\ndef test_requote_uri_with_unquoted_percents(uri, expected):\n    \"\"\"See: https://github.com/psf/requests/issues/2356\"\"\"\n    assert requote_uri(uri) == expected\n\n\n@pytest.mark.parametrize(\n    \"uri, expected\",\n    (\n        (\n            # Illegal bytes\n            \"http://example.com/?a=%--\",\n            \"http://example.com/?a=%--\",\n        ),\n        (\n",
+          "source": "tests/test_utils.py:L308-L472"
+        },
+        {
+          "id": "78",
+          "text": "            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /final-url/\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/path/to/thing/#view=edit&token=hunter2'\n        r = requests.get(url)\n\n        assert r.status_code == 200\n        assert len(r.history) == 2\n        assert r.history[0].request.url == url\n\n        # Verify we haven't overwritten the location with our previous fragment.\n        assert r.history[1].request.url == f'http://{host}:{port}/get#relevant-section'\n        # Verify previous fragment is used and not the original.\n        assert r.url == f'http://{host}:{port}/final-url/#relevant-section'\n\n        close_server.set()\n\n\ndef test_json_decode_compatibility_for_alt_utf_encodings():\n\n    def response_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n'\n            b'Content-Length: 18\\r\\n\\r\\n'\n            b'\\xff\\xfe{\\x00\"\\x00K0\"\\x00=\\x00\"\\x00\\xab0\"\\x00\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url)\n    r.encoding = None\n    with pytest.raises(requests.exceptions.JSONDecodeError) as excinfo:\n        r.json()\n    assert isinstance(excinfo.value, requests.exceptions.RequestException)\n    assert isinstance(excinfo.value, JSONDecodeError)\n    assert r.text not in str(excinfo.value)\n",
+          "source": "tests/test_lowlevel.py:L379-L428"
+        },
+        {
+          "id": "49",
+          "text": "    def is_permanent_redirect(self):\n        \"\"\"True if this Response one of the permanent versions of redirect.\"\"\"\n        return \"location\" in self.headers and self.status_code in (\n            codes.moved_permanently,\n            codes.permanent_redirect,\n        )\n\n    @property\n    def next(self):\n        \"\"\"Returns a PreparedRequest for the next request in a redirect chain, if there is one.\"\"\"\n        return self._next\n\n    @property\n    def apparent_encoding(self):\n        \"\"\"The apparent encoding, provided by the charset_normalizer or chardet libraries.\"\"\"\n        if chardet is not None:\n            return chardet.detect(self.content)[\"encoding\"]\n        else:\n            # If no character detection library is available, we'll fall back\n            # to a standard Python utf-8 str.\n            return \"utf-8\"\n\n    def iter_content(self, chunk_size=1, decode_unicode=False):\n        \"\"\"Iterates over the response data.  When stream=True is set on the\n        request, this avoids reading the content at once into memory for\n        large responses.  The chunk size is the number of bytes it should\n        read into memory.  This is not necessarily the length of each item\n        returned as decoding can take place.\n\n        chunk_size must be of type int or None. A value of None will\n        function differently depending on the value of `stream`.\n        stream=True will read data as it arrives in whatever size the\n        chunks are received. If stream=False, data is returned as\n        a single chunk.\n\n        If decode_unicode is True, content will be decoded using the best\n        available encoding based on the response.\n        \"\"\"\n\n        def generate():\n            # Special case for urllib3.\n            if hasattr(self.raw, \"stream\"):\n                try:\n                    yield from self.raw.stream(chunk_size, decode_content=True)\n                except ProtocolError as e:\n                    raise ChunkedEncodingError(e)\n                except DecodeError as e:\n                    raise ContentDecodingError(e)\n                except ReadTimeoutError as e:\n                    raise ConnectionError(e)\n                except SSLError as e:\n                    raise RequestsSSLError(e)\n            else:\n                # Standard file-like object.\n                while True:\n                    chunk = self.raw.read(chunk_size)\n                    if not chunk:\n                        break\n                    yield chunk\n\n            self._content_consumed = True\n\n        if self._content_consumed and isinstance(self._content, bool):\n            raise StreamConsumedError()\n        elif chunk_size is not None and not isinstance(chunk_size, int):\n            raise TypeError(\n                f\"chunk_size must be an int, it is instead a {type(chunk_size)}.\"\n            )\n        # simulate reading small chunks of the content\n        reused_chunks = iter_slices(self._content, chunk_size)\n\n        stream_chunks = generate()\n\n        chunks = reused_chunks if self._content_consumed else stream_chunks\n\n        if decode_unicode:\n            chunks = stream_decode_response_unicode(chunks, self)\n\n        return chunks\n\n    def iter_lines(\n        self, chunk_size=ITER_CHUNK_SIZE, decode_unicode=False, delimiter=None\n    ):\n        \"\"\"Iterates over the response data, one line at a time.  When\n        stream=True is set on the request, this avoids reading the\n        content at once into memory for large responses.\n\n        .. note:: This method is not reentrant safe.\n        \"\"\"\n\n        pending = None\n\n        for chunk in self.iter_content(\n            chunk_size=chunk_size, decode_unicode=decode_unicode\n        ):\n            if pending is not None:\n                chunk = pending + chunk\n\n            if delimiter:\n                lines = chunk.split(delimiter)\n            else:\n                lines = chunk.splitlines()\n\n            if lines and lines[-1] and chunk and lines[-1][-1] == chunk[-1]:\n                pending = lines.pop()\n            else:\n                pending = None\n\n            yield from lines\n\n        if pending is not None:\n            yield pending\n\n    @property\n    def content(self):\n        \"\"\"Content of the response, in bytes.\"\"\"\n\n        if self._content is False:\n            # Read the contents.\n            if self._content_consumed:\n                raise RuntimeError(\"The content for this response was already consumed\")\n\n            if self.status_code == 0 or self.raw is None:\n                self._content = None\n            else:\n                self._content = b\"\".join(self.iter_content(CONTENT_CHUNK_SIZE)) or b\"\"\n\n        self._content_consumed = True\n        # don't need to release the connection; that's been handled by urllib3\n        # since we exhausted the data.\n        return self._content\n\n    @property\n    def text(self):\n        \"\"\"Content of the response, in unicode.\n\n        If Response.encoding is None, encoding will be guessed using\n        ``charset_normalizer`` or ``chardet``.\n\n        The encoding of the response content is determined based solely on HTTP\n        headers, following RFC 2616 to the letter. If you can take advantage of\n        non-HTTP knowledge to make a better guess at the encoding, you should\n        set ``r.encoding`` appropriately before accessing this property.\n        \"\"\"\n\n        # Try charset from content-type\n        content = None\n        encoding = self.encoding\n\n        if not self.content:\n            return \"\"\n\n        # Fallback to auto-detected encoding.\n        if self.encoding is None:\n            encoding = self.apparent_encoding\n\n        # Decode unicode from given encoding.\n        try:\n            content = str(self.content, encoding, errors=\"replace\")\n        except (LookupError, TypeError):\n            # A LookupError is raised if the encoding was not found which could\n            # indicate a misspelling or similar mistake.\n            #\n            # A TypeError can be raised if encoding is None\n            #\n            # So we try blindly encoding.\n",
+          "source": "src/requests/models.py:L777-L942"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "short_id": "107",
+      "text_unit_id": "389dde3cd137709270c2c13a240d8018c44b01110888c0bd9c5337e38016b77fc557047f133187ddaa1c5d5573bd90a8862712ca2b4a0537a35e809db32a8179",
+      "id": "a508132f67cba7cedc589493a9a54cad81ca9b8568c3ab37a5b98ba09b9682e8",
+      "title": "tests/test_utils.py:L308-L472",
+      "path": "tests/test_utils.py",
+      "start_line": 308,
+      "end_line": 472,
+      "tokens": 1200,
+      "text_sha256": "2cdfba69a878cd4b62869f9e5829c27bd72ac6cf08a4888c31e386dbed2db6a2",
+      "ms_text_unit_id": "389dde3cd137709270c2c13a240d8018c44b01110888c0bd9c5337e38016b77fc557047f133187ddaa1c5d5573bd90a8862712ca2b4a0537a35e809db32a8179"
+    },
+    {
+      "short_id": "78",
+      "text_unit_id": "8d707a967d2ac3011d34f329f840b838b9b30e3dbd68ec99c6309f16d86711daa0c5bc66648a3b5f102056a27bfe3c266966a58a0e7f34ea18a86f401ea94eb0",
+      "id": "b0cdef55a2c5ce2dcc3e2fa72c0fd5cd5ece7a243c220abd27873f188aed20c4",
+      "title": "tests/test_lowlevel.py:L379-L428",
+      "path": "tests/test_lowlevel.py",
+      "start_line": 379,
+      "end_line": 428,
+      "tokens": 452,
+      "text_sha256": "21659c862b007521515fb5027d9d9461ea170a47bc715b5a8729fc475f7d401c",
+      "ms_text_unit_id": "8d707a967d2ac3011d34f329f840b838b9b30e3dbd68ec99c6309f16d86711daa0c5bc66648a3b5f102056a27bfe3c266966a58a0e7f34ea18a86f401ea94eb0"
+    },
+    {
+      "short_id": "49",
+      "text_unit_id": "2aa3a4d67bf046e61f6a0ed501baa22d70798827acb206146ce41358ad56ff12d1eee35099aae5cbc0fcc932a9e52ff47be8ad2b65d05074244b15946372e087",
+      "id": "43af353e619da1a46933db2beb1bb0a5cc2e53eca7e2dd5e29bddd856768c293",
+      "title": "src/requests/models.py:L777-L942",
+      "path": "src/requests/models.py",
+      "start_line": 777,
+      "end_line": 942,
+      "tokens": 1195,
+      "text_sha256": "978c87e6ced94c8ce21e02c4700192fd7a8ef0ef0dbe174e9beeea0a83996a49",
+      "ms_text_unit_id": "2aa3a4d67bf046e61f6a0ed501baa22d70798827acb206146ce41358ad56ff12d1eee35099aae5cbc0fcc932a9e52ff47be8ad2b65d05074244b15946372e087"
+    }
+  ],
+  "raw_context_tokens": 5283,
+  "final_context_tokens": 5399,
+  "source_text_tokens": 2847,
+  "source_chunks": 3,
+  "retrieval_compute_seconds": 0.016723542474210262,
+  "adaptation_seconds": 0.01606516633182764,
+  "empty_reason": null,
+  "community_level": 2,
+  "dropped_tail_rows": 0
+}

@@ -1,0 +1,1019 @@
+{
+  "question_id": "Q05",
+  "method": "ms_local",
+  "budget": 8000,
+  "query": "Where are JSON decoding errors converted into the library-specific exception for response.json()?",
+  "upstream_raw_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n395|JSONDECODEERROR|JSONDECODEERROR, also known as `JSONDecodeError`, is an exception type associated with the Requests library. It is raised when a response contains an alternate UTF encoding that cannot be decoded successfully as JSON. Its serialization and deserialization behavior is covered by the relevant documentation tests.|3\n266|JSON DECODE ERROR|JSONDecodeError is an error event raised when the response body cannot be parsed as valid JSON.|2\n267|REQUESTS JSON DECODE ERROR|RequestsJSONDecodeError is the Requests-specific JSON decoding error raised after an underlying JSONDecodeError occurs while parsing a response.|2\n596|TEST JSON DECODE COMPATIBILITY|A test event that verifies an invalid response body raises Requests' JSONDecodeError compatible with both RequestException and JSONDecodeError|3\n162|JSON|JSON is a data interchange format and Python standard-library module used for processing, encoding, and decoding JSON content. In the Requests context, it serves as the fallback compatibility library when `simplejson` is unavailable and provides the `JSONDecodeError` exception used in response-decoding behavior and its serialization and deserialization tests.|2\n597|TEST JSON DECODE PERSISTS DOC ATTR|A test event that verifies the JSONDecodeError preserves the response text in its doc attribute|3\n253|DECODEERROR|DecodeError is a urllib3 exception raised when streamed response content cannot be decoded correctly. It is used to verify that the Requests library converts content-decoding failures into a `ContentDecodingError`.|1\n257|CONTENTDECODINGERROR|ContentDecodingError is a Requests exception used to report failures that occur while decoding response content. It is raised when urllib3 encounters a DecodeError during response-content iteration.|1\n604|TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE|The entity “TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE” refers to a pytest test event that verifies `Requests JSONDecodeError` exceptions support serialization and deserialization. The test creates a `Requests JSONDecodeError`, serializes it with Python’s `pickle` module, deserializes the resulting data, and confirms that the original and reconstructed exceptions have matching representations.|3\n161|SIMPLEJSON|SIMPLEJSON is an optional Python JSON-processing library that may be used when available. In the Requests ecosystem, it can provide the JSON decoding implementation exposed under the alias `complexjson`. Its `JSONDecodeError` is also made available through a compatibility module, allowing code to handle JSON decoding errors consistently whether the standard library or `simplejson` is being used.|2\n396|REQUESTEXCEPTION|Base exception type from Requests, verified as a superclass of the JSON decoding error|1\n221|URLLIB3 EXCEPTIONS|urllib3.exceptions provides HTTP and connection-related exceptions imported by Requests, including DecodeError, LocationParseError, ProtocolError, ReadTimeoutError, and SSLError.|1\n398|TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS|A test event that verifies Requests JSON decoding behavior and exception compatibility for alternate UTF encodings|3\n118|REQUESTS EXCEPTIONS|Requests Exceptions defines the exception and warning hierarchy used by the Requests library to represent failures across HTTP communication and response processing. It includes the base `RequestException` class and specialized errors for connection failures (`ConnectionError`, `ConnectTimeout`), timeouts (`Timeout`, `ReadTimeout`), HTTP status failures (`HTTPError`), and excessive redirects (`TooManyRedirects`). The module also covers errors associated with invalid URLs, unsupported schemas, proxy configuration, response decoding, JSON parsing, stream consumption, and other connection, URL, HTTP, and data-processing problems. These classes provide structured error reporting for invalid requests, failed connections, timeout conditions, redirect issues, proxy and schema errors, and failures while decoding or consuming response content.|2\n270|TYPE ERROR|TypeError is an error event that can occur when the encoding value is None or otherwise has an incompatible type during response decoding.|1\n268|UNICODE DECODE ERROR|UnicodeDecodeError is an error event that occurs when the detected character encoding cannot decode response content correctly.|1\n576|TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE|A test that verifies a response with no content returns None for content and raises ValueError when JSON decoding is attempted|3\n95|HTTP ERROR|HTTP ERROR is an error event raised by the Requests library when an HTTP response has an unsuccessful client-error or server-error status code. It is triggered by `Response.raise_for_status()` to indicate that the response did not complete successfully.|2\n256|CHUNKEDENCODINGERROR|ChunkedEncodingError is a Requests exception that reports failures in HTTP chunked transfer encoding. It is raised when urllib3 encounters a ProtocolError while iterating over the content of a response.|1\n255|SSLERROR|SSLERROR represents an SSL-related exception encountered during HTTPS communication. It is raised when certificate verification fails, including cases involving self-signed or expired certificates, and may also occur while reading streamed response data. In the Requests library, `SSLError` is a Requests exception that corresponds to underlying urllib3 SSL failures, ensuring those failures are converted into `RequestsSSLError` for consistent handling.|2\n\n\n-----Relationships-----\nid|source|target|description|weight|links\n593|TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS|JSONDECODEERROR|The test expects JSONDecodeError to be raised when decoding the response body|9.0|1\n227|SIMPLEJSON|JSON|simplejson and the standard json module are alternative JSON implementations selected by requests.compat|7.0|1\n380|REQUESTS JSON DECODE ERROR|JSON DECODE ERROR|RequestsJSONDecodeError is constructed from the underlying JSONDecodeError raised during JSON parsing.|1.0|1\n592|JSONDECODEERROR|REQUESTEXCEPTION|The JSON decoding error is verified to also be a Requests exception|9.0|1\n929|TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE|REQUESTS|The test validates Requests response content and JSON decoding behavior for an empty response|9.0|17\n977|TEST JSON DECODE COMPATIBILITY|REQUESTS|The test calls a Requests response's json method and checks exception compatibility|9.0|17\n978|TEST JSON DECODE PERSISTS DOC ATTR|REQUESTS|The test checks a JSON decoding exception produced by a Requests response|9.0|17\n1007|TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE|REQUESTS|The test for “TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE” verifies that `REQUESTS` `JSONDecodeError` instances can be serialized and deserialized successfully. It constructs a `Requests` `JSONDecodeError`, validates its serialization, and confirms that the resulting serialized representation can be deserialized correctly.|10.0|17\n591|REQUESTS|TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS|The test exercises Requests response JSON decoding and exception behavior|9.0|17\n998|REQUESTS|JSONDECODEERROR|Requests defines and tests its JSONDecodeError exception behavior.|8.0|17\n526|JSON DECODE ERROR|REQUESTS|JSONDecodeError is imported through requests.compat for compatibility with Requests response parsing|7.0|17\n133|REQUESTS|HTTP ERROR|Requests provides `Response.raise_for_status`, which raises an `HTTPError` when an HTTP response is unsuccessful, specifically when its status code falls within the 400–599 range.|18.0|17\n288|REQUESTS|JSON|Requests uses JSON compatibility utilities to encode and decode JSON data and to define JSON-related exceptions. It also uses the JSON module in its bug-report helper to format and print collected diagnostic information as JSON.|16.0|17\n317|REQUESTS|REQUESTS EXCEPTIONS|Requests imports its own exception classes for HTTP, connection, decoding, URL, JSON, and stream errors.|9.0|17\n374|REQUESTS|SIMPLEJSON|Requests can use simplejson as the underlying JSON implementation referenced by its complexjson alias.|6.0|17\n375|REQUESTS|JSON DECODE ERROR|Requests catches JSONDecodeError when JSON parsing fails and converts it into a Requests-specific JSON decoding error.|9.0|17\n376|REQUESTS|REQUESTS JSON DECODE ERROR|Requests raises RequestsJSONDecodeError when the response body does not contain valid JSON.|9.0|17\n997|REQUESTS|SSLERROR|Requests raises SSLError when TLS certificate verification fails.|9.0|17\n364|REQUESTS|CHUNKEDENCODINGERROR|Requests converts underlying urllib3 `ProtocolError` failures into `ChunkedEncodingError` exceptions during streaming, including while processing responses through `iter_content`.|18.0|17\n365|REQUESTS|CONTENTDECODINGERROR|Requests converts underlying `DecodeError` failures from urllib3 into `ContentDecodingError` while streaming response content, including during `iter_content`.|18.0|17\n377|REQUESTS|UNICODE DECODE ERROR|Requests catches UnicodeDecodeError when the detected response encoding is incorrect and then falls back to another decoding path.|8.0|17\n379|REQUESTS|TYPE ERROR|Requests handles TypeError when the response encoding is None or invalid during content decoding.|7.0|17\n1012|TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE|PYTEST|PYTEST defines and executes the test for “TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE,” verifying that JSON decode errors can be serialized and deserialized successfully.|2.0|5\n590|PYTEST|TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS|Pytest executes the test that checks alternate UTF encoding JSON-decoding behavior|9.0|5\n946|PYTEST|TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE|Pytest executes the no-content JSON behavior test|9.0|5\n987|PYTEST|TEST JSON DECODE COMPATIBILITY|Pytest executes the JSON decoding compatibility test|9.0|5\n988|PYTEST|TEST JSON DECODE PERSISTS DOC ATTR|Pytest executes the JSON exception attribute persistence test|9.0|5\n930|TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE|HTTPBIN|The test obtains a no-content response from an Httpbin status endpoint|8.0|3\n992|TEST JSON DECODE COMPATIBILITY|HTTPBIN|The test obtains invalid byte content from an httpbin endpoint to trigger JSON decoding failure|8.0|3\n993|TEST JSON DECODE PERSISTS DOC ATTR|HTTPBIN|The test obtains the response text from an httpbin byte-response endpoint|1.0|3\n363|URLLIB3|SSLERROR|urllib3 supplies the `SSLError` exception, which can be raised while handling streamed responses, particularly during streaming tests.|17.0|3\n302|URLLIB3|URLLIB3 EXCEPTIONS|urllib3 supplies the exceptions imported by Requests for decoding, location parsing, protocol, timeout, and SSL failures.|9.0|3\n361|URLLIB3|DECODEERROR|urllib3 can raise the `DecodeError` exception when the content of a streamed response cannot be decoded. `DecodeError` is supplied by urllib3 and is specifically relevant to failures encountered while streaming response content.|17.0|3\n351|RESPONSE|HTTP ERROR|Response.ok calls raise_for_status and catches HTTPError to return False for error responses.|9.0|1\n168|REQUESTS HTTP LIBRARY|REQUESTS EXCEPTIONS|The main Requests package imports warning and error classes from its exceptions module.|9.0|1\n1014|TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE|PICKLE|The test uses pickle to serialize and deserialize the JSON decoding error|1.0|1\n\n\n-----Sources-----\nid|text\n78|            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /final-url/\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/path/to/thing/#view=edit&token=hunter2'\n        r = requests.get(url)\n\n        assert r.status_code == 200\n        assert len(r.history) == 2\n        assert r.history[0].request.url == url\n\n        # Verify we haven't overwritten the location with our previous fragment.\n        assert r.history[1].request.url == f'http://{host}:{port}/get#relevant-section'\n        # Verify previous fragment is used and not the original.\n        assert r.url == f'http://{host}:{port}/final-url/#relevant-section'\n\n        close_server.set()\n\n\ndef test_json_decode_compatibility_for_alt_utf_encodings():\n\n    def response_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n'\n            b'Content-Length: 18\\r\\n\\r\\n'\n            b'\\xff\\xfe{\\x00\"\\x00K0\"\\x00=\\x00\"\\x00\\xab0\"\\x00\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url)\n    r.encoding = None\n    with pytest.raises(requests.exceptions.JSONDecodeError) as excinfo:\n        r.json()\n    assert isinstance(excinfo.value, requests.exceptions.RequestException)\n    assert isinstance(excinfo.value, JSONDecodeError)\n    assert r.text not in str(excinfo.value)\n\n101|        r6 = requests.codes.get(\"unordered_collection\")\n\n        assert r1 == 425\n        assert r2 == 425\n        assert r3 == 425\n        assert r4 == 425\n        assert r5 == 425\n        assert r6 == 425\n\n    def test_different_connection_pool_for_tls_settings_verify_True(self):\n        def response_handler(sock):\n            consume_socket_content(sock, timeout=0.5)\n            sock.send(\n                b\"HTTP/1.1 200 OK\\r\\n\"\n                b\"Content-Length: 18\\r\\n\\r\\n\"\n                b'\\xff\\xfe{\\x00\"\\x00K0\"\\x00=\\x00\"\\x00\\xab0\"\\x00\\r\\n'\n            )\n\n        s = requests.Session()\n        close_server = threading.Event()\n        server = TLSServer(\n            handler=response_handler,\n            wait_to_close_event=close_server,\n            requests_to_handle=3,\n            cert_chain=\"tests/certs/expired/server/server.pem\",\n            keyfile=\"tests/certs/expired/server/server.key\",\n        )\n\n        with server as (host, port):\n            url = f\"https://{host}:{port}\"\n            r1 = s.get(url, verify=False)\n            assert r1.status_code == 200\n\n            # Cannot verify self-signed certificate\n            with pytest.raises(requests.exceptions.SSLError):\n                s.get(url)\n\n            close_server.set()\n        assert 2 == len(s.adapters[\"https://\"].poolmanager.pools)\n\n    def test_different_connection_pool_for_tls_settings_verify_bundle_expired_cert(\n        self,\n    ):\n        def response_handler(sock):\n            consume_socket_content(sock, timeout=0.5)\n            sock.send(\n                b\"HTTP/1.1 200 OK\\r\\n\"\n                b\"Content-Length: 18\\r\\n\\r\\n\"\n                b'\\xff\\xfe{\\x00\"\\x00K0\"\\x00=\\x00\"\\x00\\xab0\"\\x00\\r\\n'\n            )\n\n        s = requests.Session()\n        close_server = threading.Event()\n        server = TLSServer(\n            handler=response_handler,\n            wait_to_close_event=close_server,\n            requests_to_handle=3,\n            cert_chain=\"tests/certs/expired/server/server.pem\",\n            keyfile=\"tests/certs/expired/server/server.key\",\n        )\n\n        with server as (host, port):\n            url = f\"https://{host}:{port}\"\n            r1 = s.get(url, verify=False)\n            assert r1.status_code == 200\n\n            # Has right trust bundle, but certificate expired\n            with pytest.raises(requests.exceptions.SSLError):\n                s.get(url, verify=\"tests/certs/expired/ca/ca.crt\")\n\n            close_server.set()\n        assert 2 == len(s.adapters[\"https://\"].poolmanager.pools)\n\n    def test_different_connection_pool_for_tls_settings_verify_bundle_unexpired_cert(\n        self,\n    ):\n        def response_handler(sock):\n            consume_socket_content(sock, timeout=0.5)\n            sock.send(\n                b\"HTTP/1.1 200 OK\\r\\n\"\n                b\"Content-Length: 18\\r\\n\\r\\n\"\n                b'\\xff\\xfe{\\x00\"\\x00K0\"\\x00=\\x00\"\\x00\\xab0\"\\x00\\r\\n'\n            )\n\n        s = requests.Session()\n        close_server = threading.Event()\n        server = TLSServer(\n            handler=response_handler,\n            wait_to_close_event=close_server,\n            requests_to_handle=3,\n            cert_chain=\"tests/certs/valid/server/server.pem\",\n            keyfile=\"tests/certs/valid/server/server.key\",\n        )\n\n        with server as (host, port):\n            url = f\"https://{host}:{port}\"\n            r1 = s.get(url, verify=False)\n            assert r1.status_code == 200\n\n            r2 = s.get(url, verify=\"tests/certs/valid/ca/ca.crt\")\n            assert r2.status_code == 200\n\n            close_server.set()\n        assert 2 == len(s.adapters[\"https://\"].poolmanager.pools)\n\n    def test_different_connection_pool_for_mtls_settings(self):\n        client_cert = None\n\n        def response_handler(sock):\n            nonlocal client_cert\n            client_cert = sock.getpeercert()\n            consume_socket_content(sock, timeout=0.5)\n            sock.send(\n                b\"HTTP/1.1 200 OK\\r\\n\"\n                b\"Content-Length: 18\\r\\n\\r\\n\"\n                b'\\xff\\xfe{\\x00\"\\x00K0\"\\x00=\\x00\"\\x00\\xab0\"\\x00\\r\\n'\n            )\n\n        s = requests.Session()\n        close_server = threading.Event()\n        server = TLSServer(\n            handler=response_handler,\n            wait_to_close_event=close_server,\n            requests_to_handle=2,\n            cert_chain=\"tests/certs/expired/server/server.pem\",\n            keyfile=\"tests/certs/expired/server/server.key\",\n            mutual_tls=True,\n            cacert=\"tests/certs/expired/ca/ca.crt\",\n        )\n\n        cert = (\n            \"tests/certs/mtls/client/client.pem\",\n            \"tests/certs/mtls/client/client.key\",\n        )\n        with server as (host, port):\n            url = f\"https://{host}:{port}\"\n            r1 = s.get(url, verify=False, cert=cert)\n            assert r1.status_code == 200\n            with pytest.raises(requests.exceptions.SSLError):\n                s.get(url, cert=cert)\n            close_server.set()\n\n        assert client_cert is not None\n\n\ndef test_json_decode_errors_are_serializable_deserializable():\n    json_decode_error = requests.exceptions.JSONDecodeError(\n\n50|        if self.encoding is None:\n            encoding = self.apparent_encoding\n\n        # Decode unicode from given encoding.\n        try:\n            content = str(self.content, encoding, errors=\"replace\")\n        except (LookupError, TypeError):\n            # A LookupError is raised if the encoding was not found which could\n            # indicate a misspelling or similar mistake.\n            #\n            # A TypeError can be raised if encoding is None\n            #\n            # So we try blindly encoding.\n            content = str(self.content, errors=\"replace\")\n\n        return content\n\n    def json(self, **kwargs):\n        r\"\"\"Returns the json-encoded content of a response, if any.\n\n        :param \\*\\*kwargs: Optional arguments that ``json.loads`` takes.\n        :raises requests.exceptions.JSONDecodeError: If the response body does not\n            contain valid json.\n        \"\"\"\n\n        if not self.encoding and self.content and len(self.content) > 3:\n            # No encoding set. JSON RFC 4627 section 3 states we should expect\n            # UTF-8, -16 or -32. Detect which one to use; If the detection or\n            # decoding fails, fall back to `self.text` (using charset_normalizer to make\n            # a best guess).\n            encoding = guess_json_utf(self.content)\n            if encoding is not None:\n                try:\n                    return complexjson.loads(self.content.decode(encoding), **kwargs)\n                except UnicodeDecodeError:\n                    # Wrong UTF codec detected; usually because it's not UTF-8\n                    # but some other 8-bit codec.  This is an RFC violation,\n                    # and the server didn't bother to tell us what codec *was*\n                    # used.\n                    pass\n                except JSONDecodeError as e:\n                    raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)\n\n        try:\n            return complexjson.loads(self.text, **kwargs)\n        except JSONDecodeError as e:\n            # Catch JSON-related errors and raise as requests.JSONDecodeError\n            # This aliases json.JSONDecodeError and simplejson.JSONDecodeError\n            raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)\n\n    @property\n    def links(self):\n        \"\"\"Returns the parsed header links of the response, if any.\"\"\"\n\n        header = self.headers.get(\"link\")\n\n        resolved_links = {}\n\n        if header:\n            links = parse_header_links(header)\n\n            for link in links:\n                key = link.get(\"rel\") or link.get(\"url\")\n                resolved_links[key] = link\n\n        return resolved_links\n\n    def raise_for_status(self):\n        \"\"\"Raises :class:`HTTPError`, if one occurred.\"\"\"\n\n        http_error_msg = \"\"\n        if isinstance(self.reason, bytes):\n            # We attempt to decode utf-8 first because some servers\n            # choose to localize their reason strings. If the string\n            # isn't utf-8, we fall back to iso-8859-1 for all other\n            # encodings. (See PR #3538)\n            try:\n                reason = self.reason.decode(\"utf-8\")\n            except UnicodeDecodeError:\n                reason = self.reason.decode(\"iso-8859-1\")\n        else:\n            reason = self.reason\n\n        if 400 <= self.status_code < 500:\n            http_error_msg = (\n                f\"{self.status_code} Client Error: {reason} for url: {self.url}\"\n            )\n\n        elif 500 <= self.status_code < 600:\n            http_error_msg = (\n                f\"{self.status_code} Server Error: {reason} for url: {self.url}\"\n            )\n\n        if http_error_msg:\n            raise HTTPError(http_error_msg, response=self)\n\n    def close(self):\n        \"\"\"Releases the connection back to the pool. Once this method has been\n        called the underlying ``raw`` object must not be accessed again.\n\n        *Note: Should not normally need to be called explicitly.*\n        \"\"\"\n        if not self._content_consumed:\n            self.raw.close()\n\n        release_conn = getattr(self.raw, \"release_conn\", None)\n        if release_conn is not None:\n            release_conn()\n\n100|            ),\n            (\n                \"http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/\",\n                \"http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/\",\n            ),\n        ),\n    )\n    def test_preparing_url(self, url, expected):\n        def normalize_percent_encode(x):\n            # Helper function that normalizes equivalent\n            # percent-encoded bytes before comparisons\n            for c in re.findall(r\"%[a-fA-F0-9]{2}\", x):\n                x = x.replace(c, c.upper())\n            return x\n\n        r = requests.Request(\"GET\", url=url)\n        p = r.prepare()\n        assert normalize_percent_encode(p.url) == expected\n\n    @pytest.mark.parametrize(\n        \"url\",\n        (\n            b\"http://*.google.com\",\n            b\"http://*\",\n            \"http://*.google.com\",\n            \"http://*\",\n            \"http://☃.net/\",\n        ),\n    )\n    def test_preparing_bad_url(self, url):\n        r = requests.Request(\"GET\", url=url)\n        with pytest.raises(requests.exceptions.InvalidURL):\n            r.prepare()\n\n    @pytest.mark.parametrize(\"url, exception\", ((\"http://:1\", InvalidURL),))\n    def test_redirecting_to_bad_url(self, httpbin, url, exception):\n        with pytest.raises(exception):\n            requests.get(httpbin(\"redirect-to\"), params={\"url\": url})\n\n    @pytest.mark.parametrize(\n        \"input, expected\",\n        (\n            (\n                b\"http+unix://%2Fvar%2Frun%2Fsocket/path%7E\",\n                \"http+unix://%2Fvar%2Frun%2Fsocket/path~\",\n            ),\n            (\n                \"http+unix://%2Fvar%2Frun%2Fsocket/path%7E\",\n                \"http+unix://%2Fvar%2Frun%2Fsocket/path~\",\n            ),\n            (\n                b\"mailto:user@example.org\",\n                \"mailto:user@example.org\",\n            ),\n            (\n                \"mailto:user@example.org\",\n                \"mailto:user@example.org\",\n            ),\n            (\n                b\"data:SSDimaUgUHl0aG9uIQ==\",\n                \"data:SSDimaUgUHl0aG9uIQ==\",\n            ),\n        ),\n    )\n    def test_url_mutation(self, input, expected):\n        \"\"\"\n        This test validates that we correctly exclude some URLs from\n        preparation, and that we handle others. Specifically, it tests that\n        any URL whose scheme doesn't begin with \"http\" is left alone, and\n        those whose scheme *does* begin with \"http\" are mutated.\n        \"\"\"\n        r = requests.Request(\"GET\", url=input)\n        p = r.prepare()\n        assert p.url == expected\n\n    @pytest.mark.parametrize(\n        \"input, params, expected\",\n        (\n            (\n                b\"http+unix://%2Fvar%2Frun%2Fsocket/path\",\n                {\"key\": \"value\"},\n                \"http+unix://%2Fvar%2Frun%2Fsocket/path?key=value\",\n            ),\n            (\n                \"http+unix://%2Fvar%2Frun%2Fsocket/path\",\n                {\"key\": \"value\"},\n                \"http+unix://%2Fvar%2Frun%2Fsocket/path?key=value\",\n            ),\n            (\n                b\"mailto:user@example.org\",\n                {\"key\": \"value\"},\n                \"mailto:user@example.org\",\n            ),\n            (\n                \"mailto:user@example.org\",\n                {\"key\": \"value\"},\n                \"mailto:user@example.org\",\n            ),\n        ),\n    )\n    def test_parameters_for_nonstandard_schemes(self, input, params, expected):\n        \"\"\"\n        Setting parameters for nonstandard schemes is allowed if those schemes\n        begin with \"http\", and is forbidden otherwise.\n        \"\"\"\n        r = requests.Request(\"GET\", url=input, params=params)\n        p = r.prepare()\n        assert p.url == expected\n\n    def test_post_json_nan(self, httpbin):\n        data = {\"foo\": float(\"nan\")}\n        with pytest.raises(requests.exceptions.InvalidJSONError):\n            requests.post(httpbin(\"post\"), json=data)\n\n    def test_json_decode_compatibility(self, httpbin):\n        r = requests.get(httpbin(\"bytes/20\"))\n        with pytest.raises(requests.exceptions.JSONDecodeError) as excinfo:\n            r.json()\n        assert isinstance(excinfo.value, RequestException)\n        assert isinstance(excinfo.value, JSONDecodeError)\n        assert r.text not in str(excinfo.value)\n\n    def test_json_decode_persists_doc_attr(self, httpbin):\n        r = requests.get(httpbin(\"bytes/20\"))\n        with pytest.raises(requests.exceptions.JSONDecodeError) as excinfo:\n            r.json()\n        assert excinfo.value.doc == r.text\n\n    def test_status_code_425(self):\n        r1 = requests.codes.get(\"TOO_EARLY\")\n        r2 = requests.codes.get(\"too_early\")\n        r3 = requests.codes.get(\"UNORDERED\")\n        r4 = requests.codes.get(\"unordered\")\n        r5 = requests.codes.get(\"UNORDERED_COLLECTION\")\n        r6 = requests.codes.get(\"unordered_collection\")\n\n        assert r1 == 425\n        assert r2 == 425\n        assert r3 == 425\n        assert r4 == 425\n        assert r5 == 425\n        assert r6 == 425\n\n    def test_different_connection_pool_for_tls_settings_verify_True(self):\n        def response_handler(sock):\n            consume_socket_content(sock, timeout=0.5)\n\n",
+  "upstream_raw_records": {
+    "relationships": [
+      {
+        "id": "593",
+        "source": "TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS",
+        "target": "JSONDECODEERROR",
+        "description": "The test expects JSONDecodeError to be raised when decoding the response body",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "227",
+        "source": "SIMPLEJSON",
+        "target": "JSON",
+        "description": "simplejson and the standard json module are alternative JSON implementations selected by requests.compat",
+        "weight": "7.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "380",
+        "source": "REQUESTS JSON DECODE ERROR",
+        "target": "JSON DECODE ERROR",
+        "description": "RequestsJSONDecodeError is constructed from the underlying JSONDecodeError raised during JSON parsing.",
+        "weight": "1.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "592",
+        "source": "JSONDECODEERROR",
+        "target": "REQUESTEXCEPTION",
+        "description": "The JSON decoding error is verified to also be a Requests exception",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "929",
+        "source": "TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE",
+        "target": "REQUESTS",
+        "description": "The test validates Requests response content and JSON decoding behavior for an empty response",
+        "weight": "9.0",
+        "links": "17",
+        "in_context": true
+      },
+      {
+        "id": "977",
+        "source": "TEST JSON DECODE COMPATIBILITY",
+        "target": "REQUESTS",
+        "description": "The test calls a Requests response's json method and checks exception compatibility",
+        "weight": "9.0",
+        "links": "17",
+        "in_context": true
+      },
+      {
+        "id": "978",
+        "source": "TEST JSON DECODE PERSISTS DOC ATTR",
+        "target": "REQUESTS",
+        "description": "The test checks a JSON decoding exception produced by a Requests response",
+        "weight": "9.0",
+        "links": "17",
+        "in_context": true
+      },
+      {
+        "id": "1007",
+        "source": "TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE",
+        "target": "REQUESTS",
+        "description": "The test for “TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE” verifies that `REQUESTS` `JSONDecodeError` instances can be serialized and deserialized successfully. It constructs a `Requests` `JSONDecodeError`, validates its serialization, and confirms that the resulting serialized representation can be deserialized correctly.",
+        "weight": "10.0",
+        "links": "17",
+        "in_context": true
+      },
+      {
+        "id": "591",
+        "source": "REQUESTS",
+        "target": "TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS",
+        "description": "The test exercises Requests response JSON decoding and exception behavior",
+        "weight": "9.0",
+        "links": "17",
+        "in_context": true
+      },
+      {
+        "id": "998",
+        "source": "REQUESTS",
+        "target": "JSONDECODEERROR",
+        "description": "Requests defines and tests its JSONDecodeError exception behavior.",
+        "weight": "8.0",
+        "links": "17",
+        "in_context": true
+      },
+      {
+        "id": "526",
+        "source": "JSON DECODE ERROR",
+        "target": "REQUESTS",
+        "description": "JSONDecodeError is imported through requests.compat for compatibility with Requests response parsing",
+        "weight": "7.0",
+        "links": "17",
+        "in_context": true
+      },
+      {
+        "id": "133",
+        "source": "REQUESTS",
+        "target": "HTTP ERROR",
+        "description": "Requests provides `Response.raise_for_status`, which raises an `HTTPError` when an HTTP response is unsuccessful, specifically when its status code falls within the 400–599 range.",
+        "weight": "18.0",
+        "links": "17",
+        "in_context": true
+      },
+      {
+        "id": "288",
+        "source": "REQUESTS",
+        "target": "JSON",
+        "description": "Requests uses JSON compatibility utilities to encode and decode JSON data and to define JSON-related exceptions. It also uses the JSON module in its bug-report helper to format and print collected diagnostic information as JSON.",
+        "weight": "16.0",
+        "links": "17",
+        "in_context": true
+      },
+      {
+        "id": "317",
+        "source": "REQUESTS",
+        "target": "REQUESTS EXCEPTIONS",
+        "description": "Requests imports its own exception classes for HTTP, connection, decoding, URL, JSON, and stream errors.",
+        "weight": "9.0",
+        "links": "17",
+        "in_context": true
+      },
+      {
+        "id": "374",
+        "source": "REQUESTS",
+        "target": "SIMPLEJSON",
+        "description": "Requests can use simplejson as the underlying JSON implementation referenced by its complexjson alias.",
+        "weight": "6.0",
+        "links": "17",
+        "in_context": true
+      },
+      {
+        "id": "375",
+        "source": "REQUESTS",
+        "target": "JSON DECODE ERROR",
+        "description": "Requests catches JSONDecodeError when JSON parsing fails and converts it into a Requests-specific JSON decoding error.",
+        "weight": "9.0",
+        "links": "17",
+        "in_context": true
+      },
+      {
+        "id": "376",
+        "source": "REQUESTS",
+        "target": "REQUESTS JSON DECODE ERROR",
+        "description": "Requests raises RequestsJSONDecodeError when the response body does not contain valid JSON.",
+        "weight": "9.0",
+        "links": "17",
+        "in_context": true
+      },
+      {
+        "id": "997",
+        "source": "REQUESTS",
+        "target": "SSLERROR",
+        "description": "Requests raises SSLError when TLS certificate verification fails.",
+        "weight": "9.0",
+        "links": "17",
+        "in_context": true
+      },
+      {
+        "id": "364",
+        "source": "REQUESTS",
+        "target": "CHUNKEDENCODINGERROR",
+        "description": "Requests converts underlying urllib3 `ProtocolError` failures into `ChunkedEncodingError` exceptions during streaming, including while processing responses through `iter_content`.",
+        "weight": "18.0",
+        "links": "17",
+        "in_context": true
+      },
+      {
+        "id": "365",
+        "source": "REQUESTS",
+        "target": "CONTENTDECODINGERROR",
+        "description": "Requests converts underlying `DecodeError` failures from urllib3 into `ContentDecodingError` while streaming response content, including during `iter_content`.",
+        "weight": "18.0",
+        "links": "17",
+        "in_context": true
+      },
+      {
+        "id": "377",
+        "source": "REQUESTS",
+        "target": "UNICODE DECODE ERROR",
+        "description": "Requests catches UnicodeDecodeError when the detected response encoding is incorrect and then falls back to another decoding path.",
+        "weight": "8.0",
+        "links": "17",
+        "in_context": true
+      },
+      {
+        "id": "379",
+        "source": "REQUESTS",
+        "target": "TYPE ERROR",
+        "description": "Requests handles TypeError when the response encoding is None or invalid during content decoding.",
+        "weight": "7.0",
+        "links": "17",
+        "in_context": true
+      },
+      {
+        "id": "1012",
+        "source": "TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE",
+        "target": "PYTEST",
+        "description": "PYTEST defines and executes the test for “TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE,” verifying that JSON decode errors can be serialized and deserialized successfully.",
+        "weight": "2.0",
+        "links": "5",
+        "in_context": true
+      },
+      {
+        "id": "590",
+        "source": "PYTEST",
+        "target": "TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS",
+        "description": "Pytest executes the test that checks alternate UTF encoding JSON-decoding behavior",
+        "weight": "9.0",
+        "links": "5",
+        "in_context": true
+      },
+      {
+        "id": "946",
+        "source": "PYTEST",
+        "target": "TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE",
+        "description": "Pytest executes the no-content JSON behavior test",
+        "weight": "9.0",
+        "links": "5",
+        "in_context": true
+      },
+      {
+        "id": "987",
+        "source": "PYTEST",
+        "target": "TEST JSON DECODE COMPATIBILITY",
+        "description": "Pytest executes the JSON decoding compatibility test",
+        "weight": "9.0",
+        "links": "5",
+        "in_context": true
+      },
+      {
+        "id": "988",
+        "source": "PYTEST",
+        "target": "TEST JSON DECODE PERSISTS DOC ATTR",
+        "description": "Pytest executes the JSON exception attribute persistence test",
+        "weight": "9.0",
+        "links": "5",
+        "in_context": true
+      },
+      {
+        "id": "930",
+        "source": "TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE",
+        "target": "HTTPBIN",
+        "description": "The test obtains a no-content response from an Httpbin status endpoint",
+        "weight": "8.0",
+        "links": "3",
+        "in_context": true
+      },
+      {
+        "id": "992",
+        "source": "TEST JSON DECODE COMPATIBILITY",
+        "target": "HTTPBIN",
+        "description": "The test obtains invalid byte content from an httpbin endpoint to trigger JSON decoding failure",
+        "weight": "8.0",
+        "links": "3",
+        "in_context": true
+      },
+      {
+        "id": "993",
+        "source": "TEST JSON DECODE PERSISTS DOC ATTR",
+        "target": "HTTPBIN",
+        "description": "The test obtains the response text from an httpbin byte-response endpoint",
+        "weight": "1.0",
+        "links": "3",
+        "in_context": true
+      },
+      {
+        "id": "363",
+        "source": "URLLIB3",
+        "target": "SSLERROR",
+        "description": "urllib3 supplies the `SSLError` exception, which can be raised while handling streamed responses, particularly during streaming tests.",
+        "weight": "17.0",
+        "links": "3",
+        "in_context": true
+      },
+      {
+        "id": "302",
+        "source": "URLLIB3",
+        "target": "URLLIB3 EXCEPTIONS",
+        "description": "urllib3 supplies the exceptions imported by Requests for decoding, location parsing, protocol, timeout, and SSL failures.",
+        "weight": "9.0",
+        "links": "3",
+        "in_context": true
+      },
+      {
+        "id": "361",
+        "source": "URLLIB3",
+        "target": "DECODEERROR",
+        "description": "urllib3 can raise the `DecodeError` exception when the content of a streamed response cannot be decoded. `DecodeError` is supplied by urllib3 and is specifically relevant to failures encountered while streaming response content.",
+        "weight": "17.0",
+        "links": "3",
+        "in_context": true
+      },
+      {
+        "id": "351",
+        "source": "RESPONSE",
+        "target": "HTTP ERROR",
+        "description": "Response.ok calls raise_for_status and catches HTTPError to return False for error responses.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "168",
+        "source": "REQUESTS HTTP LIBRARY",
+        "target": "REQUESTS EXCEPTIONS",
+        "description": "The main Requests package imports warning and error classes from its exceptions module.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "1014",
+        "source": "TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE",
+        "target": "PICKLE",
+        "description": "The test uses pickle to serialize and deserialize the JSON decoding error",
+        "weight": "1.0",
+        "links": "1",
+        "in_context": true
+      }
+    ],
+    "entities": [
+      {
+        "id": "395",
+        "entity": "JSONDECODEERROR",
+        "description": "JSONDECODEERROR, also known as `JSONDecodeError`, is an exception type associated with the Requests library. It is raised when a response contains an alternate UTF encoding that cannot be decoded successfully as JSON. Its serialization and deserialization behavior is covered by the relevant documentation tests.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "266",
+        "entity": "JSON DECODE ERROR",
+        "description": "JSONDecodeError is an error event raised when the response body cannot be parsed as valid JSON.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "267",
+        "entity": "REQUESTS JSON DECODE ERROR",
+        "description": "RequestsJSONDecodeError is the Requests-specific JSON decoding error raised after an underlying JSONDecodeError occurs while parsing a response.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "596",
+        "entity": "TEST JSON DECODE COMPATIBILITY",
+        "description": "A test event that verifies an invalid response body raises Requests' JSONDecodeError compatible with both RequestException and JSONDecodeError",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "162",
+        "entity": "JSON",
+        "description": "JSON is a data interchange format and Python standard-library module used for processing, encoding, and decoding JSON content. In the Requests context, it serves as the fallback compatibility library when `simplejson` is unavailable and provides the `JSONDecodeError` exception used in response-decoding behavior and its serialization and deserialization tests.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "597",
+        "entity": "TEST JSON DECODE PERSISTS DOC ATTR",
+        "description": "A test event that verifies the JSONDecodeError preserves the response text in its doc attribute",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "253",
+        "entity": "DECODEERROR",
+        "description": "DecodeError is a urllib3 exception raised when streamed response content cannot be decoded correctly. It is used to verify that the Requests library converts content-decoding failures into a `ContentDecodingError`.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "257",
+        "entity": "CONTENTDECODINGERROR",
+        "description": "ContentDecodingError is a Requests exception used to report failures that occur while decoding response content. It is raised when urllib3 encounters a DecodeError during response-content iteration.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "604",
+        "entity": "TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE",
+        "description": "The entity “TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE” refers to a pytest test event that verifies `Requests JSONDecodeError` exceptions support serialization and deserialization. The test creates a `Requests JSONDecodeError`, serializes it with Python’s `pickle` module, deserializes the resulting data, and confirms that the original and reconstructed exceptions have matching representations.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "161",
+        "entity": "SIMPLEJSON",
+        "description": "SIMPLEJSON is an optional Python JSON-processing library that may be used when available. In the Requests ecosystem, it can provide the JSON decoding implementation exposed under the alias `complexjson`. Its `JSONDecodeError` is also made available through a compatibility module, allowing code to handle JSON decoding errors consistently whether the standard library or `simplejson` is being used.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "396",
+        "entity": "REQUESTEXCEPTION",
+        "description": "Base exception type from Requests, verified as a superclass of the JSON decoding error",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "221",
+        "entity": "URLLIB3 EXCEPTIONS",
+        "description": "urllib3.exceptions provides HTTP and connection-related exceptions imported by Requests, including DecodeError, LocationParseError, ProtocolError, ReadTimeoutError, and SSLError.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "398",
+        "entity": "TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS",
+        "description": "A test event that verifies Requests JSON decoding behavior and exception compatibility for alternate UTF encodings",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "118",
+        "entity": "REQUESTS EXCEPTIONS",
+        "description": "Requests Exceptions defines the exception and warning hierarchy used by the Requests library to represent failures across HTTP communication and response processing. It includes the base `RequestException` class and specialized errors for connection failures (`ConnectionError`, `ConnectTimeout`), timeouts (`Timeout`, `ReadTimeout`), HTTP status failures (`HTTPError`), and excessive redirects (`TooManyRedirects`). The module also covers errors associated with invalid URLs, unsupported schemas, proxy configuration, response decoding, JSON parsing, stream consumption, and other connection, URL, HTTP, and data-processing problems. These classes provide structured error reporting for invalid requests, failed connections, timeout conditions, redirect issues, proxy and schema errors, and failures while decoding or consuming response content.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "270",
+        "entity": "TYPE ERROR",
+        "description": "TypeError is an error event that can occur when the encoding value is None or otherwise has an incompatible type during response decoding.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "268",
+        "entity": "UNICODE DECODE ERROR",
+        "description": "UnicodeDecodeError is an error event that occurs when the detected character encoding cannot decode response content correctly.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "576",
+        "entity": "TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE",
+        "description": "A test that verifies a response with no content returns None for content and raises ValueError when JSON decoding is attempted",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "95",
+        "entity": "HTTP ERROR",
+        "description": "HTTP ERROR is an error event raised by the Requests library when an HTTP response has an unsuccessful client-error or server-error status code. It is triggered by `Response.raise_for_status()` to indicate that the response did not complete successfully.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "256",
+        "entity": "CHUNKEDENCODINGERROR",
+        "description": "ChunkedEncodingError is a Requests exception that reports failures in HTTP chunked transfer encoding. It is raised when urllib3 encounters a ProtocolError while iterating over the content of a response.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "255",
+        "entity": "SSLERROR",
+        "description": "SSLERROR represents an SSL-related exception encountered during HTTPS communication. It is raised when certificate verification fails, including cases involving self-signed or expired certificates, and may also occur while reading streamed response data. In the Requests library, `SSLError` is a Requests exception that corresponds to underlying urllib3 SSL failures, ensuring those failures are converted into `RequestsSSLError` for consistent handling.",
+        "number of relationships": "2",
+        "in_context": true
+      }
+    ],
+    "sources": [
+      {
+        "id": "78",
+        "text": "            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /final-url/\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/path/to/thing/#view=edit&token=hunter2'\n        r = requests.get(url)\n\n        assert r.status_code == 200\n        assert len(r.history) == 2\n        assert r.history[0].request.url == url\n\n        # Verify we haven't overwritten the location with our previous fragment.\n        assert r.history[1].request.url == f'http://{host}:{port}/get#relevant-section'\n        # Verify previous fragment is used and not the original.\n        assert r.url == f'http://{host}:{port}/final-url/#relevant-section'\n\n        close_server.set()\n\n\ndef test_json_decode_compatibility_for_alt_utf_encodings():\n\n    def response_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n'\n            b'Content-Length: 18\\r\\n\\r\\n'\n            b'\\xff\\xfe{\\x00\"\\x00K0\"\\x00=\\x00\"\\x00\\xab0\"\\x00\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url)\n    r.encoding = None\n    with pytest.raises(requests.exceptions.JSONDecodeError) as excinfo:\n        r.json()\n    assert isinstance(excinfo.value, requests.exceptions.RequestException)\n    assert isinstance(excinfo.value, JSONDecodeError)\n    assert r.text not in str(excinfo.value)\n"
+      },
+      {
+        "id": "101",
+        "text": "        r6 = requests.codes.get(\"unordered_collection\")\n\n        assert r1 == 425\n        assert r2 == 425\n        assert r3 == 425\n        assert r4 == 425\n        assert r5 == 425\n        assert r6 == 425\n\n    def test_different_connection_pool_for_tls_settings_verify_True(self):\n        def response_handler(sock):\n            consume_socket_content(sock, timeout=0.5)\n            sock.send(\n                b\"HTTP/1.1 200 OK\\r\\n\"\n                b\"Content-Length: 18\\r\\n\\r\\n\"\n                b'\\xff\\xfe{\\x00\"\\x00K0\"\\x00=\\x00\"\\x00\\xab0\"\\x00\\r\\n'\n            )\n\n        s = requests.Session()\n        close_server = threading.Event()\n        server = TLSServer(\n            handler=response_handler,\n            wait_to_close_event=close_server,\n            requests_to_handle=3,\n            cert_chain=\"tests/certs/expired/server/server.pem\",\n            keyfile=\"tests/certs/expired/server/server.key\",\n        )\n\n        with server as (host, port):\n            url = f\"https://{host}:{port}\"\n            r1 = s.get(url, verify=False)\n            assert r1.status_code == 200\n\n            # Cannot verify self-signed certificate\n            with pytest.raises(requests.exceptions.SSLError):\n                s.get(url)\n\n            close_server.set()\n        assert 2 == len(s.adapters[\"https://\"].poolmanager.pools)\n\n    def test_different_connection_pool_for_tls_settings_verify_bundle_expired_cert(\n        self,\n    ):\n        def response_handler(sock):\n            consume_socket_content(sock, timeout=0.5)\n            sock.send(\n                b\"HTTP/1.1 200 OK\\r\\n\"\n                b\"Content-Length: 18\\r\\n\\r\\n\"\n                b'\\xff\\xfe{\\x00\"\\x00K0\"\\x00=\\x00\"\\x00\\xab0\"\\x00\\r\\n'\n            )\n\n        s = requests.Session()\n        close_server = threading.Event()\n        server = TLSServer(\n            handler=response_handler,\n            wait_to_close_event=close_server,\n            requests_to_handle=3,\n            cert_chain=\"tests/certs/expired/server/server.pem\",\n            keyfile=\"tests/certs/expired/server/server.key\",\n        )\n\n        with server as (host, port):\n            url = f\"https://{host}:{port}\"\n            r1 = s.get(url, verify=False)\n            assert r1.status_code == 200\n\n            # Has right trust bundle, but certificate expired\n            with pytest.raises(requests.exceptions.SSLError):\n                s.get(url, verify=\"tests/certs/expired/ca/ca.crt\")\n\n            close_server.set()\n        assert 2 == len(s.adapters[\"https://\"].poolmanager.pools)\n\n    def test_different_connection_pool_for_tls_settings_verify_bundle_unexpired_cert(\n        self,\n    ):\n        def response_handler(sock):\n            consume_socket_content(sock, timeout=0.5)\n            sock.send(\n                b\"HTTP/1.1 200 OK\\r\\n\"\n                b\"Content-Length: 18\\r\\n\\r\\n\"\n                b'\\xff\\xfe{\\x00\"\\x00K0\"\\x00=\\x00\"\\x00\\xab0\"\\x00\\r\\n'\n            )\n\n        s = requests.Session()\n        close_server = threading.Event()\n        server = TLSServer(\n            handler=response_handler,\n            wait_to_close_event=close_server,\n            requests_to_handle=3,\n            cert_chain=\"tests/certs/valid/server/server.pem\",\n            keyfile=\"tests/certs/valid/server/server.key\",\n        )\n\n        with server as (host, port):\n            url = f\"https://{host}:{port}\"\n            r1 = s.get(url, verify=False)\n            assert r1.status_code == 200\n\n            r2 = s.get(url, verify=\"tests/certs/valid/ca/ca.crt\")\n            assert r2.status_code == 200\n\n            close_server.set()\n        assert 2 == len(s.adapters[\"https://\"].poolmanager.pools)\n\n    def test_different_connection_pool_for_mtls_settings(self):\n        client_cert = None\n\n        def response_handler(sock):\n            nonlocal client_cert\n            client_cert = sock.getpeercert()\n            consume_socket_content(sock, timeout=0.5)\n            sock.send(\n                b\"HTTP/1.1 200 OK\\r\\n\"\n                b\"Content-Length: 18\\r\\n\\r\\n\"\n                b'\\xff\\xfe{\\x00\"\\x00K0\"\\x00=\\x00\"\\x00\\xab0\"\\x00\\r\\n'\n            )\n\n        s = requests.Session()\n        close_server = threading.Event()\n        server = TLSServer(\n            handler=response_handler,\n            wait_to_close_event=close_server,\n            requests_to_handle=2,\n            cert_chain=\"tests/certs/expired/server/server.pem\",\n            keyfile=\"tests/certs/expired/server/server.key\",\n            mutual_tls=True,\n            cacert=\"tests/certs/expired/ca/ca.crt\",\n        )\n\n        cert = (\n            \"tests/certs/mtls/client/client.pem\",\n            \"tests/certs/mtls/client/client.key\",\n        )\n        with server as (host, port):\n            url = f\"https://{host}:{port}\"\n            r1 = s.get(url, verify=False, cert=cert)\n            assert r1.status_code == 200\n            with pytest.raises(requests.exceptions.SSLError):\n                s.get(url, cert=cert)\n            close_server.set()\n\n        assert client_cert is not None\n\n\ndef test_json_decode_errors_are_serializable_deserializable():\n    json_decode_error = requests.exceptions.JSONDecodeError(\n"
+      },
+      {
+        "id": "50",
+        "text": "        if self.encoding is None:\n            encoding = self.apparent_encoding\n\n        # Decode unicode from given encoding.\n        try:\n            content = str(self.content, encoding, errors=\"replace\")\n        except (LookupError, TypeError):\n            # A LookupError is raised if the encoding was not found which could\n            # indicate a misspelling or similar mistake.\n            #\n            # A TypeError can be raised if encoding is None\n            #\n            # So we try blindly encoding.\n            content = str(self.content, errors=\"replace\")\n\n        return content\n\n    def json(self, **kwargs):\n        r\"\"\"Returns the json-encoded content of a response, if any.\n\n        :param \\*\\*kwargs: Optional arguments that ``json.loads`` takes.\n        :raises requests.exceptions.JSONDecodeError: If the response body does not\n            contain valid json.\n        \"\"\"\n\n        if not self.encoding and self.content and len(self.content) > 3:\n            # No encoding set. JSON RFC 4627 section 3 states we should expect\n            # UTF-8, -16 or -32. Detect which one to use; If the detection or\n            # decoding fails, fall back to `self.text` (using charset_normalizer to make\n            # a best guess).\n            encoding = guess_json_utf(self.content)\n            if encoding is not None:\n                try:\n                    return complexjson.loads(self.content.decode(encoding), **kwargs)\n                except UnicodeDecodeError:\n                    # Wrong UTF codec detected; usually because it's not UTF-8\n                    # but some other 8-bit codec.  This is an RFC violation,\n                    # and the server didn't bother to tell us what codec *was*\n                    # used.\n                    pass\n                except JSONDecodeError as e:\n                    raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)\n\n        try:\n            return complexjson.loads(self.text, **kwargs)\n        except JSONDecodeError as e:\n            # Catch JSON-related errors and raise as requests.JSONDecodeError\n            # This aliases json.JSONDecodeError and simplejson.JSONDecodeError\n            raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)\n\n    @property\n    def links(self):\n        \"\"\"Returns the parsed header links of the response, if any.\"\"\"\n\n        header = self.headers.get(\"link\")\n\n        resolved_links = {}\n\n        if header:\n            links = parse_header_links(header)\n\n            for link in links:\n                key = link.get(\"rel\") or link.get(\"url\")\n                resolved_links[key] = link\n\n        return resolved_links\n\n    def raise_for_status(self):\n        \"\"\"Raises :class:`HTTPError`, if one occurred.\"\"\"\n\n        http_error_msg = \"\"\n        if isinstance(self.reason, bytes):\n            # We attempt to decode utf-8 first because some servers\n            # choose to localize their reason strings. If the string\n            # isn't utf-8, we fall back to iso-8859-1 for all other\n            # encodings. (See PR #3538)\n            try:\n                reason = self.reason.decode(\"utf-8\")\n            except UnicodeDecodeError:\n                reason = self.reason.decode(\"iso-8859-1\")\n        else:\n            reason = self.reason\n\n        if 400 <= self.status_code < 500:\n            http_error_msg = (\n                f\"{self.status_code} Client Error: {reason} for url: {self.url}\"\n            )\n\n        elif 500 <= self.status_code < 600:\n            http_error_msg = (\n                f\"{self.status_code} Server Error: {reason} for url: {self.url}\"\n            )\n\n        if http_error_msg:\n            raise HTTPError(http_error_msg, response=self)\n\n    def close(self):\n        \"\"\"Releases the connection back to the pool. Once this method has been\n        called the underlying ``raw`` object must not be accessed again.\n\n        *Note: Should not normally need to be called explicitly.*\n        \"\"\"\n        if not self._content_consumed:\n            self.raw.close()\n\n        release_conn = getattr(self.raw, \"release_conn\", None)\n        if release_conn is not None:\n            release_conn()\n"
+      },
+      {
+        "id": "100",
+        "text": "            ),\n            (\n                \"http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/\",\n                \"http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/\",\n            ),\n        ),\n    )\n    def test_preparing_url(self, url, expected):\n        def normalize_percent_encode(x):\n            # Helper function that normalizes equivalent\n            # percent-encoded bytes before comparisons\n            for c in re.findall(r\"%[a-fA-F0-9]{2}\", x):\n                x = x.replace(c, c.upper())\n            return x\n\n        r = requests.Request(\"GET\", url=url)\n        p = r.prepare()\n        assert normalize_percent_encode(p.url) == expected\n\n    @pytest.mark.parametrize(\n        \"url\",\n        (\n            b\"http://*.google.com\",\n            b\"http://*\",\n            \"http://*.google.com\",\n            \"http://*\",\n            \"http://☃.net/\",\n        ),\n    )\n    def test_preparing_bad_url(self, url):\n        r = requests.Request(\"GET\", url=url)\n        with pytest.raises(requests.exceptions.InvalidURL):\n            r.prepare()\n\n    @pytest.mark.parametrize(\"url, exception\", ((\"http://:1\", InvalidURL),))\n    def test_redirecting_to_bad_url(self, httpbin, url, exception):\n        with pytest.raises(exception):\n            requests.get(httpbin(\"redirect-to\"), params={\"url\": url})\n\n    @pytest.mark.parametrize(\n        \"input, expected\",\n        (\n            (\n                b\"http+unix://%2Fvar%2Frun%2Fsocket/path%7E\",\n                \"http+unix://%2Fvar%2Frun%2Fsocket/path~\",\n            ),\n            (\n                \"http+unix://%2Fvar%2Frun%2Fsocket/path%7E\",\n                \"http+unix://%2Fvar%2Frun%2Fsocket/path~\",\n            ),\n            (\n                b\"mailto:user@example.org\",\n                \"mailto:user@example.org\",\n            ),\n            (\n                \"mailto:user@example.org\",\n                \"mailto:user@example.org\",\n            ),\n            (\n                b\"data:SSDimaUgUHl0aG9uIQ==\",\n                \"data:SSDimaUgUHl0aG9uIQ==\",\n            ),\n        ),\n    )\n    def test_url_mutation(self, input, expected):\n        \"\"\"\n        This test validates that we correctly exclude some URLs from\n        preparation, and that we handle others. Specifically, it tests that\n        any URL whose scheme doesn't begin with \"http\" is left alone, and\n        those whose scheme *does* begin with \"http\" are mutated.\n        \"\"\"\n        r = requests.Request(\"GET\", url=input)\n        p = r.prepare()\n        assert p.url == expected\n\n    @pytest.mark.parametrize(\n        \"input, params, expected\",\n        (\n            (\n                b\"http+unix://%2Fvar%2Frun%2Fsocket/path\",\n                {\"key\": \"value\"},\n                \"http+unix://%2Fvar%2Frun%2Fsocket/path?key=value\",\n            ),\n            (\n                \"http+unix://%2Fvar%2Frun%2Fsocket/path\",\n                {\"key\": \"value\"},\n                \"http+unix://%2Fvar%2Frun%2Fsocket/path?key=value\",\n            ),\n            (\n                b\"mailto:user@example.org\",\n                {\"key\": \"value\"},\n                \"mailto:user@example.org\",\n            ),\n            (\n                \"mailto:user@example.org\",\n                {\"key\": \"value\"},\n                \"mailto:user@example.org\",\n            ),\n        ),\n    )\n    def test_parameters_for_nonstandard_schemes(self, input, params, expected):\n        \"\"\"\n        Setting parameters for nonstandard schemes is allowed if those schemes\n        begin with \"http\", and is forbidden otherwise.\n        \"\"\"\n        r = requests.Request(\"GET\", url=input, params=params)\n        p = r.prepare()\n        assert p.url == expected\n\n    def test_post_json_nan(self, httpbin):\n        data = {\"foo\": float(\"nan\")}\n        with pytest.raises(requests.exceptions.InvalidJSONError):\n            requests.post(httpbin(\"post\"), json=data)\n\n    def test_json_decode_compatibility(self, httpbin):\n        r = requests.get(httpbin(\"bytes/20\"))\n        with pytest.raises(requests.exceptions.JSONDecodeError) as excinfo:\n            r.json()\n        assert isinstance(excinfo.value, RequestException)\n        assert isinstance(excinfo.value, JSONDecodeError)\n        assert r.text not in str(excinfo.value)\n\n    def test_json_decode_persists_doc_attr(self, httpbin):\n        r = requests.get(httpbin(\"bytes/20\"))\n        with pytest.raises(requests.exceptions.JSONDecodeError) as excinfo:\n            r.json()\n        assert excinfo.value.doc == r.text\n\n    def test_status_code_425(self):\n        r1 = requests.codes.get(\"TOO_EARLY\")\n        r2 = requests.codes.get(\"too_early\")\n        r3 = requests.codes.get(\"UNORDERED\")\n        r4 = requests.codes.get(\"unordered\")\n        r5 = requests.codes.get(\"UNORDERED_COLLECTION\")\n        r6 = requests.codes.get(\"unordered_collection\")\n\n        assert r1 == 425\n        assert r2 == 425\n        assert r3 == 425\n        assert r4 == 425\n        assert r5 == 425\n        assert r6 == 425\n\n    def test_different_connection_pool_for_tls_settings_verify_True(self):\n        def response_handler(sock):\n            consume_socket_content(sock, timeout=0.5)\n"
+      }
+    ]
+  },
+  "final_context": "-----Entities-----\nid|entity|description|number of relationships\n395|JSONDECODEERROR|JSONDECODEERROR, also known as `JSONDecodeError`, is an exception type associated with the Requests library. It is raised when a response contains an alternate UTF encoding that cannot be decoded successfully as JSON. Its serialization and deserialization behavior is covered by the relevant documentation tests.|3\n266|JSON DECODE ERROR|JSONDecodeError is an error event raised when the response body cannot be parsed as valid JSON.|2\n267|REQUESTS JSON DECODE ERROR|RequestsJSONDecodeError is the Requests-specific JSON decoding error raised after an underlying JSONDecodeError occurs while parsing a response.|2\n596|TEST JSON DECODE COMPATIBILITY|A test event that verifies an invalid response body raises Requests' JSONDecodeError compatible with both RequestException and JSONDecodeError|3\n162|JSON|JSON is a data interchange format and Python standard-library module used for processing, encoding, and decoding JSON content. In the Requests context, it serves as the fallback compatibility library when `simplejson` is unavailable and provides the `JSONDecodeError` exception used in response-decoding behavior and its serialization and deserialization tests.|2\n597|TEST JSON DECODE PERSISTS DOC ATTR|A test event that verifies the JSONDecodeError preserves the response text in its doc attribute|3\n253|DECODEERROR|DecodeError is a urllib3 exception raised when streamed response content cannot be decoded correctly. It is used to verify that the Requests library converts content-decoding failures into a `ContentDecodingError`.|1\n257|CONTENTDECODINGERROR|ContentDecodingError is a Requests exception used to report failures that occur while decoding response content. It is raised when urllib3 encounters a DecodeError during response-content iteration.|1\n604|TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE|The entity “TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE” refers to a pytest test event that verifies `Requests JSONDecodeError` exceptions support serialization and deserialization. The test creates a `Requests JSONDecodeError`, serializes it with Python’s `pickle` module, deserializes the resulting data, and confirms that the original and reconstructed exceptions have matching representations.|3\n161|SIMPLEJSON|SIMPLEJSON is an optional Python JSON-processing library that may be used when available. In the Requests ecosystem, it can provide the JSON decoding implementation exposed under the alias `complexjson`. Its `JSONDecodeError` is also made available through a compatibility module, allowing code to handle JSON decoding errors consistently whether the standard library or `simplejson` is being used.|2\n396|REQUESTEXCEPTION|Base exception type from Requests, verified as a superclass of the JSON decoding error|1\n221|URLLIB3 EXCEPTIONS|urllib3.exceptions provides HTTP and connection-related exceptions imported by Requests, including DecodeError, LocationParseError, ProtocolError, ReadTimeoutError, and SSLError.|1\n398|TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS|A test event that verifies Requests JSON decoding behavior and exception compatibility for alternate UTF encodings|3\n118|REQUESTS EXCEPTIONS|Requests Exceptions defines the exception and warning hierarchy used by the Requests library to represent failures across HTTP communication and response processing. It includes the base `RequestException` class and specialized errors for connection failures (`ConnectionError`, `ConnectTimeout`), timeouts (`Timeout`, `ReadTimeout`), HTTP status failures (`HTTPError`), and excessive redirects (`TooManyRedirects`). The module also covers errors associated with invalid URLs, unsupported schemas, proxy configuration, response decoding, JSON parsing, stream consumption, and other connection, URL, HTTP, and data-processing problems. These classes provide structured error reporting for invalid requests, failed connections, timeout conditions, redirect issues, proxy and schema errors, and failures while decoding or consuming response content.|2\n270|TYPE ERROR|TypeError is an error event that can occur when the encoding value is None or otherwise has an incompatible type during response decoding.|1\n268|UNICODE DECODE ERROR|UnicodeDecodeError is an error event that occurs when the detected character encoding cannot decode response content correctly.|1\n576|TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE|A test that verifies a response with no content returns None for content and raises ValueError when JSON decoding is attempted|3\n95|HTTP ERROR|HTTP ERROR is an error event raised by the Requests library when an HTTP response has an unsuccessful client-error or server-error status code. It is triggered by `Response.raise_for_status()` to indicate that the response did not complete successfully.|2\n256|CHUNKEDENCODINGERROR|ChunkedEncodingError is a Requests exception that reports failures in HTTP chunked transfer encoding. It is raised when urllib3 encounters a ProtocolError while iterating over the content of a response.|1\n255|SSLERROR|SSLERROR represents an SSL-related exception encountered during HTTPS communication. It is raised when certificate verification fails, including cases involving self-signed or expired certificates, and may also occur while reading streamed response data. In the Requests library, `SSLError` is a Requests exception that corresponds to underlying urllib3 SSL failures, ensuring those failures are converted into `RequestsSSLError` for consistent handling.|2\n\n-----Relationships-----\nid|source|target|description|weight|links\n593|TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS|JSONDECODEERROR|The test expects JSONDecodeError to be raised when decoding the response body|9.0|1\n227|SIMPLEJSON|JSON|simplejson and the standard json module are alternative JSON implementations selected by requests.compat|7.0|1\n380|REQUESTS JSON DECODE ERROR|JSON DECODE ERROR|RequestsJSONDecodeError is constructed from the underlying JSONDecodeError raised during JSON parsing.|1.0|1\n592|JSONDECODEERROR|REQUESTEXCEPTION|The JSON decoding error is verified to also be a Requests exception|9.0|1\n929|TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE|REQUESTS|The test validates Requests response content and JSON decoding behavior for an empty response|9.0|17\n977|TEST JSON DECODE COMPATIBILITY|REQUESTS|The test calls a Requests response's json method and checks exception compatibility|9.0|17\n978|TEST JSON DECODE PERSISTS DOC ATTR|REQUESTS|The test checks a JSON decoding exception produced by a Requests response|9.0|17\n1007|TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE|REQUESTS|The test for “TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE” verifies that `REQUESTS` `JSONDecodeError` instances can be serialized and deserialized successfully. It constructs a `Requests` `JSONDecodeError`, validates its serialization, and confirms that the resulting serialized representation can be deserialized correctly.|10.0|17\n591|REQUESTS|TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS|The test exercises Requests response JSON decoding and exception behavior|9.0|17\n998|REQUESTS|JSONDECODEERROR|Requests defines and tests its JSONDecodeError exception behavior.|8.0|17\n526|JSON DECODE ERROR|REQUESTS|JSONDecodeError is imported through requests.compat for compatibility with Requests response parsing|7.0|17\n133|REQUESTS|HTTP ERROR|Requests provides `Response.raise_for_status`, which raises an `HTTPError` when an HTTP response is unsuccessful, specifically when its status code falls within the 400–599 range.|18.0|17\n288|REQUESTS|JSON|Requests uses JSON compatibility utilities to encode and decode JSON data and to define JSON-related exceptions. It also uses the JSON module in its bug-report helper to format and print collected diagnostic information as JSON.|16.0|17\n317|REQUESTS|REQUESTS EXCEPTIONS|Requests imports its own exception classes for HTTP, connection, decoding, URL, JSON, and stream errors.|9.0|17\n374|REQUESTS|SIMPLEJSON|Requests can use simplejson as the underlying JSON implementation referenced by its complexjson alias.|6.0|17\n375|REQUESTS|JSON DECODE ERROR|Requests catches JSONDecodeError when JSON parsing fails and converts it into a Requests-specific JSON decoding error.|9.0|17\n376|REQUESTS|REQUESTS JSON DECODE ERROR|Requests raises RequestsJSONDecodeError when the response body does not contain valid JSON.|9.0|17\n997|REQUESTS|SSLERROR|Requests raises SSLError when TLS certificate verification fails.|9.0|17\n364|REQUESTS|CHUNKEDENCODINGERROR|Requests converts underlying urllib3 `ProtocolError` failures into `ChunkedEncodingError` exceptions during streaming, including while processing responses through `iter_content`.|18.0|17\n365|REQUESTS|CONTENTDECODINGERROR|Requests converts underlying `DecodeError` failures from urllib3 into `ContentDecodingError` while streaming response content, including during `iter_content`.|18.0|17\n377|REQUESTS|UNICODE DECODE ERROR|Requests catches UnicodeDecodeError when the detected response encoding is incorrect and then falls back to another decoding path.|8.0|17\n379|REQUESTS|TYPE ERROR|Requests handles TypeError when the response encoding is None or invalid during content decoding.|7.0|17\n1012|TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE|PYTEST|PYTEST defines and executes the test for “TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE,” verifying that JSON decode errors can be serialized and deserialized successfully.|2.0|5\n590|PYTEST|TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS|Pytest executes the test that checks alternate UTF encoding JSON-decoding behavior|9.0|5\n946|PYTEST|TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE|Pytest executes the no-content JSON behavior test|9.0|5\n987|PYTEST|TEST JSON DECODE COMPATIBILITY|Pytest executes the JSON decoding compatibility test|9.0|5\n988|PYTEST|TEST JSON DECODE PERSISTS DOC ATTR|Pytest executes the JSON exception attribute persistence test|9.0|5\n930|TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE|HTTPBIN|The test obtains a no-content response from an Httpbin status endpoint|8.0|3\n992|TEST JSON DECODE COMPATIBILITY|HTTPBIN|The test obtains invalid byte content from an httpbin endpoint to trigger JSON decoding failure|8.0|3\n993|TEST JSON DECODE PERSISTS DOC ATTR|HTTPBIN|The test obtains the response text from an httpbin byte-response endpoint|1.0|3\n363|URLLIB3|SSLERROR|urllib3 supplies the `SSLError` exception, which can be raised while handling streamed responses, particularly during streaming tests.|17.0|3\n302|URLLIB3|URLLIB3 EXCEPTIONS|urllib3 supplies the exceptions imported by Requests for decoding, location parsing, protocol, timeout, and SSL failures.|9.0|3\n361|URLLIB3|DECODEERROR|urllib3 can raise the `DecodeError` exception when the content of a streamed response cannot be decoded. `DecodeError` is supplied by urllib3 and is specifically relevant to failures encountered while streaming response content.|17.0|3\n351|RESPONSE|HTTP ERROR|Response.ok calls raise_for_status and catches HTTPError to return False for error responses.|9.0|1\n168|REQUESTS HTTP LIBRARY|REQUESTS EXCEPTIONS|The main Requests package imports warning and error classes from its exceptions module.|9.0|1\n1014|TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE|PICKLE|The test uses pickle to serialize and deserialize the JSON decoding error|1.0|1\n\n-----Sources-----\nid|source|text\n78|tests/test_lowlevel.py:L379-L428|\"            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /final-url/\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/path/to/thing/#view=edit&token=hunter2'\n        r = requests.get(url)\n\n        assert r.status_code == 200\n        assert len(r.history) == 2\n        assert r.history[0].request.url == url\n\n        # Verify we haven't overwritten the location with our previous fragment.\n        assert r.history[1].request.url == f'http://{host}:{port}/get#relevant-section'\n        # Verify previous fragment is used and not the original.\n        assert r.url == f'http://{host}:{port}/final-url/#relevant-section'\n\n        close_server.set()\n\n\ndef test_json_decode_compatibility_for_alt_utf_encodings():\n\n    def response_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n'\n            b'Content-Length: 18\\r\\n\\r\\n'\n            b'\\xff\\xfe{\\x00\"\"\\x00K0\"\"\\x00=\\x00\"\"\\x00\\xab0\"\"\\x00\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url)\n    r.encoding = None\n    with pytest.raises(requests.exceptions.JSONDecodeError) as excinfo:\n        r.json()\n    assert isinstance(excinfo.value, requests.exceptions.RequestException)\n    assert isinstance(excinfo.value, JSONDecodeError)\n    assert r.text not in str(excinfo.value)\n\"\n101|tests/test_requests.py:L2824-L2970|\"        r6 = requests.codes.get(\"\"unordered_collection\"\")\n\n        assert r1 == 425\n        assert r2 == 425\n        assert r3 == 425\n        assert r4 == 425\n        assert r5 == 425\n        assert r6 == 425\n\n    def test_different_connection_pool_for_tls_settings_verify_True(self):\n        def response_handler(sock):\n            consume_socket_content(sock, timeout=0.5)\n            sock.send(\n                b\"\"HTTP/1.1 200 OK\\r\\n\"\"\n                b\"\"Content-Length: 18\\r\\n\\r\\n\"\"\n                b'\\xff\\xfe{\\x00\"\"\\x00K0\"\"\\x00=\\x00\"\"\\x00\\xab0\"\"\\x00\\r\\n'\n            )\n\n        s = requests.Session()\n        close_server = threading.Event()\n        server = TLSServer(\n            handler=response_handler,\n            wait_to_close_event=close_server,\n            requests_to_handle=3,\n            cert_chain=\"\"tests/certs/expired/server/server.pem\"\",\n            keyfile=\"\"tests/certs/expired/server/server.key\"\",\n        )\n\n        with server as (host, port):\n            url = f\"\"https://{host}:{port}\"\"\n            r1 = s.get(url, verify=False)\n            assert r1.status_code == 200\n\n            # Cannot verify self-signed certificate\n            with pytest.raises(requests.exceptions.SSLError):\n                s.get(url)\n\n            close_server.set()\n        assert 2 == len(s.adapters[\"\"https://\"\"].poolmanager.pools)\n\n    def test_different_connection_pool_for_tls_settings_verify_bundle_expired_cert(\n        self,\n    ):\n        def response_handler(sock):\n            consume_socket_content(sock, timeout=0.5)\n            sock.send(\n                b\"\"HTTP/1.1 200 OK\\r\\n\"\"\n                b\"\"Content-Length: 18\\r\\n\\r\\n\"\"\n                b'\\xff\\xfe{\\x00\"\"\\x00K0\"\"\\x00=\\x00\"\"\\x00\\xab0\"\"\\x00\\r\\n'\n            )\n\n        s = requests.Session()\n        close_server = threading.Event()\n        server = TLSServer(\n            handler=response_handler,\n            wait_to_close_event=close_server,\n            requests_to_handle=3,\n            cert_chain=\"\"tests/certs/expired/server/server.pem\"\",\n            keyfile=\"\"tests/certs/expired/server/server.key\"\",\n        )\n\n        with server as (host, port):\n            url = f\"\"https://{host}:{port}\"\"\n            r1 = s.get(url, verify=False)\n            assert r1.status_code == 200\n\n            # Has right trust bundle, but certificate expired\n            with pytest.raises(requests.exceptions.SSLError):\n                s.get(url, verify=\"\"tests/certs/expired/ca/ca.crt\"\")\n\n            close_server.set()\n        assert 2 == len(s.adapters[\"\"https://\"\"].poolmanager.pools)\n\n    def test_different_connection_pool_for_tls_settings_verify_bundle_unexpired_cert(\n        self,\n    ):\n        def response_handler(sock):\n            consume_socket_content(sock, timeout=0.5)\n            sock.send(\n                b\"\"HTTP/1.1 200 OK\\r\\n\"\"\n                b\"\"Content-Length: 18\\r\\n\\r\\n\"\"\n                b'\\xff\\xfe{\\x00\"\"\\x00K0\"\"\\x00=\\x00\"\"\\x00\\xab0\"\"\\x00\\r\\n'\n            )\n\n        s = requests.Session()\n        close_server = threading.Event()\n        server = TLSServer(\n            handler=response_handler,\n            wait_to_close_event=close_server,\n            requests_to_handle=3,\n            cert_chain=\"\"tests/certs/valid/server/server.pem\"\",\n            keyfile=\"\"tests/certs/valid/server/server.key\"\",\n        )\n\n        with server as (host, port):\n            url = f\"\"https://{host}:{port}\"\"\n            r1 = s.get(url, verify=False)\n            assert r1.status_code == 200\n\n            r2 = s.get(url, verify=\"\"tests/certs/valid/ca/ca.crt\"\")\n            assert r2.status_code == 200\n\n            close_server.set()\n        assert 2 == len(s.adapters[\"\"https://\"\"].poolmanager.pools)\n\n    def test_different_connection_pool_for_mtls_settings(self):\n        client_cert = None\n\n        def response_handler(sock):\n            nonlocal client_cert\n            client_cert = sock.getpeercert()\n            consume_socket_content(sock, timeout=0.5)\n            sock.send(\n                b\"\"HTTP/1.1 200 OK\\r\\n\"\"\n                b\"\"Content-Length: 18\\r\\n\\r\\n\"\"\n                b'\\xff\\xfe{\\x00\"\"\\x00K0\"\"\\x00=\\x00\"\"\\x00\\xab0\"\"\\x00\\r\\n'\n            )\n\n        s = requests.Session()\n        close_server = threading.Event()\n        server = TLSServer(\n            handler=response_handler,\n            wait_to_close_event=close_server,\n            requests_to_handle=2,\n            cert_chain=\"\"tests/certs/expired/server/server.pem\"\",\n            keyfile=\"\"tests/certs/expired/server/server.key\"\",\n            mutual_tls=True,\n            cacert=\"\"tests/certs/expired/ca/ca.crt\"\",\n        )\n\n        cert = (\n            \"\"tests/certs/mtls/client/client.pem\"\",\n            \"\"tests/certs/mtls/client/client.key\"\",\n        )\n        with server as (host, port):\n            url = f\"\"https://{host}:{port}\"\"\n            r1 = s.get(url, verify=False, cert=cert)\n            assert r1.status_code == 200\n            with pytest.raises(requests.exceptions.SSLError):\n                s.get(url, cert=cert)\n            close_server.set()\n\n        assert client_cert is not None\n\n\ndef test_json_decode_errors_are_serializable_deserializable():\n    json_decode_error = requests.exceptions.JSONDecodeError(\n\"\n50|src/requests/models.py:L930-L1037|\"        if self.encoding is None:\n            encoding = self.apparent_encoding\n\n        # Decode unicode from given encoding.\n        try:\n            content = str(self.content, encoding, errors=\"\"replace\"\")\n        except (LookupError, TypeError):\n            # A LookupError is raised if the encoding was not found which could\n            # indicate a misspelling or similar mistake.\n            #\n            # A TypeError can be raised if encoding is None\n            #\n            # So we try blindly encoding.\n            content = str(self.content, errors=\"\"replace\"\")\n\n        return content\n\n    def json(self, **kwargs):\n        r\"\"\"\"\"\"Returns the json-encoded content of a response, if any.\n\n        :param \\*\\*kwargs: Optional arguments that ``json.loads`` takes.\n        :raises requests.exceptions.JSONDecodeError: If the response body does not\n            contain valid json.\n        \"\"\"\"\"\"\n\n        if not self.encoding and self.content and len(self.content) > 3:\n            # No encoding set. JSON RFC 4627 section 3 states we should expect\n            # UTF-8, -16 or -32. Detect which one to use; If the detection or\n            # decoding fails, fall back to `self.text` (using charset_normalizer to make\n            # a best guess).\n            encoding = guess_json_utf(self.content)\n            if encoding is not None:\n                try:\n                    return complexjson.loads(self.content.decode(encoding), **kwargs)\n                except UnicodeDecodeError:\n                    # Wrong UTF codec detected; usually because it's not UTF-8\n                    # but some other 8-bit codec.  This is an RFC violation,\n                    # and the server didn't bother to tell us what codec *was*\n                    # used.\n                    pass\n                except JSONDecodeError as e:\n                    raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)\n\n        try:\n            return complexjson.loads(self.text, **kwargs)\n        except JSONDecodeError as e:\n            # Catch JSON-related errors and raise as requests.JSONDecodeError\n            # This aliases json.JSONDecodeError and simplejson.JSONDecodeError\n            raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)\n\n    @property\n    def links(self):\n        \"\"\"\"\"\"Returns the parsed header links of the response, if any.\"\"\"\"\"\"\n\n        header = self.headers.get(\"\"link\"\")\n\n        resolved_links = {}\n\n        if header:\n            links = parse_header_links(header)\n\n            for link in links:\n                key = link.get(\"\"rel\"\") or link.get(\"\"url\"\")\n                resolved_links[key] = link\n\n        return resolved_links\n\n    def raise_for_status(self):\n        \"\"\"\"\"\"Raises :class:`HTTPError`, if one occurred.\"\"\"\"\"\"\n\n        http_error_msg = \"\"\"\"\n        if isinstance(self.reason, bytes):\n            # We attempt to decode utf-8 first because some servers\n            # choose to localize their reason strings. If the string\n            # isn't utf-8, we fall back to iso-8859-1 for all other\n            # encodings. (See PR #3538)\n            try:\n                reason = self.reason.decode(\"\"utf-8\"\")\n            except UnicodeDecodeError:\n                reason = self.reason.decode(\"\"iso-8859-1\"\")\n        else:\n            reason = self.reason\n\n        if 400 <= self.status_code < 500:\n            http_error_msg = (\n                f\"\"{self.status_code} Client Error: {reason} for url: {self.url}\"\"\n            )\n\n        elif 500 <= self.status_code < 600:\n            http_error_msg = (\n                f\"\"{self.status_code} Server Error: {reason} for url: {self.url}\"\"\n            )\n\n        if http_error_msg:\n            raise HTTPError(http_error_msg, response=self)\n\n    def close(self):\n        \"\"\"\"\"\"Releases the connection back to the pool. Once this method has been\n        called the underlying ``raw`` object must not be accessed again.\n\n        *Note: Should not normally need to be called explicitly.*\n        \"\"\"\"\"\"\n        if not self._content_consumed:\n            self.raw.close()\n\n        release_conn = getattr(self.raw, \"\"release_conn\"\", None)\n        if release_conn is not None:\n            release_conn()\n\"\n100|tests/test_requests.py:L2690-L2835|\"            ),\n            (\n                \"\"http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/\"\",\n                \"\"http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/\"\",\n            ),\n        ),\n    )\n    def test_preparing_url(self, url, expected):\n        def normalize_percent_encode(x):\n            # Helper function that normalizes equivalent\n            # percent-encoded bytes before comparisons\n            for c in re.findall(r\"\"%[a-fA-F0-9]{2}\"\", x):\n                x = x.replace(c, c.upper())\n            return x\n\n        r = requests.Request(\"\"GET\"\", url=url)\n        p = r.prepare()\n        assert normalize_percent_encode(p.url) == expected\n\n    @pytest.mark.parametrize(\n        \"\"url\"\",\n        (\n            b\"\"http://*.google.com\"\",\n            b\"\"http://*\"\",\n            \"\"http://*.google.com\"\",\n            \"\"http://*\"\",\n            \"\"http://☃.net/\"\",\n        ),\n    )\n    def test_preparing_bad_url(self, url):\n        r = requests.Request(\"\"GET\"\", url=url)\n        with pytest.raises(requests.exceptions.InvalidURL):\n            r.prepare()\n\n    @pytest.mark.parametrize(\"\"url, exception\"\", ((\"\"http://:1\"\", InvalidURL),))\n    def test_redirecting_to_bad_url(self, httpbin, url, exception):\n        with pytest.raises(exception):\n            requests.get(httpbin(\"\"redirect-to\"\"), params={\"\"url\"\": url})\n\n    @pytest.mark.parametrize(\n        \"\"input, expected\"\",\n        (\n            (\n                b\"\"http+unix://%2Fvar%2Frun%2Fsocket/path%7E\"\",\n                \"\"http+unix://%2Fvar%2Frun%2Fsocket/path~\"\",\n            ),\n            (\n                \"\"http+unix://%2Fvar%2Frun%2Fsocket/path%7E\"\",\n                \"\"http+unix://%2Fvar%2Frun%2Fsocket/path~\"\",\n            ),\n            (\n                b\"\"mailto:user@example.org\"\",\n                \"\"mailto:user@example.org\"\",\n            ),\n            (\n                \"\"mailto:user@example.org\"\",\n                \"\"mailto:user@example.org\"\",\n            ),\n            (\n                b\"\"data:SSDimaUgUHl0aG9uIQ==\"\",\n                \"\"data:SSDimaUgUHl0aG9uIQ==\"\",\n            ),\n        ),\n    )\n    def test_url_mutation(self, input, expected):\n        \"\"\"\"\"\"\n        This test validates that we correctly exclude some URLs from\n        preparation, and that we handle others. Specifically, it tests that\n        any URL whose scheme doesn't begin with \"\"http\"\" is left alone, and\n        those whose scheme *does* begin with \"\"http\"\" are mutated.\n        \"\"\"\"\"\"\n        r = requests.Request(\"\"GET\"\", url=input)\n        p = r.prepare()\n        assert p.url == expected\n\n    @pytest.mark.parametrize(\n        \"\"input, params, expected\"\",\n        (\n            (\n                b\"\"http+unix://%2Fvar%2Frun%2Fsocket/path\"\",\n                {\"\"key\"\": \"\"value\"\"},\n                \"\"http+unix://%2Fvar%2Frun%2Fsocket/path?key=value\"\",\n            ),\n            (\n                \"\"http+unix://%2Fvar%2Frun%2Fsocket/path\"\",\n                {\"\"key\"\": \"\"value\"\"},\n                \"\"http+unix://%2Fvar%2Frun%2Fsocket/path?key=value\"\",\n            ),\n            (\n                b\"\"mailto:user@example.org\"\",\n                {\"\"key\"\": \"\"value\"\"},\n                \"\"mailto:user@example.org\"\",\n            ),\n            (\n                \"\"mailto:user@example.org\"\",\n                {\"\"key\"\": \"\"value\"\"},\n                \"\"mailto:user@example.org\"\",\n            ),\n        ),\n    )\n    def test_parameters_for_nonstandard_schemes(self, input, params, expected):\n        \"\"\"\"\"\"\n        Setting parameters for nonstandard schemes is allowed if those schemes\n        begin with \"\"http\"\", and is forbidden otherwise.\n        \"\"\"\"\"\"\n        r = requests.Request(\"\"GET\"\", url=input, params=params)\n        p = r.prepare()\n        assert p.url == expected\n\n    def test_post_json_nan(self, httpbin):\n        data = {\"\"foo\"\": float(\"\"nan\"\")}\n        with pytest.raises(requests.exceptions.InvalidJSONError):\n            requests.post(httpbin(\"\"post\"\"), json=data)\n\n    def test_json_decode_compatibility(self, httpbin):\n        r = requests.get(httpbin(\"\"bytes/20\"\"))\n        with pytest.raises(requests.exceptions.JSONDecodeError) as excinfo:\n            r.json()\n        assert isinstance(excinfo.value, RequestException)\n        assert isinstance(excinfo.value, JSONDecodeError)\n        assert r.text not in str(excinfo.value)\n\n    def test_json_decode_persists_doc_attr(self, httpbin):\n        r = requests.get(httpbin(\"\"bytes/20\"\"))\n        with pytest.raises(requests.exceptions.JSONDecodeError) as excinfo:\n            r.json()\n        assert excinfo.value.doc == r.text\n\n    def test_status_code_425(self):\n        r1 = requests.codes.get(\"\"TOO_EARLY\"\")\n        r2 = requests.codes.get(\"\"too_early\"\")\n        r3 = requests.codes.get(\"\"UNORDERED\"\")\n        r4 = requests.codes.get(\"\"unordered\"\")\n        r5 = requests.codes.get(\"\"UNORDERED_COLLECTION\"\")\n        r6 = requests.codes.get(\"\"unordered_collection\"\")\n\n        assert r1 == 425\n        assert r2 == 425\n        assert r3 == 425\n        assert r4 == 425\n        assert r5 == 425\n        assert r6 == 425\n\n    def test_different_connection_pool_for_tls_settings_verify_True(self):\n        def response_handler(sock):\n            consume_socket_content(sock, timeout=0.5)\n\"\n",
+  "final_tables": [
+    {
+      "name": "entities",
+      "columns": [
+        "id",
+        "entity",
+        "description",
+        "number of relationships"
+      ],
+      "rows": [
+        {
+          "id": "395",
+          "entity": "JSONDECODEERROR",
+          "description": "JSONDECODEERROR, also known as `JSONDecodeError`, is an exception type associated with the Requests library. It is raised when a response contains an alternate UTF encoding that cannot be decoded successfully as JSON. Its serialization and deserialization behavior is covered by the relevant documentation tests.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "266",
+          "entity": "JSON DECODE ERROR",
+          "description": "JSONDecodeError is an error event raised when the response body cannot be parsed as valid JSON.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "267",
+          "entity": "REQUESTS JSON DECODE ERROR",
+          "description": "RequestsJSONDecodeError is the Requests-specific JSON decoding error raised after an underlying JSONDecodeError occurs while parsing a response.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "596",
+          "entity": "TEST JSON DECODE COMPATIBILITY",
+          "description": "A test event that verifies an invalid response body raises Requests' JSONDecodeError compatible with both RequestException and JSONDecodeError",
+          "number of relationships": "3"
+        },
+        {
+          "id": "162",
+          "entity": "JSON",
+          "description": "JSON is a data interchange format and Python standard-library module used for processing, encoding, and decoding JSON content. In the Requests context, it serves as the fallback compatibility library when `simplejson` is unavailable and provides the `JSONDecodeError` exception used in response-decoding behavior and its serialization and deserialization tests.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "597",
+          "entity": "TEST JSON DECODE PERSISTS DOC ATTR",
+          "description": "A test event that verifies the JSONDecodeError preserves the response text in its doc attribute",
+          "number of relationships": "3"
+        },
+        {
+          "id": "253",
+          "entity": "DECODEERROR",
+          "description": "DecodeError is a urllib3 exception raised when streamed response content cannot be decoded correctly. It is used to verify that the Requests library converts content-decoding failures into a `ContentDecodingError`.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "257",
+          "entity": "CONTENTDECODINGERROR",
+          "description": "ContentDecodingError is a Requests exception used to report failures that occur while decoding response content. It is raised when urllib3 encounters a DecodeError during response-content iteration.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "604",
+          "entity": "TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE",
+          "description": "The entity “TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE” refers to a pytest test event that verifies `Requests JSONDecodeError` exceptions support serialization and deserialization. The test creates a `Requests JSONDecodeError`, serializes it with Python’s `pickle` module, deserializes the resulting data, and confirms that the original and reconstructed exceptions have matching representations.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "161",
+          "entity": "SIMPLEJSON",
+          "description": "SIMPLEJSON is an optional Python JSON-processing library that may be used when available. In the Requests ecosystem, it can provide the JSON decoding implementation exposed under the alias `complexjson`. Its `JSONDecodeError` is also made available through a compatibility module, allowing code to handle JSON decoding errors consistently whether the standard library or `simplejson` is being used.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "396",
+          "entity": "REQUESTEXCEPTION",
+          "description": "Base exception type from Requests, verified as a superclass of the JSON decoding error",
+          "number of relationships": "1"
+        },
+        {
+          "id": "221",
+          "entity": "URLLIB3 EXCEPTIONS",
+          "description": "urllib3.exceptions provides HTTP and connection-related exceptions imported by Requests, including DecodeError, LocationParseError, ProtocolError, ReadTimeoutError, and SSLError.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "398",
+          "entity": "TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS",
+          "description": "A test event that verifies Requests JSON decoding behavior and exception compatibility for alternate UTF encodings",
+          "number of relationships": "3"
+        },
+        {
+          "id": "118",
+          "entity": "REQUESTS EXCEPTIONS",
+          "description": "Requests Exceptions defines the exception and warning hierarchy used by the Requests library to represent failures across HTTP communication and response processing. It includes the base `RequestException` class and specialized errors for connection failures (`ConnectionError`, `ConnectTimeout`), timeouts (`Timeout`, `ReadTimeout`), HTTP status failures (`HTTPError`), and excessive redirects (`TooManyRedirects`). The module also covers errors associated with invalid URLs, unsupported schemas, proxy configuration, response decoding, JSON parsing, stream consumption, and other connection, URL, HTTP, and data-processing problems. These classes provide structured error reporting for invalid requests, failed connections, timeout conditions, redirect issues, proxy and schema errors, and failures while decoding or consuming response content.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "270",
+          "entity": "TYPE ERROR",
+          "description": "TypeError is an error event that can occur when the encoding value is None or otherwise has an incompatible type during response decoding.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "268",
+          "entity": "UNICODE DECODE ERROR",
+          "description": "UnicodeDecodeError is an error event that occurs when the detected character encoding cannot decode response content correctly.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "576",
+          "entity": "TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE",
+          "description": "A test that verifies a response with no content returns None for content and raises ValueError when JSON decoding is attempted",
+          "number of relationships": "3"
+        },
+        {
+          "id": "95",
+          "entity": "HTTP ERROR",
+          "description": "HTTP ERROR is an error event raised by the Requests library when an HTTP response has an unsuccessful client-error or server-error status code. It is triggered by `Response.raise_for_status()` to indicate that the response did not complete successfully.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "256",
+          "entity": "CHUNKEDENCODINGERROR",
+          "description": "ChunkedEncodingError is a Requests exception that reports failures in HTTP chunked transfer encoding. It is raised when urllib3 encounters a ProtocolError while iterating over the content of a response.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "255",
+          "entity": "SSLERROR",
+          "description": "SSLERROR represents an SSL-related exception encountered during HTTPS communication. It is raised when certificate verification fails, including cases involving self-signed or expired certificates, and may also occur while reading streamed response data. In the Requests library, `SSLError` is a Requests exception that corresponds to underlying urllib3 SSL failures, ensuring those failures are converted into `RequestsSSLError` for consistent handling.",
+          "number of relationships": "2"
+        }
+      ]
+    },
+    {
+      "name": "relationships",
+      "columns": [
+        "id",
+        "source",
+        "target",
+        "description",
+        "weight",
+        "links"
+      ],
+      "rows": [
+        {
+          "id": "593",
+          "source": "TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS",
+          "target": "JSONDECODEERROR",
+          "description": "The test expects JSONDecodeError to be raised when decoding the response body",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "227",
+          "source": "SIMPLEJSON",
+          "target": "JSON",
+          "description": "simplejson and the standard json module are alternative JSON implementations selected by requests.compat",
+          "weight": "7.0",
+          "links": "1"
+        },
+        {
+          "id": "380",
+          "source": "REQUESTS JSON DECODE ERROR",
+          "target": "JSON DECODE ERROR",
+          "description": "RequestsJSONDecodeError is constructed from the underlying JSONDecodeError raised during JSON parsing.",
+          "weight": "1.0",
+          "links": "1"
+        },
+        {
+          "id": "592",
+          "source": "JSONDECODEERROR",
+          "target": "REQUESTEXCEPTION",
+          "description": "The JSON decoding error is verified to also be a Requests exception",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "929",
+          "source": "TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE",
+          "target": "REQUESTS",
+          "description": "The test validates Requests response content and JSON decoding behavior for an empty response",
+          "weight": "9.0",
+          "links": "17"
+        },
+        {
+          "id": "977",
+          "source": "TEST JSON DECODE COMPATIBILITY",
+          "target": "REQUESTS",
+          "description": "The test calls a Requests response's json method and checks exception compatibility",
+          "weight": "9.0",
+          "links": "17"
+        },
+        {
+          "id": "978",
+          "source": "TEST JSON DECODE PERSISTS DOC ATTR",
+          "target": "REQUESTS",
+          "description": "The test checks a JSON decoding exception produced by a Requests response",
+          "weight": "9.0",
+          "links": "17"
+        },
+        {
+          "id": "1007",
+          "source": "TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE",
+          "target": "REQUESTS",
+          "description": "The test for “TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE” verifies that `REQUESTS` `JSONDecodeError` instances can be serialized and deserialized successfully. It constructs a `Requests` `JSONDecodeError`, validates its serialization, and confirms that the resulting serialized representation can be deserialized correctly.",
+          "weight": "10.0",
+          "links": "17"
+        },
+        {
+          "id": "591",
+          "source": "REQUESTS",
+          "target": "TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS",
+          "description": "The test exercises Requests response JSON decoding and exception behavior",
+          "weight": "9.0",
+          "links": "17"
+        },
+        {
+          "id": "998",
+          "source": "REQUESTS",
+          "target": "JSONDECODEERROR",
+          "description": "Requests defines and tests its JSONDecodeError exception behavior.",
+          "weight": "8.0",
+          "links": "17"
+        },
+        {
+          "id": "526",
+          "source": "JSON DECODE ERROR",
+          "target": "REQUESTS",
+          "description": "JSONDecodeError is imported through requests.compat for compatibility with Requests response parsing",
+          "weight": "7.0",
+          "links": "17"
+        },
+        {
+          "id": "133",
+          "source": "REQUESTS",
+          "target": "HTTP ERROR",
+          "description": "Requests provides `Response.raise_for_status`, which raises an `HTTPError` when an HTTP response is unsuccessful, specifically when its status code falls within the 400–599 range.",
+          "weight": "18.0",
+          "links": "17"
+        },
+        {
+          "id": "288",
+          "source": "REQUESTS",
+          "target": "JSON",
+          "description": "Requests uses JSON compatibility utilities to encode and decode JSON data and to define JSON-related exceptions. It also uses the JSON module in its bug-report helper to format and print collected diagnostic information as JSON.",
+          "weight": "16.0",
+          "links": "17"
+        },
+        {
+          "id": "317",
+          "source": "REQUESTS",
+          "target": "REQUESTS EXCEPTIONS",
+          "description": "Requests imports its own exception classes for HTTP, connection, decoding, URL, JSON, and stream errors.",
+          "weight": "9.0",
+          "links": "17"
+        },
+        {
+          "id": "374",
+          "source": "REQUESTS",
+          "target": "SIMPLEJSON",
+          "description": "Requests can use simplejson as the underlying JSON implementation referenced by its complexjson alias.",
+          "weight": "6.0",
+          "links": "17"
+        },
+        {
+          "id": "375",
+          "source": "REQUESTS",
+          "target": "JSON DECODE ERROR",
+          "description": "Requests catches JSONDecodeError when JSON parsing fails and converts it into a Requests-specific JSON decoding error.",
+          "weight": "9.0",
+          "links": "17"
+        },
+        {
+          "id": "376",
+          "source": "REQUESTS",
+          "target": "REQUESTS JSON DECODE ERROR",
+          "description": "Requests raises RequestsJSONDecodeError when the response body does not contain valid JSON.",
+          "weight": "9.0",
+          "links": "17"
+        },
+        {
+          "id": "997",
+          "source": "REQUESTS",
+          "target": "SSLERROR",
+          "description": "Requests raises SSLError when TLS certificate verification fails.",
+          "weight": "9.0",
+          "links": "17"
+        },
+        {
+          "id": "364",
+          "source": "REQUESTS",
+          "target": "CHUNKEDENCODINGERROR",
+          "description": "Requests converts underlying urllib3 `ProtocolError` failures into `ChunkedEncodingError` exceptions during streaming, including while processing responses through `iter_content`.",
+          "weight": "18.0",
+          "links": "17"
+        },
+        {
+          "id": "365",
+          "source": "REQUESTS",
+          "target": "CONTENTDECODINGERROR",
+          "description": "Requests converts underlying `DecodeError` failures from urllib3 into `ContentDecodingError` while streaming response content, including during `iter_content`.",
+          "weight": "18.0",
+          "links": "17"
+        },
+        {
+          "id": "377",
+          "source": "REQUESTS",
+          "target": "UNICODE DECODE ERROR",
+          "description": "Requests catches UnicodeDecodeError when the detected response encoding is incorrect and then falls back to another decoding path.",
+          "weight": "8.0",
+          "links": "17"
+        },
+        {
+          "id": "379",
+          "source": "REQUESTS",
+          "target": "TYPE ERROR",
+          "description": "Requests handles TypeError when the response encoding is None or invalid during content decoding.",
+          "weight": "7.0",
+          "links": "17"
+        },
+        {
+          "id": "1012",
+          "source": "TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE",
+          "target": "PYTEST",
+          "description": "PYTEST defines and executes the test for “TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE,” verifying that JSON decode errors can be serialized and deserialized successfully.",
+          "weight": "2.0",
+          "links": "5"
+        },
+        {
+          "id": "590",
+          "source": "PYTEST",
+          "target": "TEST JSON DECODE COMPATIBILITY FOR ALT UTF ENCODINGS",
+          "description": "Pytest executes the test that checks alternate UTF encoding JSON-decoding behavior",
+          "weight": "9.0",
+          "links": "5"
+        },
+        {
+          "id": "946",
+          "source": "PYTEST",
+          "target": "TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE",
+          "description": "Pytest executes the no-content JSON behavior test",
+          "weight": "9.0",
+          "links": "5"
+        },
+        {
+          "id": "987",
+          "source": "PYTEST",
+          "target": "TEST JSON DECODE COMPATIBILITY",
+          "description": "Pytest executes the JSON decoding compatibility test",
+          "weight": "9.0",
+          "links": "5"
+        },
+        {
+          "id": "988",
+          "source": "PYTEST",
+          "target": "TEST JSON DECODE PERSISTS DOC ATTR",
+          "description": "Pytest executes the JSON exception attribute persistence test",
+          "weight": "9.0",
+          "links": "5"
+        },
+        {
+          "id": "930",
+          "source": "TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE",
+          "target": "HTTPBIN",
+          "description": "The test obtains a no-content response from an Httpbin status endpoint",
+          "weight": "8.0",
+          "links": "3"
+        },
+        {
+          "id": "992",
+          "source": "TEST JSON DECODE COMPATIBILITY",
+          "target": "HTTPBIN",
+          "description": "The test obtains invalid byte content from an httpbin endpoint to trigger JSON decoding failure",
+          "weight": "8.0",
+          "links": "3"
+        },
+        {
+          "id": "993",
+          "source": "TEST JSON DECODE PERSISTS DOC ATTR",
+          "target": "HTTPBIN",
+          "description": "The test obtains the response text from an httpbin byte-response endpoint",
+          "weight": "1.0",
+          "links": "3"
+        },
+        {
+          "id": "363",
+          "source": "URLLIB3",
+          "target": "SSLERROR",
+          "description": "urllib3 supplies the `SSLError` exception, which can be raised while handling streamed responses, particularly during streaming tests.",
+          "weight": "17.0",
+          "links": "3"
+        },
+        {
+          "id": "302",
+          "source": "URLLIB3",
+          "target": "URLLIB3 EXCEPTIONS",
+          "description": "urllib3 supplies the exceptions imported by Requests for decoding, location parsing, protocol, timeout, and SSL failures.",
+          "weight": "9.0",
+          "links": "3"
+        },
+        {
+          "id": "361",
+          "source": "URLLIB3",
+          "target": "DECODEERROR",
+          "description": "urllib3 can raise the `DecodeError` exception when the content of a streamed response cannot be decoded. `DecodeError` is supplied by urllib3 and is specifically relevant to failures encountered while streaming response content.",
+          "weight": "17.0",
+          "links": "3"
+        },
+        {
+          "id": "351",
+          "source": "RESPONSE",
+          "target": "HTTP ERROR",
+          "description": "Response.ok calls raise_for_status and catches HTTPError to return False for error responses.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "168",
+          "source": "REQUESTS HTTP LIBRARY",
+          "target": "REQUESTS EXCEPTIONS",
+          "description": "The main Requests package imports warning and error classes from its exceptions module.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "1014",
+          "source": "TEST JSON DECODE ERRORS ARE SERIALIZABLE DESERIALIZABLE",
+          "target": "PICKLE",
+          "description": "The test uses pickle to serialize and deserialize the JSON decoding error",
+          "weight": "1.0",
+          "links": "1"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "columns": [
+        "id",
+        "source",
+        "text"
+      ],
+      "rows": [
+        {
+          "id": "78",
+          "text": "            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /final-url/\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/path/to/thing/#view=edit&token=hunter2'\n        r = requests.get(url)\n\n        assert r.status_code == 200\n        assert len(r.history) == 2\n        assert r.history[0].request.url == url\n\n        # Verify we haven't overwritten the location with our previous fragment.\n        assert r.history[1].request.url == f'http://{host}:{port}/get#relevant-section'\n        # Verify previous fragment is used and not the original.\n        assert r.url == f'http://{host}:{port}/final-url/#relevant-section'\n\n        close_server.set()\n\n\ndef test_json_decode_compatibility_for_alt_utf_encodings():\n\n    def response_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n'\n            b'Content-Length: 18\\r\\n\\r\\n'\n            b'\\xff\\xfe{\\x00\"\\x00K0\"\\x00=\\x00\"\\x00\\xab0\"\\x00\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url)\n    r.encoding = None\n    with pytest.raises(requests.exceptions.JSONDecodeError) as excinfo:\n        r.json()\n    assert isinstance(excinfo.value, requests.exceptions.RequestException)\n    assert isinstance(excinfo.value, JSONDecodeError)\n    assert r.text not in str(excinfo.value)\n",
+          "source": "tests/test_lowlevel.py:L379-L428"
+        },
+        {
+          "id": "101",
+          "text": "        r6 = requests.codes.get(\"unordered_collection\")\n\n        assert r1 == 425\n        assert r2 == 425\n        assert r3 == 425\n        assert r4 == 425\n        assert r5 == 425\n        assert r6 == 425\n\n    def test_different_connection_pool_for_tls_settings_verify_True(self):\n        def response_handler(sock):\n            consume_socket_content(sock, timeout=0.5)\n            sock.send(\n                b\"HTTP/1.1 200 OK\\r\\n\"\n                b\"Content-Length: 18\\r\\n\\r\\n\"\n                b'\\xff\\xfe{\\x00\"\\x00K0\"\\x00=\\x00\"\\x00\\xab0\"\\x00\\r\\n'\n            )\n\n        s = requests.Session()\n        close_server = threading.Event()\n        server = TLSServer(\n            handler=response_handler,\n            wait_to_close_event=close_server,\n            requests_to_handle=3,\n            cert_chain=\"tests/certs/expired/server/server.pem\",\n            keyfile=\"tests/certs/expired/server/server.key\",\n        )\n\n        with server as (host, port):\n            url = f\"https://{host}:{port}\"\n            r1 = s.get(url, verify=False)\n            assert r1.status_code == 200\n\n            # Cannot verify self-signed certificate\n            with pytest.raises(requests.exceptions.SSLError):\n                s.get(url)\n\n            close_server.set()\n        assert 2 == len(s.adapters[\"https://\"].poolmanager.pools)\n\n    def test_different_connection_pool_for_tls_settings_verify_bundle_expired_cert(\n        self,\n    ):\n        def response_handler(sock):\n            consume_socket_content(sock, timeout=0.5)\n            sock.send(\n                b\"HTTP/1.1 200 OK\\r\\n\"\n                b\"Content-Length: 18\\r\\n\\r\\n\"\n                b'\\xff\\xfe{\\x00\"\\x00K0\"\\x00=\\x00\"\\x00\\xab0\"\\x00\\r\\n'\n            )\n\n        s = requests.Session()\n        close_server = threading.Event()\n        server = TLSServer(\n            handler=response_handler,\n            wait_to_close_event=close_server,\n            requests_to_handle=3,\n            cert_chain=\"tests/certs/expired/server/server.pem\",\n            keyfile=\"tests/certs/expired/server/server.key\",\n        )\n\n        with server as (host, port):\n            url = f\"https://{host}:{port}\"\n            r1 = s.get(url, verify=False)\n            assert r1.status_code == 200\n\n            # Has right trust bundle, but certificate expired\n            with pytest.raises(requests.exceptions.SSLError):\n                s.get(url, verify=\"tests/certs/expired/ca/ca.crt\")\n\n            close_server.set()\n        assert 2 == len(s.adapters[\"https://\"].poolmanager.pools)\n\n    def test_different_connection_pool_for_tls_settings_verify_bundle_unexpired_cert(\n        self,\n    ):\n        def response_handler(sock):\n            consume_socket_content(sock, timeout=0.5)\n            sock.send(\n                b\"HTTP/1.1 200 OK\\r\\n\"\n                b\"Content-Length: 18\\r\\n\\r\\n\"\n                b'\\xff\\xfe{\\x00\"\\x00K0\"\\x00=\\x00\"\\x00\\xab0\"\\x00\\r\\n'\n            )\n\n        s = requests.Session()\n        close_server = threading.Event()\n        server = TLSServer(\n            handler=response_handler,\n            wait_to_close_event=close_server,\n            requests_to_handle=3,\n            cert_chain=\"tests/certs/valid/server/server.pem\",\n            keyfile=\"tests/certs/valid/server/server.key\",\n        )\n\n        with server as (host, port):\n            url = f\"https://{host}:{port}\"\n            r1 = s.get(url, verify=False)\n            assert r1.status_code == 200\n\n            r2 = s.get(url, verify=\"tests/certs/valid/ca/ca.crt\")\n            assert r2.status_code == 200\n\n            close_server.set()\n        assert 2 == len(s.adapters[\"https://\"].poolmanager.pools)\n\n    def test_different_connection_pool_for_mtls_settings(self):\n        client_cert = None\n\n        def response_handler(sock):\n            nonlocal client_cert\n            client_cert = sock.getpeercert()\n            consume_socket_content(sock, timeout=0.5)\n            sock.send(\n                b\"HTTP/1.1 200 OK\\r\\n\"\n                b\"Content-Length: 18\\r\\n\\r\\n\"\n                b'\\xff\\xfe{\\x00\"\\x00K0\"\\x00=\\x00\"\\x00\\xab0\"\\x00\\r\\n'\n            )\n\n        s = requests.Session()\n        close_server = threading.Event()\n        server = TLSServer(\n            handler=response_handler,\n            wait_to_close_event=close_server,\n            requests_to_handle=2,\n            cert_chain=\"tests/certs/expired/server/server.pem\",\n            keyfile=\"tests/certs/expired/server/server.key\",\n            mutual_tls=True,\n            cacert=\"tests/certs/expired/ca/ca.crt\",\n        )\n\n        cert = (\n            \"tests/certs/mtls/client/client.pem\",\n            \"tests/certs/mtls/client/client.key\",\n        )\n        with server as (host, port):\n            url = f\"https://{host}:{port}\"\n            r1 = s.get(url, verify=False, cert=cert)\n            assert r1.status_code == 200\n            with pytest.raises(requests.exceptions.SSLError):\n                s.get(url, cert=cert)\n            close_server.set()\n\n        assert client_cert is not None\n\n\ndef test_json_decode_errors_are_serializable_deserializable():\n    json_decode_error = requests.exceptions.JSONDecodeError(\n",
+          "source": "tests/test_requests.py:L2824-L2970"
+        },
+        {
+          "id": "50",
+          "text": "        if self.encoding is None:\n            encoding = self.apparent_encoding\n\n        # Decode unicode from given encoding.\n        try:\n            content = str(self.content, encoding, errors=\"replace\")\n        except (LookupError, TypeError):\n            # A LookupError is raised if the encoding was not found which could\n            # indicate a misspelling or similar mistake.\n            #\n            # A TypeError can be raised if encoding is None\n            #\n            # So we try blindly encoding.\n            content = str(self.content, errors=\"replace\")\n\n        return content\n\n    def json(self, **kwargs):\n        r\"\"\"Returns the json-encoded content of a response, if any.\n\n        :param \\*\\*kwargs: Optional arguments that ``json.loads`` takes.\n        :raises requests.exceptions.JSONDecodeError: If the response body does not\n            contain valid json.\n        \"\"\"\n\n        if not self.encoding and self.content and len(self.content) > 3:\n            # No encoding set. JSON RFC 4627 section 3 states we should expect\n            # UTF-8, -16 or -32. Detect which one to use; If the detection or\n            # decoding fails, fall back to `self.text` (using charset_normalizer to make\n            # a best guess).\n            encoding = guess_json_utf(self.content)\n            if encoding is not None:\n                try:\n                    return complexjson.loads(self.content.decode(encoding), **kwargs)\n                except UnicodeDecodeError:\n                    # Wrong UTF codec detected; usually because it's not UTF-8\n                    # but some other 8-bit codec.  This is an RFC violation,\n                    # and the server didn't bother to tell us what codec *was*\n                    # used.\n                    pass\n                except JSONDecodeError as e:\n                    raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)\n\n        try:\n            return complexjson.loads(self.text, **kwargs)\n        except JSONDecodeError as e:\n            # Catch JSON-related errors and raise as requests.JSONDecodeError\n            # This aliases json.JSONDecodeError and simplejson.JSONDecodeError\n            raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)\n\n    @property\n    def links(self):\n        \"\"\"Returns the parsed header links of the response, if any.\"\"\"\n\n        header = self.headers.get(\"link\")\n\n        resolved_links = {}\n\n        if header:\n            links = parse_header_links(header)\n\n            for link in links:\n                key = link.get(\"rel\") or link.get(\"url\")\n                resolved_links[key] = link\n\n        return resolved_links\n\n    def raise_for_status(self):\n        \"\"\"Raises :class:`HTTPError`, if one occurred.\"\"\"\n\n        http_error_msg = \"\"\n        if isinstance(self.reason, bytes):\n            # We attempt to decode utf-8 first because some servers\n            # choose to localize their reason strings. If the string\n            # isn't utf-8, we fall back to iso-8859-1 for all other\n            # encodings. (See PR #3538)\n            try:\n                reason = self.reason.decode(\"utf-8\")\n            except UnicodeDecodeError:\n                reason = self.reason.decode(\"iso-8859-1\")\n        else:\n            reason = self.reason\n\n        if 400 <= self.status_code < 500:\n            http_error_msg = (\n                f\"{self.status_code} Client Error: {reason} for url: {self.url}\"\n            )\n\n        elif 500 <= self.status_code < 600:\n            http_error_msg = (\n                f\"{self.status_code} Server Error: {reason} for url: {self.url}\"\n            )\n\n        if http_error_msg:\n            raise HTTPError(http_error_msg, response=self)\n\n    def close(self):\n        \"\"\"Releases the connection back to the pool. Once this method has been\n        called the underlying ``raw`` object must not be accessed again.\n\n        *Note: Should not normally need to be called explicitly.*\n        \"\"\"\n        if not self._content_consumed:\n            self.raw.close()\n\n        release_conn = getattr(self.raw, \"release_conn\", None)\n        if release_conn is not None:\n            release_conn()\n",
+          "source": "src/requests/models.py:L930-L1037"
+        },
+        {
+          "id": "100",
+          "text": "            ),\n            (\n                \"http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/\",\n                \"http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/\",\n            ),\n        ),\n    )\n    def test_preparing_url(self, url, expected):\n        def normalize_percent_encode(x):\n            # Helper function that normalizes equivalent\n            # percent-encoded bytes before comparisons\n            for c in re.findall(r\"%[a-fA-F0-9]{2}\", x):\n                x = x.replace(c, c.upper())\n            return x\n\n        r = requests.Request(\"GET\", url=url)\n        p = r.prepare()\n        assert normalize_percent_encode(p.url) == expected\n\n    @pytest.mark.parametrize(\n        \"url\",\n        (\n            b\"http://*.google.com\",\n            b\"http://*\",\n            \"http://*.google.com\",\n            \"http://*\",\n            \"http://☃.net/\",\n        ),\n    )\n    def test_preparing_bad_url(self, url):\n        r = requests.Request(\"GET\", url=url)\n        with pytest.raises(requests.exceptions.InvalidURL):\n            r.prepare()\n\n    @pytest.mark.parametrize(\"url, exception\", ((\"http://:1\", InvalidURL),))\n    def test_redirecting_to_bad_url(self, httpbin, url, exception):\n        with pytest.raises(exception):\n            requests.get(httpbin(\"redirect-to\"), params={\"url\": url})\n\n    @pytest.mark.parametrize(\n        \"input, expected\",\n        (\n            (\n                b\"http+unix://%2Fvar%2Frun%2Fsocket/path%7E\",\n                \"http+unix://%2Fvar%2Frun%2Fsocket/path~\",\n            ),\n            (\n                \"http+unix://%2Fvar%2Frun%2Fsocket/path%7E\",\n                \"http+unix://%2Fvar%2Frun%2Fsocket/path~\",\n            ),\n            (\n                b\"mailto:user@example.org\",\n                \"mailto:user@example.org\",\n            ),\n            (\n                \"mailto:user@example.org\",\n                \"mailto:user@example.org\",\n            ),\n            (\n                b\"data:SSDimaUgUHl0aG9uIQ==\",\n                \"data:SSDimaUgUHl0aG9uIQ==\",\n            ),\n        ),\n    )\n    def test_url_mutation(self, input, expected):\n        \"\"\"\n        This test validates that we correctly exclude some URLs from\n        preparation, and that we handle others. Specifically, it tests that\n        any URL whose scheme doesn't begin with \"http\" is left alone, and\n        those whose scheme *does* begin with \"http\" are mutated.\n        \"\"\"\n        r = requests.Request(\"GET\", url=input)\n        p = r.prepare()\n        assert p.url == expected\n\n    @pytest.mark.parametrize(\n        \"input, params, expected\",\n        (\n            (\n                b\"http+unix://%2Fvar%2Frun%2Fsocket/path\",\n                {\"key\": \"value\"},\n                \"http+unix://%2Fvar%2Frun%2Fsocket/path?key=value\",\n            ),\n            (\n                \"http+unix://%2Fvar%2Frun%2Fsocket/path\",\n                {\"key\": \"value\"},\n                \"http+unix://%2Fvar%2Frun%2Fsocket/path?key=value\",\n            ),\n            (\n                b\"mailto:user@example.org\",\n                {\"key\": \"value\"},\n                \"mailto:user@example.org\",\n            ),\n            (\n                \"mailto:user@example.org\",\n                {\"key\": \"value\"},\n                \"mailto:user@example.org\",\n            ),\n        ),\n    )\n    def test_parameters_for_nonstandard_schemes(self, input, params, expected):\n        \"\"\"\n        Setting parameters for nonstandard schemes is allowed if those schemes\n        begin with \"http\", and is forbidden otherwise.\n        \"\"\"\n        r = requests.Request(\"GET\", url=input, params=params)\n        p = r.prepare()\n        assert p.url == expected\n\n    def test_post_json_nan(self, httpbin):\n        data = {\"foo\": float(\"nan\")}\n        with pytest.raises(requests.exceptions.InvalidJSONError):\n            requests.post(httpbin(\"post\"), json=data)\n\n    def test_json_decode_compatibility(self, httpbin):\n        r = requests.get(httpbin(\"bytes/20\"))\n        with pytest.raises(requests.exceptions.JSONDecodeError) as excinfo:\n            r.json()\n        assert isinstance(excinfo.value, RequestException)\n        assert isinstance(excinfo.value, JSONDecodeError)\n        assert r.text not in str(excinfo.value)\n\n    def test_json_decode_persists_doc_attr(self, httpbin):\n        r = requests.get(httpbin(\"bytes/20\"))\n        with pytest.raises(requests.exceptions.JSONDecodeError) as excinfo:\n            r.json()\n        assert excinfo.value.doc == r.text\n\n    def test_status_code_425(self):\n        r1 = requests.codes.get(\"TOO_EARLY\")\n        r2 = requests.codes.get(\"too_early\")\n        r3 = requests.codes.get(\"UNORDERED\")\n        r4 = requests.codes.get(\"unordered\")\n        r5 = requests.codes.get(\"UNORDERED_COLLECTION\")\n        r6 = requests.codes.get(\"unordered_collection\")\n\n        assert r1 == 425\n        assert r2 == 425\n        assert r3 == 425\n        assert r4 == 425\n        assert r5 == 425\n        assert r6 == 425\n\n    def test_different_connection_pool_for_tls_settings_verify_True(self):\n        def response_handler(sock):\n            consume_socket_content(sock, timeout=0.5)\n",
+          "source": "tests/test_requests.py:L2690-L2835"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "short_id": "78",
+      "text_unit_id": "8d707a967d2ac3011d34f329f840b838b9b30e3dbd68ec99c6309f16d86711daa0c5bc66648a3b5f102056a27bfe3c266966a58a0e7f34ea18a86f401ea94eb0",
+      "id": "b0cdef55a2c5ce2dcc3e2fa72c0fd5cd5ece7a243c220abd27873f188aed20c4",
+      "title": "tests/test_lowlevel.py:L379-L428",
+      "path": "tests/test_lowlevel.py",
+      "start_line": 379,
+      "end_line": 428,
+      "tokens": 452,
+      "text_sha256": "21659c862b007521515fb5027d9d9461ea170a47bc715b5a8729fc475f7d401c",
+      "ms_text_unit_id": "8d707a967d2ac3011d34f329f840b838b9b30e3dbd68ec99c6309f16d86711daa0c5bc66648a3b5f102056a27bfe3c266966a58a0e7f34ea18a86f401ea94eb0"
+    },
+    {
+      "short_id": "101",
+      "text_unit_id": "9dde576c0b011f4e1592879095b7f96465416ce4c9b03beede471bcda2879402c0f50a7ef05e6e857a1f0db8c1a4af3b8b031b7e9e789ef06b8c2067756cbfbd",
+      "id": "0fb5d8ef4877cff141539475ec09339c674218c365a4842cdab3ead068b6626e",
+      "title": "tests/test_requests.py:L2824-L2970",
+      "path": "tests/test_requests.py",
+      "start_line": 2824,
+      "end_line": 2970,
+      "tokens": 1198,
+      "text_sha256": "3ce9fc93f433f09e6fb63eed8b6c853d96c90947e4471ceae1449b8fdb10eae8",
+      "ms_text_unit_id": "9dde576c0b011f4e1592879095b7f96465416ce4c9b03beede471bcda2879402c0f50a7ef05e6e857a1f0db8c1a4af3b8b031b7e9e789ef06b8c2067756cbfbd"
+    },
+    {
+      "short_id": "50",
+      "text_unit_id": "4b4b5fc54c5de1b3bc06ae804b6e1a5b97c7354826ae43cb449d641d0ddfd9ca12e0edbdb3bc23b9ef8590995e18471f832326ab7032bf5ddf89637b8f414d3a",
+      "id": "61cf4146457c9f6b3abd4618550a9b34f9b5c84559b1ce6821dd103889bd5717",
+      "title": "src/requests/models.py:L930-L1037",
+      "path": "src/requests/models.py",
+      "start_line": 930,
+      "end_line": 1037,
+      "tokens": 854,
+      "text_sha256": "f9efde53f47fd33155ca84cc123960363df74a6417650597fe0cee96bfe3c12a",
+      "ms_text_unit_id": "4b4b5fc54c5de1b3bc06ae804b6e1a5b97c7354826ae43cb449d641d0ddfd9ca12e0edbdb3bc23b9ef8590995e18471f832326ab7032bf5ddf89637b8f414d3a"
+    },
+    {
+      "short_id": "100",
+      "text_unit_id": "65de506163ff5ec99a33944ffad347988388e67ca72ddf910ef96882aa3d391ca482896d03f63a8044be5fce87ec5bd683e32b363b7624e8a3c3a11093411551",
+      "id": "65851d357cf81ac2d60eb885a5d60b162a74887b184a9d0a7ca147d12ec5d6dd",
+      "title": "tests/test_requests.py:L2690-L2835",
+      "path": "tests/test_requests.py",
+      "start_line": 2690,
+      "end_line": 2835,
+      "tokens": 1200,
+      "text_sha256": "b20307e76ab7a5da17e1aa2d3466422da2bee962504ef3f1ae191d2a557d0941",
+      "ms_text_unit_id": "65de506163ff5ec99a33944ffad347988388e67ca72ddf910ef96882aa3d391ca482896d03f63a8044be5fce87ec5bd683e32b363b7624e8a3c3a11093411551"
+    }
+  ],
+  "raw_context_tokens": 6231,
+  "final_context_tokens": 6384,
+  "source_text_tokens": 3704,
+  "source_chunks": 4,
+  "retrieval_compute_seconds": 0.01624662522226572,
+  "adaptation_seconds": 0.017138542607426643,
+  "empty_reason": null,
+  "community_level": 2,
+  "dropped_tail_rows": 0
+}

@@ -1,0 +1,957 @@
+{
+  "question_id": "Q06",
+  "method": "ms_local",
+  "budget": 8000,
+  "query": "Locate how streamed lines carry an unfinished last line across chunks, including a custom delimiter.",
+  "upstream_raw_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n351|INCOMPLETE CHUNKED RESPONSE HANDLER|A socket response-handler event that sends an HTTP 200 response declaring chunked transfer encoding but never provides valid terminating chunks, allowing the test to verify error handling|1\n263|STREAMED RESPONSE READING|Streamed response reading is the process of consuming response data incrementally from a raw stream rather than loading it all into memory at once.|2\n569|TEST_RESPONSE_ITER_LINES|A test that verifies a streamed response can be iterated by lines and produces the expected number of lines|3\n343|TEST CHUNKED ENCODING ERROR|A test event verifying that Requests raises ChunkedEncodingError when a server returns an incomplete or invalid chunked response|3\n354|CHUNKED UPLOAD|A test event that posts generator-produced byte chunks to a local server and verifies successful chunked transfer encoding|2\n355|CHUNKED ENCODING ERROR|A test event that sends a request to an incomplete chunked response and verifies that Requests raises ChunkedEncodingError|3\n342|TEST CHUNKED UPLOAD|A test event verifying that Requests can safely send generator-based request data using chunked transfer encoding|3\n580|CHUNKED UPLOAD TEST|A test event verifying that a generator-based request body uses Transfer-Encoding: chunked and does not set a Content-Length header.|1\n256|CHUNKEDENCODINGERROR|ChunkedEncodingError is a Requests exception that reports failures in HTTP chunked transfer encoding. It is raised when urllib3 encounters a ProtocolError while iterating over the content of a response.|1\n579|NONEMPTY STREAM UPLOAD TEST|A test event verifying that an authenticated stream containing data uses Content-Length without setting Transfer-Encoding.|1\n455|TEST_DIGEST_STREAM|A pytest event that verifies streamed Digest-authenticated responses contain readable raw data while non-streamed responses have already consumed raw content.|3\n344|TEST CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER|A test event verifying that a custom Host header is used exactly once for a chunked upload|3\n572|TEST_RESPONSE_ITER_LINES_REENTRANT|An expected-failure test documenting that calling Response.iter_lines multiple times is not reentrant-safe|3\n557|TEST MANUAL REDIRECT WITH PARTIAL BODY READ|A test event that verifies Requests can follow streamed redirects after partially reading one response body and fully reading another response body>|2\n356|CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER|A test event that verifies a custom Host header is used exactly once during a chunked upload|2\n357|CHUNKED UPLOAD DOESNT SKIP HOST HEADER|A test event that verifies the default Host header is retained exactly once during a chunked upload|2\n345|TEST CHUNKED UPLOAD DOESNT SKIP HOST HEADER|A test event verifying that Requests includes the expected default Host header exactly once for a chunked upload|3\n558|TEST PREPARE BODY POSITION NON STREAM|A test event that verifies a non-streamed byte-string request body produces no rewind position when a GET request is prepared>|1\n560|TEST REWIND PARTIALLY READ BODY|A test event that verifies Requests preserves and restores the original offset of a partially read seekable request body>|1\n\n\n-----Relationships-----\nid|source|target|description|weight\n521|CHUNKED ENCODING ERROR|CHUNKED ENCODING ERROR|The chunked encoding error test expects Requests to raise the ChunkedEncodingError exception|10.0\n492|TEST CHUNKED UPLOAD|REQUESTS|The test exercises Requests by sending generator data in a chunked POST request and checking the Transfer-Encoding header|9.0\n495|TEST CHUNKED ENCODING ERROR|REQUESTS|The test exercises Requests and expects it to raise ChunkedEncodingError for an incomplete chunked response|9.0\n498|TEST CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER|REQUESTS|The test sends a chunked POST request through Requests with a custom Host header and verifies the echoed request headers|9.0\n501|TEST CHUNKED UPLOAD DOESNT SKIP HOST HEADER|REQUESTS|The test sends a chunked POST request through Requests and verifies that the default Host header is preserved|9.0\n714|TEST_DIGEST_STREAM|REQUESTS|The event tests Requests streaming and raw response reading with Digest authentication|9.0\n918|TEST_RESPONSE_ITER_LINES|REQUESTS|The test validates Requests streamed response line iteration|9.0\n924|TEST_RESPONSE_ITER_LINES_REENTRANT|REQUESTS|The expected-failure test documents a limitation in Requests Response.iter_lines behavior|9.0\n902|TEST MANUAL REDIRECT WITH PARTIAL BODY READ|REQUESTS|This test validates Requests Session.resolve_redirects and streamed response-body handling|9.0\n369|REQUESTS|STREAMED RESPONSE READING|Requests provides iter_content and iter_lines for streamed response reading.|9.0\n904|TEST PREPARE BODY POSITION NON STREAM|REQUESTS|This test validates Requests request preparation and body-position tracking for non-streamed data|9.0\n906|TEST REWIND PARTIALLY READ BODY|REQUESTS|This test validates Requests restoration of a partially consumed request body|9.0\n949|NONEMPTY STREAM UPLOAD TEST|REQUESTS|The test validates how Requests prepares authenticated POST requests containing a nonempty byte stream.|9.0\n950|CHUNKED UPLOAD TEST|REQUESTS|The test validates Requests handling of generator-based request bodies and chunked transfer encoding.|9.0\n364|REQUESTS|CHUNKEDENCODINGERROR|Requests converts underlying urllib3 `ProtocolError` failures into `ChunkedEncodingError` exceptions during streaming, including while processing responses through `iter_content`.|18.0\n493|TEST CHUNKED UPLOAD|PYTEST|The test uses pytest assertions to verify the result of a chunked upload|7.0\n496|TEST CHUNKED ENCODING ERROR|PYTEST|The test uses pytest.raises to verify the expected Requests exception|8.0\n499|TEST CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER|PYTEST|The test uses pytest assertions to verify that the custom Host header appears exactly once|7.0\n502|TEST CHUNKED UPLOAD DOESNT SKIP HOST HEADER|PYTEST|The test uses pytest assertions to verify that exactly one default Host header is present|7.0\n716|TEST_DIGEST_STREAM|PYTEST|Pytest runs the Digest streaming test|8.0\n939|PYTEST|TEST_RESPONSE_ITER_LINES|Pytest executes the streamed line-iteration test|9.0\n942|PYTEST|TEST_RESPONSE_ITER_LINES_REENTRANT|Pytest marks the reentrant line-iteration test as an expected failure|9.0\n715|TEST_DIGEST_STREAM|HTTPBIN|The event obtains Digest-authenticated responses from HTTPBin|8.0\n919|TEST_RESPONSE_ITER_LINES|HTTPBIN|The test uses an Httpbin streaming endpoint|8.0\n925|TEST_RESPONSE_ITER_LINES_REENTRANT|HTTPBIN|The test uses an Httpbin streaming endpoint|8.0\n903|TEST MANUAL REDIRECT WITH PARTIAL BODY READ|HTTPBIN|This test obtains redirect responses from Httpbin through the httpbin fixture|8.0\n510|SERVER|CHUNKED ENCODING ERROR|The Server utility runs the incomplete-chunked-response handler used by the error test|8.0\n509|SERVER|CHUNKED UPLOAD|The Server utility provides the local HTTP endpoint used by the chunked upload test|8.0\n511|SERVER|CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER|The Server utility hosts the request whose custom Host header is inspected|8.0\n512|SERVER|CHUNKED UPLOAD DOESNT SKIP HOST HEADER|The Server utility hosts the request whose default Host header is inspected|8.0\n494|TEST CHUNKED UPLOAD|THREADING|The test uses a threading Event to release the test server after the request completes|7.0\n497|TEST CHUNKED ENCODING ERROR|THREADING|The test uses a threading Event to release the server block after the expected failure|6.0\n500|TEST CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER|THREADING|The test uses a threading Event to release the test server after the request completes|6.0\n503|TEST CHUNKED UPLOAD DOESNT SKIP HOST HEADER|THREADING|The test uses a threading Event to release the test server after the request completes|6.0\n517|ECHO RESPONSE HANDLER|CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER|The custom-Host-header test uses the echo handler to inspect and return the submitted request headers|9.0\n518|ECHO RESPONSE HANDLER|CHUNKED UPLOAD DOESNT SKIP HOST HEADER|The default-Host-header test uses the echo handler to inspect and return the submitted request headers|9.0\n357|RESPONSE|STREAMED RESPONSE READING|The Response object incrementally reads raw content through iter_content and iter_lines.|9.0\n515|CONSUME SOCKET CONTENT|INCOMPLETE CHUNKED RESPONSE HANDLER|The incomplete-response handler uses consume_socket_content before sending the malformed response|8.0\n519|BASIC RESPONSE SERVER|CHUNKED UPLOAD|The chunked upload test creates a basic response server to receive the generator-based request|9.0\n\n\n-----Sources-----\nid|text\n75|import threading\n\nimport pytest\nfrom tests.testserver.server import Server, consume_socket_content\n\nimport requests\nfrom requests.compat import JSONDecodeError\n\nfrom .utils import override_environ\n\n\ndef echo_response_handler(sock):\n    \"\"\"Simple handler that will take request and echo it back to requester.\"\"\"\n    request_content = consume_socket_content(sock, timeout=0.5)\n\n    text_200 = (\n        b\"HTTP/1.1 200 OK\\r\\n\"\n        b\"Content-Length: %d\\r\\n\\r\\n\"\n        b\"%s\"\n    ) % (len(request_content), request_content)\n    sock.send(text_200)\n\n\ndef test_chunked_upload():\n    \"\"\"can safely send generators\"\"\"\n    close_server = threading.Event()\n    server = Server.basic_response_server(wait_to_close_event=close_server)\n    data = iter([b\"a\", b\"b\", b\"c\"])\n\n    with server as (host, port):\n        url = f\"http://{host}:{port}/\"\n        r = requests.post(url, data=data, stream=True)\n        close_server.set()  # release server block\n\n    assert r.status_code == 200\n    assert r.request.headers[\"Transfer-Encoding\"] == \"chunked\"\n\n\ndef test_chunked_encoding_error():\n    \"\"\"get a ChunkedEncodingError if the server returns a bad response\"\"\"\n\n    def incomplete_chunked_response_handler(sock):\n        request_content = consume_socket_content(sock, timeout=0.5)\n\n        # The server never ends the request and doesn't provide any valid chunks\n        sock.send(\n            b\"HTTP/1.1 200 OK\\r\\n\"\n            b\"Transfer-Encoding: chunked\\r\\n\"\n        )\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(incomplete_chunked_response_handler)\n\n    with server as (host, port):\n        url = f\"http://{host}:{port}/\"\n        with pytest.raises(requests.exceptions.ChunkedEncodingError):\n            requests.get(url)\n        close_server.set()  # release server block\n\n\ndef test_chunked_upload_uses_only_specified_host_header():\n    \"\"\"Ensure we use only the specified Host header for chunked requests.\"\"\"\n    close_server = threading.Event()\n    server = Server(echo_response_handler, wait_to_close_event=close_server)\n\n    data = iter([b\"a\", b\"b\", b\"c\"])\n    custom_host = \"sample-host\"\n\n    with server as (host, port):\n        url = f\"http://{host}:{port}/\"\n        r = requests.post(url, data=data, headers={\"Host\": custom_host}, stream=True)\n        close_server.set()  # release server block\n\n    expected_header = b\"Host: %s\\r\\n\" % custom_host.encode(\"utf-8\")\n    assert expected_header in r.content\n    assert r.content.count(b\"Host: \") == 1\n\n\ndef test_chunked_upload_doesnt_skip_host_header():\n    \"\"\"Ensure we don't omit all Host headers with chunked requests.\"\"\"\n    close_server = threading.Event()\n    server = Server(echo_response_handler, wait_to_close_event=close_server)\n\n    data = iter([b\"a\", b\"b\", b\"c\"])\n\n    with server as (host, port):\n        expected_host = f\"{host}:{port}\"\n        url = f\"http://{host}:{port}/\"\n        r = requests.post(url, data=data, stream=True)\n        close_server.set()  # release server block\n\n    expected_header = b\"Host: %s\\r\\n\" % expected_host.encode(\"utf-8\")\n    assert expected_header in r.content\n    assert r.content.count(b\"Host: \") == 1\n\n\ndef test_conflicting_content_lengths():\n    \"\"\"Ensure we correctly throw an InvalidHeader error if multiple\n    conflicting Content-Length headers are returned.\n    \"\"\"\n\n    def multiple_content_length_response_handler(sock):\n        request_content = consume_socket_content(sock, timeout=0.5)\n        response = (\n            b\"HTTP/1.1 200 OK\\r\\n\"\n            b\"Content-Type: text/plain\\r\\n\"\n            b\"Content-Length: 16\\r\\n\"\n            b\"Content-Length: 32\\r\\n\\r\\n\"\n            b\"-- Bad Actor -- Original Content\\r\\n\"\n        )\n        sock.send(response)\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(multiple_content_length_response_handler)\n\n    with server as (host, port):\n        url = f\"http://{host}:{port}/\"\n        with pytest.raises(requests.exceptions.InvalidHeader):\n            requests.get(url)\n        close_server.set()\n\n\ndef test_digestauth_401_count_reset_on_redirect():\n    \"\"\"Ensure we correctly reset num_401_calls after a successful digest auth,\n    followed by a 302 redirect to another digest auth prompt.\n\n    See https://github.com/psf/requests/issues/1979.\n    \"\"\"\n    text_401 = (b'HTTP/1.1 401 UNAUTHORIZED\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'WWW-Authenticate: Digest nonce=\"6bf5d6e4da1ce66918800195d6b9130d\"'\n                b', opaque=\"372825293d1c26955496c80ed6426e9e\", '\n                b'realm=\"me@kennethreitz.com\", qop=auth\\r\\n\\r\\n')\n\n    text_302 = (b'HTTP/1.1 302 FOUND\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'Location: /\\r\\n\\r\\n')\n\n    text_200 = (b'HTTP/1.1 200 OK\\r\\n'\n                b'Content-Length: 0\\r\\n\\r\\n')\n\n    expected_digest = (b'Authorization: Digest username=\"user\", '\n\n49|    def is_permanent_redirect(self):\n        \"\"\"True if this Response one of the permanent versions of redirect.\"\"\"\n        return \"location\" in self.headers and self.status_code in (\n            codes.moved_permanently,\n            codes.permanent_redirect,\n        )\n\n    @property\n    def next(self):\n        \"\"\"Returns a PreparedRequest for the next request in a redirect chain, if there is one.\"\"\"\n        return self._next\n\n    @property\n    def apparent_encoding(self):\n        \"\"\"The apparent encoding, provided by the charset_normalizer or chardet libraries.\"\"\"\n        if chardet is not None:\n            return chardet.detect(self.content)[\"encoding\"]\n        else:\n            # If no character detection library is available, we'll fall back\n            # to a standard Python utf-8 str.\n            return \"utf-8\"\n\n    def iter_content(self, chunk_size=1, decode_unicode=False):\n        \"\"\"Iterates over the response data.  When stream=True is set on the\n        request, this avoids reading the content at once into memory for\n        large responses.  The chunk size is the number of bytes it should\n        read into memory.  This is not necessarily the length of each item\n        returned as decoding can take place.\n\n        chunk_size must be of type int or None. A value of None will\n        function differently depending on the value of `stream`.\n        stream=True will read data as it arrives in whatever size the\n        chunks are received. If stream=False, data is returned as\n        a single chunk.\n\n        If decode_unicode is True, content will be decoded using the best\n        available encoding based on the response.\n        \"\"\"\n\n        def generate():\n            # Special case for urllib3.\n            if hasattr(self.raw, \"stream\"):\n                try:\n                    yield from self.raw.stream(chunk_size, decode_content=True)\n                except ProtocolError as e:\n                    raise ChunkedEncodingError(e)\n                except DecodeError as e:\n                    raise ContentDecodingError(e)\n                except ReadTimeoutError as e:\n                    raise ConnectionError(e)\n                except SSLError as e:\n                    raise RequestsSSLError(e)\n            else:\n                # Standard file-like object.\n                while True:\n                    chunk = self.raw.read(chunk_size)\n                    if not chunk:\n                        break\n                    yield chunk\n\n            self._content_consumed = True\n\n        if self._content_consumed and isinstance(self._content, bool):\n            raise StreamConsumedError()\n        elif chunk_size is not None and not isinstance(chunk_size, int):\n            raise TypeError(\n                f\"chunk_size must be an int, it is instead a {type(chunk_size)}.\"\n            )\n        # simulate reading small chunks of the content\n        reused_chunks = iter_slices(self._content, chunk_size)\n\n        stream_chunks = generate()\n\n        chunks = reused_chunks if self._content_consumed else stream_chunks\n\n        if decode_unicode:\n            chunks = stream_decode_response_unicode(chunks, self)\n\n        return chunks\n\n    def iter_lines(\n        self, chunk_size=ITER_CHUNK_SIZE, decode_unicode=False, delimiter=None\n    ):\n        \"\"\"Iterates over the response data, one line at a time.  When\n        stream=True is set on the request, this avoids reading the\n        content at once into memory for large responses.\n\n        .. note:: This method is not reentrant safe.\n        \"\"\"\n\n        pending = None\n\n        for chunk in self.iter_content(\n            chunk_size=chunk_size, decode_unicode=decode_unicode\n        ):\n            if pending is not None:\n                chunk = pending + chunk\n\n            if delimiter:\n                lines = chunk.split(delimiter)\n            else:\n                lines = chunk.splitlines()\n\n            if lines and lines[-1] and chunk and lines[-1][-1] == chunk[-1]:\n                pending = lines.pop()\n            else:\n                pending = None\n\n            yield from lines\n\n        if pending is not None:\n            yield pending\n\n    @property\n    def content(self):\n        \"\"\"Content of the response, in bytes.\"\"\"\n\n        if self._content is False:\n            # Read the contents.\n            if self._content_consumed:\n                raise RuntimeError(\"The content for this response was already consumed\")\n\n            if self.status_code == 0 or self.raw is None:\n                self._content = None\n            else:\n                self._content = b\"\".join(self.iter_content(CONTENT_CHUNK_SIZE)) or b\"\"\n\n        self._content_consumed = True\n        # don't need to release the connection; that's been handled by urllib3\n        # since we exhausted the data.\n        return self._content\n\n    @property\n    def text(self):\n        \"\"\"Content of the response, in unicode.\n\n        If Response.encoding is None, encoding will be guessed using\n        ``charset_normalizer`` or ``chardet``.\n\n        The encoding of the response content is determined based solely on HTTP\n        headers, following RFC 2616 to the letter. If you can take advantage of\n        non-HTTP knowledge to make a better guess at the encoding, you should\n        set ``r.encoding`` appropriately before accessing this property.\n        \"\"\"\n\n        # Try charset from content-type\n        content = None\n        encoding = self.encoding\n\n        if not self.content:\n            return \"\"\n\n        # Fallback to auto-detected encoding.\n        if self.encoding is None:\n            encoding = self.apparent_encoding\n\n        # Decode unicode from given encoding.\n        try:\n            content = str(self.content, encoding, errors=\"replace\")\n        except (LookupError, TypeError):\n            # A LookupError is raised if the encoding was not found which could\n            # indicate a misspelling or similar mistake.\n            #\n            # A TypeError can be raised if encoding is None\n            #\n            # So we try blindly encoding.\n\n95|\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"Unable to rewind request body\" in str(e)\n\n    def _patch_adapter_gzipped_redirect(self, session, url):\n        adapter = session.get_adapter(url=url)\n        org_build_response = adapter.build_response\n        self._patched_response = False\n\n        def build_response(*args, **kwargs):\n            resp = org_build_response(*args, **kwargs)\n            if not self._patched_response:\n                resp.raw.headers[\"content-encoding\"] = \"gzip\"\n                self._patched_response = True\n            return resp\n\n        adapter.build_response = build_response\n\n    def test_redirect_with_wrong_gzipped_header(self, httpbin):\n        s = requests.Session()\n        url = httpbin(\"redirect/1\")\n        self._patch_adapter_gzipped_redirect(s, url)\n        s.get(url)\n\n    @pytest.mark.parametrize(\n        \"username, password, auth_str\",\n        (\n            (\"test\", \"test\", \"Basic dGVzdDp0ZXN0\"),\n            (\n                \"имя\".encode(),\n                \"пароль\".encode(),\n                \"Basic 0LjQvNGPOtC/0LDRgNC+0LvRjA==\",\n            ),\n        ),\n    )\n    def test_basic_auth_str_is_always_native(self, username, password, auth_str):\n        s = _basic_auth_str(username, password)\n        assert isinstance(s, builtin_str)\n        assert s == auth_str\n\n    def test_requests_history_is_saved(self, httpbin):\n        r = requests.get(httpbin(\"redirect/5\"))\n        total = r.history[-1].history\n        i = 0\n        for item in r.history:\n            assert item.history == total[0:i]\n            i += 1\n\n    def test_json_param_post_content_type_works(self, httpbin):\n        r = requests.post(httpbin(\"post\"), json={\"life\": 42})\n        assert r.status_code == 200\n        assert \"application/json\" in r.request.headers[\"Content-Type\"]\n        assert {\"life\": 42} == r.json()[\"json\"]\n\n    def test_json_param_post_should_not_override_data_param(self, httpbin):\n        r = requests.Request(\n            method=\"POST\",\n            url=httpbin(\"post\"),\n            data={\"stuff\": \"elixr\"},\n            json={\"music\": \"flute\"},\n        )\n        prep = r.prepare()\n        assert \"stuff=elixr\" == prep.body\n\n    def test_response_iter_lines(self, httpbin):\n        r = requests.get(httpbin(\"stream/4\"), stream=True)\n        assert r.status_code == 200\n\n        it = r.iter_lines()\n        next(it)\n        assert len(list(it)) == 3\n\n    def test_response_context_manager(self, httpbin):\n        with requests.get(httpbin(\"stream/4\"), stream=True) as response:\n            assert isinstance(response, requests.Response)\n\n        assert response.raw.closed\n\n    def test_unconsumed_session_response_closes_connection(self, httpbin):\n        s = requests.session()\n\n        with contextlib.closing(s.get(httpbin(\"stream/4\"), stream=True)) as response:\n            pass\n\n        assert response._content_consumed is False\n        assert response.raw.closed\n\n    @pytest.mark.xfail\n    def test_response_iter_lines_reentrant(self, httpbin):\n        \"\"\"Response.iter_lines() is not reentrant safe\"\"\"\n        r = requests.get(httpbin(\"stream/4\"), stream=True)\n        assert r.status_code == 200\n\n        next(r.iter_lines())\n        assert len(list(r.iter_lines())) == 3\n\n    def test_session_close_proxy_clear(self):\n        proxies = {\n            \"one\": mock.Mock(),\n            \"two\": mock.Mock(),\n        }\n        session = requests.Session()\n        with mock.patch.dict(session.adapters[\"http://\"].proxy_manager, proxies):\n            session.close()\n            proxies[\"one\"].clear.assert_called_once_with()\n            proxies[\"two\"].clear.assert_called_once_with()\n\n    def test_proxy_auth(self):\n        adapter = HTTPAdapter()\n        headers = adapter.proxy_headers(\"http://user:pass@httpbin.org\")\n        assert headers == {\"Proxy-Authorization\": \"Basic dXNlcjpwYXNz\"}\n\n    def test_proxy_auth_empty_pass(self):\n        adapter = HTTPAdapter()\n        headers = adapter.proxy_headers(\"http://user:@httpbin.org\")\n        assert headers == {\"Proxy-Authorization\": \"Basic dXNlcjo=\"}\n\n    def test_response_json_when_content_is_None(self, httpbin):\n        r = requests.get(httpbin(\"/status/204\"))\n        # Make sure r.content is None\n        r.status_code = 0\n        r._content = False\n        r._content_consumed = False\n\n        assert r.content is None\n        with pytest.raises(ValueError):\n            r.json()\n\n    def test_response_without_release_conn(self):\n        \"\"\"Test `close` call for non-urllib3-like raw objects.\n        Should work when `release_conn` attr doesn't exist on `response.raw`.\n        \"\"\"\n        resp = requests.Response()\n        resp.raw = StringIO.StringIO(\"test\")\n        assert not resp.raw.closed\n        resp.close()\n        assert resp.raw.closed\n\n    def test_empty_stream_with_auth_does_not_set_content_length_header(self, httpbin):\n        \"\"\"Ensure that a byte stream with size 0 will not set both a Content-Length\n        and Transfer-Encoding header.\n        \"\"\"\n        auth = (\"user\", \"pass\")\n        url = httpbin(\"post\")\n        file_obj = io.BytesIO(b\"\")\n        r = requests.Request(\"POST\", url, auth=auth, data=file_obj)\n        prepared_request = r.prepare()\n        assert \"Transfer-Encoding\" in prepared_request.headers\n\n",
+  "upstream_raw_records": {
+    "relationships": [
+      {
+        "id": "521",
+        "source": "CHUNKED ENCODING ERROR",
+        "target": "CHUNKED ENCODING ERROR",
+        "description": "The chunked encoding error test expects Requests to raise the ChunkedEncodingError exception",
+        "weight": "10.0",
+        "in_context": true
+      },
+      {
+        "id": "492",
+        "source": "TEST CHUNKED UPLOAD",
+        "target": "REQUESTS",
+        "description": "The test exercises Requests by sending generator data in a chunked POST request and checking the Transfer-Encoding header",
+        "weight": "9.0",
+        "in_context": true
+      },
+      {
+        "id": "495",
+        "source": "TEST CHUNKED ENCODING ERROR",
+        "target": "REQUESTS",
+        "description": "The test exercises Requests and expects it to raise ChunkedEncodingError for an incomplete chunked response",
+        "weight": "9.0",
+        "in_context": true
+      },
+      {
+        "id": "498",
+        "source": "TEST CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER",
+        "target": "REQUESTS",
+        "description": "The test sends a chunked POST request through Requests with a custom Host header and verifies the echoed request headers",
+        "weight": "9.0",
+        "in_context": true
+      },
+      {
+        "id": "501",
+        "source": "TEST CHUNKED UPLOAD DOESNT SKIP HOST HEADER",
+        "target": "REQUESTS",
+        "description": "The test sends a chunked POST request through Requests and verifies that the default Host header is preserved",
+        "weight": "9.0",
+        "in_context": true
+      },
+      {
+        "id": "714",
+        "source": "TEST_DIGEST_STREAM",
+        "target": "REQUESTS",
+        "description": "The event tests Requests streaming and raw response reading with Digest authentication",
+        "weight": "9.0",
+        "in_context": true
+      },
+      {
+        "id": "918",
+        "source": "TEST_RESPONSE_ITER_LINES",
+        "target": "REQUESTS",
+        "description": "The test validates Requests streamed response line iteration",
+        "weight": "9.0",
+        "in_context": true
+      },
+      {
+        "id": "924",
+        "source": "TEST_RESPONSE_ITER_LINES_REENTRANT",
+        "target": "REQUESTS",
+        "description": "The expected-failure test documents a limitation in Requests Response.iter_lines behavior",
+        "weight": "9.0",
+        "in_context": true
+      },
+      {
+        "id": "902",
+        "source": "TEST MANUAL REDIRECT WITH PARTIAL BODY READ",
+        "target": "REQUESTS",
+        "description": "This test validates Requests Session.resolve_redirects and streamed response-body handling",
+        "weight": "9.0",
+        "in_context": true
+      },
+      {
+        "id": "369",
+        "source": "REQUESTS",
+        "target": "STREAMED RESPONSE READING",
+        "description": "Requests provides iter_content and iter_lines for streamed response reading.",
+        "weight": "9.0",
+        "in_context": true
+      },
+      {
+        "id": "904",
+        "source": "TEST PREPARE BODY POSITION NON STREAM",
+        "target": "REQUESTS",
+        "description": "This test validates Requests request preparation and body-position tracking for non-streamed data",
+        "weight": "9.0",
+        "in_context": true
+      },
+      {
+        "id": "906",
+        "source": "TEST REWIND PARTIALLY READ BODY",
+        "target": "REQUESTS",
+        "description": "This test validates Requests restoration of a partially consumed request body",
+        "weight": "9.0",
+        "in_context": true
+      },
+      {
+        "id": "949",
+        "source": "NONEMPTY STREAM UPLOAD TEST",
+        "target": "REQUESTS",
+        "description": "The test validates how Requests prepares authenticated POST requests containing a nonempty byte stream.",
+        "weight": "9.0",
+        "in_context": true
+      },
+      {
+        "id": "950",
+        "source": "CHUNKED UPLOAD TEST",
+        "target": "REQUESTS",
+        "description": "The test validates Requests handling of generator-based request bodies and chunked transfer encoding.",
+        "weight": "9.0",
+        "in_context": true
+      },
+      {
+        "id": "364",
+        "source": "REQUESTS",
+        "target": "CHUNKEDENCODINGERROR",
+        "description": "Requests converts underlying urllib3 `ProtocolError` failures into `ChunkedEncodingError` exceptions during streaming, including while processing responses through `iter_content`.",
+        "weight": "18.0",
+        "in_context": true
+      },
+      {
+        "id": "493",
+        "source": "TEST CHUNKED UPLOAD",
+        "target": "PYTEST",
+        "description": "The test uses pytest assertions to verify the result of a chunked upload",
+        "weight": "7.0",
+        "in_context": true
+      },
+      {
+        "id": "496",
+        "source": "TEST CHUNKED ENCODING ERROR",
+        "target": "PYTEST",
+        "description": "The test uses pytest.raises to verify the expected Requests exception",
+        "weight": "8.0",
+        "in_context": true
+      },
+      {
+        "id": "499",
+        "source": "TEST CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER",
+        "target": "PYTEST",
+        "description": "The test uses pytest assertions to verify that the custom Host header appears exactly once",
+        "weight": "7.0",
+        "in_context": true
+      },
+      {
+        "id": "502",
+        "source": "TEST CHUNKED UPLOAD DOESNT SKIP HOST HEADER",
+        "target": "PYTEST",
+        "description": "The test uses pytest assertions to verify that exactly one default Host header is present",
+        "weight": "7.0",
+        "in_context": true
+      },
+      {
+        "id": "716",
+        "source": "TEST_DIGEST_STREAM",
+        "target": "PYTEST",
+        "description": "Pytest runs the Digest streaming test",
+        "weight": "8.0",
+        "in_context": true
+      },
+      {
+        "id": "939",
+        "source": "PYTEST",
+        "target": "TEST_RESPONSE_ITER_LINES",
+        "description": "Pytest executes the streamed line-iteration test",
+        "weight": "9.0",
+        "in_context": true
+      },
+      {
+        "id": "942",
+        "source": "PYTEST",
+        "target": "TEST_RESPONSE_ITER_LINES_REENTRANT",
+        "description": "Pytest marks the reentrant line-iteration test as an expected failure",
+        "weight": "9.0",
+        "in_context": true
+      },
+      {
+        "id": "715",
+        "source": "TEST_DIGEST_STREAM",
+        "target": "HTTPBIN",
+        "description": "The event obtains Digest-authenticated responses from HTTPBin",
+        "weight": "8.0",
+        "in_context": true
+      },
+      {
+        "id": "919",
+        "source": "TEST_RESPONSE_ITER_LINES",
+        "target": "HTTPBIN",
+        "description": "The test uses an Httpbin streaming endpoint",
+        "weight": "8.0",
+        "in_context": true
+      },
+      {
+        "id": "925",
+        "source": "TEST_RESPONSE_ITER_LINES_REENTRANT",
+        "target": "HTTPBIN",
+        "description": "The test uses an Httpbin streaming endpoint",
+        "weight": "8.0",
+        "in_context": true
+      },
+      {
+        "id": "903",
+        "source": "TEST MANUAL REDIRECT WITH PARTIAL BODY READ",
+        "target": "HTTPBIN",
+        "description": "This test obtains redirect responses from Httpbin through the httpbin fixture",
+        "weight": "8.0",
+        "in_context": true
+      },
+      {
+        "id": "510",
+        "source": "SERVER",
+        "target": "CHUNKED ENCODING ERROR",
+        "description": "The Server utility runs the incomplete-chunked-response handler used by the error test",
+        "weight": "8.0",
+        "in_context": true
+      },
+      {
+        "id": "509",
+        "source": "SERVER",
+        "target": "CHUNKED UPLOAD",
+        "description": "The Server utility provides the local HTTP endpoint used by the chunked upload test",
+        "weight": "8.0",
+        "in_context": true
+      },
+      {
+        "id": "511",
+        "source": "SERVER",
+        "target": "CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER",
+        "description": "The Server utility hosts the request whose custom Host header is inspected",
+        "weight": "8.0",
+        "in_context": true
+      },
+      {
+        "id": "512",
+        "source": "SERVER",
+        "target": "CHUNKED UPLOAD DOESNT SKIP HOST HEADER",
+        "description": "The Server utility hosts the request whose default Host header is inspected",
+        "weight": "8.0",
+        "in_context": true
+      },
+      {
+        "id": "494",
+        "source": "TEST CHUNKED UPLOAD",
+        "target": "THREADING",
+        "description": "The test uses a threading Event to release the test server after the request completes",
+        "weight": "7.0",
+        "in_context": true
+      },
+      {
+        "id": "497",
+        "source": "TEST CHUNKED ENCODING ERROR",
+        "target": "THREADING",
+        "description": "The test uses a threading Event to release the server block after the expected failure",
+        "weight": "6.0",
+        "in_context": true
+      },
+      {
+        "id": "500",
+        "source": "TEST CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER",
+        "target": "THREADING",
+        "description": "The test uses a threading Event to release the test server after the request completes",
+        "weight": "6.0",
+        "in_context": true
+      },
+      {
+        "id": "503",
+        "source": "TEST CHUNKED UPLOAD DOESNT SKIP HOST HEADER",
+        "target": "THREADING",
+        "description": "The test uses a threading Event to release the test server after the request completes",
+        "weight": "6.0",
+        "in_context": true
+      },
+      {
+        "id": "517",
+        "source": "ECHO RESPONSE HANDLER",
+        "target": "CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER",
+        "description": "The custom-Host-header test uses the echo handler to inspect and return the submitted request headers",
+        "weight": "9.0",
+        "in_context": true
+      },
+      {
+        "id": "518",
+        "source": "ECHO RESPONSE HANDLER",
+        "target": "CHUNKED UPLOAD DOESNT SKIP HOST HEADER",
+        "description": "The default-Host-header test uses the echo handler to inspect and return the submitted request headers",
+        "weight": "9.0",
+        "in_context": true
+      },
+      {
+        "id": "357",
+        "source": "RESPONSE",
+        "target": "STREAMED RESPONSE READING",
+        "description": "The Response object incrementally reads raw content through iter_content and iter_lines.",
+        "weight": "9.0",
+        "in_context": true
+      },
+      {
+        "id": "515",
+        "source": "CONSUME SOCKET CONTENT",
+        "target": "INCOMPLETE CHUNKED RESPONSE HANDLER",
+        "description": "The incomplete-response handler uses consume_socket_content before sending the malformed response",
+        "weight": "8.0",
+        "in_context": true
+      },
+      {
+        "id": "519",
+        "source": "BASIC RESPONSE SERVER",
+        "target": "CHUNKED UPLOAD",
+        "description": "The chunked upload test creates a basic response server to receive the generator-based request",
+        "weight": "9.0",
+        "in_context": true
+      }
+    ],
+    "entities": [
+      {
+        "id": "351",
+        "entity": "INCOMPLETE CHUNKED RESPONSE HANDLER",
+        "description": "A socket response-handler event that sends an HTTP 200 response declaring chunked transfer encoding but never provides valid terminating chunks, allowing the test to verify error handling",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "263",
+        "entity": "STREAMED RESPONSE READING",
+        "description": "Streamed response reading is the process of consuming response data incrementally from a raw stream rather than loading it all into memory at once.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "569",
+        "entity": "TEST_RESPONSE_ITER_LINES",
+        "description": "A test that verifies a streamed response can be iterated by lines and produces the expected number of lines",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "343",
+        "entity": "TEST CHUNKED ENCODING ERROR",
+        "description": "A test event verifying that Requests raises ChunkedEncodingError when a server returns an incomplete or invalid chunked response",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "354",
+        "entity": "CHUNKED UPLOAD",
+        "description": "A test event that posts generator-produced byte chunks to a local server and verifies successful chunked transfer encoding",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "355",
+        "entity": "CHUNKED ENCODING ERROR",
+        "description": "A test event that sends a request to an incomplete chunked response and verifies that Requests raises ChunkedEncodingError",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "342",
+        "entity": "TEST CHUNKED UPLOAD",
+        "description": "A test event verifying that Requests can safely send generator-based request data using chunked transfer encoding",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "580",
+        "entity": "CHUNKED UPLOAD TEST",
+        "description": "A test event verifying that a generator-based request body uses Transfer-Encoding: chunked and does not set a Content-Length header.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "256",
+        "entity": "CHUNKEDENCODINGERROR",
+        "description": "ChunkedEncodingError is a Requests exception that reports failures in HTTP chunked transfer encoding. It is raised when urllib3 encounters a ProtocolError while iterating over the content of a response.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "579",
+        "entity": "NONEMPTY STREAM UPLOAD TEST",
+        "description": "A test event verifying that an authenticated stream containing data uses Content-Length without setting Transfer-Encoding.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "455",
+        "entity": "TEST_DIGEST_STREAM",
+        "description": "A pytest event that verifies streamed Digest-authenticated responses contain readable raw data while non-streamed responses have already consumed raw content.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "344",
+        "entity": "TEST CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER",
+        "description": "A test event verifying that a custom Host header is used exactly once for a chunked upload",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "572",
+        "entity": "TEST_RESPONSE_ITER_LINES_REENTRANT",
+        "description": "An expected-failure test documenting that calling Response.iter_lines multiple times is not reentrant-safe",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "557",
+        "entity": "TEST MANUAL REDIRECT WITH PARTIAL BODY READ",
+        "description": "A test event that verifies Requests can follow streamed redirects after partially reading one response body and fully reading another response body>",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "356",
+        "entity": "CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER",
+        "description": "A test event that verifies a custom Host header is used exactly once during a chunked upload",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "357",
+        "entity": "CHUNKED UPLOAD DOESNT SKIP HOST HEADER",
+        "description": "A test event that verifies the default Host header is retained exactly once during a chunked upload",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "345",
+        "entity": "TEST CHUNKED UPLOAD DOESNT SKIP HOST HEADER",
+        "description": "A test event verifying that Requests includes the expected default Host header exactly once for a chunked upload",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "558",
+        "entity": "TEST PREPARE BODY POSITION NON STREAM",
+        "description": "A test event that verifies a non-streamed byte-string request body produces no rewind position when a GET request is prepared>",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "560",
+        "entity": "TEST REWIND PARTIALLY READ BODY",
+        "description": "A test event that verifies Requests preserves and restores the original offset of a partially read seekable request body>",
+        "number of relationships": "1",
+        "in_context": true
+      }
+    ],
+    "sources": [
+      {
+        "id": "75",
+        "text": "import threading\n\nimport pytest\nfrom tests.testserver.server import Server, consume_socket_content\n\nimport requests\nfrom requests.compat import JSONDecodeError\n\nfrom .utils import override_environ\n\n\ndef echo_response_handler(sock):\n    \"\"\"Simple handler that will take request and echo it back to requester.\"\"\"\n    request_content = consume_socket_content(sock, timeout=0.5)\n\n    text_200 = (\n        b\"HTTP/1.1 200 OK\\r\\n\"\n        b\"Content-Length: %d\\r\\n\\r\\n\"\n        b\"%s\"\n    ) % (len(request_content), request_content)\n    sock.send(text_200)\n\n\ndef test_chunked_upload():\n    \"\"\"can safely send generators\"\"\"\n    close_server = threading.Event()\n    server = Server.basic_response_server(wait_to_close_event=close_server)\n    data = iter([b\"a\", b\"b\", b\"c\"])\n\n    with server as (host, port):\n        url = f\"http://{host}:{port}/\"\n        r = requests.post(url, data=data, stream=True)\n        close_server.set()  # release server block\n\n    assert r.status_code == 200\n    assert r.request.headers[\"Transfer-Encoding\"] == \"chunked\"\n\n\ndef test_chunked_encoding_error():\n    \"\"\"get a ChunkedEncodingError if the server returns a bad response\"\"\"\n\n    def incomplete_chunked_response_handler(sock):\n        request_content = consume_socket_content(sock, timeout=0.5)\n\n        # The server never ends the request and doesn't provide any valid chunks\n        sock.send(\n            b\"HTTP/1.1 200 OK\\r\\n\"\n            b\"Transfer-Encoding: chunked\\r\\n\"\n        )\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(incomplete_chunked_response_handler)\n\n    with server as (host, port):\n        url = f\"http://{host}:{port}/\"\n        with pytest.raises(requests.exceptions.ChunkedEncodingError):\n            requests.get(url)\n        close_server.set()  # release server block\n\n\ndef test_chunked_upload_uses_only_specified_host_header():\n    \"\"\"Ensure we use only the specified Host header for chunked requests.\"\"\"\n    close_server = threading.Event()\n    server = Server(echo_response_handler, wait_to_close_event=close_server)\n\n    data = iter([b\"a\", b\"b\", b\"c\"])\n    custom_host = \"sample-host\"\n\n    with server as (host, port):\n        url = f\"http://{host}:{port}/\"\n        r = requests.post(url, data=data, headers={\"Host\": custom_host}, stream=True)\n        close_server.set()  # release server block\n\n    expected_header = b\"Host: %s\\r\\n\" % custom_host.encode(\"utf-8\")\n    assert expected_header in r.content\n    assert r.content.count(b\"Host: \") == 1\n\n\ndef test_chunked_upload_doesnt_skip_host_header():\n    \"\"\"Ensure we don't omit all Host headers with chunked requests.\"\"\"\n    close_server = threading.Event()\n    server = Server(echo_response_handler, wait_to_close_event=close_server)\n\n    data = iter([b\"a\", b\"b\", b\"c\"])\n\n    with server as (host, port):\n        expected_host = f\"{host}:{port}\"\n        url = f\"http://{host}:{port}/\"\n        r = requests.post(url, data=data, stream=True)\n        close_server.set()  # release server block\n\n    expected_header = b\"Host: %s\\r\\n\" % expected_host.encode(\"utf-8\")\n    assert expected_header in r.content\n    assert r.content.count(b\"Host: \") == 1\n\n\ndef test_conflicting_content_lengths():\n    \"\"\"Ensure we correctly throw an InvalidHeader error if multiple\n    conflicting Content-Length headers are returned.\n    \"\"\"\n\n    def multiple_content_length_response_handler(sock):\n        request_content = consume_socket_content(sock, timeout=0.5)\n        response = (\n            b\"HTTP/1.1 200 OK\\r\\n\"\n            b\"Content-Type: text/plain\\r\\n\"\n            b\"Content-Length: 16\\r\\n\"\n            b\"Content-Length: 32\\r\\n\\r\\n\"\n            b\"-- Bad Actor -- Original Content\\r\\n\"\n        )\n        sock.send(response)\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(multiple_content_length_response_handler)\n\n    with server as (host, port):\n        url = f\"http://{host}:{port}/\"\n        with pytest.raises(requests.exceptions.InvalidHeader):\n            requests.get(url)\n        close_server.set()\n\n\ndef test_digestauth_401_count_reset_on_redirect():\n    \"\"\"Ensure we correctly reset num_401_calls after a successful digest auth,\n    followed by a 302 redirect to another digest auth prompt.\n\n    See https://github.com/psf/requests/issues/1979.\n    \"\"\"\n    text_401 = (b'HTTP/1.1 401 UNAUTHORIZED\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'WWW-Authenticate: Digest nonce=\"6bf5d6e4da1ce66918800195d6b9130d\"'\n                b', opaque=\"372825293d1c26955496c80ed6426e9e\", '\n                b'realm=\"me@kennethreitz.com\", qop=auth\\r\\n\\r\\n')\n\n    text_302 = (b'HTTP/1.1 302 FOUND\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'Location: /\\r\\n\\r\\n')\n\n    text_200 = (b'HTTP/1.1 200 OK\\r\\n'\n                b'Content-Length: 0\\r\\n\\r\\n')\n\n    expected_digest = (b'Authorization: Digest username=\"user\", '\n"
+      },
+      {
+        "id": "49",
+        "text": "    def is_permanent_redirect(self):\n        \"\"\"True if this Response one of the permanent versions of redirect.\"\"\"\n        return \"location\" in self.headers and self.status_code in (\n            codes.moved_permanently,\n            codes.permanent_redirect,\n        )\n\n    @property\n    def next(self):\n        \"\"\"Returns a PreparedRequest for the next request in a redirect chain, if there is one.\"\"\"\n        return self._next\n\n    @property\n    def apparent_encoding(self):\n        \"\"\"The apparent encoding, provided by the charset_normalizer or chardet libraries.\"\"\"\n        if chardet is not None:\n            return chardet.detect(self.content)[\"encoding\"]\n        else:\n            # If no character detection library is available, we'll fall back\n            # to a standard Python utf-8 str.\n            return \"utf-8\"\n\n    def iter_content(self, chunk_size=1, decode_unicode=False):\n        \"\"\"Iterates over the response data.  When stream=True is set on the\n        request, this avoids reading the content at once into memory for\n        large responses.  The chunk size is the number of bytes it should\n        read into memory.  This is not necessarily the length of each item\n        returned as decoding can take place.\n\n        chunk_size must be of type int or None. A value of None will\n        function differently depending on the value of `stream`.\n        stream=True will read data as it arrives in whatever size the\n        chunks are received. If stream=False, data is returned as\n        a single chunk.\n\n        If decode_unicode is True, content will be decoded using the best\n        available encoding based on the response.\n        \"\"\"\n\n        def generate():\n            # Special case for urllib3.\n            if hasattr(self.raw, \"stream\"):\n                try:\n                    yield from self.raw.stream(chunk_size, decode_content=True)\n                except ProtocolError as e:\n                    raise ChunkedEncodingError(e)\n                except DecodeError as e:\n                    raise ContentDecodingError(e)\n                except ReadTimeoutError as e:\n                    raise ConnectionError(e)\n                except SSLError as e:\n                    raise RequestsSSLError(e)\n            else:\n                # Standard file-like object.\n                while True:\n                    chunk = self.raw.read(chunk_size)\n                    if not chunk:\n                        break\n                    yield chunk\n\n            self._content_consumed = True\n\n        if self._content_consumed and isinstance(self._content, bool):\n            raise StreamConsumedError()\n        elif chunk_size is not None and not isinstance(chunk_size, int):\n            raise TypeError(\n                f\"chunk_size must be an int, it is instead a {type(chunk_size)}.\"\n            )\n        # simulate reading small chunks of the content\n        reused_chunks = iter_slices(self._content, chunk_size)\n\n        stream_chunks = generate()\n\n        chunks = reused_chunks if self._content_consumed else stream_chunks\n\n        if decode_unicode:\n            chunks = stream_decode_response_unicode(chunks, self)\n\n        return chunks\n\n    def iter_lines(\n        self, chunk_size=ITER_CHUNK_SIZE, decode_unicode=False, delimiter=None\n    ):\n        \"\"\"Iterates over the response data, one line at a time.  When\n        stream=True is set on the request, this avoids reading the\n        content at once into memory for large responses.\n\n        .. note:: This method is not reentrant safe.\n        \"\"\"\n\n        pending = None\n\n        for chunk in self.iter_content(\n            chunk_size=chunk_size, decode_unicode=decode_unicode\n        ):\n            if pending is not None:\n                chunk = pending + chunk\n\n            if delimiter:\n                lines = chunk.split(delimiter)\n            else:\n                lines = chunk.splitlines()\n\n            if lines and lines[-1] and chunk and lines[-1][-1] == chunk[-1]:\n                pending = lines.pop()\n            else:\n                pending = None\n\n            yield from lines\n\n        if pending is not None:\n            yield pending\n\n    @property\n    def content(self):\n        \"\"\"Content of the response, in bytes.\"\"\"\n\n        if self._content is False:\n            # Read the contents.\n            if self._content_consumed:\n                raise RuntimeError(\"The content for this response was already consumed\")\n\n            if self.status_code == 0 or self.raw is None:\n                self._content = None\n            else:\n                self._content = b\"\".join(self.iter_content(CONTENT_CHUNK_SIZE)) or b\"\"\n\n        self._content_consumed = True\n        # don't need to release the connection; that's been handled by urllib3\n        # since we exhausted the data.\n        return self._content\n\n    @property\n    def text(self):\n        \"\"\"Content of the response, in unicode.\n\n        If Response.encoding is None, encoding will be guessed using\n        ``charset_normalizer`` or ``chardet``.\n\n        The encoding of the response content is determined based solely on HTTP\n        headers, following RFC 2616 to the letter. If you can take advantage of\n        non-HTTP knowledge to make a better guess at the encoding, you should\n        set ``r.encoding`` appropriately before accessing this property.\n        \"\"\"\n\n        # Try charset from content-type\n        content = None\n        encoding = self.encoding\n\n        if not self.content:\n            return \"\"\n\n        # Fallback to auto-detected encoding.\n        if self.encoding is None:\n            encoding = self.apparent_encoding\n\n        # Decode unicode from given encoding.\n        try:\n            content = str(self.content, encoding, errors=\"replace\")\n        except (LookupError, TypeError):\n            # A LookupError is raised if the encoding was not found which could\n            # indicate a misspelling or similar mistake.\n            #\n            # A TypeError can be raised if encoding is None\n            #\n            # So we try blindly encoding.\n"
+      },
+      {
+        "id": "95",
+        "text": "\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"Unable to rewind request body\" in str(e)\n\n    def _patch_adapter_gzipped_redirect(self, session, url):\n        adapter = session.get_adapter(url=url)\n        org_build_response = adapter.build_response\n        self._patched_response = False\n\n        def build_response(*args, **kwargs):\n            resp = org_build_response(*args, **kwargs)\n            if not self._patched_response:\n                resp.raw.headers[\"content-encoding\"] = \"gzip\"\n                self._patched_response = True\n            return resp\n\n        adapter.build_response = build_response\n\n    def test_redirect_with_wrong_gzipped_header(self, httpbin):\n        s = requests.Session()\n        url = httpbin(\"redirect/1\")\n        self._patch_adapter_gzipped_redirect(s, url)\n        s.get(url)\n\n    @pytest.mark.parametrize(\n        \"username, password, auth_str\",\n        (\n            (\"test\", \"test\", \"Basic dGVzdDp0ZXN0\"),\n            (\n                \"имя\".encode(),\n                \"пароль\".encode(),\n                \"Basic 0LjQvNGPOtC/0LDRgNC+0LvRjA==\",\n            ),\n        ),\n    )\n    def test_basic_auth_str_is_always_native(self, username, password, auth_str):\n        s = _basic_auth_str(username, password)\n        assert isinstance(s, builtin_str)\n        assert s == auth_str\n\n    def test_requests_history_is_saved(self, httpbin):\n        r = requests.get(httpbin(\"redirect/5\"))\n        total = r.history[-1].history\n        i = 0\n        for item in r.history:\n            assert item.history == total[0:i]\n            i += 1\n\n    def test_json_param_post_content_type_works(self, httpbin):\n        r = requests.post(httpbin(\"post\"), json={\"life\": 42})\n        assert r.status_code == 200\n        assert \"application/json\" in r.request.headers[\"Content-Type\"]\n        assert {\"life\": 42} == r.json()[\"json\"]\n\n    def test_json_param_post_should_not_override_data_param(self, httpbin):\n        r = requests.Request(\n            method=\"POST\",\n            url=httpbin(\"post\"),\n            data={\"stuff\": \"elixr\"},\n            json={\"music\": \"flute\"},\n        )\n        prep = r.prepare()\n        assert \"stuff=elixr\" == prep.body\n\n    def test_response_iter_lines(self, httpbin):\n        r = requests.get(httpbin(\"stream/4\"), stream=True)\n        assert r.status_code == 200\n\n        it = r.iter_lines()\n        next(it)\n        assert len(list(it)) == 3\n\n    def test_response_context_manager(self, httpbin):\n        with requests.get(httpbin(\"stream/4\"), stream=True) as response:\n            assert isinstance(response, requests.Response)\n\n        assert response.raw.closed\n\n    def test_unconsumed_session_response_closes_connection(self, httpbin):\n        s = requests.session()\n\n        with contextlib.closing(s.get(httpbin(\"stream/4\"), stream=True)) as response:\n            pass\n\n        assert response._content_consumed is False\n        assert response.raw.closed\n\n    @pytest.mark.xfail\n    def test_response_iter_lines_reentrant(self, httpbin):\n        \"\"\"Response.iter_lines() is not reentrant safe\"\"\"\n        r = requests.get(httpbin(\"stream/4\"), stream=True)\n        assert r.status_code == 200\n\n        next(r.iter_lines())\n        assert len(list(r.iter_lines())) == 3\n\n    def test_session_close_proxy_clear(self):\n        proxies = {\n            \"one\": mock.Mock(),\n            \"two\": mock.Mock(),\n        }\n        session = requests.Session()\n        with mock.patch.dict(session.adapters[\"http://\"].proxy_manager, proxies):\n            session.close()\n            proxies[\"one\"].clear.assert_called_once_with()\n            proxies[\"two\"].clear.assert_called_once_with()\n\n    def test_proxy_auth(self):\n        adapter = HTTPAdapter()\n        headers = adapter.proxy_headers(\"http://user:pass@httpbin.org\")\n        assert headers == {\"Proxy-Authorization\": \"Basic dXNlcjpwYXNz\"}\n\n    def test_proxy_auth_empty_pass(self):\n        adapter = HTTPAdapter()\n        headers = adapter.proxy_headers(\"http://user:@httpbin.org\")\n        assert headers == {\"Proxy-Authorization\": \"Basic dXNlcjo=\"}\n\n    def test_response_json_when_content_is_None(self, httpbin):\n        r = requests.get(httpbin(\"/status/204\"))\n        # Make sure r.content is None\n        r.status_code = 0\n        r._content = False\n        r._content_consumed = False\n\n        assert r.content is None\n        with pytest.raises(ValueError):\n            r.json()\n\n    def test_response_without_release_conn(self):\n        \"\"\"Test `close` call for non-urllib3-like raw objects.\n        Should work when `release_conn` attr doesn't exist on `response.raw`.\n        \"\"\"\n        resp = requests.Response()\n        resp.raw = StringIO.StringIO(\"test\")\n        assert not resp.raw.closed\n        resp.close()\n        assert resp.raw.closed\n\n    def test_empty_stream_with_auth_does_not_set_content_length_header(self, httpbin):\n        \"\"\"Ensure that a byte stream with size 0 will not set both a Content-Length\n        and Transfer-Encoding header.\n        \"\"\"\n        auth = (\"user\", \"pass\")\n        url = httpbin(\"post\")\n        file_obj = io.BytesIO(b\"\")\n        r = requests.Request(\"POST\", url, auth=auth, data=file_obj)\n        prepared_request = r.prepare()\n        assert \"Transfer-Encoding\" in prepared_request.headers\n"
+      }
+    ]
+  },
+  "final_context": "-----Entities-----\nid|entity|description|number of relationships\n351|INCOMPLETE CHUNKED RESPONSE HANDLER|A socket response-handler event that sends an HTTP 200 response declaring chunked transfer encoding but never provides valid terminating chunks, allowing the test to verify error handling|1\n263|STREAMED RESPONSE READING|Streamed response reading is the process of consuming response data incrementally from a raw stream rather than loading it all into memory at once.|2\n569|TEST_RESPONSE_ITER_LINES|A test that verifies a streamed response can be iterated by lines and produces the expected number of lines|3\n343|TEST CHUNKED ENCODING ERROR|A test event verifying that Requests raises ChunkedEncodingError when a server returns an incomplete or invalid chunked response|3\n354|CHUNKED UPLOAD|A test event that posts generator-produced byte chunks to a local server and verifies successful chunked transfer encoding|2\n355|CHUNKED ENCODING ERROR|A test event that sends a request to an incomplete chunked response and verifies that Requests raises ChunkedEncodingError|3\n342|TEST CHUNKED UPLOAD|A test event verifying that Requests can safely send generator-based request data using chunked transfer encoding|3\n580|CHUNKED UPLOAD TEST|A test event verifying that a generator-based request body uses Transfer-Encoding: chunked and does not set a Content-Length header.|1\n256|CHUNKEDENCODINGERROR|ChunkedEncodingError is a Requests exception that reports failures in HTTP chunked transfer encoding. It is raised when urllib3 encounters a ProtocolError while iterating over the content of a response.|1\n579|NONEMPTY STREAM UPLOAD TEST|A test event verifying that an authenticated stream containing data uses Content-Length without setting Transfer-Encoding.|1\n455|TEST_DIGEST_STREAM|A pytest event that verifies streamed Digest-authenticated responses contain readable raw data while non-streamed responses have already consumed raw content.|3\n344|TEST CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER|A test event verifying that a custom Host header is used exactly once for a chunked upload|3\n572|TEST_RESPONSE_ITER_LINES_REENTRANT|An expected-failure test documenting that calling Response.iter_lines multiple times is not reentrant-safe|3\n557|TEST MANUAL REDIRECT WITH PARTIAL BODY READ|A test event that verifies Requests can follow streamed redirects after partially reading one response body and fully reading another response body>|2\n356|CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER|A test event that verifies a custom Host header is used exactly once during a chunked upload|2\n357|CHUNKED UPLOAD DOESNT SKIP HOST HEADER|A test event that verifies the default Host header is retained exactly once during a chunked upload|2\n345|TEST CHUNKED UPLOAD DOESNT SKIP HOST HEADER|A test event verifying that Requests includes the expected default Host header exactly once for a chunked upload|3\n558|TEST PREPARE BODY POSITION NON STREAM|A test event that verifies a non-streamed byte-string request body produces no rewind position when a GET request is prepared>|1\n560|TEST REWIND PARTIALLY READ BODY|A test event that verifies Requests preserves and restores the original offset of a partially read seekable request body>|1\n\n-----Relationships-----\nid|source|target|description|weight\n521|CHUNKED ENCODING ERROR|CHUNKED ENCODING ERROR|The chunked encoding error test expects Requests to raise the ChunkedEncodingError exception|10.0\n492|TEST CHUNKED UPLOAD|REQUESTS|The test exercises Requests by sending generator data in a chunked POST request and checking the Transfer-Encoding header|9.0\n495|TEST CHUNKED ENCODING ERROR|REQUESTS|The test exercises Requests and expects it to raise ChunkedEncodingError for an incomplete chunked response|9.0\n498|TEST CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER|REQUESTS|The test sends a chunked POST request through Requests with a custom Host header and verifies the echoed request headers|9.0\n501|TEST CHUNKED UPLOAD DOESNT SKIP HOST HEADER|REQUESTS|The test sends a chunked POST request through Requests and verifies that the default Host header is preserved|9.0\n714|TEST_DIGEST_STREAM|REQUESTS|The event tests Requests streaming and raw response reading with Digest authentication|9.0\n918|TEST_RESPONSE_ITER_LINES|REQUESTS|The test validates Requests streamed response line iteration|9.0\n924|TEST_RESPONSE_ITER_LINES_REENTRANT|REQUESTS|The expected-failure test documents a limitation in Requests Response.iter_lines behavior|9.0\n902|TEST MANUAL REDIRECT WITH PARTIAL BODY READ|REQUESTS|This test validates Requests Session.resolve_redirects and streamed response-body handling|9.0\n369|REQUESTS|STREAMED RESPONSE READING|Requests provides iter_content and iter_lines for streamed response reading.|9.0\n904|TEST PREPARE BODY POSITION NON STREAM|REQUESTS|This test validates Requests request preparation and body-position tracking for non-streamed data|9.0\n906|TEST REWIND PARTIALLY READ BODY|REQUESTS|This test validates Requests restoration of a partially consumed request body|9.0\n949|NONEMPTY STREAM UPLOAD TEST|REQUESTS|The test validates how Requests prepares authenticated POST requests containing a nonempty byte stream.|9.0\n950|CHUNKED UPLOAD TEST|REQUESTS|The test validates Requests handling of generator-based request bodies and chunked transfer encoding.|9.0\n364|REQUESTS|CHUNKEDENCODINGERROR|Requests converts underlying urllib3 `ProtocolError` failures into `ChunkedEncodingError` exceptions during streaming, including while processing responses through `iter_content`.|18.0\n493|TEST CHUNKED UPLOAD|PYTEST|The test uses pytest assertions to verify the result of a chunked upload|7.0\n496|TEST CHUNKED ENCODING ERROR|PYTEST|The test uses pytest.raises to verify the expected Requests exception|8.0\n499|TEST CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER|PYTEST|The test uses pytest assertions to verify that the custom Host header appears exactly once|7.0\n502|TEST CHUNKED UPLOAD DOESNT SKIP HOST HEADER|PYTEST|The test uses pytest assertions to verify that exactly one default Host header is present|7.0\n716|TEST_DIGEST_STREAM|PYTEST|Pytest runs the Digest streaming test|8.0\n939|PYTEST|TEST_RESPONSE_ITER_LINES|Pytest executes the streamed line-iteration test|9.0\n942|PYTEST|TEST_RESPONSE_ITER_LINES_REENTRANT|Pytest marks the reentrant line-iteration test as an expected failure|9.0\n715|TEST_DIGEST_STREAM|HTTPBIN|The event obtains Digest-authenticated responses from HTTPBin|8.0\n919|TEST_RESPONSE_ITER_LINES|HTTPBIN|The test uses an Httpbin streaming endpoint|8.0\n925|TEST_RESPONSE_ITER_LINES_REENTRANT|HTTPBIN|The test uses an Httpbin streaming endpoint|8.0\n903|TEST MANUAL REDIRECT WITH PARTIAL BODY READ|HTTPBIN|This test obtains redirect responses from Httpbin through the httpbin fixture|8.0\n510|SERVER|CHUNKED ENCODING ERROR|The Server utility runs the incomplete-chunked-response handler used by the error test|8.0\n509|SERVER|CHUNKED UPLOAD|The Server utility provides the local HTTP endpoint used by the chunked upload test|8.0\n511|SERVER|CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER|The Server utility hosts the request whose custom Host header is inspected|8.0\n512|SERVER|CHUNKED UPLOAD DOESNT SKIP HOST HEADER|The Server utility hosts the request whose default Host header is inspected|8.0\n494|TEST CHUNKED UPLOAD|THREADING|The test uses a threading Event to release the test server after the request completes|7.0\n497|TEST CHUNKED ENCODING ERROR|THREADING|The test uses a threading Event to release the server block after the expected failure|6.0\n500|TEST CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER|THREADING|The test uses a threading Event to release the test server after the request completes|6.0\n503|TEST CHUNKED UPLOAD DOESNT SKIP HOST HEADER|THREADING|The test uses a threading Event to release the test server after the request completes|6.0\n517|ECHO RESPONSE HANDLER|CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER|The custom-Host-header test uses the echo handler to inspect and return the submitted request headers|9.0\n518|ECHO RESPONSE HANDLER|CHUNKED UPLOAD DOESNT SKIP HOST HEADER|The default-Host-header test uses the echo handler to inspect and return the submitted request headers|9.0\n357|RESPONSE|STREAMED RESPONSE READING|The Response object incrementally reads raw content through iter_content and iter_lines.|9.0\n515|CONSUME SOCKET CONTENT|INCOMPLETE CHUNKED RESPONSE HANDLER|The incomplete-response handler uses consume_socket_content before sending the malformed response|8.0\n519|BASIC RESPONSE SERVER|CHUNKED UPLOAD|The chunked upload test creates a basic response server to receive the generator-based request|9.0\n\n-----Sources-----\nid|source|text\n75|tests/test_lowlevel.py:L1-L146|\"import threading\n\nimport pytest\nfrom tests.testserver.server import Server, consume_socket_content\n\nimport requests\nfrom requests.compat import JSONDecodeError\n\nfrom .utils import override_environ\n\n\ndef echo_response_handler(sock):\n    \"\"\"\"\"\"Simple handler that will take request and echo it back to requester.\"\"\"\"\"\"\n    request_content = consume_socket_content(sock, timeout=0.5)\n\n    text_200 = (\n        b\"\"HTTP/1.1 200 OK\\r\\n\"\"\n        b\"\"Content-Length: %d\\r\\n\\r\\n\"\"\n        b\"\"%s\"\"\n    ) % (len(request_content), request_content)\n    sock.send(text_200)\n\n\ndef test_chunked_upload():\n    \"\"\"\"\"\"can safely send generators\"\"\"\"\"\"\n    close_server = threading.Event()\n    server = Server.basic_response_server(wait_to_close_event=close_server)\n    data = iter([b\"\"a\"\", b\"\"b\"\", b\"\"c\"\"])\n\n    with server as (host, port):\n        url = f\"\"http://{host}:{port}/\"\"\n        r = requests.post(url, data=data, stream=True)\n        close_server.set()  # release server block\n\n    assert r.status_code == 200\n    assert r.request.headers[\"\"Transfer-Encoding\"\"] == \"\"chunked\"\"\n\n\ndef test_chunked_encoding_error():\n    \"\"\"\"\"\"get a ChunkedEncodingError if the server returns a bad response\"\"\"\"\"\"\n\n    def incomplete_chunked_response_handler(sock):\n        request_content = consume_socket_content(sock, timeout=0.5)\n\n        # The server never ends the request and doesn't provide any valid chunks\n        sock.send(\n            b\"\"HTTP/1.1 200 OK\\r\\n\"\"\n            b\"\"Transfer-Encoding: chunked\\r\\n\"\"\n        )\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(incomplete_chunked_response_handler)\n\n    with server as (host, port):\n        url = f\"\"http://{host}:{port}/\"\"\n        with pytest.raises(requests.exceptions.ChunkedEncodingError):\n            requests.get(url)\n        close_server.set()  # release server block\n\n\ndef test_chunked_upload_uses_only_specified_host_header():\n    \"\"\"\"\"\"Ensure we use only the specified Host header for chunked requests.\"\"\"\"\"\"\n    close_server = threading.Event()\n    server = Server(echo_response_handler, wait_to_close_event=close_server)\n\n    data = iter([b\"\"a\"\", b\"\"b\"\", b\"\"c\"\"])\n    custom_host = \"\"sample-host\"\"\n\n    with server as (host, port):\n        url = f\"\"http://{host}:{port}/\"\"\n        r = requests.post(url, data=data, headers={\"\"Host\"\": custom_host}, stream=True)\n        close_server.set()  # release server block\n\n    expected_header = b\"\"Host: %s\\r\\n\"\" % custom_host.encode(\"\"utf-8\"\")\n    assert expected_header in r.content\n    assert r.content.count(b\"\"Host: \"\") == 1\n\n\ndef test_chunked_upload_doesnt_skip_host_header():\n    \"\"\"\"\"\"Ensure we don't omit all Host headers with chunked requests.\"\"\"\"\"\"\n    close_server = threading.Event()\n    server = Server(echo_response_handler, wait_to_close_event=close_server)\n\n    data = iter([b\"\"a\"\", b\"\"b\"\", b\"\"c\"\"])\n\n    with server as (host, port):\n        expected_host = f\"\"{host}:{port}\"\"\n        url = f\"\"http://{host}:{port}/\"\"\n        r = requests.post(url, data=data, stream=True)\n        close_server.set()  # release server block\n\n    expected_header = b\"\"Host: %s\\r\\n\"\" % expected_host.encode(\"\"utf-8\"\")\n    assert expected_header in r.content\n    assert r.content.count(b\"\"Host: \"\") == 1\n\n\ndef test_conflicting_content_lengths():\n    \"\"\"\"\"\"Ensure we correctly throw an InvalidHeader error if multiple\n    conflicting Content-Length headers are returned.\n    \"\"\"\"\"\"\n\n    def multiple_content_length_response_handler(sock):\n        request_content = consume_socket_content(sock, timeout=0.5)\n        response = (\n            b\"\"HTTP/1.1 200 OK\\r\\n\"\"\n            b\"\"Content-Type: text/plain\\r\\n\"\"\n            b\"\"Content-Length: 16\\r\\n\"\"\n            b\"\"Content-Length: 32\\r\\n\\r\\n\"\"\n            b\"\"-- Bad Actor -- Original Content\\r\\n\"\"\n        )\n        sock.send(response)\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(multiple_content_length_response_handler)\n\n    with server as (host, port):\n        url = f\"\"http://{host}:{port}/\"\"\n        with pytest.raises(requests.exceptions.InvalidHeader):\n            requests.get(url)\n        close_server.set()\n\n\ndef test_digestauth_401_count_reset_on_redirect():\n    \"\"\"\"\"\"Ensure we correctly reset num_401_calls after a successful digest auth,\n    followed by a 302 redirect to another digest auth prompt.\n\n    See https://github.com/psf/requests/issues/1979.\n    \"\"\"\"\"\"\n    text_401 = (b'HTTP/1.1 401 UNAUTHORIZED\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'WWW-Authenticate: Digest nonce=\"\"6bf5d6e4da1ce66918800195d6b9130d\"\"'\n                b', opaque=\"\"372825293d1c26955496c80ed6426e9e\"\", '\n                b'realm=\"\"me@kennethreitz.com\"\", qop=auth\\r\\n\\r\\n')\n\n    text_302 = (b'HTTP/1.1 302 FOUND\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'Location: /\\r\\n\\r\\n')\n\n    text_200 = (b'HTTP/1.1 200 OK\\r\\n'\n                b'Content-Length: 0\\r\\n\\r\\n')\n\n    expected_digest = (b'Authorization: Digest username=\"\"user\"\", '\n\"\n49|src/requests/models.py:L777-L942|\"    def is_permanent_redirect(self):\n        \"\"\"\"\"\"True if this Response one of the permanent versions of redirect.\"\"\"\"\"\"\n        return \"\"location\"\" in self.headers and self.status_code in (\n            codes.moved_permanently,\n            codes.permanent_redirect,\n        )\n\n    @property\n    def next(self):\n        \"\"\"\"\"\"Returns a PreparedRequest for the next request in a redirect chain, if there is one.\"\"\"\"\"\"\n        return self._next\n\n    @property\n    def apparent_encoding(self):\n        \"\"\"\"\"\"The apparent encoding, provided by the charset_normalizer or chardet libraries.\"\"\"\"\"\"\n        if chardet is not None:\n            return chardet.detect(self.content)[\"\"encoding\"\"]\n        else:\n            # If no character detection library is available, we'll fall back\n            # to a standard Python utf-8 str.\n            return \"\"utf-8\"\"\n\n    def iter_content(self, chunk_size=1, decode_unicode=False):\n        \"\"\"\"\"\"Iterates over the response data.  When stream=True is set on the\n        request, this avoids reading the content at once into memory for\n        large responses.  The chunk size is the number of bytes it should\n        read into memory.  This is not necessarily the length of each item\n        returned as decoding can take place.\n\n        chunk_size must be of type int or None. A value of None will\n        function differently depending on the value of `stream`.\n        stream=True will read data as it arrives in whatever size the\n        chunks are received. If stream=False, data is returned as\n        a single chunk.\n\n        If decode_unicode is True, content will be decoded using the best\n        available encoding based on the response.\n        \"\"\"\"\"\"\n\n        def generate():\n            # Special case for urllib3.\n            if hasattr(self.raw, \"\"stream\"\"):\n                try:\n                    yield from self.raw.stream(chunk_size, decode_content=True)\n                except ProtocolError as e:\n                    raise ChunkedEncodingError(e)\n                except DecodeError as e:\n                    raise ContentDecodingError(e)\n                except ReadTimeoutError as e:\n                    raise ConnectionError(e)\n                except SSLError as e:\n                    raise RequestsSSLError(e)\n            else:\n                # Standard file-like object.\n                while True:\n                    chunk = self.raw.read(chunk_size)\n                    if not chunk:\n                        break\n                    yield chunk\n\n            self._content_consumed = True\n\n        if self._content_consumed and isinstance(self._content, bool):\n            raise StreamConsumedError()\n        elif chunk_size is not None and not isinstance(chunk_size, int):\n            raise TypeError(\n                f\"\"chunk_size must be an int, it is instead a {type(chunk_size)}.\"\"\n            )\n        # simulate reading small chunks of the content\n        reused_chunks = iter_slices(self._content, chunk_size)\n\n        stream_chunks = generate()\n\n        chunks = reused_chunks if self._content_consumed else stream_chunks\n\n        if decode_unicode:\n            chunks = stream_decode_response_unicode(chunks, self)\n\n        return chunks\n\n    def iter_lines(\n        self, chunk_size=ITER_CHUNK_SIZE, decode_unicode=False, delimiter=None\n    ):\n        \"\"\"\"\"\"Iterates over the response data, one line at a time.  When\n        stream=True is set on the request, this avoids reading the\n        content at once into memory for large responses.\n\n        .. note:: This method is not reentrant safe.\n        \"\"\"\"\"\"\n\n        pending = None\n\n        for chunk in self.iter_content(\n            chunk_size=chunk_size, decode_unicode=decode_unicode\n        ):\n            if pending is not None:\n                chunk = pending + chunk\n\n            if delimiter:\n                lines = chunk.split(delimiter)\n            else:\n                lines = chunk.splitlines()\n\n            if lines and lines[-1] and chunk and lines[-1][-1] == chunk[-1]:\n                pending = lines.pop()\n            else:\n                pending = None\n\n            yield from lines\n\n        if pending is not None:\n            yield pending\n\n    @property\n    def content(self):\n        \"\"\"\"\"\"Content of the response, in bytes.\"\"\"\"\"\"\n\n        if self._content is False:\n            # Read the contents.\n            if self._content_consumed:\n                raise RuntimeError(\"\"The content for this response was already consumed\"\")\n\n            if self.status_code == 0 or self.raw is None:\n                self._content = None\n            else:\n                self._content = b\"\"\"\".join(self.iter_content(CONTENT_CHUNK_SIZE)) or b\"\"\"\"\n\n        self._content_consumed = True\n        # don't need to release the connection; that's been handled by urllib3\n        # since we exhausted the data.\n        return self._content\n\n    @property\n    def text(self):\n        \"\"\"\"\"\"Content of the response, in unicode.\n\n        If Response.encoding is None, encoding will be guessed using\n        ``charset_normalizer`` or ``chardet``.\n\n        The encoding of the response content is determined based solely on HTTP\n        headers, following RFC 2616 to the letter. If you can take advantage of\n        non-HTTP knowledge to make a better guess at the encoding, you should\n        set ``r.encoding`` appropriately before accessing this property.\n        \"\"\"\"\"\"\n\n        # Try charset from content-type\n        content = None\n        encoding = self.encoding\n\n        if not self.content:\n            return \"\"\"\"\n\n        # Fallback to auto-detected encoding.\n        if self.encoding is None:\n            encoding = self.apparent_encoding\n\n        # Decode unicode from given encoding.\n        try:\n            content = str(self.content, encoding, errors=\"\"replace\"\")\n        except (LookupError, TypeError):\n            # A LookupError is raised if the encoding was not found which could\n            # indicate a misspelling or similar mistake.\n            #\n            # A TypeError can be raised if encoding is None\n            #\n            # So we try blindly encoding.\n\"\n95|tests/test_requests.py:L2016-L2165|\"\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"\"Unable to rewind request body\"\" in str(e)\n\n    def _patch_adapter_gzipped_redirect(self, session, url):\n        adapter = session.get_adapter(url=url)\n        org_build_response = adapter.build_response\n        self._patched_response = False\n\n        def build_response(*args, **kwargs):\n            resp = org_build_response(*args, **kwargs)\n            if not self._patched_response:\n                resp.raw.headers[\"\"content-encoding\"\"] = \"\"gzip\"\"\n                self._patched_response = True\n            return resp\n\n        adapter.build_response = build_response\n\n    def test_redirect_with_wrong_gzipped_header(self, httpbin):\n        s = requests.Session()\n        url = httpbin(\"\"redirect/1\"\")\n        self._patch_adapter_gzipped_redirect(s, url)\n        s.get(url)\n\n    @pytest.mark.parametrize(\n        \"\"username, password, auth_str\"\",\n        (\n            (\"\"test\"\", \"\"test\"\", \"\"Basic dGVzdDp0ZXN0\"\"),\n            (\n                \"\"имя\"\".encode(),\n                \"\"пароль\"\".encode(),\n                \"\"Basic 0LjQvNGPOtC/0LDRgNC+0LvRjA==\"\",\n            ),\n        ),\n    )\n    def test_basic_auth_str_is_always_native(self, username, password, auth_str):\n        s = _basic_auth_str(username, password)\n        assert isinstance(s, builtin_str)\n        assert s == auth_str\n\n    def test_requests_history_is_saved(self, httpbin):\n        r = requests.get(httpbin(\"\"redirect/5\"\"))\n        total = r.history[-1].history\n        i = 0\n        for item in r.history:\n            assert item.history == total[0:i]\n            i += 1\n\n    def test_json_param_post_content_type_works(self, httpbin):\n        r = requests.post(httpbin(\"\"post\"\"), json={\"\"life\"\": 42})\n        assert r.status_code == 200\n        assert \"\"application/json\"\" in r.request.headers[\"\"Content-Type\"\"]\n        assert {\"\"life\"\": 42} == r.json()[\"\"json\"\"]\n\n    def test_json_param_post_should_not_override_data_param(self, httpbin):\n        r = requests.Request(\n            method=\"\"POST\"\",\n            url=httpbin(\"\"post\"\"),\n            data={\"\"stuff\"\": \"\"elixr\"\"},\n            json={\"\"music\"\": \"\"flute\"\"},\n        )\n        prep = r.prepare()\n        assert \"\"stuff=elixr\"\" == prep.body\n\n    def test_response_iter_lines(self, httpbin):\n        r = requests.get(httpbin(\"\"stream/4\"\"), stream=True)\n        assert r.status_code == 200\n\n        it = r.iter_lines()\n        next(it)\n        assert len(list(it)) == 3\n\n    def test_response_context_manager(self, httpbin):\n        with requests.get(httpbin(\"\"stream/4\"\"), stream=True) as response:\n            assert isinstance(response, requests.Response)\n\n        assert response.raw.closed\n\n    def test_unconsumed_session_response_closes_connection(self, httpbin):\n        s = requests.session()\n\n        with contextlib.closing(s.get(httpbin(\"\"stream/4\"\"), stream=True)) as response:\n            pass\n\n        assert response._content_consumed is False\n        assert response.raw.closed\n\n    @pytest.mark.xfail\n    def test_response_iter_lines_reentrant(self, httpbin):\n        \"\"\"\"\"\"Response.iter_lines() is not reentrant safe\"\"\"\"\"\"\n        r = requests.get(httpbin(\"\"stream/4\"\"), stream=True)\n        assert r.status_code == 200\n\n        next(r.iter_lines())\n        assert len(list(r.iter_lines())) == 3\n\n    def test_session_close_proxy_clear(self):\n        proxies = {\n            \"\"one\"\": mock.Mock(),\n            \"\"two\"\": mock.Mock(),\n        }\n        session = requests.Session()\n        with mock.patch.dict(session.adapters[\"\"http://\"\"].proxy_manager, proxies):\n            session.close()\n            proxies[\"\"one\"\"].clear.assert_called_once_with()\n            proxies[\"\"two\"\"].clear.assert_called_once_with()\n\n    def test_proxy_auth(self):\n        adapter = HTTPAdapter()\n        headers = adapter.proxy_headers(\"\"http://user:pass@httpbin.org\"\")\n        assert headers == {\"\"Proxy-Authorization\"\": \"\"Basic dXNlcjpwYXNz\"\"}\n\n    def test_proxy_auth_empty_pass(self):\n        adapter = HTTPAdapter()\n        headers = adapter.proxy_headers(\"\"http://user:@httpbin.org\"\")\n        assert headers == {\"\"Proxy-Authorization\"\": \"\"Basic dXNlcjo=\"\"}\n\n    def test_response_json_when_content_is_None(self, httpbin):\n        r = requests.get(httpbin(\"\"/status/204\"\"))\n        # Make sure r.content is None\n        r.status_code = 0\n        r._content = False\n        r._content_consumed = False\n\n        assert r.content is None\n        with pytest.raises(ValueError):\n            r.json()\n\n    def test_response_without_release_conn(self):\n        \"\"\"\"\"\"Test `close` call for non-urllib3-like raw objects.\n        Should work when `release_conn` attr doesn't exist on `response.raw`.\n        \"\"\"\"\"\"\n        resp = requests.Response()\n        resp.raw = StringIO.StringIO(\"\"test\"\")\n        assert not resp.raw.closed\n        resp.close()\n        assert resp.raw.closed\n\n    def test_empty_stream_with_auth_does_not_set_content_length_header(self, httpbin):\n        \"\"\"\"\"\"Ensure that a byte stream with size 0 will not set both a Content-Length\n        and Transfer-Encoding header.\n        \"\"\"\"\"\"\n        auth = (\"\"user\"\", \"\"pass\"\")\n        url = httpbin(\"\"post\"\")\n        file_obj = io.BytesIO(b\"\"\"\")\n        r = requests.Request(\"\"POST\"\", url, auth=auth, data=file_obj)\n        prepared_request = r.prepare()\n        assert \"\"Transfer-Encoding\"\" in prepared_request.headers\n\"\n",
+  "final_tables": [
+    {
+      "name": "entities",
+      "columns": [
+        "id",
+        "entity",
+        "description",
+        "number of relationships"
+      ],
+      "rows": [
+        {
+          "id": "351",
+          "entity": "INCOMPLETE CHUNKED RESPONSE HANDLER",
+          "description": "A socket response-handler event that sends an HTTP 200 response declaring chunked transfer encoding but never provides valid terminating chunks, allowing the test to verify error handling",
+          "number of relationships": "1"
+        },
+        {
+          "id": "263",
+          "entity": "STREAMED RESPONSE READING",
+          "description": "Streamed response reading is the process of consuming response data incrementally from a raw stream rather than loading it all into memory at once.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "569",
+          "entity": "TEST_RESPONSE_ITER_LINES",
+          "description": "A test that verifies a streamed response can be iterated by lines and produces the expected number of lines",
+          "number of relationships": "3"
+        },
+        {
+          "id": "343",
+          "entity": "TEST CHUNKED ENCODING ERROR",
+          "description": "A test event verifying that Requests raises ChunkedEncodingError when a server returns an incomplete or invalid chunked response",
+          "number of relationships": "3"
+        },
+        {
+          "id": "354",
+          "entity": "CHUNKED UPLOAD",
+          "description": "A test event that posts generator-produced byte chunks to a local server and verifies successful chunked transfer encoding",
+          "number of relationships": "2"
+        },
+        {
+          "id": "355",
+          "entity": "CHUNKED ENCODING ERROR",
+          "description": "A test event that sends a request to an incomplete chunked response and verifies that Requests raises ChunkedEncodingError",
+          "number of relationships": "3"
+        },
+        {
+          "id": "342",
+          "entity": "TEST CHUNKED UPLOAD",
+          "description": "A test event verifying that Requests can safely send generator-based request data using chunked transfer encoding",
+          "number of relationships": "3"
+        },
+        {
+          "id": "580",
+          "entity": "CHUNKED UPLOAD TEST",
+          "description": "A test event verifying that a generator-based request body uses Transfer-Encoding: chunked and does not set a Content-Length header.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "256",
+          "entity": "CHUNKEDENCODINGERROR",
+          "description": "ChunkedEncodingError is a Requests exception that reports failures in HTTP chunked transfer encoding. It is raised when urllib3 encounters a ProtocolError while iterating over the content of a response.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "579",
+          "entity": "NONEMPTY STREAM UPLOAD TEST",
+          "description": "A test event verifying that an authenticated stream containing data uses Content-Length without setting Transfer-Encoding.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "455",
+          "entity": "TEST_DIGEST_STREAM",
+          "description": "A pytest event that verifies streamed Digest-authenticated responses contain readable raw data while non-streamed responses have already consumed raw content.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "344",
+          "entity": "TEST CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER",
+          "description": "A test event verifying that a custom Host header is used exactly once for a chunked upload",
+          "number of relationships": "3"
+        },
+        {
+          "id": "572",
+          "entity": "TEST_RESPONSE_ITER_LINES_REENTRANT",
+          "description": "An expected-failure test documenting that calling Response.iter_lines multiple times is not reentrant-safe",
+          "number of relationships": "3"
+        },
+        {
+          "id": "557",
+          "entity": "TEST MANUAL REDIRECT WITH PARTIAL BODY READ",
+          "description": "A test event that verifies Requests can follow streamed redirects after partially reading one response body and fully reading another response body>",
+          "number of relationships": "2"
+        },
+        {
+          "id": "356",
+          "entity": "CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER",
+          "description": "A test event that verifies a custom Host header is used exactly once during a chunked upload",
+          "number of relationships": "2"
+        },
+        {
+          "id": "357",
+          "entity": "CHUNKED UPLOAD DOESNT SKIP HOST HEADER",
+          "description": "A test event that verifies the default Host header is retained exactly once during a chunked upload",
+          "number of relationships": "2"
+        },
+        {
+          "id": "345",
+          "entity": "TEST CHUNKED UPLOAD DOESNT SKIP HOST HEADER",
+          "description": "A test event verifying that Requests includes the expected default Host header exactly once for a chunked upload",
+          "number of relationships": "3"
+        },
+        {
+          "id": "558",
+          "entity": "TEST PREPARE BODY POSITION NON STREAM",
+          "description": "A test event that verifies a non-streamed byte-string request body produces no rewind position when a GET request is prepared>",
+          "number of relationships": "1"
+        },
+        {
+          "id": "560",
+          "entity": "TEST REWIND PARTIALLY READ BODY",
+          "description": "A test event that verifies Requests preserves and restores the original offset of a partially read seekable request body>",
+          "number of relationships": "1"
+        }
+      ]
+    },
+    {
+      "name": "relationships",
+      "columns": [
+        "id",
+        "source",
+        "target",
+        "description",
+        "weight"
+      ],
+      "rows": [
+        {
+          "id": "521",
+          "source": "CHUNKED ENCODING ERROR",
+          "target": "CHUNKED ENCODING ERROR",
+          "description": "The chunked encoding error test expects Requests to raise the ChunkedEncodingError exception",
+          "weight": "10.0"
+        },
+        {
+          "id": "492",
+          "source": "TEST CHUNKED UPLOAD",
+          "target": "REQUESTS",
+          "description": "The test exercises Requests by sending generator data in a chunked POST request and checking the Transfer-Encoding header",
+          "weight": "9.0"
+        },
+        {
+          "id": "495",
+          "source": "TEST CHUNKED ENCODING ERROR",
+          "target": "REQUESTS",
+          "description": "The test exercises Requests and expects it to raise ChunkedEncodingError for an incomplete chunked response",
+          "weight": "9.0"
+        },
+        {
+          "id": "498",
+          "source": "TEST CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER",
+          "target": "REQUESTS",
+          "description": "The test sends a chunked POST request through Requests with a custom Host header and verifies the echoed request headers",
+          "weight": "9.0"
+        },
+        {
+          "id": "501",
+          "source": "TEST CHUNKED UPLOAD DOESNT SKIP HOST HEADER",
+          "target": "REQUESTS",
+          "description": "The test sends a chunked POST request through Requests and verifies that the default Host header is preserved",
+          "weight": "9.0"
+        },
+        {
+          "id": "714",
+          "source": "TEST_DIGEST_STREAM",
+          "target": "REQUESTS",
+          "description": "The event tests Requests streaming and raw response reading with Digest authentication",
+          "weight": "9.0"
+        },
+        {
+          "id": "918",
+          "source": "TEST_RESPONSE_ITER_LINES",
+          "target": "REQUESTS",
+          "description": "The test validates Requests streamed response line iteration",
+          "weight": "9.0"
+        },
+        {
+          "id": "924",
+          "source": "TEST_RESPONSE_ITER_LINES_REENTRANT",
+          "target": "REQUESTS",
+          "description": "The expected-failure test documents a limitation in Requests Response.iter_lines behavior",
+          "weight": "9.0"
+        },
+        {
+          "id": "902",
+          "source": "TEST MANUAL REDIRECT WITH PARTIAL BODY READ",
+          "target": "REQUESTS",
+          "description": "This test validates Requests Session.resolve_redirects and streamed response-body handling",
+          "weight": "9.0"
+        },
+        {
+          "id": "369",
+          "source": "REQUESTS",
+          "target": "STREAMED RESPONSE READING",
+          "description": "Requests provides iter_content and iter_lines for streamed response reading.",
+          "weight": "9.0"
+        },
+        {
+          "id": "904",
+          "source": "TEST PREPARE BODY POSITION NON STREAM",
+          "target": "REQUESTS",
+          "description": "This test validates Requests request preparation and body-position tracking for non-streamed data",
+          "weight": "9.0"
+        },
+        {
+          "id": "906",
+          "source": "TEST REWIND PARTIALLY READ BODY",
+          "target": "REQUESTS",
+          "description": "This test validates Requests restoration of a partially consumed request body",
+          "weight": "9.0"
+        },
+        {
+          "id": "949",
+          "source": "NONEMPTY STREAM UPLOAD TEST",
+          "target": "REQUESTS",
+          "description": "The test validates how Requests prepares authenticated POST requests containing a nonempty byte stream.",
+          "weight": "9.0"
+        },
+        {
+          "id": "950",
+          "source": "CHUNKED UPLOAD TEST",
+          "target": "REQUESTS",
+          "description": "The test validates Requests handling of generator-based request bodies and chunked transfer encoding.",
+          "weight": "9.0"
+        },
+        {
+          "id": "364",
+          "source": "REQUESTS",
+          "target": "CHUNKEDENCODINGERROR",
+          "description": "Requests converts underlying urllib3 `ProtocolError` failures into `ChunkedEncodingError` exceptions during streaming, including while processing responses through `iter_content`.",
+          "weight": "18.0"
+        },
+        {
+          "id": "493",
+          "source": "TEST CHUNKED UPLOAD",
+          "target": "PYTEST",
+          "description": "The test uses pytest assertions to verify the result of a chunked upload",
+          "weight": "7.0"
+        },
+        {
+          "id": "496",
+          "source": "TEST CHUNKED ENCODING ERROR",
+          "target": "PYTEST",
+          "description": "The test uses pytest.raises to verify the expected Requests exception",
+          "weight": "8.0"
+        },
+        {
+          "id": "499",
+          "source": "TEST CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER",
+          "target": "PYTEST",
+          "description": "The test uses pytest assertions to verify that the custom Host header appears exactly once",
+          "weight": "7.0"
+        },
+        {
+          "id": "502",
+          "source": "TEST CHUNKED UPLOAD DOESNT SKIP HOST HEADER",
+          "target": "PYTEST",
+          "description": "The test uses pytest assertions to verify that exactly one default Host header is present",
+          "weight": "7.0"
+        },
+        {
+          "id": "716",
+          "source": "TEST_DIGEST_STREAM",
+          "target": "PYTEST",
+          "description": "Pytest runs the Digest streaming test",
+          "weight": "8.0"
+        },
+        {
+          "id": "939",
+          "source": "PYTEST",
+          "target": "TEST_RESPONSE_ITER_LINES",
+          "description": "Pytest executes the streamed line-iteration test",
+          "weight": "9.0"
+        },
+        {
+          "id": "942",
+          "source": "PYTEST",
+          "target": "TEST_RESPONSE_ITER_LINES_REENTRANT",
+          "description": "Pytest marks the reentrant line-iteration test as an expected failure",
+          "weight": "9.0"
+        },
+        {
+          "id": "715",
+          "source": "TEST_DIGEST_STREAM",
+          "target": "HTTPBIN",
+          "description": "The event obtains Digest-authenticated responses from HTTPBin",
+          "weight": "8.0"
+        },
+        {
+          "id": "919",
+          "source": "TEST_RESPONSE_ITER_LINES",
+          "target": "HTTPBIN",
+          "description": "The test uses an Httpbin streaming endpoint",
+          "weight": "8.0"
+        },
+        {
+          "id": "925",
+          "source": "TEST_RESPONSE_ITER_LINES_REENTRANT",
+          "target": "HTTPBIN",
+          "description": "The test uses an Httpbin streaming endpoint",
+          "weight": "8.0"
+        },
+        {
+          "id": "903",
+          "source": "TEST MANUAL REDIRECT WITH PARTIAL BODY READ",
+          "target": "HTTPBIN",
+          "description": "This test obtains redirect responses from Httpbin through the httpbin fixture",
+          "weight": "8.0"
+        },
+        {
+          "id": "510",
+          "source": "SERVER",
+          "target": "CHUNKED ENCODING ERROR",
+          "description": "The Server utility runs the incomplete-chunked-response handler used by the error test",
+          "weight": "8.0"
+        },
+        {
+          "id": "509",
+          "source": "SERVER",
+          "target": "CHUNKED UPLOAD",
+          "description": "The Server utility provides the local HTTP endpoint used by the chunked upload test",
+          "weight": "8.0"
+        },
+        {
+          "id": "511",
+          "source": "SERVER",
+          "target": "CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER",
+          "description": "The Server utility hosts the request whose custom Host header is inspected",
+          "weight": "8.0"
+        },
+        {
+          "id": "512",
+          "source": "SERVER",
+          "target": "CHUNKED UPLOAD DOESNT SKIP HOST HEADER",
+          "description": "The Server utility hosts the request whose default Host header is inspected",
+          "weight": "8.0"
+        },
+        {
+          "id": "494",
+          "source": "TEST CHUNKED UPLOAD",
+          "target": "THREADING",
+          "description": "The test uses a threading Event to release the test server after the request completes",
+          "weight": "7.0"
+        },
+        {
+          "id": "497",
+          "source": "TEST CHUNKED ENCODING ERROR",
+          "target": "THREADING",
+          "description": "The test uses a threading Event to release the server block after the expected failure",
+          "weight": "6.0"
+        },
+        {
+          "id": "500",
+          "source": "TEST CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER",
+          "target": "THREADING",
+          "description": "The test uses a threading Event to release the test server after the request completes",
+          "weight": "6.0"
+        },
+        {
+          "id": "503",
+          "source": "TEST CHUNKED UPLOAD DOESNT SKIP HOST HEADER",
+          "target": "THREADING",
+          "description": "The test uses a threading Event to release the test server after the request completes",
+          "weight": "6.0"
+        },
+        {
+          "id": "517",
+          "source": "ECHO RESPONSE HANDLER",
+          "target": "CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER",
+          "description": "The custom-Host-header test uses the echo handler to inspect and return the submitted request headers",
+          "weight": "9.0"
+        },
+        {
+          "id": "518",
+          "source": "ECHO RESPONSE HANDLER",
+          "target": "CHUNKED UPLOAD DOESNT SKIP HOST HEADER",
+          "description": "The default-Host-header test uses the echo handler to inspect and return the submitted request headers",
+          "weight": "9.0"
+        },
+        {
+          "id": "357",
+          "source": "RESPONSE",
+          "target": "STREAMED RESPONSE READING",
+          "description": "The Response object incrementally reads raw content through iter_content and iter_lines.",
+          "weight": "9.0"
+        },
+        {
+          "id": "515",
+          "source": "CONSUME SOCKET CONTENT",
+          "target": "INCOMPLETE CHUNKED RESPONSE HANDLER",
+          "description": "The incomplete-response handler uses consume_socket_content before sending the malformed response",
+          "weight": "8.0"
+        },
+        {
+          "id": "519",
+          "source": "BASIC RESPONSE SERVER",
+          "target": "CHUNKED UPLOAD",
+          "description": "The chunked upload test creates a basic response server to receive the generator-based request",
+          "weight": "9.0"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "columns": [
+        "id",
+        "source",
+        "text"
+      ],
+      "rows": [
+        {
+          "id": "75",
+          "text": "import threading\n\nimport pytest\nfrom tests.testserver.server import Server, consume_socket_content\n\nimport requests\nfrom requests.compat import JSONDecodeError\n\nfrom .utils import override_environ\n\n\ndef echo_response_handler(sock):\n    \"\"\"Simple handler that will take request and echo it back to requester.\"\"\"\n    request_content = consume_socket_content(sock, timeout=0.5)\n\n    text_200 = (\n        b\"HTTP/1.1 200 OK\\r\\n\"\n        b\"Content-Length: %d\\r\\n\\r\\n\"\n        b\"%s\"\n    ) % (len(request_content), request_content)\n    sock.send(text_200)\n\n\ndef test_chunked_upload():\n    \"\"\"can safely send generators\"\"\"\n    close_server = threading.Event()\n    server = Server.basic_response_server(wait_to_close_event=close_server)\n    data = iter([b\"a\", b\"b\", b\"c\"])\n\n    with server as (host, port):\n        url = f\"http://{host}:{port}/\"\n        r = requests.post(url, data=data, stream=True)\n        close_server.set()  # release server block\n\n    assert r.status_code == 200\n    assert r.request.headers[\"Transfer-Encoding\"] == \"chunked\"\n\n\ndef test_chunked_encoding_error():\n    \"\"\"get a ChunkedEncodingError if the server returns a bad response\"\"\"\n\n    def incomplete_chunked_response_handler(sock):\n        request_content = consume_socket_content(sock, timeout=0.5)\n\n        # The server never ends the request and doesn't provide any valid chunks\n        sock.send(\n            b\"HTTP/1.1 200 OK\\r\\n\"\n            b\"Transfer-Encoding: chunked\\r\\n\"\n        )\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(incomplete_chunked_response_handler)\n\n    with server as (host, port):\n        url = f\"http://{host}:{port}/\"\n        with pytest.raises(requests.exceptions.ChunkedEncodingError):\n            requests.get(url)\n        close_server.set()  # release server block\n\n\ndef test_chunked_upload_uses_only_specified_host_header():\n    \"\"\"Ensure we use only the specified Host header for chunked requests.\"\"\"\n    close_server = threading.Event()\n    server = Server(echo_response_handler, wait_to_close_event=close_server)\n\n    data = iter([b\"a\", b\"b\", b\"c\"])\n    custom_host = \"sample-host\"\n\n    with server as (host, port):\n        url = f\"http://{host}:{port}/\"\n        r = requests.post(url, data=data, headers={\"Host\": custom_host}, stream=True)\n        close_server.set()  # release server block\n\n    expected_header = b\"Host: %s\\r\\n\" % custom_host.encode(\"utf-8\")\n    assert expected_header in r.content\n    assert r.content.count(b\"Host: \") == 1\n\n\ndef test_chunked_upload_doesnt_skip_host_header():\n    \"\"\"Ensure we don't omit all Host headers with chunked requests.\"\"\"\n    close_server = threading.Event()\n    server = Server(echo_response_handler, wait_to_close_event=close_server)\n\n    data = iter([b\"a\", b\"b\", b\"c\"])\n\n    with server as (host, port):\n        expected_host = f\"{host}:{port}\"\n        url = f\"http://{host}:{port}/\"\n        r = requests.post(url, data=data, stream=True)\n        close_server.set()  # release server block\n\n    expected_header = b\"Host: %s\\r\\n\" % expected_host.encode(\"utf-8\")\n    assert expected_header in r.content\n    assert r.content.count(b\"Host: \") == 1\n\n\ndef test_conflicting_content_lengths():\n    \"\"\"Ensure we correctly throw an InvalidHeader error if multiple\n    conflicting Content-Length headers are returned.\n    \"\"\"\n\n    def multiple_content_length_response_handler(sock):\n        request_content = consume_socket_content(sock, timeout=0.5)\n        response = (\n            b\"HTTP/1.1 200 OK\\r\\n\"\n            b\"Content-Type: text/plain\\r\\n\"\n            b\"Content-Length: 16\\r\\n\"\n            b\"Content-Length: 32\\r\\n\\r\\n\"\n            b\"-- Bad Actor -- Original Content\\r\\n\"\n        )\n        sock.send(response)\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(multiple_content_length_response_handler)\n\n    with server as (host, port):\n        url = f\"http://{host}:{port}/\"\n        with pytest.raises(requests.exceptions.InvalidHeader):\n            requests.get(url)\n        close_server.set()\n\n\ndef test_digestauth_401_count_reset_on_redirect():\n    \"\"\"Ensure we correctly reset num_401_calls after a successful digest auth,\n    followed by a 302 redirect to another digest auth prompt.\n\n    See https://github.com/psf/requests/issues/1979.\n    \"\"\"\n    text_401 = (b'HTTP/1.1 401 UNAUTHORIZED\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'WWW-Authenticate: Digest nonce=\"6bf5d6e4da1ce66918800195d6b9130d\"'\n                b', opaque=\"372825293d1c26955496c80ed6426e9e\", '\n                b'realm=\"me@kennethreitz.com\", qop=auth\\r\\n\\r\\n')\n\n    text_302 = (b'HTTP/1.1 302 FOUND\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'Location: /\\r\\n\\r\\n')\n\n    text_200 = (b'HTTP/1.1 200 OK\\r\\n'\n                b'Content-Length: 0\\r\\n\\r\\n')\n\n    expected_digest = (b'Authorization: Digest username=\"user\", '\n",
+          "source": "tests/test_lowlevel.py:L1-L146"
+        },
+        {
+          "id": "49",
+          "text": "    def is_permanent_redirect(self):\n        \"\"\"True if this Response one of the permanent versions of redirect.\"\"\"\n        return \"location\" in self.headers and self.status_code in (\n            codes.moved_permanently,\n            codes.permanent_redirect,\n        )\n\n    @property\n    def next(self):\n        \"\"\"Returns a PreparedRequest for the next request in a redirect chain, if there is one.\"\"\"\n        return self._next\n\n    @property\n    def apparent_encoding(self):\n        \"\"\"The apparent encoding, provided by the charset_normalizer or chardet libraries.\"\"\"\n        if chardet is not None:\n            return chardet.detect(self.content)[\"encoding\"]\n        else:\n            # If no character detection library is available, we'll fall back\n            # to a standard Python utf-8 str.\n            return \"utf-8\"\n\n    def iter_content(self, chunk_size=1, decode_unicode=False):\n        \"\"\"Iterates over the response data.  When stream=True is set on the\n        request, this avoids reading the content at once into memory for\n        large responses.  The chunk size is the number of bytes it should\n        read into memory.  This is not necessarily the length of each item\n        returned as decoding can take place.\n\n        chunk_size must be of type int or None. A value of None will\n        function differently depending on the value of `stream`.\n        stream=True will read data as it arrives in whatever size the\n        chunks are received. If stream=False, data is returned as\n        a single chunk.\n\n        If decode_unicode is True, content will be decoded using the best\n        available encoding based on the response.\n        \"\"\"\n\n        def generate():\n            # Special case for urllib3.\n            if hasattr(self.raw, \"stream\"):\n                try:\n                    yield from self.raw.stream(chunk_size, decode_content=True)\n                except ProtocolError as e:\n                    raise ChunkedEncodingError(e)\n                except DecodeError as e:\n                    raise ContentDecodingError(e)\n                except ReadTimeoutError as e:\n                    raise ConnectionError(e)\n                except SSLError as e:\n                    raise RequestsSSLError(e)\n            else:\n                # Standard file-like object.\n                while True:\n                    chunk = self.raw.read(chunk_size)\n                    if not chunk:\n                        break\n                    yield chunk\n\n            self._content_consumed = True\n\n        if self._content_consumed and isinstance(self._content, bool):\n            raise StreamConsumedError()\n        elif chunk_size is not None and not isinstance(chunk_size, int):\n            raise TypeError(\n                f\"chunk_size must be an int, it is instead a {type(chunk_size)}.\"\n            )\n        # simulate reading small chunks of the content\n        reused_chunks = iter_slices(self._content, chunk_size)\n\n        stream_chunks = generate()\n\n        chunks = reused_chunks if self._content_consumed else stream_chunks\n\n        if decode_unicode:\n            chunks = stream_decode_response_unicode(chunks, self)\n\n        return chunks\n\n    def iter_lines(\n        self, chunk_size=ITER_CHUNK_SIZE, decode_unicode=False, delimiter=None\n    ):\n        \"\"\"Iterates over the response data, one line at a time.  When\n        stream=True is set on the request, this avoids reading the\n        content at once into memory for large responses.\n\n        .. note:: This method is not reentrant safe.\n        \"\"\"\n\n        pending = None\n\n        for chunk in self.iter_content(\n            chunk_size=chunk_size, decode_unicode=decode_unicode\n        ):\n            if pending is not None:\n                chunk = pending + chunk\n\n            if delimiter:\n                lines = chunk.split(delimiter)\n            else:\n                lines = chunk.splitlines()\n\n            if lines and lines[-1] and chunk and lines[-1][-1] == chunk[-1]:\n                pending = lines.pop()\n            else:\n                pending = None\n\n            yield from lines\n\n        if pending is not None:\n            yield pending\n\n    @property\n    def content(self):\n        \"\"\"Content of the response, in bytes.\"\"\"\n\n        if self._content is False:\n            # Read the contents.\n            if self._content_consumed:\n                raise RuntimeError(\"The content for this response was already consumed\")\n\n            if self.status_code == 0 or self.raw is None:\n                self._content = None\n            else:\n                self._content = b\"\".join(self.iter_content(CONTENT_CHUNK_SIZE)) or b\"\"\n\n        self._content_consumed = True\n        # don't need to release the connection; that's been handled by urllib3\n        # since we exhausted the data.\n        return self._content\n\n    @property\n    def text(self):\n        \"\"\"Content of the response, in unicode.\n\n        If Response.encoding is None, encoding will be guessed using\n        ``charset_normalizer`` or ``chardet``.\n\n        The encoding of the response content is determined based solely on HTTP\n        headers, following RFC 2616 to the letter. If you can take advantage of\n        non-HTTP knowledge to make a better guess at the encoding, you should\n        set ``r.encoding`` appropriately before accessing this property.\n        \"\"\"\n\n        # Try charset from content-type\n        content = None\n        encoding = self.encoding\n\n        if not self.content:\n            return \"\"\n\n        # Fallback to auto-detected encoding.\n        if self.encoding is None:\n            encoding = self.apparent_encoding\n\n        # Decode unicode from given encoding.\n        try:\n            content = str(self.content, encoding, errors=\"replace\")\n        except (LookupError, TypeError):\n            # A LookupError is raised if the encoding was not found which could\n            # indicate a misspelling or similar mistake.\n            #\n            # A TypeError can be raised if encoding is None\n            #\n            # So we try blindly encoding.\n",
+          "source": "src/requests/models.py:L777-L942"
+        },
+        {
+          "id": "95",
+          "text": "\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"Unable to rewind request body\" in str(e)\n\n    def _patch_adapter_gzipped_redirect(self, session, url):\n        adapter = session.get_adapter(url=url)\n        org_build_response = adapter.build_response\n        self._patched_response = False\n\n        def build_response(*args, **kwargs):\n            resp = org_build_response(*args, **kwargs)\n            if not self._patched_response:\n                resp.raw.headers[\"content-encoding\"] = \"gzip\"\n                self._patched_response = True\n            return resp\n\n        adapter.build_response = build_response\n\n    def test_redirect_with_wrong_gzipped_header(self, httpbin):\n        s = requests.Session()\n        url = httpbin(\"redirect/1\")\n        self._patch_adapter_gzipped_redirect(s, url)\n        s.get(url)\n\n    @pytest.mark.parametrize(\n        \"username, password, auth_str\",\n        (\n            (\"test\", \"test\", \"Basic dGVzdDp0ZXN0\"),\n            (\n                \"имя\".encode(),\n                \"пароль\".encode(),\n                \"Basic 0LjQvNGPOtC/0LDRgNC+0LvRjA==\",\n            ),\n        ),\n    )\n    def test_basic_auth_str_is_always_native(self, username, password, auth_str):\n        s = _basic_auth_str(username, password)\n        assert isinstance(s, builtin_str)\n        assert s == auth_str\n\n    def test_requests_history_is_saved(self, httpbin):\n        r = requests.get(httpbin(\"redirect/5\"))\n        total = r.history[-1].history\n        i = 0\n        for item in r.history:\n            assert item.history == total[0:i]\n            i += 1\n\n    def test_json_param_post_content_type_works(self, httpbin):\n        r = requests.post(httpbin(\"post\"), json={\"life\": 42})\n        assert r.status_code == 200\n        assert \"application/json\" in r.request.headers[\"Content-Type\"]\n        assert {\"life\": 42} == r.json()[\"json\"]\n\n    def test_json_param_post_should_not_override_data_param(self, httpbin):\n        r = requests.Request(\n            method=\"POST\",\n            url=httpbin(\"post\"),\n            data={\"stuff\": \"elixr\"},\n            json={\"music\": \"flute\"},\n        )\n        prep = r.prepare()\n        assert \"stuff=elixr\" == prep.body\n\n    def test_response_iter_lines(self, httpbin):\n        r = requests.get(httpbin(\"stream/4\"), stream=True)\n        assert r.status_code == 200\n\n        it = r.iter_lines()\n        next(it)\n        assert len(list(it)) == 3\n\n    def test_response_context_manager(self, httpbin):\n        with requests.get(httpbin(\"stream/4\"), stream=True) as response:\n            assert isinstance(response, requests.Response)\n\n        assert response.raw.closed\n\n    def test_unconsumed_session_response_closes_connection(self, httpbin):\n        s = requests.session()\n\n        with contextlib.closing(s.get(httpbin(\"stream/4\"), stream=True)) as response:\n            pass\n\n        assert response._content_consumed is False\n        assert response.raw.closed\n\n    @pytest.mark.xfail\n    def test_response_iter_lines_reentrant(self, httpbin):\n        \"\"\"Response.iter_lines() is not reentrant safe\"\"\"\n        r = requests.get(httpbin(\"stream/4\"), stream=True)\n        assert r.status_code == 200\n\n        next(r.iter_lines())\n        assert len(list(r.iter_lines())) == 3\n\n    def test_session_close_proxy_clear(self):\n        proxies = {\n            \"one\": mock.Mock(),\n            \"two\": mock.Mock(),\n        }\n        session = requests.Session()\n        with mock.patch.dict(session.adapters[\"http://\"].proxy_manager, proxies):\n            session.close()\n            proxies[\"one\"].clear.assert_called_once_with()\n            proxies[\"two\"].clear.assert_called_once_with()\n\n    def test_proxy_auth(self):\n        adapter = HTTPAdapter()\n        headers = adapter.proxy_headers(\"http://user:pass@httpbin.org\")\n        assert headers == {\"Proxy-Authorization\": \"Basic dXNlcjpwYXNz\"}\n\n    def test_proxy_auth_empty_pass(self):\n        adapter = HTTPAdapter()\n        headers = adapter.proxy_headers(\"http://user:@httpbin.org\")\n        assert headers == {\"Proxy-Authorization\": \"Basic dXNlcjo=\"}\n\n    def test_response_json_when_content_is_None(self, httpbin):\n        r = requests.get(httpbin(\"/status/204\"))\n        # Make sure r.content is None\n        r.status_code = 0\n        r._content = False\n        r._content_consumed = False\n\n        assert r.content is None\n        with pytest.raises(ValueError):\n            r.json()\n\n    def test_response_without_release_conn(self):\n        \"\"\"Test `close` call for non-urllib3-like raw objects.\n        Should work when `release_conn` attr doesn't exist on `response.raw`.\n        \"\"\"\n        resp = requests.Response()\n        resp.raw = StringIO.StringIO(\"test\")\n        assert not resp.raw.closed\n        resp.close()\n        assert resp.raw.closed\n\n    def test_empty_stream_with_auth_does_not_set_content_length_header(self, httpbin):\n        \"\"\"Ensure that a byte stream with size 0 will not set both a Content-Length\n        and Transfer-Encoding header.\n        \"\"\"\n        auth = (\"user\", \"pass\")\n        url = httpbin(\"post\")\n        file_obj = io.BytesIO(b\"\")\n        r = requests.Request(\"POST\", url, auth=auth, data=file_obj)\n        prepared_request = r.prepare()\n        assert \"Transfer-Encoding\" in prepared_request.headers\n",
+          "source": "tests/test_requests.py:L2016-L2165"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "short_id": "75",
+      "text_unit_id": "309ab3cb670ebfc1d1dd6494937fd899fdccfa44d0aad351a00a21e7203339efa1a3feaaa7aa0bc1ac6624f264b15568bd2ffe9d213f67e07632b6b255991599",
+      "id": "9c62ac2a1e6c37459eb041b50122a5abff7746b496858310874c994962101080",
+      "title": "tests/test_lowlevel.py:L1-L146",
+      "path": "tests/test_lowlevel.py",
+      "start_line": 1,
+      "end_line": 146,
+      "tokens": 1195,
+      "text_sha256": "254591e7aba3e88feb71694b4567563d1bbd1547cbd5231da3081a0e077038a4",
+      "ms_text_unit_id": "309ab3cb670ebfc1d1dd6494937fd899fdccfa44d0aad351a00a21e7203339efa1a3feaaa7aa0bc1ac6624f264b15568bd2ffe9d213f67e07632b6b255991599"
+    },
+    {
+      "short_id": "49",
+      "text_unit_id": "2aa3a4d67bf046e61f6a0ed501baa22d70798827acb206146ce41358ad56ff12d1eee35099aae5cbc0fcc932a9e52ff47be8ad2b65d05074244b15946372e087",
+      "id": "43af353e619da1a46933db2beb1bb0a5cc2e53eca7e2dd5e29bddd856768c293",
+      "title": "src/requests/models.py:L777-L942",
+      "path": "src/requests/models.py",
+      "start_line": 777,
+      "end_line": 942,
+      "tokens": 1195,
+      "text_sha256": "978c87e6ced94c8ce21e02c4700192fd7a8ef0ef0dbe174e9beeea0a83996a49",
+      "ms_text_unit_id": "2aa3a4d67bf046e61f6a0ed501baa22d70798827acb206146ce41358ad56ff12d1eee35099aae5cbc0fcc932a9e52ff47be8ad2b65d05074244b15946372e087"
+    },
+    {
+      "short_id": "95",
+      "text_unit_id": "a2472c1ed2a06cdf1ac34c4edd112af95b3f3ed97f4657dc62a10e50ed98ba75681c81cb6cb33c393a814fb51a035d1ab8fef29ae36fe95f2393cbc77c50bfc2",
+      "id": "bd1917605a30d62d0b147525d20ff7bf7d8f991a7e343ea4a08bd2b8a76ebf50",
+      "title": "tests/test_requests.py:L2016-L2165",
+      "path": "tests/test_requests.py",
+      "start_line": 2016,
+      "end_line": 2165,
+      "tokens": 1194,
+      "text_sha256": "d0ba8ccdf9b4d78373cbd3e8d11bce6d35058bb8d5317b566c37124d44e0a7d2",
+      "ms_text_unit_id": "a2472c1ed2a06cdf1ac34c4edd112af95b3f3ed97f4657dc62a10e50ed98ba75681c81cb6cb33c393a814fb51a035d1ab8fef29ae36fe95f2393cbc77c50bfc2"
+    }
+  ],
+  "raw_context_tokens": 5612,
+  "final_context_tokens": 5779,
+  "source_text_tokens": 3584,
+  "source_chunks": 3,
+  "retrieval_compute_seconds": 0.014308957383036613,
+  "adaptation_seconds": 0.013047459535300732,
+  "empty_reason": null,
+  "community_level": 2,
+  "dropped_tail_rows": 0
+}

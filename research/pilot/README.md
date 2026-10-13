@@ -1,6 +1,6 @@
 # Requests：冻结语料、题目和评估入口
 
-**完整索引、168份检索上下文和8次功能尝试已完成。** 四组检索效果见[主报告](../../docs/report.md)及[逐题分数](results/scores.json)。八份原始补丁均损坏、无法应用，所以候选功能与回归测试未执行；这不是检索质量的单独因果证据。[完整账本](results/execution.json)、[中断历史](results/execution-interrupted.json)和[接口探测](probe-result.md)分别保存。
+**完整索引、首轮168份上下文、离线补测160份上下文和8次功能尝试已完成。** 四组检索效果见[主报告](../../docs/report.md)及[逐题分数](results/scores.json)。八份原始补丁均损坏、无法应用，所以候选功能与回归测试未执行；这不是检索质量的单独因果证据。[完整账本](results/execution.json)、[中断历史](results/execution-interrupted.json)和[接口探测](probe-result.md)分别保存。
 
 可以把准备过程理解成先备好同一批书、同一张考卷和评分规则，再让关键词、普通向量和微软图检索参加比较。没有按方法表现换题或改分。
 
@@ -39,13 +39,13 @@
 
 ## 已固定的比较
 
-四组为BM25、同embedding的hybrid、Microsoft Basic与Local。最终上下文共享4000-token主预算和12000-token次预算，图关系、社区报告和来源位置同样计数。另有[精确文本／定义参考](reference-lookup.json)，只是便宜诊断，不冒充完整的引用或调用分析。
+四组为BM25、同embedding的hybrid、Microsoft Basic与Local。首轮最终上下文共享4000-token主预算和12000-token次预算；后续只复用缓存补齐8000／16000，图关系、社区报告和来源位置同样计数。另有[精确文本／定义参考](reference-lookup.json)，只是便宜诊断，不冒充完整的引用或调用分析。
 
 生成模型为用户选定的one.fullstar.tech `gpt-5.6-luna`；三组向量部分使用官方OpenAI `text-embedding-3-large`，3072维。模型在远端运行，由Mac mini发起受控请求；代理实际后端映射不能独立核实。成功响应以精确参数缓存，失败不自动重放。正式阶段累计embedding预算$1，旧探针消耗计入；生成价格未知，次数、时间和输入量仍有明确上限。仓库外凭据不入库，见[说明](credentials.md)。
 
 每组对两个功能各生成一次补丁，只使用相同4000-token初始证据，不追加搜索或改错。先核对原始响应／补丁hash与修改范围，再对干净副本跑冻结验收、旧回归和逐项需求检查。实际八份补丁均在应用检查失败，没有修补或追加调用；保留[原输出及诊断](results/features)。检索覆盖和功能正确性分开报告；两个功能不能组成可靠的行业成功率。
 
-完整原理、预算、实现差异、安装、执行及复算命令统一见[技术附录](full-run.md)，避免维护两套命令。实际168份上下文的完整网格、源码来源、预算和得分复算均已通过检查。
+完整原理、预算、实现差异、安装、执行及复算命令统一见[技术附录](full-run.md)，避免维护两套命令。首轮168份和新增160份上下文的完整网格、源码来源、预算和得分复算均已通过检查。
 
 ## 现阶段能够离线核验什么
 
@@ -55,6 +55,7 @@
 python3 research/pilot/verify.py
 python3 research/pilot/verify_results.py
 python3 research/pilot/score_results.py --check
+python3 research/pilot/score_budget_supplement.py --check
 python3 research/pilot/verify_feature_results.py
 python3 research/pilot/verify_selection.py
 python3 research/pilot/verify_probe_result.py

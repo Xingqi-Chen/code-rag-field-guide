@@ -1,0 +1,989 @@
+{
+  "question_id": "Q04",
+  "method": "ms_local",
+  "budget": 8000,
+  "query": "Locate the method that removes a registered response callback and tells the caller whether it existed.",
+  "upstream_raw_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n215|HOOKS|Hooks are collections of callback functions associated with supported events in the Requests hooks system; the default configuration includes a response hook list.|2\n214|HOOK|A hook is a callable callback registered in the Requests hooks system to process hook data, such as a response, and optionally return updated data.|2\n488|SESSION HOOKS OVERRIDDEN BY REQUEST HOOKS TEST|A test event that verifies request-specific response hooks replace the response hooks configured on a Session.|1\n350|ECHO RESPONSE HANDLER|ECHO RESPONSE HANDLER is a socket response-handler event and test server handler used by the fragment test. It consumes an incoming HTTP request and returns it in an HTTP 200 response, using the received request content as the response body.|4\n247|CALLABLE|Callable is a callable-object type abstraction used by RequestHooksMixin to validate hook functions before registering them.>|1\n353|BASIC RESPONSE SERVER|A server configuration event created through Server.basic_response_server to provide a basic HTTP response while coordinating shutdown with a threading Event|2\n289|DELETE|DELETE is an HTTP method supported by the Requests library for removing a resource.|1\n193|REMOVE_COOKIE_BY_NAME|remove_cookie_by_name is a function that removes cookies matching a name and, optionally, a domain and path from a cookie jar.|1\n232|REQUESTS HOOKS|REQUESTS HOOKS provides the default request and response hook functionality used by the tests. It exposes the `default_hooks` collection, which manages these hooks.|1\n487|SESSION HOOKS USED WITH NO REQUEST HOOKS TEST|A test event that verifies response hooks configured on a Session are inherited by a request without its own hooks.|1\n244|REQUESTHOOKSMIXIN|RequestHooksMixin is a requests software component that registers and deregisters callable hooks for supported request events.>|4\n534|CASE-INSENSITIVE HEADER REMOVAL|A test event verifying that passing a differently cased header name with a null value removes the existing header from a prepared request|1\n375|DIGEST RESPONSE HANDLER|DIGEST RESPONSE HANDLER is a socket-based test server handler for validating HTTP Digest authentication and credential protection during redirects. It challenges an unauthenticated request with a `WWW-Authenticate` response—typically an initial `401` response, with a test path that may return `200` while still including the challenge—and verifies that the client does not resend the request with credentials before authentication is required. It then validates the client’s Digest `Authorization` header, sends a redirect, confirms that credentials are withheld when the request moves to a different host, and authenticates the final request only when the credentials are appropriately supplied.|6\n577|TEST_RESPONSE_WITHOUT_RELEASE_CONN|A test that verifies Response.close works with a raw object that lacks a release_conn method|2\n486|HOOK RECEIVES REQUEST ARGUMENTS TEST|A test event that verifies a response hook receives a response object and keyword arguments when a request is sent.|1\n391|RESPONSE HANDLER|A test server handler that processes two sequential 302 redirects, first introducing a relevant-section fragment and then redirecting to a fragment-free final URL before returning a 200 response>|4\n429|TEST HISTORY IS ALWAYS A LIST|A test event verifying that Response.history is always a list, both for responses with redirects and responses without redirects|1\n352|MULTIPLE CONTENT LENGTH RESPONSE HANDLER|A socket response-handler event that returns an HTTP response containing conflicting Content-Length headers and invalidates the response for header-validation testing|1\n50|HTTP DELETE|HTTP DELETE is one of the HTTP request methods supported by Requests\"|1\n\n\n-----Relationships-----\nid|source|target|description|weight|links\n338|REQUESTHOOKSMIXIN|CALLABLE|RequestHooksMixin checks whether hooks are Callable objects before adding them to its event-specific hook lists.|8.0|1\n293|HOOKS|HOOK|The hooks configuration stores one or more callable hooks for each supported event.|9.0|1\n557|REQUESTS|DIGEST RESPONSE HANDLER|Requests sends the unauthenticated GET request handled by the digest response handler and validates the 200 response|8.0|9\n931|TEST_RESPONSE_WITHOUT_RELEASE_CONN|REQUESTS|The test validates Requests Response.close behavior with a non-standard raw response object|9.0|9\n412|DELETE|REQUESTS|The Requests library exposes a delete method that sends DELETE requests.|1.0|9\n652|TEST HISTORY IS ALWAYS A LIST|REQUESTS|The test verifies the Requests Response.history contract|9.0|9\n778|HOOK RECEIVES REQUEST ARGUMENTS TEST|REQUESTS|The test uses Requests response hooks and request sending APIs.|9.0|9\n779|SESSION HOOKS USED WITH NO REQUEST HOOKS TEST|REQUESTS|The test verifies response-hook inheritance in the Requests Session API.|9.0|9\n780|SESSION HOOKS OVERRIDDEN BY REQUEST HOOKS TEST|REQUESTS|The test verifies request-specific hook precedence in the Requests Session API.|9.0|9\n62|REQUESTS|HTTP DELETE|Requests lists HTTP DELETE among the supported request methods|8.0|9\n318|REQUESTS|REQUESTS HOOKS|Requests imports default hooks from its hooks component.|8.0|9\n580|DIGEST RESPONSE HANDLER|CONSUME SOCKET CONTENT|The digest response handler consumes the initial request and verifies that no authenticated follow-up request is received|8.0|4\n582|RESPONSE HANDLER|CONSUME SOCKET CONTENT|The fragment redirect handler consumes each request before sending the next redirect or final response|8.0|4\n514|CONSUME SOCKET CONTENT|ECHO RESPONSE HANDLER|The echo handler uses consume_socket_content to read the incoming request before echoing it back|9.0|4\n516|CONSUME SOCKET CONTENT|MULTIPLE CONTENT LENGTH RESPONSE HANDLER|The conflicting-header handler uses consume_socket_content before sending its response|8.0|4\n292|HOOK|RESPONSE|A hook receives response data, may process it, and can return updated response data.|9.0|2\n294|HOOKS|RESPONSE|The hooks system supports response as its only currently defined event and maintains its associated hook list.|1.0|2\n947|PYTEST|TEST_RESPONSE_WITHOUT_RELEASE_CONN|Pytest executes the raw-response close test|9.0|1\n857|CASE-INSENSITIVE HEADER REMOVAL|HTTPBIN|The test sends the request to HTTPBin and inspects the resulting request headers|8.0|1\n329|REQUEST|REQUESTHOOKSMIXIN|Request inherits from RequestHooksMixin and uses its hook registration and deregistration behavior.|9.0|1\n330|PREPAREDREQUEST|REQUESTHOOKSMIXIN|PreparedRequest inherits from RequestHooksMixin and includes request hook functionality.|9.0|1\n253|REMOVE_COOKIE_BY_NAME|COOKIEJAR|remove_cookie_by_name iterates through and clears matching cookies stored in a cookie jar.|10.0|1\n545|DIGEST RESPONSE HANDLER|DIGEST AUTHORIZATION REQUEST|The handler verifies that the client returns a correctly formed Digest Authorization request.|10.0|1\n546|DIGEST RESPONSE HANDLER|HTTP REDIRECT|The handler sends a redirect after verifying the first authenticated request.|10.0|1\n544|DIGEST RESPONSE HANDLER|DIGEST AUTHENTICATION CHALLENGE|The DIGEST RESPONSE HANDLER sends the initial DIGEST AUTHENTICATION CHALLENGE to the client by returning a 200 response containing the challenge in the `WWW-Authenticate` header.|19.0|1\n576|TEST FRAGMENT UPDATE ON REDIRECT|RESPONSE HANDLER|The test starts a server using the response handler that emits the two redirect responses and the final response|9.0|1\n543|DIGEST RESPONSE HANDLER|HTTP GET REQUEST|The handler receives and validates the initial GET request before issuing the authentication challenge.|9.0|1\n579|RESPONSE HANDLER|HTTP 200 RESPONSE|The handler sends a 200 OK response after the redirected request reaches the final URL|8.0|1\n574|TEST FRAGMENT NOT SENT WITH REQUEST|ECHO RESPONSE HANDLER|The test relies on the echo response handler to expose the transmitted request for inspection|9.0|1\n337|REQUESTHOOKSMIXIN|DEFAULT_HOOKS|The hook behavior provided by RequestHooksMixin depends on a hook dictionary initialized with the structure returned by default_hooks.|7.0|1\n517|ECHO RESPONSE HANDLER|CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER|The custom-Host-header test uses the echo handler to inspect and return the submitted request headers|9.0|1\n518|ECHO RESPONSE HANDLER|CHUNKED UPLOAD DOESNT SKIP HOST HEADER|The default-Host-header test uses the echo handler to inspect and return the submitted request headers|9.0|1\n578|RESPONSE HANDLER|HTTP 302 REDIRECT|The handler sends an initial 302 redirect introducing the `relevant-section` fragment and a second 302 redirect to the final URL|9.0|1\n519|BASIC RESPONSE SERVER|CHUNKED UPLOAD|The chunked upload test creates a basic response server to receive the generator-based request|9.0|1\n520|BASIC RESPONSE SERVER|EVENT|The basic response server is configured to wait for a threading Event before closing|8.0|1\n\n\n-----Sources-----\nid|text\n43|\"\"\"\nrequests.hooks\n~~~~~~~~~~~~~~\n\nThis module provides the capabilities for the Requests hooks system.\n\nAvailable hooks:\n\n``response``:\n    The response generated from a Request.\n\"\"\"\nHOOKS = [\"response\"]\n\n\ndef default_hooks():\n    return {event: [] for event in HOOKS}\n\n\n# TODO: response is the only one\n\n\ndef dispatch_hook(key, hooks, hook_data, **kwargs):\n    \"\"\"Dispatches a hook dictionary on a given piece of data.\"\"\"\n    hooks = hooks or {}\n    hooks = hooks.get(key)\n    if hooks:\n        if hasattr(hooks, \"__call__\"):\n            hooks = [hooks]\n        for hook in hooks:\n            _hook_data = hook(hook_data, **kwargs)\n            if _hook_data is not None:\n                hook_data = _hook_data\n    return hook_data\n\n88|        ),\n    )\n    def test_unicode_multipart_post(self, httpbin, data):\n        with open(__file__, \"rb\") as f:\n            r = requests.post(\n                httpbin(\"post\"),\n                data=data,\n                files={\"file\": (\"test_requests.py\", f)},\n            )\n        assert r.status_code == 200\n\n    def test_unicode_multipart_post_fieldnames(self, httpbin):\n        filename = os.path.splitext(__file__)[0] + \".py\"\n        with open(filename, \"rb\") as f:\n            r = requests.Request(\n                method=\"POST\",\n                url=httpbin(\"post\"),\n                data={b\"stuff\": \"elixr\"},\n                files={\"file\": (\"test_requests.py\", f)},\n            )\n            prep = r.prepare()\n\n        assert b'name=\"stuff\"' in prep.body\n        assert b\"name=\\\"b'stuff'\\\"\" not in prep.body\n\n    def test_unicode_method_name(self, httpbin):\n        with open(__file__, \"rb\") as f:\n            files = {\"file\": f}\n            r = requests.request(\n                method=\"POST\",\n                url=httpbin(\"post\"),\n                files=files,\n            )\n        assert r.status_code == 200\n\n    def test_unicode_method_name_with_request_object(self, httpbin):\n        s = requests.Session()\n        with open(__file__, \"rb\") as f:\n            files = {\"file\": f}\n            req = requests.Request(\"POST\", httpbin(\"post\"), files=files)\n            prep = s.prepare_request(req)\n        assert isinstance(prep.method, builtin_str)\n        assert prep.method == \"POST\"\n\n        resp = s.send(prep)\n        assert resp.status_code == 200\n\n    def test_non_prepared_request_error(self):\n        s = requests.Session()\n        req = requests.Request(\"POST\", \"/\")\n\n        with pytest.raises(ValueError) as e:\n            s.send(req)\n        assert str(e.value) == \"You can only send PreparedRequests.\"\n\n    def test_custom_content_type(self, httpbin):\n        with open(__file__, \"rb\") as f1:\n            with open(__file__, \"rb\") as f2:\n                data = {\"stuff\": json.dumps({\"a\": 123})}\n                files = {\n                    \"file1\": (\"test_requests.py\", f1),\n                    \"file2\": (\"test_requests\", f2, \"text/py-content-type\"),\n                }\n                r = requests.post(httpbin(\"post\"), data=data, files=files)\n        assert r.status_code == 200\n        assert b\"text/py-content-type\" in r.request.body\n\n    def test_hook_receives_request_arguments(self, httpbin):\n        def hook(resp, **kwargs):\n            assert resp is not None\n            assert kwargs != {}\n\n        s = requests.Session()\n        r = requests.Request(\"GET\", httpbin(), hooks={\"response\": hook})\n        prep = s.prepare_request(r)\n        s.send(prep)\n\n    def test_session_hooks_are_used_with_no_request_hooks(self, httpbin):\n        def hook(*args, **kwargs):\n            pass\n\n        s = requests.Session()\n        s.hooks[\"response\"].append(hook)\n        r = requests.Request(\"GET\", httpbin())\n        prep = s.prepare_request(r)\n        assert prep.hooks[\"response\"] != []\n        assert prep.hooks[\"response\"] == [hook]\n\n    def test_session_hooks_are_overridden_by_request_hooks(self, httpbin):\n        def hook1(*args, **kwargs):\n            pass\n\n        def hook2(*args, **kwargs):\n            pass\n\n        assert hook1 is not hook2\n        s = requests.Session()\n        s.hooks[\"response\"].append(hook2)\n        r = requests.Request(\"GET\", httpbin(), hooks={\"response\": [hook1]})\n        prep = s.prepare_request(r)\n        assert prep.hooks[\"response\"] == [hook1]\n\n    def test_prepared_request_hook(self, httpbin):\n        def hook(resp, **kwargs):\n            resp.hook_working = True\n            return resp\n\n        req = requests.Request(\"GET\", httpbin(), hooks={\"response\": hook})\n        prep = req.prepare()\n\n        s = requests.Session()\n        s.proxies = getproxies()\n        resp = s.send(prep)\n\n        assert hasattr(resp, \"hook_working\")\n\n    def test_prepared_from_session(self, httpbin):\n        class DummyAuth(requests.auth.AuthBase):\n            def __call__(self, r):\n                r.headers[\"Dummy-Auth-Test\"] = \"dummy-auth-test-ok\"\n                return r\n\n        req = requests.Request(\"GET\", httpbin(\"headers\"))\n        assert not req.auth\n\n        s = requests.Session()\n        s.auth = DummyAuth()\n\n        prep = s.prepare_request(req)\n        resp = s.send(prep)\n\n        assert resp.json()[\"headers\"][\"Dummy-Auth-Test\"] == \"dummy-auth-test-ok\"\n\n    def test_prepare_request_with_bytestring_url(self):\n        req = requests.Request(\"GET\", b\"https://httpbin.org/\")\n        s = requests.Session()\n        prep = s.prepare_request(req)\n        assert prep.url == \"https://httpbin.org/\"\n\n    def test_request_with_bytestring_host(self, httpbin):\n        s = requests.Session()\n        resp = s.request(\n            \"GET\",\n            httpbin(\"cookies/set?cookie=value\"),\n            allow_redirects=False,\n            headers={\"Host\": b\"httpbin.org\"},\n        )\n        assert resp.cookies.get(\"cookie\") == \"value\"\n\n    def test_links(self):\n        r = requests.Response()\n        r.headers = {\n            \"cache-control\": \"public, max-age=60, s-maxage=60\",\n            \"connection\": \"keep-alive\",\n            \"content-encoding\": \"gzip\",\n\n75|import threading\n\nimport pytest\nfrom tests.testserver.server import Server, consume_socket_content\n\nimport requests\nfrom requests.compat import JSONDecodeError\n\nfrom .utils import override_environ\n\n\ndef echo_response_handler(sock):\n    \"\"\"Simple handler that will take request and echo it back to requester.\"\"\"\n    request_content = consume_socket_content(sock, timeout=0.5)\n\n    text_200 = (\n        b\"HTTP/1.1 200 OK\\r\\n\"\n        b\"Content-Length: %d\\r\\n\\r\\n\"\n        b\"%s\"\n    ) % (len(request_content), request_content)\n    sock.send(text_200)\n\n\ndef test_chunked_upload():\n    \"\"\"can safely send generators\"\"\"\n    close_server = threading.Event()\n    server = Server.basic_response_server(wait_to_close_event=close_server)\n    data = iter([b\"a\", b\"b\", b\"c\"])\n\n    with server as (host, port):\n        url = f\"http://{host}:{port}/\"\n        r = requests.post(url, data=data, stream=True)\n        close_server.set()  # release server block\n\n    assert r.status_code == 200\n    assert r.request.headers[\"Transfer-Encoding\"] == \"chunked\"\n\n\ndef test_chunked_encoding_error():\n    \"\"\"get a ChunkedEncodingError if the server returns a bad response\"\"\"\n\n    def incomplete_chunked_response_handler(sock):\n        request_content = consume_socket_content(sock, timeout=0.5)\n\n        # The server never ends the request and doesn't provide any valid chunks\n        sock.send(\n            b\"HTTP/1.1 200 OK\\r\\n\"\n            b\"Transfer-Encoding: chunked\\r\\n\"\n        )\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(incomplete_chunked_response_handler)\n\n    with server as (host, port):\n        url = f\"http://{host}:{port}/\"\n        with pytest.raises(requests.exceptions.ChunkedEncodingError):\n            requests.get(url)\n        close_server.set()  # release server block\n\n\ndef test_chunked_upload_uses_only_specified_host_header():\n    \"\"\"Ensure we use only the specified Host header for chunked requests.\"\"\"\n    close_server = threading.Event()\n    server = Server(echo_response_handler, wait_to_close_event=close_server)\n\n    data = iter([b\"a\", b\"b\", b\"c\"])\n    custom_host = \"sample-host\"\n\n    with server as (host, port):\n        url = f\"http://{host}:{port}/\"\n        r = requests.post(url, data=data, headers={\"Host\": custom_host}, stream=True)\n        close_server.set()  # release server block\n\n    expected_header = b\"Host: %s\\r\\n\" % custom_host.encode(\"utf-8\")\n    assert expected_header in r.content\n    assert r.content.count(b\"Host: \") == 1\n\n\ndef test_chunked_upload_doesnt_skip_host_header():\n    \"\"\"Ensure we don't omit all Host headers with chunked requests.\"\"\"\n    close_server = threading.Event()\n    server = Server(echo_response_handler, wait_to_close_event=close_server)\n\n    data = iter([b\"a\", b\"b\", b\"c\"])\n\n    with server as (host, port):\n        expected_host = f\"{host}:{port}\"\n        url = f\"http://{host}:{port}/\"\n        r = requests.post(url, data=data, stream=True)\n        close_server.set()  # release server block\n\n    expected_header = b\"Host: %s\\r\\n\" % expected_host.encode(\"utf-8\")\n    assert expected_header in r.content\n    assert r.content.count(b\"Host: \") == 1\n\n\ndef test_conflicting_content_lengths():\n    \"\"\"Ensure we correctly throw an InvalidHeader error if multiple\n    conflicting Content-Length headers are returned.\n    \"\"\"\n\n    def multiple_content_length_response_handler(sock):\n        request_content = consume_socket_content(sock, timeout=0.5)\n        response = (\n            b\"HTTP/1.1 200 OK\\r\\n\"\n            b\"Content-Type: text/plain\\r\\n\"\n            b\"Content-Length: 16\\r\\n\"\n            b\"Content-Length: 32\\r\\n\\r\\n\"\n            b\"-- Bad Actor -- Original Content\\r\\n\"\n        )\n        sock.send(response)\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(multiple_content_length_response_handler)\n\n    with server as (host, port):\n        url = f\"http://{host}:{port}/\"\n        with pytest.raises(requests.exceptions.InvalidHeader):\n            requests.get(url)\n        close_server.set()\n\n\ndef test_digestauth_401_count_reset_on_redirect():\n    \"\"\"Ensure we correctly reset num_401_calls after a successful digest auth,\n    followed by a 302 redirect to another digest auth prompt.\n\n    See https://github.com/psf/requests/issues/1979.\n    \"\"\"\n    text_401 = (b'HTTP/1.1 401 UNAUTHORIZED\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'WWW-Authenticate: Digest nonce=\"6bf5d6e4da1ce66918800195d6b9130d\"'\n                b', opaque=\"372825293d1c26955496c80ed6426e9e\", '\n                b'realm=\"me@kennethreitz.com\", qop=auth\\r\\n\\r\\n')\n\n    text_302 = (b'HTTP/1.1 302 FOUND\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'Location: /\\r\\n\\r\\n')\n\n    text_200 = (b'HTTP/1.1 200 OK\\r\\n'\n                b'Content-Length: 0\\r\\n\\r\\n')\n\n    expected_digest = (b'Authorization: Digest username=\"user\", '\n\n77|\n    def digest_response_handler(sock):\n        # Respond to GET with a 200 containing www-authenticate header.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content.startswith(b\"GET / HTTP/1.1\")\n        sock.send(text_200_chal)\n\n        # Verify the client didn't respond with auth.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content == b''\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(digest_response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url, auth=auth)\n        # Verify server didn't receive auth from us.\n        assert r.status_code == 200\n        assert len(r.history) == 0\n        close_server.set()\n\n\n_schemes_by_var_prefix = [\n    ('http', ['http']),\n    ('https', ['https']),\n    ('all', ['http', 'https']),\n]\n\n_proxy_combos = []\nfor prefix, schemes in _schemes_by_var_prefix:\n    for scheme in schemes:\n        _proxy_combos.append((f\"{prefix}_proxy\", scheme))\n\n_proxy_combos += [(var.upper(), scheme) for var, scheme in _proxy_combos]\n\n\n@pytest.mark.parametrize(\"var,scheme\", _proxy_combos)\ndef test_use_proxy_from_environment(httpbin, var, scheme):\n    url = f\"{scheme}://httpbin.org\"\n    fake_proxy = Server()  # do nothing with the requests; just close the socket\n    with fake_proxy as (host, port):\n        proxy_url = f\"socks5://{host}:{port}\"\n        kwargs = {var: proxy_url}\n        with override_environ(**kwargs):\n            # fake proxy's lack of response will cause a ConnectionError\n            with pytest.raises(requests.exceptions.ConnectionError):\n                requests.get(url)\n\n        # the fake proxy received a request\n        assert len(fake_proxy.handler_results) == 1\n\n        # it had actual content (not checking for SOCKS protocol for now)\n        assert len(fake_proxy.handler_results[0]) > 0\n\n\ndef test_redirect_rfc1808_to_non_ascii_location():\n    path = 'š'\n    expected_path = b'%C5%A1'\n    redirect_request = []  # stores the second request to the server\n\n    def redirect_resp_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        location = f'//{host}:{port}/{path}'\n        sock.send(\n            (\n                b'HTTP/1.1 301 Moved Permanently\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'Location: %s\\r\\n'\n                b'\\r\\n'\n            ) % location.encode('utf8')\n        )\n        redirect_request.append(consume_socket_content(sock, timeout=0.5))\n        sock.send(b'HTTP/1.1 200 OK\\r\\n\\r\\n')\n\n    close_server = threading.Event()\n    server = Server(redirect_resp_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}'\n        r = requests.get(url=url, allow_redirects=True)\n        assert r.status_code == 200\n        assert len(r.history) == 1\n        assert r.history[0].status_code == 301\n        assert redirect_request[0].startswith(b'GET /' + expected_path + b' HTTP/1.1')\n        assert r.url == '{}/{}'.format(url, expected_path.decode('ascii'))\n\n        close_server.set()\n\n\ndef test_fragment_not_sent_with_request():\n    \"\"\"Verify that the fragment portion of a URI isn't sent to the server.\"\"\"\n    close_server = threading.Event()\n    server = Server(echo_response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/path/to/thing/#view=edit&token=hunter2'\n        r = requests.get(url)\n        raw_request = r.content\n\n        assert r.status_code == 200\n        headers, body = raw_request.split(b'\\r\\n\\r\\n', 1)\n        status_line, headers = headers.split(b'\\r\\n', 1)\n\n        assert status_line == b'GET /path/to/thing/ HTTP/1.1'\n        for frag in (b'view', b'edit', b'token', b'hunter2'):\n            assert frag not in headers\n            assert frag not in body\n\n        close_server.set()\n\n\ndef test_fragment_update_on_redirect():\n    \"\"\"Verify we only append previous fragment if one doesn't exist on new\n    location. If a new fragment is encountered in a Location header, it should\n    be added to all subsequent requests.\n    \"\"\"\n\n    def response_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /get#relevant-section\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /final-url/\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n\n",
+  "upstream_raw_records": {
+    "relationships": [
+      {
+        "id": "338",
+        "source": "REQUESTHOOKSMIXIN",
+        "target": "CALLABLE",
+        "description": "RequestHooksMixin checks whether hooks are Callable objects before adding them to its event-specific hook lists.",
+        "weight": "8.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "293",
+        "source": "HOOKS",
+        "target": "HOOK",
+        "description": "The hooks configuration stores one or more callable hooks for each supported event.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "557",
+        "source": "REQUESTS",
+        "target": "DIGEST RESPONSE HANDLER",
+        "description": "Requests sends the unauthenticated GET request handled by the digest response handler and validates the 200 response",
+        "weight": "8.0",
+        "links": "9",
+        "in_context": true
+      },
+      {
+        "id": "931",
+        "source": "TEST_RESPONSE_WITHOUT_RELEASE_CONN",
+        "target": "REQUESTS",
+        "description": "The test validates Requests Response.close behavior with a non-standard raw response object",
+        "weight": "9.0",
+        "links": "9",
+        "in_context": true
+      },
+      {
+        "id": "412",
+        "source": "DELETE",
+        "target": "REQUESTS",
+        "description": "The Requests library exposes a delete method that sends DELETE requests.",
+        "weight": "1.0",
+        "links": "9",
+        "in_context": true
+      },
+      {
+        "id": "652",
+        "source": "TEST HISTORY IS ALWAYS A LIST",
+        "target": "REQUESTS",
+        "description": "The test verifies the Requests Response.history contract",
+        "weight": "9.0",
+        "links": "9",
+        "in_context": true
+      },
+      {
+        "id": "778",
+        "source": "HOOK RECEIVES REQUEST ARGUMENTS TEST",
+        "target": "REQUESTS",
+        "description": "The test uses Requests response hooks and request sending APIs.",
+        "weight": "9.0",
+        "links": "9",
+        "in_context": true
+      },
+      {
+        "id": "779",
+        "source": "SESSION HOOKS USED WITH NO REQUEST HOOKS TEST",
+        "target": "REQUESTS",
+        "description": "The test verifies response-hook inheritance in the Requests Session API.",
+        "weight": "9.0",
+        "links": "9",
+        "in_context": true
+      },
+      {
+        "id": "780",
+        "source": "SESSION HOOKS OVERRIDDEN BY REQUEST HOOKS TEST",
+        "target": "REQUESTS",
+        "description": "The test verifies request-specific hook precedence in the Requests Session API.",
+        "weight": "9.0",
+        "links": "9",
+        "in_context": true
+      },
+      {
+        "id": "62",
+        "source": "REQUESTS",
+        "target": "HTTP DELETE",
+        "description": "Requests lists HTTP DELETE among the supported request methods",
+        "weight": "8.0",
+        "links": "9",
+        "in_context": true
+      },
+      {
+        "id": "318",
+        "source": "REQUESTS",
+        "target": "REQUESTS HOOKS",
+        "description": "Requests imports default hooks from its hooks component.",
+        "weight": "8.0",
+        "links": "9",
+        "in_context": true
+      },
+      {
+        "id": "580",
+        "source": "DIGEST RESPONSE HANDLER",
+        "target": "CONSUME SOCKET CONTENT",
+        "description": "The digest response handler consumes the initial request and verifies that no authenticated follow-up request is received",
+        "weight": "8.0",
+        "links": "4",
+        "in_context": true
+      },
+      {
+        "id": "582",
+        "source": "RESPONSE HANDLER",
+        "target": "CONSUME SOCKET CONTENT",
+        "description": "The fragment redirect handler consumes each request before sending the next redirect or final response",
+        "weight": "8.0",
+        "links": "4",
+        "in_context": true
+      },
+      {
+        "id": "514",
+        "source": "CONSUME SOCKET CONTENT",
+        "target": "ECHO RESPONSE HANDLER",
+        "description": "The echo handler uses consume_socket_content to read the incoming request before echoing it back",
+        "weight": "9.0",
+        "links": "4",
+        "in_context": true
+      },
+      {
+        "id": "516",
+        "source": "CONSUME SOCKET CONTENT",
+        "target": "MULTIPLE CONTENT LENGTH RESPONSE HANDLER",
+        "description": "The conflicting-header handler uses consume_socket_content before sending its response",
+        "weight": "8.0",
+        "links": "4",
+        "in_context": true
+      },
+      {
+        "id": "292",
+        "source": "HOOK",
+        "target": "RESPONSE",
+        "description": "A hook receives response data, may process it, and can return updated response data.",
+        "weight": "9.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "294",
+        "source": "HOOKS",
+        "target": "RESPONSE",
+        "description": "The hooks system supports response as its only currently defined event and maintains its associated hook list.",
+        "weight": "1.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "947",
+        "source": "PYTEST",
+        "target": "TEST_RESPONSE_WITHOUT_RELEASE_CONN",
+        "description": "Pytest executes the raw-response close test",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "857",
+        "source": "CASE-INSENSITIVE HEADER REMOVAL",
+        "target": "HTTPBIN",
+        "description": "The test sends the request to HTTPBin and inspects the resulting request headers",
+        "weight": "8.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "329",
+        "source": "REQUEST",
+        "target": "REQUESTHOOKSMIXIN",
+        "description": "Request inherits from RequestHooksMixin and uses its hook registration and deregistration behavior.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "330",
+        "source": "PREPAREDREQUEST",
+        "target": "REQUESTHOOKSMIXIN",
+        "description": "PreparedRequest inherits from RequestHooksMixin and includes request hook functionality.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "253",
+        "source": "REMOVE_COOKIE_BY_NAME",
+        "target": "COOKIEJAR",
+        "description": "remove_cookie_by_name iterates through and clears matching cookies stored in a cookie jar.",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "545",
+        "source": "DIGEST RESPONSE HANDLER",
+        "target": "DIGEST AUTHORIZATION REQUEST",
+        "description": "The handler verifies that the client returns a correctly formed Digest Authorization request.",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "546",
+        "source": "DIGEST RESPONSE HANDLER",
+        "target": "HTTP REDIRECT",
+        "description": "The handler sends a redirect after verifying the first authenticated request.",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "544",
+        "source": "DIGEST RESPONSE HANDLER",
+        "target": "DIGEST AUTHENTICATION CHALLENGE",
+        "description": "The DIGEST RESPONSE HANDLER sends the initial DIGEST AUTHENTICATION CHALLENGE to the client by returning a 200 response containing the challenge in the `WWW-Authenticate` header.",
+        "weight": "19.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "576",
+        "source": "TEST FRAGMENT UPDATE ON REDIRECT",
+        "target": "RESPONSE HANDLER",
+        "description": "The test starts a server using the response handler that emits the two redirect responses and the final response",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "543",
+        "source": "DIGEST RESPONSE HANDLER",
+        "target": "HTTP GET REQUEST",
+        "description": "The handler receives and validates the initial GET request before issuing the authentication challenge.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "579",
+        "source": "RESPONSE HANDLER",
+        "target": "HTTP 200 RESPONSE",
+        "description": "The handler sends a 200 OK response after the redirected request reaches the final URL",
+        "weight": "8.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "574",
+        "source": "TEST FRAGMENT NOT SENT WITH REQUEST",
+        "target": "ECHO RESPONSE HANDLER",
+        "description": "The test relies on the echo response handler to expose the transmitted request for inspection",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "337",
+        "source": "REQUESTHOOKSMIXIN",
+        "target": "DEFAULT_HOOKS",
+        "description": "The hook behavior provided by RequestHooksMixin depends on a hook dictionary initialized with the structure returned by default_hooks.",
+        "weight": "7.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "517",
+        "source": "ECHO RESPONSE HANDLER",
+        "target": "CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER",
+        "description": "The custom-Host-header test uses the echo handler to inspect and return the submitted request headers",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "518",
+        "source": "ECHO RESPONSE HANDLER",
+        "target": "CHUNKED UPLOAD DOESNT SKIP HOST HEADER",
+        "description": "The default-Host-header test uses the echo handler to inspect and return the submitted request headers",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "578",
+        "source": "RESPONSE HANDLER",
+        "target": "HTTP 302 REDIRECT",
+        "description": "The handler sends an initial 302 redirect introducing the `relevant-section` fragment and a second 302 redirect to the final URL",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "519",
+        "source": "BASIC RESPONSE SERVER",
+        "target": "CHUNKED UPLOAD",
+        "description": "The chunked upload test creates a basic response server to receive the generator-based request",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "520",
+        "source": "BASIC RESPONSE SERVER",
+        "target": "EVENT",
+        "description": "The basic response server is configured to wait for a threading Event before closing",
+        "weight": "8.0",
+        "links": "1",
+        "in_context": true
+      }
+    ],
+    "entities": [
+      {
+        "id": "215",
+        "entity": "HOOKS",
+        "description": "Hooks are collections of callback functions associated with supported events in the Requests hooks system; the default configuration includes a response hook list.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "214",
+        "entity": "HOOK",
+        "description": "A hook is a callable callback registered in the Requests hooks system to process hook data, such as a response, and optionally return updated data.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "488",
+        "entity": "SESSION HOOKS OVERRIDDEN BY REQUEST HOOKS TEST",
+        "description": "A test event that verifies request-specific response hooks replace the response hooks configured on a Session.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "350",
+        "entity": "ECHO RESPONSE HANDLER",
+        "description": "ECHO RESPONSE HANDLER is a socket response-handler event and test server handler used by the fragment test. It consumes an incoming HTTP request and returns it in an HTTP 200 response, using the received request content as the response body.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "247",
+        "entity": "CALLABLE",
+        "description": "Callable is a callable-object type abstraction used by RequestHooksMixin to validate hook functions before registering them.>",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "353",
+        "entity": "BASIC RESPONSE SERVER",
+        "description": "A server configuration event created through Server.basic_response_server to provide a basic HTTP response while coordinating shutdown with a threading Event",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "289",
+        "entity": "DELETE",
+        "description": "DELETE is an HTTP method supported by the Requests library for removing a resource.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "193",
+        "entity": "REMOVE_COOKIE_BY_NAME",
+        "description": "remove_cookie_by_name is a function that removes cookies matching a name and, optionally, a domain and path from a cookie jar.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "232",
+        "entity": "REQUESTS HOOKS",
+        "description": "REQUESTS HOOKS provides the default request and response hook functionality used by the tests. It exposes the `default_hooks` collection, which manages these hooks.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "487",
+        "entity": "SESSION HOOKS USED WITH NO REQUEST HOOKS TEST",
+        "description": "A test event that verifies response hooks configured on a Session are inherited by a request without its own hooks.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "244",
+        "entity": "REQUESTHOOKSMIXIN",
+        "description": "RequestHooksMixin is a requests software component that registers and deregisters callable hooks for supported request events.>",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "534",
+        "entity": "CASE-INSENSITIVE HEADER REMOVAL",
+        "description": "A test event verifying that passing a differently cased header name with a null value removes the existing header from a prepared request",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "375",
+        "entity": "DIGEST RESPONSE HANDLER",
+        "description": "DIGEST RESPONSE HANDLER is a socket-based test server handler for validating HTTP Digest authentication and credential protection during redirects. It challenges an unauthenticated request with a `WWW-Authenticate` response—typically an initial `401` response, with a test path that may return `200` while still including the challenge—and verifies that the client does not resend the request with credentials before authentication is required. It then validates the client’s Digest `Authorization` header, sends a redirect, confirms that credentials are withheld when the request moves to a different host, and authenticates the final request only when the credentials are appropriately supplied.",
+        "number of relationships": "6",
+        "in_context": true
+      },
+      {
+        "id": "577",
+        "entity": "TEST_RESPONSE_WITHOUT_RELEASE_CONN",
+        "description": "A test that verifies Response.close works with a raw object that lacks a release_conn method",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "486",
+        "entity": "HOOK RECEIVES REQUEST ARGUMENTS TEST",
+        "description": "A test event that verifies a response hook receives a response object and keyword arguments when a request is sent.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "391",
+        "entity": "RESPONSE HANDLER",
+        "description": "A test server handler that processes two sequential 302 redirects, first introducing a relevant-section fragment and then redirecting to a fragment-free final URL before returning a 200 response>",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "429",
+        "entity": "TEST HISTORY IS ALWAYS A LIST",
+        "description": "A test event verifying that Response.history is always a list, both for responses with redirects and responses without redirects",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "352",
+        "entity": "MULTIPLE CONTENT LENGTH RESPONSE HANDLER",
+        "description": "A socket response-handler event that returns an HTTP response containing conflicting Content-Length headers and invalidates the response for header-validation testing",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "50",
+        "entity": "HTTP DELETE",
+        "description": "HTTP DELETE is one of the HTTP request methods supported by Requests\"",
+        "number of relationships": "1",
+        "in_context": true
+      }
+    ],
+    "sources": [
+      {
+        "id": "43",
+        "text": "\"\"\"\nrequests.hooks\n~~~~~~~~~~~~~~\n\nThis module provides the capabilities for the Requests hooks system.\n\nAvailable hooks:\n\n``response``:\n    The response generated from a Request.\n\"\"\"\nHOOKS = [\"response\"]\n\n\ndef default_hooks():\n    return {event: [] for event in HOOKS}\n\n\n# TODO: response is the only one\n\n\ndef dispatch_hook(key, hooks, hook_data, **kwargs):\n    \"\"\"Dispatches a hook dictionary on a given piece of data.\"\"\"\n    hooks = hooks or {}\n    hooks = hooks.get(key)\n    if hooks:\n        if hasattr(hooks, \"__call__\"):\n            hooks = [hooks]\n        for hook in hooks:\n            _hook_data = hook(hook_data, **kwargs)\n            if _hook_data is not None:\n                hook_data = _hook_data\n    return hook_data\n"
+      },
+      {
+        "id": "88",
+        "text": "        ),\n    )\n    def test_unicode_multipart_post(self, httpbin, data):\n        with open(__file__, \"rb\") as f:\n            r = requests.post(\n                httpbin(\"post\"),\n                data=data,\n                files={\"file\": (\"test_requests.py\", f)},\n            )\n        assert r.status_code == 200\n\n    def test_unicode_multipart_post_fieldnames(self, httpbin):\n        filename = os.path.splitext(__file__)[0] + \".py\"\n        with open(filename, \"rb\") as f:\n            r = requests.Request(\n                method=\"POST\",\n                url=httpbin(\"post\"),\n                data={b\"stuff\": \"elixr\"},\n                files={\"file\": (\"test_requests.py\", f)},\n            )\n            prep = r.prepare()\n\n        assert b'name=\"stuff\"' in prep.body\n        assert b\"name=\\\"b'stuff'\\\"\" not in prep.body\n\n    def test_unicode_method_name(self, httpbin):\n        with open(__file__, \"rb\") as f:\n            files = {\"file\": f}\n            r = requests.request(\n                method=\"POST\",\n                url=httpbin(\"post\"),\n                files=files,\n            )\n        assert r.status_code == 200\n\n    def test_unicode_method_name_with_request_object(self, httpbin):\n        s = requests.Session()\n        with open(__file__, \"rb\") as f:\n            files = {\"file\": f}\n            req = requests.Request(\"POST\", httpbin(\"post\"), files=files)\n            prep = s.prepare_request(req)\n        assert isinstance(prep.method, builtin_str)\n        assert prep.method == \"POST\"\n\n        resp = s.send(prep)\n        assert resp.status_code == 200\n\n    def test_non_prepared_request_error(self):\n        s = requests.Session()\n        req = requests.Request(\"POST\", \"/\")\n\n        with pytest.raises(ValueError) as e:\n            s.send(req)\n        assert str(e.value) == \"You can only send PreparedRequests.\"\n\n    def test_custom_content_type(self, httpbin):\n        with open(__file__, \"rb\") as f1:\n            with open(__file__, \"rb\") as f2:\n                data = {\"stuff\": json.dumps({\"a\": 123})}\n                files = {\n                    \"file1\": (\"test_requests.py\", f1),\n                    \"file2\": (\"test_requests\", f2, \"text/py-content-type\"),\n                }\n                r = requests.post(httpbin(\"post\"), data=data, files=files)\n        assert r.status_code == 200\n        assert b\"text/py-content-type\" in r.request.body\n\n    def test_hook_receives_request_arguments(self, httpbin):\n        def hook(resp, **kwargs):\n            assert resp is not None\n            assert kwargs != {}\n\n        s = requests.Session()\n        r = requests.Request(\"GET\", httpbin(), hooks={\"response\": hook})\n        prep = s.prepare_request(r)\n        s.send(prep)\n\n    def test_session_hooks_are_used_with_no_request_hooks(self, httpbin):\n        def hook(*args, **kwargs):\n            pass\n\n        s = requests.Session()\n        s.hooks[\"response\"].append(hook)\n        r = requests.Request(\"GET\", httpbin())\n        prep = s.prepare_request(r)\n        assert prep.hooks[\"response\"] != []\n        assert prep.hooks[\"response\"] == [hook]\n\n    def test_session_hooks_are_overridden_by_request_hooks(self, httpbin):\n        def hook1(*args, **kwargs):\n            pass\n\n        def hook2(*args, **kwargs):\n            pass\n\n        assert hook1 is not hook2\n        s = requests.Session()\n        s.hooks[\"response\"].append(hook2)\n        r = requests.Request(\"GET\", httpbin(), hooks={\"response\": [hook1]})\n        prep = s.prepare_request(r)\n        assert prep.hooks[\"response\"] == [hook1]\n\n    def test_prepared_request_hook(self, httpbin):\n        def hook(resp, **kwargs):\n            resp.hook_working = True\n            return resp\n\n        req = requests.Request(\"GET\", httpbin(), hooks={\"response\": hook})\n        prep = req.prepare()\n\n        s = requests.Session()\n        s.proxies = getproxies()\n        resp = s.send(prep)\n\n        assert hasattr(resp, \"hook_working\")\n\n    def test_prepared_from_session(self, httpbin):\n        class DummyAuth(requests.auth.AuthBase):\n            def __call__(self, r):\n                r.headers[\"Dummy-Auth-Test\"] = \"dummy-auth-test-ok\"\n                return r\n\n        req = requests.Request(\"GET\", httpbin(\"headers\"))\n        assert not req.auth\n\n        s = requests.Session()\n        s.auth = DummyAuth()\n\n        prep = s.prepare_request(req)\n        resp = s.send(prep)\n\n        assert resp.json()[\"headers\"][\"Dummy-Auth-Test\"] == \"dummy-auth-test-ok\"\n\n    def test_prepare_request_with_bytestring_url(self):\n        req = requests.Request(\"GET\", b\"https://httpbin.org/\")\n        s = requests.Session()\n        prep = s.prepare_request(req)\n        assert prep.url == \"https://httpbin.org/\"\n\n    def test_request_with_bytestring_host(self, httpbin):\n        s = requests.Session()\n        resp = s.request(\n            \"GET\",\n            httpbin(\"cookies/set?cookie=value\"),\n            allow_redirects=False,\n            headers={\"Host\": b\"httpbin.org\"},\n        )\n        assert resp.cookies.get(\"cookie\") == \"value\"\n\n    def test_links(self):\n        r = requests.Response()\n        r.headers = {\n            \"cache-control\": \"public, max-age=60, s-maxage=60\",\n            \"connection\": \"keep-alive\",\n            \"content-encoding\": \"gzip\",\n"
+      },
+      {
+        "id": "75",
+        "text": "import threading\n\nimport pytest\nfrom tests.testserver.server import Server, consume_socket_content\n\nimport requests\nfrom requests.compat import JSONDecodeError\n\nfrom .utils import override_environ\n\n\ndef echo_response_handler(sock):\n    \"\"\"Simple handler that will take request and echo it back to requester.\"\"\"\n    request_content = consume_socket_content(sock, timeout=0.5)\n\n    text_200 = (\n        b\"HTTP/1.1 200 OK\\r\\n\"\n        b\"Content-Length: %d\\r\\n\\r\\n\"\n        b\"%s\"\n    ) % (len(request_content), request_content)\n    sock.send(text_200)\n\n\ndef test_chunked_upload():\n    \"\"\"can safely send generators\"\"\"\n    close_server = threading.Event()\n    server = Server.basic_response_server(wait_to_close_event=close_server)\n    data = iter([b\"a\", b\"b\", b\"c\"])\n\n    with server as (host, port):\n        url = f\"http://{host}:{port}/\"\n        r = requests.post(url, data=data, stream=True)\n        close_server.set()  # release server block\n\n    assert r.status_code == 200\n    assert r.request.headers[\"Transfer-Encoding\"] == \"chunked\"\n\n\ndef test_chunked_encoding_error():\n    \"\"\"get a ChunkedEncodingError if the server returns a bad response\"\"\"\n\n    def incomplete_chunked_response_handler(sock):\n        request_content = consume_socket_content(sock, timeout=0.5)\n\n        # The server never ends the request and doesn't provide any valid chunks\n        sock.send(\n            b\"HTTP/1.1 200 OK\\r\\n\"\n            b\"Transfer-Encoding: chunked\\r\\n\"\n        )\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(incomplete_chunked_response_handler)\n\n    with server as (host, port):\n        url = f\"http://{host}:{port}/\"\n        with pytest.raises(requests.exceptions.ChunkedEncodingError):\n            requests.get(url)\n        close_server.set()  # release server block\n\n\ndef test_chunked_upload_uses_only_specified_host_header():\n    \"\"\"Ensure we use only the specified Host header for chunked requests.\"\"\"\n    close_server = threading.Event()\n    server = Server(echo_response_handler, wait_to_close_event=close_server)\n\n    data = iter([b\"a\", b\"b\", b\"c\"])\n    custom_host = \"sample-host\"\n\n    with server as (host, port):\n        url = f\"http://{host}:{port}/\"\n        r = requests.post(url, data=data, headers={\"Host\": custom_host}, stream=True)\n        close_server.set()  # release server block\n\n    expected_header = b\"Host: %s\\r\\n\" % custom_host.encode(\"utf-8\")\n    assert expected_header in r.content\n    assert r.content.count(b\"Host: \") == 1\n\n\ndef test_chunked_upload_doesnt_skip_host_header():\n    \"\"\"Ensure we don't omit all Host headers with chunked requests.\"\"\"\n    close_server = threading.Event()\n    server = Server(echo_response_handler, wait_to_close_event=close_server)\n\n    data = iter([b\"a\", b\"b\", b\"c\"])\n\n    with server as (host, port):\n        expected_host = f\"{host}:{port}\"\n        url = f\"http://{host}:{port}/\"\n        r = requests.post(url, data=data, stream=True)\n        close_server.set()  # release server block\n\n    expected_header = b\"Host: %s\\r\\n\" % expected_host.encode(\"utf-8\")\n    assert expected_header in r.content\n    assert r.content.count(b\"Host: \") == 1\n\n\ndef test_conflicting_content_lengths():\n    \"\"\"Ensure we correctly throw an InvalidHeader error if multiple\n    conflicting Content-Length headers are returned.\n    \"\"\"\n\n    def multiple_content_length_response_handler(sock):\n        request_content = consume_socket_content(sock, timeout=0.5)\n        response = (\n            b\"HTTP/1.1 200 OK\\r\\n\"\n            b\"Content-Type: text/plain\\r\\n\"\n            b\"Content-Length: 16\\r\\n\"\n            b\"Content-Length: 32\\r\\n\\r\\n\"\n            b\"-- Bad Actor -- Original Content\\r\\n\"\n        )\n        sock.send(response)\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(multiple_content_length_response_handler)\n\n    with server as (host, port):\n        url = f\"http://{host}:{port}/\"\n        with pytest.raises(requests.exceptions.InvalidHeader):\n            requests.get(url)\n        close_server.set()\n\n\ndef test_digestauth_401_count_reset_on_redirect():\n    \"\"\"Ensure we correctly reset num_401_calls after a successful digest auth,\n    followed by a 302 redirect to another digest auth prompt.\n\n    See https://github.com/psf/requests/issues/1979.\n    \"\"\"\n    text_401 = (b'HTTP/1.1 401 UNAUTHORIZED\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'WWW-Authenticate: Digest nonce=\"6bf5d6e4da1ce66918800195d6b9130d\"'\n                b', opaque=\"372825293d1c26955496c80ed6426e9e\", '\n                b'realm=\"me@kennethreitz.com\", qop=auth\\r\\n\\r\\n')\n\n    text_302 = (b'HTTP/1.1 302 FOUND\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'Location: /\\r\\n\\r\\n')\n\n    text_200 = (b'HTTP/1.1 200 OK\\r\\n'\n                b'Content-Length: 0\\r\\n\\r\\n')\n\n    expected_digest = (b'Authorization: Digest username=\"user\", '\n"
+      },
+      {
+        "id": "77",
+        "text": "\n    def digest_response_handler(sock):\n        # Respond to GET with a 200 containing www-authenticate header.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content.startswith(b\"GET / HTTP/1.1\")\n        sock.send(text_200_chal)\n\n        # Verify the client didn't respond with auth.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content == b''\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(digest_response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url, auth=auth)\n        # Verify server didn't receive auth from us.\n        assert r.status_code == 200\n        assert len(r.history) == 0\n        close_server.set()\n\n\n_schemes_by_var_prefix = [\n    ('http', ['http']),\n    ('https', ['https']),\n    ('all', ['http', 'https']),\n]\n\n_proxy_combos = []\nfor prefix, schemes in _schemes_by_var_prefix:\n    for scheme in schemes:\n        _proxy_combos.append((f\"{prefix}_proxy\", scheme))\n\n_proxy_combos += [(var.upper(), scheme) for var, scheme in _proxy_combos]\n\n\n@pytest.mark.parametrize(\"var,scheme\", _proxy_combos)\ndef test_use_proxy_from_environment(httpbin, var, scheme):\n    url = f\"{scheme}://httpbin.org\"\n    fake_proxy = Server()  # do nothing with the requests; just close the socket\n    with fake_proxy as (host, port):\n        proxy_url = f\"socks5://{host}:{port}\"\n        kwargs = {var: proxy_url}\n        with override_environ(**kwargs):\n            # fake proxy's lack of response will cause a ConnectionError\n            with pytest.raises(requests.exceptions.ConnectionError):\n                requests.get(url)\n\n        # the fake proxy received a request\n        assert len(fake_proxy.handler_results) == 1\n\n        # it had actual content (not checking for SOCKS protocol for now)\n        assert len(fake_proxy.handler_results[0]) > 0\n\n\ndef test_redirect_rfc1808_to_non_ascii_location():\n    path = 'š'\n    expected_path = b'%C5%A1'\n    redirect_request = []  # stores the second request to the server\n\n    def redirect_resp_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        location = f'//{host}:{port}/{path}'\n        sock.send(\n            (\n                b'HTTP/1.1 301 Moved Permanently\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'Location: %s\\r\\n'\n                b'\\r\\n'\n            ) % location.encode('utf8')\n        )\n        redirect_request.append(consume_socket_content(sock, timeout=0.5))\n        sock.send(b'HTTP/1.1 200 OK\\r\\n\\r\\n')\n\n    close_server = threading.Event()\n    server = Server(redirect_resp_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}'\n        r = requests.get(url=url, allow_redirects=True)\n        assert r.status_code == 200\n        assert len(r.history) == 1\n        assert r.history[0].status_code == 301\n        assert redirect_request[0].startswith(b'GET /' + expected_path + b' HTTP/1.1')\n        assert r.url == '{}/{}'.format(url, expected_path.decode('ascii'))\n\n        close_server.set()\n\n\ndef test_fragment_not_sent_with_request():\n    \"\"\"Verify that the fragment portion of a URI isn't sent to the server.\"\"\"\n    close_server = threading.Event()\n    server = Server(echo_response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/path/to/thing/#view=edit&token=hunter2'\n        r = requests.get(url)\n        raw_request = r.content\n\n        assert r.status_code == 200\n        headers, body = raw_request.split(b'\\r\\n\\r\\n', 1)\n        status_line, headers = headers.split(b'\\r\\n', 1)\n\n        assert status_line == b'GET /path/to/thing/ HTTP/1.1'\n        for frag in (b'view', b'edit', b'token', b'hunter2'):\n            assert frag not in headers\n            assert frag not in body\n\n        close_server.set()\n\n\ndef test_fragment_update_on_redirect():\n    \"\"\"Verify we only append previous fragment if one doesn't exist on new\n    location. If a new fragment is encountered in a Location header, it should\n    be added to all subsequent requests.\n    \"\"\"\n\n    def response_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /get#relevant-section\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /final-url/\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n"
+      }
+    ]
+  },
+  "final_context": "-----Entities-----\nid|entity|description|number of relationships\n215|HOOKS|Hooks are collections of callback functions associated with supported events in the Requests hooks system; the default configuration includes a response hook list.|2\n214|HOOK|A hook is a callable callback registered in the Requests hooks system to process hook data, such as a response, and optionally return updated data.|2\n488|SESSION HOOKS OVERRIDDEN BY REQUEST HOOKS TEST|A test event that verifies request-specific response hooks replace the response hooks configured on a Session.|1\n350|ECHO RESPONSE HANDLER|ECHO RESPONSE HANDLER is a socket response-handler event and test server handler used by the fragment test. It consumes an incoming HTTP request and returns it in an HTTP 200 response, using the received request content as the response body.|4\n247|CALLABLE|Callable is a callable-object type abstraction used by RequestHooksMixin to validate hook functions before registering them.>|1\n353|BASIC RESPONSE SERVER|A server configuration event created through Server.basic_response_server to provide a basic HTTP response while coordinating shutdown with a threading Event|2\n289|DELETE|DELETE is an HTTP method supported by the Requests library for removing a resource.|1\n193|REMOVE_COOKIE_BY_NAME|remove_cookie_by_name is a function that removes cookies matching a name and, optionally, a domain and path from a cookie jar.|1\n232|REQUESTS HOOKS|REQUESTS HOOKS provides the default request and response hook functionality used by the tests. It exposes the `default_hooks` collection, which manages these hooks.|1\n487|SESSION HOOKS USED WITH NO REQUEST HOOKS TEST|A test event that verifies response hooks configured on a Session are inherited by a request without its own hooks.|1\n244|REQUESTHOOKSMIXIN|RequestHooksMixin is a requests software component that registers and deregisters callable hooks for supported request events.>|4\n534|CASE-INSENSITIVE HEADER REMOVAL|A test event verifying that passing a differently cased header name with a null value removes the existing header from a prepared request|1\n375|DIGEST RESPONSE HANDLER|DIGEST RESPONSE HANDLER is a socket-based test server handler for validating HTTP Digest authentication and credential protection during redirects. It challenges an unauthenticated request with a `WWW-Authenticate` response—typically an initial `401` response, with a test path that may return `200` while still including the challenge—and verifies that the client does not resend the request with credentials before authentication is required. It then validates the client’s Digest `Authorization` header, sends a redirect, confirms that credentials are withheld when the request moves to a different host, and authenticates the final request only when the credentials are appropriately supplied.|6\n577|TEST_RESPONSE_WITHOUT_RELEASE_CONN|A test that verifies Response.close works with a raw object that lacks a release_conn method|2\n486|HOOK RECEIVES REQUEST ARGUMENTS TEST|A test event that verifies a response hook receives a response object and keyword arguments when a request is sent.|1\n391|RESPONSE HANDLER|A test server handler that processes two sequential 302 redirects, first introducing a relevant-section fragment and then redirecting to a fragment-free final URL before returning a 200 response>|4\n429|TEST HISTORY IS ALWAYS A LIST|A test event verifying that Response.history is always a list, both for responses with redirects and responses without redirects|1\n352|MULTIPLE CONTENT LENGTH RESPONSE HANDLER|A socket response-handler event that returns an HTTP response containing conflicting Content-Length headers and invalidates the response for header-validation testing|1\n50|HTTP DELETE|\"HTTP DELETE is one of the HTTP request methods supported by Requests\"\"\"|1\n\n-----Relationships-----\nid|source|target|description|weight|links\n338|REQUESTHOOKSMIXIN|CALLABLE|RequestHooksMixin checks whether hooks are Callable objects before adding them to its event-specific hook lists.|8.0|1\n293|HOOKS|HOOK|The hooks configuration stores one or more callable hooks for each supported event.|9.0|1\n557|REQUESTS|DIGEST RESPONSE HANDLER|Requests sends the unauthenticated GET request handled by the digest response handler and validates the 200 response|8.0|9\n931|TEST_RESPONSE_WITHOUT_RELEASE_CONN|REQUESTS|The test validates Requests Response.close behavior with a non-standard raw response object|9.0|9\n412|DELETE|REQUESTS|The Requests library exposes a delete method that sends DELETE requests.|1.0|9\n652|TEST HISTORY IS ALWAYS A LIST|REQUESTS|The test verifies the Requests Response.history contract|9.0|9\n778|HOOK RECEIVES REQUEST ARGUMENTS TEST|REQUESTS|The test uses Requests response hooks and request sending APIs.|9.0|9\n779|SESSION HOOKS USED WITH NO REQUEST HOOKS TEST|REQUESTS|The test verifies response-hook inheritance in the Requests Session API.|9.0|9\n780|SESSION HOOKS OVERRIDDEN BY REQUEST HOOKS TEST|REQUESTS|The test verifies request-specific hook precedence in the Requests Session API.|9.0|9\n62|REQUESTS|HTTP DELETE|Requests lists HTTP DELETE among the supported request methods|8.0|9\n318|REQUESTS|REQUESTS HOOKS|Requests imports default hooks from its hooks component.|8.0|9\n580|DIGEST RESPONSE HANDLER|CONSUME SOCKET CONTENT|The digest response handler consumes the initial request and verifies that no authenticated follow-up request is received|8.0|4\n582|RESPONSE HANDLER|CONSUME SOCKET CONTENT|The fragment redirect handler consumes each request before sending the next redirect or final response|8.0|4\n514|CONSUME SOCKET CONTENT|ECHO RESPONSE HANDLER|The echo handler uses consume_socket_content to read the incoming request before echoing it back|9.0|4\n516|CONSUME SOCKET CONTENT|MULTIPLE CONTENT LENGTH RESPONSE HANDLER|The conflicting-header handler uses consume_socket_content before sending its response|8.0|4\n292|HOOK|RESPONSE|A hook receives response data, may process it, and can return updated response data.|9.0|2\n294|HOOKS|RESPONSE|The hooks system supports response as its only currently defined event and maintains its associated hook list.|1.0|2\n947|PYTEST|TEST_RESPONSE_WITHOUT_RELEASE_CONN|Pytest executes the raw-response close test|9.0|1\n857|CASE-INSENSITIVE HEADER REMOVAL|HTTPBIN|The test sends the request to HTTPBin and inspects the resulting request headers|8.0|1\n329|REQUEST|REQUESTHOOKSMIXIN|Request inherits from RequestHooksMixin and uses its hook registration and deregistration behavior.|9.0|1\n330|PREPAREDREQUEST|REQUESTHOOKSMIXIN|PreparedRequest inherits from RequestHooksMixin and includes request hook functionality.|9.0|1\n253|REMOVE_COOKIE_BY_NAME|COOKIEJAR|remove_cookie_by_name iterates through and clears matching cookies stored in a cookie jar.|10.0|1\n545|DIGEST RESPONSE HANDLER|DIGEST AUTHORIZATION REQUEST|The handler verifies that the client returns a correctly formed Digest Authorization request.|10.0|1\n546|DIGEST RESPONSE HANDLER|HTTP REDIRECT|The handler sends a redirect after verifying the first authenticated request.|10.0|1\n544|DIGEST RESPONSE HANDLER|DIGEST AUTHENTICATION CHALLENGE|The DIGEST RESPONSE HANDLER sends the initial DIGEST AUTHENTICATION CHALLENGE to the client by returning a 200 response containing the challenge in the `WWW-Authenticate` header.|19.0|1\n576|TEST FRAGMENT UPDATE ON REDIRECT|RESPONSE HANDLER|The test starts a server using the response handler that emits the two redirect responses and the final response|9.0|1\n543|DIGEST RESPONSE HANDLER|HTTP GET REQUEST|The handler receives and validates the initial GET request before issuing the authentication challenge.|9.0|1\n579|RESPONSE HANDLER|HTTP 200 RESPONSE|The handler sends a 200 OK response after the redirected request reaches the final URL|8.0|1\n574|TEST FRAGMENT NOT SENT WITH REQUEST|ECHO RESPONSE HANDLER|The test relies on the echo response handler to expose the transmitted request for inspection|9.0|1\n337|REQUESTHOOKSMIXIN|DEFAULT_HOOKS|The hook behavior provided by RequestHooksMixin depends on a hook dictionary initialized with the structure returned by default_hooks.|7.0|1\n517|ECHO RESPONSE HANDLER|CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER|The custom-Host-header test uses the echo handler to inspect and return the submitted request headers|9.0|1\n518|ECHO RESPONSE HANDLER|CHUNKED UPLOAD DOESNT SKIP HOST HEADER|The default-Host-header test uses the echo handler to inspect and return the submitted request headers|9.0|1\n578|RESPONSE HANDLER|HTTP 302 REDIRECT|The handler sends an initial 302 redirect introducing the `relevant-section` fragment and a second 302 redirect to the final URL|9.0|1\n519|BASIC RESPONSE SERVER|CHUNKED UPLOAD|The chunked upload test creates a basic response server to receive the generator-based request|9.0|1\n520|BASIC RESPONSE SERVER|EVENT|The basic response server is configured to wait for a threading Event before closing|8.0|1\n\n-----Sources-----\nid|source|text\n43|src/requests/hooks.py:L1-L33|\"\"\"\"\"\"\"\nrequests.hooks\n~~~~~~~~~~~~~~\n\nThis module provides the capabilities for the Requests hooks system.\n\nAvailable hooks:\n\n``response``:\n    The response generated from a Request.\n\"\"\"\"\"\"\nHOOKS = [\"\"response\"\"]\n\n\ndef default_hooks():\n    return {event: [] for event in HOOKS}\n\n\n# TODO: response is the only one\n\n\ndef dispatch_hook(key, hooks, hook_data, **kwargs):\n    \"\"\"\"\"\"Dispatches a hook dictionary on a given piece of data.\"\"\"\"\"\"\n    hooks = hooks or {}\n    hooks = hooks.get(key)\n    if hooks:\n        if hasattr(hooks, \"\"__call__\"\"):\n            hooks = [hooks]\n        for hook in hooks:\n            _hook_data = hook(hook_data, **kwargs)\n            if _hook_data is not None:\n                hook_data = _hook_data\n    return hook_data\n\"\n88|tests/test_requests.py:L1057-L1211|\"        ),\n    )\n    def test_unicode_multipart_post(self, httpbin, data):\n        with open(__file__, \"\"rb\"\") as f:\n            r = requests.post(\n                httpbin(\"\"post\"\"),\n                data=data,\n                files={\"\"file\"\": (\"\"test_requests.py\"\", f)},\n            )\n        assert r.status_code == 200\n\n    def test_unicode_multipart_post_fieldnames(self, httpbin):\n        filename = os.path.splitext(__file__)[0] + \"\".py\"\"\n        with open(filename, \"\"rb\"\") as f:\n            r = requests.Request(\n                method=\"\"POST\"\",\n                url=httpbin(\"\"post\"\"),\n                data={b\"\"stuff\"\": \"\"elixr\"\"},\n                files={\"\"file\"\": (\"\"test_requests.py\"\", f)},\n            )\n            prep = r.prepare()\n\n        assert b'name=\"\"stuff\"\"' in prep.body\n        assert b\"\"name=\\\"\"b'stuff'\\\"\"\"\" not in prep.body\n\n    def test_unicode_method_name(self, httpbin):\n        with open(__file__, \"\"rb\"\") as f:\n            files = {\"\"file\"\": f}\n            r = requests.request(\n                method=\"\"POST\"\",\n                url=httpbin(\"\"post\"\"),\n                files=files,\n            )\n        assert r.status_code == 200\n\n    def test_unicode_method_name_with_request_object(self, httpbin):\n        s = requests.Session()\n        with open(__file__, \"\"rb\"\") as f:\n            files = {\"\"file\"\": f}\n            req = requests.Request(\"\"POST\"\", httpbin(\"\"post\"\"), files=files)\n            prep = s.prepare_request(req)\n        assert isinstance(prep.method, builtin_str)\n        assert prep.method == \"\"POST\"\"\n\n        resp = s.send(prep)\n        assert resp.status_code == 200\n\n    def test_non_prepared_request_error(self):\n        s = requests.Session()\n        req = requests.Request(\"\"POST\"\", \"\"/\"\")\n\n        with pytest.raises(ValueError) as e:\n            s.send(req)\n        assert str(e.value) == \"\"You can only send PreparedRequests.\"\"\n\n    def test_custom_content_type(self, httpbin):\n        with open(__file__, \"\"rb\"\") as f1:\n            with open(__file__, \"\"rb\"\") as f2:\n                data = {\"\"stuff\"\": json.dumps({\"\"a\"\": 123})}\n                files = {\n                    \"\"file1\"\": (\"\"test_requests.py\"\", f1),\n                    \"\"file2\"\": (\"\"test_requests\"\", f2, \"\"text/py-content-type\"\"),\n                }\n                r = requests.post(httpbin(\"\"post\"\"), data=data, files=files)\n        assert r.status_code == 200\n        assert b\"\"text/py-content-type\"\" in r.request.body\n\n    def test_hook_receives_request_arguments(self, httpbin):\n        def hook(resp, **kwargs):\n            assert resp is not None\n            assert kwargs != {}\n\n        s = requests.Session()\n        r = requests.Request(\"\"GET\"\", httpbin(), hooks={\"\"response\"\": hook})\n        prep = s.prepare_request(r)\n        s.send(prep)\n\n    def test_session_hooks_are_used_with_no_request_hooks(self, httpbin):\n        def hook(*args, **kwargs):\n            pass\n\n        s = requests.Session()\n        s.hooks[\"\"response\"\"].append(hook)\n        r = requests.Request(\"\"GET\"\", httpbin())\n        prep = s.prepare_request(r)\n        assert prep.hooks[\"\"response\"\"] != []\n        assert prep.hooks[\"\"response\"\"] == [hook]\n\n    def test_session_hooks_are_overridden_by_request_hooks(self, httpbin):\n        def hook1(*args, **kwargs):\n            pass\n\n        def hook2(*args, **kwargs):\n            pass\n\n        assert hook1 is not hook2\n        s = requests.Session()\n        s.hooks[\"\"response\"\"].append(hook2)\n        r = requests.Request(\"\"GET\"\", httpbin(), hooks={\"\"response\"\": [hook1]})\n        prep = s.prepare_request(r)\n        assert prep.hooks[\"\"response\"\"] == [hook1]\n\n    def test_prepared_request_hook(self, httpbin):\n        def hook(resp, **kwargs):\n            resp.hook_working = True\n            return resp\n\n        req = requests.Request(\"\"GET\"\", httpbin(), hooks={\"\"response\"\": hook})\n        prep = req.prepare()\n\n        s = requests.Session()\n        s.proxies = getproxies()\n        resp = s.send(prep)\n\n        assert hasattr(resp, \"\"hook_working\"\")\n\n    def test_prepared_from_session(self, httpbin):\n        class DummyAuth(requests.auth.AuthBase):\n            def __call__(self, r):\n                r.headers[\"\"Dummy-Auth-Test\"\"] = \"\"dummy-auth-test-ok\"\"\n                return r\n\n        req = requests.Request(\"\"GET\"\", httpbin(\"\"headers\"\"))\n        assert not req.auth\n\n        s = requests.Session()\n        s.auth = DummyAuth()\n\n        prep = s.prepare_request(req)\n        resp = s.send(prep)\n\n        assert resp.json()[\"\"headers\"\"][\"\"Dummy-Auth-Test\"\"] == \"\"dummy-auth-test-ok\"\"\n\n    def test_prepare_request_with_bytestring_url(self):\n        req = requests.Request(\"\"GET\"\", b\"\"https://httpbin.org/\"\")\n        s = requests.Session()\n        prep = s.prepare_request(req)\n        assert prep.url == \"\"https://httpbin.org/\"\"\n\n    def test_request_with_bytestring_host(self, httpbin):\n        s = requests.Session()\n        resp = s.request(\n            \"\"GET\"\",\n            httpbin(\"\"cookies/set?cookie=value\"\"),\n            allow_redirects=False,\n            headers={\"\"Host\"\": b\"\"httpbin.org\"\"},\n        )\n        assert resp.cookies.get(\"\"cookie\"\") == \"\"value\"\"\n\n    def test_links(self):\n        r = requests.Response()\n        r.headers = {\n            \"\"cache-control\"\": \"\"public, max-age=60, s-maxage=60\"\",\n            \"\"connection\"\": \"\"keep-alive\"\",\n            \"\"content-encoding\"\": \"\"gzip\"\",\n\"\n75|tests/test_lowlevel.py:L1-L146|\"import threading\n\nimport pytest\nfrom tests.testserver.server import Server, consume_socket_content\n\nimport requests\nfrom requests.compat import JSONDecodeError\n\nfrom .utils import override_environ\n\n\ndef echo_response_handler(sock):\n    \"\"\"\"\"\"Simple handler that will take request and echo it back to requester.\"\"\"\"\"\"\n    request_content = consume_socket_content(sock, timeout=0.5)\n\n    text_200 = (\n        b\"\"HTTP/1.1 200 OK\\r\\n\"\"\n        b\"\"Content-Length: %d\\r\\n\\r\\n\"\"\n        b\"\"%s\"\"\n    ) % (len(request_content), request_content)\n    sock.send(text_200)\n\n\ndef test_chunked_upload():\n    \"\"\"\"\"\"can safely send generators\"\"\"\"\"\"\n    close_server = threading.Event()\n    server = Server.basic_response_server(wait_to_close_event=close_server)\n    data = iter([b\"\"a\"\", b\"\"b\"\", b\"\"c\"\"])\n\n    with server as (host, port):\n        url = f\"\"http://{host}:{port}/\"\"\n        r = requests.post(url, data=data, stream=True)\n        close_server.set()  # release server block\n\n    assert r.status_code == 200\n    assert r.request.headers[\"\"Transfer-Encoding\"\"] == \"\"chunked\"\"\n\n\ndef test_chunked_encoding_error():\n    \"\"\"\"\"\"get a ChunkedEncodingError if the server returns a bad response\"\"\"\"\"\"\n\n    def incomplete_chunked_response_handler(sock):\n        request_content = consume_socket_content(sock, timeout=0.5)\n\n        # The server never ends the request and doesn't provide any valid chunks\n        sock.send(\n            b\"\"HTTP/1.1 200 OK\\r\\n\"\"\n            b\"\"Transfer-Encoding: chunked\\r\\n\"\"\n        )\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(incomplete_chunked_response_handler)\n\n    with server as (host, port):\n        url = f\"\"http://{host}:{port}/\"\"\n        with pytest.raises(requests.exceptions.ChunkedEncodingError):\n            requests.get(url)\n        close_server.set()  # release server block\n\n\ndef test_chunked_upload_uses_only_specified_host_header():\n    \"\"\"\"\"\"Ensure we use only the specified Host header for chunked requests.\"\"\"\"\"\"\n    close_server = threading.Event()\n    server = Server(echo_response_handler, wait_to_close_event=close_server)\n\n    data = iter([b\"\"a\"\", b\"\"b\"\", b\"\"c\"\"])\n    custom_host = \"\"sample-host\"\"\n\n    with server as (host, port):\n        url = f\"\"http://{host}:{port}/\"\"\n        r = requests.post(url, data=data, headers={\"\"Host\"\": custom_host}, stream=True)\n        close_server.set()  # release server block\n\n    expected_header = b\"\"Host: %s\\r\\n\"\" % custom_host.encode(\"\"utf-8\"\")\n    assert expected_header in r.content\n    assert r.content.count(b\"\"Host: \"\") == 1\n\n\ndef test_chunked_upload_doesnt_skip_host_header():\n    \"\"\"\"\"\"Ensure we don't omit all Host headers with chunked requests.\"\"\"\"\"\"\n    close_server = threading.Event()\n    server = Server(echo_response_handler, wait_to_close_event=close_server)\n\n    data = iter([b\"\"a\"\", b\"\"b\"\", b\"\"c\"\"])\n\n    with server as (host, port):\n        expected_host = f\"\"{host}:{port}\"\"\n        url = f\"\"http://{host}:{port}/\"\"\n        r = requests.post(url, data=data, stream=True)\n        close_server.set()  # release server block\n\n    expected_header = b\"\"Host: %s\\r\\n\"\" % expected_host.encode(\"\"utf-8\"\")\n    assert expected_header in r.content\n    assert r.content.count(b\"\"Host: \"\") == 1\n\n\ndef test_conflicting_content_lengths():\n    \"\"\"\"\"\"Ensure we correctly throw an InvalidHeader error if multiple\n    conflicting Content-Length headers are returned.\n    \"\"\"\"\"\"\n\n    def multiple_content_length_response_handler(sock):\n        request_content = consume_socket_content(sock, timeout=0.5)\n        response = (\n            b\"\"HTTP/1.1 200 OK\\r\\n\"\"\n            b\"\"Content-Type: text/plain\\r\\n\"\"\n            b\"\"Content-Length: 16\\r\\n\"\"\n            b\"\"Content-Length: 32\\r\\n\\r\\n\"\"\n            b\"\"-- Bad Actor -- Original Content\\r\\n\"\"\n        )\n        sock.send(response)\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(multiple_content_length_response_handler)\n\n    with server as (host, port):\n        url = f\"\"http://{host}:{port}/\"\"\n        with pytest.raises(requests.exceptions.InvalidHeader):\n            requests.get(url)\n        close_server.set()\n\n\ndef test_digestauth_401_count_reset_on_redirect():\n    \"\"\"\"\"\"Ensure we correctly reset num_401_calls after a successful digest auth,\n    followed by a 302 redirect to another digest auth prompt.\n\n    See https://github.com/psf/requests/issues/1979.\n    \"\"\"\"\"\"\n    text_401 = (b'HTTP/1.1 401 UNAUTHORIZED\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'WWW-Authenticate: Digest nonce=\"\"6bf5d6e4da1ce66918800195d6b9130d\"\"'\n                b', opaque=\"\"372825293d1c26955496c80ed6426e9e\"\", '\n                b'realm=\"\"me@kennethreitz.com\"\", qop=auth\\r\\n\\r\\n')\n\n    text_302 = (b'HTTP/1.1 302 FOUND\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'Location: /\\r\\n\\r\\n')\n\n    text_200 = (b'HTTP/1.1 200 OK\\r\\n'\n                b'Content-Length: 0\\r\\n\\r\\n')\n\n    expected_digest = (b'Authorization: Digest username=\"\"user\"\", '\n\"\n77|tests/test_lowlevel.py:L250-L390|\"\n    def digest_response_handler(sock):\n        # Respond to GET with a 200 containing www-authenticate header.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content.startswith(b\"\"GET / HTTP/1.1\"\")\n        sock.send(text_200_chal)\n\n        # Verify the client didn't respond with auth.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content == b''\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(digest_response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url, auth=auth)\n        # Verify server didn't receive auth from us.\n        assert r.status_code == 200\n        assert len(r.history) == 0\n        close_server.set()\n\n\n_schemes_by_var_prefix = [\n    ('http', ['http']),\n    ('https', ['https']),\n    ('all', ['http', 'https']),\n]\n\n_proxy_combos = []\nfor prefix, schemes in _schemes_by_var_prefix:\n    for scheme in schemes:\n        _proxy_combos.append((f\"\"{prefix}_proxy\"\", scheme))\n\n_proxy_combos += [(var.upper(), scheme) for var, scheme in _proxy_combos]\n\n\n@pytest.mark.parametrize(\"\"var,scheme\"\", _proxy_combos)\ndef test_use_proxy_from_environment(httpbin, var, scheme):\n    url = f\"\"{scheme}://httpbin.org\"\"\n    fake_proxy = Server()  # do nothing with the requests; just close the socket\n    with fake_proxy as (host, port):\n        proxy_url = f\"\"socks5://{host}:{port}\"\"\n        kwargs = {var: proxy_url}\n        with override_environ(**kwargs):\n            # fake proxy's lack of response will cause a ConnectionError\n            with pytest.raises(requests.exceptions.ConnectionError):\n                requests.get(url)\n\n        # the fake proxy received a request\n        assert len(fake_proxy.handler_results) == 1\n\n        # it had actual content (not checking for SOCKS protocol for now)\n        assert len(fake_proxy.handler_results[0]) > 0\n\n\ndef test_redirect_rfc1808_to_non_ascii_location():\n    path = 'š'\n    expected_path = b'%C5%A1'\n    redirect_request = []  # stores the second request to the server\n\n    def redirect_resp_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        location = f'//{host}:{port}/{path}'\n        sock.send(\n            (\n                b'HTTP/1.1 301 Moved Permanently\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'Location: %s\\r\\n'\n                b'\\r\\n'\n            ) % location.encode('utf8')\n        )\n        redirect_request.append(consume_socket_content(sock, timeout=0.5))\n        sock.send(b'HTTP/1.1 200 OK\\r\\n\\r\\n')\n\n    close_server = threading.Event()\n    server = Server(redirect_resp_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}'\n        r = requests.get(url=url, allow_redirects=True)\n        assert r.status_code == 200\n        assert len(r.history) == 1\n        assert r.history[0].status_code == 301\n        assert redirect_request[0].startswith(b'GET /' + expected_path + b' HTTP/1.1')\n        assert r.url == '{}/{}'.format(url, expected_path.decode('ascii'))\n\n        close_server.set()\n\n\ndef test_fragment_not_sent_with_request():\n    \"\"\"\"\"\"Verify that the fragment portion of a URI isn't sent to the server.\"\"\"\"\"\"\n    close_server = threading.Event()\n    server = Server(echo_response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/path/to/thing/#view=edit&token=hunter2'\n        r = requests.get(url)\n        raw_request = r.content\n\n        assert r.status_code == 200\n        headers, body = raw_request.split(b'\\r\\n\\r\\n', 1)\n        status_line, headers = headers.split(b'\\r\\n', 1)\n\n        assert status_line == b'GET /path/to/thing/ HTTP/1.1'\n        for frag in (b'view', b'edit', b'token', b'hunter2'):\n            assert frag not in headers\n            assert frag not in body\n\n        close_server.set()\n\n\ndef test_fragment_update_on_redirect():\n    \"\"\"\"\"\"Verify we only append previous fragment if one doesn't exist on new\n    location. If a new fragment is encountered in a Location header, it should\n    be added to all subsequent requests.\n    \"\"\"\"\"\"\n\n    def response_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /get#relevant-section\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /final-url/\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n\"\n",
+  "final_tables": [
+    {
+      "name": "entities",
+      "columns": [
+        "id",
+        "entity",
+        "description",
+        "number of relationships"
+      ],
+      "rows": [
+        {
+          "id": "215",
+          "entity": "HOOKS",
+          "description": "Hooks are collections of callback functions associated with supported events in the Requests hooks system; the default configuration includes a response hook list.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "214",
+          "entity": "HOOK",
+          "description": "A hook is a callable callback registered in the Requests hooks system to process hook data, such as a response, and optionally return updated data.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "488",
+          "entity": "SESSION HOOKS OVERRIDDEN BY REQUEST HOOKS TEST",
+          "description": "A test event that verifies request-specific response hooks replace the response hooks configured on a Session.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "350",
+          "entity": "ECHO RESPONSE HANDLER",
+          "description": "ECHO RESPONSE HANDLER is a socket response-handler event and test server handler used by the fragment test. It consumes an incoming HTTP request and returns it in an HTTP 200 response, using the received request content as the response body.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "247",
+          "entity": "CALLABLE",
+          "description": "Callable is a callable-object type abstraction used by RequestHooksMixin to validate hook functions before registering them.>",
+          "number of relationships": "1"
+        },
+        {
+          "id": "353",
+          "entity": "BASIC RESPONSE SERVER",
+          "description": "A server configuration event created through Server.basic_response_server to provide a basic HTTP response while coordinating shutdown with a threading Event",
+          "number of relationships": "2"
+        },
+        {
+          "id": "289",
+          "entity": "DELETE",
+          "description": "DELETE is an HTTP method supported by the Requests library for removing a resource.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "193",
+          "entity": "REMOVE_COOKIE_BY_NAME",
+          "description": "remove_cookie_by_name is a function that removes cookies matching a name and, optionally, a domain and path from a cookie jar.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "232",
+          "entity": "REQUESTS HOOKS",
+          "description": "REQUESTS HOOKS provides the default request and response hook functionality used by the tests. It exposes the `default_hooks` collection, which manages these hooks.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "487",
+          "entity": "SESSION HOOKS USED WITH NO REQUEST HOOKS TEST",
+          "description": "A test event that verifies response hooks configured on a Session are inherited by a request without its own hooks.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "244",
+          "entity": "REQUESTHOOKSMIXIN",
+          "description": "RequestHooksMixin is a requests software component that registers and deregisters callable hooks for supported request events.>",
+          "number of relationships": "4"
+        },
+        {
+          "id": "534",
+          "entity": "CASE-INSENSITIVE HEADER REMOVAL",
+          "description": "A test event verifying that passing a differently cased header name with a null value removes the existing header from a prepared request",
+          "number of relationships": "1"
+        },
+        {
+          "id": "375",
+          "entity": "DIGEST RESPONSE HANDLER",
+          "description": "DIGEST RESPONSE HANDLER is a socket-based test server handler for validating HTTP Digest authentication and credential protection during redirects. It challenges an unauthenticated request with a `WWW-Authenticate` response—typically an initial `401` response, with a test path that may return `200` while still including the challenge—and verifies that the client does not resend the request with credentials before authentication is required. It then validates the client’s Digest `Authorization` header, sends a redirect, confirms that credentials are withheld when the request moves to a different host, and authenticates the final request only when the credentials are appropriately supplied.",
+          "number of relationships": "6"
+        },
+        {
+          "id": "577",
+          "entity": "TEST_RESPONSE_WITHOUT_RELEASE_CONN",
+          "description": "A test that verifies Response.close works with a raw object that lacks a release_conn method",
+          "number of relationships": "2"
+        },
+        {
+          "id": "486",
+          "entity": "HOOK RECEIVES REQUEST ARGUMENTS TEST",
+          "description": "A test event that verifies a response hook receives a response object and keyword arguments when a request is sent.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "391",
+          "entity": "RESPONSE HANDLER",
+          "description": "A test server handler that processes two sequential 302 redirects, first introducing a relevant-section fragment and then redirecting to a fragment-free final URL before returning a 200 response>",
+          "number of relationships": "4"
+        },
+        {
+          "id": "429",
+          "entity": "TEST HISTORY IS ALWAYS A LIST",
+          "description": "A test event verifying that Response.history is always a list, both for responses with redirects and responses without redirects",
+          "number of relationships": "1"
+        },
+        {
+          "id": "352",
+          "entity": "MULTIPLE CONTENT LENGTH RESPONSE HANDLER",
+          "description": "A socket response-handler event that returns an HTTP response containing conflicting Content-Length headers and invalidates the response for header-validation testing",
+          "number of relationships": "1"
+        },
+        {
+          "id": "50",
+          "entity": "HTTP DELETE",
+          "description": "HTTP DELETE is one of the HTTP request methods supported by Requests\"",
+          "number of relationships": "1"
+        }
+      ]
+    },
+    {
+      "name": "relationships",
+      "columns": [
+        "id",
+        "source",
+        "target",
+        "description",
+        "weight",
+        "links"
+      ],
+      "rows": [
+        {
+          "id": "338",
+          "source": "REQUESTHOOKSMIXIN",
+          "target": "CALLABLE",
+          "description": "RequestHooksMixin checks whether hooks are Callable objects before adding them to its event-specific hook lists.",
+          "weight": "8.0",
+          "links": "1"
+        },
+        {
+          "id": "293",
+          "source": "HOOKS",
+          "target": "HOOK",
+          "description": "The hooks configuration stores one or more callable hooks for each supported event.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "557",
+          "source": "REQUESTS",
+          "target": "DIGEST RESPONSE HANDLER",
+          "description": "Requests sends the unauthenticated GET request handled by the digest response handler and validates the 200 response",
+          "weight": "8.0",
+          "links": "9"
+        },
+        {
+          "id": "931",
+          "source": "TEST_RESPONSE_WITHOUT_RELEASE_CONN",
+          "target": "REQUESTS",
+          "description": "The test validates Requests Response.close behavior with a non-standard raw response object",
+          "weight": "9.0",
+          "links": "9"
+        },
+        {
+          "id": "412",
+          "source": "DELETE",
+          "target": "REQUESTS",
+          "description": "The Requests library exposes a delete method that sends DELETE requests.",
+          "weight": "1.0",
+          "links": "9"
+        },
+        {
+          "id": "652",
+          "source": "TEST HISTORY IS ALWAYS A LIST",
+          "target": "REQUESTS",
+          "description": "The test verifies the Requests Response.history contract",
+          "weight": "9.0",
+          "links": "9"
+        },
+        {
+          "id": "778",
+          "source": "HOOK RECEIVES REQUEST ARGUMENTS TEST",
+          "target": "REQUESTS",
+          "description": "The test uses Requests response hooks and request sending APIs.",
+          "weight": "9.0",
+          "links": "9"
+        },
+        {
+          "id": "779",
+          "source": "SESSION HOOKS USED WITH NO REQUEST HOOKS TEST",
+          "target": "REQUESTS",
+          "description": "The test verifies response-hook inheritance in the Requests Session API.",
+          "weight": "9.0",
+          "links": "9"
+        },
+        {
+          "id": "780",
+          "source": "SESSION HOOKS OVERRIDDEN BY REQUEST HOOKS TEST",
+          "target": "REQUESTS",
+          "description": "The test verifies request-specific hook precedence in the Requests Session API.",
+          "weight": "9.0",
+          "links": "9"
+        },
+        {
+          "id": "62",
+          "source": "REQUESTS",
+          "target": "HTTP DELETE",
+          "description": "Requests lists HTTP DELETE among the supported request methods",
+          "weight": "8.0",
+          "links": "9"
+        },
+        {
+          "id": "318",
+          "source": "REQUESTS",
+          "target": "REQUESTS HOOKS",
+          "description": "Requests imports default hooks from its hooks component.",
+          "weight": "8.0",
+          "links": "9"
+        },
+        {
+          "id": "580",
+          "source": "DIGEST RESPONSE HANDLER",
+          "target": "CONSUME SOCKET CONTENT",
+          "description": "The digest response handler consumes the initial request and verifies that no authenticated follow-up request is received",
+          "weight": "8.0",
+          "links": "4"
+        },
+        {
+          "id": "582",
+          "source": "RESPONSE HANDLER",
+          "target": "CONSUME SOCKET CONTENT",
+          "description": "The fragment redirect handler consumes each request before sending the next redirect or final response",
+          "weight": "8.0",
+          "links": "4"
+        },
+        {
+          "id": "514",
+          "source": "CONSUME SOCKET CONTENT",
+          "target": "ECHO RESPONSE HANDLER",
+          "description": "The echo handler uses consume_socket_content to read the incoming request before echoing it back",
+          "weight": "9.0",
+          "links": "4"
+        },
+        {
+          "id": "516",
+          "source": "CONSUME SOCKET CONTENT",
+          "target": "MULTIPLE CONTENT LENGTH RESPONSE HANDLER",
+          "description": "The conflicting-header handler uses consume_socket_content before sending its response",
+          "weight": "8.0",
+          "links": "4"
+        },
+        {
+          "id": "292",
+          "source": "HOOK",
+          "target": "RESPONSE",
+          "description": "A hook receives response data, may process it, and can return updated response data.",
+          "weight": "9.0",
+          "links": "2"
+        },
+        {
+          "id": "294",
+          "source": "HOOKS",
+          "target": "RESPONSE",
+          "description": "The hooks system supports response as its only currently defined event and maintains its associated hook list.",
+          "weight": "1.0",
+          "links": "2"
+        },
+        {
+          "id": "947",
+          "source": "PYTEST",
+          "target": "TEST_RESPONSE_WITHOUT_RELEASE_CONN",
+          "description": "Pytest executes the raw-response close test",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "857",
+          "source": "CASE-INSENSITIVE HEADER REMOVAL",
+          "target": "HTTPBIN",
+          "description": "The test sends the request to HTTPBin and inspects the resulting request headers",
+          "weight": "8.0",
+          "links": "1"
+        },
+        {
+          "id": "329",
+          "source": "REQUEST",
+          "target": "REQUESTHOOKSMIXIN",
+          "description": "Request inherits from RequestHooksMixin and uses its hook registration and deregistration behavior.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "330",
+          "source": "PREPAREDREQUEST",
+          "target": "REQUESTHOOKSMIXIN",
+          "description": "PreparedRequest inherits from RequestHooksMixin and includes request hook functionality.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "253",
+          "source": "REMOVE_COOKIE_BY_NAME",
+          "target": "COOKIEJAR",
+          "description": "remove_cookie_by_name iterates through and clears matching cookies stored in a cookie jar.",
+          "weight": "10.0",
+          "links": "1"
+        },
+        {
+          "id": "545",
+          "source": "DIGEST RESPONSE HANDLER",
+          "target": "DIGEST AUTHORIZATION REQUEST",
+          "description": "The handler verifies that the client returns a correctly formed Digest Authorization request.",
+          "weight": "10.0",
+          "links": "1"
+        },
+        {
+          "id": "546",
+          "source": "DIGEST RESPONSE HANDLER",
+          "target": "HTTP REDIRECT",
+          "description": "The handler sends a redirect after verifying the first authenticated request.",
+          "weight": "10.0",
+          "links": "1"
+        },
+        {
+          "id": "544",
+          "source": "DIGEST RESPONSE HANDLER",
+          "target": "DIGEST AUTHENTICATION CHALLENGE",
+          "description": "The DIGEST RESPONSE HANDLER sends the initial DIGEST AUTHENTICATION CHALLENGE to the client by returning a 200 response containing the challenge in the `WWW-Authenticate` header.",
+          "weight": "19.0",
+          "links": "1"
+        },
+        {
+          "id": "576",
+          "source": "TEST FRAGMENT UPDATE ON REDIRECT",
+          "target": "RESPONSE HANDLER",
+          "description": "The test starts a server using the response handler that emits the two redirect responses and the final response",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "543",
+          "source": "DIGEST RESPONSE HANDLER",
+          "target": "HTTP GET REQUEST",
+          "description": "The handler receives and validates the initial GET request before issuing the authentication challenge.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "579",
+          "source": "RESPONSE HANDLER",
+          "target": "HTTP 200 RESPONSE",
+          "description": "The handler sends a 200 OK response after the redirected request reaches the final URL",
+          "weight": "8.0",
+          "links": "1"
+        },
+        {
+          "id": "574",
+          "source": "TEST FRAGMENT NOT SENT WITH REQUEST",
+          "target": "ECHO RESPONSE HANDLER",
+          "description": "The test relies on the echo response handler to expose the transmitted request for inspection",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "337",
+          "source": "REQUESTHOOKSMIXIN",
+          "target": "DEFAULT_HOOKS",
+          "description": "The hook behavior provided by RequestHooksMixin depends on a hook dictionary initialized with the structure returned by default_hooks.",
+          "weight": "7.0",
+          "links": "1"
+        },
+        {
+          "id": "517",
+          "source": "ECHO RESPONSE HANDLER",
+          "target": "CHUNKED UPLOAD USES ONLY SPECIFIED HOST HEADER",
+          "description": "The custom-Host-header test uses the echo handler to inspect and return the submitted request headers",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "518",
+          "source": "ECHO RESPONSE HANDLER",
+          "target": "CHUNKED UPLOAD DOESNT SKIP HOST HEADER",
+          "description": "The default-Host-header test uses the echo handler to inspect and return the submitted request headers",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "578",
+          "source": "RESPONSE HANDLER",
+          "target": "HTTP 302 REDIRECT",
+          "description": "The handler sends an initial 302 redirect introducing the `relevant-section` fragment and a second 302 redirect to the final URL",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "519",
+          "source": "BASIC RESPONSE SERVER",
+          "target": "CHUNKED UPLOAD",
+          "description": "The chunked upload test creates a basic response server to receive the generator-based request",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "520",
+          "source": "BASIC RESPONSE SERVER",
+          "target": "EVENT",
+          "description": "The basic response server is configured to wait for a threading Event before closing",
+          "weight": "8.0",
+          "links": "1"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "columns": [
+        "id",
+        "source",
+        "text"
+      ],
+      "rows": [
+        {
+          "id": "43",
+          "text": "\"\"\"\nrequests.hooks\n~~~~~~~~~~~~~~\n\nThis module provides the capabilities for the Requests hooks system.\n\nAvailable hooks:\n\n``response``:\n    The response generated from a Request.\n\"\"\"\nHOOKS = [\"response\"]\n\n\ndef default_hooks():\n    return {event: [] for event in HOOKS}\n\n\n# TODO: response is the only one\n\n\ndef dispatch_hook(key, hooks, hook_data, **kwargs):\n    \"\"\"Dispatches a hook dictionary on a given piece of data.\"\"\"\n    hooks = hooks or {}\n    hooks = hooks.get(key)\n    if hooks:\n        if hasattr(hooks, \"__call__\"):\n            hooks = [hooks]\n        for hook in hooks:\n            _hook_data = hook(hook_data, **kwargs)\n            if _hook_data is not None:\n                hook_data = _hook_data\n    return hook_data\n",
+          "source": "src/requests/hooks.py:L1-L33"
+        },
+        {
+          "id": "88",
+          "text": "        ),\n    )\n    def test_unicode_multipart_post(self, httpbin, data):\n        with open(__file__, \"rb\") as f:\n            r = requests.post(\n                httpbin(\"post\"),\n                data=data,\n                files={\"file\": (\"test_requests.py\", f)},\n            )\n        assert r.status_code == 200\n\n    def test_unicode_multipart_post_fieldnames(self, httpbin):\n        filename = os.path.splitext(__file__)[0] + \".py\"\n        with open(filename, \"rb\") as f:\n            r = requests.Request(\n                method=\"POST\",\n                url=httpbin(\"post\"),\n                data={b\"stuff\": \"elixr\"},\n                files={\"file\": (\"test_requests.py\", f)},\n            )\n            prep = r.prepare()\n\n        assert b'name=\"stuff\"' in prep.body\n        assert b\"name=\\\"b'stuff'\\\"\" not in prep.body\n\n    def test_unicode_method_name(self, httpbin):\n        with open(__file__, \"rb\") as f:\n            files = {\"file\": f}\n            r = requests.request(\n                method=\"POST\",\n                url=httpbin(\"post\"),\n                files=files,\n            )\n        assert r.status_code == 200\n\n    def test_unicode_method_name_with_request_object(self, httpbin):\n        s = requests.Session()\n        with open(__file__, \"rb\") as f:\n            files = {\"file\": f}\n            req = requests.Request(\"POST\", httpbin(\"post\"), files=files)\n            prep = s.prepare_request(req)\n        assert isinstance(prep.method, builtin_str)\n        assert prep.method == \"POST\"\n\n        resp = s.send(prep)\n        assert resp.status_code == 200\n\n    def test_non_prepared_request_error(self):\n        s = requests.Session()\n        req = requests.Request(\"POST\", \"/\")\n\n        with pytest.raises(ValueError) as e:\n            s.send(req)\n        assert str(e.value) == \"You can only send PreparedRequests.\"\n\n    def test_custom_content_type(self, httpbin):\n        with open(__file__, \"rb\") as f1:\n            with open(__file__, \"rb\") as f2:\n                data = {\"stuff\": json.dumps({\"a\": 123})}\n                files = {\n                    \"file1\": (\"test_requests.py\", f1),\n                    \"file2\": (\"test_requests\", f2, \"text/py-content-type\"),\n                }\n                r = requests.post(httpbin(\"post\"), data=data, files=files)\n        assert r.status_code == 200\n        assert b\"text/py-content-type\" in r.request.body\n\n    def test_hook_receives_request_arguments(self, httpbin):\n        def hook(resp, **kwargs):\n            assert resp is not None\n            assert kwargs != {}\n\n        s = requests.Session()\n        r = requests.Request(\"GET\", httpbin(), hooks={\"response\": hook})\n        prep = s.prepare_request(r)\n        s.send(prep)\n\n    def test_session_hooks_are_used_with_no_request_hooks(self, httpbin):\n        def hook(*args, **kwargs):\n            pass\n\n        s = requests.Session()\n        s.hooks[\"response\"].append(hook)\n        r = requests.Request(\"GET\", httpbin())\n        prep = s.prepare_request(r)\n        assert prep.hooks[\"response\"] != []\n        assert prep.hooks[\"response\"] == [hook]\n\n    def test_session_hooks_are_overridden_by_request_hooks(self, httpbin):\n        def hook1(*args, **kwargs):\n            pass\n\n        def hook2(*args, **kwargs):\n            pass\n\n        assert hook1 is not hook2\n        s = requests.Session()\n        s.hooks[\"response\"].append(hook2)\n        r = requests.Request(\"GET\", httpbin(), hooks={\"response\": [hook1]})\n        prep = s.prepare_request(r)\n        assert prep.hooks[\"response\"] == [hook1]\n\n    def test_prepared_request_hook(self, httpbin):\n        def hook(resp, **kwargs):\n            resp.hook_working = True\n            return resp\n\n        req = requests.Request(\"GET\", httpbin(), hooks={\"response\": hook})\n        prep = req.prepare()\n\n        s = requests.Session()\n        s.proxies = getproxies()\n        resp = s.send(prep)\n\n        assert hasattr(resp, \"hook_working\")\n\n    def test_prepared_from_session(self, httpbin):\n        class DummyAuth(requests.auth.AuthBase):\n            def __call__(self, r):\n                r.headers[\"Dummy-Auth-Test\"] = \"dummy-auth-test-ok\"\n                return r\n\n        req = requests.Request(\"GET\", httpbin(\"headers\"))\n        assert not req.auth\n\n        s = requests.Session()\n        s.auth = DummyAuth()\n\n        prep = s.prepare_request(req)\n        resp = s.send(prep)\n\n        assert resp.json()[\"headers\"][\"Dummy-Auth-Test\"] == \"dummy-auth-test-ok\"\n\n    def test_prepare_request_with_bytestring_url(self):\n        req = requests.Request(\"GET\", b\"https://httpbin.org/\")\n        s = requests.Session()\n        prep = s.prepare_request(req)\n        assert prep.url == \"https://httpbin.org/\"\n\n    def test_request_with_bytestring_host(self, httpbin):\n        s = requests.Session()\n        resp = s.request(\n            \"GET\",\n            httpbin(\"cookies/set?cookie=value\"),\n            allow_redirects=False,\n            headers={\"Host\": b\"httpbin.org\"},\n        )\n        assert resp.cookies.get(\"cookie\") == \"value\"\n\n    def test_links(self):\n        r = requests.Response()\n        r.headers = {\n            \"cache-control\": \"public, max-age=60, s-maxage=60\",\n            \"connection\": \"keep-alive\",\n            \"content-encoding\": \"gzip\",\n",
+          "source": "tests/test_requests.py:L1057-L1211"
+        },
+        {
+          "id": "75",
+          "text": "import threading\n\nimport pytest\nfrom tests.testserver.server import Server, consume_socket_content\n\nimport requests\nfrom requests.compat import JSONDecodeError\n\nfrom .utils import override_environ\n\n\ndef echo_response_handler(sock):\n    \"\"\"Simple handler that will take request and echo it back to requester.\"\"\"\n    request_content = consume_socket_content(sock, timeout=0.5)\n\n    text_200 = (\n        b\"HTTP/1.1 200 OK\\r\\n\"\n        b\"Content-Length: %d\\r\\n\\r\\n\"\n        b\"%s\"\n    ) % (len(request_content), request_content)\n    sock.send(text_200)\n\n\ndef test_chunked_upload():\n    \"\"\"can safely send generators\"\"\"\n    close_server = threading.Event()\n    server = Server.basic_response_server(wait_to_close_event=close_server)\n    data = iter([b\"a\", b\"b\", b\"c\"])\n\n    with server as (host, port):\n        url = f\"http://{host}:{port}/\"\n        r = requests.post(url, data=data, stream=True)\n        close_server.set()  # release server block\n\n    assert r.status_code == 200\n    assert r.request.headers[\"Transfer-Encoding\"] == \"chunked\"\n\n\ndef test_chunked_encoding_error():\n    \"\"\"get a ChunkedEncodingError if the server returns a bad response\"\"\"\n\n    def incomplete_chunked_response_handler(sock):\n        request_content = consume_socket_content(sock, timeout=0.5)\n\n        # The server never ends the request and doesn't provide any valid chunks\n        sock.send(\n            b\"HTTP/1.1 200 OK\\r\\n\"\n            b\"Transfer-Encoding: chunked\\r\\n\"\n        )\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(incomplete_chunked_response_handler)\n\n    with server as (host, port):\n        url = f\"http://{host}:{port}/\"\n        with pytest.raises(requests.exceptions.ChunkedEncodingError):\n            requests.get(url)\n        close_server.set()  # release server block\n\n\ndef test_chunked_upload_uses_only_specified_host_header():\n    \"\"\"Ensure we use only the specified Host header for chunked requests.\"\"\"\n    close_server = threading.Event()\n    server = Server(echo_response_handler, wait_to_close_event=close_server)\n\n    data = iter([b\"a\", b\"b\", b\"c\"])\n    custom_host = \"sample-host\"\n\n    with server as (host, port):\n        url = f\"http://{host}:{port}/\"\n        r = requests.post(url, data=data, headers={\"Host\": custom_host}, stream=True)\n        close_server.set()  # release server block\n\n    expected_header = b\"Host: %s\\r\\n\" % custom_host.encode(\"utf-8\")\n    assert expected_header in r.content\n    assert r.content.count(b\"Host: \") == 1\n\n\ndef test_chunked_upload_doesnt_skip_host_header():\n    \"\"\"Ensure we don't omit all Host headers with chunked requests.\"\"\"\n    close_server = threading.Event()\n    server = Server(echo_response_handler, wait_to_close_event=close_server)\n\n    data = iter([b\"a\", b\"b\", b\"c\"])\n\n    with server as (host, port):\n        expected_host = f\"{host}:{port}\"\n        url = f\"http://{host}:{port}/\"\n        r = requests.post(url, data=data, stream=True)\n        close_server.set()  # release server block\n\n    expected_header = b\"Host: %s\\r\\n\" % expected_host.encode(\"utf-8\")\n    assert expected_header in r.content\n    assert r.content.count(b\"Host: \") == 1\n\n\ndef test_conflicting_content_lengths():\n    \"\"\"Ensure we correctly throw an InvalidHeader error if multiple\n    conflicting Content-Length headers are returned.\n    \"\"\"\n\n    def multiple_content_length_response_handler(sock):\n        request_content = consume_socket_content(sock, timeout=0.5)\n        response = (\n            b\"HTTP/1.1 200 OK\\r\\n\"\n            b\"Content-Type: text/plain\\r\\n\"\n            b\"Content-Length: 16\\r\\n\"\n            b\"Content-Length: 32\\r\\n\\r\\n\"\n            b\"-- Bad Actor -- Original Content\\r\\n\"\n        )\n        sock.send(response)\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(multiple_content_length_response_handler)\n\n    with server as (host, port):\n        url = f\"http://{host}:{port}/\"\n        with pytest.raises(requests.exceptions.InvalidHeader):\n            requests.get(url)\n        close_server.set()\n\n\ndef test_digestauth_401_count_reset_on_redirect():\n    \"\"\"Ensure we correctly reset num_401_calls after a successful digest auth,\n    followed by a 302 redirect to another digest auth prompt.\n\n    See https://github.com/psf/requests/issues/1979.\n    \"\"\"\n    text_401 = (b'HTTP/1.1 401 UNAUTHORIZED\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'WWW-Authenticate: Digest nonce=\"6bf5d6e4da1ce66918800195d6b9130d\"'\n                b', opaque=\"372825293d1c26955496c80ed6426e9e\", '\n                b'realm=\"me@kennethreitz.com\", qop=auth\\r\\n\\r\\n')\n\n    text_302 = (b'HTTP/1.1 302 FOUND\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'Location: /\\r\\n\\r\\n')\n\n    text_200 = (b'HTTP/1.1 200 OK\\r\\n'\n                b'Content-Length: 0\\r\\n\\r\\n')\n\n    expected_digest = (b'Authorization: Digest username=\"user\", '\n",
+          "source": "tests/test_lowlevel.py:L1-L146"
+        },
+        {
+          "id": "77",
+          "text": "\n    def digest_response_handler(sock):\n        # Respond to GET with a 200 containing www-authenticate header.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content.startswith(b\"GET / HTTP/1.1\")\n        sock.send(text_200_chal)\n\n        # Verify the client didn't respond with auth.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content == b''\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(digest_response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url, auth=auth)\n        # Verify server didn't receive auth from us.\n        assert r.status_code == 200\n        assert len(r.history) == 0\n        close_server.set()\n\n\n_schemes_by_var_prefix = [\n    ('http', ['http']),\n    ('https', ['https']),\n    ('all', ['http', 'https']),\n]\n\n_proxy_combos = []\nfor prefix, schemes in _schemes_by_var_prefix:\n    for scheme in schemes:\n        _proxy_combos.append((f\"{prefix}_proxy\", scheme))\n\n_proxy_combos += [(var.upper(), scheme) for var, scheme in _proxy_combos]\n\n\n@pytest.mark.parametrize(\"var,scheme\", _proxy_combos)\ndef test_use_proxy_from_environment(httpbin, var, scheme):\n    url = f\"{scheme}://httpbin.org\"\n    fake_proxy = Server()  # do nothing with the requests; just close the socket\n    with fake_proxy as (host, port):\n        proxy_url = f\"socks5://{host}:{port}\"\n        kwargs = {var: proxy_url}\n        with override_environ(**kwargs):\n            # fake proxy's lack of response will cause a ConnectionError\n            with pytest.raises(requests.exceptions.ConnectionError):\n                requests.get(url)\n\n        # the fake proxy received a request\n        assert len(fake_proxy.handler_results) == 1\n\n        # it had actual content (not checking for SOCKS protocol for now)\n        assert len(fake_proxy.handler_results[0]) > 0\n\n\ndef test_redirect_rfc1808_to_non_ascii_location():\n    path = 'š'\n    expected_path = b'%C5%A1'\n    redirect_request = []  # stores the second request to the server\n\n    def redirect_resp_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        location = f'//{host}:{port}/{path}'\n        sock.send(\n            (\n                b'HTTP/1.1 301 Moved Permanently\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'Location: %s\\r\\n'\n                b'\\r\\n'\n            ) % location.encode('utf8')\n        )\n        redirect_request.append(consume_socket_content(sock, timeout=0.5))\n        sock.send(b'HTTP/1.1 200 OK\\r\\n\\r\\n')\n\n    close_server = threading.Event()\n    server = Server(redirect_resp_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}'\n        r = requests.get(url=url, allow_redirects=True)\n        assert r.status_code == 200\n        assert len(r.history) == 1\n        assert r.history[0].status_code == 301\n        assert redirect_request[0].startswith(b'GET /' + expected_path + b' HTTP/1.1')\n        assert r.url == '{}/{}'.format(url, expected_path.decode('ascii'))\n\n        close_server.set()\n\n\ndef test_fragment_not_sent_with_request():\n    \"\"\"Verify that the fragment portion of a URI isn't sent to the server.\"\"\"\n    close_server = threading.Event()\n    server = Server(echo_response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/path/to/thing/#view=edit&token=hunter2'\n        r = requests.get(url)\n        raw_request = r.content\n\n        assert r.status_code == 200\n        headers, body = raw_request.split(b'\\r\\n\\r\\n', 1)\n        status_line, headers = headers.split(b'\\r\\n', 1)\n\n        assert status_line == b'GET /path/to/thing/ HTTP/1.1'\n        for frag in (b'view', b'edit', b'token', b'hunter2'):\n            assert frag not in headers\n            assert frag not in body\n\n        close_server.set()\n\n\ndef test_fragment_update_on_redirect():\n    \"\"\"Verify we only append previous fragment if one doesn't exist on new\n    location. If a new fragment is encountered in a Location header, it should\n    be added to all subsequent requests.\n    \"\"\"\n\n    def response_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /get#relevant-section\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /final-url/\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n",
+          "source": "tests/test_lowlevel.py:L250-L390"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "short_id": "43",
+      "text_unit_id": "15f9f577f2a490427bcffca5c217cb8d544431391942264352679174621cf2db183d293f478083eba592e1aff059cf7f41f24aa1538933990819d4b3e49b48a3",
+      "id": "7cb3a8efdf1d83b958b8d18e3673dba0838ac5f42d2a09d71b206347e5d0c24f",
+      "title": "src/requests/hooks.py:L1-L33",
+      "path": "src/requests/hooks.py",
+      "start_line": 1,
+      "end_line": 33,
+      "tokens": 169,
+      "text_sha256": "0a2bb2b221c0dfd57951f702057148c7cdc8ac3a6ec1f37d45c4d482fdbc7ed4",
+      "ms_text_unit_id": "15f9f577f2a490427bcffca5c217cb8d544431391942264352679174621cf2db183d293f478083eba592e1aff059cf7f41f24aa1538933990819d4b3e49b48a3"
+    },
+    {
+      "short_id": "88",
+      "text_unit_id": "62f6b63e7654b78533aa887e37a3cdf87006f34f17cde879863bf85910912e8d66f14c06bc6eec94866cfc5805b624dfdee1ef6ef469951d5c7917a09c8a04b4",
+      "id": "caea88e0de4b28a43b6dd9aa53871811bf93476525f684fdb14310a1cf2506ad",
+      "title": "tests/test_requests.py:L1057-L1211",
+      "path": "tests/test_requests.py",
+      "start_line": 1057,
+      "end_line": 1211,
+      "tokens": 1187,
+      "text_sha256": "e2e099694a57b016302d8ca79a61582ba4c5a23a02c2db89c783ffcea4caa5c4",
+      "ms_text_unit_id": "62f6b63e7654b78533aa887e37a3cdf87006f34f17cde879863bf85910912e8d66f14c06bc6eec94866cfc5805b624dfdee1ef6ef469951d5c7917a09c8a04b4"
+    },
+    {
+      "short_id": "75",
+      "text_unit_id": "309ab3cb670ebfc1d1dd6494937fd899fdccfa44d0aad351a00a21e7203339efa1a3feaaa7aa0bc1ac6624f264b15568bd2ffe9d213f67e07632b6b255991599",
+      "id": "9c62ac2a1e6c37459eb041b50122a5abff7746b496858310874c994962101080",
+      "title": "tests/test_lowlevel.py:L1-L146",
+      "path": "tests/test_lowlevel.py",
+      "start_line": 1,
+      "end_line": 146,
+      "tokens": 1195,
+      "text_sha256": "254591e7aba3e88feb71694b4567563d1bbd1547cbd5231da3081a0e077038a4",
+      "ms_text_unit_id": "309ab3cb670ebfc1d1dd6494937fd899fdccfa44d0aad351a00a21e7203339efa1a3feaaa7aa0bc1ac6624f264b15568bd2ffe9d213f67e07632b6b255991599"
+    },
+    {
+      "short_id": "77",
+      "text_unit_id": "da4d936c498ad40c1d91a81f1b444b377d7175ec9c0df47f4be514fb1f8efe11d8e4094624df77fc73da5f684dd5d7c6357352fdfc7545d3f4c0c8b76c32ef2e",
+      "id": "6824739b4a45389a356b3fa872c74b2125d794e3f050a4aa5adbf588a7072035",
+      "title": "tests/test_lowlevel.py:L250-L390",
+      "path": "tests/test_lowlevel.py",
+      "start_line": 250,
+      "end_line": 390,
+      "tokens": 1196,
+      "text_sha256": "90140d8304e63bf59b8d4c00aacad9b20798b06ee261f1f7bc8b9a121cebbe51",
+      "ms_text_unit_id": "da4d936c498ad40c1d91a81f1b444b377d7175ec9c0df47f4be514fb1f8efe11d8e4094624df77fc73da5f684dd5d7c6357352fdfc7545d3f4c0c8b76c32ef2e"
+    }
+  ],
+  "raw_context_tokens": 5772,
+  "final_context_tokens": 5958,
+  "source_text_tokens": 3747,
+  "source_chunks": 4,
+  "retrieval_compute_seconds": 0.015697624534368515,
+  "adaptation_seconds": 0.013084542006254196,
+  "empty_reason": null,
+  "community_level": 2,
+  "dropped_tail_rows": 0
+}

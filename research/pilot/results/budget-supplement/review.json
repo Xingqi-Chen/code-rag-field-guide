@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "reviewed_utc": "2026-10-13T04:07:19.497505+00:00",
+  "reviewer": "独立 AI 审阅代理 /root/audit；非外部人类审计",
+  "scope": "仅对新增 8000/16000-token 离线补测作轻量发布前核验；没有扩展研究或重跑检索。",
+  "outcome": "通过；未发现阻断问题。",
+  "blocking_findings": [],
+  "checks": [
+    {
+      "check": "缓存路径",
+      "result": "静态核对 supplement_budgets.py：未实例化 Runtime/付费 provider；20 查询按精确模型、3072 维和完整原文读取既有缓存；CachedEmbedding 仅作精确内存查询，未命中即失败。Python 网络审计钩子在运行开头启用。未包含生成、重建图或功能编辑路径。独立验证 20 份缓存向量哈希与记录一致。"
+    },
+    {
+      "check": "原始证据保留",
+      "result": "retrieval.json 中脚本 SHA 与当前脚本一致；记录的付费账本 SHA 与现有账本一致；全部 5 个原始结果文件哈希均匹配。原 4000/12000 分数复算不变；补测共 160 唯一上下文，未混入 feature。"
+    },
+    {
+      "check": "正式验证器",
+      "result": "score_budget_supplement.py --check --tokens 成功退出；包含原 168 上下文与新增 160 上下文的实际渲染、来源、预算和 token 校验，补测分数及 budget-analysis 均与重算一致。"
+    },
+    {
+      "check": "独立覆盖复算",
+      "result": "使用独立行集合计算，复核全部新增 160 行 coverage80 及两个预算的四组 test 主表；与保存值一致。主表 test 共16题，Q19无gold排除后15题评分。"
+    },
+    {
+      "check": "重复行与未标注定义",
+      "result": "独立核对全部 320 检索上下文的重复行及未标注行诊断和组均值。重复行比例=(源码行出现总次数−唯一(path,line)数)/源码行出现总次数，再按上下文取平均；仅衡量块重叠。未标注比例按唯一源码行中未落入必要 gold 行并集的部分计算；无gold题不计，明确不是噪声率或不相关率。"
+    },
+    {
+      "check": "Basic 设置",
+      "result": "Basic build_context 的 k=10 未变；实际返回源码块均不超过10。Local 的原份额、候选数、社区层级选择及统一整行裁剪参数保留；仅新增预算档位。"
+    }
+  ],
+  "test_coverage80": [
+    {
+      "method": "bm25",
+      "budget": 8000,
+      "questions": 16,
+      "scorable_questions": 15,
+      "coverage80": 0.43666666666666665
+    },
+    {
+      "method": "hybrid",
+      "budget": 8000,
+      "questions": 16,
+      "scorable_questions": 15,
+      "coverage80": 0.5633333333333334
+    },
+    {
+      "method": "ms_basic",
+      "budget": 8000,
+      "questions": 16,
+      "scorable_questions": 15,
+      "coverage80": 0.5577777777777778
+    },
+    {
+      "method": "ms_local",
+      "budget": 8000,
+      "questions": 16,
+      "scorable_questions": 15,
+      "coverage80": 0.21
+    },
+    {
+      "method": "bm25",
+      "budget": 16000,
+      "questions": 16,
+      "scorable_questions": 15,
+      "coverage80": 0.6933333333333334
+    },
+    {
+      "method": "hybrid",
+      "budget": 16000,
+      "questions": 16,
+      "scorable_questions": 15,
+      "coverage80": 0.7788888888888889
+    },
+    {
+      "method": "ms_basic",
+      "budget": 16000,
+      "questions": 16,
+      "scorable_questions": 15,
+      "coverage80": 0.5744444444444444
+    },
+    {
+      "method": "ms_local",
+      "budget": 16000,
+      "questions": 16,
+      "scorable_questions": 15,
+      "coverage80": 0.23222222222222222
+    }
+  ],
+  "execution_evidence": {
+    "metadata_file": "retrieval.json",
+    "execution_source_commit": "598a3b231982c5e1259acc339fe88052c99545bf",
+    "script_sha256": "8a696636c8739e8fcaf24a8f2751a4eb626363d482131e80e1c0787656ad0867",
+    "paid_ledger_sha256_before_and_after": "5e79ec8d0f2e9d9ca4684c1d51c303c4d519ef904070ad7e1e02aa39434f1958",
+    "recorded_external_model_calls": 0,
+    "recorded_physical_embedding_calls": 0,
+    "recorded_python_network_attempts": 0,
+    "recorded_offline_cache_lookup_calls": 80
+  },
+  "limits": [
+    "8000/16000 是原轮之后的补充预算观察，不替换原冻结 4000/12000 主比较，也不作为独立确认性实验。",
+    "重复源码行不是语义冗余；未标注行包含可能有用的上下文，不能解释成噪声。",
+    "Basic 固定 k=10 可能先受候选数量限制；相同 token 上限并不保证各组用满预算或拿到等量源码。",
+    "补测使用内存查询向量，原轮使用磁盘缓存适配器；跨轮耗时不能直接用于方法速度比较。",
+    "本复核未重新执行补测 runner、模型请求、embedding 请求或索引构建；仅检查代码、已有缓存和结果。"
+  ],
+  "review_actions": {
+    "model_requests": 0,
+    "network_requests": 0,
+    "credentials_read": false,
+    "main_text_modified": false,
+    "other_files_modified": false
+  }
+}

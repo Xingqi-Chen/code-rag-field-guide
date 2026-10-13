@@ -1,0 +1,968 @@
+{
+  "question_id": "Q09",
+  "method": "ms_local",
+  "budget": 8000,
+  "query": "During a cross-host redirect, trace the decision to remove an Authorization header and identify the condition for replacing auth from the environment.",
+  "upstream_raw_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n551|TEST SHOULD STRIP AUTH HOST CHANGE|A pytest test that verifies Requests determines that authentication should be removed when a redirect changes the host|2\n554|TEST SHOULD STRIP AUTH|A test event that verifies Requests preserves authentication when redirecting between equivalent HTTP and HTTPS default ports, while stripping authentication for non-standard port changes>|1\n550|TEST AUTH IS RETAINED FOR REDIRECT ON HOST|A pytest test that verifies Requests retains Authorization credentials when following a redirect on the same host|3\n555|TEST SHOULD STRIP AUTH PORT CHANGE|A test event that verifies Requests strips authentication when a redirect changes from one non-standard port to another>|1\n276|REQUESTS ISSUE 3490|Requests issue 3490 is referenced in a comment concerning removal of request body headers during redirects|1\n275|REQUESTS ISSUE 1084|Requests issue 1084 is referenced in a comment concerning removal of request body headers during redirects|1\n377|DIGESTAUTH REDIRECT TEST|The authentication test covering a successful Digest exchange, a 302 redirect, credential isolation on the redirected host, and a final 200 response.|2\n446|RESPECT PROXY ENVIRONMENT ON SEND WITH REDIRECTS TEST|A test event that verifies Requests honors the HTTP proxy environment variable when sending a request that follows redirects.|3\n549|TEST AUTH IS STRIPPED ON HTTP DOWNGRADE|A pytest test that verifies Requests removes Authorization credentials when following a redirect from HTTPS to HTTP|3\n359|DIGESTAUTH 401 COUNT RESET ON REDIRECT|A test event covering digest authentication across a successful authentication, a 302 redirect, and a second digest-authentication challenge|1\n556|TEST SHOULD STRIP AUTH DEFAULT PORT|A parameterized test event that verifies Requests does not strip authentication when HTTP or HTTPS redirects only add or remove the corresponding default port>|1\n347|TEST DIGESTAUTH 401 COUNT RESET ON REDIRECT|A test event verifying that Requests resets its digest-authentication 401 counter after successful authentication followed by a redirect to another digest-authentication challenge|2\n449|PROXY AUTHORIZATION PRESERVATION TEST|A test event that verifies a Proxy-Authorization header configured on a Requests session is preserved and sent to httpbin.|3\n427|GH 3579|A GitHub issue referenced as the regression context for handling non-Requests cookie jars during redirect resolution|1\n552|TEST SHOULD STRIP AUTH HTTP DOWNGRADE|A pytest test that verifies Requests determines that authentication should be removed when a redirect downgrades from HTTPS to HTTP|2\n237|HTTP REDIRECT|HTTP REDIRECT is a response event and flow identified by a `Location` header and redirect status codes such as 301, 302, 303, 307, and 308. It is recorded in the response history and may cause a subsequent request to the specified destination. HTTP REDIRECT responses can be processed automatically by Requests. In particular, a 302 redirect may send the client from the original host to the root URL; when the redirect targets a different host, credentials must not be included in the redirected request.|5\n492|REQUEST WITH BYTESTRING HOST TEST|A test event that verifies a request with a bytestring Host header can set and retrieve a cookie while redirects are disabled.|1\n370|AUTHORIZATION HEADER|The HTTP request header used to carry the client's Digest authentication response.|1\n364|DIGESTAUTH ONLY ON 4XX|A test event verifying that the Requests client does not send digest credentials when a 200 OK response contains a WWW-Authenticate header.|2\n\n\n-----Relationships-----\nid|source|target|description|weight|links\n549|DIGESTAUTH REDIRECT TEST|HTTP REDIRECT|The redirect test asserts that the first response has status code 302 and that redirect history records it.|10.0|1\n887|TEST AUTH IS STRIPPED ON HTTP DOWNGRADE|REQUESTS|This test verifies Requests strips Authorization when an HTTPS request redirects to HTTP|9.0|15\n890|TEST AUTH IS RETAINED FOR REDIRECT ON HOST|REQUESTS|This test verifies Requests retains Authorization across redirects that remain on the same host|9.0|15\n691|REQUESTS|RESPECT PROXY ENVIRONMENT ON SEND WITH REDIRECTS TEST|The test verifies Requests applies proxy settings while sending a redirected request.|9.0|15\n698|REQUESTS|PROXY AUTHORIZATION PRESERVATION TEST|The test configures a Requests session with Proxy-Authorization and verifies the transmitted header.|9.0|15\n507|TEST DIGESTAUTH 401 COUNT RESET ON REDIRECT|REQUESTS|The test targets Requests digest-authentication behavior across a successful authentication and a subsequent redirect challenge|9.0|15\n533|DIGESTAUTH ONLY ON 4XX|REQUESTS|The test checks the Requests client's behavior when a successful HTTP response includes a WWW-Authenticate header.|9.0|15\n893|TEST SHOULD STRIP AUTH HOST CHANGE|REQUESTS|This test directly verifies Requests identifies a host change as a reason to strip authentication|9.0|15\n895|TEST SHOULD STRIP AUTH HTTP DOWNGRADE|REQUESTS|This test directly verifies Requests strips authentication during an HTTPS-to-HTTP downgrade|9.0|15\n525|DIGESTAUTH 401 COUNT RESET ON REDIRECT|REQUESTS|The digest-authentication redirect test verifies Requests behavior identified in issue 1979|9.0|15\n784|REQUEST WITH BYTESTRING HOST TEST|REQUESTS|The test verifies Requests handling of a bytestring Host header, cookies, and redirects.|9.0|15\n899|TEST SHOULD STRIP AUTH|REQUESTS|This test validates Requests Session.should_strip_auth behavior across HTTP and HTTPS redirects and port changes|9.0|15\n900|TEST SHOULD STRIP AUTH PORT CHANGE|REQUESTS|This test validates Requests authentication stripping when a redirect changes non-standard ports|9.0|15\n901|TEST SHOULD STRIP AUTH DEFAULT PORT|REQUESTS|This parameterized test validates Requests handling of equivalent default HTTP and HTTPS ports|9.0|15\n393|REQUESTS|REQUESTS ISSUE 1084|Requests issue 1084 is cited in the Requests redirect implementation|7.0|15\n394|REQUESTS|REQUESTS ISSUE 3490|Requests issue 3490 is cited in the Requests redirect implementation|7.0|15\n889|TEST AUTH IS STRIPPED ON HTTP DOWNGRADE|PYTEST|Pytest executes this authentication redirect test using injected fixtures|8.0|7\n892|TEST AUTH IS RETAINED FOR REDIRECT ON HOST|PYTEST|Pytest executes this redirect authentication test|8.0|7\n690|PYTEST|RESPECT PROXY ENVIRONMENT ON SEND WITH REDIRECTS TEST|Pytest executes the proxy environment test involving redirects.|9.0|7\n697|PYTEST|PROXY AUTHORIZATION PRESERVATION TEST|Pytest executes the proxy authorization preservation test.|9.0|7\n508|TEST DIGESTAUTH 401 COUNT RESET ON REDIRECT|PYTEST|The test is defined as a pytest test case for Requests authentication behavior|1.0|7\n894|TEST SHOULD STRIP AUTH HOST CHANGE|PYTEST|Pytest executes this authentication policy test|8.0|7\n896|TEST SHOULD STRIP AUTH HTTP DOWNGRADE|PYTEST|Pytest executes this authentication policy test|8.0|7\n888|TEST AUTH IS STRIPPED ON HTTP DOWNGRADE|HTTPBIN|The test uses secure and insecure httpbin redirect endpoints to exercise the downgrade behavior|9.0|4\n891|TEST AUTH IS RETAINED FOR REDIRECT ON HOST|HTTPBIN|The test uses an httpbin redirect endpoint to trigger the same-host redirect|8.0|4\n692|HTTPBIN|RESPECT PROXY ENVIRONMENT ON SEND WITH REDIRECTS TEST|The test uses an httpbin redirect endpoint as the target request.|8.0|4\n699|HTTPBIN|PROXY AUTHORIZATION PRESERVATION TEST|The test sends the request to httpbin and inspects the echoed headers.|1.0|4\n348|RESPONSE|HTTP REDIRECT|Response detects redirects through its is_redirect and is_permanent_redirect properties and tracks redirect history.|9.0|1\n546|DIGEST RESPONSE HANDLER|HTTP REDIRECT|The handler sends a redirect after verifying the first authenticated request.|10.0|1\n532|DIGESTAUTH ONLY ON 4XX|HTTP DIGEST AUTHENTICATION|The test verifies that digest authentication is triggered only for 4xx challenges and not for a 200 OK response.|9.0|1\n349|HTTP REDIRECT|PREPARED REQUEST|A redirect response can expose a PreparedRequest for the next request through the next property.|8.0|1\n550|DIGESTAUTH REDIRECT TEST|HTTP/1.1 200 OK|The redirect test requires the final authenticated response to have status code 200.|10.0|1\n325|REDIRECT STATI|HTTP REDIRECT|REDIRECT_STATI contains the HTTP redirect status codes handled automatically by Requests.|10.0|1\n540|DIGEST AUTHORIZATION REQUEST|AUTHORIZATION HEADER|The Digest response is transmitted in the HTTP Authorization request header.|10.0|1\n650|TEST COOKIELIB COOKIEJAR ON REDIRECT|GH 3579|The test is explicitly documented as addressing the regression tracked by GitHub issue 3579|9.0|1\n\n\n-----Sources-----\nid|text\n93|        \"invalid_header\",\n        (\n            {\" foo\": \"bar\"},\n            {\"\\tfoo\": \"bar\"},\n            {\"    foo\": \"bar\"},\n            {\"foo\": \" bar\"},\n            {\"foo\": \"    bar\"},\n            {\"foo\": \"\\tbar\"},\n            {\" \": \"bar\"},\n        ),\n    )\n    def test_header_no_leading_space(self, httpbin, invalid_header):\n        \"\"\"Ensure headers containing leading whitespace raise\n        InvalidHeader Error before sending.\n        \"\"\"\n        with pytest.raises(InvalidHeader):\n            requests.get(httpbin(\"get\"), headers=invalid_header)\n\n    def test_header_with_subclass_types(self, httpbin):\n        \"\"\"If the subclasses does not behave *exactly* like\n        the base bytes/str classes, this is not supported.\n        This test is for backwards compatibility.\n        \"\"\"\n\n        class MyString(str):\n            pass\n\n        class MyBytes(bytes):\n            pass\n\n        r_str = requests.get(httpbin(\"get\"), headers={MyString(\"x-custom\"): \"myheader\"})\n        assert r_str.request.headers[\"x-custom\"] == \"myheader\"\n\n        r_bytes = requests.get(\n            httpbin(\"get\"), headers={MyBytes(b\"x-custom\"): b\"myheader\"}\n        )\n        assert r_bytes.request.headers[\"x-custom\"] == b\"myheader\"\n\n        r_mixed = requests.get(\n            httpbin(\"get\"), headers={MyString(\"x-custom\"): MyBytes(b\"myheader\")}\n        )\n        assert r_mixed.request.headers[\"x-custom\"] == b\"myheader\"\n\n    @pytest.mark.parametrize(\"files\", (\"foo\", b\"foo\", bytearray(b\"foo\")))\n    def test_can_send_objects_with_files(self, httpbin, files):\n        data = {\"a\": \"this is a string\"}\n        files = {\"b\": files}\n        r = requests.Request(\"POST\", httpbin(\"post\"), data=data, files=files)\n        p = r.prepare()\n        assert \"multipart/form-data\" in p.headers[\"Content-Type\"]\n\n    def test_can_send_file_object_with_non_string_filename(self, httpbin):\n        f = io.BytesIO()\n        f.name = 2\n        r = requests.Request(\"POST\", httpbin(\"post\"), files={\"f\": f})\n        p = r.prepare()\n\n        assert \"multipart/form-data\" in p.headers[\"Content-Type\"]\n\n    def test_autoset_header_values_are_native(self, httpbin):\n        data = \"this is a string\"\n        length = \"16\"\n        req = requests.Request(\"POST\", httpbin(\"post\"), data=data)\n        p = req.prepare()\n\n        assert p.headers[\"Content-Length\"] == length\n\n    def test_content_length_for_bytes_data(self, httpbin):\n        data = \"This is a string containing multi-byte UTF-8 ☃️\"\n        encoded_data = data.encode(\"utf-8\")\n        length = str(len(encoded_data))\n        req = requests.Request(\"POST\", httpbin(\"post\"), data=encoded_data)\n        p = req.prepare()\n\n        assert p.headers[\"Content-Length\"] == length\n\n    def test_content_length_for_string_data_counts_bytes(self, httpbin):\n        data = \"This is a string containing multi-byte UTF-8 ☃️\"\n        length = str(len(data.encode(\"utf-8\")))\n        req = requests.Request(\"POST\", httpbin(\"post\"), data=data)\n        p = req.prepare()\n\n        assert p.headers[\"Content-Length\"] == length\n\n    def test_nonhttp_schemes_dont_check_URLs(self):\n        test_urls = (\n            \"data:image/gif;base64,R0lGODlhAQABAHAAACH5BAUAAAAALAAAAAABAAEAAAICRAEAOw==\",\n            \"file:///etc/passwd\",\n            \"magnet:?xt=urn:btih:be08f00302bc2d1d3cfa3af02024fa647a271431\",\n        )\n        for test_url in test_urls:\n            req = requests.Request(\"GET\", test_url)\n            preq = req.prepare()\n            assert test_url == preq.url\n\n    def test_auth_is_stripped_on_http_downgrade(\n        self, httpbin, httpbin_secure, httpbin_ca_bundle\n    ):\n        r = requests.get(\n            httpbin_secure(\"redirect-to\"),\n            params={\"url\": httpbin(\"get\")},\n            auth=(\"user\", \"pass\"),\n            verify=httpbin_ca_bundle,\n        )\n        assert r.history[0].request.headers[\"Authorization\"]\n        assert \"Authorization\" not in r.request.headers\n\n    def test_auth_is_retained_for_redirect_on_host(self, httpbin):\n        r = requests.get(httpbin(\"redirect/1\"), auth=(\"user\", \"pass\"))\n        h1 = r.history[0].request.headers[\"Authorization\"]\n        h2 = r.request.headers[\"Authorization\"]\n\n        assert h1 == h2\n\n    def test_should_strip_auth_host_change(self):\n        s = requests.Session()\n        assert s.should_strip_auth(\n            \"http://example.com/foo\", \"http://another.example.com/\"\n        )\n\n    def test_should_strip_auth_http_downgrade(self):\n        s = requests.Session()\n        assert s.should_strip_auth(\"https://example.com/foo\", \"http://example.com/bar\")\n\n    def test_should_strip_auth_https_upgrade(self):\n        s = requests.Session()\n        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com:80/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com:443/bar\"\n        )\n        # Non-standard ports should trigger stripping\n        assert s.should_strip_auth(\n\n94|        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com:80/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com:443/bar\"\n        )\n        # Non-standard ports should trigger stripping\n        assert s.should_strip_auth(\n            \"http://example.com:8080/foo\", \"https://example.com/bar\"\n        )\n        assert s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com:8443/bar\"\n        )\n\n    def test_should_strip_auth_port_change(self):\n        s = requests.Session()\n        assert s.should_strip_auth(\n            \"http://example.com:1234/foo\", \"https://example.com:4321/bar\"\n        )\n\n    @pytest.mark.parametrize(\n        \"old_uri, new_uri\",\n        (\n            (\"https://example.com:443/foo\", \"https://example.com/bar\"),\n            (\"http://example.com:80/foo\", \"http://example.com/bar\"),\n            (\"https://example.com/foo\", \"https://example.com:443/bar\"),\n            (\"http://example.com/foo\", \"http://example.com:80/bar\"),\n        ),\n    )\n    def test_should_strip_auth_default_port(self, old_uri, new_uri):\n        s = requests.Session()\n        assert not s.should_strip_auth(old_uri, new_uri)\n\n    def test_manual_redirect_with_partial_body_read(self, httpbin):\n        s = requests.Session()\n        r1 = s.get(httpbin(\"redirect/2\"), allow_redirects=False, stream=True)\n        assert r1.is_redirect\n        rg = s.resolve_redirects(r1, r1.request, stream=True)\n\n        # read only the first eight bytes of the response body,\n        # then follow the redirect\n        r1.iter_content(8)\n        r2 = next(rg)\n        assert r2.is_redirect\n\n        # read all of the response via iter_content,\n        # then follow the redirect\n        for _ in r2.iter_content():\n            pass\n        r3 = next(rg)\n        assert not r3.is_redirect\n\n    def test_prepare_body_position_non_stream(self):\n        data = b\"the data\"\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position is None\n\n    def test_rewind_body(self):\n        data = io.BytesIO(b\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 0\n        assert prep.body.read() == b\"the data\"\n\n        # the data has all been read\n        assert prep.body.read() == b\"\"\n\n        # rewind it back\n        requests.utils.rewind_body(prep)\n        assert prep.body.read() == b\"the data\"\n\n    def test_rewind_partially_read_body(self):\n        data = io.BytesIO(b\"the data\")\n        data.read(4)  # read some data\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 4\n        assert prep.body.read() == b\"data\"\n\n        # the data has all been read\n        assert prep.body.read() == b\"\"\n\n        # rewind it back\n        requests.utils.rewind_body(prep)\n        assert prep.body.read() == b\"data\"\n\n    def test_rewind_body_no_seek(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                return 0\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 0\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"Unable to rewind request body\" in str(e)\n\n    def test_rewind_body_failed_seek(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                return 0\n\n            def seek(self, pos, whence=0):\n                raise OSError()\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 0\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"error occurred when rewinding request body\" in str(e)\n\n    def test_rewind_body_failed_tell(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                raise OSError()\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position is not None\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"Unable to rewind request body\" in str(e)\n\n    def _patch_adapter_gzipped_redirect(self, session, url):\n        adapter = session.get_adapter(url=url)\n        org_build_response = adapter.build_response\n        self._patched_response = False\n\n        def build_response(*args, **kwargs):\n            resp = org_build_response(*args, **kwargs)\n\n53|        if (\n            not changed_scheme\n            and old_parsed.port in default_port\n            and new_parsed.port in default_port\n        ):\n            return False\n\n        # Standard case: root URI must match\n        return changed_port or changed_scheme\n\n    def resolve_redirects(\n        self,\n        resp,\n        req,\n        stream=False,\n        timeout=None,\n        verify=True,\n        cert=None,\n        proxies=None,\n        yield_requests=False,\n        **adapter_kwargs,\n    ):\n        \"\"\"Receives a Response. Returns a generator of Responses or Requests.\"\"\"\n\n        hist = []  # keep track of history\n\n        url = self.get_redirect_target(resp)\n        previous_fragment = urlparse(req.url).fragment\n        while url:\n            prepared_request = req.copy()\n\n            # Update history and keep track of redirects.\n            # resp.history must ignore the original request in this loop\n            hist.append(resp)\n            resp.history = hist[1:]\n\n            try:\n                resp.content  # Consume socket so it can be released\n            except (ChunkedEncodingError, ContentDecodingError, RuntimeError):\n                resp.raw.read(decode_content=False)\n\n            if len(resp.history) >= self.max_redirects:\n                raise TooManyRedirects(\n                    f\"Exceeded {self.max_redirects} redirects.\", response=resp\n                )\n\n            # Release the connection back into the pool.\n            resp.close()\n\n            # Handle redirection without scheme (see: RFC 1808 Section 4)\n            if url.startswith(\"//\"):\n                parsed_rurl = urlparse(resp.url)\n                url = \":\".join([to_native_string(parsed_rurl.scheme), url])\n\n            # Normalize url case and attach previous fragment if needed (RFC 7231 7.1.2)\n            parsed = urlparse(url)\n            if parsed.fragment == \"\" and previous_fragment:\n                parsed = parsed._replace(fragment=previous_fragment)\n            elif parsed.fragment:\n                previous_fragment = parsed.fragment\n            url = parsed.geturl()\n\n            # Facilitate relative 'location' headers, as allowed by RFC 7231.\n            # (e.g. '/path/to/resource' instead of 'http://domain.tld/path/to/resource')\n            # Compliant with RFC3986, we percent encode the url.\n            if not parsed.netloc:\n                url = urljoin(resp.url, requote_uri(url))\n            else:\n                url = requote_uri(url)\n\n            prepared_request.url = to_native_string(url)\n\n            self.rebuild_method(prepared_request, resp)\n\n            # https://github.com/psf/requests/issues/1084\n            if resp.status_code not in (\n                codes.temporary_redirect,\n                codes.permanent_redirect,\n            ):\n                # https://github.com/psf/requests/issues/3490\n                purged_headers = (\"Content-Length\", \"Content-Type\", \"Transfer-Encoding\")\n                for header in purged_headers:\n                    prepared_request.headers.pop(header, None)\n                prepared_request.body = None\n\n            headers = prepared_request.headers\n            headers.pop(\"Cookie\", None)\n\n            # Extract any cookies sent on the response to the cookiejar\n            # in the new request. Because we've mutated our copied prepared\n            # request, use the old one that we haven't yet touched.\n            extract_cookies_to_jar(prepared_request._cookies, req, resp.raw)\n            merge_cookies(prepared_request._cookies, self.cookies)\n            prepared_request.prepare_cookies(prepared_request._cookies)\n\n            # Rebuild auth and proxy information.\n            proxies = self.rebuild_proxies(prepared_request, proxies)\n            self.rebuild_auth(prepared_request, resp)\n\n            # A failed tell() sets `_body_position` to `object()`. This non-None\n            # value ensures `rewindable` will be True, allowing us to raise an\n            # UnrewindableBodyError, instead of hanging the connection.\n            rewindable = prepared_request._body_position is not None and (\n                \"Content-Length\" in headers or \"Transfer-Encoding\" in headers\n            )\n\n            # Attempt to rewind consumed file-like object.\n            if rewindable:\n                rewind_body(prepared_request)\n\n            # Override the original request.\n            req = prepared_request\n\n            if yield_requests:\n                yield req\n            else:\n                resp = self.send(\n                    req,\n                    stream=stream,\n                    timeout=timeout,\n                    verify=verify,\n                    cert=cert,\n                    proxies=proxies,\n                    allow_redirects=False,\n                    **adapter_kwargs,\n                )\n\n                extract_cookies_to_jar(self.cookies, prepared_request, resp.raw)\n\n                # extract redirect url, if any, for the next loop\n                url = self.get_redirect_target(resp)\n                yield resp\n\n    def rebuild_auth(self, prepared_request, response):\n        \"\"\"When being redirected we may want to strip authentication from the\n        request to avoid leaking credentials. This method intelligently removes\n        and reapplies authentication where possible to avoid credential loss.\n        \"\"\"\n        headers = prepared_request.headers\n        url = prepared_request.url\n\n        if \"Authorization\" in headers and self.should_strip_auth(\n            response.request.url, url\n        ):\n            # If we get redirected to a new host, we should strip out any\n            # authentication headers.\n            del headers[\"Authorization\"]\n\n        # .netrc might have more auth for us on our new host.\n        new_auth = get_netrc_auth(url) if self.trust_env else None\n        if new_auth is not None:\n            prepared_request.prepare_auth(new_auth)\n\n    def rebuild_proxies(self, prepared_request, proxies):\n        \"\"\"This method re-evaluates the proxy configuration by considering the\n        environment variables. If we are redirected to a URL covered by\n        NO_PROXY, we strip the proxy configuration. Otherwise, we set missing\n\n",
+  "upstream_raw_records": {
+    "relationships": [
+      {
+        "id": "549",
+        "source": "DIGESTAUTH REDIRECT TEST",
+        "target": "HTTP REDIRECT",
+        "description": "The redirect test asserts that the first response has status code 302 and that redirect history records it.",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "887",
+        "source": "TEST AUTH IS STRIPPED ON HTTP DOWNGRADE",
+        "target": "REQUESTS",
+        "description": "This test verifies Requests strips Authorization when an HTTPS request redirects to HTTP",
+        "weight": "9.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "890",
+        "source": "TEST AUTH IS RETAINED FOR REDIRECT ON HOST",
+        "target": "REQUESTS",
+        "description": "This test verifies Requests retains Authorization across redirects that remain on the same host",
+        "weight": "9.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "691",
+        "source": "REQUESTS",
+        "target": "RESPECT PROXY ENVIRONMENT ON SEND WITH REDIRECTS TEST",
+        "description": "The test verifies Requests applies proxy settings while sending a redirected request.",
+        "weight": "9.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "698",
+        "source": "REQUESTS",
+        "target": "PROXY AUTHORIZATION PRESERVATION TEST",
+        "description": "The test configures a Requests session with Proxy-Authorization and verifies the transmitted header.",
+        "weight": "9.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "507",
+        "source": "TEST DIGESTAUTH 401 COUNT RESET ON REDIRECT",
+        "target": "REQUESTS",
+        "description": "The test targets Requests digest-authentication behavior across a successful authentication and a subsequent redirect challenge",
+        "weight": "9.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "533",
+        "source": "DIGESTAUTH ONLY ON 4XX",
+        "target": "REQUESTS",
+        "description": "The test checks the Requests client's behavior when a successful HTTP response includes a WWW-Authenticate header.",
+        "weight": "9.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "893",
+        "source": "TEST SHOULD STRIP AUTH HOST CHANGE",
+        "target": "REQUESTS",
+        "description": "This test directly verifies Requests identifies a host change as a reason to strip authentication",
+        "weight": "9.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "895",
+        "source": "TEST SHOULD STRIP AUTH HTTP DOWNGRADE",
+        "target": "REQUESTS",
+        "description": "This test directly verifies Requests strips authentication during an HTTPS-to-HTTP downgrade",
+        "weight": "9.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "525",
+        "source": "DIGESTAUTH 401 COUNT RESET ON REDIRECT",
+        "target": "REQUESTS",
+        "description": "The digest-authentication redirect test verifies Requests behavior identified in issue 1979",
+        "weight": "9.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "784",
+        "source": "REQUEST WITH BYTESTRING HOST TEST",
+        "target": "REQUESTS",
+        "description": "The test verifies Requests handling of a bytestring Host header, cookies, and redirects.",
+        "weight": "9.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "899",
+        "source": "TEST SHOULD STRIP AUTH",
+        "target": "REQUESTS",
+        "description": "This test validates Requests Session.should_strip_auth behavior across HTTP and HTTPS redirects and port changes",
+        "weight": "9.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "900",
+        "source": "TEST SHOULD STRIP AUTH PORT CHANGE",
+        "target": "REQUESTS",
+        "description": "This test validates Requests authentication stripping when a redirect changes non-standard ports",
+        "weight": "9.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "901",
+        "source": "TEST SHOULD STRIP AUTH DEFAULT PORT",
+        "target": "REQUESTS",
+        "description": "This parameterized test validates Requests handling of equivalent default HTTP and HTTPS ports",
+        "weight": "9.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "393",
+        "source": "REQUESTS",
+        "target": "REQUESTS ISSUE 1084",
+        "description": "Requests issue 1084 is cited in the Requests redirect implementation",
+        "weight": "7.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "394",
+        "source": "REQUESTS",
+        "target": "REQUESTS ISSUE 3490",
+        "description": "Requests issue 3490 is cited in the Requests redirect implementation",
+        "weight": "7.0",
+        "links": "15",
+        "in_context": true
+      },
+      {
+        "id": "889",
+        "source": "TEST AUTH IS STRIPPED ON HTTP DOWNGRADE",
+        "target": "PYTEST",
+        "description": "Pytest executes this authentication redirect test using injected fixtures",
+        "weight": "8.0",
+        "links": "7",
+        "in_context": true
+      },
+      {
+        "id": "892",
+        "source": "TEST AUTH IS RETAINED FOR REDIRECT ON HOST",
+        "target": "PYTEST",
+        "description": "Pytest executes this redirect authentication test",
+        "weight": "8.0",
+        "links": "7",
+        "in_context": true
+      },
+      {
+        "id": "690",
+        "source": "PYTEST",
+        "target": "RESPECT PROXY ENVIRONMENT ON SEND WITH REDIRECTS TEST",
+        "description": "Pytest executes the proxy environment test involving redirects.",
+        "weight": "9.0",
+        "links": "7",
+        "in_context": true
+      },
+      {
+        "id": "697",
+        "source": "PYTEST",
+        "target": "PROXY AUTHORIZATION PRESERVATION TEST",
+        "description": "Pytest executes the proxy authorization preservation test.",
+        "weight": "9.0",
+        "links": "7",
+        "in_context": true
+      },
+      {
+        "id": "508",
+        "source": "TEST DIGESTAUTH 401 COUNT RESET ON REDIRECT",
+        "target": "PYTEST",
+        "description": "The test is defined as a pytest test case for Requests authentication behavior",
+        "weight": "1.0",
+        "links": "7",
+        "in_context": true
+      },
+      {
+        "id": "894",
+        "source": "TEST SHOULD STRIP AUTH HOST CHANGE",
+        "target": "PYTEST",
+        "description": "Pytest executes this authentication policy test",
+        "weight": "8.0",
+        "links": "7",
+        "in_context": true
+      },
+      {
+        "id": "896",
+        "source": "TEST SHOULD STRIP AUTH HTTP DOWNGRADE",
+        "target": "PYTEST",
+        "description": "Pytest executes this authentication policy test",
+        "weight": "8.0",
+        "links": "7",
+        "in_context": true
+      },
+      {
+        "id": "888",
+        "source": "TEST AUTH IS STRIPPED ON HTTP DOWNGRADE",
+        "target": "HTTPBIN",
+        "description": "The test uses secure and insecure httpbin redirect endpoints to exercise the downgrade behavior",
+        "weight": "9.0",
+        "links": "4",
+        "in_context": true
+      },
+      {
+        "id": "891",
+        "source": "TEST AUTH IS RETAINED FOR REDIRECT ON HOST",
+        "target": "HTTPBIN",
+        "description": "The test uses an httpbin redirect endpoint to trigger the same-host redirect",
+        "weight": "8.0",
+        "links": "4",
+        "in_context": true
+      },
+      {
+        "id": "692",
+        "source": "HTTPBIN",
+        "target": "RESPECT PROXY ENVIRONMENT ON SEND WITH REDIRECTS TEST",
+        "description": "The test uses an httpbin redirect endpoint as the target request.",
+        "weight": "8.0",
+        "links": "4",
+        "in_context": true
+      },
+      {
+        "id": "699",
+        "source": "HTTPBIN",
+        "target": "PROXY AUTHORIZATION PRESERVATION TEST",
+        "description": "The test sends the request to httpbin and inspects the echoed headers.",
+        "weight": "1.0",
+        "links": "4",
+        "in_context": true
+      },
+      {
+        "id": "348",
+        "source": "RESPONSE",
+        "target": "HTTP REDIRECT",
+        "description": "Response detects redirects through its is_redirect and is_permanent_redirect properties and tracks redirect history.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "546",
+        "source": "DIGEST RESPONSE HANDLER",
+        "target": "HTTP REDIRECT",
+        "description": "The handler sends a redirect after verifying the first authenticated request.",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "532",
+        "source": "DIGESTAUTH ONLY ON 4XX",
+        "target": "HTTP DIGEST AUTHENTICATION",
+        "description": "The test verifies that digest authentication is triggered only for 4xx challenges and not for a 200 OK response.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "349",
+        "source": "HTTP REDIRECT",
+        "target": "PREPARED REQUEST",
+        "description": "A redirect response can expose a PreparedRequest for the next request through the next property.",
+        "weight": "8.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "550",
+        "source": "DIGESTAUTH REDIRECT TEST",
+        "target": "HTTP/1.1 200 OK",
+        "description": "The redirect test requires the final authenticated response to have status code 200.",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "325",
+        "source": "REDIRECT STATI",
+        "target": "HTTP REDIRECT",
+        "description": "REDIRECT_STATI contains the HTTP redirect status codes handled automatically by Requests.",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "540",
+        "source": "DIGEST AUTHORIZATION REQUEST",
+        "target": "AUTHORIZATION HEADER",
+        "description": "The Digest response is transmitted in the HTTP Authorization request header.",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "650",
+        "source": "TEST COOKIELIB COOKIEJAR ON REDIRECT",
+        "target": "GH 3579",
+        "description": "The test is explicitly documented as addressing the regression tracked by GitHub issue 3579",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      }
+    ],
+    "entities": [
+      {
+        "id": "551",
+        "entity": "TEST SHOULD STRIP AUTH HOST CHANGE",
+        "description": "A pytest test that verifies Requests determines that authentication should be removed when a redirect changes the host",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "554",
+        "entity": "TEST SHOULD STRIP AUTH",
+        "description": "A test event that verifies Requests preserves authentication when redirecting between equivalent HTTP and HTTPS default ports, while stripping authentication for non-standard port changes>",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "550",
+        "entity": "TEST AUTH IS RETAINED FOR REDIRECT ON HOST",
+        "description": "A pytest test that verifies Requests retains Authorization credentials when following a redirect on the same host",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "555",
+        "entity": "TEST SHOULD STRIP AUTH PORT CHANGE",
+        "description": "A test event that verifies Requests strips authentication when a redirect changes from one non-standard port to another>",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "276",
+        "entity": "REQUESTS ISSUE 3490",
+        "description": "Requests issue 3490 is referenced in a comment concerning removal of request body headers during redirects",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "275",
+        "entity": "REQUESTS ISSUE 1084",
+        "description": "Requests issue 1084 is referenced in a comment concerning removal of request body headers during redirects",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "377",
+        "entity": "DIGESTAUTH REDIRECT TEST",
+        "description": "The authentication test covering a successful Digest exchange, a 302 redirect, credential isolation on the redirected host, and a final 200 response.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "446",
+        "entity": "RESPECT PROXY ENVIRONMENT ON SEND WITH REDIRECTS TEST",
+        "description": "A test event that verifies Requests honors the HTTP proxy environment variable when sending a request that follows redirects.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "549",
+        "entity": "TEST AUTH IS STRIPPED ON HTTP DOWNGRADE",
+        "description": "A pytest test that verifies Requests removes Authorization credentials when following a redirect from HTTPS to HTTP",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "359",
+        "entity": "DIGESTAUTH 401 COUNT RESET ON REDIRECT",
+        "description": "A test event covering digest authentication across a successful authentication, a 302 redirect, and a second digest-authentication challenge",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "556",
+        "entity": "TEST SHOULD STRIP AUTH DEFAULT PORT",
+        "description": "A parameterized test event that verifies Requests does not strip authentication when HTTP or HTTPS redirects only add or remove the corresponding default port>",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "347",
+        "entity": "TEST DIGESTAUTH 401 COUNT RESET ON REDIRECT",
+        "description": "A test event verifying that Requests resets its digest-authentication 401 counter after successful authentication followed by a redirect to another digest-authentication challenge",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "449",
+        "entity": "PROXY AUTHORIZATION PRESERVATION TEST",
+        "description": "A test event that verifies a Proxy-Authorization header configured on a Requests session is preserved and sent to httpbin.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "427",
+        "entity": "GH 3579",
+        "description": "A GitHub issue referenced as the regression context for handling non-Requests cookie jars during redirect resolution",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "552",
+        "entity": "TEST SHOULD STRIP AUTH HTTP DOWNGRADE",
+        "description": "A pytest test that verifies Requests determines that authentication should be removed when a redirect downgrades from HTTPS to HTTP",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "237",
+        "entity": "HTTP REDIRECT",
+        "description": "HTTP REDIRECT is a response event and flow identified by a `Location` header and redirect status codes such as 301, 302, 303, 307, and 308. It is recorded in the response history and may cause a subsequent request to the specified destination. HTTP REDIRECT responses can be processed automatically by Requests. In particular, a 302 redirect may send the client from the original host to the root URL; when the redirect targets a different host, credentials must not be included in the redirected request.",
+        "number of relationships": "5",
+        "in_context": true
+      },
+      {
+        "id": "492",
+        "entity": "REQUEST WITH BYTESTRING HOST TEST",
+        "description": "A test event that verifies a request with a bytestring Host header can set and retrieve a cookie while redirects are disabled.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "370",
+        "entity": "AUTHORIZATION HEADER",
+        "description": "The HTTP request header used to carry the client's Digest authentication response.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "364",
+        "entity": "DIGESTAUTH ONLY ON 4XX",
+        "description": "A test event verifying that the Requests client does not send digest credentials when a 200 OK response contains a WWW-Authenticate header.",
+        "number of relationships": "2",
+        "in_context": true
+      }
+    ],
+    "sources": [
+      {
+        "id": "93",
+        "text": "        \"invalid_header\",\n        (\n            {\" foo\": \"bar\"},\n            {\"\\tfoo\": \"bar\"},\n            {\"    foo\": \"bar\"},\n            {\"foo\": \" bar\"},\n            {\"foo\": \"    bar\"},\n            {\"foo\": \"\\tbar\"},\n            {\" \": \"bar\"},\n        ),\n    )\n    def test_header_no_leading_space(self, httpbin, invalid_header):\n        \"\"\"Ensure headers containing leading whitespace raise\n        InvalidHeader Error before sending.\n        \"\"\"\n        with pytest.raises(InvalidHeader):\n            requests.get(httpbin(\"get\"), headers=invalid_header)\n\n    def test_header_with_subclass_types(self, httpbin):\n        \"\"\"If the subclasses does not behave *exactly* like\n        the base bytes/str classes, this is not supported.\n        This test is for backwards compatibility.\n        \"\"\"\n\n        class MyString(str):\n            pass\n\n        class MyBytes(bytes):\n            pass\n\n        r_str = requests.get(httpbin(\"get\"), headers={MyString(\"x-custom\"): \"myheader\"})\n        assert r_str.request.headers[\"x-custom\"] == \"myheader\"\n\n        r_bytes = requests.get(\n            httpbin(\"get\"), headers={MyBytes(b\"x-custom\"): b\"myheader\"}\n        )\n        assert r_bytes.request.headers[\"x-custom\"] == b\"myheader\"\n\n        r_mixed = requests.get(\n            httpbin(\"get\"), headers={MyString(\"x-custom\"): MyBytes(b\"myheader\")}\n        )\n        assert r_mixed.request.headers[\"x-custom\"] == b\"myheader\"\n\n    @pytest.mark.parametrize(\"files\", (\"foo\", b\"foo\", bytearray(b\"foo\")))\n    def test_can_send_objects_with_files(self, httpbin, files):\n        data = {\"a\": \"this is a string\"}\n        files = {\"b\": files}\n        r = requests.Request(\"POST\", httpbin(\"post\"), data=data, files=files)\n        p = r.prepare()\n        assert \"multipart/form-data\" in p.headers[\"Content-Type\"]\n\n    def test_can_send_file_object_with_non_string_filename(self, httpbin):\n        f = io.BytesIO()\n        f.name = 2\n        r = requests.Request(\"POST\", httpbin(\"post\"), files={\"f\": f})\n        p = r.prepare()\n\n        assert \"multipart/form-data\" in p.headers[\"Content-Type\"]\n\n    def test_autoset_header_values_are_native(self, httpbin):\n        data = \"this is a string\"\n        length = \"16\"\n        req = requests.Request(\"POST\", httpbin(\"post\"), data=data)\n        p = req.prepare()\n\n        assert p.headers[\"Content-Length\"] == length\n\n    def test_content_length_for_bytes_data(self, httpbin):\n        data = \"This is a string containing multi-byte UTF-8 ☃️\"\n        encoded_data = data.encode(\"utf-8\")\n        length = str(len(encoded_data))\n        req = requests.Request(\"POST\", httpbin(\"post\"), data=encoded_data)\n        p = req.prepare()\n\n        assert p.headers[\"Content-Length\"] == length\n\n    def test_content_length_for_string_data_counts_bytes(self, httpbin):\n        data = \"This is a string containing multi-byte UTF-8 ☃️\"\n        length = str(len(data.encode(\"utf-8\")))\n        req = requests.Request(\"POST\", httpbin(\"post\"), data=data)\n        p = req.prepare()\n\n        assert p.headers[\"Content-Length\"] == length\n\n    def test_nonhttp_schemes_dont_check_URLs(self):\n        test_urls = (\n            \"data:image/gif;base64,R0lGODlhAQABAHAAACH5BAUAAAAALAAAAAABAAEAAAICRAEAOw==\",\n            \"file:///etc/passwd\",\n            \"magnet:?xt=urn:btih:be08f00302bc2d1d3cfa3af02024fa647a271431\",\n        )\n        for test_url in test_urls:\n            req = requests.Request(\"GET\", test_url)\n            preq = req.prepare()\n            assert test_url == preq.url\n\n    def test_auth_is_stripped_on_http_downgrade(\n        self, httpbin, httpbin_secure, httpbin_ca_bundle\n    ):\n        r = requests.get(\n            httpbin_secure(\"redirect-to\"),\n            params={\"url\": httpbin(\"get\")},\n            auth=(\"user\", \"pass\"),\n            verify=httpbin_ca_bundle,\n        )\n        assert r.history[0].request.headers[\"Authorization\"]\n        assert \"Authorization\" not in r.request.headers\n\n    def test_auth_is_retained_for_redirect_on_host(self, httpbin):\n        r = requests.get(httpbin(\"redirect/1\"), auth=(\"user\", \"pass\"))\n        h1 = r.history[0].request.headers[\"Authorization\"]\n        h2 = r.request.headers[\"Authorization\"]\n\n        assert h1 == h2\n\n    def test_should_strip_auth_host_change(self):\n        s = requests.Session()\n        assert s.should_strip_auth(\n            \"http://example.com/foo\", \"http://another.example.com/\"\n        )\n\n    def test_should_strip_auth_http_downgrade(self):\n        s = requests.Session()\n        assert s.should_strip_auth(\"https://example.com/foo\", \"http://example.com/bar\")\n\n    def test_should_strip_auth_https_upgrade(self):\n        s = requests.Session()\n        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com:80/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com:443/bar\"\n        )\n        # Non-standard ports should trigger stripping\n        assert s.should_strip_auth(\n"
+      },
+      {
+        "id": "94",
+        "text": "        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com:80/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com:443/bar\"\n        )\n        # Non-standard ports should trigger stripping\n        assert s.should_strip_auth(\n            \"http://example.com:8080/foo\", \"https://example.com/bar\"\n        )\n        assert s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com:8443/bar\"\n        )\n\n    def test_should_strip_auth_port_change(self):\n        s = requests.Session()\n        assert s.should_strip_auth(\n            \"http://example.com:1234/foo\", \"https://example.com:4321/bar\"\n        )\n\n    @pytest.mark.parametrize(\n        \"old_uri, new_uri\",\n        (\n            (\"https://example.com:443/foo\", \"https://example.com/bar\"),\n            (\"http://example.com:80/foo\", \"http://example.com/bar\"),\n            (\"https://example.com/foo\", \"https://example.com:443/bar\"),\n            (\"http://example.com/foo\", \"http://example.com:80/bar\"),\n        ),\n    )\n    def test_should_strip_auth_default_port(self, old_uri, new_uri):\n        s = requests.Session()\n        assert not s.should_strip_auth(old_uri, new_uri)\n\n    def test_manual_redirect_with_partial_body_read(self, httpbin):\n        s = requests.Session()\n        r1 = s.get(httpbin(\"redirect/2\"), allow_redirects=False, stream=True)\n        assert r1.is_redirect\n        rg = s.resolve_redirects(r1, r1.request, stream=True)\n\n        # read only the first eight bytes of the response body,\n        # then follow the redirect\n        r1.iter_content(8)\n        r2 = next(rg)\n        assert r2.is_redirect\n\n        # read all of the response via iter_content,\n        # then follow the redirect\n        for _ in r2.iter_content():\n            pass\n        r3 = next(rg)\n        assert not r3.is_redirect\n\n    def test_prepare_body_position_non_stream(self):\n        data = b\"the data\"\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position is None\n\n    def test_rewind_body(self):\n        data = io.BytesIO(b\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 0\n        assert prep.body.read() == b\"the data\"\n\n        # the data has all been read\n        assert prep.body.read() == b\"\"\n\n        # rewind it back\n        requests.utils.rewind_body(prep)\n        assert prep.body.read() == b\"the data\"\n\n    def test_rewind_partially_read_body(self):\n        data = io.BytesIO(b\"the data\")\n        data.read(4)  # read some data\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 4\n        assert prep.body.read() == b\"data\"\n\n        # the data has all been read\n        assert prep.body.read() == b\"\"\n\n        # rewind it back\n        requests.utils.rewind_body(prep)\n        assert prep.body.read() == b\"data\"\n\n    def test_rewind_body_no_seek(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                return 0\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 0\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"Unable to rewind request body\" in str(e)\n\n    def test_rewind_body_failed_seek(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                return 0\n\n            def seek(self, pos, whence=0):\n                raise OSError()\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 0\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"error occurred when rewinding request body\" in str(e)\n\n    def test_rewind_body_failed_tell(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                raise OSError()\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position is not None\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"Unable to rewind request body\" in str(e)\n\n    def _patch_adapter_gzipped_redirect(self, session, url):\n        adapter = session.get_adapter(url=url)\n        org_build_response = adapter.build_response\n        self._patched_response = False\n\n        def build_response(*args, **kwargs):\n            resp = org_build_response(*args, **kwargs)\n"
+      },
+      {
+        "id": "53",
+        "text": "        if (\n            not changed_scheme\n            and old_parsed.port in default_port\n            and new_parsed.port in default_port\n        ):\n            return False\n\n        # Standard case: root URI must match\n        return changed_port or changed_scheme\n\n    def resolve_redirects(\n        self,\n        resp,\n        req,\n        stream=False,\n        timeout=None,\n        verify=True,\n        cert=None,\n        proxies=None,\n        yield_requests=False,\n        **adapter_kwargs,\n    ):\n        \"\"\"Receives a Response. Returns a generator of Responses or Requests.\"\"\"\n\n        hist = []  # keep track of history\n\n        url = self.get_redirect_target(resp)\n        previous_fragment = urlparse(req.url).fragment\n        while url:\n            prepared_request = req.copy()\n\n            # Update history and keep track of redirects.\n            # resp.history must ignore the original request in this loop\n            hist.append(resp)\n            resp.history = hist[1:]\n\n            try:\n                resp.content  # Consume socket so it can be released\n            except (ChunkedEncodingError, ContentDecodingError, RuntimeError):\n                resp.raw.read(decode_content=False)\n\n            if len(resp.history) >= self.max_redirects:\n                raise TooManyRedirects(\n                    f\"Exceeded {self.max_redirects} redirects.\", response=resp\n                )\n\n            # Release the connection back into the pool.\n            resp.close()\n\n            # Handle redirection without scheme (see: RFC 1808 Section 4)\n            if url.startswith(\"//\"):\n                parsed_rurl = urlparse(resp.url)\n                url = \":\".join([to_native_string(parsed_rurl.scheme), url])\n\n            # Normalize url case and attach previous fragment if needed (RFC 7231 7.1.2)\n            parsed = urlparse(url)\n            if parsed.fragment == \"\" and previous_fragment:\n                parsed = parsed._replace(fragment=previous_fragment)\n            elif parsed.fragment:\n                previous_fragment = parsed.fragment\n            url = parsed.geturl()\n\n            # Facilitate relative 'location' headers, as allowed by RFC 7231.\n            # (e.g. '/path/to/resource' instead of 'http://domain.tld/path/to/resource')\n            # Compliant with RFC3986, we percent encode the url.\n            if not parsed.netloc:\n                url = urljoin(resp.url, requote_uri(url))\n            else:\n                url = requote_uri(url)\n\n            prepared_request.url = to_native_string(url)\n\n            self.rebuild_method(prepared_request, resp)\n\n            # https://github.com/psf/requests/issues/1084\n            if resp.status_code not in (\n                codes.temporary_redirect,\n                codes.permanent_redirect,\n            ):\n                # https://github.com/psf/requests/issues/3490\n                purged_headers = (\"Content-Length\", \"Content-Type\", \"Transfer-Encoding\")\n                for header in purged_headers:\n                    prepared_request.headers.pop(header, None)\n                prepared_request.body = None\n\n            headers = prepared_request.headers\n            headers.pop(\"Cookie\", None)\n\n            # Extract any cookies sent on the response to the cookiejar\n            # in the new request. Because we've mutated our copied prepared\n            # request, use the old one that we haven't yet touched.\n            extract_cookies_to_jar(prepared_request._cookies, req, resp.raw)\n            merge_cookies(prepared_request._cookies, self.cookies)\n            prepared_request.prepare_cookies(prepared_request._cookies)\n\n            # Rebuild auth and proxy information.\n            proxies = self.rebuild_proxies(prepared_request, proxies)\n            self.rebuild_auth(prepared_request, resp)\n\n            # A failed tell() sets `_body_position` to `object()`. This non-None\n            # value ensures `rewindable` will be True, allowing us to raise an\n            # UnrewindableBodyError, instead of hanging the connection.\n            rewindable = prepared_request._body_position is not None and (\n                \"Content-Length\" in headers or \"Transfer-Encoding\" in headers\n            )\n\n            # Attempt to rewind consumed file-like object.\n            if rewindable:\n                rewind_body(prepared_request)\n\n            # Override the original request.\n            req = prepared_request\n\n            if yield_requests:\n                yield req\n            else:\n                resp = self.send(\n                    req,\n                    stream=stream,\n                    timeout=timeout,\n                    verify=verify,\n                    cert=cert,\n                    proxies=proxies,\n                    allow_redirects=False,\n                    **adapter_kwargs,\n                )\n\n                extract_cookies_to_jar(self.cookies, prepared_request, resp.raw)\n\n                # extract redirect url, if any, for the next loop\n                url = self.get_redirect_target(resp)\n                yield resp\n\n    def rebuild_auth(self, prepared_request, response):\n        \"\"\"When being redirected we may want to strip authentication from the\n        request to avoid leaking credentials. This method intelligently removes\n        and reapplies authentication where possible to avoid credential loss.\n        \"\"\"\n        headers = prepared_request.headers\n        url = prepared_request.url\n\n        if \"Authorization\" in headers and self.should_strip_auth(\n            response.request.url, url\n        ):\n            # If we get redirected to a new host, we should strip out any\n            # authentication headers.\n            del headers[\"Authorization\"]\n\n        # .netrc might have more auth for us on our new host.\n        new_auth = get_netrc_auth(url) if self.trust_env else None\n        if new_auth is not None:\n            prepared_request.prepare_auth(new_auth)\n\n    def rebuild_proxies(self, prepared_request, proxies):\n        \"\"\"This method re-evaluates the proxy configuration by considering the\n        environment variables. If we are redirected to a URL covered by\n        NO_PROXY, we strip the proxy configuration. Otherwise, we set missing\n"
+      }
+    ]
+  },
+  "final_context": "-----Entities-----\nid|entity|description|number of relationships\n551|TEST SHOULD STRIP AUTH HOST CHANGE|A pytest test that verifies Requests determines that authentication should be removed when a redirect changes the host|2\n554|TEST SHOULD STRIP AUTH|A test event that verifies Requests preserves authentication when redirecting between equivalent HTTP and HTTPS default ports, while stripping authentication for non-standard port changes>|1\n550|TEST AUTH IS RETAINED FOR REDIRECT ON HOST|A pytest test that verifies Requests retains Authorization credentials when following a redirect on the same host|3\n555|TEST SHOULD STRIP AUTH PORT CHANGE|A test event that verifies Requests strips authentication when a redirect changes from one non-standard port to another>|1\n276|REQUESTS ISSUE 3490|Requests issue 3490 is referenced in a comment concerning removal of request body headers during redirects|1\n275|REQUESTS ISSUE 1084|Requests issue 1084 is referenced in a comment concerning removal of request body headers during redirects|1\n377|DIGESTAUTH REDIRECT TEST|The authentication test covering a successful Digest exchange, a 302 redirect, credential isolation on the redirected host, and a final 200 response.|2\n446|RESPECT PROXY ENVIRONMENT ON SEND WITH REDIRECTS TEST|A test event that verifies Requests honors the HTTP proxy environment variable when sending a request that follows redirects.|3\n549|TEST AUTH IS STRIPPED ON HTTP DOWNGRADE|A pytest test that verifies Requests removes Authorization credentials when following a redirect from HTTPS to HTTP|3\n359|DIGESTAUTH 401 COUNT RESET ON REDIRECT|A test event covering digest authentication across a successful authentication, a 302 redirect, and a second digest-authentication challenge|1\n556|TEST SHOULD STRIP AUTH DEFAULT PORT|A parameterized test event that verifies Requests does not strip authentication when HTTP or HTTPS redirects only add or remove the corresponding default port>|1\n347|TEST DIGESTAUTH 401 COUNT RESET ON REDIRECT|A test event verifying that Requests resets its digest-authentication 401 counter after successful authentication followed by a redirect to another digest-authentication challenge|2\n449|PROXY AUTHORIZATION PRESERVATION TEST|A test event that verifies a Proxy-Authorization header configured on a Requests session is preserved and sent to httpbin.|3\n427|GH 3579|A GitHub issue referenced as the regression context for handling non-Requests cookie jars during redirect resolution|1\n552|TEST SHOULD STRIP AUTH HTTP DOWNGRADE|A pytest test that verifies Requests determines that authentication should be removed when a redirect downgrades from HTTPS to HTTP|2\n237|HTTP REDIRECT|HTTP REDIRECT is a response event and flow identified by a `Location` header and redirect status codes such as 301, 302, 303, 307, and 308. It is recorded in the response history and may cause a subsequent request to the specified destination. HTTP REDIRECT responses can be processed automatically by Requests. In particular, a 302 redirect may send the client from the original host to the root URL; when the redirect targets a different host, credentials must not be included in the redirected request.|5\n492|REQUEST WITH BYTESTRING HOST TEST|A test event that verifies a request with a bytestring Host header can set and retrieve a cookie while redirects are disabled.|1\n370|AUTHORIZATION HEADER|The HTTP request header used to carry the client's Digest authentication response.|1\n364|DIGESTAUTH ONLY ON 4XX|A test event verifying that the Requests client does not send digest credentials when a 200 OK response contains a WWW-Authenticate header.|2\n\n-----Relationships-----\nid|source|target|description|weight|links\n549|DIGESTAUTH REDIRECT TEST|HTTP REDIRECT|The redirect test asserts that the first response has status code 302 and that redirect history records it.|10.0|1\n887|TEST AUTH IS STRIPPED ON HTTP DOWNGRADE|REQUESTS|This test verifies Requests strips Authorization when an HTTPS request redirects to HTTP|9.0|15\n890|TEST AUTH IS RETAINED FOR REDIRECT ON HOST|REQUESTS|This test verifies Requests retains Authorization across redirects that remain on the same host|9.0|15\n691|REQUESTS|RESPECT PROXY ENVIRONMENT ON SEND WITH REDIRECTS TEST|The test verifies Requests applies proxy settings while sending a redirected request.|9.0|15\n698|REQUESTS|PROXY AUTHORIZATION PRESERVATION TEST|The test configures a Requests session with Proxy-Authorization and verifies the transmitted header.|9.0|15\n507|TEST DIGESTAUTH 401 COUNT RESET ON REDIRECT|REQUESTS|The test targets Requests digest-authentication behavior across a successful authentication and a subsequent redirect challenge|9.0|15\n533|DIGESTAUTH ONLY ON 4XX|REQUESTS|The test checks the Requests client's behavior when a successful HTTP response includes a WWW-Authenticate header.|9.0|15\n893|TEST SHOULD STRIP AUTH HOST CHANGE|REQUESTS|This test directly verifies Requests identifies a host change as a reason to strip authentication|9.0|15\n895|TEST SHOULD STRIP AUTH HTTP DOWNGRADE|REQUESTS|This test directly verifies Requests strips authentication during an HTTPS-to-HTTP downgrade|9.0|15\n525|DIGESTAUTH 401 COUNT RESET ON REDIRECT|REQUESTS|The digest-authentication redirect test verifies Requests behavior identified in issue 1979|9.0|15\n784|REQUEST WITH BYTESTRING HOST TEST|REQUESTS|The test verifies Requests handling of a bytestring Host header, cookies, and redirects.|9.0|15\n899|TEST SHOULD STRIP AUTH|REQUESTS|This test validates Requests Session.should_strip_auth behavior across HTTP and HTTPS redirects and port changes|9.0|15\n900|TEST SHOULD STRIP AUTH PORT CHANGE|REQUESTS|This test validates Requests authentication stripping when a redirect changes non-standard ports|9.0|15\n901|TEST SHOULD STRIP AUTH DEFAULT PORT|REQUESTS|This parameterized test validates Requests handling of equivalent default HTTP and HTTPS ports|9.0|15\n393|REQUESTS|REQUESTS ISSUE 1084|Requests issue 1084 is cited in the Requests redirect implementation|7.0|15\n394|REQUESTS|REQUESTS ISSUE 3490|Requests issue 3490 is cited in the Requests redirect implementation|7.0|15\n889|TEST AUTH IS STRIPPED ON HTTP DOWNGRADE|PYTEST|Pytest executes this authentication redirect test using injected fixtures|8.0|7\n892|TEST AUTH IS RETAINED FOR REDIRECT ON HOST|PYTEST|Pytest executes this redirect authentication test|8.0|7\n690|PYTEST|RESPECT PROXY ENVIRONMENT ON SEND WITH REDIRECTS TEST|Pytest executes the proxy environment test involving redirects.|9.0|7\n697|PYTEST|PROXY AUTHORIZATION PRESERVATION TEST|Pytest executes the proxy authorization preservation test.|9.0|7\n508|TEST DIGESTAUTH 401 COUNT RESET ON REDIRECT|PYTEST|The test is defined as a pytest test case for Requests authentication behavior|1.0|7\n894|TEST SHOULD STRIP AUTH HOST CHANGE|PYTEST|Pytest executes this authentication policy test|8.0|7\n896|TEST SHOULD STRIP AUTH HTTP DOWNGRADE|PYTEST|Pytest executes this authentication policy test|8.0|7\n888|TEST AUTH IS STRIPPED ON HTTP DOWNGRADE|HTTPBIN|The test uses secure and insecure httpbin redirect endpoints to exercise the downgrade behavior|9.0|4\n891|TEST AUTH IS RETAINED FOR REDIRECT ON HOST|HTTPBIN|The test uses an httpbin redirect endpoint to trigger the same-host redirect|8.0|4\n692|HTTPBIN|RESPECT PROXY ENVIRONMENT ON SEND WITH REDIRECTS TEST|The test uses an httpbin redirect endpoint as the target request.|8.0|4\n699|HTTPBIN|PROXY AUTHORIZATION PRESERVATION TEST|The test sends the request to httpbin and inspects the echoed headers.|1.0|4\n348|RESPONSE|HTTP REDIRECT|Response detects redirects through its is_redirect and is_permanent_redirect properties and tracks redirect history.|9.0|1\n546|DIGEST RESPONSE HANDLER|HTTP REDIRECT|The handler sends a redirect after verifying the first authenticated request.|10.0|1\n532|DIGESTAUTH ONLY ON 4XX|HTTP DIGEST AUTHENTICATION|The test verifies that digest authentication is triggered only for 4xx challenges and not for a 200 OK response.|9.0|1\n349|HTTP REDIRECT|PREPARED REQUEST|A redirect response can expose a PreparedRequest for the next request through the next property.|8.0|1\n550|DIGESTAUTH REDIRECT TEST|HTTP/1.1 200 OK|The redirect test requires the final authenticated response to have status code 200.|10.0|1\n325|REDIRECT STATI|HTTP REDIRECT|REDIRECT_STATI contains the HTTP redirect status codes handled automatically by Requests.|10.0|1\n540|DIGEST AUTHORIZATION REQUEST|AUTHORIZATION HEADER|The Digest response is transmitted in the HTTP Authorization request header.|10.0|1\n650|TEST COOKIELIB COOKIEJAR ON REDIRECT|GH 3579|The test is explicitly documented as addressing the regression tracked by GitHub issue 3579|9.0|1\n\n-----Sources-----\nid|source|text\n93|tests/test_requests.py:L1746-L1882|\"        \"\"invalid_header\"\",\n        (\n            {\"\" foo\"\": \"\"bar\"\"},\n            {\"\"\\tfoo\"\": \"\"bar\"\"},\n            {\"\"    foo\"\": \"\"bar\"\"},\n            {\"\"foo\"\": \"\" bar\"\"},\n            {\"\"foo\"\": \"\"    bar\"\"},\n            {\"\"foo\"\": \"\"\\tbar\"\"},\n            {\"\" \"\": \"\"bar\"\"},\n        ),\n    )\n    def test_header_no_leading_space(self, httpbin, invalid_header):\n        \"\"\"\"\"\"Ensure headers containing leading whitespace raise\n        InvalidHeader Error before sending.\n        \"\"\"\"\"\"\n        with pytest.raises(InvalidHeader):\n            requests.get(httpbin(\"\"get\"\"), headers=invalid_header)\n\n    def test_header_with_subclass_types(self, httpbin):\n        \"\"\"\"\"\"If the subclasses does not behave *exactly* like\n        the base bytes/str classes, this is not supported.\n        This test is for backwards compatibility.\n        \"\"\"\"\"\"\n\n        class MyString(str):\n            pass\n\n        class MyBytes(bytes):\n            pass\n\n        r_str = requests.get(httpbin(\"\"get\"\"), headers={MyString(\"\"x-custom\"\"): \"\"myheader\"\"})\n        assert r_str.request.headers[\"\"x-custom\"\"] == \"\"myheader\"\"\n\n        r_bytes = requests.get(\n            httpbin(\"\"get\"\"), headers={MyBytes(b\"\"x-custom\"\"): b\"\"myheader\"\"}\n        )\n        assert r_bytes.request.headers[\"\"x-custom\"\"] == b\"\"myheader\"\"\n\n        r_mixed = requests.get(\n            httpbin(\"\"get\"\"), headers={MyString(\"\"x-custom\"\"): MyBytes(b\"\"myheader\"\")}\n        )\n        assert r_mixed.request.headers[\"\"x-custom\"\"] == b\"\"myheader\"\"\n\n    @pytest.mark.parametrize(\"\"files\"\", (\"\"foo\"\", b\"\"foo\"\", bytearray(b\"\"foo\"\")))\n    def test_can_send_objects_with_files(self, httpbin, files):\n        data = {\"\"a\"\": \"\"this is a string\"\"}\n        files = {\"\"b\"\": files}\n        r = requests.Request(\"\"POST\"\", httpbin(\"\"post\"\"), data=data, files=files)\n        p = r.prepare()\n        assert \"\"multipart/form-data\"\" in p.headers[\"\"Content-Type\"\"]\n\n    def test_can_send_file_object_with_non_string_filename(self, httpbin):\n        f = io.BytesIO()\n        f.name = 2\n        r = requests.Request(\"\"POST\"\", httpbin(\"\"post\"\"), files={\"\"f\"\": f})\n        p = r.prepare()\n\n        assert \"\"multipart/form-data\"\" in p.headers[\"\"Content-Type\"\"]\n\n    def test_autoset_header_values_are_native(self, httpbin):\n        data = \"\"this is a string\"\"\n        length = \"\"16\"\"\n        req = requests.Request(\"\"POST\"\", httpbin(\"\"post\"\"), data=data)\n        p = req.prepare()\n\n        assert p.headers[\"\"Content-Length\"\"] == length\n\n    def test_content_length_for_bytes_data(self, httpbin):\n        data = \"\"This is a string containing multi-byte UTF-8 ☃️\"\"\n        encoded_data = data.encode(\"\"utf-8\"\")\n        length = str(len(encoded_data))\n        req = requests.Request(\"\"POST\"\", httpbin(\"\"post\"\"), data=encoded_data)\n        p = req.prepare()\n\n        assert p.headers[\"\"Content-Length\"\"] == length\n\n    def test_content_length_for_string_data_counts_bytes(self, httpbin):\n        data = \"\"This is a string containing multi-byte UTF-8 ☃️\"\"\n        length = str(len(data.encode(\"\"utf-8\"\")))\n        req = requests.Request(\"\"POST\"\", httpbin(\"\"post\"\"), data=data)\n        p = req.prepare()\n\n        assert p.headers[\"\"Content-Length\"\"] == length\n\n    def test_nonhttp_schemes_dont_check_URLs(self):\n        test_urls = (\n            \"\"data:image/gif;base64,R0lGODlhAQABAHAAACH5BAUAAAAALAAAAAABAAEAAAICRAEAOw==\"\",\n            \"\"file:///etc/passwd\"\",\n            \"\"magnet:?xt=urn:btih:be08f00302bc2d1d3cfa3af02024fa647a271431\"\",\n        )\n        for test_url in test_urls:\n            req = requests.Request(\"\"GET\"\", test_url)\n            preq = req.prepare()\n            assert test_url == preq.url\n\n    def test_auth_is_stripped_on_http_downgrade(\n        self, httpbin, httpbin_secure, httpbin_ca_bundle\n    ):\n        r = requests.get(\n            httpbin_secure(\"\"redirect-to\"\"),\n            params={\"\"url\"\": httpbin(\"\"get\"\")},\n            auth=(\"\"user\"\", \"\"pass\"\"),\n            verify=httpbin_ca_bundle,\n        )\n        assert r.history[0].request.headers[\"\"Authorization\"\"]\n        assert \"\"Authorization\"\" not in r.request.headers\n\n    def test_auth_is_retained_for_redirect_on_host(self, httpbin):\n        r = requests.get(httpbin(\"\"redirect/1\"\"), auth=(\"\"user\"\", \"\"pass\"\"))\n        h1 = r.history[0].request.headers[\"\"Authorization\"\"]\n        h2 = r.request.headers[\"\"Authorization\"\"]\n\n        assert h1 == h2\n\n    def test_should_strip_auth_host_change(self):\n        s = requests.Session()\n        assert s.should_strip_auth(\n            \"\"http://example.com/foo\"\", \"\"http://another.example.com/\"\"\n        )\n\n    def test_should_strip_auth_http_downgrade(self):\n        s = requests.Session()\n        assert s.should_strip_auth(\"\"https://example.com/foo\"\", \"\"http://example.com/bar\"\")\n\n    def test_should_strip_auth_https_upgrade(self):\n        s = requests.Session()\n        assert not s.should_strip_auth(\n            \"\"http://example.com/foo\"\", \"\"https://example.com/bar\"\"\n        )\n        assert not s.should_strip_auth(\n            \"\"http://example.com:80/foo\"\", \"\"https://example.com/bar\"\"\n        )\n        assert not s.should_strip_auth(\n            \"\"http://example.com/foo\"\", \"\"https://example.com:443/bar\"\"\n        )\n        # Non-standard ports should trigger stripping\n        assert s.should_strip_auth(\n\"\n94|tests/test_requests.py:L1872-L2028|\"        assert not s.should_strip_auth(\n            \"\"http://example.com/foo\"\", \"\"https://example.com/bar\"\"\n        )\n        assert not s.should_strip_auth(\n            \"\"http://example.com:80/foo\"\", \"\"https://example.com/bar\"\"\n        )\n        assert not s.should_strip_auth(\n            \"\"http://example.com/foo\"\", \"\"https://example.com:443/bar\"\"\n        )\n        # Non-standard ports should trigger stripping\n        assert s.should_strip_auth(\n            \"\"http://example.com:8080/foo\"\", \"\"https://example.com/bar\"\"\n        )\n        assert s.should_strip_auth(\n            \"\"http://example.com/foo\"\", \"\"https://example.com:8443/bar\"\"\n        )\n\n    def test_should_strip_auth_port_change(self):\n        s = requests.Session()\n        assert s.should_strip_auth(\n            \"\"http://example.com:1234/foo\"\", \"\"https://example.com:4321/bar\"\"\n        )\n\n    @pytest.mark.parametrize(\n        \"\"old_uri, new_uri\"\",\n        (\n            (\"\"https://example.com:443/foo\"\", \"\"https://example.com/bar\"\"),\n            (\"\"http://example.com:80/foo\"\", \"\"http://example.com/bar\"\"),\n            (\"\"https://example.com/foo\"\", \"\"https://example.com:443/bar\"\"),\n            (\"\"http://example.com/foo\"\", \"\"http://example.com:80/bar\"\"),\n        ),\n    )\n    def test_should_strip_auth_default_port(self, old_uri, new_uri):\n        s = requests.Session()\n        assert not s.should_strip_auth(old_uri, new_uri)\n\n    def test_manual_redirect_with_partial_body_read(self, httpbin):\n        s = requests.Session()\n        r1 = s.get(httpbin(\"\"redirect/2\"\"), allow_redirects=False, stream=True)\n        assert r1.is_redirect\n        rg = s.resolve_redirects(r1, r1.request, stream=True)\n\n        # read only the first eight bytes of the response body,\n        # then follow the redirect\n        r1.iter_content(8)\n        r2 = next(rg)\n        assert r2.is_redirect\n\n        # read all of the response via iter_content,\n        # then follow the redirect\n        for _ in r2.iter_content():\n            pass\n        r3 = next(rg)\n        assert not r3.is_redirect\n\n    def test_prepare_body_position_non_stream(self):\n        data = b\"\"the data\"\"\n        prep = requests.Request(\"\"GET\"\", \"\"http://example.com\"\", data=data).prepare()\n        assert prep._body_position is None\n\n    def test_rewind_body(self):\n        data = io.BytesIO(b\"\"the data\"\")\n        prep = requests.Request(\"\"GET\"\", \"\"http://example.com\"\", data=data).prepare()\n        assert prep._body_position == 0\n        assert prep.body.read() == b\"\"the data\"\"\n\n        # the data has all been read\n        assert prep.body.read() == b\"\"\"\"\n\n        # rewind it back\n        requests.utils.rewind_body(prep)\n        assert prep.body.read() == b\"\"the data\"\"\n\n    def test_rewind_partially_read_body(self):\n        data = io.BytesIO(b\"\"the data\"\")\n        data.read(4)  # read some data\n        prep = requests.Request(\"\"GET\"\", \"\"http://example.com\"\", data=data).prepare()\n        assert prep._body_position == 4\n        assert prep.body.read() == b\"\"data\"\"\n\n        # the data has all been read\n        assert prep.body.read() == b\"\"\"\"\n\n        # rewind it back\n        requests.utils.rewind_body(prep)\n        assert prep.body.read() == b\"\"data\"\"\n\n    def test_rewind_body_no_seek(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                return 0\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"\"the data\"\")\n        prep = requests.Request(\"\"GET\"\", \"\"http://example.com\"\", data=data).prepare()\n        assert prep._body_position == 0\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"\"Unable to rewind request body\"\" in str(e)\n\n    def test_rewind_body_failed_seek(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                return 0\n\n            def seek(self, pos, whence=0):\n                raise OSError()\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"\"the data\"\")\n        prep = requests.Request(\"\"GET\"\", \"\"http://example.com\"\", data=data).prepare()\n        assert prep._body_position == 0\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"\"error occurred when rewinding request body\"\" in str(e)\n\n    def test_rewind_body_failed_tell(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                raise OSError()\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"\"the data\"\")\n        prep = requests.Request(\"\"GET\"\", \"\"http://example.com\"\", data=data).prepare()\n        assert prep._body_position is not None\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"\"Unable to rewind request body\"\" in str(e)\n\n    def _patch_adapter_gzipped_redirect(self, session, url):\n        adapter = session.get_adapter(url=url)\n        org_build_response = adapter.build_response\n        self._patched_response = False\n\n        def build_response(*args, **kwargs):\n            resp = org_build_response(*args, **kwargs)\n\"\n53|src/requests/sessions.py:L149-L305|\"        if (\n            not changed_scheme\n            and old_parsed.port in default_port\n            and new_parsed.port in default_port\n        ):\n            return False\n\n        # Standard case: root URI must match\n        return changed_port or changed_scheme\n\n    def resolve_redirects(\n        self,\n        resp,\n        req,\n        stream=False,\n        timeout=None,\n        verify=True,\n        cert=None,\n        proxies=None,\n        yield_requests=False,\n        **adapter_kwargs,\n    ):\n        \"\"\"\"\"\"Receives a Response. Returns a generator of Responses or Requests.\"\"\"\"\"\"\n\n        hist = []  # keep track of history\n\n        url = self.get_redirect_target(resp)\n        previous_fragment = urlparse(req.url).fragment\n        while url:\n            prepared_request = req.copy()\n\n            # Update history and keep track of redirects.\n            # resp.history must ignore the original request in this loop\n            hist.append(resp)\n            resp.history = hist[1:]\n\n            try:\n                resp.content  # Consume socket so it can be released\n            except (ChunkedEncodingError, ContentDecodingError, RuntimeError):\n                resp.raw.read(decode_content=False)\n\n            if len(resp.history) >= self.max_redirects:\n                raise TooManyRedirects(\n                    f\"\"Exceeded {self.max_redirects} redirects.\"\", response=resp\n                )\n\n            # Release the connection back into the pool.\n            resp.close()\n\n            # Handle redirection without scheme (see: RFC 1808 Section 4)\n            if url.startswith(\"\"//\"\"):\n                parsed_rurl = urlparse(resp.url)\n                url = \"\":\"\".join([to_native_string(parsed_rurl.scheme), url])\n\n            # Normalize url case and attach previous fragment if needed (RFC 7231 7.1.2)\n            parsed = urlparse(url)\n            if parsed.fragment == \"\"\"\" and previous_fragment:\n                parsed = parsed._replace(fragment=previous_fragment)\n            elif parsed.fragment:\n                previous_fragment = parsed.fragment\n            url = parsed.geturl()\n\n            # Facilitate relative 'location' headers, as allowed by RFC 7231.\n            # (e.g. '/path/to/resource' instead of 'http://domain.tld/path/to/resource')\n            # Compliant with RFC3986, we percent encode the url.\n            if not parsed.netloc:\n                url = urljoin(resp.url, requote_uri(url))\n            else:\n                url = requote_uri(url)\n\n            prepared_request.url = to_native_string(url)\n\n            self.rebuild_method(prepared_request, resp)\n\n            # https://github.com/psf/requests/issues/1084\n            if resp.status_code not in (\n                codes.temporary_redirect,\n                codes.permanent_redirect,\n            ):\n                # https://github.com/psf/requests/issues/3490\n                purged_headers = (\"\"Content-Length\"\", \"\"Content-Type\"\", \"\"Transfer-Encoding\"\")\n                for header in purged_headers:\n                    prepared_request.headers.pop(header, None)\n                prepared_request.body = None\n\n            headers = prepared_request.headers\n            headers.pop(\"\"Cookie\"\", None)\n\n            # Extract any cookies sent on the response to the cookiejar\n            # in the new request. Because we've mutated our copied prepared\n            # request, use the old one that we haven't yet touched.\n            extract_cookies_to_jar(prepared_request._cookies, req, resp.raw)\n            merge_cookies(prepared_request._cookies, self.cookies)\n            prepared_request.prepare_cookies(prepared_request._cookies)\n\n            # Rebuild auth and proxy information.\n            proxies = self.rebuild_proxies(prepared_request, proxies)\n            self.rebuild_auth(prepared_request, resp)\n\n            # A failed tell() sets `_body_position` to `object()`. This non-None\n            # value ensures `rewindable` will be True, allowing us to raise an\n            # UnrewindableBodyError, instead of hanging the connection.\n            rewindable = prepared_request._body_position is not None and (\n                \"\"Content-Length\"\" in headers or \"\"Transfer-Encoding\"\" in headers\n            )\n\n            # Attempt to rewind consumed file-like object.\n            if rewindable:\n                rewind_body(prepared_request)\n\n            # Override the original request.\n            req = prepared_request\n\n            if yield_requests:\n                yield req\n            else:\n                resp = self.send(\n                    req,\n                    stream=stream,\n                    timeout=timeout,\n                    verify=verify,\n                    cert=cert,\n                    proxies=proxies,\n                    allow_redirects=False,\n                    **adapter_kwargs,\n                )\n\n                extract_cookies_to_jar(self.cookies, prepared_request, resp.raw)\n\n                # extract redirect url, if any, for the next loop\n                url = self.get_redirect_target(resp)\n                yield resp\n\n    def rebuild_auth(self, prepared_request, response):\n        \"\"\"\"\"\"When being redirected we may want to strip authentication from the\n        request to avoid leaking credentials. This method intelligently removes\n        and reapplies authentication where possible to avoid credential loss.\n        \"\"\"\"\"\"\n        headers = prepared_request.headers\n        url = prepared_request.url\n\n        if \"\"Authorization\"\" in headers and self.should_strip_auth(\n            response.request.url, url\n        ):\n            # If we get redirected to a new host, we should strip out any\n            # authentication headers.\n            del headers[\"\"Authorization\"\"]\n\n        # .netrc might have more auth for us on our new host.\n        new_auth = get_netrc_auth(url) if self.trust_env else None\n        if new_auth is not None:\n            prepared_request.prepare_auth(new_auth)\n\n    def rebuild_proxies(self, prepared_request, proxies):\n        \"\"\"\"\"\"This method re-evaluates the proxy configuration by considering the\n        environment variables. If we are redirected to a URL covered by\n        NO_PROXY, we strip the proxy configuration. Otherwise, we set missing\n\"\n",
+  "final_tables": [
+    {
+      "name": "entities",
+      "columns": [
+        "id",
+        "entity",
+        "description",
+        "number of relationships"
+      ],
+      "rows": [
+        {
+          "id": "551",
+          "entity": "TEST SHOULD STRIP AUTH HOST CHANGE",
+          "description": "A pytest test that verifies Requests determines that authentication should be removed when a redirect changes the host",
+          "number of relationships": "2"
+        },
+        {
+          "id": "554",
+          "entity": "TEST SHOULD STRIP AUTH",
+          "description": "A test event that verifies Requests preserves authentication when redirecting between equivalent HTTP and HTTPS default ports, while stripping authentication for non-standard port changes>",
+          "number of relationships": "1"
+        },
+        {
+          "id": "550",
+          "entity": "TEST AUTH IS RETAINED FOR REDIRECT ON HOST",
+          "description": "A pytest test that verifies Requests retains Authorization credentials when following a redirect on the same host",
+          "number of relationships": "3"
+        },
+        {
+          "id": "555",
+          "entity": "TEST SHOULD STRIP AUTH PORT CHANGE",
+          "description": "A test event that verifies Requests strips authentication when a redirect changes from one non-standard port to another>",
+          "number of relationships": "1"
+        },
+        {
+          "id": "276",
+          "entity": "REQUESTS ISSUE 3490",
+          "description": "Requests issue 3490 is referenced in a comment concerning removal of request body headers during redirects",
+          "number of relationships": "1"
+        },
+        {
+          "id": "275",
+          "entity": "REQUESTS ISSUE 1084",
+          "description": "Requests issue 1084 is referenced in a comment concerning removal of request body headers during redirects",
+          "number of relationships": "1"
+        },
+        {
+          "id": "377",
+          "entity": "DIGESTAUTH REDIRECT TEST",
+          "description": "The authentication test covering a successful Digest exchange, a 302 redirect, credential isolation on the redirected host, and a final 200 response.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "446",
+          "entity": "RESPECT PROXY ENVIRONMENT ON SEND WITH REDIRECTS TEST",
+          "description": "A test event that verifies Requests honors the HTTP proxy environment variable when sending a request that follows redirects.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "549",
+          "entity": "TEST AUTH IS STRIPPED ON HTTP DOWNGRADE",
+          "description": "A pytest test that verifies Requests removes Authorization credentials when following a redirect from HTTPS to HTTP",
+          "number of relationships": "3"
+        },
+        {
+          "id": "359",
+          "entity": "DIGESTAUTH 401 COUNT RESET ON REDIRECT",
+          "description": "A test event covering digest authentication across a successful authentication, a 302 redirect, and a second digest-authentication challenge",
+          "number of relationships": "1"
+        },
+        {
+          "id": "556",
+          "entity": "TEST SHOULD STRIP AUTH DEFAULT PORT",
+          "description": "A parameterized test event that verifies Requests does not strip authentication when HTTP or HTTPS redirects only add or remove the corresponding default port>",
+          "number of relationships": "1"
+        },
+        {
+          "id": "347",
+          "entity": "TEST DIGESTAUTH 401 COUNT RESET ON REDIRECT",
+          "description": "A test event verifying that Requests resets its digest-authentication 401 counter after successful authentication followed by a redirect to another digest-authentication challenge",
+          "number of relationships": "2"
+        },
+        {
+          "id": "449",
+          "entity": "PROXY AUTHORIZATION PRESERVATION TEST",
+          "description": "A test event that verifies a Proxy-Authorization header configured on a Requests session is preserved and sent to httpbin.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "427",
+          "entity": "GH 3579",
+          "description": "A GitHub issue referenced as the regression context for handling non-Requests cookie jars during redirect resolution",
+          "number of relationships": "1"
+        },
+        {
+          "id": "552",
+          "entity": "TEST SHOULD STRIP AUTH HTTP DOWNGRADE",
+          "description": "A pytest test that verifies Requests determines that authentication should be removed when a redirect downgrades from HTTPS to HTTP",
+          "number of relationships": "2"
+        },
+        {
+          "id": "237",
+          "entity": "HTTP REDIRECT",
+          "description": "HTTP REDIRECT is a response event and flow identified by a `Location` header and redirect status codes such as 301, 302, 303, 307, and 308. It is recorded in the response history and may cause a subsequent request to the specified destination. HTTP REDIRECT responses can be processed automatically by Requests. In particular, a 302 redirect may send the client from the original host to the root URL; when the redirect targets a different host, credentials must not be included in the redirected request.",
+          "number of relationships": "5"
+        },
+        {
+          "id": "492",
+          "entity": "REQUEST WITH BYTESTRING HOST TEST",
+          "description": "A test event that verifies a request with a bytestring Host header can set and retrieve a cookie while redirects are disabled.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "370",
+          "entity": "AUTHORIZATION HEADER",
+          "description": "The HTTP request header used to carry the client's Digest authentication response.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "364",
+          "entity": "DIGESTAUTH ONLY ON 4XX",
+          "description": "A test event verifying that the Requests client does not send digest credentials when a 200 OK response contains a WWW-Authenticate header.",
+          "number of relationships": "2"
+        }
+      ]
+    },
+    {
+      "name": "relationships",
+      "columns": [
+        "id",
+        "source",
+        "target",
+        "description",
+        "weight",
+        "links"
+      ],
+      "rows": [
+        {
+          "id": "549",
+          "source": "DIGESTAUTH REDIRECT TEST",
+          "target": "HTTP REDIRECT",
+          "description": "The redirect test asserts that the first response has status code 302 and that redirect history records it.",
+          "weight": "10.0",
+          "links": "1"
+        },
+        {
+          "id": "887",
+          "source": "TEST AUTH IS STRIPPED ON HTTP DOWNGRADE",
+          "target": "REQUESTS",
+          "description": "This test verifies Requests strips Authorization when an HTTPS request redirects to HTTP",
+          "weight": "9.0",
+          "links": "15"
+        },
+        {
+          "id": "890",
+          "source": "TEST AUTH IS RETAINED FOR REDIRECT ON HOST",
+          "target": "REQUESTS",
+          "description": "This test verifies Requests retains Authorization across redirects that remain on the same host",
+          "weight": "9.0",
+          "links": "15"
+        },
+        {
+          "id": "691",
+          "source": "REQUESTS",
+          "target": "RESPECT PROXY ENVIRONMENT ON SEND WITH REDIRECTS TEST",
+          "description": "The test verifies Requests applies proxy settings while sending a redirected request.",
+          "weight": "9.0",
+          "links": "15"
+        },
+        {
+          "id": "698",
+          "source": "REQUESTS",
+          "target": "PROXY AUTHORIZATION PRESERVATION TEST",
+          "description": "The test configures a Requests session with Proxy-Authorization and verifies the transmitted header.",
+          "weight": "9.0",
+          "links": "15"
+        },
+        {
+          "id": "507",
+          "source": "TEST DIGESTAUTH 401 COUNT RESET ON REDIRECT",
+          "target": "REQUESTS",
+          "description": "The test targets Requests digest-authentication behavior across a successful authentication and a subsequent redirect challenge",
+          "weight": "9.0",
+          "links": "15"
+        },
+        {
+          "id": "533",
+          "source": "DIGESTAUTH ONLY ON 4XX",
+          "target": "REQUESTS",
+          "description": "The test checks the Requests client's behavior when a successful HTTP response includes a WWW-Authenticate header.",
+          "weight": "9.0",
+          "links": "15"
+        },
+        {
+          "id": "893",
+          "source": "TEST SHOULD STRIP AUTH HOST CHANGE",
+          "target": "REQUESTS",
+          "description": "This test directly verifies Requests identifies a host change as a reason to strip authentication",
+          "weight": "9.0",
+          "links": "15"
+        },
+        {
+          "id": "895",
+          "source": "TEST SHOULD STRIP AUTH HTTP DOWNGRADE",
+          "target": "REQUESTS",
+          "description": "This test directly verifies Requests strips authentication during an HTTPS-to-HTTP downgrade",
+          "weight": "9.0",
+          "links": "15"
+        },
+        {
+          "id": "525",
+          "source": "DIGESTAUTH 401 COUNT RESET ON REDIRECT",
+          "target": "REQUESTS",
+          "description": "The digest-authentication redirect test verifies Requests behavior identified in issue 1979",
+          "weight": "9.0",
+          "links": "15"
+        },
+        {
+          "id": "784",
+          "source": "REQUEST WITH BYTESTRING HOST TEST",
+          "target": "REQUESTS",
+          "description": "The test verifies Requests handling of a bytestring Host header, cookies, and redirects.",
+          "weight": "9.0",
+          "links": "15"
+        },
+        {
+          "id": "899",
+          "source": "TEST SHOULD STRIP AUTH",
+          "target": "REQUESTS",
+          "description": "This test validates Requests Session.should_strip_auth behavior across HTTP and HTTPS redirects and port changes",
+          "weight": "9.0",
+          "links": "15"
+        },
+        {
+          "id": "900",
+          "source": "TEST SHOULD STRIP AUTH PORT CHANGE",
+          "target": "REQUESTS",
+          "description": "This test validates Requests authentication stripping when a redirect changes non-standard ports",
+          "weight": "9.0",
+          "links": "15"
+        },
+        {
+          "id": "901",
+          "source": "TEST SHOULD STRIP AUTH DEFAULT PORT",
+          "target": "REQUESTS",
+          "description": "This parameterized test validates Requests handling of equivalent default HTTP and HTTPS ports",
+          "weight": "9.0",
+          "links": "15"
+        },
+        {
+          "id": "393",
+          "source": "REQUESTS",
+          "target": "REQUESTS ISSUE 1084",
+          "description": "Requests issue 1084 is cited in the Requests redirect implementation",
+          "weight": "7.0",
+          "links": "15"
+        },
+        {
+          "id": "394",
+          "source": "REQUESTS",
+          "target": "REQUESTS ISSUE 3490",
+          "description": "Requests issue 3490 is cited in the Requests redirect implementation",
+          "weight": "7.0",
+          "links": "15"
+        },
+        {
+          "id": "889",
+          "source": "TEST AUTH IS STRIPPED ON HTTP DOWNGRADE",
+          "target": "PYTEST",
+          "description": "Pytest executes this authentication redirect test using injected fixtures",
+          "weight": "8.0",
+          "links": "7"
+        },
+        {
+          "id": "892",
+          "source": "TEST AUTH IS RETAINED FOR REDIRECT ON HOST",
+          "target": "PYTEST",
+          "description": "Pytest executes this redirect authentication test",
+          "weight": "8.0",
+          "links": "7"
+        },
+        {
+          "id": "690",
+          "source": "PYTEST",
+          "target": "RESPECT PROXY ENVIRONMENT ON SEND WITH REDIRECTS TEST",
+          "description": "Pytest executes the proxy environment test involving redirects.",
+          "weight": "9.0",
+          "links": "7"
+        },
+        {
+          "id": "697",
+          "source": "PYTEST",
+          "target": "PROXY AUTHORIZATION PRESERVATION TEST",
+          "description": "Pytest executes the proxy authorization preservation test.",
+          "weight": "9.0",
+          "links": "7"
+        },
+        {
+          "id": "508",
+          "source": "TEST DIGESTAUTH 401 COUNT RESET ON REDIRECT",
+          "target": "PYTEST",
+          "description": "The test is defined as a pytest test case for Requests authentication behavior",
+          "weight": "1.0",
+          "links": "7"
+        },
+        {
+          "id": "894",
+          "source": "TEST SHOULD STRIP AUTH HOST CHANGE",
+          "target": "PYTEST",
+          "description": "Pytest executes this authentication policy test",
+          "weight": "8.0",
+          "links": "7"
+        },
+        {
+          "id": "896",
+          "source": "TEST SHOULD STRIP AUTH HTTP DOWNGRADE",
+          "target": "PYTEST",
+          "description": "Pytest executes this authentication policy test",
+          "weight": "8.0",
+          "links": "7"
+        },
+        {
+          "id": "888",
+          "source": "TEST AUTH IS STRIPPED ON HTTP DOWNGRADE",
+          "target": "HTTPBIN",
+          "description": "The test uses secure and insecure httpbin redirect endpoints to exercise the downgrade behavior",
+          "weight": "9.0",
+          "links": "4"
+        },
+        {
+          "id": "891",
+          "source": "TEST AUTH IS RETAINED FOR REDIRECT ON HOST",
+          "target": "HTTPBIN",
+          "description": "The test uses an httpbin redirect endpoint to trigger the same-host redirect",
+          "weight": "8.0",
+          "links": "4"
+        },
+        {
+          "id": "692",
+          "source": "HTTPBIN",
+          "target": "RESPECT PROXY ENVIRONMENT ON SEND WITH REDIRECTS TEST",
+          "description": "The test uses an httpbin redirect endpoint as the target request.",
+          "weight": "8.0",
+          "links": "4"
+        },
+        {
+          "id": "699",
+          "source": "HTTPBIN",
+          "target": "PROXY AUTHORIZATION PRESERVATION TEST",
+          "description": "The test sends the request to httpbin and inspects the echoed headers.",
+          "weight": "1.0",
+          "links": "4"
+        },
+        {
+          "id": "348",
+          "source": "RESPONSE",
+          "target": "HTTP REDIRECT",
+          "description": "Response detects redirects through its is_redirect and is_permanent_redirect properties and tracks redirect history.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "546",
+          "source": "DIGEST RESPONSE HANDLER",
+          "target": "HTTP REDIRECT",
+          "description": "The handler sends a redirect after verifying the first authenticated request.",
+          "weight": "10.0",
+          "links": "1"
+        },
+        {
+          "id": "532",
+          "source": "DIGESTAUTH ONLY ON 4XX",
+          "target": "HTTP DIGEST AUTHENTICATION",
+          "description": "The test verifies that digest authentication is triggered only for 4xx challenges and not for a 200 OK response.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "349",
+          "source": "HTTP REDIRECT",
+          "target": "PREPARED REQUEST",
+          "description": "A redirect response can expose a PreparedRequest for the next request through the next property.",
+          "weight": "8.0",
+          "links": "1"
+        },
+        {
+          "id": "550",
+          "source": "DIGESTAUTH REDIRECT TEST",
+          "target": "HTTP/1.1 200 OK",
+          "description": "The redirect test requires the final authenticated response to have status code 200.",
+          "weight": "10.0",
+          "links": "1"
+        },
+        {
+          "id": "325",
+          "source": "REDIRECT STATI",
+          "target": "HTTP REDIRECT",
+          "description": "REDIRECT_STATI contains the HTTP redirect status codes handled automatically by Requests.",
+          "weight": "10.0",
+          "links": "1"
+        },
+        {
+          "id": "540",
+          "source": "DIGEST AUTHORIZATION REQUEST",
+          "target": "AUTHORIZATION HEADER",
+          "description": "The Digest response is transmitted in the HTTP Authorization request header.",
+          "weight": "10.0",
+          "links": "1"
+        },
+        {
+          "id": "650",
+          "source": "TEST COOKIELIB COOKIEJAR ON REDIRECT",
+          "target": "GH 3579",
+          "description": "The test is explicitly documented as addressing the regression tracked by GitHub issue 3579",
+          "weight": "9.0",
+          "links": "1"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "columns": [
+        "id",
+        "source",
+        "text"
+      ],
+      "rows": [
+        {
+          "id": "93",
+          "text": "        \"invalid_header\",\n        (\n            {\" foo\": \"bar\"},\n            {\"\\tfoo\": \"bar\"},\n            {\"    foo\": \"bar\"},\n            {\"foo\": \" bar\"},\n            {\"foo\": \"    bar\"},\n            {\"foo\": \"\\tbar\"},\n            {\" \": \"bar\"},\n        ),\n    )\n    def test_header_no_leading_space(self, httpbin, invalid_header):\n        \"\"\"Ensure headers containing leading whitespace raise\n        InvalidHeader Error before sending.\n        \"\"\"\n        with pytest.raises(InvalidHeader):\n            requests.get(httpbin(\"get\"), headers=invalid_header)\n\n    def test_header_with_subclass_types(self, httpbin):\n        \"\"\"If the subclasses does not behave *exactly* like\n        the base bytes/str classes, this is not supported.\n        This test is for backwards compatibility.\n        \"\"\"\n\n        class MyString(str):\n            pass\n\n        class MyBytes(bytes):\n            pass\n\n        r_str = requests.get(httpbin(\"get\"), headers={MyString(\"x-custom\"): \"myheader\"})\n        assert r_str.request.headers[\"x-custom\"] == \"myheader\"\n\n        r_bytes = requests.get(\n            httpbin(\"get\"), headers={MyBytes(b\"x-custom\"): b\"myheader\"}\n        )\n        assert r_bytes.request.headers[\"x-custom\"] == b\"myheader\"\n\n        r_mixed = requests.get(\n            httpbin(\"get\"), headers={MyString(\"x-custom\"): MyBytes(b\"myheader\")}\n        )\n        assert r_mixed.request.headers[\"x-custom\"] == b\"myheader\"\n\n    @pytest.mark.parametrize(\"files\", (\"foo\", b\"foo\", bytearray(b\"foo\")))\n    def test_can_send_objects_with_files(self, httpbin, files):\n        data = {\"a\": \"this is a string\"}\n        files = {\"b\": files}\n        r = requests.Request(\"POST\", httpbin(\"post\"), data=data, files=files)\n        p = r.prepare()\n        assert \"multipart/form-data\" in p.headers[\"Content-Type\"]\n\n    def test_can_send_file_object_with_non_string_filename(self, httpbin):\n        f = io.BytesIO()\n        f.name = 2\n        r = requests.Request(\"POST\", httpbin(\"post\"), files={\"f\": f})\n        p = r.prepare()\n\n        assert \"multipart/form-data\" in p.headers[\"Content-Type\"]\n\n    def test_autoset_header_values_are_native(self, httpbin):\n        data = \"this is a string\"\n        length = \"16\"\n        req = requests.Request(\"POST\", httpbin(\"post\"), data=data)\n        p = req.prepare()\n\n        assert p.headers[\"Content-Length\"] == length\n\n    def test_content_length_for_bytes_data(self, httpbin):\n        data = \"This is a string containing multi-byte UTF-8 ☃️\"\n        encoded_data = data.encode(\"utf-8\")\n        length = str(len(encoded_data))\n        req = requests.Request(\"POST\", httpbin(\"post\"), data=encoded_data)\n        p = req.prepare()\n\n        assert p.headers[\"Content-Length\"] == length\n\n    def test_content_length_for_string_data_counts_bytes(self, httpbin):\n        data = \"This is a string containing multi-byte UTF-8 ☃️\"\n        length = str(len(data.encode(\"utf-8\")))\n        req = requests.Request(\"POST\", httpbin(\"post\"), data=data)\n        p = req.prepare()\n\n        assert p.headers[\"Content-Length\"] == length\n\n    def test_nonhttp_schemes_dont_check_URLs(self):\n        test_urls = (\n            \"data:image/gif;base64,R0lGODlhAQABAHAAACH5BAUAAAAALAAAAAABAAEAAAICRAEAOw==\",\n            \"file:///etc/passwd\",\n            \"magnet:?xt=urn:btih:be08f00302bc2d1d3cfa3af02024fa647a271431\",\n        )\n        for test_url in test_urls:\n            req = requests.Request(\"GET\", test_url)\n            preq = req.prepare()\n            assert test_url == preq.url\n\n    def test_auth_is_stripped_on_http_downgrade(\n        self, httpbin, httpbin_secure, httpbin_ca_bundle\n    ):\n        r = requests.get(\n            httpbin_secure(\"redirect-to\"),\n            params={\"url\": httpbin(\"get\")},\n            auth=(\"user\", \"pass\"),\n            verify=httpbin_ca_bundle,\n        )\n        assert r.history[0].request.headers[\"Authorization\"]\n        assert \"Authorization\" not in r.request.headers\n\n    def test_auth_is_retained_for_redirect_on_host(self, httpbin):\n        r = requests.get(httpbin(\"redirect/1\"), auth=(\"user\", \"pass\"))\n        h1 = r.history[0].request.headers[\"Authorization\"]\n        h2 = r.request.headers[\"Authorization\"]\n\n        assert h1 == h2\n\n    def test_should_strip_auth_host_change(self):\n        s = requests.Session()\n        assert s.should_strip_auth(\n            \"http://example.com/foo\", \"http://another.example.com/\"\n        )\n\n    def test_should_strip_auth_http_downgrade(self):\n        s = requests.Session()\n        assert s.should_strip_auth(\"https://example.com/foo\", \"http://example.com/bar\")\n\n    def test_should_strip_auth_https_upgrade(self):\n        s = requests.Session()\n        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com:80/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com:443/bar\"\n        )\n        # Non-standard ports should trigger stripping\n        assert s.should_strip_auth(\n",
+          "source": "tests/test_requests.py:L1746-L1882"
+        },
+        {
+          "id": "94",
+          "text": "        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com:80/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com:443/bar\"\n        )\n        # Non-standard ports should trigger stripping\n        assert s.should_strip_auth(\n            \"http://example.com:8080/foo\", \"https://example.com/bar\"\n        )\n        assert s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com:8443/bar\"\n        )\n\n    def test_should_strip_auth_port_change(self):\n        s = requests.Session()\n        assert s.should_strip_auth(\n            \"http://example.com:1234/foo\", \"https://example.com:4321/bar\"\n        )\n\n    @pytest.mark.parametrize(\n        \"old_uri, new_uri\",\n        (\n            (\"https://example.com:443/foo\", \"https://example.com/bar\"),\n            (\"http://example.com:80/foo\", \"http://example.com/bar\"),\n            (\"https://example.com/foo\", \"https://example.com:443/bar\"),\n            (\"http://example.com/foo\", \"http://example.com:80/bar\"),\n        ),\n    )\n    def test_should_strip_auth_default_port(self, old_uri, new_uri):\n        s = requests.Session()\n        assert not s.should_strip_auth(old_uri, new_uri)\n\n    def test_manual_redirect_with_partial_body_read(self, httpbin):\n        s = requests.Session()\n        r1 = s.get(httpbin(\"redirect/2\"), allow_redirects=False, stream=True)\n        assert r1.is_redirect\n        rg = s.resolve_redirects(r1, r1.request, stream=True)\n\n        # read only the first eight bytes of the response body,\n        # then follow the redirect\n        r1.iter_content(8)\n        r2 = next(rg)\n        assert r2.is_redirect\n\n        # read all of the response via iter_content,\n        # then follow the redirect\n        for _ in r2.iter_content():\n            pass\n        r3 = next(rg)\n        assert not r3.is_redirect\n\n    def test_prepare_body_position_non_stream(self):\n        data = b\"the data\"\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position is None\n\n    def test_rewind_body(self):\n        data = io.BytesIO(b\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 0\n        assert prep.body.read() == b\"the data\"\n\n        # the data has all been read\n        assert prep.body.read() == b\"\"\n\n        # rewind it back\n        requests.utils.rewind_body(prep)\n        assert prep.body.read() == b\"the data\"\n\n    def test_rewind_partially_read_body(self):\n        data = io.BytesIO(b\"the data\")\n        data.read(4)  # read some data\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 4\n        assert prep.body.read() == b\"data\"\n\n        # the data has all been read\n        assert prep.body.read() == b\"\"\n\n        # rewind it back\n        requests.utils.rewind_body(prep)\n        assert prep.body.read() == b\"data\"\n\n    def test_rewind_body_no_seek(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                return 0\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 0\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"Unable to rewind request body\" in str(e)\n\n    def test_rewind_body_failed_seek(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                return 0\n\n            def seek(self, pos, whence=0):\n                raise OSError()\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 0\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"error occurred when rewinding request body\" in str(e)\n\n    def test_rewind_body_failed_tell(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                raise OSError()\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position is not None\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"Unable to rewind request body\" in str(e)\n\n    def _patch_adapter_gzipped_redirect(self, session, url):\n        adapter = session.get_adapter(url=url)\n        org_build_response = adapter.build_response\n        self._patched_response = False\n\n        def build_response(*args, **kwargs):\n            resp = org_build_response(*args, **kwargs)\n",
+          "source": "tests/test_requests.py:L1872-L2028"
+        },
+        {
+          "id": "53",
+          "text": "        if (\n            not changed_scheme\n            and old_parsed.port in default_port\n            and new_parsed.port in default_port\n        ):\n            return False\n\n        # Standard case: root URI must match\n        return changed_port or changed_scheme\n\n    def resolve_redirects(\n        self,\n        resp,\n        req,\n        stream=False,\n        timeout=None,\n        verify=True,\n        cert=None,\n        proxies=None,\n        yield_requests=False,\n        **adapter_kwargs,\n    ):\n        \"\"\"Receives a Response. Returns a generator of Responses or Requests.\"\"\"\n\n        hist = []  # keep track of history\n\n        url = self.get_redirect_target(resp)\n        previous_fragment = urlparse(req.url).fragment\n        while url:\n            prepared_request = req.copy()\n\n            # Update history and keep track of redirects.\n            # resp.history must ignore the original request in this loop\n            hist.append(resp)\n            resp.history = hist[1:]\n\n            try:\n                resp.content  # Consume socket so it can be released\n            except (ChunkedEncodingError, ContentDecodingError, RuntimeError):\n                resp.raw.read(decode_content=False)\n\n            if len(resp.history) >= self.max_redirects:\n                raise TooManyRedirects(\n                    f\"Exceeded {self.max_redirects} redirects.\", response=resp\n                )\n\n            # Release the connection back into the pool.\n            resp.close()\n\n            # Handle redirection without scheme (see: RFC 1808 Section 4)\n            if url.startswith(\"//\"):\n                parsed_rurl = urlparse(resp.url)\n                url = \":\".join([to_native_string(parsed_rurl.scheme), url])\n\n            # Normalize url case and attach previous fragment if needed (RFC 7231 7.1.2)\n            parsed = urlparse(url)\n            if parsed.fragment == \"\" and previous_fragment:\n                parsed = parsed._replace(fragment=previous_fragment)\n            elif parsed.fragment:\n                previous_fragment = parsed.fragment\n            url = parsed.geturl()\n\n            # Facilitate relative 'location' headers, as allowed by RFC 7231.\n            # (e.g. '/path/to/resource' instead of 'http://domain.tld/path/to/resource')\n            # Compliant with RFC3986, we percent encode the url.\n            if not parsed.netloc:\n                url = urljoin(resp.url, requote_uri(url))\n            else:\n                url = requote_uri(url)\n\n            prepared_request.url = to_native_string(url)\n\n            self.rebuild_method(prepared_request, resp)\n\n            # https://github.com/psf/requests/issues/1084\n            if resp.status_code not in (\n                codes.temporary_redirect,\n                codes.permanent_redirect,\n            ):\n                # https://github.com/psf/requests/issues/3490\n                purged_headers = (\"Content-Length\", \"Content-Type\", \"Transfer-Encoding\")\n                for header in purged_headers:\n                    prepared_request.headers.pop(header, None)\n                prepared_request.body = None\n\n            headers = prepared_request.headers\n            headers.pop(\"Cookie\", None)\n\n            # Extract any cookies sent on the response to the cookiejar\n            # in the new request. Because we've mutated our copied prepared\n            # request, use the old one that we haven't yet touched.\n            extract_cookies_to_jar(prepared_request._cookies, req, resp.raw)\n            merge_cookies(prepared_request._cookies, self.cookies)\n            prepared_request.prepare_cookies(prepared_request._cookies)\n\n            # Rebuild auth and proxy information.\n            proxies = self.rebuild_proxies(prepared_request, proxies)\n            self.rebuild_auth(prepared_request, resp)\n\n            # A failed tell() sets `_body_position` to `object()`. This non-None\n            # value ensures `rewindable` will be True, allowing us to raise an\n            # UnrewindableBodyError, instead of hanging the connection.\n            rewindable = prepared_request._body_position is not None and (\n                \"Content-Length\" in headers or \"Transfer-Encoding\" in headers\n            )\n\n            # Attempt to rewind consumed file-like object.\n            if rewindable:\n                rewind_body(prepared_request)\n\n            # Override the original request.\n            req = prepared_request\n\n            if yield_requests:\n                yield req\n            else:\n                resp = self.send(\n                    req,\n                    stream=stream,\n                    timeout=timeout,\n                    verify=verify,\n                    cert=cert,\n                    proxies=proxies,\n                    allow_redirects=False,\n                    **adapter_kwargs,\n                )\n\n                extract_cookies_to_jar(self.cookies, prepared_request, resp.raw)\n\n                # extract redirect url, if any, for the next loop\n                url = self.get_redirect_target(resp)\n                yield resp\n\n    def rebuild_auth(self, prepared_request, response):\n        \"\"\"When being redirected we may want to strip authentication from the\n        request to avoid leaking credentials. This method intelligently removes\n        and reapplies authentication where possible to avoid credential loss.\n        \"\"\"\n        headers = prepared_request.headers\n        url = prepared_request.url\n\n        if \"Authorization\" in headers and self.should_strip_auth(\n            response.request.url, url\n        ):\n            # If we get redirected to a new host, we should strip out any\n            # authentication headers.\n            del headers[\"Authorization\"]\n\n        # .netrc might have more auth for us on our new host.\n        new_auth = get_netrc_auth(url) if self.trust_env else None\n        if new_auth is not None:\n            prepared_request.prepare_auth(new_auth)\n\n    def rebuild_proxies(self, prepared_request, proxies):\n        \"\"\"This method re-evaluates the proxy configuration by considering the\n        environment variables. If we are redirected to a URL covered by\n        NO_PROXY, we strip the proxy configuration. Otherwise, we set missing\n",
+          "source": "src/requests/sessions.py:L149-L305"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "short_id": "93",
+      "text_unit_id": "b0f14cc15eeb69052052cdb3419f9d23f61e2011d3957be6386b6a56900e93b7ce06b38b322b2d5bbe5be2a7f5d57c57a523cb46545e23cb9d5410d5225595d7",
+      "id": "9d67c7ae84e8cc4a8868cccfdf3c0c63fe1961016bebbe6f7039b52d28749035",
+      "title": "tests/test_requests.py:L1746-L1882",
+      "path": "tests/test_requests.py",
+      "start_line": 1746,
+      "end_line": 1882,
+      "tokens": 1196,
+      "text_sha256": "5a8065d2e5ca04c9213b63722df31db6ee184c0cb6e0f3f673aac092d99987e9",
+      "ms_text_unit_id": "b0f14cc15eeb69052052cdb3419f9d23f61e2011d3957be6386b6a56900e93b7ce06b38b322b2d5bbe5be2a7f5d57c57a523cb46545e23cb9d5410d5225595d7"
+    },
+    {
+      "short_id": "94",
+      "text_unit_id": "f58c14175330235d8fc1ab76a727a2ebbcb83a7b6f0c40a6b2565546b3e14b71fb34762b92dc723c1560082374706f31f3f79711e7a6a5ea3cc830eac1d00fcb",
+      "id": "8d5caeb573fe757b42490450a06e8776a7cf1fa7ee8ad98baa2a75b74f96a18c",
+      "title": "tests/test_requests.py:L1872-L2028",
+      "path": "tests/test_requests.py",
+      "start_line": 1872,
+      "end_line": 2028,
+      "tokens": 1197,
+      "text_sha256": "50e03c3cf032d66ef1d5707bc05dd5eacf88b79bb353c66a9126438eef568cfe",
+      "ms_text_unit_id": "f58c14175330235d8fc1ab76a727a2ebbcb83a7b6f0c40a6b2565546b3e14b71fb34762b92dc723c1560082374706f31f3f79711e7a6a5ea3cc830eac1d00fcb"
+    },
+    {
+      "short_id": "53",
+      "text_unit_id": "315d7f9dae4b63ac95d3dec0b2c02ca55b10aae09be6268b7af95dd004553161c284f99b4113ab9d37bc2ad672faf2689947cfab0bf2d79a24f4c39ba2a5364b",
+      "id": "e6c556ff05b4fed115c5d5a430280c6f4b87ef64048c77a455e7c3f5a77d4f19",
+      "title": "src/requests/sessions.py:L149-L305",
+      "path": "src/requests/sessions.py",
+      "start_line": 149,
+      "end_line": 305,
+      "tokens": 1188,
+      "text_sha256": "4ec75354abaf60e57f0e338e31cd8a382fc5e1a360afe9cc676745c3aa24f2c2",
+      "ms_text_unit_id": "315d7f9dae4b63ac95d3dec0b2c02ca55b10aae09be6268b7af95dd004553161c284f99b4113ab9d37bc2ad672faf2689947cfab0bf2d79a24f4c39ba2a5364b"
+    }
+  ],
+  "raw_context_tokens": 5590,
+  "final_context_tokens": 5755,
+  "source_text_tokens": 3581,
+  "source_chunks": 3,
+  "retrieval_compute_seconds": 0.015404334291815758,
+  "adaptation_seconds": 0.012914790771901608,
+  "empty_reason": null,
+  "community_level": 2,
+  "dropped_tail_rows": 0
+}

@@ -1,0 +1,1197 @@
+{
+  "question_id": "Q03",
+  "method": "ms_local",
+  "budget": 8000,
+  "query": "Why can an HTTP response object be false in an if statement even though a response was received?",
+  "upstream_raw_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n248|HTTP RESPONSE|An HTTP response is the server-produced result represented by the Response class, including status code, headers, URL, cookies, content, and timing information.|1\n365|HTTP/1.1 200 OK|“HTTP/1.1 200 OK” represents a successful HTTP response from the local test server. It is returned after redirect processing and is also used for an alternate-encoding JSON response. Depending on the request context, the response may contain an empty body or an alternate-encoding JSON payload.|5\n522|HTTP ERROR TEST|The HTTP error test verifies HTTPError response handling and message behavior)<|2\n95|HTTP ERROR|HTTP ERROR is an error event raised by the Requests library when an HTTP response has an unsuccessful client-error or server-error status code. It is triggered by `Response.raise_for_status()` to indicate that the response did not complete successfully.|2\n394|HTTP 200 RESPONSE|Successful HTTP responses returned by the local test servers after authentication, redirect, or fragment behavior is exercised>|3\n291|INFORMATIONAL RESPONSES|Informational responses are the 1xx HTTP status-code category, including Continue, Switching Protocols, Processing, Early Hints, and Checkpoint>|1\n12|RESPONSE|The `RESPONSE` entity is the `Response` Python class in the Requests library, representing the HTTP result returned by a server after a request or prepared request is sent. It contains the originating request and response metadata, including the status code, URL, headers, cookies, encoding, body content, raw response, connection, and elapsed time. The `Response` object supports content access and decoding, iteration over response data, streaming, serialization, and context-manager behavior. It is also used during redirect handling to inspect response status codes and provides mechanisms for evaluating status behavior and raising errors for unsuccessful HTTP responses.|28\n351|INCOMPLETE CHUNKED RESPONSE HANDLER|A socket response-handler event that sends an HTTP 200 response declaring chunked transfer encoding but never provides valid terminating chunks, allowing the test to verify error handling|1\n517|HTTPERROR|HTTPError is a Requests exception that can contain an associated Response object)<|1\n436|HTTP 200 OK HEAD TEST|A test event that sends an HTTP HEAD request through Requests to the httpbin get endpoint and verifies that the response status code is 200.|3\n397|HTTP/1.1 302 FOUND|HTTP redirect response sent by the local test server with an empty body and a Location header pointing to the final URL|3\n22|HTTP|HTTP is both the application-layer network protocol used for communication between clients, servers, local response servers, and the httpbin testing service, and a Python standard-library package that supplies cookie- and HTTP-related compatibility imports. It is used to validate status codes, response headers, content lengths, and response bodies, and it underlies documented `Request`, `Session`, and `PreparedRequest` operations. Requests exercises HTTP through standard methods including GET, HEAD, POST, PUT, PATCH, and OPTIONS, as well as custom verbs. HTTP support also includes transport adapters, configurable request handling, proxy usage, and standard response processing.|3\n290|HTTP STATUS CODES|HTTP status codes are standardized numerical responses representing informational results, successful requests, redirections, client errors, and server errors>|5\n352|MULTIPLE CONTENT LENGTH RESPONSE HANDLER|A socket response-handler event that returns an HTTP response containing conflicting Content-Length headers and invalidates the response for header-validation testing|1\n505|HTTPEXCEPTION|HTTPError is the Requests exception raised by Response.raise_for_status for an unsuccessful HTTP status|2\n292|REDIRECTION RESPONSES|Redirection responses are the 3xx HTTP status-code category, including Multiple Choices, Moved Permanently, Found, Not Modified, Use Proxy, Temporary Redirect, and Permanent Redirect>|1\n577|TEST_RESPONSE_WITHOUT_RELEASE_CONN|A test that verifies Response.close works with a raw object that lacks a release_conn method|2\n\n\n-----Relationships-----\nid|source|target|description|weight|links\n351|RESPONSE|HTTP ERROR|Response.ok calls raise_for_status and catches HTTPError to return False for error responses.|9.0|2\n346|RESPONSE|HTTP RESPONSE|The Response class represents an HTTP response and exposes its status, headers, content, URL, cookies, and timing information.|10.0|2\n825|HTTPERROR|RESPONSE|HTTPError can store an associated Response object|1.0|1\n291|REQUESTS|RESPONSE|REQUESTS is a Python HTTP library that defines and uses the RESPONSE object to represent the results of HTTP operations. When REQUESTS sends an HTTP request, it returns a RESPONSE instance containing the received HTTP result. RESPONSE exposes the response content, status information, timing data, streaming capabilities, and serialization behavior. REQUESTS also provides a hooks system that supports a response event, allowing generated RESPONSE objects to be processed or customized after requests are completed.|28.0|6\n589|REQUESTS|HTTP/1.1 200 OK|Requests receives the final successful response and the alternate-encoding response|8.0|6\n588|REQUESTS|HTTP/1.1 302 FOUND|Requests receives and follows the HTTP 302 redirect response|8.0|6\n665|REQUESTS|HTTP 200 OK HEAD TEST|The test uses Requests to send the HEAD request and inspect its status code.|9.0|6\n831|HTTP ERROR TEST|REQUESTS|The HTTP error test verifies exception behavior provided by Requests|1.0|6\n133|REQUESTS|HTTP ERROR|Requests provides `Response.raise_for_status`, which raises an `HTTPError` when an HTTP response is unsuccessful, specifically when its status code falls within the 400–599 range.|18.0|6\n664|PYTEST|HTTP 200 OK HEAD TEST|Pytest executes the HTTP HEAD status-code test.|9.0|2\n844|HTTP ERROR TEST|PYTEST|Pytest assertions validate HTTPError behavior and response association|1.0|2\n587|SERVER|HTTP/1.1 200 OK|The local test server sends HTTP 200 success responses|9.0|2\n586|SERVER|HTTP/1.1 302 FOUND|The local test server sends the HTTP 302 redirect response|9.0|2\n536|HTTP DIGEST AUTHENTICATION|HTTP/1.1 200 OK|The authentication flow ends with a 200 OK response after the client successfully authenticates.|8.0|2\n535|HTTP DIGEST AUTHENTICATION|HTTP/1.1 302 FOUND|The Digest authentication flow is tested across a 302 redirect to ensure credentials are not leaked to the redirected host.|8.0|2\n666|HTTPBIN|HTTP 200 OK HEAD TEST|The test sends the HEAD request to an httpbin endpoint.|8.0|1\n202|HTTPADAPTER|RESPONSE|HTTPAdapter creates and populates Response objects from urllib3 responses, including status, headers, encoding, cookies, and connection information.|10.0|1\n13|RESPONSE|REQUEST|A Response contains the Request object that originally generated it.|10.0|1\n350|RESPONSE|SESSION|The Response documentation references Session.resolve_redirects as the component that processes redirect chains.|7.0|1\n12|REQUEST|RESPONSE|A REQUEST is sent to a server and generates a RESPONSE containing the returned information. The RESPONSE can then be processed by the Requests hooks system.|19.0|1\n396|SESSION|RESPONSE|SESSION sends prepared requests and receives or returns RESPONSE objects. These responses may trigger redirect processing, and their status codes and request metadata can be inspected.|18.0|1\n14|RESPONSE|PREPAREDREQUEST|`RESPONSE` represents the result of an API or Session call and includes a `request` attribute containing the `PREPAREDREQUEST` used for that call. When redirects occur, `RESPONSE` exposes the next `PREPAREDREQUEST` in the redirect chain through its `next` property.|19.0|1\n399|PREPAREDREQUEST|RESPONSE|A PreparedRequest is sent to obtain an HTTP Response|8.0|1\n204|RESPONSE|CASEINSENSITIVEDICT|Response stores its HTTP headers in a CaseInsensitiveDict so header names can be accessed without regard to case.|9.0|1\n348|RESPONSE|HTTP REDIRECT|Response detects redirects through its is_redirect and is_permanent_redirect properties and tracks redirect history.|9.0|1\n798|RESPONSE|STRINGIO|A StringIO stream is assigned as the raw body of a Response to test response iteration|8.0|1\n358|RESPONSE|CHARACTER ENCODING DETECTION|A Response uses Chardet or Charset-normalizer to determine apparent encoding when no explicit encoding is available.|9.0|1\n359|RESPONSE|UNICODE DECODING|A Response decodes byte content into text using its declared or detected encoding.|9.0|1\n820|TESTREQUESTANDRESPONSEAREPICKLEABLE|RESPONSE|The test verifies that a Response and its associated request survive pickle serialization|9.0|1\n347|RESPONSE|PREPARED REQUEST|The Response request attribute contains the PreparedRequest associated with the response.|9.0|1\n357|RESPONSE|STREAMED RESPONSE READING|The Response object incrementally reads raw content through iter_content and iter_lines.|9.0|1\n292|HOOK|RESPONSE|A hook receives response data, may process it, and can return updated response data.|9.0|1\n294|HOOKS|RESPONSE|The hooks system supports response as its only currently defined event and maintains its associated hook list.|1.0|1\n813|TESTEMPTYRESPONSEHASCONTENTNONE|RESPONSE|The test creates a Response and verifies that its content is None|9.0|1\n814|TESTRESPONSEISITERABLE|RESPONSE|The test assigns a raw stream to a Response and verifies that the response is iterable|9.0|1\n815|TESTRESPONSEDECODEUNICODE|RESPONSE|The test verifies that Response.iter_content returns strings when decoding is enabled|9.0|1\n817|TESTRESPONSECHUNKSIZETYPE|RESPONSE|The test verifies Response.iter_content behavior for valid and invalid chunk-size arguments|9.0|1\n818|TESTITERCONTENTWRAPSEXCEPTIONS|RESPONSE|The parametrized test invokes Response.iter_content and checks translated exceptions for several urllib3 failures|9.0|1\n352|RESPONSE|CASE-INSENSITIVE DICTIONARY|Response stores its HTTP headers in a CaseInsensitiveDict instance.|9.0|1\n353|RESPONSE|COOKIE JAR|Response stores server-provided cookies in a CookieJar created from a dictionary.|8.0|1\n355|RESPONSE|PERMANENT REDIRECT|A Response is identified as a permanent redirect when it has a Location header and a permanent-redirect status code.|9.0|1\n356|RESPONSE|REDIRECT CHAIN|A Response can reference the next PreparedRequest in a redirect chain.|9.0|1\n799|RESPONSE|BYTESIO|A BytesIO stream is assigned as the raw body of a Response to test streaming and content chunking|8.0|1\n570|TEST REDIRECT RFC1808 TO NON-ASCII LOCATION|HTTP 200 RESPONSE|The test asserts that the final redirected response has status code 200|8.0|1\n515|CONSUME SOCKET CONTENT|INCOMPLETE CHUNKED RESPONSE HANDLER|The incomplete-response handler uses consume_socket_content before sending the malformed response|8.0|1\n550|DIGESTAUTH REDIRECT TEST|HTTP/1.1 200 OK|The redirect test requires the final authenticated response to have status code 200.|10.0|1\n572|REDIRECT RESPONSE HANDLER|HTTP 200 RESPONSE|The handler sends a final 200 OK response after consuming the redirected request|8.0|1\n579|RESPONSE HANDLER|HTTP 200 RESPONSE|The handler sends a 200 OK response after the redirected request reaches the final URL|8.0|1\n415|INFORMATIONAL RESPONSES|HTTP STATUS CODES|Informational responses are the 1xx category of HTTP status codes|10.0|1\n552|DIGESTAUTH 4XX TEST|HTTP/1.1 200 OK|The 4xx-specific test places a Digest challenge on a 200 response and verifies that no authentication response is sent.|10.0|1\n\n\n-----Sources-----\nid|text\n48|        hooks = hooks or []\n        for event in hooks:\n            self.register_hook(event, hooks[event])\n\n\nclass Response:\n    \"\"\"The :class:`Response <Response>` object, which contains a\n    server's response to an HTTP request.\n    \"\"\"\n\n    __attrs__ = [\n        \"_content\",\n        \"status_code\",\n        \"headers\",\n        \"url\",\n        \"history\",\n        \"encoding\",\n        \"reason\",\n        \"cookies\",\n        \"elapsed\",\n        \"request\",\n    ]\n\n    def __init__(self):\n        self._content = False\n        self._content_consumed = False\n        self._next = None\n\n        #: Integer Code of responded HTTP Status, e.g. 404 or 200.\n        self.status_code = None\n\n        #: Case-insensitive Dictionary of Response Headers.\n        #: For example, ``headers['content-encoding']`` will return the\n        #: value of a ``'Content-Encoding'`` response header.\n        self.headers = CaseInsensitiveDict()\n\n        #: File-like object representation of response (for advanced usage).\n        #: Use of ``raw`` requires that ``stream=True`` be set on the request.\n        #: This requirement does not apply for use internally to Requests.\n        self.raw = None\n\n        #: Final URL location of Response.\n        self.url = None\n\n        #: Encoding to decode with when accessing r.text.\n        self.encoding = None\n\n        #: A list of :class:`Response <Response>` objects from\n        #: the history of the Request. Any redirect responses will end\n        #: up here. The list is sorted from the oldest to the most recent request.\n        self.history = []\n\n        #: Textual reason of responded HTTP Status, e.g. \"Not Found\" or \"OK\".\n        self.reason = None\n\n        #: A CookieJar of Cookies the server sent back.\n        self.cookies = cookiejar_from_dict({})\n\n        #: The amount of time elapsed between sending the request\n        #: and the arrival of the response (as a timedelta).\n        #: This property specifically measures the time taken between sending\n        #: the first byte of the request and finishing parsing the headers. It\n        #: is therefore unaffected by consuming the response content or the\n        #: value of the ``stream`` keyword argument.\n        self.elapsed = datetime.timedelta(0)\n\n        #: The :class:`PreparedRequest <PreparedRequest>` object to which this\n        #: is a response.\n        self.request = None\n\n    def __enter__(self):\n        return self\n\n    def __exit__(self, *args):\n        self.close()\n\n    def __getstate__(self):\n        # Consume everything; accessing the content attribute makes\n        # sure the content has been fully read.\n        if not self._content_consumed:\n            self.content\n\n        return {attr: getattr(self, attr, None) for attr in self.__attrs__}\n\n    def __setstate__(self, state):\n        for name, value in state.items():\n            setattr(self, name, value)\n\n        # pickled objects do not have .raw\n        setattr(self, \"_content_consumed\", True)\n        setattr(self, \"raw\", None)\n\n    def __repr__(self):\n        return f\"<Response [{self.status_code}]>\"\n\n    def __bool__(self):\n        \"\"\"Returns True if :attr:`status_code` is less than 400.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code, is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\n        return self.ok\n\n    def __nonzero__(self):\n        \"\"\"Returns True if :attr:`status_code` is less than 400.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code, is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\n        return self.ok\n\n    def __iter__(self):\n        \"\"\"Allows you to use a response as an iterator.\"\"\"\n        return self.iter_content(128)\n\n    @property\n    def ok(self):\n        \"\"\"Returns True if :attr:`status_code` is less than 400, False if not.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\n        try:\n            self.raise_for_status()\n        except HTTPError:\n            return False\n        return True\n\n    @property\n    def is_redirect(self):\n        \"\"\"True if this Response is a well-formed HTTP redirect that could have\n        been processed automatically (by :meth:`Session.resolve_redirects`).\n        \"\"\"\n        return \"location\" in self.headers and self.status_code in REDIRECT_STATI\n\n    @property\n    def is_permanent_redirect(self):\n        \"\"\"True if this Response one of the permanent versions of redirect.\"\"\"\n        return \"location\" in self.headers and self.status_code in (\n            codes.moved_permanently,\n            codes.permanent_redirect,\n        )\n\n    @property\n    def next(self):\n        \"\"\"Returns a PreparedRequest for the next request in a redirect chain, if there is one.\"\"\"\n        return self._next\n\n    @property\n    def apparent_encoding(self):\n\n76|\n    text_302 = (b'HTTP/1.1 302 FOUND\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'Location: /\\r\\n\\r\\n')\n\n    text_200 = (b'HTTP/1.1 200 OK\\r\\n'\n                b'Content-Length: 0\\r\\n\\r\\n')\n\n    expected_digest = (b'Authorization: Digest username=\"user\", '\n                       b'realm=\"me@kennethreitz.com\", '\n                       b'nonce=\"6bf5d6e4da1ce66918800195d6b9130d\", uri=\"/\"')\n\n    auth = requests.auth.HTTPDigestAuth('user', 'pass')\n\n    def digest_response_handler(sock):\n        # Respond to initial GET with a challenge.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content.startswith(b\"GET / HTTP/1.1\")\n        sock.send(text_401)\n\n        # Verify we receive an Authorization header in response, then redirect.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert expected_digest in request_content\n        sock.send(text_302)\n\n        # Verify Authorization isn't sent to the redirected host,\n        # then send another challenge.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert b'Authorization:' not in request_content\n        sock.send(text_401)\n\n        # Verify Authorization is sent correctly again, and return 200 OK.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert expected_digest in request_content\n        sock.send(text_200)\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(digest_response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url, auth=auth)\n        # Verify server succeeded in authenticating.\n        assert r.status_code == 200\n        # Verify Authorization was sent in final request.\n        assert 'Authorization' in r.request.headers\n        assert r.request.headers['Authorization'].startswith('Digest ')\n        # Verify redirect happened as we expected.\n        assert r.history[0].status_code == 302\n        close_server.set()\n\n\ndef test_digestauth_401_only_sent_once():\n    \"\"\"Ensure we correctly respond to a 401 challenge once, and then\n    stop responding if challenged again.\n    \"\"\"\n    text_401 = (b'HTTP/1.1 401 UNAUTHORIZED\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'WWW-Authenticate: Digest nonce=\"6bf5d6e4da1ce66918800195d6b9130d\"'\n                b', opaque=\"372825293d1c26955496c80ed6426e9e\", '\n                b'realm=\"me@kennethreitz.com\", qop=auth\\r\\n\\r\\n')\n\n    expected_digest = (b'Authorization: Digest username=\"user\", '\n                       b'realm=\"me@kennethreitz.com\", '\n                       b'nonce=\"6bf5d6e4da1ce66918800195d6b9130d\", uri=\"/\"')\n\n    auth = requests.auth.HTTPDigestAuth('user', 'pass')\n\n    def digest_failed_response_handler(sock):\n        # Respond to initial GET with a challenge.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content.startswith(b\"GET / HTTP/1.1\")\n        sock.send(text_401)\n\n        # Verify we receive an Authorization header in response, then\n        # challenge again.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert expected_digest in request_content\n        sock.send(text_401)\n\n        # Verify the client didn't respond to second challenge.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content == b''\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(digest_failed_response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url, auth=auth)\n        # Verify server didn't authenticate us.\n        assert r.status_code == 401\n        assert r.history[0].status_code == 401\n        close_server.set()\n\n\ndef test_digestauth_only_on_4xx():\n    \"\"\"Ensure we only send digestauth on 4xx challenges.\n\n    See https://github.com/psf/requests/issues/3772.\n    \"\"\"\n    text_200_chal = (b'HTTP/1.1 200 OK\\r\\n'\n                     b'Content-Length: 0\\r\\n'\n                     b'WWW-Authenticate: Digest nonce=\"6bf5d6e4da1ce66918800195d6b9130d\"'\n                     b', opaque=\"372825293d1c26955496c80ed6426e9e\", '\n                     b'realm=\"me@kennethreitz.com\", qop=auth\\r\\n\\r\\n')\n\n    auth = requests.auth.HTTPDigestAuth('user', 'pass')\n\n    def digest_response_handler(sock):\n        # Respond to GET with a 200 containing www-authenticate header.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content.startswith(b\"GET / HTTP/1.1\")\n        sock.send(text_200_chal)\n\n        # Verify the client didn't respond with auth.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content == b''\n\n        return request_content\n\n\n78|            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /final-url/\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/path/to/thing/#view=edit&token=hunter2'\n        r = requests.get(url)\n\n        assert r.status_code == 200\n        assert len(r.history) == 2\n        assert r.history[0].request.url == url\n\n        # Verify we haven't overwritten the location with our previous fragment.\n        assert r.history[1].request.url == f'http://{host}:{port}/get#relevant-section'\n        # Verify previous fragment is used and not the original.\n        assert r.url == f'http://{host}:{port}/final-url/#relevant-section'\n\n        close_server.set()\n\n\ndef test_json_decode_compatibility_for_alt_utf_encodings():\n\n    def response_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n'\n            b'Content-Length: 18\\r\\n\\r\\n'\n            b'\\xff\\xfe{\\x00\"\\x00K0\"\\x00=\\x00\"\\x00\\xab0\"\\x00\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url)\n    r.encoding = None\n    with pytest.raises(requests.exceptions.JSONDecodeError) as excinfo:\n        r.json()\n    assert isinstance(excinfo.value, requests.exceptions.RequestException)\n    assert isinstance(excinfo.value, JSONDecodeError)\n    assert r.text not in str(excinfo.value)\n\n",
+  "upstream_raw_records": {
+    "relationships": [
+      {
+        "id": "351",
+        "source": "RESPONSE",
+        "target": "HTTP ERROR",
+        "description": "Response.ok calls raise_for_status and catches HTTPError to return False for error responses.",
+        "weight": "9.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "346",
+        "source": "RESPONSE",
+        "target": "HTTP RESPONSE",
+        "description": "The Response class represents an HTTP response and exposes its status, headers, content, URL, cookies, and timing information.",
+        "weight": "10.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "825",
+        "source": "HTTPERROR",
+        "target": "RESPONSE",
+        "description": "HTTPError can store an associated Response object",
+        "weight": "1.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "291",
+        "source": "REQUESTS",
+        "target": "RESPONSE",
+        "description": "REQUESTS is a Python HTTP library that defines and uses the RESPONSE object to represent the results of HTTP operations. When REQUESTS sends an HTTP request, it returns a RESPONSE instance containing the received HTTP result. RESPONSE exposes the response content, status information, timing data, streaming capabilities, and serialization behavior. REQUESTS also provides a hooks system that supports a response event, allowing generated RESPONSE objects to be processed or customized after requests are completed.",
+        "weight": "28.0",
+        "links": "6",
+        "in_context": true
+      },
+      {
+        "id": "589",
+        "source": "REQUESTS",
+        "target": "HTTP/1.1 200 OK",
+        "description": "Requests receives the final successful response and the alternate-encoding response",
+        "weight": "8.0",
+        "links": "6",
+        "in_context": true
+      },
+      {
+        "id": "588",
+        "source": "REQUESTS",
+        "target": "HTTP/1.1 302 FOUND",
+        "description": "Requests receives and follows the HTTP 302 redirect response",
+        "weight": "8.0",
+        "links": "6",
+        "in_context": true
+      },
+      {
+        "id": "665",
+        "source": "REQUESTS",
+        "target": "HTTP 200 OK HEAD TEST",
+        "description": "The test uses Requests to send the HEAD request and inspect its status code.",
+        "weight": "9.0",
+        "links": "6",
+        "in_context": true
+      },
+      {
+        "id": "831",
+        "source": "HTTP ERROR TEST",
+        "target": "REQUESTS",
+        "description": "The HTTP error test verifies exception behavior provided by Requests",
+        "weight": "1.0",
+        "links": "6",
+        "in_context": true
+      },
+      {
+        "id": "133",
+        "source": "REQUESTS",
+        "target": "HTTP ERROR",
+        "description": "Requests provides `Response.raise_for_status`, which raises an `HTTPError` when an HTTP response is unsuccessful, specifically when its status code falls within the 400–599 range.",
+        "weight": "18.0",
+        "links": "6",
+        "in_context": true
+      },
+      {
+        "id": "664",
+        "source": "PYTEST",
+        "target": "HTTP 200 OK HEAD TEST",
+        "description": "Pytest executes the HTTP HEAD status-code test.",
+        "weight": "9.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "844",
+        "source": "HTTP ERROR TEST",
+        "target": "PYTEST",
+        "description": "Pytest assertions validate HTTPError behavior and response association",
+        "weight": "1.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "587",
+        "source": "SERVER",
+        "target": "HTTP/1.1 200 OK",
+        "description": "The local test server sends HTTP 200 success responses",
+        "weight": "9.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "586",
+        "source": "SERVER",
+        "target": "HTTP/1.1 302 FOUND",
+        "description": "The local test server sends the HTTP 302 redirect response",
+        "weight": "9.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "536",
+        "source": "HTTP DIGEST AUTHENTICATION",
+        "target": "HTTP/1.1 200 OK",
+        "description": "The authentication flow ends with a 200 OK response after the client successfully authenticates.",
+        "weight": "8.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "535",
+        "source": "HTTP DIGEST AUTHENTICATION",
+        "target": "HTTP/1.1 302 FOUND",
+        "description": "The Digest authentication flow is tested across a 302 redirect to ensure credentials are not leaked to the redirected host.",
+        "weight": "8.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "666",
+        "source": "HTTPBIN",
+        "target": "HTTP 200 OK HEAD TEST",
+        "description": "The test sends the HEAD request to an httpbin endpoint.",
+        "weight": "8.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "202",
+        "source": "HTTPADAPTER",
+        "target": "RESPONSE",
+        "description": "HTTPAdapter creates and populates Response objects from urllib3 responses, including status, headers, encoding, cookies, and connection information.",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "13",
+        "source": "RESPONSE",
+        "target": "REQUEST",
+        "description": "A Response contains the Request object that originally generated it.",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "350",
+        "source": "RESPONSE",
+        "target": "SESSION",
+        "description": "The Response documentation references Session.resolve_redirects as the component that processes redirect chains.",
+        "weight": "7.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "12",
+        "source": "REQUEST",
+        "target": "RESPONSE",
+        "description": "A REQUEST is sent to a server and generates a RESPONSE containing the returned information. The RESPONSE can then be processed by the Requests hooks system.",
+        "weight": "19.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "396",
+        "source": "SESSION",
+        "target": "RESPONSE",
+        "description": "SESSION sends prepared requests and receives or returns RESPONSE objects. These responses may trigger redirect processing, and their status codes and request metadata can be inspected.",
+        "weight": "18.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "14",
+        "source": "RESPONSE",
+        "target": "PREPAREDREQUEST",
+        "description": "`RESPONSE` represents the result of an API or Session call and includes a `request` attribute containing the `PREPAREDREQUEST` used for that call. When redirects occur, `RESPONSE` exposes the next `PREPAREDREQUEST` in the redirect chain through its `next` property.",
+        "weight": "19.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "399",
+        "source": "PREPAREDREQUEST",
+        "target": "RESPONSE",
+        "description": "A PreparedRequest is sent to obtain an HTTP Response",
+        "weight": "8.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "204",
+        "source": "RESPONSE",
+        "target": "CASEINSENSITIVEDICT",
+        "description": "Response stores its HTTP headers in a CaseInsensitiveDict so header names can be accessed without regard to case.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "348",
+        "source": "RESPONSE",
+        "target": "HTTP REDIRECT",
+        "description": "Response detects redirects through its is_redirect and is_permanent_redirect properties and tracks redirect history.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "798",
+        "source": "RESPONSE",
+        "target": "STRINGIO",
+        "description": "A StringIO stream is assigned as the raw body of a Response to test response iteration",
+        "weight": "8.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "358",
+        "source": "RESPONSE",
+        "target": "CHARACTER ENCODING DETECTION",
+        "description": "A Response uses Chardet or Charset-normalizer to determine apparent encoding when no explicit encoding is available.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "359",
+        "source": "RESPONSE",
+        "target": "UNICODE DECODING",
+        "description": "A Response decodes byte content into text using its declared or detected encoding.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "820",
+        "source": "TESTREQUESTANDRESPONSEAREPICKLEABLE",
+        "target": "RESPONSE",
+        "description": "The test verifies that a Response and its associated request survive pickle serialization",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "347",
+        "source": "RESPONSE",
+        "target": "PREPARED REQUEST",
+        "description": "The Response request attribute contains the PreparedRequest associated with the response.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "357",
+        "source": "RESPONSE",
+        "target": "STREAMED RESPONSE READING",
+        "description": "The Response object incrementally reads raw content through iter_content and iter_lines.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "292",
+        "source": "HOOK",
+        "target": "RESPONSE",
+        "description": "A hook receives response data, may process it, and can return updated response data.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "294",
+        "source": "HOOKS",
+        "target": "RESPONSE",
+        "description": "The hooks system supports response as its only currently defined event and maintains its associated hook list.",
+        "weight": "1.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "813",
+        "source": "TESTEMPTYRESPONSEHASCONTENTNONE",
+        "target": "RESPONSE",
+        "description": "The test creates a Response and verifies that its content is None",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "814",
+        "source": "TESTRESPONSEISITERABLE",
+        "target": "RESPONSE",
+        "description": "The test assigns a raw stream to a Response and verifies that the response is iterable",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "815",
+        "source": "TESTRESPONSEDECODEUNICODE",
+        "target": "RESPONSE",
+        "description": "The test verifies that Response.iter_content returns strings when decoding is enabled",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "817",
+        "source": "TESTRESPONSECHUNKSIZETYPE",
+        "target": "RESPONSE",
+        "description": "The test verifies Response.iter_content behavior for valid and invalid chunk-size arguments",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "818",
+        "source": "TESTITERCONTENTWRAPSEXCEPTIONS",
+        "target": "RESPONSE",
+        "description": "The parametrized test invokes Response.iter_content and checks translated exceptions for several urllib3 failures",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "352",
+        "source": "RESPONSE",
+        "target": "CASE-INSENSITIVE DICTIONARY",
+        "description": "Response stores its HTTP headers in a CaseInsensitiveDict instance.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "353",
+        "source": "RESPONSE",
+        "target": "COOKIE JAR",
+        "description": "Response stores server-provided cookies in a CookieJar created from a dictionary.",
+        "weight": "8.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "355",
+        "source": "RESPONSE",
+        "target": "PERMANENT REDIRECT",
+        "description": "A Response is identified as a permanent redirect when it has a Location header and a permanent-redirect status code.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "356",
+        "source": "RESPONSE",
+        "target": "REDIRECT CHAIN",
+        "description": "A Response can reference the next PreparedRequest in a redirect chain.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "799",
+        "source": "RESPONSE",
+        "target": "BYTESIO",
+        "description": "A BytesIO stream is assigned as the raw body of a Response to test streaming and content chunking",
+        "weight": "8.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "570",
+        "source": "TEST REDIRECT RFC1808 TO NON-ASCII LOCATION",
+        "target": "HTTP 200 RESPONSE",
+        "description": "The test asserts that the final redirected response has status code 200",
+        "weight": "8.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "515",
+        "source": "CONSUME SOCKET CONTENT",
+        "target": "INCOMPLETE CHUNKED RESPONSE HANDLER",
+        "description": "The incomplete-response handler uses consume_socket_content before sending the malformed response",
+        "weight": "8.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "550",
+        "source": "DIGESTAUTH REDIRECT TEST",
+        "target": "HTTP/1.1 200 OK",
+        "description": "The redirect test requires the final authenticated response to have status code 200.",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "572",
+        "source": "REDIRECT RESPONSE HANDLER",
+        "target": "HTTP 200 RESPONSE",
+        "description": "The handler sends a final 200 OK response after consuming the redirected request",
+        "weight": "8.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "579",
+        "source": "RESPONSE HANDLER",
+        "target": "HTTP 200 RESPONSE",
+        "description": "The handler sends a 200 OK response after the redirected request reaches the final URL",
+        "weight": "8.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "415",
+        "source": "INFORMATIONAL RESPONSES",
+        "target": "HTTP STATUS CODES",
+        "description": "Informational responses are the 1xx category of HTTP status codes",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "552",
+        "source": "DIGESTAUTH 4XX TEST",
+        "target": "HTTP/1.1 200 OK",
+        "description": "The 4xx-specific test places a Digest challenge on a 200 response and verifies that no authentication response is sent.",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      }
+    ],
+    "entities": [
+      {
+        "id": "248",
+        "entity": "HTTP RESPONSE",
+        "description": "An HTTP response is the server-produced result represented by the Response class, including status code, headers, URL, cookies, content, and timing information.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "365",
+        "entity": "HTTP/1.1 200 OK",
+        "description": "“HTTP/1.1 200 OK” represents a successful HTTP response from the local test server. It is returned after redirect processing and is also used for an alternate-encoding JSON response. Depending on the request context, the response may contain an empty body or an alternate-encoding JSON payload.",
+        "number of relationships": "5",
+        "in_context": true
+      },
+      {
+        "id": "522",
+        "entity": "HTTP ERROR TEST",
+        "description": "The HTTP error test verifies HTTPError response handling and message behavior)<",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "95",
+        "entity": "HTTP ERROR",
+        "description": "HTTP ERROR is an error event raised by the Requests library when an HTTP response has an unsuccessful client-error or server-error status code. It is triggered by `Response.raise_for_status()` to indicate that the response did not complete successfully.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "394",
+        "entity": "HTTP 200 RESPONSE",
+        "description": "Successful HTTP responses returned by the local test servers after authentication, redirect, or fragment behavior is exercised>",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "291",
+        "entity": "INFORMATIONAL RESPONSES",
+        "description": "Informational responses are the 1xx HTTP status-code category, including Continue, Switching Protocols, Processing, Early Hints, and Checkpoint>",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "12",
+        "entity": "RESPONSE",
+        "description": "The `RESPONSE` entity is the `Response` Python class in the Requests library, representing the HTTP result returned by a server after a request or prepared request is sent. It contains the originating request and response metadata, including the status code, URL, headers, cookies, encoding, body content, raw response, connection, and elapsed time. The `Response` object supports content access and decoding, iteration over response data, streaming, serialization, and context-manager behavior. It is also used during redirect handling to inspect response status codes and provides mechanisms for evaluating status behavior and raising errors for unsuccessful HTTP responses.",
+        "number of relationships": "28",
+        "in_context": true
+      },
+      {
+        "id": "351",
+        "entity": "INCOMPLETE CHUNKED RESPONSE HANDLER",
+        "description": "A socket response-handler event that sends an HTTP 200 response declaring chunked transfer encoding but never provides valid terminating chunks, allowing the test to verify error handling",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "517",
+        "entity": "HTTPERROR",
+        "description": "HTTPError is a Requests exception that can contain an associated Response object)<",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "436",
+        "entity": "HTTP 200 OK HEAD TEST",
+        "description": "A test event that sends an HTTP HEAD request through Requests to the httpbin get endpoint and verifies that the response status code is 200.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "397",
+        "entity": "HTTP/1.1 302 FOUND",
+        "description": "HTTP redirect response sent by the local test server with an empty body and a Location header pointing to the final URL",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "22",
+        "entity": "HTTP",
+        "description": "HTTP is both the application-layer network protocol used for communication between clients, servers, local response servers, and the httpbin testing service, and a Python standard-library package that supplies cookie- and HTTP-related compatibility imports. It is used to validate status codes, response headers, content lengths, and response bodies, and it underlies documented `Request`, `Session`, and `PreparedRequest` operations. Requests exercises HTTP through standard methods including GET, HEAD, POST, PUT, PATCH, and OPTIONS, as well as custom verbs. HTTP support also includes transport adapters, configurable request handling, proxy usage, and standard response processing.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "290",
+        "entity": "HTTP STATUS CODES",
+        "description": "HTTP status codes are standardized numerical responses representing informational results, successful requests, redirections, client errors, and server errors>",
+        "number of relationships": "5",
+        "in_context": true
+      },
+      {
+        "id": "352",
+        "entity": "MULTIPLE CONTENT LENGTH RESPONSE HANDLER",
+        "description": "A socket response-handler event that returns an HTTP response containing conflicting Content-Length headers and invalidates the response for header-validation testing",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "505",
+        "entity": "HTTPEXCEPTION",
+        "description": "HTTPError is the Requests exception raised by Response.raise_for_status for an unsuccessful HTTP status",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "292",
+        "entity": "REDIRECTION RESPONSES",
+        "description": "Redirection responses are the 3xx HTTP status-code category, including Multiple Choices, Moved Permanently, Found, Not Modified, Use Proxy, Temporary Redirect, and Permanent Redirect>",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "577",
+        "entity": "TEST_RESPONSE_WITHOUT_RELEASE_CONN",
+        "description": "A test that verifies Response.close works with a raw object that lacks a release_conn method",
+        "number of relationships": "2",
+        "in_context": true
+      }
+    ],
+    "sources": [
+      {
+        "id": "48",
+        "text": "        hooks = hooks or []\n        for event in hooks:\n            self.register_hook(event, hooks[event])\n\n\nclass Response:\n    \"\"\"The :class:`Response <Response>` object, which contains a\n    server's response to an HTTP request.\n    \"\"\"\n\n    __attrs__ = [\n        \"_content\",\n        \"status_code\",\n        \"headers\",\n        \"url\",\n        \"history\",\n        \"encoding\",\n        \"reason\",\n        \"cookies\",\n        \"elapsed\",\n        \"request\",\n    ]\n\n    def __init__(self):\n        self._content = False\n        self._content_consumed = False\n        self._next = None\n\n        #: Integer Code of responded HTTP Status, e.g. 404 or 200.\n        self.status_code = None\n\n        #: Case-insensitive Dictionary of Response Headers.\n        #: For example, ``headers['content-encoding']`` will return the\n        #: value of a ``'Content-Encoding'`` response header.\n        self.headers = CaseInsensitiveDict()\n\n        #: File-like object representation of response (for advanced usage).\n        #: Use of ``raw`` requires that ``stream=True`` be set on the request.\n        #: This requirement does not apply for use internally to Requests.\n        self.raw = None\n\n        #: Final URL location of Response.\n        self.url = None\n\n        #: Encoding to decode with when accessing r.text.\n        self.encoding = None\n\n        #: A list of :class:`Response <Response>` objects from\n        #: the history of the Request. Any redirect responses will end\n        #: up here. The list is sorted from the oldest to the most recent request.\n        self.history = []\n\n        #: Textual reason of responded HTTP Status, e.g. \"Not Found\" or \"OK\".\n        self.reason = None\n\n        #: A CookieJar of Cookies the server sent back.\n        self.cookies = cookiejar_from_dict({})\n\n        #: The amount of time elapsed between sending the request\n        #: and the arrival of the response (as a timedelta).\n        #: This property specifically measures the time taken between sending\n        #: the first byte of the request and finishing parsing the headers. It\n        #: is therefore unaffected by consuming the response content or the\n        #: value of the ``stream`` keyword argument.\n        self.elapsed = datetime.timedelta(0)\n\n        #: The :class:`PreparedRequest <PreparedRequest>` object to which this\n        #: is a response.\n        self.request = None\n\n    def __enter__(self):\n        return self\n\n    def __exit__(self, *args):\n        self.close()\n\n    def __getstate__(self):\n        # Consume everything; accessing the content attribute makes\n        # sure the content has been fully read.\n        if not self._content_consumed:\n            self.content\n\n        return {attr: getattr(self, attr, None) for attr in self.__attrs__}\n\n    def __setstate__(self, state):\n        for name, value in state.items():\n            setattr(self, name, value)\n\n        # pickled objects do not have .raw\n        setattr(self, \"_content_consumed\", True)\n        setattr(self, \"raw\", None)\n\n    def __repr__(self):\n        return f\"<Response [{self.status_code}]>\"\n\n    def __bool__(self):\n        \"\"\"Returns True if :attr:`status_code` is less than 400.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code, is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\n        return self.ok\n\n    def __nonzero__(self):\n        \"\"\"Returns True if :attr:`status_code` is less than 400.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code, is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\n        return self.ok\n\n    def __iter__(self):\n        \"\"\"Allows you to use a response as an iterator.\"\"\"\n        return self.iter_content(128)\n\n    @property\n    def ok(self):\n        \"\"\"Returns True if :attr:`status_code` is less than 400, False if not.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\n        try:\n            self.raise_for_status()\n        except HTTPError:\n            return False\n        return True\n\n    @property\n    def is_redirect(self):\n        \"\"\"True if this Response is a well-formed HTTP redirect that could have\n        been processed automatically (by :meth:`Session.resolve_redirects`).\n        \"\"\"\n        return \"location\" in self.headers and self.status_code in REDIRECT_STATI\n\n    @property\n    def is_permanent_redirect(self):\n        \"\"\"True if this Response one of the permanent versions of redirect.\"\"\"\n        return \"location\" in self.headers and self.status_code in (\n            codes.moved_permanently,\n            codes.permanent_redirect,\n        )\n\n    @property\n    def next(self):\n        \"\"\"Returns a PreparedRequest for the next request in a redirect chain, if there is one.\"\"\"\n        return self._next\n\n    @property\n    def apparent_encoding(self):\n"
+      },
+      {
+        "id": "76",
+        "text": "\n    text_302 = (b'HTTP/1.1 302 FOUND\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'Location: /\\r\\n\\r\\n')\n\n    text_200 = (b'HTTP/1.1 200 OK\\r\\n'\n                b'Content-Length: 0\\r\\n\\r\\n')\n\n    expected_digest = (b'Authorization: Digest username=\"user\", '\n                       b'realm=\"me@kennethreitz.com\", '\n                       b'nonce=\"6bf5d6e4da1ce66918800195d6b9130d\", uri=\"/\"')\n\n    auth = requests.auth.HTTPDigestAuth('user', 'pass')\n\n    def digest_response_handler(sock):\n        # Respond to initial GET with a challenge.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content.startswith(b\"GET / HTTP/1.1\")\n        sock.send(text_401)\n\n        # Verify we receive an Authorization header in response, then redirect.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert expected_digest in request_content\n        sock.send(text_302)\n\n        # Verify Authorization isn't sent to the redirected host,\n        # then send another challenge.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert b'Authorization:' not in request_content\n        sock.send(text_401)\n\n        # Verify Authorization is sent correctly again, and return 200 OK.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert expected_digest in request_content\n        sock.send(text_200)\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(digest_response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url, auth=auth)\n        # Verify server succeeded in authenticating.\n        assert r.status_code == 200\n        # Verify Authorization was sent in final request.\n        assert 'Authorization' in r.request.headers\n        assert r.request.headers['Authorization'].startswith('Digest ')\n        # Verify redirect happened as we expected.\n        assert r.history[0].status_code == 302\n        close_server.set()\n\n\ndef test_digestauth_401_only_sent_once():\n    \"\"\"Ensure we correctly respond to a 401 challenge once, and then\n    stop responding if challenged again.\n    \"\"\"\n    text_401 = (b'HTTP/1.1 401 UNAUTHORIZED\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'WWW-Authenticate: Digest nonce=\"6bf5d6e4da1ce66918800195d6b9130d\"'\n                b', opaque=\"372825293d1c26955496c80ed6426e9e\", '\n                b'realm=\"me@kennethreitz.com\", qop=auth\\r\\n\\r\\n')\n\n    expected_digest = (b'Authorization: Digest username=\"user\", '\n                       b'realm=\"me@kennethreitz.com\", '\n                       b'nonce=\"6bf5d6e4da1ce66918800195d6b9130d\", uri=\"/\"')\n\n    auth = requests.auth.HTTPDigestAuth('user', 'pass')\n\n    def digest_failed_response_handler(sock):\n        # Respond to initial GET with a challenge.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content.startswith(b\"GET / HTTP/1.1\")\n        sock.send(text_401)\n\n        # Verify we receive an Authorization header in response, then\n        # challenge again.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert expected_digest in request_content\n        sock.send(text_401)\n\n        # Verify the client didn't respond to second challenge.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content == b''\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(digest_failed_response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url, auth=auth)\n        # Verify server didn't authenticate us.\n        assert r.status_code == 401\n        assert r.history[0].status_code == 401\n        close_server.set()\n\n\ndef test_digestauth_only_on_4xx():\n    \"\"\"Ensure we only send digestauth on 4xx challenges.\n\n    See https://github.com/psf/requests/issues/3772.\n    \"\"\"\n    text_200_chal = (b'HTTP/1.1 200 OK\\r\\n'\n                     b'Content-Length: 0\\r\\n'\n                     b'WWW-Authenticate: Digest nonce=\"6bf5d6e4da1ce66918800195d6b9130d\"'\n                     b', opaque=\"372825293d1c26955496c80ed6426e9e\", '\n                     b'realm=\"me@kennethreitz.com\", qop=auth\\r\\n\\r\\n')\n\n    auth = requests.auth.HTTPDigestAuth('user', 'pass')\n\n    def digest_response_handler(sock):\n        # Respond to GET with a 200 containing www-authenticate header.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content.startswith(b\"GET / HTTP/1.1\")\n        sock.send(text_200_chal)\n\n        # Verify the client didn't respond with auth.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content == b''\n\n        return request_content\n\n"
+      },
+      {
+        "id": "78",
+        "text": "            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /final-url/\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/path/to/thing/#view=edit&token=hunter2'\n        r = requests.get(url)\n\n        assert r.status_code == 200\n        assert len(r.history) == 2\n        assert r.history[0].request.url == url\n\n        # Verify we haven't overwritten the location with our previous fragment.\n        assert r.history[1].request.url == f'http://{host}:{port}/get#relevant-section'\n        # Verify previous fragment is used and not the original.\n        assert r.url == f'http://{host}:{port}/final-url/#relevant-section'\n\n        close_server.set()\n\n\ndef test_json_decode_compatibility_for_alt_utf_encodings():\n\n    def response_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n'\n            b'Content-Length: 18\\r\\n\\r\\n'\n            b'\\xff\\xfe{\\x00\"\\x00K0\"\\x00=\\x00\"\\x00\\xab0\"\\x00\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url)\n    r.encoding = None\n    with pytest.raises(requests.exceptions.JSONDecodeError) as excinfo:\n        r.json()\n    assert isinstance(excinfo.value, requests.exceptions.RequestException)\n    assert isinstance(excinfo.value, JSONDecodeError)\n    assert r.text not in str(excinfo.value)\n"
+      }
+    ]
+  },
+  "final_context": "-----Entities-----\nid|entity|description|number of relationships\n248|HTTP RESPONSE|An HTTP response is the server-produced result represented by the Response class, including status code, headers, URL, cookies, content, and timing information.|1\n365|HTTP/1.1 200 OK|“HTTP/1.1 200 OK” represents a successful HTTP response from the local test server. It is returned after redirect processing and is also used for an alternate-encoding JSON response. Depending on the request context, the response may contain an empty body or an alternate-encoding JSON payload.|5\n522|HTTP ERROR TEST|The HTTP error test verifies HTTPError response handling and message behavior)<|2\n95|HTTP ERROR|HTTP ERROR is an error event raised by the Requests library when an HTTP response has an unsuccessful client-error or server-error status code. It is triggered by `Response.raise_for_status()` to indicate that the response did not complete successfully.|2\n394|HTTP 200 RESPONSE|Successful HTTP responses returned by the local test servers after authentication, redirect, or fragment behavior is exercised>|3\n291|INFORMATIONAL RESPONSES|Informational responses are the 1xx HTTP status-code category, including Continue, Switching Protocols, Processing, Early Hints, and Checkpoint>|1\n12|RESPONSE|The `RESPONSE` entity is the `Response` Python class in the Requests library, representing the HTTP result returned by a server after a request or prepared request is sent. It contains the originating request and response metadata, including the status code, URL, headers, cookies, encoding, body content, raw response, connection, and elapsed time. The `Response` object supports content access and decoding, iteration over response data, streaming, serialization, and context-manager behavior. It is also used during redirect handling to inspect response status codes and provides mechanisms for evaluating status behavior and raising errors for unsuccessful HTTP responses.|28\n351|INCOMPLETE CHUNKED RESPONSE HANDLER|A socket response-handler event that sends an HTTP 200 response declaring chunked transfer encoding but never provides valid terminating chunks, allowing the test to verify error handling|1\n517|HTTPERROR|HTTPError is a Requests exception that can contain an associated Response object)<|1\n436|HTTP 200 OK HEAD TEST|A test event that sends an HTTP HEAD request through Requests to the httpbin get endpoint and verifies that the response status code is 200.|3\n397|HTTP/1.1 302 FOUND|HTTP redirect response sent by the local test server with an empty body and a Location header pointing to the final URL|3\n22|HTTP|HTTP is both the application-layer network protocol used for communication between clients, servers, local response servers, and the httpbin testing service, and a Python standard-library package that supplies cookie- and HTTP-related compatibility imports. It is used to validate status codes, response headers, content lengths, and response bodies, and it underlies documented `Request`, `Session`, and `PreparedRequest` operations. Requests exercises HTTP through standard methods including GET, HEAD, POST, PUT, PATCH, and OPTIONS, as well as custom verbs. HTTP support also includes transport adapters, configurable request handling, proxy usage, and standard response processing.|3\n290|HTTP STATUS CODES|HTTP status codes are standardized numerical responses representing informational results, successful requests, redirections, client errors, and server errors>|5\n352|MULTIPLE CONTENT LENGTH RESPONSE HANDLER|A socket response-handler event that returns an HTTP response containing conflicting Content-Length headers and invalidates the response for header-validation testing|1\n505|HTTPEXCEPTION|HTTPError is the Requests exception raised by Response.raise_for_status for an unsuccessful HTTP status|2\n292|REDIRECTION RESPONSES|Redirection responses are the 3xx HTTP status-code category, including Multiple Choices, Moved Permanently, Found, Not Modified, Use Proxy, Temporary Redirect, and Permanent Redirect>|1\n577|TEST_RESPONSE_WITHOUT_RELEASE_CONN|A test that verifies Response.close works with a raw object that lacks a release_conn method|2\n\n-----Relationships-----\nid|source|target|description|weight|links\n351|RESPONSE|HTTP ERROR|Response.ok calls raise_for_status and catches HTTPError to return False for error responses.|9.0|2\n346|RESPONSE|HTTP RESPONSE|The Response class represents an HTTP response and exposes its status, headers, content, URL, cookies, and timing information.|10.0|2\n825|HTTPERROR|RESPONSE|HTTPError can store an associated Response object|1.0|1\n291|REQUESTS|RESPONSE|REQUESTS is a Python HTTP library that defines and uses the RESPONSE object to represent the results of HTTP operations. When REQUESTS sends an HTTP request, it returns a RESPONSE instance containing the received HTTP result. RESPONSE exposes the response content, status information, timing data, streaming capabilities, and serialization behavior. REQUESTS also provides a hooks system that supports a response event, allowing generated RESPONSE objects to be processed or customized after requests are completed.|28.0|6\n589|REQUESTS|HTTP/1.1 200 OK|Requests receives the final successful response and the alternate-encoding response|8.0|6\n588|REQUESTS|HTTP/1.1 302 FOUND|Requests receives and follows the HTTP 302 redirect response|8.0|6\n665|REQUESTS|HTTP 200 OK HEAD TEST|The test uses Requests to send the HEAD request and inspect its status code.|9.0|6\n831|HTTP ERROR TEST|REQUESTS|The HTTP error test verifies exception behavior provided by Requests|1.0|6\n133|REQUESTS|HTTP ERROR|Requests provides `Response.raise_for_status`, which raises an `HTTPError` when an HTTP response is unsuccessful, specifically when its status code falls within the 400–599 range.|18.0|6\n664|PYTEST|HTTP 200 OK HEAD TEST|Pytest executes the HTTP HEAD status-code test.|9.0|2\n844|HTTP ERROR TEST|PYTEST|Pytest assertions validate HTTPError behavior and response association|1.0|2\n587|SERVER|HTTP/1.1 200 OK|The local test server sends HTTP 200 success responses|9.0|2\n586|SERVER|HTTP/1.1 302 FOUND|The local test server sends the HTTP 302 redirect response|9.0|2\n536|HTTP DIGEST AUTHENTICATION|HTTP/1.1 200 OK|The authentication flow ends with a 200 OK response after the client successfully authenticates.|8.0|2\n535|HTTP DIGEST AUTHENTICATION|HTTP/1.1 302 FOUND|The Digest authentication flow is tested across a 302 redirect to ensure credentials are not leaked to the redirected host.|8.0|2\n666|HTTPBIN|HTTP 200 OK HEAD TEST|The test sends the HEAD request to an httpbin endpoint.|8.0|1\n202|HTTPADAPTER|RESPONSE|HTTPAdapter creates and populates Response objects from urllib3 responses, including status, headers, encoding, cookies, and connection information.|10.0|1\n13|RESPONSE|REQUEST|A Response contains the Request object that originally generated it.|10.0|1\n350|RESPONSE|SESSION|The Response documentation references Session.resolve_redirects as the component that processes redirect chains.|7.0|1\n12|REQUEST|RESPONSE|A REQUEST is sent to a server and generates a RESPONSE containing the returned information. The RESPONSE can then be processed by the Requests hooks system.|19.0|1\n396|SESSION|RESPONSE|SESSION sends prepared requests and receives or returns RESPONSE objects. These responses may trigger redirect processing, and their status codes and request metadata can be inspected.|18.0|1\n14|RESPONSE|PREPAREDREQUEST|`RESPONSE` represents the result of an API or Session call and includes a `request` attribute containing the `PREPAREDREQUEST` used for that call. When redirects occur, `RESPONSE` exposes the next `PREPAREDREQUEST` in the redirect chain through its `next` property.|19.0|1\n399|PREPAREDREQUEST|RESPONSE|A PreparedRequest is sent to obtain an HTTP Response|8.0|1\n204|RESPONSE|CASEINSENSITIVEDICT|Response stores its HTTP headers in a CaseInsensitiveDict so header names can be accessed without regard to case.|9.0|1\n348|RESPONSE|HTTP REDIRECT|Response detects redirects through its is_redirect and is_permanent_redirect properties and tracks redirect history.|9.0|1\n798|RESPONSE|STRINGIO|A StringIO stream is assigned as the raw body of a Response to test response iteration|8.0|1\n358|RESPONSE|CHARACTER ENCODING DETECTION|A Response uses Chardet or Charset-normalizer to determine apparent encoding when no explicit encoding is available.|9.0|1\n359|RESPONSE|UNICODE DECODING|A Response decodes byte content into text using its declared or detected encoding.|9.0|1\n820|TESTREQUESTANDRESPONSEAREPICKLEABLE|RESPONSE|The test verifies that a Response and its associated request survive pickle serialization|9.0|1\n347|RESPONSE|PREPARED REQUEST|The Response request attribute contains the PreparedRequest associated with the response.|9.0|1\n357|RESPONSE|STREAMED RESPONSE READING|The Response object incrementally reads raw content through iter_content and iter_lines.|9.0|1\n292|HOOK|RESPONSE|A hook receives response data, may process it, and can return updated response data.|9.0|1\n294|HOOKS|RESPONSE|The hooks system supports response as its only currently defined event and maintains its associated hook list.|1.0|1\n813|TESTEMPTYRESPONSEHASCONTENTNONE|RESPONSE|The test creates a Response and verifies that its content is None|9.0|1\n814|TESTRESPONSEISITERABLE|RESPONSE|The test assigns a raw stream to a Response and verifies that the response is iterable|9.0|1\n815|TESTRESPONSEDECODEUNICODE|RESPONSE|The test verifies that Response.iter_content returns strings when decoding is enabled|9.0|1\n817|TESTRESPONSECHUNKSIZETYPE|RESPONSE|The test verifies Response.iter_content behavior for valid and invalid chunk-size arguments|9.0|1\n818|TESTITERCONTENTWRAPSEXCEPTIONS|RESPONSE|The parametrized test invokes Response.iter_content and checks translated exceptions for several urllib3 failures|9.0|1\n352|RESPONSE|CASE-INSENSITIVE DICTIONARY|Response stores its HTTP headers in a CaseInsensitiveDict instance.|9.0|1\n353|RESPONSE|COOKIE JAR|Response stores server-provided cookies in a CookieJar created from a dictionary.|8.0|1\n355|RESPONSE|PERMANENT REDIRECT|A Response is identified as a permanent redirect when it has a Location header and a permanent-redirect status code.|9.0|1\n356|RESPONSE|REDIRECT CHAIN|A Response can reference the next PreparedRequest in a redirect chain.|9.0|1\n799|RESPONSE|BYTESIO|A BytesIO stream is assigned as the raw body of a Response to test streaming and content chunking|8.0|1\n570|TEST REDIRECT RFC1808 TO NON-ASCII LOCATION|HTTP 200 RESPONSE|The test asserts that the final redirected response has status code 200|8.0|1\n515|CONSUME SOCKET CONTENT|INCOMPLETE CHUNKED RESPONSE HANDLER|The incomplete-response handler uses consume_socket_content before sending the malformed response|8.0|1\n550|DIGESTAUTH REDIRECT TEST|HTTP/1.1 200 OK|The redirect test requires the final authenticated response to have status code 200.|10.0|1\n572|REDIRECT RESPONSE HANDLER|HTTP 200 RESPONSE|The handler sends a final 200 OK response after consuming the redirected request|8.0|1\n579|RESPONSE HANDLER|HTTP 200 RESPONSE|The handler sends a 200 OK response after the redirected request reaches the final URL|8.0|1\n415|INFORMATIONAL RESPONSES|HTTP STATUS CODES|Informational responses are the 1xx category of HTTP status codes|10.0|1\n552|DIGESTAUTH 4XX TEST|HTTP/1.1 200 OK|The 4xx-specific test places a Digest challenge on a 200 response and verifies that no authentication response is sent.|10.0|1\n\n-----Sources-----\nid|source|text\n48|src/requests/models.py:L635-L790|\"        hooks = hooks or []\n        for event in hooks:\n            self.register_hook(event, hooks[event])\n\n\nclass Response:\n    \"\"\"\"\"\"The :class:`Response <Response>` object, which contains a\n    server's response to an HTTP request.\n    \"\"\"\"\"\"\n\n    __attrs__ = [\n        \"\"_content\"\",\n        \"\"status_code\"\",\n        \"\"headers\"\",\n        \"\"url\"\",\n        \"\"history\"\",\n        \"\"encoding\"\",\n        \"\"reason\"\",\n        \"\"cookies\"\",\n        \"\"elapsed\"\",\n        \"\"request\"\",\n    ]\n\n    def __init__(self):\n        self._content = False\n        self._content_consumed = False\n        self._next = None\n\n        #: Integer Code of responded HTTP Status, e.g. 404 or 200.\n        self.status_code = None\n\n        #: Case-insensitive Dictionary of Response Headers.\n        #: For example, ``headers['content-encoding']`` will return the\n        #: value of a ``'Content-Encoding'`` response header.\n        self.headers = CaseInsensitiveDict()\n\n        #: File-like object representation of response (for advanced usage).\n        #: Use of ``raw`` requires that ``stream=True`` be set on the request.\n        #: This requirement does not apply for use internally to Requests.\n        self.raw = None\n\n        #: Final URL location of Response.\n        self.url = None\n\n        #: Encoding to decode with when accessing r.text.\n        self.encoding = None\n\n        #: A list of :class:`Response <Response>` objects from\n        #: the history of the Request. Any redirect responses will end\n        #: up here. The list is sorted from the oldest to the most recent request.\n        self.history = []\n\n        #: Textual reason of responded HTTP Status, e.g. \"\"Not Found\"\" or \"\"OK\"\".\n        self.reason = None\n\n        #: A CookieJar of Cookies the server sent back.\n        self.cookies = cookiejar_from_dict({})\n\n        #: The amount of time elapsed between sending the request\n        #: and the arrival of the response (as a timedelta).\n        #: This property specifically measures the time taken between sending\n        #: the first byte of the request and finishing parsing the headers. It\n        #: is therefore unaffected by consuming the response content or the\n        #: value of the ``stream`` keyword argument.\n        self.elapsed = datetime.timedelta(0)\n\n        #: The :class:`PreparedRequest <PreparedRequest>` object to which this\n        #: is a response.\n        self.request = None\n\n    def __enter__(self):\n        return self\n\n    def __exit__(self, *args):\n        self.close()\n\n    def __getstate__(self):\n        # Consume everything; accessing the content attribute makes\n        # sure the content has been fully read.\n        if not self._content_consumed:\n            self.content\n\n        return {attr: getattr(self, attr, None) for attr in self.__attrs__}\n\n    def __setstate__(self, state):\n        for name, value in state.items():\n            setattr(self, name, value)\n\n        # pickled objects do not have .raw\n        setattr(self, \"\"_content_consumed\"\", True)\n        setattr(self, \"\"raw\"\", None)\n\n    def __repr__(self):\n        return f\"\"<Response [{self.status_code}]>\"\"\n\n    def __bool__(self):\n        \"\"\"\"\"\"Returns True if :attr:`status_code` is less than 400.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code, is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\"\"\"\n        return self.ok\n\n    def __nonzero__(self):\n        \"\"\"\"\"\"Returns True if :attr:`status_code` is less than 400.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code, is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\"\"\"\n        return self.ok\n\n    def __iter__(self):\n        \"\"\"\"\"\"Allows you to use a response as an iterator.\"\"\"\"\"\"\n        return self.iter_content(128)\n\n    @property\n    def ok(self):\n        \"\"\"\"\"\"Returns True if :attr:`status_code` is less than 400, False if not.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\"\"\"\n        try:\n            self.raise_for_status()\n        except HTTPError:\n            return False\n        return True\n\n    @property\n    def is_redirect(self):\n        \"\"\"\"\"\"True if this Response is a well-formed HTTP redirect that could have\n        been processed automatically (by :meth:`Session.resolve_redirects`).\n        \"\"\"\"\"\"\n        return \"\"location\"\" in self.headers and self.status_code in REDIRECT_STATI\n\n    @property\n    def is_permanent_redirect(self):\n        \"\"\"\"\"\"True if this Response one of the permanent versions of redirect.\"\"\"\"\"\"\n        return \"\"location\"\" in self.headers and self.status_code in (\n            codes.moved_permanently,\n            codes.permanent_redirect,\n        )\n\n    @property\n    def next(self):\n        \"\"\"\"\"\"Returns a PreparedRequest for the next request in a redirect chain, if there is one.\"\"\"\"\"\"\n        return self._next\n\n    @property\n    def apparent_encoding(self):\n\"\n76|tests/test_lowlevel.py:L138-L262|\"\n    text_302 = (b'HTTP/1.1 302 FOUND\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'Location: /\\r\\n\\r\\n')\n\n    text_200 = (b'HTTP/1.1 200 OK\\r\\n'\n                b'Content-Length: 0\\r\\n\\r\\n')\n\n    expected_digest = (b'Authorization: Digest username=\"\"user\"\", '\n                       b'realm=\"\"me@kennethreitz.com\"\", '\n                       b'nonce=\"\"6bf5d6e4da1ce66918800195d6b9130d\"\", uri=\"\"/\"\"')\n\n    auth = requests.auth.HTTPDigestAuth('user', 'pass')\n\n    def digest_response_handler(sock):\n        # Respond to initial GET with a challenge.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content.startswith(b\"\"GET / HTTP/1.1\"\")\n        sock.send(text_401)\n\n        # Verify we receive an Authorization header in response, then redirect.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert expected_digest in request_content\n        sock.send(text_302)\n\n        # Verify Authorization isn't sent to the redirected host,\n        # then send another challenge.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert b'Authorization:' not in request_content\n        sock.send(text_401)\n\n        # Verify Authorization is sent correctly again, and return 200 OK.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert expected_digest in request_content\n        sock.send(text_200)\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(digest_response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url, auth=auth)\n        # Verify server succeeded in authenticating.\n        assert r.status_code == 200\n        # Verify Authorization was sent in final request.\n        assert 'Authorization' in r.request.headers\n        assert r.request.headers['Authorization'].startswith('Digest ')\n        # Verify redirect happened as we expected.\n        assert r.history[0].status_code == 302\n        close_server.set()\n\n\ndef test_digestauth_401_only_sent_once():\n    \"\"\"\"\"\"Ensure we correctly respond to a 401 challenge once, and then\n    stop responding if challenged again.\n    \"\"\"\"\"\"\n    text_401 = (b'HTTP/1.1 401 UNAUTHORIZED\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'WWW-Authenticate: Digest nonce=\"\"6bf5d6e4da1ce66918800195d6b9130d\"\"'\n                b', opaque=\"\"372825293d1c26955496c80ed6426e9e\"\", '\n                b'realm=\"\"me@kennethreitz.com\"\", qop=auth\\r\\n\\r\\n')\n\n    expected_digest = (b'Authorization: Digest username=\"\"user\"\", '\n                       b'realm=\"\"me@kennethreitz.com\"\", '\n                       b'nonce=\"\"6bf5d6e4da1ce66918800195d6b9130d\"\", uri=\"\"/\"\"')\n\n    auth = requests.auth.HTTPDigestAuth('user', 'pass')\n\n    def digest_failed_response_handler(sock):\n        # Respond to initial GET with a challenge.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content.startswith(b\"\"GET / HTTP/1.1\"\")\n        sock.send(text_401)\n\n        # Verify we receive an Authorization header in response, then\n        # challenge again.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert expected_digest in request_content\n        sock.send(text_401)\n\n        # Verify the client didn't respond to second challenge.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content == b''\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(digest_failed_response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url, auth=auth)\n        # Verify server didn't authenticate us.\n        assert r.status_code == 401\n        assert r.history[0].status_code == 401\n        close_server.set()\n\n\ndef test_digestauth_only_on_4xx():\n    \"\"\"\"\"\"Ensure we only send digestauth on 4xx challenges.\n\n    See https://github.com/psf/requests/issues/3772.\n    \"\"\"\"\"\"\n    text_200_chal = (b'HTTP/1.1 200 OK\\r\\n'\n                     b'Content-Length: 0\\r\\n'\n                     b'WWW-Authenticate: Digest nonce=\"\"6bf5d6e4da1ce66918800195d6b9130d\"\"'\n                     b', opaque=\"\"372825293d1c26955496c80ed6426e9e\"\", '\n                     b'realm=\"\"me@kennethreitz.com\"\", qop=auth\\r\\n\\r\\n')\n\n    auth = requests.auth.HTTPDigestAuth('user', 'pass')\n\n    def digest_response_handler(sock):\n        # Respond to GET with a 200 containing www-authenticate header.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content.startswith(b\"\"GET / HTTP/1.1\"\")\n        sock.send(text_200_chal)\n\n        # Verify the client didn't respond with auth.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content == b''\n\n        return request_content\n\n\"\n78|tests/test_lowlevel.py:L379-L428|\"            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /final-url/\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/path/to/thing/#view=edit&token=hunter2'\n        r = requests.get(url)\n\n        assert r.status_code == 200\n        assert len(r.history) == 2\n        assert r.history[0].request.url == url\n\n        # Verify we haven't overwritten the location with our previous fragment.\n        assert r.history[1].request.url == f'http://{host}:{port}/get#relevant-section'\n        # Verify previous fragment is used and not the original.\n        assert r.url == f'http://{host}:{port}/final-url/#relevant-section'\n\n        close_server.set()\n\n\ndef test_json_decode_compatibility_for_alt_utf_encodings():\n\n    def response_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n'\n            b'Content-Length: 18\\r\\n\\r\\n'\n            b'\\xff\\xfe{\\x00\"\"\\x00K0\"\"\\x00=\\x00\"\"\\x00\\xab0\"\"\\x00\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url)\n    r.encoding = None\n    with pytest.raises(requests.exceptions.JSONDecodeError) as excinfo:\n        r.json()\n    assert isinstance(excinfo.value, requests.exceptions.RequestException)\n    assert isinstance(excinfo.value, JSONDecodeError)\n    assert r.text not in str(excinfo.value)\n\"\n",
+  "final_tables": [
+    {
+      "name": "entities",
+      "columns": [
+        "id",
+        "entity",
+        "description",
+        "number of relationships"
+      ],
+      "rows": [
+        {
+          "id": "248",
+          "entity": "HTTP RESPONSE",
+          "description": "An HTTP response is the server-produced result represented by the Response class, including status code, headers, URL, cookies, content, and timing information.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "365",
+          "entity": "HTTP/1.1 200 OK",
+          "description": "“HTTP/1.1 200 OK” represents a successful HTTP response from the local test server. It is returned after redirect processing and is also used for an alternate-encoding JSON response. Depending on the request context, the response may contain an empty body or an alternate-encoding JSON payload.",
+          "number of relationships": "5"
+        },
+        {
+          "id": "522",
+          "entity": "HTTP ERROR TEST",
+          "description": "The HTTP error test verifies HTTPError response handling and message behavior)<",
+          "number of relationships": "2"
+        },
+        {
+          "id": "95",
+          "entity": "HTTP ERROR",
+          "description": "HTTP ERROR is an error event raised by the Requests library when an HTTP response has an unsuccessful client-error or server-error status code. It is triggered by `Response.raise_for_status()` to indicate that the response did not complete successfully.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "394",
+          "entity": "HTTP 200 RESPONSE",
+          "description": "Successful HTTP responses returned by the local test servers after authentication, redirect, or fragment behavior is exercised>",
+          "number of relationships": "3"
+        },
+        {
+          "id": "291",
+          "entity": "INFORMATIONAL RESPONSES",
+          "description": "Informational responses are the 1xx HTTP status-code category, including Continue, Switching Protocols, Processing, Early Hints, and Checkpoint>",
+          "number of relationships": "1"
+        },
+        {
+          "id": "12",
+          "entity": "RESPONSE",
+          "description": "The `RESPONSE` entity is the `Response` Python class in the Requests library, representing the HTTP result returned by a server after a request or prepared request is sent. It contains the originating request and response metadata, including the status code, URL, headers, cookies, encoding, body content, raw response, connection, and elapsed time. The `Response` object supports content access and decoding, iteration over response data, streaming, serialization, and context-manager behavior. It is also used during redirect handling to inspect response status codes and provides mechanisms for evaluating status behavior and raising errors for unsuccessful HTTP responses.",
+          "number of relationships": "28"
+        },
+        {
+          "id": "351",
+          "entity": "INCOMPLETE CHUNKED RESPONSE HANDLER",
+          "description": "A socket response-handler event that sends an HTTP 200 response declaring chunked transfer encoding but never provides valid terminating chunks, allowing the test to verify error handling",
+          "number of relationships": "1"
+        },
+        {
+          "id": "517",
+          "entity": "HTTPERROR",
+          "description": "HTTPError is a Requests exception that can contain an associated Response object)<",
+          "number of relationships": "1"
+        },
+        {
+          "id": "436",
+          "entity": "HTTP 200 OK HEAD TEST",
+          "description": "A test event that sends an HTTP HEAD request through Requests to the httpbin get endpoint and verifies that the response status code is 200.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "397",
+          "entity": "HTTP/1.1 302 FOUND",
+          "description": "HTTP redirect response sent by the local test server with an empty body and a Location header pointing to the final URL",
+          "number of relationships": "3"
+        },
+        {
+          "id": "22",
+          "entity": "HTTP",
+          "description": "HTTP is both the application-layer network protocol used for communication between clients, servers, local response servers, and the httpbin testing service, and a Python standard-library package that supplies cookie- and HTTP-related compatibility imports. It is used to validate status codes, response headers, content lengths, and response bodies, and it underlies documented `Request`, `Session`, and `PreparedRequest` operations. Requests exercises HTTP through standard methods including GET, HEAD, POST, PUT, PATCH, and OPTIONS, as well as custom verbs. HTTP support also includes transport adapters, configurable request handling, proxy usage, and standard response processing.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "290",
+          "entity": "HTTP STATUS CODES",
+          "description": "HTTP status codes are standardized numerical responses representing informational results, successful requests, redirections, client errors, and server errors>",
+          "number of relationships": "5"
+        },
+        {
+          "id": "352",
+          "entity": "MULTIPLE CONTENT LENGTH RESPONSE HANDLER",
+          "description": "A socket response-handler event that returns an HTTP response containing conflicting Content-Length headers and invalidates the response for header-validation testing",
+          "number of relationships": "1"
+        },
+        {
+          "id": "505",
+          "entity": "HTTPEXCEPTION",
+          "description": "HTTPError is the Requests exception raised by Response.raise_for_status for an unsuccessful HTTP status",
+          "number of relationships": "2"
+        },
+        {
+          "id": "292",
+          "entity": "REDIRECTION RESPONSES",
+          "description": "Redirection responses are the 3xx HTTP status-code category, including Multiple Choices, Moved Permanently, Found, Not Modified, Use Proxy, Temporary Redirect, and Permanent Redirect>",
+          "number of relationships": "1"
+        },
+        {
+          "id": "577",
+          "entity": "TEST_RESPONSE_WITHOUT_RELEASE_CONN",
+          "description": "A test that verifies Response.close works with a raw object that lacks a release_conn method",
+          "number of relationships": "2"
+        }
+      ]
+    },
+    {
+      "name": "relationships",
+      "columns": [
+        "id",
+        "source",
+        "target",
+        "description",
+        "weight",
+        "links"
+      ],
+      "rows": [
+        {
+          "id": "351",
+          "source": "RESPONSE",
+          "target": "HTTP ERROR",
+          "description": "Response.ok calls raise_for_status and catches HTTPError to return False for error responses.",
+          "weight": "9.0",
+          "links": "2"
+        },
+        {
+          "id": "346",
+          "source": "RESPONSE",
+          "target": "HTTP RESPONSE",
+          "description": "The Response class represents an HTTP response and exposes its status, headers, content, URL, cookies, and timing information.",
+          "weight": "10.0",
+          "links": "2"
+        },
+        {
+          "id": "825",
+          "source": "HTTPERROR",
+          "target": "RESPONSE",
+          "description": "HTTPError can store an associated Response object",
+          "weight": "1.0",
+          "links": "1"
+        },
+        {
+          "id": "291",
+          "source": "REQUESTS",
+          "target": "RESPONSE",
+          "description": "REQUESTS is a Python HTTP library that defines and uses the RESPONSE object to represent the results of HTTP operations. When REQUESTS sends an HTTP request, it returns a RESPONSE instance containing the received HTTP result. RESPONSE exposes the response content, status information, timing data, streaming capabilities, and serialization behavior. REQUESTS also provides a hooks system that supports a response event, allowing generated RESPONSE objects to be processed or customized after requests are completed.",
+          "weight": "28.0",
+          "links": "6"
+        },
+        {
+          "id": "589",
+          "source": "REQUESTS",
+          "target": "HTTP/1.1 200 OK",
+          "description": "Requests receives the final successful response and the alternate-encoding response",
+          "weight": "8.0",
+          "links": "6"
+        },
+        {
+          "id": "588",
+          "source": "REQUESTS",
+          "target": "HTTP/1.1 302 FOUND",
+          "description": "Requests receives and follows the HTTP 302 redirect response",
+          "weight": "8.0",
+          "links": "6"
+        },
+        {
+          "id": "665",
+          "source": "REQUESTS",
+          "target": "HTTP 200 OK HEAD TEST",
+          "description": "The test uses Requests to send the HEAD request and inspect its status code.",
+          "weight": "9.0",
+          "links": "6"
+        },
+        {
+          "id": "831",
+          "source": "HTTP ERROR TEST",
+          "target": "REQUESTS",
+          "description": "The HTTP error test verifies exception behavior provided by Requests",
+          "weight": "1.0",
+          "links": "6"
+        },
+        {
+          "id": "133",
+          "source": "REQUESTS",
+          "target": "HTTP ERROR",
+          "description": "Requests provides `Response.raise_for_status`, which raises an `HTTPError` when an HTTP response is unsuccessful, specifically when its status code falls within the 400–599 range.",
+          "weight": "18.0",
+          "links": "6"
+        },
+        {
+          "id": "664",
+          "source": "PYTEST",
+          "target": "HTTP 200 OK HEAD TEST",
+          "description": "Pytest executes the HTTP HEAD status-code test.",
+          "weight": "9.0",
+          "links": "2"
+        },
+        {
+          "id": "844",
+          "source": "HTTP ERROR TEST",
+          "target": "PYTEST",
+          "description": "Pytest assertions validate HTTPError behavior and response association",
+          "weight": "1.0",
+          "links": "2"
+        },
+        {
+          "id": "587",
+          "source": "SERVER",
+          "target": "HTTP/1.1 200 OK",
+          "description": "The local test server sends HTTP 200 success responses",
+          "weight": "9.0",
+          "links": "2"
+        },
+        {
+          "id": "586",
+          "source": "SERVER",
+          "target": "HTTP/1.1 302 FOUND",
+          "description": "The local test server sends the HTTP 302 redirect response",
+          "weight": "9.0",
+          "links": "2"
+        },
+        {
+          "id": "536",
+          "source": "HTTP DIGEST AUTHENTICATION",
+          "target": "HTTP/1.1 200 OK",
+          "description": "The authentication flow ends with a 200 OK response after the client successfully authenticates.",
+          "weight": "8.0",
+          "links": "2"
+        },
+        {
+          "id": "535",
+          "source": "HTTP DIGEST AUTHENTICATION",
+          "target": "HTTP/1.1 302 FOUND",
+          "description": "The Digest authentication flow is tested across a 302 redirect to ensure credentials are not leaked to the redirected host.",
+          "weight": "8.0",
+          "links": "2"
+        },
+        {
+          "id": "666",
+          "source": "HTTPBIN",
+          "target": "HTTP 200 OK HEAD TEST",
+          "description": "The test sends the HEAD request to an httpbin endpoint.",
+          "weight": "8.0",
+          "links": "1"
+        },
+        {
+          "id": "202",
+          "source": "HTTPADAPTER",
+          "target": "RESPONSE",
+          "description": "HTTPAdapter creates and populates Response objects from urllib3 responses, including status, headers, encoding, cookies, and connection information.",
+          "weight": "10.0",
+          "links": "1"
+        },
+        {
+          "id": "13",
+          "source": "RESPONSE",
+          "target": "REQUEST",
+          "description": "A Response contains the Request object that originally generated it.",
+          "weight": "10.0",
+          "links": "1"
+        },
+        {
+          "id": "350",
+          "source": "RESPONSE",
+          "target": "SESSION",
+          "description": "The Response documentation references Session.resolve_redirects as the component that processes redirect chains.",
+          "weight": "7.0",
+          "links": "1"
+        },
+        {
+          "id": "12",
+          "source": "REQUEST",
+          "target": "RESPONSE",
+          "description": "A REQUEST is sent to a server and generates a RESPONSE containing the returned information. The RESPONSE can then be processed by the Requests hooks system.",
+          "weight": "19.0",
+          "links": "1"
+        },
+        {
+          "id": "396",
+          "source": "SESSION",
+          "target": "RESPONSE",
+          "description": "SESSION sends prepared requests and receives or returns RESPONSE objects. These responses may trigger redirect processing, and their status codes and request metadata can be inspected.",
+          "weight": "18.0",
+          "links": "1"
+        },
+        {
+          "id": "14",
+          "source": "RESPONSE",
+          "target": "PREPAREDREQUEST",
+          "description": "`RESPONSE` represents the result of an API or Session call and includes a `request` attribute containing the `PREPAREDREQUEST` used for that call. When redirects occur, `RESPONSE` exposes the next `PREPAREDREQUEST` in the redirect chain through its `next` property.",
+          "weight": "19.0",
+          "links": "1"
+        },
+        {
+          "id": "399",
+          "source": "PREPAREDREQUEST",
+          "target": "RESPONSE",
+          "description": "A PreparedRequest is sent to obtain an HTTP Response",
+          "weight": "8.0",
+          "links": "1"
+        },
+        {
+          "id": "204",
+          "source": "RESPONSE",
+          "target": "CASEINSENSITIVEDICT",
+          "description": "Response stores its HTTP headers in a CaseInsensitiveDict so header names can be accessed without regard to case.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "348",
+          "source": "RESPONSE",
+          "target": "HTTP REDIRECT",
+          "description": "Response detects redirects through its is_redirect and is_permanent_redirect properties and tracks redirect history.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "798",
+          "source": "RESPONSE",
+          "target": "STRINGIO",
+          "description": "A StringIO stream is assigned as the raw body of a Response to test response iteration",
+          "weight": "8.0",
+          "links": "1"
+        },
+        {
+          "id": "358",
+          "source": "RESPONSE",
+          "target": "CHARACTER ENCODING DETECTION",
+          "description": "A Response uses Chardet or Charset-normalizer to determine apparent encoding when no explicit encoding is available.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "359",
+          "source": "RESPONSE",
+          "target": "UNICODE DECODING",
+          "description": "A Response decodes byte content into text using its declared or detected encoding.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "820",
+          "source": "TESTREQUESTANDRESPONSEAREPICKLEABLE",
+          "target": "RESPONSE",
+          "description": "The test verifies that a Response and its associated request survive pickle serialization",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "347",
+          "source": "RESPONSE",
+          "target": "PREPARED REQUEST",
+          "description": "The Response request attribute contains the PreparedRequest associated with the response.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "357",
+          "source": "RESPONSE",
+          "target": "STREAMED RESPONSE READING",
+          "description": "The Response object incrementally reads raw content through iter_content and iter_lines.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "292",
+          "source": "HOOK",
+          "target": "RESPONSE",
+          "description": "A hook receives response data, may process it, and can return updated response data.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "294",
+          "source": "HOOKS",
+          "target": "RESPONSE",
+          "description": "The hooks system supports response as its only currently defined event and maintains its associated hook list.",
+          "weight": "1.0",
+          "links": "1"
+        },
+        {
+          "id": "813",
+          "source": "TESTEMPTYRESPONSEHASCONTENTNONE",
+          "target": "RESPONSE",
+          "description": "The test creates a Response and verifies that its content is None",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "814",
+          "source": "TESTRESPONSEISITERABLE",
+          "target": "RESPONSE",
+          "description": "The test assigns a raw stream to a Response and verifies that the response is iterable",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "815",
+          "source": "TESTRESPONSEDECODEUNICODE",
+          "target": "RESPONSE",
+          "description": "The test verifies that Response.iter_content returns strings when decoding is enabled",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "817",
+          "source": "TESTRESPONSECHUNKSIZETYPE",
+          "target": "RESPONSE",
+          "description": "The test verifies Response.iter_content behavior for valid and invalid chunk-size arguments",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "818",
+          "source": "TESTITERCONTENTWRAPSEXCEPTIONS",
+          "target": "RESPONSE",
+          "description": "The parametrized test invokes Response.iter_content and checks translated exceptions for several urllib3 failures",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "352",
+          "source": "RESPONSE",
+          "target": "CASE-INSENSITIVE DICTIONARY",
+          "description": "Response stores its HTTP headers in a CaseInsensitiveDict instance.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "353",
+          "source": "RESPONSE",
+          "target": "COOKIE JAR",
+          "description": "Response stores server-provided cookies in a CookieJar created from a dictionary.",
+          "weight": "8.0",
+          "links": "1"
+        },
+        {
+          "id": "355",
+          "source": "RESPONSE",
+          "target": "PERMANENT REDIRECT",
+          "description": "A Response is identified as a permanent redirect when it has a Location header and a permanent-redirect status code.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "356",
+          "source": "RESPONSE",
+          "target": "REDIRECT CHAIN",
+          "description": "A Response can reference the next PreparedRequest in a redirect chain.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "799",
+          "source": "RESPONSE",
+          "target": "BYTESIO",
+          "description": "A BytesIO stream is assigned as the raw body of a Response to test streaming and content chunking",
+          "weight": "8.0",
+          "links": "1"
+        },
+        {
+          "id": "570",
+          "source": "TEST REDIRECT RFC1808 TO NON-ASCII LOCATION",
+          "target": "HTTP 200 RESPONSE",
+          "description": "The test asserts that the final redirected response has status code 200",
+          "weight": "8.0",
+          "links": "1"
+        },
+        {
+          "id": "515",
+          "source": "CONSUME SOCKET CONTENT",
+          "target": "INCOMPLETE CHUNKED RESPONSE HANDLER",
+          "description": "The incomplete-response handler uses consume_socket_content before sending the malformed response",
+          "weight": "8.0",
+          "links": "1"
+        },
+        {
+          "id": "550",
+          "source": "DIGESTAUTH REDIRECT TEST",
+          "target": "HTTP/1.1 200 OK",
+          "description": "The redirect test requires the final authenticated response to have status code 200.",
+          "weight": "10.0",
+          "links": "1"
+        },
+        {
+          "id": "572",
+          "source": "REDIRECT RESPONSE HANDLER",
+          "target": "HTTP 200 RESPONSE",
+          "description": "The handler sends a final 200 OK response after consuming the redirected request",
+          "weight": "8.0",
+          "links": "1"
+        },
+        {
+          "id": "579",
+          "source": "RESPONSE HANDLER",
+          "target": "HTTP 200 RESPONSE",
+          "description": "The handler sends a 200 OK response after the redirected request reaches the final URL",
+          "weight": "8.0",
+          "links": "1"
+        },
+        {
+          "id": "415",
+          "source": "INFORMATIONAL RESPONSES",
+          "target": "HTTP STATUS CODES",
+          "description": "Informational responses are the 1xx category of HTTP status codes",
+          "weight": "10.0",
+          "links": "1"
+        },
+        {
+          "id": "552",
+          "source": "DIGESTAUTH 4XX TEST",
+          "target": "HTTP/1.1 200 OK",
+          "description": "The 4xx-specific test places a Digest challenge on a 200 response and verifies that no authentication response is sent.",
+          "weight": "10.0",
+          "links": "1"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "columns": [
+        "id",
+        "source",
+        "text"
+      ],
+      "rows": [
+        {
+          "id": "48",
+          "text": "        hooks = hooks or []\n        for event in hooks:\n            self.register_hook(event, hooks[event])\n\n\nclass Response:\n    \"\"\"The :class:`Response <Response>` object, which contains a\n    server's response to an HTTP request.\n    \"\"\"\n\n    __attrs__ = [\n        \"_content\",\n        \"status_code\",\n        \"headers\",\n        \"url\",\n        \"history\",\n        \"encoding\",\n        \"reason\",\n        \"cookies\",\n        \"elapsed\",\n        \"request\",\n    ]\n\n    def __init__(self):\n        self._content = False\n        self._content_consumed = False\n        self._next = None\n\n        #: Integer Code of responded HTTP Status, e.g. 404 or 200.\n        self.status_code = None\n\n        #: Case-insensitive Dictionary of Response Headers.\n        #: For example, ``headers['content-encoding']`` will return the\n        #: value of a ``'Content-Encoding'`` response header.\n        self.headers = CaseInsensitiveDict()\n\n        #: File-like object representation of response (for advanced usage).\n        #: Use of ``raw`` requires that ``stream=True`` be set on the request.\n        #: This requirement does not apply for use internally to Requests.\n        self.raw = None\n\n        #: Final URL location of Response.\n        self.url = None\n\n        #: Encoding to decode with when accessing r.text.\n        self.encoding = None\n\n        #: A list of :class:`Response <Response>` objects from\n        #: the history of the Request. Any redirect responses will end\n        #: up here. The list is sorted from the oldest to the most recent request.\n        self.history = []\n\n        #: Textual reason of responded HTTP Status, e.g. \"Not Found\" or \"OK\".\n        self.reason = None\n\n        #: A CookieJar of Cookies the server sent back.\n        self.cookies = cookiejar_from_dict({})\n\n        #: The amount of time elapsed between sending the request\n        #: and the arrival of the response (as a timedelta).\n        #: This property specifically measures the time taken between sending\n        #: the first byte of the request and finishing parsing the headers. It\n        #: is therefore unaffected by consuming the response content or the\n        #: value of the ``stream`` keyword argument.\n        self.elapsed = datetime.timedelta(0)\n\n        #: The :class:`PreparedRequest <PreparedRequest>` object to which this\n        #: is a response.\n        self.request = None\n\n    def __enter__(self):\n        return self\n\n    def __exit__(self, *args):\n        self.close()\n\n    def __getstate__(self):\n        # Consume everything; accessing the content attribute makes\n        # sure the content has been fully read.\n        if not self._content_consumed:\n            self.content\n\n        return {attr: getattr(self, attr, None) for attr in self.__attrs__}\n\n    def __setstate__(self, state):\n        for name, value in state.items():\n            setattr(self, name, value)\n\n        # pickled objects do not have .raw\n        setattr(self, \"_content_consumed\", True)\n        setattr(self, \"raw\", None)\n\n    def __repr__(self):\n        return f\"<Response [{self.status_code}]>\"\n\n    def __bool__(self):\n        \"\"\"Returns True if :attr:`status_code` is less than 400.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code, is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\n        return self.ok\n\n    def __nonzero__(self):\n        \"\"\"Returns True if :attr:`status_code` is less than 400.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code, is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\n        return self.ok\n\n    def __iter__(self):\n        \"\"\"Allows you to use a response as an iterator.\"\"\"\n        return self.iter_content(128)\n\n    @property\n    def ok(self):\n        \"\"\"Returns True if :attr:`status_code` is less than 400, False if not.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\n        try:\n            self.raise_for_status()\n        except HTTPError:\n            return False\n        return True\n\n    @property\n    def is_redirect(self):\n        \"\"\"True if this Response is a well-formed HTTP redirect that could have\n        been processed automatically (by :meth:`Session.resolve_redirects`).\n        \"\"\"\n        return \"location\" in self.headers and self.status_code in REDIRECT_STATI\n\n    @property\n    def is_permanent_redirect(self):\n        \"\"\"True if this Response one of the permanent versions of redirect.\"\"\"\n        return \"location\" in self.headers and self.status_code in (\n            codes.moved_permanently,\n            codes.permanent_redirect,\n        )\n\n    @property\n    def next(self):\n        \"\"\"Returns a PreparedRequest for the next request in a redirect chain, if there is one.\"\"\"\n        return self._next\n\n    @property\n    def apparent_encoding(self):\n",
+          "source": "src/requests/models.py:L635-L790"
+        },
+        {
+          "id": "76",
+          "text": "\n    text_302 = (b'HTTP/1.1 302 FOUND\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'Location: /\\r\\n\\r\\n')\n\n    text_200 = (b'HTTP/1.1 200 OK\\r\\n'\n                b'Content-Length: 0\\r\\n\\r\\n')\n\n    expected_digest = (b'Authorization: Digest username=\"user\", '\n                       b'realm=\"me@kennethreitz.com\", '\n                       b'nonce=\"6bf5d6e4da1ce66918800195d6b9130d\", uri=\"/\"')\n\n    auth = requests.auth.HTTPDigestAuth('user', 'pass')\n\n    def digest_response_handler(sock):\n        # Respond to initial GET with a challenge.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content.startswith(b\"GET / HTTP/1.1\")\n        sock.send(text_401)\n\n        # Verify we receive an Authorization header in response, then redirect.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert expected_digest in request_content\n        sock.send(text_302)\n\n        # Verify Authorization isn't sent to the redirected host,\n        # then send another challenge.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert b'Authorization:' not in request_content\n        sock.send(text_401)\n\n        # Verify Authorization is sent correctly again, and return 200 OK.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert expected_digest in request_content\n        sock.send(text_200)\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(digest_response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url, auth=auth)\n        # Verify server succeeded in authenticating.\n        assert r.status_code == 200\n        # Verify Authorization was sent in final request.\n        assert 'Authorization' in r.request.headers\n        assert r.request.headers['Authorization'].startswith('Digest ')\n        # Verify redirect happened as we expected.\n        assert r.history[0].status_code == 302\n        close_server.set()\n\n\ndef test_digestauth_401_only_sent_once():\n    \"\"\"Ensure we correctly respond to a 401 challenge once, and then\n    stop responding if challenged again.\n    \"\"\"\n    text_401 = (b'HTTP/1.1 401 UNAUTHORIZED\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'WWW-Authenticate: Digest nonce=\"6bf5d6e4da1ce66918800195d6b9130d\"'\n                b', opaque=\"372825293d1c26955496c80ed6426e9e\", '\n                b'realm=\"me@kennethreitz.com\", qop=auth\\r\\n\\r\\n')\n\n    expected_digest = (b'Authorization: Digest username=\"user\", '\n                       b'realm=\"me@kennethreitz.com\", '\n                       b'nonce=\"6bf5d6e4da1ce66918800195d6b9130d\", uri=\"/\"')\n\n    auth = requests.auth.HTTPDigestAuth('user', 'pass')\n\n    def digest_failed_response_handler(sock):\n        # Respond to initial GET with a challenge.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content.startswith(b\"GET / HTTP/1.1\")\n        sock.send(text_401)\n\n        # Verify we receive an Authorization header in response, then\n        # challenge again.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert expected_digest in request_content\n        sock.send(text_401)\n\n        # Verify the client didn't respond to second challenge.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content == b''\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(digest_failed_response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url, auth=auth)\n        # Verify server didn't authenticate us.\n        assert r.status_code == 401\n        assert r.history[0].status_code == 401\n        close_server.set()\n\n\ndef test_digestauth_only_on_4xx():\n    \"\"\"Ensure we only send digestauth on 4xx challenges.\n\n    See https://github.com/psf/requests/issues/3772.\n    \"\"\"\n    text_200_chal = (b'HTTP/1.1 200 OK\\r\\n'\n                     b'Content-Length: 0\\r\\n'\n                     b'WWW-Authenticate: Digest nonce=\"6bf5d6e4da1ce66918800195d6b9130d\"'\n                     b', opaque=\"372825293d1c26955496c80ed6426e9e\", '\n                     b'realm=\"me@kennethreitz.com\", qop=auth\\r\\n\\r\\n')\n\n    auth = requests.auth.HTTPDigestAuth('user', 'pass')\n\n    def digest_response_handler(sock):\n        # Respond to GET with a 200 containing www-authenticate header.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content.startswith(b\"GET / HTTP/1.1\")\n        sock.send(text_200_chal)\n\n        # Verify the client didn't respond with auth.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content == b''\n\n        return request_content\n\n",
+          "source": "tests/test_lowlevel.py:L138-L262"
+        },
+        {
+          "id": "78",
+          "text": "            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /final-url/\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/path/to/thing/#view=edit&token=hunter2'\n        r = requests.get(url)\n\n        assert r.status_code == 200\n        assert len(r.history) == 2\n        assert r.history[0].request.url == url\n\n        # Verify we haven't overwritten the location with our previous fragment.\n        assert r.history[1].request.url == f'http://{host}:{port}/get#relevant-section'\n        # Verify previous fragment is used and not the original.\n        assert r.url == f'http://{host}:{port}/final-url/#relevant-section'\n\n        close_server.set()\n\n\ndef test_json_decode_compatibility_for_alt_utf_encodings():\n\n    def response_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n'\n            b'Content-Length: 18\\r\\n\\r\\n'\n            b'\\xff\\xfe{\\x00\"\\x00K0\"\\x00=\\x00\"\\x00\\xab0\"\\x00\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url)\n    r.encoding = None\n    with pytest.raises(requests.exceptions.JSONDecodeError) as excinfo:\n        r.json()\n    assert isinstance(excinfo.value, requests.exceptions.RequestException)\n    assert isinstance(excinfo.value, JSONDecodeError)\n    assert r.text not in str(excinfo.value)\n",
+          "source": "tests/test_lowlevel.py:L379-L428"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "short_id": "48",
+      "text_unit_id": "c2595a0671c939e229a84e1dcd2321cd3887b1ffe40c2ac840acc8dfb42c7714737e97f632be571e79735c34c1df7dbc3afdba1fc7237c316c18c49240a9e8d7",
+      "id": "af91d526981fde7ba83847cc4e6b45e887780b5d0f8afaba004468b77b9cfffa",
+      "title": "src/requests/models.py:L635-L790",
+      "path": "src/requests/models.py",
+      "start_line": 635,
+      "end_line": 790,
+      "tokens": 1194,
+      "text_sha256": "5c17533c8622760bb0698ad8433f5d83202f1c33b1cdc42a06910b6cc092c938",
+      "ms_text_unit_id": "c2595a0671c939e229a84e1dcd2321cd3887b1ffe40c2ac840acc8dfb42c7714737e97f632be571e79735c34c1df7dbc3afdba1fc7237c316c18c49240a9e8d7"
+    },
+    {
+      "short_id": "76",
+      "text_unit_id": "4548b59416bd6d7f9f8daf6ff0c109662484c9cc96ad2195fe9c9924727d4d95ca130b4dff8329146125cf2119eaad2ba30a0c980b4493ae32d548af5675db39",
+      "id": "70f71fa667900063c2b110b3d3154a40ae77df01cf6135b7f0ee15f2436903bf",
+      "title": "tests/test_lowlevel.py:L138-L262",
+      "path": "tests/test_lowlevel.py",
+      "start_line": 138,
+      "end_line": 262,
+      "tokens": 1195,
+      "text_sha256": "d6efa5b84a3343e6e55b9fe13208c2b70a7073512d130d281fe32c8abbc6a7b6",
+      "ms_text_unit_id": "4548b59416bd6d7f9f8daf6ff0c109662484c9cc96ad2195fe9c9924727d4d95ca130b4dff8329146125cf2119eaad2ba30a0c980b4493ae32d548af5675db39"
+    },
+    {
+      "short_id": "78",
+      "text_unit_id": "8d707a967d2ac3011d34f329f840b838b9b30e3dbd68ec99c6309f16d86711daa0c5bc66648a3b5f102056a27bfe3c266966a58a0e7f34ea18a86f401ea94eb0",
+      "id": "b0cdef55a2c5ce2dcc3e2fa72c0fd5cd5ece7a243c220abd27873f188aed20c4",
+      "title": "tests/test_lowlevel.py:L379-L428",
+      "path": "tests/test_lowlevel.py",
+      "start_line": 379,
+      "end_line": 428,
+      "tokens": 452,
+      "text_sha256": "21659c862b007521515fb5027d9d9461ea170a47bc715b5a8729fc475f7d401c",
+      "ms_text_unit_id": "8d707a967d2ac3011d34f329f840b838b9b30e3dbd68ec99c6309f16d86711daa0c5bc66648a3b5f102056a27bfe3c266966a58a0e7f34ea18a86f401ea94eb0"
+    }
+  ],
+  "raw_context_tokens": 5532,
+  "final_context_tokens": 5609,
+  "source_text_tokens": 2841,
+  "source_chunks": 3,
+  "retrieval_compute_seconds": 0.013444583863019943,
+  "adaptation_seconds": 0.01822266634553671,
+  "empty_reason": null,
+  "community_level": 2,
+  "dropped_tail_rows": 0
+}
