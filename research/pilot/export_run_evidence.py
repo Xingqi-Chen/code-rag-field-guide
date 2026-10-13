@@ -37,13 +37,14 @@ def main(initial_prompts=None):
         'embedding_cache_items','imported_successful_probe_cache','source_commit','workflows',
         'executions','recoveries','index_elapsed_seconds','index_finished_utc',
         'retrieval_finished_utc','generation_finished_utc','stopped_utc','stop_reason',
-        'window_started_utc','window_deadline_utc','execution_windows','evaluation_authorization']
+        'window_started_utc','window_deadline_utc','execution_windows','evaluation_authorization','host_interruption_timing']
     public={k:state[k] for k in public_keys if k in state}
     event_keys=['sequence','service','phase','workflow','input_tokens','items','status',
         'request_body_sha256','started_utc','source_commit','supervisor_reason','worker_exit',
         'elapsed_seconds','http_status','error_category','response_format','validation_reason',
         'usage','visible_output_common_tokens','requested_output_limit_exceeded',
-        'worker_source_sha256','response_byte_limit','response_bytes','request_dispatched','policy_checkpoint','code_prompt_source_sha256']
+        'worker_source_sha256','response_byte_limit','response_bytes','request_dispatched','policy_checkpoint','code_prompt_source_sha256',
+        'validation_stage','validated_utc','original_ledger_status']
     public['events']=[{k:e[k] for k in event_keys if k in e} for e in state['events']]
     classifications=Counter()
     if initial_prompts is None:
@@ -77,7 +78,9 @@ def main(initial_prompts=None):
         recovery=next((r for r in state.get('recoveries',[]) if r['event']==seq
                        and r.get('response_reused_without_resending')),None)
         if recovery:
-            event['recovery']='Complete reply independently validated and reused; original rejection retained.'
+            event['recovery']=('Complete reply validated offline after executor transport loss and reused without resending; original stale ledger retained.'
+                if recovery.get('original_status')=='reserved_before_dispatch' else
+                'Complete reply independently validated and reused; original rejection retained.')
             event['usage']=reply['usage']
             event['visible_output_common_tokens']=recovery['visible_output_common_tokens']
             event['requested_output_limit_exceeded']=(reply['usage']['completion_tokens']>2048
@@ -98,6 +101,9 @@ def main(initial_prompts=None):
     public['request_timing']={'sum_supervised_request_seconds':sum(delays),
         'mean_supervised_request_seconds':statistics.mean(delays) if delays else None,
         'definition':'Client dispatch-to-worker-exit; includes transport and response validation overhead, excludes cache hits.'}
+    if state.get('host_interruption_timing'):
+        public['request_timing']['missing_supervised_timing_sequences']=[e['sequence'] for e in public['events'] if 'elapsed_seconds' not in e]
+        public['request_timing']['missing_timing_note']='Known request timing sum excludes missing supervisor duration after transport loss; never interpreted as zero latency.'
     if public.get('non_dispatched_reservations'):
         public['request_timing'].update(
             definition='Supervisor-to-worker-exit, including the explicitly never-dispatched administrative checkpoint; excludes cache hits.',

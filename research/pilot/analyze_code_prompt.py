@@ -34,7 +34,7 @@ def run_summary(base):
     for name in sorted({e['operation'] for e in events}):
         subset=[e for e in dispatched if e['operation']==name]
         operations[name]={'physical_attempts':len(subset),
-            'initially_validated':sum(e['status']=='validated' for e in subset),
+            'initially_validated':sum(e['status']=='validated' and not e.get('recovery') for e in subset),
             'complete_reply_later_validated_and_reused':sum(bool(e.get('recovery')) for e in subset),
             'supervised_seconds':sum(e.get('elapsed_seconds',0) for e in subset)}
     return {'index_tables':index['tables'],'entity_types':index['entity_type_counts'],
@@ -51,7 +51,8 @@ def run_summary(base):
         'diagnosed_stop_gap_seconds':execution['diagnosed_stop_gap_seconds'],
         'index_calendar_seconds':execution['index_elapsed_calendar_seconds'],
         'completion_cache_hits':execution['completion_cache_hits'],
-        'operations':operations,'memory_measurement':execution['memory_measurement']}
+        'operations':operations,'memory_measurement':execution['memory_measurement'],
+        **({'host_interruption_timing':execution['host_interruption_timing']} if 'host_interruption_timing' in execution else {})}
 
 
 def calculate():
