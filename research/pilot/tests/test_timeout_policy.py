@@ -6,6 +6,7 @@ import unittest
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from resume_code_prompt_bounded import eligibility
+import resume_code_prompt_120 as extended
 
 
 class TimeoutPolicyTests(unittest.TestCase):
@@ -38,6 +39,32 @@ class TimeoutPolicyTests(unittest.TestCase):
     def test_eligibility_is_read_only(self):
         state=self.state();before=deepcopy(state)
         eligibility(state);self.assertEqual(state,before)
+
+    def exhausted_state(self):
+        state=self.state(109)
+        for e in state['events']:
+            e['request_body_sha256']=f"other-{e['sequence']}"
+            e['status']='validated'
+        for e in state['events'][-3:]:
+            e.update(request_body_sha256=extended.EXHAUSTED_HASH,status='failed',error_category='worker_wall_timeout')
+        return state
+
+    def test_120_exception_only_for_exact_exhausted_request(self):
+        state=self.exhausted_state()
+        self.assertIsNone(eligibility(state))
+        self.assertEqual(extended.eligibility(state)['retry_number'],3)
+        state['events'][-1]['request_body_sha256']='different'
+        self.assertEqual(extended.eligibility(state)['retry_number'],1)
+
+    def test_120_exception_is_not_repeated(self):
+        state=self.exhausted_state()
+        state['events'].append({**state['events'][-1],'sequence':110})
+        self.assertIsNone(extended.eligibility(state))
+
+    def test_120_keeps_new_request_retry_limit(self):
+        self.assertEqual(extended.eligibility(self.state())['delay_seconds'],5)
+        self.assertEqual(extended.eligibility(self.state(2))['delay_seconds'],15)
+        self.assertIsNone(extended.eligibility(self.state(3)))
 
 
 if __name__=='__main__':unittest.main()

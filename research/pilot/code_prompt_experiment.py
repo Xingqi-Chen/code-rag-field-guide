@@ -96,8 +96,17 @@ def configure():
     assert plan['changed']['extract_graph.entity_types'] == TYPES
     transport.RUN = full_index.RUN = RUN
     transport.Runtime = CodeRuntime
+    amendment_path = RUN/'timeout-amendment-120.json'
+    request_seconds = 60
+    if amendment_path.exists():
+        amendment = read(amendment_path)
+        assert amendment['generation_request_seconds']==120
+        assert amendment['first_possible_event']==110
+        assert amendment['original_deadline_utc']=='2026-10-13T16:12:59.674100+00:00'
+        request_seconds = 120
     transport.LIMITS = dict(transport.LIMITS, generation_index_attempts=1200,
-        generation_feature_attempts=0, generation_input_total=8000000, wall_seconds=10800)
+        generation_feature_attempts=0, generation_input_total=8000000, wall_seconds=10800,
+        generation_request_seconds=request_seconds)
     probe.supervise = supervise_variant
     full_index.make_config = make_config
 
