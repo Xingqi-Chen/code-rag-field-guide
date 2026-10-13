@@ -178,6 +178,9 @@ def calculate(tokens=False):
             **score(gold[q['id']],r['sources'])})
     assert len(rows)==400 and len({(r['question_id'],r['method'],r['budget']) for r in rows})==400
     aggregates=[]
+    def average(records, metric):
+        values = [r[metric] for r in records if r[metric] is not None]
+        return statistics.mean(values) if values else None
     for method in sorted({r['method'] for r in rows}):
         for budget in BUDGETS:
             for split in ['test','dev','all']:
@@ -186,7 +189,7 @@ def calculate(tokens=False):
                          'compute_seconds','duplicate_source_line_fraction']
                 aggregates.append({'method':method,'budget':budget,'split':split,'questions':len(rs),
                     'scorable_questions':sum(r['coverage80'] is not None for r in rs),
-                    **{m:statistics.mean(r[m] for r in rs if r[m] is not None) for m in metrics}})
+                    **{m:average(rs,m) for m in metrics}})
     paired=[]
     for budget in BUDGETS:
         for qid,q in questions.items():
