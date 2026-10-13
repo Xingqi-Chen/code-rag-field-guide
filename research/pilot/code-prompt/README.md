@@ -48,4 +48,4 @@ python3 research/pilot/verify_code_prompt.py
 
 本次单次恢复授权于 **2026-10-13 13:55:34 UTC** 收到。`recover_code_prompt_timeout.py authorize --user-approved-specific-retry`只登记这一明确授权并保存中断快照；`resume`消费一次对应请求哈希的许可并继续原运行。这个开关不是未来所有重试的授权。第75次原始未知结果继续保留，新事件编号记录唯一重发的 lineage；截止时间仍是16:12:59 UTC。
 
-后续第96次也遇到未知结果；用户于14:25:48 UTC明确批准仅重发96一次，由专门的 `recover_code_prompt_timeout96.py` 登记并执行，96→97成功。随后第107次未知结果再次停止；`recover_code_prompt_timeout107.py` 已离线复核，尚无运行授权。每次恢复均保留旧快照、累计预算和原截止时间；[当前状态及完整证据](../results/code-prompt/README.md)单独记录。
+后续第96次也遇到未知结果；用户于14:25:48 UTC明确批准仅重发96一次，由专门的 `recover_code_prompt_timeout96.py` 登记并执行，96→97成功。随后第107次未知结果再次停止，其专门入口先完成离线复核。用户于14:44:31 UTC新增本轮授权，允许107及后续超时有限重试：新控制器 `resume_code_prompt_bounded.py` 按精确请求hash最多两次额外尝试、5／15秒退避，其他错误停止。每次恢复均保留旧快照、累计预算和原截止时间；[当前状态及完整证据](../results/code-prompt/README.md)单独记录。

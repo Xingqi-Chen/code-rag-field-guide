@@ -1,0 +1,65 @@
+{
+  "checked_utc": "2026-10-13T14:50:12.654151+00:00",
+  "mode": "read_only_no_new_service_calls",
+  "input_snapshot": "execution-interrupted-03.json",
+  "diagnosis": "All three observed stops were the local worker SIGALRM wall timer at60 seconds, not a recorded provider HTTP error.",
+  "unknown_events": [
+    {
+      "sequence": 75,
+      "elapsed_seconds": 60.149,
+      "error_category": "worker_wall_timeout",
+      "supervisor_reason": null,
+      "worker_exit": 0,
+      "http_status": null
+    },
+    {
+      "sequence": 96,
+      "elapsed_seconds": 60.158,
+      "error_category": "worker_wall_timeout",
+      "supervisor_reason": null,
+      "worker_exit": 0,
+      "http_status": null
+    },
+    {
+      "sequence": 107,
+      "elapsed_seconds": 60.112,
+      "error_category": "worker_wall_timeout",
+      "supervisor_reason": null,
+      "worker_exit": 0,
+      "http_status": null
+    }
+  ],
+  "successful_latency_seconds": {
+    "n": 104,
+    "median": 19.5765,
+    "p95_nearest_rank": 34.97,
+    "max": 54.825,
+    "above45": 3
+  },
+  "implementation_evidence": {
+    "worker": "research/pilot/probe_runtime.py:366-390",
+    "controller": "research/pilot/full_runtime.py:316-328",
+    "timer": "SIGALRM/ITIMER_REAL=60; urllib socket timeout=60; outer supervisor request limit=62 and original total deadline",
+    "stream": "Requests set stream=true, but worker reads the response body completely before parsing/saving. No partial SSE progress or time-to-first-byte is persisted.",
+    "exit_zero": "Worker catches local Stop and writes an error envelope, then exits normally; exit0 is not a successful provider reply."
+  },
+  "limitations": [
+    "No persisted HTTP status, response body or usage exists for75,96,107. Cannot locate the stall in connect/headers/body, infer server cancellation, or distinguish queueing, generation and network delay.",
+    "Success-only latency statistics are censored by60 seconds and do not estimate the failed requests eventual completion times.",
+    "The approved identical-body retries76 and97 completed in34.485 and22.563 seconds; this is consistent with transient variability but does not identify its cause."
+  ],
+  "recommendation": {
+    "generation_request_seconds": 120,
+    "status": "proposal_only_not_applied",
+    "rationale": "Allow twice the former client wait and more headroom above the observed54.825-second success tail;120 is an engineering bound, not an empirically established optimum or completion guarantee.",
+    "keep": [
+      "original16:12:59.674100UTC deadline",
+      "cumulative budgets",
+      "concurrency1",
+      "same prompts/model/payloads/score",
+      "bounded retries with backoff and unknown usage retained"
+    ],
+    "comparability": "Changing the client wait would leave prompt and retrieval parameters unchanged, but changes which responses complete and would create a mixed timeout policy. Record the exact boundary; compare retrieval descriptively, and do not attribute improved completion, latency/cost or retrieval solely to prompt changes."
+  },
+  "applied_change": "No timeout or deadline change. New task authorization allows at most two extra timeout attempts per exact request hash with5/15-second backoff."
+}
