@@ -17,6 +17,8 @@
 
 主分母是预先保留的15道可评分测试题；另1道无实现负例不计召回，4道开发题单列。证据命中要求实际取回的原文覆盖一段预标证据的至少80%行，再按题平均；严格100%行口径在本批得到相同结果。[首轮原始材料](research/pilot/results/contexts)、[首轮分数](research/pilot/results/scores.json)与[补测结果](research/pilot/results/budget-supplement)可离线复算。相同上限不等于相同实际材料量：16000档Local平均实际11647 token，hybrid15242；Basic受固定10块候选限制。
 
+**代码专用提示词追加验证：**已冻结独立配置并真实运行；第75次请求超时，74次成功结果已保存。目前没有新图或Local分数，尚不能判断专用提示词是否改善效果。按照结果未知不自动重发的规则暂停，完整用量与可恢复范围见[中断记录](research/pilot/results/code-prompt)。旧版结果不外推到这个尚未完成的变体。
+
 **新增Global真实回答实验：**复用84份社区报告，对4道精确／规划题和2道全局认证题运行官方map→reduce，再与同模型BM25回答比较。54次调用全部完成，耗时约9分45秒，无新embedding或索引重建。Global能整理较广的职责和测试主题，但精确位置仍有缺口，并出现不存在的报告引用；BM25也有行号及逻辑解释错误。独立AI审阅的必要要点覆盖，精确／规划题为52.5%对81.25%，全局题为45%对65%（Global对BM25）；不是整篇答案准确率。Global总输入是BM25的7.86倍，不能把两组说成等总预算。[逐题回答、审阅与总用量](research/pilot/results/global)与[完整方法](research/pilot/full-run.md)单独记录，不与上表检索覆盖率混算。
 
 **什么时候值得试：**自然语言线索分散，希望它补到基线漏掉的材料，并愿意为抽取、报告、来源核验和更新付出成本。**什么时候不能依赖：**要求唯一符号位置、完整调用者、确定的运行时目标或修改／删除同步。默认文档实体图没有这些保证。实际Q01中，Local取回的实体描述包含正确的字典名称，却没交回实现源码；“听起来知道答案”与“给开发者足够依据”是两回事。
@@ -38,6 +40,7 @@ python3 research/pilot/score_results.py --check
 python3 research/pilot/score_budget_supplement.py --check
 python3 research/pilot/verify_global.py --check
 python3 research/pilot/analyze_failure_chains.py --check
+python3 research/pilot/verify_code_prompt.py
 python3 scripts/validate.py
 ```
 

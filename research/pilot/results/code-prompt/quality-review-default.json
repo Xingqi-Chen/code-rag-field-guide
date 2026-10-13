@@ -1,0 +1,1271 @@
+{
+  "reviewer": {
+    "type": "AI",
+    "agent": "final_fact_review",
+    "independent_from_author": true,
+    "human_review": false,
+    "blind_review": false
+  },
+  "methodology": {
+    "scope": "固定旧图各 20 个实体与关系；只按每条链接的冻结 documents.jsonl 源码/文档块逐条阅读，不查看新图结果。",
+    "sample_seed": 20261012,
+    "sample_order": "sha256(\"20261012:{table}:{record.id}\") 升序，table 为 entities / relationships；复核了所给 40 条 sample_hash，未从全图重新抽样。",
+    "rubric": {
+      "supported": "主要身份/行为或关系受 linked source 支持；不要求每条是代码符号。",
+      "partial_or_ambiguous": "部分支持，但身份、条件、绑定或链接证据范围不足。",
+      "unsupported": "主要说法没有 linked source 支持或与其矛盾。"
+    },
+    "flags": {
+      "exact_code_symbol": "实体标题（仅忽略上游强制大写）保留链接文本可见的代码符号拼写；关系要求两端都满足。不把项目/语言/主题名称当代码符号。此标记不证明限定名唯一或运行时绑定。",
+      "visible_direction_supported": "关系的描述方向与 source→target 及可见操作/所属关系一致时 true；反向或缺少方向证据时 false；主题、非定向关联或仅有常量时 null。实体均 null。",
+      "dynamic_target_overclaim": "是否把动态接收者/选择推成已证明的具体运行目标；不以一般遗漏条件自动标记。",
+      "source_link_missing": "没有 sources 或 input_id/title 无法在冻结输入解析时 true；有链接但证据不充分不等于缺失链接。",
+      "name_changed_or_ambiguous": "自然语言改写实际代码符号，或不同身份未消歧时 true；只有强制大写及纯主题实体不自动算此项。"
+    },
+    "limits": [
+      "独立 AI 审阅，非人类审阅、非盲法；审阅者知道此为旧配置且看过先前失败分析。",
+      "每组仅 20 条，只给样本计数，不估计全图 precision，也不是检索效果或端到端准确率。",
+      "文档与注释支持的是其陈述，不独立验证外部项目或运行环境；测试源码仅支持测试意图/断言，不表示本轮执行过测试。",
+      "没有读取条目未链接的源码来补足判断。",
+      "源实体类型为 ORGANIZATION/EVENT 等不被当作可靠代码语义类型，也不单因泛主题而降级。"
+    ]
+  },
+  "inputs": {
+    "sample_sha256": "778b7e5cf4f754afd525a5a98db0eb1fec4e1b8d6a15df8dd0b0f7f84637217a",
+    "documents_sha256": "5688b3cca77328965a48d7d7b835b7ad3826d79a4237203281e1ebde8956a6e7"
+  },
+  "entities": [
+    {
+      "id": "a65c88a6-5924-44b7-88f4-df0851d85ead",
+      "human_readable_id": 309,
+      "label": "TARFILE",
+      "sample_hash": "001166e976764352e333300a1850e71a875ad721bc52620787c20f1339fc0dc3",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "导入 tarfile、写入归档、extractfile 及 super_len 测试直接支持主要描述。Tarfile.extractfile 的拼写来自原注释；未将模块的 ORGANIZATION 类型当作代码语义类型。",
+      "evidence": [
+        {
+          "source_title": "src/requests/utils.py:L1-L182",
+          "input_id": "bb2001fb5c4d6c2e864cd2bd2cf31e11204dd36ca9ebc751a038800298cc36a3",
+          "source_line_start": 154,
+          "snippet": "# `Tarfile.extractfile()`, per issue 5229."
+        },
+        {
+          "source_title": "tests/test_utils.py:L1-L180",
+          "input_id": "88888615c9eb5431d8145359d643317a50c48010be9fdc24b1bf8700e67b2ca2",
+          "source_line_start": 119,
+          "snippet": "with tarfile.open(tar_obj, \"w\") as tar:\n            tar.add(str(file_obj), arcname=\"test.txt\")"
+        },
+        {
+          "source_title": "tests/test_utils.py:L1-L180",
+          "input_id": "88888615c9eb5431d8145359d643317a50c48010be9fdc24b1bf8700e67b2ca2",
+          "source_line_start": 123,
+          "snippet": "member = tar.extractfile(\"test.txt\")"
+        }
+      ]
+    },
+    {
+      "id": "10b4464b-c197-4b0a-b570-d320aae0e54c",
+      "human_readable_id": 271,
+      "label": "REQUESTS.PACKAGES",
+      "sample_hash": "015b1a1537b553edd44a57c469ae8197fe03461c44fd91dd728ed543f85966a5",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "源码明确把 urllib3/idna 及兼容 chardet 名称注册到 requests.packages；实体是兼容命名空间，非组织。",
+      "evidence": [
+        {
+          "source_title": "src/requests/packages.py:L1-L23",
+          "input_id": "35822cc415d89d0b42a0fb1fc32e9c8fc12289ac29c437f2058741b8fd7a420c",
+          "source_line_start": 8,
+          "snippet": "for package in (\"urllib3\", \"idna\"):"
+        },
+        {
+          "source_title": "src/requests/packages.py:L1-L23",
+          "input_id": "35822cc415d89d0b42a0fb1fc32e9c8fc12289ac29c437f2058741b8fd7a420c",
+          "source_line_start": 14,
+          "snippet": "sys.modules[f\"requests.packages.{mod}\"] = sys.modules[mod]"
+        },
+        {
+          "source_title": "src/requests/packages.py:L1-L23",
+          "input_id": "35822cc415d89d0b42a0fb1fc32e9c8fc12289ac29c437f2058741b8fd7a420c",
+          "source_line_start": 22,
+          "snippet": "mod = mod.replace(target, \"chardet\")"
+        }
+      ]
+    },
+    {
+      "id": "e2021421-dc7e-45cd-b786-7ddf10aa397c",
+      "human_readable_id": 468,
+      "label": "TEST_UNICODE_HEADER_NAME",
+      "sample_hash": "0178fde98b0e114cf1d335abd8536498df263c67ee2fb78bf38bfc5be22a86e4",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "可见函数调用 PUT、传入 Content-Type 与 Unicode 字符串。描述仅概括测试意图；未证明任意 Unicode 头名均合法，测试本身也没有这样的断言。",
+      "evidence": [
+        {
+          "source_title": "tests/test_requests.py:L775-L929",
+          "input_id": "3b81f8f08bac76fc65e8bb96bbabe77868ebd0da365f43e9ff2d5a7ff4308c48",
+          "source_line_start": 917,
+          "snippet": "def test_unicode_header_name(self, httpbin):\n        requests.put(\n            httpbin(\"put\"),\n            headers={\"Content-Type\": \"application/octet-stream\"},\n            data=\"\\xff\",\n        )  # compat.str is unicode."
+        }
+      ]
+    },
+    {
+      "id": "02b42d3a-5e5a-4cad-88cd-fb68e2608e2e",
+      "human_readable_id": 236,
+      "label": "MULTIPART FORMDATA REQUEST",
+      "sample_hash": "01d34458a8d0339f9d086d642f4d5463a537b337497868283c049317b00c391c",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": false,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "这是有明确源码支持的请求体概念，不是精确代码符号。_encode_files 的文档和字段/文件处理支持描述，不能因其为主题实体而判错。",
+      "evidence": [
+        {
+          "source_title": "src/requests/models.py:L1-L185",
+          "input_id": "ce7864049adc0b732691fc982285b9c3c7ab256d3e2b7eb0a01e725c608ec2bb",
+          "source_line_start": 137,
+          "snippet": "def _encode_files(files, data):\n        \"\"\"Build the body for a multipart/form-data request."
+        },
+        {
+          "source_title": "src/requests/models.py:L1-L185",
+          "input_id": "ce7864049adc0b732691fc982285b9c3c7ab256d3e2b7eb0a01e725c608ec2bb",
+          "source_line_start": 152,
+          "snippet": "fields = to_key_val_list(data or {})\n        files = to_key_val_list(files or {})"
+        }
+      ]
+    },
+    {
+      "id": "c46610f4-477d-4d17-bf60-21f7f1c7bfce",
+      "human_readable_id": 544,
+      "label": "TEST CAN SEND FILE OBJECT WITH NON-STRING FILENAME",
+      "sample_hash": "0200154bbb69619e76c9c39bc60179006432292958c7dd2e21187276b895340d",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": false,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": true
+      },
+      "rationale_zh": "非字符串 filename=2 的 BytesIO 被用于 Request.prepare，断言 multipart 类型，直接支持行为。标题把实际函数下划线改为空格/连字符，精确定位价值下降。",
+      "evidence": [
+        {
+          "source_title": "tests/test_requests.py:L1746-L1882",
+          "input_id": "9d67c7ae84e8cc4a8868cccfdf3c0c63fe1961016bebbe6f7039b52d28749035",
+          "source_line_start": 1797,
+          "snippet": "def test_can_send_file_object_with_non_string_filename(self, httpbin):\n        f = io.BytesIO()\n        f.name = 2"
+        },
+        {
+          "source_title": "tests/test_requests.py:L1746-L1882",
+          "input_id": "9d67c7ae84e8cc4a8868cccfdf3c0c63fe1961016bebbe6f7039b52d28749035",
+          "source_line_start": 1800,
+          "snippet": "r = requests.Request(\"POST\", httpbin(\"post\"), files={\"f\": f})\n        p = r.prepare()"
+        }
+      ]
+    },
+    {
+      "id": "2e01d86b-249b-4842-8a4c-252150709316",
+      "human_readable_id": 237,
+      "label": "HTTP REDIRECT",
+      "sample_hash": "02371cea043823d88e42732092131c102251fa930df03508cd479afc4e20ba0f",
+      "judgment": "partial_or_ambiguous",
+      "flags": {
+        "exact_code_symbol": false,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "重定向状态、Location、history 等主要概念有支持。但“跨主机时不得包含凭据”比链接材料证明的范围更宽：此块测试用 Location:/，且之后仍接受新 challenge 并重新发送 Authorization；不能推出所有凭据/后续请求一律不存在。",
+      "evidence": [
+        {
+          "source_title": "src/requests/models.py:L635-L790",
+          "input_id": "af91d526981fde7ba83847cc4e6b45e887780b5d0f8afaba004468b77b9cfffa",
+          "source_line_start": 774,
+          "snippet": "return \"location\" in self.headers and self.status_code in REDIRECT_STATI"
+        },
+        {
+          "source_title": "tests/test_lowlevel.py:L138-L262",
+          "input_id": "70f71fa667900063c2b110b3d3154a40ae77df01cf6135b7f0ee15f2436903bf",
+          "source_line_start": 141,
+          "snippet": "b'Location: /\\r\\n\\r\\n')"
+        },
+        {
+          "source_title": "tests/test_lowlevel.py:L138-L262",
+          "input_id": "70f71fa667900063c2b110b3d3154a40ae77df01cf6135b7f0ee15f2436903bf",
+          "source_line_start": 166,
+          "snippet": "assert b'Authorization:' not in request_content"
+        },
+        {
+          "source_title": "tests/test_lowlevel.py:L138-L262",
+          "input_id": "70f71fa667900063c2b110b3d3154a40ae77df01cf6135b7f0ee15f2436903bf",
+          "source_line_start": 169,
+          "snippet": "# Verify Authorization is sent correctly again, and return 200 OK."
+        }
+      ]
+    },
+    {
+      "id": "428d7bc1-46fc-4e94-ad1c-504c9d84ab24",
+      "human_readable_id": 156,
+      "label": "LINUX",
+      "sample_hash": "0288ef2ac2aa576e0b37b8df8a16e029d476c794618e22e645e616786e6101d6",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": false,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "Linux 作为打包环境在模块文档中直接出现。它不是代码符号，类型为 ORGANIZATION 也不意味着描述无依据。",
+      "evidence": [
+        {
+          "source_title": "src/requests/certs.py:L1-L17",
+          "input_id": "2b3448b0ff373af125260c2a99ac8d3ab8c7da387d62d33998f78f604369120f",
+          "source_line_start": 10,
+          "snippet": "If you are packaging Requests, e.g., for a Linux distribution or a managed\nenvironment, you can change the definition of where() to return a separately\npackaged CA bundle."
+        }
+      ]
+    },
+    {
+      "id": "e2ab08d8-4f51-4f8a-9a89-95d3dfe87220",
+      "human_readable_id": 205,
+      "label": "CREATE_COOKIE",
+      "sample_hash": "034f70ddee41cf674fc7c1eec634cc64d86946d9afa6c1ef7608cf369ffacb95",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "函数定义、name/value、domain/path/secure/expires/HttpOnly 默认字典直接支持主要描述。链接块在错误检查处截断，未单独验证块外最终构造返回。",
+      "evidence": [
+        {
+          "source_title": "src/requests/cookies.py:L328-L479",
+          "input_id": "f48da9b65043050d6de455ecb9b19d9b89702e7f58493c169c64549982b3a76a",
+          "source_line_start": 455,
+          "snippet": "def create_cookie(name, value, **kwargs):\n    \"\"\"Make a cookie from underspecified parameters."
+        },
+        {
+          "source_title": "src/requests/cookies.py:L328-L479",
+          "input_id": "f48da9b65043050d6de455ecb9b19d9b89702e7f58493c169c64549982b3a76a",
+          "source_line_start": 466,
+          "snippet": "\"domain\": \"\",\n        \"path\": \"/\",\n        \"secure\": False,\n        \"expires\": None,"
+        },
+        {
+          "source_title": "src/requests/cookies.py:L328-L479",
+          "input_id": "f48da9b65043050d6de455ecb9b19d9b89702e7f58493c169c64549982b3a76a",
+          "source_line_start": 473,
+          "snippet": "\"rest\": {\"HttpOnly\": None},"
+        }
+      ]
+    },
+    {
+      "id": "763f9eba-a00f-44a7-96c9-84d8ac0968a8",
+      "human_readable_id": 395,
+      "label": "JSONDECODEERROR",
+      "sample_hash": "038e40630810e79590631c18535de4b7db14f7a66e13834aa38fd9a587cafc0b",
+      "judgment": "partial_or_ambiguous",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": true
+      },
+      "rationale_zh": "替代 UTF 编码的无效 JSON 测试支持异常行为；但 JSONDecodeError 在同块同时指向 requests.exceptions 和兼容层类型，身份未消歧。另一链接只到序列化测试开头，没有序列化断言；称为 documentation tests 也不准确。",
+      "evidence": [
+        {
+          "source_title": "tests/test_lowlevel.py:L379-L428",
+          "input_id": "b0cdef55a2c5ce2dcc3e2fa72c0fd5cd5ece7a243c220abd27873f188aed20c4",
+          "source_line_start": 424,
+          "snippet": "with pytest.raises(requests.exceptions.JSONDecodeError) as excinfo:\n        r.json()"
+        },
+        {
+          "source_title": "tests/test_lowlevel.py:L379-L428",
+          "input_id": "b0cdef55a2c5ce2dcc3e2fa72c0fd5cd5ece7a243c220abd27873f188aed20c4",
+          "source_line_start": 427,
+          "snippet": "assert isinstance(excinfo.value, JSONDecodeError)"
+        },
+        {
+          "source_title": "tests/test_requests.py:L2824-L2970",
+          "input_id": "0fb5d8ef4877cff141539475ec09339c674218c365a4842cdab3ead068b6626e",
+          "source_line_start": 2969,
+          "snippet": "def test_json_decode_errors_are_serializable_deserializable():\n    json_decode_error = requests.exceptions.JSONDecodeError("
+        }
+      ]
+    },
+    {
+      "id": "6e51f2b3-5e52-4e13-ac03-1a0dc395ce58",
+      "human_readable_id": 65,
+      "label": "GREQUESTS",
+      "sample_hash": "043c7a256d3666aa51bb3c7f5f23069817537114efae6360f88afd3def461113",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": false,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "链接文档明确列 grequests 为异步相关项目。按文档陈述判支持，没有额外验证该外部项目的当前实现；项目名不是本块代码符号。",
+      "evidence": [
+        {
+          "source_title": "docs/user/advanced.rst:L1049-L1141",
+          "input_id": "efe880aa7d1745bd061c369fb06d2e9faef98f5c2f0028f39b9e14df0d40c9b5",
+          "source_line_start": 1073,
+          "snippet": "out there that combine Requests with one of Python's asynchronicity frameworks.\nSome excellent examples are `requests-threads`_, `grequests`_, `requests-futures`_, and `httpx`_."
+        }
+      ]
+    },
+    {
+      "id": "328adb20-5ba9-4109-a75e-8e9b0fc46482",
+      "human_readable_id": 412,
+      "label": "TEST_HTTP_307_ALLOW_REDIRECT_POST_WITH_SEEKABLE",
+      "sample_hash": "0470880ddbaf5dc35ce9e956c2bdd33c3926d51137d848e7c8c09dcb46ea95da",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "精确测试函数名可见，BytesIO 输入、307 history 和返回 data 与原字节解码相等的断言直接支持行为。",
+      "evidence": [
+        {
+          "source_title": "tests/test_requests.py:L161-L289",
+          "input_id": "b242f7122931670bf7bee8ddd426864026bcd6008840197bbdbec4e2e57a86f4",
+          "source_line_start": 227,
+          "snippet": "def test_HTTP_307_ALLOW_REDIRECT_POST_WITH_SEEKABLE(self, httpbin):\n        byte_str = b\"test\""
+        },
+        {
+          "source_title": "tests/test_requests.py:L161-L289",
+          "input_id": "b242f7122931670bf7bee8ddd426864026bcd6008840197bbdbec4e2e57a86f4",
+          "source_line_start": 231,
+          "snippet": "data=io.BytesIO(byte_str),"
+        },
+        {
+          "source_title": "tests/test_requests.py:L161-L289",
+          "input_id": "b242f7122931670bf7bee8ddd426864026bcd6008840197bbdbec4e2e57a86f4",
+          "source_line_start": 237,
+          "snippet": "assert r.json()[\"data\"] == byte_str.decode(\"utf-8\")"
+        }
+      ]
+    },
+    {
+      "id": "cada8377-39bb-41eb-9432-4fdcba4377d6",
+      "human_readable_id": 493,
+      "label": "LINKS TEST",
+      "sample_hash": "04d7ed18f4bf8acd34f236b9a7607e76c7d800896b8240e1b74258d2994731ae",
+      "judgment": "partial_or_ambiguous",
+      "flags": {
+        "exact_code_symbol": false,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": true
+      },
+      "rationale_zh": "链接块确有 test_links 开头和三项响应头初始化，但在字典中截断，无 Link 内容或断言。只能支持“测试开始设置响应”，不能核验具体 link 验证行为；标题也改写了函数名。",
+      "evidence": [
+        {
+          "source_title": "tests/test_requests.py:L1057-L1211",
+          "input_id": "caea88e0de4b28a43b6dd9aa53871811bf93476525f684fdb14310a1cf2506ad",
+          "source_line_start": 1206,
+          "snippet": "def test_links(self):\n        r = requests.Response()\n        r.headers = {\n            \"cache-control\": \"public, max-age=60, s-maxage=60\",\n            \"connection\": \"keep-alive\",\n            \"content-encoding\": \"gzip\","
+        }
+      ]
+    },
+    {
+      "id": "aa70764b-1029-4f26-9ec0-e15f28a84a05",
+      "human_readable_id": 257,
+      "label": "CONTENTDECODINGERROR",
+      "sample_hash": "04da6edef2b82f090ede1479ac2b31373f5c6af0d0ef36f2651f2503e4b88f21",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "iter_content 在有 stream 属性的分支捕获 DecodeError 并抛 ContentDecodingError，配套参数化测试亦匹配；不是所有读取分支都会做此转换。",
+      "evidence": [
+        {
+          "source_title": "src/requests/models.py:L777-L942",
+          "input_id": "43af353e619da1a46933db2beb1bb0a5cc2e53eca7e2dd5e29bddd856768c293",
+          "source_line_start": 823,
+          "snippet": "except DecodeError as e:\n                    raise ContentDecodingError(e)"
+        },
+        {
+          "source_title": "tests/test_requests.py:L1345-L1498",
+          "input_id": "0c09f08bbbad03c18c8e99b184cc3d256466154533900cafcf2d849e740b4749",
+          "source_line_start": 1465,
+          "snippet": "(urllib3.exceptions.DecodeError, tuple(), ContentDecodingError),"
+        }
+      ]
+    },
+    {
+      "id": "94219202-53d6-46c8-9322-df7e5ea1a7e6",
+      "human_readable_id": 304,
+      "label": "CERTS",
+      "sample_hash": "058cdb829d33f4bfd76123d72f23e0780d39da8a48b03ec6e2da9e079ee5329f",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "相对导入 certs 和 DEFAULT_CA_BUNDLE_PATH=certs.where() 支持模块提供 CA bundle 位置。信任/验证细节未由这一块独立证明，描述的核心身份仍有依据。",
+      "evidence": [
+        {
+          "source_title": "src/requests/utils.py:L1-L182",
+          "input_id": "bb2001fb5c4d6c2e864cd2bd2cf31e11204dd36ca9ebc751a038800298cc36a3",
+          "source_line_start": 24,
+          "snippet": "from . import certs"
+        },
+        {
+          "source_title": "src/requests/utils.py:L1-L182",
+          "input_id": "bb2001fb5c4d6c2e864cd2bd2cf31e11204dd36ca9ebc751a038800298cc36a3",
+          "source_line_start": 63,
+          "snippet": "DEFAULT_CA_BUNDLE_PATH = certs.where()"
+        }
+      ]
+    },
+    {
+      "id": "f747bec8-f702-4737-97a5-2c05e6abb30d",
+      "human_readable_id": 297,
+      "label": "OS",
+      "sample_hash": "0649b1cb4d226553a811338ac05cf0044f022e46d9f7f720fa28c0395d9db587",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "多个链接块直接导入 os 并使用 fstat、splitdrive、join、exists，支持系统/路径模块的主要身份与用途。环境变量等更广能力并非此样本逐项实现证明。",
+      "evidence": [
+        {
+          "source_title": "src/requests/utils.py:L1-L182",
+          "input_id": "bb2001fb5c4d6c2e864cd2bd2cf31e11204dd36ca9ebc751a038800298cc36a3",
+          "source_line_start": 12,
+          "snippet": "import os"
+        },
+        {
+          "source_title": "src/requests/utils.py:L1-L182",
+          "input_id": "bb2001fb5c4d6c2e864cd2bd2cf31e11204dd36ca9ebc751a038800298cc36a3",
+          "source_line_start": 157,
+          "snippet": "total_length = os.fstat(fileno).st_size"
+        },
+        {
+          "source_title": "tests/test_utils.py:L308-L472",
+          "input_id": "a508132f67cba7cedc589493a9a54cad81ca9b8568c3ab37a5b98ba09b9682e8",
+          "source_line_start": 331,
+          "snippet": "_, name = os.path.splitdrive(__file__)"
+        },
+        {
+          "source_title": "tests/test_utils.py:L308-L472",
+          "input_id": "a508132f67cba7cedc589493a9a54cad81ca9b8568c3ab37a5b98ba09b9682e8",
+          "source_line_start": 336,
+          "snippet": "assert os.path.exists(extracted_path)"
+        }
+      ]
+    },
+    {
+      "id": "892dfa1d-374b-400d-9e4c-d9c06181ca27",
+      "human_readable_id": 219,
+      "label": "ENCODINGS.IDNA",
+      "sample_hash": "0821a2c60a8ce9e9af37a663f8681bdc28a34c278b9e8fba778b5750e7bbb4c2",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "显式 encodings.idna 导入及紧邻注释说明避免线程内隐式导入导致 LookupError；描述有直接依据。",
+      "evidence": [
+        {
+          "source_title": "src/requests/models.py:L1-L185",
+          "input_id": "ce7864049adc0b732691fc982285b9c3c7ab256d3e2b7eb0a01e725c608ec2bb",
+          "source_line_start": 10,
+          "snippet": "# Import encoding now, to avoid implicit import later.\n# Implicit import within threads may cause LookupError when standard library is in a ZIP,\n# such as in Embedded Python. See https://github.com/psf/requests/issues/3578.\nimport encodings.idna  # noqa: F401"
+        }
+      ]
+    },
+    {
+      "id": "13c54ccc-1aac-4321-9dfa-86caae9adec6",
+      "human_readable_id": 111,
+      "label": "REQUESTS HTTP LIBRARY",
+      "sample_hash": "08fecd7067c76fb26689eafc142bde17db075754a2213022c50f39ad5b38204a",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": false,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "模块文档直接说明 Python HTTP 库，GET/POST 示例、API/异常导入及版本检查均可见。标题是项目描述名，不是可直接解析的限定符号。",
+      "evidence": [
+        {
+          "source_title": "src/requests/__init__.py:L1-L174",
+          "input_id": "f5bd2923eeb1fbcd1d23698f0e5be214aa259fc35120e6d7a333cd46bfaf3364",
+          "source_line_start": 10,
+          "snippet": "Requests is an HTTP library, written in Python, for human beings."
+        },
+        {
+          "source_title": "src/requests/__init__.py:L1-L174",
+          "input_id": "f5bd2923eeb1fbcd1d23698f0e5be214aa259fc35120e6d7a333cd46bfaf3364",
+          "source_line_start": 164,
+          "snippet": "from .api import delete, get, head, options, patch, post, put, request"
+        }
+      ]
+    },
+    {
+      "id": "23a7fa4c-d6fa-46f7-996e-adfd725f53d8",
+      "human_readable_id": 67,
+      "label": "HTTPX",
+      "sample_hash": "09e40444cc7c44c29a3cbc55988ce07c72cdb199e1d18ee6f7f33e85d2c4c31c",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": false,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "固定文档把 httpx 列为异步相关项目，记录按文档定位为一个选项，与链接证据一致；不代表验证 httpx 自身实现或其依赖关系。",
+      "evidence": [
+        {
+          "source_title": "docs/user/advanced.rst:L1049-L1141",
+          "input_id": "efe880aa7d1745bd061c369fb06d2e9faef98f5c2f0028f39b9e14df0d40c9b5",
+          "source_line_start": 1074,
+          "snippet": "Some excellent examples are `requests-threads`_, `grequests`_, `requests-futures`_, and `httpx`_."
+        }
+      ]
+    },
+    {
+      "id": "34d17e35-7762-4522-8603-b5c31dcc7f0d",
+      "human_readable_id": 539,
+      "label": "NON-STRING HEADER VALUE VALIDATION",
+      "sample_hash": "0aac99ba6d215b6f426ce6ffae3cd7f42476781554422c6cac8c16111aa3ab75",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": false,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": true
+      },
+      "rationale_zh": "参数化枚举整数、字典、列表头值，pytest.raises(InvalidHeader) 直接支持。标题是 test_header_value_not_str 的概括，不是原函数名。",
+      "evidence": [
+        {
+          "source_title": "tests/test_requests.py:L1624-L1760",
+          "input_id": "2b223db0ce3998330ac5bf060e661b1495b64a7610c9e5a5172cac9c6c07fb18",
+          "source_line_start": 1712,
+          "snippet": "({\"foo\": 3}, \"foo\"),\n            ({\"bar\": {\"foo\": \"bar\"}}, \"bar\"),\n            ({\"baz\": [\"foo\", \"bar\"]}, \"baz\"),"
+        },
+        {
+          "source_title": "tests/test_requests.py:L1624-L1760",
+          "input_id": "2b223db0ce3998330ac5bf060e661b1495b64a7610c9e5a5172cac9c6c07fb18",
+          "source_line_start": 1717,
+          "snippet": "def test_header_value_not_str(self, httpbin, invalid_header, key):"
+        },
+        {
+          "source_title": "tests/test_requests.py:L1624-L1760",
+          "input_id": "2b223db0ce3998330ac5bf060e661b1495b64a7610c9e5a5172cac9c6c07fb18",
+          "source_line_start": 1721,
+          "snippet": "with pytest.raises(InvalidHeader) as excinfo:"
+        }
+      ]
+    },
+    {
+      "id": "4e34289e-cace-4b44-9725-b9dd7211c64b",
+      "human_readable_id": 320,
+      "label": "STRINGIO",
+      "sample_hash": "0afb5a5eff1a52099675ca2732059356197096bb177a175fd132ef5404c884da",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "StringIO 导入兼容分支、Response.raw 测试及 super_len(StringIO) 直接支持。此处 StringIO 是模块/别名，实际流类用 StringIO.StringIO，不应当作唯一定义位置。",
+      "evidence": [
+        {
+          "source_title": "tests/compat.py:L1-L23",
+          "input_id": "7cb6eb9f50d96b511d61577f5a6811fe8884231cb7bd0baf3d7bb205357c04f9",
+          "source_line_start": 3,
+          "snippet": "try:\n    import StringIO\nexcept ImportError:\n    import io as StringIO"
+        },
+        {
+          "source_title": "tests/test_requests.py:L1345-L1498",
+          "input_id": "0c09f08bbbad03c18c8e99b184cc3d256466154533900cafcf2d849e740b4749",
+          "source_line_start": 1391,
+          "snippet": "io = StringIO.StringIO(\"abc\")"
+        },
+        {
+          "source_title": "tests/test_utils.py:L1-L180",
+          "input_id": "88888615c9eb5431d8145359d643317a50c48010be9fdc24b1bf8700e67b2ca2",
+          "source_line_start": 63,
+          "snippet": "assert super_len(stream(value)) == 4"
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "0202973c-f576-4539-87c3-ed54514e2ea7",
+      "human_readable_id": 880,
+      "label": "TEST AUTOSET HEADER VALUES ARE NATIVE → PYTEST",
+      "sample_hash": "00229a17fb5d5f747cd8a15fd745d4f407c1fcddf7856e3f6f65547535884a63",
+      "judgment": "partial_or_ambiguous",
+      "flags": {
+        "exact_code_symbol": false,
+        "visible_direction_supported": false,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": true
+      },
+      "rationale_zh": "块内存在该测试定义及其他 pytest 装饰器，支持 pytest 风格测试的关联；没有直接展示该函数被 pytest 收集/执行。描述的执行主体是 pytest，source/target 却是 test→pytest，不能读作同向调用边。",
+      "evidence": [
+        {
+          "source_title": "tests/test_requests.py:L1746-L1882",
+          "input_id": "9d67c7ae84e8cc4a8868cccfdf3c0c63fe1961016bebbe6f7039b52d28749035",
+          "source_line_start": 1805,
+          "snippet": "def test_autoset_header_values_are_native(self, httpbin):"
+        },
+        {
+          "source_title": "tests/test_requests.py:L1746-L1882",
+          "input_id": "9d67c7ae84e8cc4a8868cccfdf3c0c63fe1961016bebbe6f7039b52d28749035",
+          "source_line_start": 1789,
+          "snippet": "@pytest.mark.parametrize(\"files\", (\"foo\", b\"foo\", bytearray(b\"foo\")))"
+        }
+      ]
+    },
+    {
+      "id": "23e458f6-2db1-42fd-8834-c52ef32fd28a",
+      "human_readable_id": 633,
+      "label": "TEST_HTTP_302_CHANGES_POST_TO_GET → REQUESTS",
+      "sample_hash": "005d9ec8653929fe36cf81f624e47defb1674da18d01315c778f54fb3bb4079d",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "测试调用 requests.post，断言最终 GET、历史 302；source 测试→target Requests 的验证方向有支持。",
+      "evidence": [
+        {
+          "source_title": "tests/test_requests.py:L161-L289",
+          "input_id": "b242f7122931670bf7bee8ddd426864026bcd6008840197bbdbec4e2e57a86f4",
+          "source_line_start": 280,
+          "snippet": "def test_http_302_changes_post_to_get(self, httpbin):\n        r = requests.post(httpbin(\"status\", \"302\"))\n        assert r.status_code == 200\n        assert r.request.method == \"GET\"\n        assert r.history[0].status_code == 302"
+        }
+      ]
+    },
+    {
+      "id": "b0fe3a1a-b5ef-4252-aa4e-412fb9a2ffd4",
+      "human_readable_id": 659,
+      "label": "TEST HTTP 200 OK HEAD → REQUESTS",
+      "sample_hash": "00676b3d467d28077e6e698349297bf00b9b4d8636f9775ea7d9d0c355226f8f",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": false,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": true
+      },
+      "rationale_zh": "块末只有 test_HTTP_200_OK_HEAD 函数签名，描述谨慎限定为“命名为 HEAD 处理的套件测试”，这一弱关联可支持；不支持任何实际 HEAD 响应断言。空格化名称不是原标识符。",
+      "evidence": [
+        {
+          "source_title": "tests/test_requests.py:L397-L519",
+          "input_id": "d990cc1c1e966f6e504c2b701dcab3dc28d04eb97af585d787a78dbbf45d457b",
+          "source_line_start": 519,
+          "snippet": "def test_HTTP_200_OK_HEAD(self, httpbin):"
+        }
+      ]
+    },
+    {
+      "id": "63178e71-9f92-46b3-8869-1280b8ed2d22",
+      "human_readable_id": 824,
+      "label": "PICKLE → SESSION",
+      "sample_hash": "009ede311617a6750948da87c55f14c7b52f027fb2c4956dcc1785ed941db9d5",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "test_session_pickling 中 Session 对象被 pickle.dumps/loads，再用于 send，明确支持序列化/恢复关系。",
+      "evidence": [
+        {
+          "source_title": "tests/test_requests.py:L1488-L1634",
+          "input_id": "738fe173f86a3ea0fd04fd1badf08b7af0573474d3cadc7105cab638a4925afc",
+          "source_line_start": 1553,
+          "snippet": "def test_session_pickling(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"))\n        s = requests.Session()\n\n        s = pickle.loads(pickle.dumps(s))"
+        }
+      ]
+    },
+    {
+      "id": "05082b55-6bda-4828-aa0c-f471a767b5fd",
+      "human_readable_id": 883,
+      "label": "TEST CONTENT LENGTH FOR STRING DATA COUNTS BYTES → REQUESTS",
+      "sample_hash": "011d09e4501ef70de2934fc0615545d73e8337fc812347d46a68d3f129c6b5d9",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": false,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": true
+      },
+      "rationale_zh": "Unicode 字符串按 UTF-8 编码后的字节长度与准备请求的 Content-Length 相等，验证关系直接可见；测试端点名被空格化。",
+      "evidence": [
+        {
+          "source_title": "tests/test_requests.py:L1746-L1882",
+          "input_id": "9d67c7ae84e8cc4a8868cccfdf3c0c63fe1961016bebbe6f7039b52d28749035",
+          "source_line_start": 1822,
+          "snippet": "def test_content_length_for_string_data_counts_bytes(self, httpbin):\n        data = \"This is a string containing multi-byte UTF-8 ☃️\"\n        length = str(len(data.encode(\"utf-8\")))"
+        },
+        {
+          "source_title": "tests/test_requests.py:L1746-L1882",
+          "input_id": "9d67c7ae84e8cc4a8868cccfdf3c0c63fe1961016bebbe6f7039b52d28749035",
+          "source_line_start": 1811,
+          "snippet": "assert p.headers[\"Content-Length\"] == length"
+        }
+      ]
+    },
+    {
+      "id": "d36ace4f-e597-46e7-bd8d-345d1c2f75c7",
+      "human_readable_id": 711,
+      "label": "TEST_DIGEST_AUTH_SETS_SESSION_COOKIES → REQUESTS",
+      "sample_hash": "012c06f1b18e0792a9371b60f652c5423b427781c7cc7c62ace2be151c74b7ed",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "测试创建 Session，发送 Digest auth 请求后断言 s.cookies 的值，支持测试→Requests 的验证关系。",
+      "evidence": [
+        {
+          "source_title": "tests/test_requests.py:L640-L786",
+          "input_id": "a3b9a989f4d0f8d75c8cbc04cdfa21e95e3085097f3953feab609d7825707b28",
+          "source_line_start": 733,
+          "snippet": "def test_DIGEST_AUTH_SETS_SESSION_COOKIES(self, httpbin):"
+        },
+        {
+          "source_title": "tests/test_requests.py:L640-L786",
+          "input_id": "a3b9a989f4d0f8d75c8cbc04cdfa21e95e3085097f3953feab609d7825707b28",
+          "source_line_start": 738,
+          "snippet": "s.get(url, auth=auth)\n            assert s.cookies[\"fake\"] == \"fake_value\""
+        }
+      ]
+    },
+    {
+      "id": "723857ce-544a-475d-abd1-b11845176c42",
+      "human_readable_id": 508,
+      "label": "TEST DIGESTAUTH 401 COUNT RESET ON REDIRECT → PYTEST",
+      "sample_hash": "01af5aba35e939d9000a9110e5ba7715216457e1e24fefe8123b49f89290c585",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": false,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": true
+      },
+      "rationale_zh": "同块 import pytest 并定义具明确 docstring 的 test_digestauth_401_count_reset_on_redirect；作为 pytest 测试的分类有支持。不是展示调用 pytest 的边，名称被改为空格。",
+      "evidence": [
+        {
+          "source_title": "tests/test_lowlevel.py:L1-L146",
+          "input_id": "9c62ac2a1e6c37459eb041b50122a5abff7746b496858310874c994962101080",
+          "source_line_start": 3,
+          "snippet": "import pytest"
+        },
+        {
+          "source_title": "tests/test_lowlevel.py:L1-L146",
+          "input_id": "9c62ac2a1e6c37459eb041b50122a5abff7746b496858310874c994962101080",
+          "source_line_start": 127,
+          "snippet": "def test_digestauth_401_count_reset_on_redirect():\n    \"\"\"Ensure we correctly reset num_401_calls after a successful digest auth,\n    followed by a 302 redirect to another digest auth prompt."
+        }
+      ]
+    },
+    {
+      "id": "5cde36bf-b868-4ac7-b5d1-61cf9235bfc2",
+      "human_readable_id": 326,
+      "label": "REQUESTS → DEFAULT REDIRECT LIMIT",
+      "sample_hash": "027f0ad5c89d8f9ec44347a6bb4e77e38ee5faf2fa50801f560088c950a98ecd",
+      "judgment": "partial_or_ambiguous",
+      "flags": {
+        "exact_code_symbol": false,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": true
+      },
+      "rationale_zh": "链接块只定义 DEFAULT_REDIRECT_LIMIT=30，没有消费该常量或限制重定向的执行路径。数值与身份支持，但“用它限制自动重定向”没有本条 link 的行为证据。",
+      "evidence": [
+        {
+          "source_title": "src/requests/models.py:L1-L185",
+          "input_id": "ce7864049adc0b732691fc982285b9c3c7ab256d3e2b7eb0a01e725c608ec2bb",
+          "source_line_start": 79,
+          "snippet": "DEFAULT_REDIRECT_LIMIT = 30"
+        }
+      ]
+    },
+    {
+      "id": "f9dbcbaa-b31b-4581-a0ef-a3a05a146352",
+      "human_readable_id": 36,
+      "label": "SESSION → REQUESTS",
+      "sample_hash": "0282fe765c773c103cafae68e23c53e3a213f198e69968a6006cf8d6637ed6b1",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "文档给出从 requests 导入 Session、Session.prepare_request 应用 cookies 与 send 的示例；源码显示合并 session cookies，支持组件关系与状态用途。文档示例不等于执行记录。",
+      "evidence": [
+        {
+          "source_title": "docs/user/advanced.rst:L125-L271",
+          "input_id": "2979c4d9d21eb7aeb8e70fc2118ea94ce52561f021a8cbae5483bbd4e9396311",
+          "source_line_start": 130,
+          "snippet": "from requests import Request, Session"
+        },
+        {
+          "source_title": "docs/user/advanced.rst:L125-L271",
+          "input_id": "2979c4d9d21eb7aeb8e70fc2118ea94ce52561f021a8cbae5483bbd4e9396311",
+          "source_line_start": 160,
+          "snippet": ":class:`Session <requests.Session>`-level state such as cookies will\nnot get applied to your request."
+        },
+        {
+          "source_title": "src/requests/sessions.py:L441-L588",
+          "input_id": "be544364d6c7365dff9fd6c80742bdf27f6cef80ffbb10bad922126e1a776e05",
+          "source_line_start": 473,
+          "snippet": "# Merge with session cookies\n        merged_cookies = merge_cookies(\n            merge_cookies(RequestsCookieJar(), self.cookies), cookies\n        )"
+        }
+      ]
+    },
+    {
+      "id": "a230c2bd-32b2-4474-bec8-0e28f3334fec",
+      "human_readable_id": 85,
+      "label": "REQUESTS → SSLV3",
+      "sample_hash": "02a2d7e5e08e222f9df33d9abd163e7fbfb2be05ce4a13fc60941f4a0c2c7ee5",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": false,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "链接文档明确展示 Ssl3HttpAdapter 和 ssl.PROTOCOL_SSLv3，作为文档中的配置办法有支持；未验证当前 Python/SSL 环境一定具备此协议，亦非真实调用边。",
+      "evidence": [
+        {
+          "source_title": "docs/user/advanced.rst:L929-L1057",
+          "input_id": "fed560d4cf53c3f49927f81d9d28eabeea7358a0a49b68d553c6bf2c6c2bd1a8",
+          "source_line_start": 1018,
+          "snippet": "We'll make a Transport Adapter that instructs the\nlibrary to use SSLv3::"
+        },
+        {
+          "source_title": "docs/user/advanced.rst:L929-L1057",
+          "input_id": "fed560d4cf53c3f49927f81d9d28eabeea7358a0a49b68d553c6bf2c6c2bd1a8",
+          "source_line_start": 1033,
+          "snippet": "block=block, ssl_version=ssl.PROTOCOL_SSLv3)"
+        }
+      ]
+    },
+    {
+      "id": "3a77f623-b701-4377-a499-cea41c2999c6",
+      "human_readable_id": 116,
+      "label": "REQUESTS → NTLM",
+      "sample_hash": "02f87b0fb07b8fab97cf6e6ff76d5de37f6ff26aecab668225e7b967466436f8",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": false,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "文档明确把 NTLM 列在 Requests organization 下的外部认证处理器，关系没有误称为内置支持。NTLM 是认证主题/项目标签，不是该块代码符号。",
+      "evidence": [
+        {
+          "source_title": "docs/user/authentication.rst:L1-L145",
+          "input_id": "9ee1d84f70030958f0de6e7385096736e40f5fe6d82302ea195810cbf6d09a2d",
+          "source_line_start": 99,
+          "snippet": "`Requests organization`_, including:\n\n- Kerberos_\n- NTLM_"
+        }
+      ]
+    },
+    {
+      "id": "b04b0052-05cf-48f7-a10d-621b83de234c",
+      "human_readable_id": 157,
+      "label": "REQUESTS HTTP LIBRARY → CHARSET_NORMALIZER",
+      "sample_hash": "02fda17d52248b9cafbb65ce3b9b2bde8ddce89cb137b581b06179eed403c2de",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": false,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "版本导入和 elif charset_normalizer_version 检查直接支持依赖检测/校验；检查有 chardet 优先的条件，并非两者存在时必定都校验。源端是项目标签，非原代码名。",
+      "evidence": [
+        {
+          "source_title": "src/requests/__init__.py:L1-L174",
+          "input_id": "f5bd2923eeb1fbcd1d23698f0e5be214aa259fc35120e6d7a333cd46bfaf3364",
+          "source_line_start": 48,
+          "snippet": "from charset_normalizer import __version__ as charset_normalizer_version"
+        },
+        {
+          "source_title": "src/requests/__init__.py:L1-L174",
+          "input_id": "f5bd2923eeb1fbcd1d23698f0e5be214aa259fc35120e6d7a333cd46bfaf3364",
+          "source_line_start": 80,
+          "snippet": "elif charset_normalizer_version:\n        major, minor, patch = charset_normalizer_version.split(\".\")[:3]"
+        }
+      ]
+    },
+    {
+      "id": "5313b5d6-bee0-444b-bb95-e6a7c22dbffb",
+      "human_readable_id": 319,
+      "label": "REQUESTS → REQUESTS STATUS CODES",
+      "sample_hash": "0350b93c8d847204f5d8037faff4aac6777a84c2e6291bae60b4283ccbc3db93",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": false,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": true
+      },
+      "rationale_zh": "models 中从 .status_codes 导入 codes，是直接导入证据；目标标题把组件名改成自然语言，不能当成代码限定名。",
+      "evidence": [
+        {
+          "source_title": "src/requests/models.py:L1-L185",
+          "input_id": "ce7864049adc0b732691fc982285b9c3c7ab256d3e2b7eb0a01e725c608ec2bb",
+          "source_line_start": 54,
+          "snippet": "from .status_codes import codes"
+        }
+      ]
+    },
+    {
+      "id": "877b095d-f6bb-4505-9943-535f3b4a4550",
+      "human_readable_id": 196,
+      "label": "PROXY MANAGER FOR → PROXYMANAGER",
+      "sample_hash": "040eb6e0c547109565e51f56cd6823f7003d39952b95188dc540f08ed1bef685",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": false,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": true
+      },
+      "rationale_zh": "proxy_manager_for 的 docstring 返回 ProxyManager，非 SOCKS 新建分支调用 proxy_from_url，支持该类对象的工厂用途。缓存命中会直接复用，不能解读为每次都创建，也不是直接调用 ProxyManager 构造器的证明。",
+      "evidence": [
+        {
+          "source_title": "src/requests/adapters.py:L156-L310",
+          "input_id": "3defd0f917ddff68090997576b620cec5291b1d379a24d3f556451ebdadcc397",
+          "source_line_start": 266,
+          "snippet": "def proxy_manager_for(self, proxy, **proxy_kwargs):\n        \"\"\"Return urllib3 ProxyManager for the given proxy."
+        },
+        {
+          "source_title": "src/requests/adapters.py:L156-L310",
+          "input_id": "3defd0f917ddff68090997576b620cec5291b1d379a24d3f556451ebdadcc397",
+          "source_line_start": 278,
+          "snippet": "if proxy in self.proxy_manager:\n            manager = self.proxy_manager[proxy]"
+        },
+        {
+          "source_title": "src/requests/adapters.py:L156-L310",
+          "input_id": "3defd0f917ddff68090997576b620cec5291b1d379a24d3f556451ebdadcc397",
+          "source_line_start": 293,
+          "snippet": "manager = self.proxy_manager[proxy] = proxy_from_url("
+        }
+      ]
+    },
+    {
+      "id": "23a2e40e-0126-43e3-baef-869b5d8da712",
+      "human_readable_id": 259,
+      "label": "REQUESTS → REQUESTSCOOKIEJAR",
+      "sample_hash": "048ee886e4e2e58e4a6316518fb421f4f52e8949281ecd883fcdd809d7b78ca1",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "Session 文档显式称默认 RequestsCookieJar，cookies 源码及测试显示 set/get/copy 行为，支持库使用和存取关系。",
+      "evidence": [
+        {
+          "source_title": "src/requests/sessions.py:L298-L453",
+          "input_id": "4a8e8bbc6944c527b33e96030e006e6f03d602a69c6034c6b0eeeb471f9e78ce",
+          "source_line_start": 442,
+          "snippet": "#: :class:`RequestsCookieJar <requests.cookies.RequestsCookieJar>`, but"
+        },
+        {
+          "source_title": "tests/test_requests.py:L1345-L1498",
+          "input_id": "0c09f08bbbad03c18c8e99b184cc3d256466154533900cafcf2d849e740b4749",
+          "source_line_start": 1363,
+          "snippet": "jar = requests.cookies.RequestsCookieJar()\n        jar.set(key, value, path=path)\n        jar.set(key, value)"
+        }
+      ]
+    },
+    {
+      "id": "c3022d57-a633-4243-8ebc-0a1825aac2b5",
+      "human_readable_id": 454,
+      "label": "WARNINGS → DEPRECATIONWARNING",
+      "sample_hash": "04c0fa1bce36fecde4068c0c8f11e32bab385d5b7ecf71b188da04d03d23f939",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "u 函数调用 warnings.warn 并传入 DeprecationWarning，方向及类别均直接可见。",
+      "evidence": [
+        {
+          "source_title": "tests/compat.py:L1-L23",
+          "input_id": "7cb6eb9f50d96b511d61577f5a6811fe8884231cb7bd0baf3d7bb205357c04f9",
+          "source_line_start": 14,
+          "snippet": "def u(s):\n    warnings.warn("
+        },
+        {
+          "source_title": "tests/compat.py:L1-L23",
+          "input_id": "7cb6eb9f50d96b511d61577f5a6811fe8884231cb7bd0baf3d7bb205357c04f9",
+          "source_line_start": 21,
+          "snippet": "        DeprecationWarning,\n    )"
+        }
+      ]
+    },
+    {
+      "id": "afdebe10-6668-43ef-8d83-148d40424b2f",
+      "human_readable_id": 471,
+      "label": "PYTHON → PYTEST",
+      "sample_hash": "0501045e942dc3b443caf588e44a487d0932c7f12b9630dff48985ae970299b1",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": false,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "Python 函数/服务器设置与 pytest fixture/装饰器均直接可见，支持共同用于套件这一概括；是语言与框架关联，不是两代码符号间调用。",
+      "evidence": [
+        {
+          "source_title": "tests/conftest.py:L1-L58",
+          "input_id": "3e39838d233a99214730f440ad51bfea12cf2b6966a7a1e9b6a1df8d27a1fb44",
+          "source_line_start": 25,
+          "snippet": "@pytest.fixture\ndef httpbin(httpbin):\n    return prepare_url(httpbin)"
+        },
+        {
+          "source_title": "tests/conftest.py:L1-L58",
+          "input_id": "3e39838d233a99214730f440ad51bfea12cf2b6966a7a1e9b6a1df8d27a1fb44",
+          "source_line_start": 50,
+          "snippet": "server = HTTPServer((\"localhost\", 0), SimpleHTTPRequestHandler)"
+        },
+        {
+          "source_title": "tests/test_requests.py:L2016-L2165",
+          "input_id": "bd1917605a30d62d0b147525d20ff7bf7d8f991a7e343ea4a08bd2b8a76ebf50",
+          "source_line_start": 2105,
+          "snippet": "@pytest.mark.xfail"
+        }
+      ]
+    },
+    {
+      "id": "b801eabe-1181-490c-8143-08b324300129",
+      "human_readable_id": 760,
+      "label": "TEST UNICODE MULTIPART POST → REQUESTS",
+      "sample_hash": "051ce9b1b3ee2a6c5c670ee0e98a07907cf03b81f9be60466fa08bd77a046f9c",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": false,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": true
+      },
+      "rationale_zh": "参数化 Unicode/bytes 数据、multipart 文件提交和状态 200 断言支持有限的兼容性测试；未覆盖所有 Unicode 输入。测试名称被空格化。",
+      "evidence": [
+        {
+          "source_title": "tests/test_requests.py:L919-L1069",
+          "input_id": "d62e2a771164b167bb4b3823a37d8a244819d3c478fdd6c0a08ded7b6ff4550b",
+          "source_line_start": 1053,
+          "snippet": "{\"stuff\": \"ëlïxr\"},\n            {\"stuff\": \"ëlïxr\".encode()},\n            {\"stuff\": \"elixr\"},\n            {\"stuff\": b\"elixr\"},"
+        },
+        {
+          "source_title": "tests/test_requests.py:L919-L1069",
+          "input_id": "d62e2a771164b167bb4b3823a37d8a244819d3c478fdd6c0a08ded7b6ff4550b",
+          "source_line_start": 1059,
+          "snippet": "def test_unicode_multipart_post(self, httpbin, data):"
+        }
+      ]
+    },
+    {
+      "id": "671443ec-c4df-4775-be96-7ac42ae4d61d",
+      "human_readable_id": 732,
+      "label": "TEST_POSTBIN_GET_POST_FILES_WITH_DATA → HTTPBIN",
+      "sample_hash": "05426e422039a5dfed458be95a2a8943715fd29dcd4c99e9f0fbc878df32cd4e",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "该测试用 httpbin(\"post\") 构建 url 并调用 requests.post，支持测试→httpbin endpoint 的使用关系。fixture 实际部署主机不在本链接中，未据此推断公网服务。",
+      "evidence": [
+        {
+          "source_title": "tests/test_requests.py:L775-L929",
+          "input_id": "3b81f8f08bac76fc65e8bb96bbabe77868ebd0da365f43e9ff2d5a7ff4308c48",
+          "source_line_start": 840,
+          "snippet": "def test_POSTBIN_GET_POST_FILES_WITH_DATA(self, httpbin):\n        url = httpbin(\"post\")\n        requests.post(url).raise_for_status()"
+        }
+      ]
+    },
+    {
+      "id": "2acf29ed-959d-400a-8759-48abb3413146",
+      "human_readable_id": 1002,
+      "label": "TEST DIFFERENT CONNECTION POOL FOR TLS SETTINGS VERIFY BUNDLE EXPIRED CERT → TLSSERVER",
+      "sample_hash": "055496d008c71a52d2939e20dd6336eebd1c2a14fade0cd0a5f3ec148e8d7145",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": false,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": true
+      },
+      "rationale_zh": "同名测试构造 TLSServer 并指定 expired/server 证书，在请求中指定 expired/ca bundle，注释说明信任 bundle 正确但证书过期。关系用途有支持；不是这里实际运行 TLS 验证，标题改写原测试名。",
+      "evidence": [
+        {
+          "source_title": "tests/test_requests.py:L2824-L2970",
+          "input_id": "0fb5d8ef4877cff141539475ec09339c674218c365a4842cdab3ead068b6626e",
+          "source_line_start": 2864,
+          "snippet": "def test_different_connection_pool_for_tls_settings_verify_bundle_expired_cert("
+        },
+        {
+          "source_title": "tests/test_requests.py:L2824-L2970",
+          "input_id": "0fb5d8ef4877cff141539475ec09339c674218c365a4842cdab3ead068b6626e",
+          "source_line_start": 2848,
+          "snippet": "cert_chain=\"tests/certs/expired/server/server.pem\","
+        },
+        {
+          "source_title": "tests/test_requests.py:L2824-L2970",
+          "input_id": "0fb5d8ef4877cff141539475ec09339c674218c365a4842cdab3ead068b6626e",
+          "source_line_start": 2890,
+          "snippet": "# Has right trust bundle, but certificate expired\n            with pytest.raises(requests.exceptions.SSLError):\n                s.get(url, verify=\"tests/certs/expired/ca/ca.crt\")"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "entities": {
+      "n": 20,
+      "judgments": {
+        "supported": 17,
+        "partial_or_ambiguous": 3,
+        "unsupported": 0
+      },
+      "flags": {
+        "exact_code_symbol": {
+          "true": 11,
+          "false": 9
+        },
+        "visible_direction_supported": {
+          "null": 20
+        },
+        "dynamic_target_overclaim": {
+          "false": 20
+        },
+        "source_link_missing": {
+          "false": 20
+        },
+        "name_changed_or_ambiguous": {
+          "false": 16,
+          "true": 4
+        }
+      }
+    },
+    "relationships": {
+      "n": 20,
+      "judgments": {
+        "partial_or_ambiguous": 2,
+        "supported": 18,
+        "unsupported": 0
+      },
+      "flags": {
+        "exact_code_symbol": {
+          "false": 13,
+          "true": 7
+        },
+        "visible_direction_supported": {
+          "false": 1,
+          "true": 13,
+          "null": 6
+        },
+        "dynamic_target_overclaim": {
+          "false": 20
+        },
+        "source_link_missing": {
+          "false": 20
+        },
+        "name_changed_or_ambiguous": {
+          "true": 9,
+          "false": 11
+        }
+      }
+    }
+  }
+}
