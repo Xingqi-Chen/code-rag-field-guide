@@ -122,10 +122,11 @@ def prepare_recovery():
         state.setdefault('recoveries', []).append({
             'time_utc': variant.transport.now(), 'event': event['sequence'],
             'service': service,
-            'reason': ('authorized_policy_checkpoint_before_dispatch' if event.get('request_dispatched') is False else 'timeout_without_complete_response'),
+            'reason': ('authorized_policy_checkpoint_before_dispatch' if event.get('request_dispatched') is False else 'http520_without_complete_model_response' if event.get('http_status')==520 else 'timeout_without_complete_response'),
             'explicit_one_time_retry_authorized': True,
             'authorization_scope': POLICY['scope'],
-            'authorization_utc': POLICY['user_authorized_utc'],
+            'authorization_utc': (state['http520_approval_recorded_utc'] if event.get('http_status')==520 else POLICY['user_authorized_utc']),
+            **({'authorization_time_basis':'Approval confirmation/config activation time; not the original user-message timestamp.'} if event.get('http_status')==520 else {}),
             'remote_completion_and_cost_unknown': event.get('request_dispatched') is not False,
             'successful_responses_reused': successes,
             'snapshot': snapshot.name,

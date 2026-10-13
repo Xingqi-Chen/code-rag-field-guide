@@ -22,14 +22,20 @@ def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
 def run_summary(base):
     execution=read(base/'execution.json')
     index=read(base/'index-summary.json')
-    events=execution['events']
+    events=[e for e in execution['events'] if e['phase']=='index']
+    assert sum(e['service']=='generation' for e in events)==execution['index_generation_attempts']
     dispatched=[e for e in events if e.get('request_dispatched') is not False]
     usage_unknown=[e['sequence'] for e in dispatched if 'usage' not in e]
+    usage=Counter()
+    for e in dispatched:
+        for k,v in e.get('usage',{}).items():
+            if type(v) is int:usage[e['service']+'_'+k]+=v
     operations={}
     for name in sorted({e['operation'] for e in events}):
         subset=[e for e in dispatched if e['operation']==name]
         operations[name]={'physical_attempts':len(subset),
-            'validated':sum(e['status']=='validated' for e in subset),
+            'initially_validated':sum(e['status']=='validated' for e in subset),
+            'complete_reply_later_validated_and_reused':sum(bool(e.get('recovery')) for e in subset),
             'supervised_seconds':sum(e.get('elapsed_seconds',0) for e in subset)}
     return {'index_tables':index['tables'],'entity_types':index['entity_type_counts'],
         'output_bytes':index['all_output_file_bytes'],'vector_bytes':index['vector_store_bytes'],
@@ -37,7 +43,8 @@ def run_summary(base):
         'physical_generation_attempts':sum(e['service']=='generation' for e in dispatched),
         'new_embedding_batches':sum(e['service']=='embedding' for e in dispatched),
         'non_dispatched_reservations':[e['sequence'] for e in events if e.get('request_dispatched') is False],
-        'unknown_usage_sequences':usage_unknown,'observed_usage_totals':execution['observed_usage_totals'],
+        'unknown_usage_sequences':usage_unknown,'index_observed_usage_totals':dict(usage),
+        'usage_scope':'Only phase=index for calls/usage/operations. Cumulative embedding reservations below also include prior probes and any query-vector preparation; not a per-run invoice.',
         'embedding_reserved_tokens_cumulative':execution['embedding_reserved_tokens'],
         'embedding_estimate_usd_cumulative':execution['known_embedding_input_estimate_usd'],
         'active_workflow_seconds':execution['active_index_workflow_seconds'],

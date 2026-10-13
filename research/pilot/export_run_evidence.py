@@ -98,6 +98,11 @@ def main(initial_prompts=None):
     public['request_timing']={'sum_supervised_request_seconds':sum(delays),
         'mean_supervised_request_seconds':statistics.mean(delays) if delays else None,
         'definition':'Client dispatch-to-worker-exit; includes transport and response validation overhead, excludes cache hits.'}
+    if public.get('non_dispatched_reservations'):
+        public['request_timing'].update(
+            definition='Supervisor-to-worker-exit, including the explicitly never-dispatched administrative checkpoint; excludes cache hits.',
+            non_dispatched_supervised_seconds=sum(e.get('elapsed_seconds',0) for e in public['events'] if e.get('request_dispatched') is False),
+            provider_dispatch_supervised_seconds=sum(e.get('elapsed_seconds',0) for e in public['events'] if e.get('request_dispatched') is not False))
     stops=[json.loads(p.read_text()) for p in sorted(RUN.glob('stopped-*.json'))]
     if partial and not any(s.get('stopped_utc')==state['stopped_utc'] for s in stops):stops.append(state)
     workflows=[]

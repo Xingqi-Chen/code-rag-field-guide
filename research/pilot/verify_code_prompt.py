@@ -171,6 +171,28 @@ def main():
     assert progress['successful_responses_reused']==189 and progress['cumulative_cache_hits_at_recovery']==669
     assert progress['unknown_usage_sequences_before_resume']==[75,96,107,108,109]
     assert progress['wall_deadline_removed'] and progress['limits']['wall_seconds'] is None
+    stopped520=read(OUT/'execution-interrupted-07.json');events520=stopped520['events']
+    assert stopped520['status']=='stopped' and stopped520['stop_reason']=='unclassified_http_error'
+    assert len(events520)==stopped520['index_generation_attempts']==272
+    assert events520[:109]==previous['events']
+    assert events520[-1]['http_status']==520 and events520[-1]['response_format']=='non_json'
+    assert events520[-1]['request_body_sha256']=='17b46a852d4e61e4321bfe32cf59a1fb5df5da1c4e2b3726d3e2356864465f36'
+    assert stopped520['non_dispatched_reservations']==[195]
+    assert stopped520['provider_dispatch_attempts']=={'generation':271}
+    assert stopped520['unknown_usage_sequences']==[75,96,107,108,109,272]
+    assert stopped520['generation_input_tokens']==sum(e['input_tokens'] for e in events520)==667096
+    validated520=[e for e in events520 if e['status']=='validated']
+    assert len(validated520)==265
+    assert Counter(e['operation'] for e in validated520)=={'extraction_initial':114,'extraction_glean':114,'description_summary':37}
+    totals=Counter()
+    for e in validated520:
+        for k,v in e['usage'].items():
+            if type(v) is int:totals['generation_'+k]+=v
+    assert dict(totals)==stopped520['observed_usage_totals']
+    assert stopped520['embedding_attempts']==0 and stopped520['embedding_reserved_tokens']==206333
+    assert stopped520['wall_deadline_removed'] and stopped520['limits']['wall_seconds'] is None
+    assert stopped520['limits']['generation_request_seconds']==120
+    assert stopped520['request_timing']['non_dispatched_supervised_seconds']==.214
     sample=read(OUT/'quality-sample-default.json');review=read(OUT/'quality-review-default.json')
     assert sha(OUT/'quality-sample-default.json')==review['inputs']['sample_sha256']
     units={u['ms_text_unit_id']:u for u in read(ROOT/'research/pilot/results/index/text-unit-provenance.json')}
