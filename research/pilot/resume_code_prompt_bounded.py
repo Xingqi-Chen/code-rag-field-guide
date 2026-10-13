@@ -122,11 +122,11 @@ def prepare_recovery():
         state.setdefault('recoveries', []).append({
             'time_utc': variant.transport.now(), 'event': event['sequence'],
             'service': service,
-            'reason': 'timeout_without_complete_response',
+            'reason': ('authorized_policy_checkpoint_before_dispatch' if event.get('request_dispatched') is False else 'timeout_without_complete_response'),
             'explicit_one_time_retry_authorized': True,
             'authorization_scope': POLICY['scope'],
             'authorization_utc': POLICY['user_authorized_utc'],
-            'remote_completion_and_cost_unknown': True,
+            'remote_completion_and_cost_unknown': event.get('request_dispatched') is not False,
             'successful_responses_reused': successes,
             'snapshot': snapshot.name,
             'retry_request_body_sha256': event['request_body_sha256'],

@@ -43,7 +43,7 @@ def main(initial_prompts=None):
         'request_body_sha256','started_utc','source_commit','supervisor_reason','worker_exit',
         'elapsed_seconds','http_status','error_category','response_format','validation_reason',
         'usage','visible_output_common_tokens','requested_output_limit_exceeded',
-        'worker_source_sha256','response_byte_limit','response_bytes']
+        'worker_source_sha256','response_byte_limit','response_bytes','request_dispatched','policy_checkpoint','code_prompt_source_sha256']
     public['events']=[{k:e[k] for k in event_keys if k in e} for e in state['events']]
     classifications=Counter()
     if initial_prompts is None:
@@ -83,6 +83,11 @@ def main(initial_prompts=None):
             event['requested_output_limit_exceeded']=(reply['usage']['completion_tokens']>2048
                 or recovery['visible_output_common_tokens']>2048)
     public['operation_counts']=dict(classifications)
+    if any(e.get('request_dispatched') is False for e in public['events']):
+        public['provider_dispatch_attempts']=dict(Counter(e['service'] for e in public['events'] if e.get('request_dispatched') is not False))
+        public['provider_operation_attempts']=dict(Counter(e['operation'] for e in public['events'] if e.get('request_dispatched') is not False))
+        public['non_dispatched_reservations']=[e['sequence'] for e in public['events'] if e.get('request_dispatched') is False]
+        public['reservation_note']='Attempt/input caps and operation_counts conservatively retain administrative reservations. provider_dispatch_attempts excludes confirmed never-dispatched reservations. Missing provider responses remain unknown.'
     public['observed_usage_totals']=dict(usage_totals)
     public['known_embedding_input_estimate_usd']=str(Decimal(state['embedding_reserved_tokens'])*Decimal('.13')/1000000)
     public['cost_notes']='Embedding estimate includes prior probes at USD0.13/million input tokens, not a verified invoice. Generation price unknown. Missing usage is unknown, never inferred as zero.'

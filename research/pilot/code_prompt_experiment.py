@@ -9,6 +9,7 @@ import hashlib
 import importlib.metadata
 import json
 import math
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -107,6 +108,8 @@ def configure():
     transport.LIMITS = dict(transport.LIMITS, generation_index_attempts=1200,
         generation_feature_attempts=0, generation_input_total=8000000, wall_seconds=10800,
         generation_request_seconds=request_seconds)
+    if (RUN/'summary.json').exists() and read(RUN/'summary.json').get('wall_deadline_removed') is True:
+        transport.LIMITS['wall_seconds']=None
     probe.supervise = supervise_variant
     full_index.make_config = make_config
 
@@ -154,11 +157,32 @@ def check_frozen():
 
 
 def worker(request, response):
+    # An existing controller cannot retroactively disarm its installed timer.
+    # Finish its current request, then pause the next reservation BEFORE sending.
+    if (RUN/'deadline-removal-request.json').exists():
+        state=read(RUN/'summary.json')
+        if not state.get('wall_deadline_removed'):
+            seq=len(state['events'])
+            assert request.parent.resolve()==response.parent.resolve()==RUN.resolve()
+            assert request.name==f'request-{seq:02}.json' and response.name==f'response-{seq:02}.json'
+            assert state['status']=='running' and state['supervisor_pid']==os.getppid()
+            assert state['events'][-1]['status']=='reserved_before_dispatch'
+            assert sha_body(read(request)['body'])==state['events'][-1]['request_body_sha256']
+            write(response,{'error_category':'authorized_deadline_policy_checkpoint',
+                'request_dispatched':False,'policy_checkpoint':True,
+                'worker_source_sha256':{Path(module.__file__).name:sha(Path(module.__file__))
+                    for module in [transport,probe]},
+                'code_prompt_source_sha256':sha(Path(__file__))})
+            return
     transport.worker(request, response)
     if response.exists():
         result = read(response)
         result.setdefault('worker_source_sha256', {})['code_prompt_experiment.py'] = sha(Path(__file__))
         write(response, result)
+
+
+def sha_body(body):
+    return probe.digest(probe.canonical(body).encode())
 
 
 def main():
