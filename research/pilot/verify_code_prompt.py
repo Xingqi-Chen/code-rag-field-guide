@@ -140,6 +140,20 @@ def main():
         assert policy['max_additional_retries_per_request_hash']==2
         assert policy['generation_request_seconds']==60
         previous=current
+    amendment=read(OUT/'timeout-amendment-120.json')
+    assert amendment['prior_generation_request_seconds']==60 and amendment['generation_request_seconds']==120
+    assert amendment['first_possible_event']==110 and amendment['original_deadline_utc']==policy['original_deadline_utc']
+    assert not amendment['cumulative_caps_reset'] and not amendment['deadline_extended']
+    assert not amendment['request_body_prompt_model_corpus_parser_and_metrics_changed']
+    resumed=read(OUT/'recovery-progress-120.json');event110=resumed['retry_event']
+    assert event110['sequence']==110 and event110['status']=='validated' and event110['http_status']==200
+    assert event110['request_body_sha256']==previous['events'][-1]['request_body_sha256']
+    assert resumed['lineage']['event']==109 and resumed['lineage']['retry_event']==110
+    assert resumed['lineage']['logical_retry_number']==3
+    assert resumed['successful_generation_cache_reuse_this_recovery']==104
+    assert resumed['cumulative_cache_hits_at_recovery']==480
+    assert resumed['amendment_applied_utc']==amendment['applied_utc']
+    assert 0<event110['elapsed_seconds']<60
     sample=read(OUT/'quality-sample-default.json');review=read(OUT/'quality-review-default.json')
     assert sha(OUT/'quality-sample-default.json')==review['inputs']['sample_sha256']
     units={u['ms_text_unit_id']:u for u in read(ROOT/'research/pilot/results/index/text-unit-provenance.json')}
@@ -158,7 +172,7 @@ def main():
             assert judged['evidence']
             for e in judged['evidence']:assert linked[e['input_id']]==e['source_title'] and e['snippet']
     assert not review['reviewer']['human_review'] and not review['reviewer']['blind_review']
-    print('Verified frozen inputs, five interruption snapshots, 104 successful generations and 5 unknown outcomes, approved75-to76,96-to97 and107-to108-to109 lineage, bounded retry exhaustion, unchanged cumulative limits and 40 baseline audit records. No new retrieval claim or model call.')
+    print('Verified frozen inputs, five interruption snapshots, 104 successful generations and 5 unknown outcomes, approved75-to76,96-to97 and107-to108-to109 lineage, bounded retry exhaustion, subsequent authorized120-second policy and successful110 recovery, unchanged cumulative caps/deadline and 40 baseline audit records. No completed retrieval claim or model call.')
 
 
 if __name__=='__main__':main()

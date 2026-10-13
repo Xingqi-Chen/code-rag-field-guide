@@ -54,6 +54,9 @@ def export():
     public.update(variant='code-prompt', prior_cumulative_embedding_tokens=206333,
         cost_notes='Cumulative estimate includes 206333 prior baseline/probe/query tokens. Only new graph embeddings incur new calls; source/query vectors reused. No Fullstar fee estimate. Unknown usage is not zero.',
         evaluation_complete=False)
+    for key in ['timeout_retry_policy','limit_amendments']:
+        if key in state:public[key]=state[key]
+    public['unknown_usage_sequences']=[e['sequence'] for e in public['events'] if 'usage' not in e]
     if partial:
         assert not destination.exists(), 'Refuse to replace a published interruption snapshot'
         write(destination, public)
