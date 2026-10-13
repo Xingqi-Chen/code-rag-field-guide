@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "authorization_utc": "2026-10-13T04:15:42Z",
+  "scope": "Six single-attempt Global answers and six same-model BM25 answers; no indexing, embeddings, repair or retries",
+  "microsoft_commit": "5faaaf4f5685fa2056fa8c3bf9342cb089f2942f",
+  "requests_commit": "0e322af87745eff34caffe4df68456ebc20d9068",
+  "community_level": 2,
+  "reports_selected": 84,
+  "map_batches_per_question": 7,
+  "map_context_tokens": 12000,
+  "reduce_data_tokens": 12000,
+  "bm25_context_tokens": 12000,
+  "map_max_length_words": 1000,
+  "reduce_max_length_words": 2000,
+  "use_community_summary": false,
+  "dynamic_community_selection": false,
+  "allow_general_knowledge": false,
+  "seed": 20261012,
+  "limits": {
+    "physical_generation_attempts": 60,
+    "planned_maximum": 54,
+    "wall_seconds": 3600,
+    "request_seconds": 60,
+    "input_tokens_per_request": 16000,
+    "input_tokens_total": 864000,
+    "requested_output_tokens_per_request": 2048,
+    "response_bytes": 2097152,
+    "concurrency": 1,
+    "automatic_retries": 0,
+    "embedding_calls": 0
+  },
+  "model": "gpt-5.6-luna",
+  "endpoint": "https://one.fullstar.tech/v1/responses",
+  "fullstar_cost": "Not calculated, as requested; all provider token usage recorded",
+  "embedding_budget": "No new embeddings; prior cumulative official OpenAI budget remains USD 1",
+  "transport": "Existing direct Responses SSE adapter; map JSON is required by unchanged official prompt but not enforced by a new transport schema. Official Global json_mode=False avoids a duplicated keyword in this pinned version; _map_response_single_batch still passes response_format_json_object=True, accepted and recorded by adapter. Reduce stream uses the complete validated response as one async chunk. No upstream prompts, parsing, report batching or reduce selection are replaced.",
+  "failure_policy": "Abort on transport/response/budget/unknown result; no resume or replay. Retain upstream parsing failures and canned abstention without repair.",
+  "output_limit_risk": "Prior authorized proxy behavior can exceed requested 2048 tokens; preserve actual complete response and usage, mark violations. No truncation or retry.",
+  "evaluation": {
+    "precise_ids": [
+      "Q01",
+      "Q07",
+      "Q13",
+      "F02-plan"
+    ],
+    "global_ids": [
+      "G01",
+      "G02"
+    ],
+    "rubric": "Frozen atomic requirements, each 0 absent/wrong, 0.5 partial, 1 correct; report per question and group only. Independent AI reviewer checks source grounded factual errors, omissions, unsupported assertions and citation grounding. Not a human benchmark.",
+    "citations": "Separate named correct source locations from direct source excerpt citations and community-report citations. A Reports ID is not automatically verified source evidence. No retrieval-recall pooling with prior 20 questions.",
+    "baseline": "Same model, exact common user question/instruction, requested output cap and 12000 data cap; BM25 direct source once versus Global seven report map requests plus reduce. Different prompts and total compute are explicitly not controlled; no causal graph-only comparison.",
+    "selection": "Three earlier prespecified precise cases plus adapted F02 planning; two prospective auth-wide questions. Earlier retrieval results are known; this is a purposive exploratory extension, not a fresh blind test.",
+    "independence": "Gold is never loaded by execution script; no tuning or index rebuild using new questions."
+  }
+}

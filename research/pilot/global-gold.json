@@ -1,0 +1,513 @@
+{
+  "schema": 1,
+  "scoring": "For each criterion: 1 fully correct, .5 materially incomplete but correct core, 0 absent or wrong. Separately list errors, omissions, source locations and unsupported assertions. References are sufficient inspection anchors, not exhaustive relevant lines.",
+  "reference_scope": "Frozen Requests 2.32.3. Feature requirements are hypothetical user requirements, not claims about existing code. Tests are inspected statically; no live HTTP tests executed.",
+  "items": [
+    {
+      "id": "Q01",
+      "criteria": [
+        {
+          "id": "Q01-C1",
+          "requirement": "Identify src/requests/structures.py and CaseInsensitiveDict."
+        },
+        {
+          "id": "Q01-C2",
+          "requirement": "Explain __setitem__ stores value under lower-case lookup key together with last original spelling."
+        },
+        {
+          "id": "Q01-C3",
+          "requirement": "Explain __getitem__ lowercases the lookup key."
+        },
+        {
+          "id": "Q01-C4",
+          "requirement": "Explain iteration yields preserved original spelling."
+        }
+      ],
+      "evidence": [
+        {
+          "path": "src/requests/structures.py",
+          "symbol": "CaseInsensitiveDict.__setitem__",
+          "start_line": 46,
+          "end_line": 49,
+          "span_sha256": "d2dd595c8e7ea0e1b7ef2f8d07ca11ac46ca3795f8ef8adef582f3cb2abc7496",
+          "id": "Q01-E1"
+        },
+        {
+          "path": "src/requests/structures.py",
+          "symbol": "CaseInsensitiveDict.__getitem__",
+          "start_line": 51,
+          "end_line": 52,
+          "span_sha256": "50522e6951e62263533e5128ac3f5dfdeb8aeb4b5c112777aebd7f9a3f37f244",
+          "id": "Q01-E2"
+        },
+        {
+          "path": "src/requests/structures.py",
+          "symbol": "CaseInsensitiveDict.__iter__",
+          "start_line": 57,
+          "end_line": 58,
+          "span_sha256": "8f17ffd12d65b0bc77e44e3b6a3c9ea8a9c9810b348ceebdc1b506381f04fb89",
+          "id": "Q01-E3"
+        }
+      ]
+    },
+    {
+      "id": "Q07",
+      "criteria": [
+        {
+          "id": "Q07-C1",
+          "requirement": "Identify api.get -> api.request."
+        },
+        {
+          "id": "Q07-C2",
+          "requirement": "Identify api.request creates/uses Session and invokes Session.request."
+        },
+        {
+          "id": "Q07-C3",
+          "requirement": "Identify Session.request builds Request and calls prepare_request before sending."
+        },
+        {
+          "id": "Q07-C4",
+          "requirement": "Identify Session.request -> Session.send with prepared request."
+        },
+        {
+          "id": "Q07-C5",
+          "requirement": "Identify Session.send -> get_adapter(request.url) -> selected adapter.send; stop there and do not invent a fixed runtime subclass."
+        }
+      ],
+      "evidence": [
+        {
+          "path": "src/requests/api.py",
+          "symbol": "get",
+          "start_line": 73,
+          "end_line": 73,
+          "span_sha256": "70549dd2a63c274797867c46af37edcc16c7910183baa74d29777d93d59c47cd",
+          "id": "Q07-E1"
+        },
+        {
+          "path": "src/requests/api.py",
+          "symbol": "request",
+          "start_line": 58,
+          "end_line": 59,
+          "span_sha256": "e59a55a07e738ba374816e2002174d93f87fbe36b96890e592ce55cd54901387",
+          "id": "Q07-E2"
+        },
+        {
+          "path": "src/requests/sessions.py",
+          "symbol": "Session.request",
+          "start_line": 575,
+          "end_line": 575,
+          "span_sha256": "dbc9f752718a85e13f1c0ff07f4580d913a00af35a7fb77b5756bd8d75c10d2b",
+          "id": "Q07-E3"
+        },
+        {
+          "path": "src/requests/sessions.py",
+          "symbol": "Session.request",
+          "start_line": 589,
+          "end_line": 589,
+          "span_sha256": "12ee5af6a7da84d81bd1ded3f002d0a9c510a18868da21aca944220ef898b037",
+          "id": "Q07-E4"
+        },
+        {
+          "path": "src/requests/sessions.py",
+          "symbol": "Session.send",
+          "start_line": 697,
+          "end_line": 703,
+          "span_sha256": "3678a62e1750e7c6b1d993f0df47d90c736f79d3738c44285e5278dce58391e2",
+          "id": "Q07-E5"
+        }
+      ]
+    },
+    {
+      "id": "Q13",
+      "criteria": [
+        {
+          "id": "Q13-C1",
+          "requirement": "Identify CaseInsensitiveDict set/get and associated spelling/iteration behavior."
+        },
+        {
+          "id": "Q13-C2",
+          "requirement": "Identify PreparedRequest.prepare_headers as consumer and header validation interaction."
+        },
+        {
+          "id": "Q13-C3",
+          "requirement": "Identify focused TestCaseInsensitiveDict tests including case-variant lookup."
+        },
+        {
+          "id": "Q13-C4",
+          "requirement": "Distinguish inspection scope from mandatory edits; do not claim every caller must change."
+        }
+      ],
+      "evidence": [
+        {
+          "path": "src/requests/structures.py",
+          "symbol": "CaseInsensitiveDict.__setitem__",
+          "start_line": 46,
+          "end_line": 49,
+          "span_sha256": "d2dd595c8e7ea0e1b7ef2f8d07ca11ac46ca3795f8ef8adef582f3cb2abc7496",
+          "id": "Q13-E1"
+        },
+        {
+          "path": "src/requests/structures.py",
+          "symbol": "CaseInsensitiveDict.__getitem__",
+          "start_line": 51,
+          "end_line": 52,
+          "span_sha256": "50522e6951e62263533e5128ac3f5dfdeb8aeb4b5c112777aebd7f9a3f37f244",
+          "id": "Q13-E2"
+        },
+        {
+          "path": "src/requests/models.py",
+          "symbol": "PreparedRequest.prepare_headers",
+          "start_line": 483,
+          "end_line": 492,
+          "span_sha256": "e5c5262d067ac89571a6fb9fc70f01c6572394e61f6fbe244735b1c89673e3c1",
+          "id": "Q13-E3"
+        },
+        {
+          "path": "tests/test_structures.py",
+          "symbol": "TestCaseInsensitiveDict",
+          "start_line": 16,
+          "end_line": 22,
+          "span_sha256": "b346d5bdd4da781061a138fae0451e5b628477de2859105c276a502a7655a24f",
+          "id": "Q13-E4"
+        }
+      ]
+    },
+    {
+      "id": "F02-plan",
+      "criteria": [
+        {
+          "id": "F02-plan-C1",
+          "requirement": "Initialize a mutable per-instance default_timeout=None in Session initialization without constructor/global-default change."
+        },
+        {
+          "id": "F02-plan-C2",
+          "requirement": "Use an omitted-argument sentinel or equivalent at Session.request; explicit None must not be replaced."
+        },
+        {
+          "id": "F02-plan-C3",
+          "requirement": "Ensure existing verb wrappers reach this policy; preserve direct Session.send contract."
+        },
+        {
+          "id": "F02-plan-C4",
+          "requirement": "Forward the effective timeout through send and redirects without adding shape validation."
+        },
+        {
+          "id": "F02-plan-C5",
+          "requirement": "Plan tests for omitted/explicit None/float/tuple, per-instance mutation, wrappers, redirects and direct send; document distinction."
+        }
+      ],
+      "evidence": [
+        {
+          "path": "src/requests/sessions.py",
+          "symbol": "Session.__init__",
+          "start_line": 390,
+          "end_line": 398,
+          "span_sha256": "4650edb0592558d9f635ddde0a48cd18b1f872654971d73d1b6815e487d8fea1",
+          "id": "F02-E1"
+        },
+        {
+          "path": "src/requests/sessions.py",
+          "symbol": "Session.request",
+          "start_line": 500,
+          "end_line": 519,
+          "span_sha256": "93c7dcc0178e9921a4b07159c74e7ce2c43ca05d7699917b5c0ccbe1518b582a",
+          "id": "F02-E2"
+        },
+        {
+          "path": "src/requests/sessions.py",
+          "symbol": "Session.request",
+          "start_line": 584,
+          "end_line": 591,
+          "span_sha256": "6d0c2395035260acbe8d96869f6f0589ed6f1c5fd3ea8fb68fadb8c8e5ac64e1",
+          "id": "F02-E3"
+        },
+        {
+          "path": "src/requests/sessions.py",
+          "symbol": "Session.get",
+          "start_line": 602,
+          "end_line": 602,
+          "span_sha256": "771334806f9eb7fbf6a29cea2f41529020fbfeb4b548dfc191cc7ff123805a4c",
+          "id": "F02-E4"
+        },
+        {
+          "path": "src/requests/sessions.py",
+          "symbol": "Session.post",
+          "start_line": 637,
+          "end_line": 637,
+          "span_sha256": "2bf3e64e2f812d3e38814b8663360bcc9c901dc9c0fe1c59c87fa50ab48a4e50",
+          "id": "F02-E5"
+        },
+        {
+          "path": "src/requests/sessions.py",
+          "symbol": "SessionRedirectMixin.resolve_redirects",
+          "start_line": 265,
+          "end_line": 275,
+          "span_sha256": "3d18aa34e83c1f2830027aab6dfa15b8e917398acb5351600226c0d515558556",
+          "id": "F02-E6"
+        },
+        {
+          "path": "src/requests/sessions.py",
+          "symbol": "Session.send",
+          "start_line": 673,
+          "end_line": 690,
+          "span_sha256": "a5bcdc571121ade4e5f9d291b4f2860f8d175c9fecfc37d1beeb891c4a9589b7",
+          "id": "F02-E7"
+        },
+        {
+          "path": "src/requests/adapters.py",
+          "symbol": "HTTPAdapter.send",
+          "start_line": 613,
+          "end_line": 616,
+          "span_sha256": "641069f7b8651989468a3630cb3911228134c4c25405cd57a07b8c34992b2696",
+          "id": "F02-E8"
+        }
+      ]
+    },
+    {
+      "id": "G01",
+      "criteria": [
+        {
+          "id": "G01-C1",
+          "requirement": "Identify auth.py built-in Basic/Proxy/Digest handlers and callable AuthBase interface."
+        },
+        {
+          "id": "G01-C2",
+          "requirement": "Identify models.PreparedRequest.prepare_auth applies callable/tuple auth during preparation."
+        },
+        {
+          "id": "G01-C3",
+          "requirement": "Identify sessions.prepare_request merges request/session auth and conditionally uses netrc/trust_env."
+        },
+        {
+          "id": "G01-C4",
+          "requirement": "Identify redirect auth stripping/reapplication and distinct proxy authorization responsibilities."
+        },
+        {
+          "id": "G01-C5",
+          "requirement": "Identify relevant authentication docs/tests and distinguish external OAuth packages from built-in implementation."
+        }
+      ],
+      "evidence": [
+        {
+          "id": "G01-E1",
+          "path": "src/requests/auth.py",
+          "start_line": 69,
+          "end_line": 105,
+          "symbol": "AuthBase/HTTPBasicAuth/HTTPProxyAuth",
+          "span_sha256": "21da0400690f99826f8856a0fdfeefde34a684203269d4fd3ec9c7ba06a86b85"
+        },
+        {
+          "id": "G01-E2",
+          "path": "src/requests/auth.py",
+          "start_line": 236,
+          "end_line": 303,
+          "symbol": "HTTPDigestAuth challenge and hooks",
+          "span_sha256": "12bad2631ce8404304a8ae3ff635231f113dd76310d7af00e23ede0ad01b333b"
+        },
+        {
+          "id": "G01-E3",
+          "path": "src/requests/models.py",
+          "start_line": 351,
+          "end_line": 377,
+          "symbol": "PreparedRequest.prepare",
+          "span_sha256": "f7a157033f2d1a35e5eb8e0859c0d48a7b2512517cb5ef5d847ee63e207d28c1"
+        },
+        {
+          "id": "G01-E4",
+          "path": "src/requests/models.py",
+          "start_line": 588,
+          "end_line": 608,
+          "symbol": "PreparedRequest.prepare_auth",
+          "span_sha256": "3f68074da93bcdf2c532963db10f12d77762e961133b0278018f10800ab7a31c"
+        },
+        {
+          "id": "G01-E5",
+          "path": "src/requests/sessions.py",
+          "start_line": 127,
+          "end_line": 159,
+          "symbol": "SessionRedirectMixin.should_strip_auth",
+          "span_sha256": "e338acd849ea915c2228be009f973b0573b7248f49ab8922364526ae279dae91"
+        },
+        {
+          "id": "G01-E6",
+          "path": "src/requests/sessions.py",
+          "start_line": 282,
+          "end_line": 333,
+          "symbol": "rebuild_auth/rebuild_proxies",
+          "span_sha256": "c09ae0e347ac022df21bc501e361d518e60023ea8dbede64ac6b3c6c015dbaa5"
+        },
+        {
+          "id": "G01-E7",
+          "path": "src/requests/sessions.py",
+          "start_line": 477,
+          "end_line": 497,
+          "symbol": "Session.prepare_request",
+          "span_sha256": "6c69a8b8b60677fdf93d373c2aaa1aa20f22eead5eb586c950e5a70024129d5f"
+        },
+        {
+          "id": "G01-E8",
+          "path": "docs/user/authentication.rst",
+          "start_line": 60,
+          "end_line": 85,
+          "symbol": "external OAuth",
+          "span_sha256": "a6e59d785ac3574ef9ed37fbb5ecfc382befee10292debd6907ca993d83b1045"
+        },
+        {
+          "id": "G01-E9",
+          "path": "docs/user/authentication.rst",
+          "start_line": 108,
+          "end_line": 134,
+          "symbol": "custom AuthBase",
+          "span_sha256": "36188bead922b7e6e94c2eed5f57a19d63fe11036e6388935de85eb00ed440bd"
+        },
+        {
+          "id": "G01-E10",
+          "path": "tests/test_requests.py",
+          "start_line": 671,
+          "end_line": 699,
+          "symbol": "test_basicauth_with_netrc",
+          "span_sha256": "9b57a604a1578a2d8d4bc9d89baea8fecebada29bb057d5b7332dc100035ae91"
+        },
+        {
+          "id": "G01-E11",
+          "path": "tests/test_requests.py",
+          "start_line": 1860,
+          "end_line": 1908,
+          "symbol": "test_should_strip_auth",
+          "span_sha256": "900c253fd377994f213870690d5aad454b4013ebeabf42a8e00d773529c833ca"
+        },
+        {
+          "id": "G01-E12",
+          "path": "tests/test_lowlevel.py",
+          "start_line": 127,
+          "end_line": 186,
+          "symbol": "Digest redirect challenge test",
+          "span_sha256": "8004e1e8a6d918b878f991d0689110353a414d2d76537704756c016d4c445abb"
+        }
+      ]
+    },
+    {
+      "id": "G02",
+      "criteria": [
+        {
+          "id": "G02-C1",
+          "requirement": "Identify AuthBase.__call__ extension returning a prepared request; external extension may avoid core edits."
+        },
+        {
+          "id": "G02-C2",
+          "requirement": "Identify PreparedRequest.prepare_auth / Session.prepare_request integration and precedence to inspect."
+        },
+        {
+          "id": "G02-C3",
+          "requirement": "Explain optional response hooks/challenge flow with Digest as existing example; do not require every scheme to use challenges."
+        },
+        {
+          "id": "G02-C4",
+          "requirement": "Identify redirect credential stripping/netrc and proxy separation as behavior to preserve/inspect."
+        },
+        {
+          "id": "G02-C5",
+          "requirement": "Propose auth integration, precedence, redirects, challenge/retry and documentation tests while distinguishing inspections from required edits."
+        }
+      ],
+      "evidence": [
+        {
+          "id": "G02-E1",
+          "path": "src/requests/auth.py",
+          "start_line": 69,
+          "end_line": 105,
+          "symbol": "AuthBase/HTTPBasicAuth/HTTPProxyAuth",
+          "span_sha256": "21da0400690f99826f8856a0fdfeefde34a684203269d4fd3ec9c7ba06a86b85"
+        },
+        {
+          "id": "G02-E2",
+          "path": "src/requests/auth.py",
+          "start_line": 236,
+          "end_line": 303,
+          "symbol": "HTTPDigestAuth challenge and hooks",
+          "span_sha256": "12bad2631ce8404304a8ae3ff635231f113dd76310d7af00e23ede0ad01b333b"
+        },
+        {
+          "id": "G02-E3",
+          "path": "src/requests/models.py",
+          "start_line": 351,
+          "end_line": 377,
+          "symbol": "PreparedRequest.prepare",
+          "span_sha256": "f7a157033f2d1a35e5eb8e0859c0d48a7b2512517cb5ef5d847ee63e207d28c1"
+        },
+        {
+          "id": "G02-E4",
+          "path": "src/requests/models.py",
+          "start_line": 588,
+          "end_line": 608,
+          "symbol": "PreparedRequest.prepare_auth",
+          "span_sha256": "3f68074da93bcdf2c532963db10f12d77762e961133b0278018f10800ab7a31c"
+        },
+        {
+          "id": "G02-E5",
+          "path": "src/requests/sessions.py",
+          "start_line": 127,
+          "end_line": 159,
+          "symbol": "SessionRedirectMixin.should_strip_auth",
+          "span_sha256": "e338acd849ea915c2228be009f973b0573b7248f49ab8922364526ae279dae91"
+        },
+        {
+          "id": "G02-E6",
+          "path": "src/requests/sessions.py",
+          "start_line": 282,
+          "end_line": 333,
+          "symbol": "rebuild_auth/rebuild_proxies",
+          "span_sha256": "c09ae0e347ac022df21bc501e361d518e60023ea8dbede64ac6b3c6c015dbaa5"
+        },
+        {
+          "id": "G02-E7",
+          "path": "src/requests/sessions.py",
+          "start_line": 477,
+          "end_line": 497,
+          "symbol": "Session.prepare_request",
+          "span_sha256": "6c69a8b8b60677fdf93d373c2aaa1aa20f22eead5eb586c950e5a70024129d5f"
+        },
+        {
+          "id": "G02-E8",
+          "path": "docs/user/authentication.rst",
+          "start_line": 60,
+          "end_line": 85,
+          "symbol": "external OAuth",
+          "span_sha256": "a6e59d785ac3574ef9ed37fbb5ecfc382befee10292debd6907ca993d83b1045"
+        },
+        {
+          "id": "G02-E9",
+          "path": "docs/user/authentication.rst",
+          "start_line": 108,
+          "end_line": 134,
+          "symbol": "custom AuthBase",
+          "span_sha256": "36188bead922b7e6e94c2eed5f57a19d63fe11036e6388935de85eb00ed440bd"
+        },
+        {
+          "id": "G02-E10",
+          "path": "tests/test_requests.py",
+          "start_line": 671,
+          "end_line": 699,
+          "symbol": "test_basicauth_with_netrc",
+          "span_sha256": "9b57a604a1578a2d8d4bc9d89baea8fecebada29bb057d5b7332dc100035ae91"
+        },
+        {
+          "id": "G02-E11",
+          "path": "tests/test_requests.py",
+          "start_line": 1860,
+          "end_line": 1908,
+          "symbol": "test_should_strip_auth",
+          "span_sha256": "900c253fd377994f213870690d5aad454b4013ebeabf42a8e00d773529c833ca"
+        },
+        {
+          "id": "G02-E12",
+          "path": "tests/test_lowlevel.py",
+          "start_line": 127,
+          "end_line": 186,
+          "symbol": "Digest redirect challenge test",
+          "span_sha256": "8004e1e8a6d918b878f991d0689110353a414d2d76537704756c016d4c445abb"
+        }
+      ]
+    }
+  ]
+}
