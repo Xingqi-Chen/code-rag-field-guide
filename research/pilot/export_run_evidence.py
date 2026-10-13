@@ -36,7 +36,8 @@ def main():
         'logical_completion_calls','completion_cache_hits','logical_embedding_calls',
         'embedding_cache_items','imported_successful_probe_cache','source_commit','workflows',
         'executions','recoveries','index_elapsed_seconds','index_finished_utc',
-        'retrieval_finished_utc','generation_finished_utc','stopped_utc','stop_reason']
+        'retrieval_finished_utc','generation_finished_utc','stopped_utc','stop_reason',
+        'window_started_utc','window_deadline_utc','execution_windows']
     public={k:state[k] for k in public_keys if k in state}
     event_keys=['sequence','service','phase','workflow','input_tokens','items','status',
         'request_body_sha256','started_utc','source_commit','supervisor_reason','worker_exit',
