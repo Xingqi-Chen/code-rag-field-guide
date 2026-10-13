@@ -1,0 +1,313 @@
+{
+  "reviewer": "Independent AI review agent /root/final_fact_review; 非人类评分；非盲法；未参与生成这四份回答。",
+  "methodology": {
+    "completed_at_utc": "2026-10-13T04:40:29.388255+00:00",
+    "scope": "G01/G02 × global/bm25 四份最终回答；只评理解/规划，不运行 HTTP 测试，不调用模型或服务。",
+    "frozen_rubric": "严格使用 global-gold.json 原条目及顺序：1=完整正确，0.5=正确核心但重要内容不完整，0=缺失或错误；不修改标准。正确性与输入出处分开记录，不因诚实说明材料不足就增加幻觉错误。",
+    "scoring_note": "按每条复合要求判断，不能将报告引用数量或回答长度当得分。没有精确方法时只给已表达的正确核心部分分；完全未识别关键接口/动作记0。额外事实错误独立列出，不对所有条目重复扣分。事实正确也不意味着直接源码已被输入支持。",
+    "source_check": "固定 Requests 2.32.3；G01/G02 共用的12处证据逐一通过 SHA256 核对。两组 BM25 共18个 Sources 单元逐字核对原码成功。检查最终回答额外的 Digest 算法、Basic 字节编码、代理经理、序列化方法及相关测试；Global 报告按所引 ID 选读，没有把 Reports ID 当原码行号。",
+    "input_hashes": {
+      "global-gold.json": "db5eb7d25e682c28603310aa46263797d992a7298c00bfce869aad3033833d7b",
+      "global-questions.json": "21a441eb81ce9f8c3ff5285a9ad6815371676892d945283ccfdcaaf6c20a9852",
+      "answers/G01-global.json": "dcd467907f5678aab95e9c346cdad1ded9f29c1906df4df43ef92b3c0e1c9c3f",
+      "answers/G01-bm25.json": "4e70e15f721581f972d34ce31feb976ce79cfc1ac5b3648f894684ade676cb9e",
+      "answers/G02-global.json": "5fdc75d57925f6740c5a28feaf577c89de3651b610edfbf798aaafef406b93c7",
+      "answers/G02-bm25.json": "09772b66e858636dcddf8aadcbd2e391b4b19230d5ba719f5fe11656e8adb653"
+    },
+    "limitations": "单一 AI 审阅者，知道方法名称，无人类一致性检验；仅两道全局题，不可估算普遍准确率。未执行任何认证/HTTP 测试，也没有验证第三方扩展运行效果。correct_source_locations 内审阅者补核的行号均明确标注，不能算模型已输出精确行号。",
+    "location_range_correction": "After the independent reviewer flagged four source-range precision corrections, the coordinating agent verified AST start/end lines and applied them; scores, model answers and frozen gold unchanged."
+  },
+  "assessments": [
+    {
+      "question_id": "G01",
+      "method": "global",
+      "criteria": [
+        {
+          "id": "G01-C1",
+          "score": 0.5,
+          "rationale": "正确识别 HTTPBasicAuth、HTTPProxyAuth、HTTPDigestAuth 及各自头字段/挑战职责，但未识别 auth.py 的具体模块位置或 AuthBase.__call__ 接口。"
+        },
+        {
+          "id": "G01-C2",
+          "score": 0,
+          "rationale": "只概述 PreparedRequest 保存最终请求状态和认证头；明确未能识别负责应用认证的准备方法，也未解释 prepare_auth 对 tuple/callable 的实际应用。"
+        },
+        {
+          "id": "G01-C3",
+          "score": 0.5,
+          "rationale": "正确概括请求/Session 设置合并，以及显式认证缺省且信任环境时的 netrc 来源；缺 Session.prepare_request 的具体集成点和 request.auth/self.auth 双条件。"
+        },
+        {
+          "id": "G01-C4",
+          "score": 0.5,
+          "rationale": "正确区分重定向凭据移除与代理认证、列出主机变化/HTTPS 降级等行为；遗漏重定向后的 trust_env/netrc 重新认证。"
+        },
+        {
+          "id": "G01-C5",
+          "score": 0.5,
+          "rationale": "正确区分 requests-oauthlib 等第三方扩展，描述了实际存在的认证回归主题；未定位具体认证文档与测试文件/函数，文档职责仍停留在概述。"
+        }
+      ],
+      "factual_errors": [],
+      "unsupported_assertions": [],
+      "omissions": [
+        "AuthBase.__call__ 的可调用扩展契约及 auth.py 位置。",
+        "PreparedRequest.prepare_auth 将二元 tuple 转为 HTTPBasicAuth、调用 auth(self)、合并返回状态并重算 Content-Length。",
+        "Session.prepare_request 的准确位置及 netrc 仅在请求和 Session 都未提供认证时使用。",
+        "rebuild_auth 在重定向后按 trust_env 查询 netrc 并重新调用 prepare_auth。",
+        "可直接检查的 docs/user/authentication.rst、认证测试文件/函数位置。"
+      ],
+      "source_grounding": "输入是 84 份模型生成的社区报告，未提供原始源码块。最终报告引用 ID 均存在；选择性核对 Reports 22/45/32/73/38/2/37/49/4/15/13/68/17/72 等及固定源码后，Basic 编码、Digest 算法/线程状态、代理管理、Windows 注册表代理及所述测试主题均有依据。Reports 引用不是源码定位或程序语义验证。回答对无法确定具体方法、文件和执行结果的声明视为诚实的材料边界，不计幻觉；不足反映在对应标准与遗漏中。",
+      "correct_source_locations": []
+    },
+    {
+      "question_id": "G01",
+      "method": "bm25",
+      "criteria": [
+        {
+          "id": "G01-C1",
+          "score": 0.5,
+          "rationale": "正确识别 Basic、Digest、AuthBase.__call__ 及 auth.py 为其实现位置；但未识别内置 HTTPProxyAuth，且没有该模块实现原文。"
+        },
+        {
+          "id": "G01-C2",
+          "score": 0.5,
+          "rationale": "正确说明 Session.prepare_request 把 auth 交给 PreparedRequest.prepare，且据文档说明 callable/tuple 认证在请求设置阶段生效；未识别 prepare_auth 的具体应用逻辑，主动承认未取回实现。"
+        },
+        {
+          "id": "G01-C3",
+          "score": 1,
+          "rationale": "准确给出 Session.prepare_request、request.auth/self.auth 合并，以及 trust_env 且二者皆无认证才读 netrc 的代码和优先级。"
+        },
+        {
+          "id": "G01-C4",
+          "score": 0.5,
+          "rationale": "详细且正确说明 should_strip_auth 的主机/协议/端口规则，并区分 rebuild_proxies 的 Proxy-Authorization 行为；遗漏重定向后的 netrc 重新应用。"
+        },
+        {
+          "id": "G01-C5",
+          "score": 0.5,
+          "rationale": "准确定位 authentication.rst 及内置/第三方区别；只取回 cookie/header 测试，未识别认证专项测试，并如实承认此缺口。"
+        }
+      ],
+      "factual_errors": [],
+      "unsupported_assertions": [],
+      "omissions": [
+        "HTTPProxyAuth 内置处理器及其与 HTTPBasicAuth 的继承关系。",
+        "PreparedRequest.prepare_auth 的 tuple 转换、调用与状态更新实现。",
+        "rebuild_auth 的 netrc 重新应用；Source 54 开头已含该片段，回答仍未解释。",
+        "test_basicauth_with_netrc、test_should_strip_auth_*、Digest challenge/redirect 等认证专项测试定位。"
+      ],
+      "source_grounding": "9 个 Sources 块均逐字匹配固定源码对应行；回答引用的 Source ID 全部存在。直接源码支持 Session 准备、设置优先级、环境、重定向判断及代理处理，认证文档支持公共处理器和扩展边界。将“supplied snapshot does not include”按所给摘录缺失理解，而非声称完整仓库没有 auth.py 或认证测试；这些诚实限制不列事实错误。未声称运行测试。",
+      "correct_source_locations": [
+        {
+          "answer_location": "docs/user/authentication.rst / Basic, netrc, Digest, New Forms, OAuth",
+          "source": "docs/user/authentication.rst:1-145",
+          "note": "回答给出正确文件/符号；行号由本次静态审阅核对，不冒充模型原本给出的行号。"
+        },
+        {
+          "answer_location": "src/requests/sessions.py / Session.prepare_request",
+          "source": "src/requests/sessions.py:477-497",
+          "note": "回答给出正确文件/符号；行号由本次静态审阅核对，不冒充模型原本给出的行号。"
+        },
+        {
+          "answer_location": "src/requests/sessions.py / merge_setting",
+          "source": "src/requests/sessions.py:61-88",
+          "note": "回答给出正确文件/符号；行号由本次静态审阅核对，不冒充模型原本给出的行号。"
+        },
+        {
+          "answer_location": "src/requests/sessions.py / Session.__init__",
+          "source": "src/requests/sessions.py:390-449",
+          "note": "回答给出正确文件/符号；行号由本次静态审阅核对，不冒充模型原本给出的行号。"
+        },
+        {
+          "answer_location": "src/requests/sessions.py / SessionRedirectMixin.should_strip_auth",
+          "source": "src/requests/sessions.py:127-157",
+          "note": "回答给出正确文件/符号；行号由本次静态审阅核对，不冒充模型原本给出的行号。"
+        },
+        {
+          "answer_location": "src/requests/sessions.py / SessionRedirectMixin.rebuild_proxies",
+          "source": "src/requests/sessions.py:302-331",
+          "note": "回答给出正确文件/符号；行号由本次静态审阅核对，不冒充模型原本给出的行号。"
+        },
+        {
+          "answer_location": "src/requests/sessions.py / Session.merge_environment_settings",
+          "source": "src/requests/sessions.py:750-779",
+          "note": "回答给出正确文件/符号；行号由本次静态审阅核对，不冒充模型原本给出的行号。"
+        },
+        {
+          "answer_location": "tests/test_requests.py / test_cookielib_cookiejar_on_redirect",
+          "source": "tests/test_requests.py:438-468",
+          "note": "名称和文件确实存在，但属于 cookie 回归，不计认证专项测试命中。"
+        }
+      ]
+    },
+    {
+      "question_id": "G02",
+      "method": "global",
+      "criteria": [
+        {
+          "id": "G02-C1",
+          "score": 0,
+          "rationale": "未识别 AuthBase.__call__ 及返回 PreparedRequest 的契约；诚实表示报告未提供通用接口，但不能因此满足扩展点标准。"
+        },
+        {
+          "id": "G02-C2",
+          "score": 0.5,
+          "rationale": "正确指出 Session/Request/PreparedRequest、请求/Session/netrc 设置与显式认证优先级应检查；缺 prepare_auth 和 Session.prepare_request 具体集成点。"
+        },
+        {
+          "id": "G02-C3",
+          "score": 1,
+          "rationale": "清楚区分预先附带凭据与可选挑战应答，以 Digest 的 401/WWW-Authenticate、有界重发作现有例子；把 response hooks 列为可选检查点，未要求每种方案使用挑战。"
+        },
+        {
+          "id": "G02-C4",
+          "score": 0.5,
+          "rationale": "正确要求保持重定向凭据隔离并区分代理认证；未识别重定向后的 netrc 重新应用与其 trust_env 条件。"
+        },
+        {
+          "id": "G02-C5",
+          "score": 0.5,
+          "rationale": "提出认证设置、优先级、重定向、挑战/重试等回归，并明确检查对象不等于必改文件；缺明确的认证文档更新/示例验证计划及可定位的既有测试。"
+        }
+      ],
+      "factual_errors": [
+        {
+          "claim": "Named methods include HTTPAdapter.getstate and HTTPAdapter.setstate.",
+          "reason": "该快照中不存在这两个普通方法名；实际序列化钩子是 __getstate__ 和 __setstate__。社区报告中的一般 getstate/setstate behavior 不能直接转换成准确的 API 名。",
+          "source": "src/requests/adapters.py:224-244；输入 Report 4 的 Serialization 段落使用一般 getstate/setstate 表述。"
+        }
+      ],
+      "unsupported_assertions": [
+        {
+          "claim": "What Must Change 段落末尾引用 [Data: Reports (2, 6, 16, 37, 88)]。",
+          "reason": "输入 records.reports 的 84 个 ID 中没有 88。该段关于未能确定必改文件、可能需要认证实现/测试以及其他模块仅待检查的结论并未因此自动成为源码事实错误；问题是不可解析的证据引用。独立检查 G02 的 36 条 map point：其 Reports 引用无 88；reduce_context 的 Reports 引用也无 88，只有四处 Importance Score: 88；对应最终 reduce 调用序号为 53，最终回答才出现 Reports(88)。没有证据推断此引用错误为何生成。"
+        }
+      ],
+      "omissions": [
+        "AuthBase.__call__、返回请求以及外部实现可避免核心修改的明确方案。",
+        "PreparedRequest.prepare_auth 与 Session.prepare_request 的具体模块/函数定位。",
+        "重定向后 netrc/trust_env 的重新认证路径。",
+        "认证文档新增使用示例、内置/第三方归属说明与验证计划。",
+        "已有认证测试的具体文件/函数。"
+      ],
+      "source_grounding": "仅使用社区报告，无原始源码块；身份明确、非盲法审阅。最终多数事实可在所引报告及源码中核查，但报告命名不能替代 API 名校验，报告 ID 不能替代源码证据。该答案有一处具体方法名错误和一处独立的无效引用。关于材料不足、未知 API 或无法确定必改文件的声明没有被当作幻觉。未将报告 88 无效推导成整段必然错误，也未将任何 importance score 当作报告 ID。",
+      "correct_source_locations": [
+        {
+          "answer_location": "requests.adapters / HTTPAdapter.proxy_manager_for",
+          "source": "src/requests/adapters.py:266-302",
+          "note": "回答给出正确模块/方法名，未给路径行号；路径与行号由审阅者补核。"
+        },
+        {
+          "answer_location": "requests.adapters / HTTPAdapter.cert_verify",
+          "source": "src/requests/adapters.py:304-357",
+          "note": "回答给出正确模块/方法名，未给路径行号；路径与行号由审阅者补核。"
+        }
+      ]
+    },
+    {
+      "question_id": "G02",
+      "method": "bm25",
+      "criteria": [
+        {
+          "id": "G02-C1",
+          "score": 1,
+          "rationale": "明确 AuthBase.__call__ 修改并返回 prepared request，且不将 Session/HTTPAdapter 或任何已有文件当必改项，允许新增实现承载扩展。"
+        },
+        {
+          "id": "G02-C2",
+          "score": 1,
+          "rationale": "准确将 models.py 的 PreparedRequest.prepare_auth/prepare 与 Session.prepare_request、merge_setting 和 netrc/raw-header 优先级列为检查对象；实现未取回时保留不确定性。"
+        },
+        {
+          "id": "G02-C3",
+          "score": 0.5,
+          "rationale": "正确解释 request-only 与可选 challenge/hook 路线，并提醒重试和 rewind 需进一步检查；没有指出现有 HTTPDigestAuth 就是该机制例子，另对 hooks 合并有明确事实错误。"
+        },
+        {
+          "id": "G02-C4",
+          "score": 0.5,
+          "rationale": "识别跨主机/协议/端口凭据策略及代理分离、TLS 隧道限制；遗漏重定向后的 netrc 重新应用，并把判断函数说成直接删除头字段。"
+        },
+        {
+          "id": "G02-C5",
+          "score": 0.5,
+          "rationale": "提出自定义 callable、优先级、netrc、hooks、重定向和代理回归并规划认证文档，明确检查不等于修改；未具体提出挑战状态/重复挑战/有界重试回归，且 hook 空列表预期写反。"
+        }
+      ],
+      "factual_errors": [
+        {
+          "claim": "An explicitly empty request or session response hook list disables the other side’s response hooks.",
+          "reason": "行为正好相反。session hooks 缺省或 response=[] 时返回 request_hooks；request hooks 缺省或 response=[] 时返回 session_hooks。该特殊处理是为了不让空列表覆盖另一侧 hooks。原码就在回答引用的 Source 52 中。",
+          "source": "src/requests/sessions.py:91-103；G02-bm25 Source 52。"
+        },
+        {
+          "claim": "SessionRedirectMixin.should_strip_auth() removes authorization when the hostname changes or when the scheme/port changes.",
+          "reason": "条件概述基本正确，但精确职责表述错误：should_strip_auth 只返回布尔判断；实际删除 Authorization 的操作在 rebuild_auth。不能把谓词当成已执行头字段删除。",
+          "source": "src/requests/sessions.py:127-157 和 282-300；Source 52 给出判断函数，删除语句未出现在本次摘录。"
+        }
+      ],
+      "unsupported_assertions": [],
+      "omissions": [
+        "HTTPDigestAuth 作为现有可选响应 hook/挑战/重发机制的具体例子。",
+        "rebuild_auth 在重定向后根据 trust_env 使用新 URL 的 netrc。",
+        "挑战状态、重复挑战、有界重试、请求体回卷的明确回归用例。",
+        "现有认证专项测试文件/函数定位。"
+      ],
+      "source_grounding": "9 个 Sources 块逐字匹配固定源码；引用的 Source ID 全部存在。认证文档、Session 准备/合并代码和代理实现支撑多数具体位置。prepare_auth 的定义虽未提供，Source 54 的 prepared_request.prepare_auth(new_auth) 调用及 Source 52 的 models 导入为这一检查目标提供线索，因此不将它判成无来源臆造。最大问题是在直接提供 merge_hooks 原码时仍将行为读反；另把 should_strip_auth 的判断职责写成执行职责。未把对缺失 auth.py、模型实现和测试的坦白说明记为幻觉。",
+      "correct_source_locations": [
+        {
+          "answer_location": "docs/user/authentication.rst / AuthBase.__call__",
+          "source": "docs/user/authentication.rst:108-134",
+          "note": "回答给出正确文件/符号；行号由本次静态审阅核对，不冒充模型原本给出的行号。"
+        },
+        {
+          "answer_location": "src/requests/models.py / PreparedRequest.prepare_auth",
+          "source": "src/requests/models.py:588-608",
+          "note": "文件/方法名正确；输入提供调用线索而非定义，回答将其列为待查目标，未声称已核实其内部实现。"
+        },
+        {
+          "answer_location": "src/requests/sessions.py / Session.prepare_request",
+          "source": "src/requests/sessions.py:457-498",
+          "note": "回答给出正确文件/符号；行号由本次静态审阅核对，不冒充模型原本给出的行号。"
+        },
+        {
+          "answer_location": "src/requests/sessions.py / merge_setting",
+          "source": "src/requests/sessions.py:61-88",
+          "note": "回答给出正确文件/符号；行号由本次静态审阅核对，不冒充模型原本给出的行号。"
+        },
+        {
+          "answer_location": "src/requests/sessions.py / merge_hooks",
+          "source": "src/requests/sessions.py:91-103",
+          "note": "位置正确，但对其空列表行为的解释错误，见 factual_errors。"
+        },
+        {
+          "answer_location": "src/requests/sessions.py / should_strip_auth",
+          "source": "src/requests/sessions.py:127-157",
+          "note": "位置与条件大体正确，函数本身只判断而不删除头字段。"
+        },
+        {
+          "answer_location": "src/requests/hooks.py / hook dispatch",
+          "source": "src/requests/hooks.py:22-33",
+          "note": "回答给出正确文件/符号；行号由本次静态审阅核对，不冒充模型原本给出的行号。"
+        },
+        {
+          "answer_location": "src/requests/adapters.py / proxy_headers",
+          "source": "src/requests/adapters.py:592-611",
+          "note": "回答给出正确文件/符号；行号由本次静态审阅核对，不冒充模型原本给出的行号。"
+        },
+        {
+          "answer_location": "src/requests/adapters.py / HTTPAdapter.send",
+          "source": "src/requests/adapters.py:613-719",
+          "note": "回答给出正确文件/符号；行号由本次静态审阅核对，不冒充模型原本给出的行号。"
+        },
+        {
+          "answer_location": "src/requests/api.py / request",
+          "source": "src/requests/api.py:14-59",
+          "note": "回答给出正确文件/符号；行号由本次静态审阅核对，不冒充模型原本给出的行号。"
+        }
+      ]
+    }
+  ]
+}

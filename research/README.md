@@ -9,6 +9,7 @@
 - [接口探测历史](pilot/probe-result.md)：四批请求与失败单独记账，不当作检索效果。
 - [正式评测方法](pilot/full-run.md)、[执行范围](pilot/full-run-plan.json)、[完整索引账本](pilot/results/execution.json)、[真实中断记录](pilot/results/execution-interrupted.json)：639实体、1069关系、84社区报告；[逐题检索评分](pilot/results/scores.json)、[功能原输出和诊断](pilot/results/features)。
 - [8000／16000离线预算补测](pilot/results/budget-supplement)：保留4000／12000，新增模型调用为0；[四档实际长度与重叠](pilot/results/budget-supplement/budget-analysis.json)。
+- [Global六题真实回答补充](pilot/results/global)：复用84份社区报告，42次map＋6次reduce，与6次同模型BM25回答对照；[冻结协议](pilot/global-plan.json)、[题目](pilot/global-questions.json)、[评分依据](pilot/global-gold.json)和全部请求／回答公开，独立于原有检索分数。
 - [本轮过程与发布检查](process.md)。
 - [旧版与正常 Git 历史](legacy.md)：旧自制代码图实验退出新版证据。
 

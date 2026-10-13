@@ -1,0 +1,22 @@
+$ python3 research/pilot/verify_global.py --check
+{"status": "complete", "physical_generation_calls": 54, "provider_input_tokens": 694712, "provider_output_tokens": 49786}
+exit_code=0
+
+$ .cache/graphrag-venv/bin/python research/pilot/verify_global.py --check --tokens
+{"status": "complete", "physical_generation_calls": 54, "provider_input_tokens": 694712, "provider_output_tokens": 49786}
+exit_code=0
+
+$ python3 -m unittest discover -s research/pilot/tests
+...................
+----------------------------------------------------------------------
+Ran 19 tests in 0.001s
+
+OK
+exit_code=0
+
+$ python3 scripts/validate.py
+Validated 597 public files, 265 local links/anchors, 4 PNG/SVG pairs, source pin and privacy patterns.
+exit_code=0
+
+$ git diff --check
+exit_code=0

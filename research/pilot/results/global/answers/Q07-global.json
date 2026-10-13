@@ -1,0 +1,184 @@
+{
+  "question_id": "Q07",
+  "group": "precise",
+  "method": "global",
+  "answer": "The supplied evidence is insufficient to establish an exact end-to-end call chain from `requests.get(url)` to `adapter.send`. It does not provide the public wrapper\u2019s source location or implementation, the exact Session method it invokes, the preparation function, the adapter-selection function, source lines, or a runtime trace. Therefore, a precise chain such as `requests.get` -> `Session.request` -> preparation -> adapter selection -> `adapter.send` cannot be asserted without inventing unsupported details. [Data: Reports (32, 21, 38, 47, +more)]\n\nThe supported high-level flow is:\n\n1. `requests.get(url)` is a public Requests helper for issuing an HTTP GET request, but its exact module/function location and wrapper body are not supplied. [Data: Reports (9, 64, 65, 0, +more)]\n2. Request processing may use a `SESSION`, which maintains persistent configuration and state, combines request-level and session-level settings, prepares requests, and sends them. This includes headers, cookies, authentication, proxies, TLS verification, hooks, redirects, and transport adapters. `MERGE_SETTING`, `MERGE_HOOKS`, and, under the stated conditions, `GET_NETRC_AUTH` are identified conceptually, but their exact module paths and call order are not supplied. [Data: Reports (32, 73)]\n3. A `REQUEST` can be prepared into a `PREPAREDREQUEST`. `PREPAREDREQUEST` is the fully prepared outgoing request containing the final URL, headers, cookies, body, and other processed data; its supported module location is `requests.models`. The exact preparation function and method call are not provided. [Data: Reports (35, 13, 30)]\n4. Before transport, the Session selects a mounted adapter based on the requested URL. The most specific matching URL prefix is selected, unrelated prefixes are ignored, and matching is described as case-insensitive. The exact selector function and source location are not supplied. [Data: Reports (50, 4, 79)]\n5. For the built-in HTTP/HTTPS path, the selected adapter is `HTTPAdapter`, identified in `requests.adapters`. It manages urllib3 connections and connection pools, including proxy and TLS-related transport configuration. The evidence supports a transport boundary at the selected adapter, but does not provide the exact source location or call into `HTTPAdapter.send`. [Data: Reports (50, 4, 81)]\n\nAccordingly, the strongest trace supported by the snapshot is:\n\n```text\nrequests.get(url)\n  -> unspecified public-wrapper/session call\n  -> request preparation\n  -> PreparedRequest (requests.models)\n  -> Session mounted-prefix adapter selection\n  -> HTTPAdapter (requests.adapters)\n  -> adapter.send   [endpoint requested, exact invocation not evidenced]\n```\n\nNo source changes are proposed or required by the supplied evidence. No tests or runtime execution are established. Exact wrapper, preparation, selection, and `adapter.send` locations would require the relevant Requests source snapshot or additional source-level records. [Data: Reports (13, 30, 75, 16, 79, +more)]",
+  "elapsed_seconds": 77.24914200045168,
+  "call_sequences": [
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17
+  ],
+  "map_points": [
+    [
+      {
+        "answer": "The supplied snapshot identifies SESSION as the central Requests client object. It manages persistent state and configuration for HTTP/HTTPS operations, including request preparation, authentication, proxies, headers, cookies, TLS verification, redirects, and transport adapters. [Data: Reports (32)]",
+        "score": 95
+      },
+      {
+        "answer": "The supported high-level flow is that SESSION applies session-level and request-level configuration, prepares a REQUEST, and sends it through the configured transport machinery. The snapshot states that SESSION prepares and sends requests while applying authentication, proxy settings, headers, cookies, and transport adapters. [Data: Reports (32)]",
+        "score": 90
+      },
+      {
+        "answer": "Configuration is merged before transport dispatch: MERGE_SETTING combines request-level and session-level settings such as headers, parameters, and authentication, while MERGE_HOOKS combines request and session hooks. GET_NETRC_AUTH may supply credentials from netrc when explicit authentication is absent and environment trust is enabled. [Data: Reports (32)]",
+        "score": 82
+      },
+      {
+        "answer": "SESSION creates and mounts HTTPAdapter instances for HTTP and HTTPS URLs, stores the adapters in ORDEREDDICT, and uses them for connection pooling and transport reuse. The supplied evidence therefore supports a final dispatch from the prepared request to the selected adapter's send operation, but it does not provide the adapter-selection function's exact implementation or source location. [Data: Reports (32, 21)]",
+        "score": 88
+      },
+      {
+        "answer": "The requested exact trace from the public requests.get(url) wrapper through preparation to adapter.send cannot be fully established from the supplied snapshot. No report gives the module/function locations for requests.get, the intermediate preparation function, adapter selection, or the adapter.send call, and no source lines or runtime trace are provided. Accordingly, those locations and any unlisted intermediate steps remain uncertain. [Data: Reports (32, 21)]",
+        "score": 100
+      }
+    ],
+    [
+      {
+        "answer": "The supplied snapshot identifies Requests as supporting request construction and sessions, but it does not provide the exact source location or implementation body of the public `requests.get(url)` wrapper. Therefore, the wrapper's precise module/function path cannot be established from the supplied evidence. [Data: Reports (0)]",
+        "score": 95
+      },
+      {
+        "answer": "The supported preparation path is through the Requests Session subsystem. `SESSION` maintains persistent request state, prepares requests, sends them, follows redirects subject to configured limits, and manages connection adapters. During request processing, it combines request-level and session-level settings through `MERGE_SETTING` and combines hooks through `MERGE_HOOKS`; environment-based authentication may be obtained through `GET_NETRC_AUTH` when explicit authentication is absent and environment trust is enabled. Exact module paths for these functions are not supplied. [Data: Reports (73)]",
+        "score": 90
+      },
+      {
+        "answer": "Session connection adapters are stored in an `ORDEREDDICT`, and the snapshot states that Session creates and mounts `HTTPAdapter` instances for HTTP and HTTPS connection management. However, the supplied evidence does not include the adapter-selection algorithm or the exact URL-to-mounted-adapter lookup performed for `url`; consequently, the precise selection step cannot be traced further without inventing source details. [Data: Reports (73)]",
+        "score": 85
+      },
+      {
+        "answer": "After an adapter has been selected, the supported transport boundary is `HTTPAdapter`. `HTTPAdapter` initializes an `urllib3` `PoolManager`, uses it to obtain connections when no proxy is configured, and relies on it for SSL-configured connections. The supplied snapshot discusses adapter initialization and connection acquisition but does not provide the exact module/function location or source evidence for the call to `HTTPAdapter.send`; the requested trace therefore stops at the adapter boundary rather than asserting an unsupported implementation sequence beyond it. [Data: Reports (81)]",
+        "score": 88
+      },
+      {
+        "answer": "No source changes are proposed, and no tests or runtime behavior are claimed. The snapshot is insufficient to provide exact source line numbers, the complete `requests.get` wrapper body, the precise preparation call chain, or the adapter-selection and `adapter.send` invocation details. [Data: Reports (0, 73, 81)]",
+        "score": 80
+      }
+    ],
+    [
+      {
+        "answer": "The supplied evidence does not explicitly identify the source location or implementation of the public `requests.get(url)` wrapper, nor does it establish the exact call sequence from that wrapper into a session. It only supports that a `REQUEST` represents the user-created HTTP operation and may be sent directly or through a `SESSION`. [Data: Reports (35)]",
+        "score": 90
+      },
+      {
+        "answer": "The supported preparation stage is that a `REQUEST` accepts the URL and other request inputs, then can be prepared into a `PREPAREDREQUEST`. `PREPAREDREQUEST` is identified as the fully prepared request containing the final URL, headers, cookies, body, and other processed data, and it is defined in the `requests.models` module. [Data: Reports (35)]",
+        "score": 95
+      },
+      {
+        "answer": "When a session is involved, `SESSION` is described as preparing and sending requests while maintaining shared configuration such as headers, cookies, authentication, proxies, TLS settings, connection pools, and HTTP adapters. The evidence does not provide the exact `SESSION` module or function names, or source lines for this stage. [Data: Reports (1, 35)]",
+        "score": 88
+      },
+      {
+        "answer": "Before transport, the session selects a mounted adapter using the requested URL. The supplied tests establish that the most specific matching URL prefix is selected, unrelated prefixes are ignored, and matching is case-insensitive. [Data: Reports (50)]",
+        "score": 92
+      },
+      {
+        "answer": "The selected adapter is the Requests `HTTPAdapter`, identified in the `requests.adapters` module. It is the default adapter for HTTP and HTTPS, implements the transport-adapter interface, and provides request-related connection methods; the requested trace stops at `adapter.send`. The supplied snapshot does not include the `send` function's exact source location, its internal call sequence, or runtime behavior after entry. No proposed code changes are made. [Data: Reports (50)]",
+        "score": 94
+      }
+    ],
+    [
+      {
+        "answer": "Fact: The supplied evidence identifies `requests.get` as a public Requests API helper for sending an HTTP GET request, and identifies `requests.Session` as the persistent-session interface. It does not provide the source module path or implementation body for `requests.get`. [Data: Reports (9, 64, 65)]",
+        "score": 90
+      },
+      {
+        "answer": "Fact: The evidence supports that request processing includes request construction and preparation before transport. The test inventory covers URL preparation, prepared requests, request serialization, headers, cookies, authentication, proxies, and request bodies, but it does not supply exact source locations or a complete function-by-function call chain. [Data: Reports (2, 37, 8)]",
+        "score": 82
+      },
+      {
+        "answer": "Fact: After preparation, the selected transport adapter is determined by the Session's mounted URL prefixes. The most specific matching prefix is selected, unrelated prefixes are ignored, and prefix matching is case-insensitive; these behaviors are associated with `HTTPAdapter` and Session adapter-selection tests. The supplied evidence does not name the exact selector function or module path. [Data: Reports (4)]",
+        "score": 85
+      },
+      {
+        "answer": "Fact: The selected adapter is `HTTPAdapter` for the built-in HTTP/HTTPS transport path. `HTTPAdapter` is described as Requests' primary transport adapter and as the component that manages urllib3 connections, connection pools, proxy managers, TLS and certificate verification, retries, serialization state, and cleanup. The requested trace may stop at `adapter.send`, but the supplied snapshot does not provide the implementation location or source evidence for the exact call into `send`. [Data: Reports (4, 37)]",
+        "score": 88
+      },
+      {
+        "answer": "Uncertainty: A precise trace such as `requests.get` -> `Session.request` -> request preparation -> adapter selection -> `adapter.send` cannot be established from the supplied snapshot alone. No source lines, module-qualified function definitions, or runtime traces are provided. No proposed code changes are supported or required by the evidence. [Data: Reports (9, 4, 37)]",
+        "score": 95
+      }
+    ],
+    [
+      {
+        "answer": "The supplied snapshot is insufficient to trace `requests.get(url)` end to end through exact module and function locations. It does not provide source lines or an explicit record for the public `requests.get` wrapper, the preparation function it invokes, the selected transport adapter, or the point at which execution reaches `adapter.send`; therefore, no exact call chain can be stated without inventing unsupported details. [Data: Reports (38, 47)]",
+        "score": 100
+      },
+      {
+        "answer": "The evidence supports only a high-level architectural conclusion: Requests is the central HTTP client, uses HTTP adapters for standard and proxy-enabled transport, and relies on urllib3 for connection-pool creation, proxy authorization, transport configuration, response processing, and streamed-response handling. These records do not identify the exact modules or functions involved in `requests.get(url)` or establish the precise adapter-selection logic. [Data: Reports (38, 47)]",
+        "score": 80
+      },
+      {
+        "answer": "A proposed trace would need to verify, from source evidence, the public wrapper, request preparation, adapter selection, and the handoff into `adapter.send`; the supplied snapshot contains no such source-level evidence. This is a proposed investigation path, not a fact established by the records. [Data: Reports (38, 47)]",
+        "score": 70
+      }
+    ],
+    [
+      {
+        "answer": "The supplied snapshot supports only a high-level flow: Requests exposes HTTP methods and session handling; requests.get(url) is therefore within the public HTTP-client/session functionality, and request state is represented by a PreparedRequest before transport dispatch. However, the snapshot does not provide the exact module or function location for the public get wrapper, nor does it show its call to a session method. [Data: Reports (16, 31)]",
+        "score": 90
+      },
+      {
+        "answer": "Preparation is supported conceptually: a PreparedRequest represents the prepared HTTP request associated with a Response and may represent the next request in a redirect chain. The supplied evidence does not identify the exact preparation function, source module, or line numbers used for requests.get(url). [Data: Reports (16, 31)]",
+        "score": 80
+      },
+      {
+        "answer": "Adapter selection is supported at the Requests session-routing level. Sessions select the adapter mounted at the most specific matching URL prefix, with matching described as case-insensitive; HTTPAdapter is the built-in transport adapter for HTTP and HTTPS URLs. [Data: Reports (79)]",
+        "score": 85
+      },
+      {
+        "answer": "HTTPAdapter is described as managing urllib3 connections and connection pools, applying proxy and TLS settings, and providing standard request-related connection methods. The supplied snapshot does not explicitly identify the adapter.send function, its module path, or the exact call chain from the selected adapter to send, so the requested trace cannot be completed reliably through adapter.send. [Data: Reports (79, 16)]",
+        "score": 95
+      },
+      {
+        "answer": "No source changes are proposed: the supplied evidence contains no requested patch and is insufficient to specify one. Exact module/function locations, source lines, tests, and runtime behavior would require the relevant Requests source snapshot or additional reports; none should be inferred from the available high-level descriptions. [Data: Reports (16, 79, 31)]",
+        "score": 88
+      }
+    ],
+    [
+      {
+        "answer": "The supplied snapshot identifies Requests as the central HTTP client library and describes its models module as defining `PreparedRequest`, which prepares and represents outgoing HTTP requests and provides URL-encoding functionality. This supports the preparation stage of the requested trace, but the snapshot does not provide an exact source path, class method, or line number for `PreparedRequest` or its preparation function. [Data: Reports (13, 30)]",
+        "score": 85
+      },
+      {
+        "answer": "The snapshot describes Requests-related HTTP operations including GET requests, API interactions, redirects, authentication, response metadata, and request preparation. However, it does not explicitly document the public `requests.get(url)` wrapper, the function it calls, or the intermediate session/preparation calls needed to establish a complete call chain. [Data: Reports (13, 30, 76)]",
+        "score": 90
+      },
+      {
+        "answer": "The supplied evidence does not identify the selected transport adapter or provide a supported module/function location for adapter selection. It also does not explicitly show the transition from a prepared request to `adapter.send`. Therefore, the trace cannot be completed to `adapter.send` from the supplied snapshot without inventing unsupported source details. [Data: Reports (13, 30, 3)]",
+        "score": 100
+      },
+      {
+        "answer": "The reports establish that Requests has transport-related testing infrastructure, including HTTP and HTTPS servers, TLS verification, redirects, authentication, connection-pool behavior, and protocol edge cases. These are test and capability descriptions, not evidence of the concrete runtime adapter chosen for a particular `url` or proof that any test was run for this trace. [Data: Reports (3, 54, 78)]",
+        "score": 70
+      },
+      {
+        "answer": "No proposed code changes are supported or required by the supplied evidence. Any claim specifying exact wrapper, session, adapter-selection, or `adapter.send` source locations would require additional source snapshot data; the available reports are insufficient to distinguish those implementation details. [Data: Reports (13, 30, 75)]",
+        "score": 95
+      }
+    ]
+  ],
+  "reduce_context": "----Analyst 1----\nImportance Score: 100\nThe requested exact trace from the public requests.get(url) wrapper through preparation to adapter.send cannot be fully established from the supplied snapshot. No report gives the module/function locations for requests.get, the intermediate preparation function, adapter selection, or the adapter.send call, and no source lines or runtime trace are provided. Accordingly, those locations and any unlisted intermediate steps remain uncertain. [Data: Reports (32, 21)]\n\n----Analyst 5----\nImportance Score: 100\nThe supplied snapshot is insufficient to trace `requests.get(url)` end to end through exact module and function locations. It does not provide source lines or an explicit record for the public `requests.get` wrapper, the preparation function it invokes, the selected transport adapter, or the point at which execution reaches `adapter.send`; therefore, no exact call chain can be stated without inventing unsupported details. [Data: Reports (38, 47)]\n\n----Analyst 7----\nImportance Score: 100\nThe supplied evidence does not identify the selected transport adapter or provide a supported module/function location for adapter selection. It also does not explicitly show the transition from a prepared request to `adapter.send`. Therefore, the trace cannot be completed to `adapter.send` from the supplied snapshot without inventing unsupported source details. [Data: Reports (13, 30, 3)]\n\n----Analyst 1----\nImportance Score: 95\nThe supplied snapshot identifies SESSION as the central Requests client object. It manages persistent state and configuration for HTTP/HTTPS operations, including request preparation, authentication, proxies, headers, cookies, TLS verification, redirects, and transport adapters. [Data: Reports (32)]\n\n----Analyst 2----\nImportance Score: 95\nThe supplied snapshot identifies Requests as supporting request construction and sessions, but it does not provide the exact source location or implementation body of the public `requests.get(url)` wrapper. Therefore, the wrapper's precise module/function path cannot be established from the supplied evidence. [Data: Reports (0)]\n\n----Analyst 3----\nImportance Score: 95\nThe supported preparation stage is that a `REQUEST` accepts the URL and other request inputs, then can be prepared into a `PREPAREDREQUEST`. `PREPAREDREQUEST` is identified as the fully prepared request containing the final URL, headers, cookies, body, and other processed data, and it is defined in the `requests.models` module. [Data: Reports (35)]\n\n----Analyst 4----\nImportance Score: 95\nUncertainty: A precise trace such as `requests.get` -> `Session.request` -> request preparation -> adapter selection -> `adapter.send` cannot be established from the supplied snapshot alone. No source lines, module-qualified function definitions, or runtime traces are provided. No proposed code changes are supported or required by the evidence. [Data: Reports (9, 4, 37)]\n\n----Analyst 6----\nImportance Score: 95\nHTTPAdapter is described as managing urllib3 connections and connection pools, applying proxy and TLS settings, and providing standard request-related connection methods. The supplied snapshot does not explicitly identify the adapter.send function, its module path, or the exact call chain from the selected adapter to send, so the requested trace cannot be completed reliably through adapter.send. [Data: Reports (79, 16)]\n\n----Analyst 7----\nImportance Score: 95\nNo proposed code changes are supported or required by the supplied evidence. Any claim specifying exact wrapper, session, adapter-selection, or `adapter.send` source locations would require additional source snapshot data; the available reports are insufficient to distinguish those implementation details. [Data: Reports (13, 30, 75)]\n\n----Analyst 3----\nImportance Score: 94\nThe selected adapter is the Requests `HTTPAdapter`, identified in the `requests.adapters` module. It is the default adapter for HTTP and HTTPS, implements the transport-adapter interface, and provides request-related connection methods; the requested trace stops at `adapter.send`. The supplied snapshot does not include the `send` function's exact source location, its internal call sequence, or runtime behavior after entry. No proposed code changes are made. [Data: Reports (50)]\n\n----Analyst 3----\nImportance Score: 92\nBefore transport, the session selects a mounted adapter using the requested URL. The supplied tests establish that the most specific matching URL prefix is selected, unrelated prefixes are ignored, and matching is case-insensitive. [Data: Reports (50)]\n\n----Analyst 1----\nImportance Score: 90\nThe supported high-level flow is that SESSION applies session-level and request-level configuration, prepares a REQUEST, and sends it through the configured transport machinery. The snapshot states that SESSION prepares and sends requests while applying authentication, proxy settings, headers, cookies, and transport adapters. [Data: Reports (32)]\n\n----Analyst 2----\nImportance Score: 90\nThe supported preparation path is through the Requests Session subsystem. `SESSION` maintains persistent request state, prepares requests, sends them, follows redirects subject to configured limits, and manages connection adapters. During request processing, it combines request-level and session-level settings through `MERGE_SETTING` and combines hooks through `MERGE_HOOKS`; environment-based authentication may be obtained through `GET_NETRC_AUTH` when explicit authentication is absent and environment trust is enabled. Exact module paths for these functions are not supplied. [Data: Reports (73)]\n\n----Analyst 3----\nImportance Score: 90\nThe supplied evidence does not explicitly identify the source location or implementation of the public `requests.get(url)` wrapper, nor does it establish the exact call sequence from that wrapper into a session. It only supports that a `REQUEST` represents the user-created HTTP operation and may be sent directly or through a `SESSION`. [Data: Reports (35)]\n\n----Analyst 4----\nImportance Score: 90\nFact: The supplied evidence identifies `requests.get` as a public Requests API helper for sending an HTTP GET request, and identifies `requests.Session` as the persistent-session interface. It does not provide the source module path or implementation body for `requests.get`. [Data: Reports (9, 64, 65)]\n\n----Analyst 6----\nImportance Score: 90\nThe supplied snapshot supports only a high-level flow: Requests exposes HTTP methods and session handling; requests.get(url) is therefore within the public HTTP-client/session functionality, and request state is represented by a PreparedRequest before transport dispatch. However, the snapshot does not provide the exact module or function location for the public get wrapper, nor does it show its call to a session method. [Data: Reports (16, 31)]\n\n----Analyst 7----\nImportance Score: 90\nThe snapshot describes Requests-related HTTP operations including GET requests, API interactions, redirects, authentication, response metadata, and request preparation. However, it does not explicitly document the public `requests.get(url)` wrapper, the function it calls, or the intermediate session/preparation calls needed to establish a complete call chain. [Data: Reports (13, 30, 76)]\n\n----Analyst 1----\nImportance Score: 88\nSESSION creates and mounts HTTPAdapter instances for HTTP and HTTPS URLs, stores the adapters in ORDEREDDICT, and uses them for connection pooling and transport reuse. The supplied evidence therefore supports a final dispatch from the prepared request to the selected adapter's send operation, but it does not provide the adapter-selection function's exact implementation or source location. [Data: Reports (32, 21)]\n\n----Analyst 2----\nImportance Score: 88\nAfter an adapter has been selected, the supported transport boundary is `HTTPAdapter`. `HTTPAdapter` initializes an `urllib3` `PoolManager`, uses it to obtain connections when no proxy is configured, and relies on it for SSL-configured connections. The supplied snapshot discusses adapter initialization and connection acquisition but does not provide the exact module/function location or source evidence for the call to `HTTPAdapter.send`; the requested trace therefore stops at the adapter boundary rather than asserting an unsupported implementation sequence beyond it. [Data: Reports (81)]\n\n----Analyst 3----\nImportance Score: 88\nWhen a session is involved, `SESSION` is described as preparing and sending requests while maintaining shared configuration such as headers, cookies, authentication, proxies, TLS settings, connection pools, and HTTP adapters. The evidence does not provide the exact `SESSION` module or function names, or source lines for this stage. [Data: Reports (1, 35)]\n\n----Analyst 4----\nImportance Score: 88\nFact: The selected adapter is `HTTPAdapter` for the built-in HTTP/HTTPS transport path. `HTTPAdapter` is described as Requests' primary transport adapter and as the component that manages urllib3 connections, connection pools, proxy managers, TLS and certificate verification, retries, serialization state, and cleanup. The requested trace may stop at `adapter.send`, but the supplied snapshot does not provide the implementation location or source evidence for the exact call into `send`. [Data: Reports (4, 37)]\n\n----Analyst 6----\nImportance Score: 88\nNo source changes are proposed: the supplied evidence contains no requested patch and is insufficient to specify one. Exact module/function locations, source lines, tests, and runtime behavior would require the relevant Requests source snapshot or additional reports; none should be inferred from the available high-level descriptions. [Data: Reports (16, 79, 31)]\n\n----Analyst 2----\nImportance Score: 85\nSession connection adapters are stored in an `ORDEREDDICT`, and the snapshot states that Session creates and mounts `HTTPAdapter` instances for HTTP and HTTPS connection management. However, the supplied evidence does not include the adapter-selection algorithm or the exact URL-to-mounted-adapter lookup performed for `url`; consequently, the precise selection step cannot be traced further without inventing source details. [Data: Reports (73)]\n\n----Analyst 4----\nImportance Score: 85\nFact: After preparation, the selected transport adapter is determined by the Session's mounted URL prefixes. The most specific matching prefix is selected, unrelated prefixes are ignored, and prefix matching is case-insensitive; these behaviors are associated with `HTTPAdapter` and Session adapter-selection tests. The supplied evidence does not name the exact selector function or module path. [Data: Reports (4)]\n\n----Analyst 6----\nImportance Score: 85\nAdapter selection is supported at the Requests session-routing level. Sessions select the adapter mounted at the most specific matching URL prefix, with matching described as case-insensitive; HTTPAdapter is the built-in transport adapter for HTTP and HTTPS URLs. [Data: Reports (79)]\n\n----Analyst 7----\nImportance Score: 85\nThe supplied snapshot identifies Requests as the central HTTP client library and describes its models module as defining `PreparedRequest`, which prepares and represents outgoing HTTP requests and provides URL-encoding functionality. This supports the preparation stage of the requested trace, but the snapshot does not provide an exact source path, class method, or line number for `PreparedRequest` or its preparation function. [Data: Reports (13, 30)]\n\n----Analyst 1----\nImportance Score: 82\nConfiguration is merged before transport dispatch: MERGE_SETTING combines request-level and session-level settings such as headers, parameters, and authentication, while MERGE_HOOKS combines request and session hooks. GET_NETRC_AUTH may supply credentials from netrc when explicit authentication is absent and environment trust is enabled. [Data: Reports (32)]\n\n----Analyst 4----\nImportance Score: 82\nFact: The evidence supports that request processing includes request construction and preparation before transport. The test inventory covers URL preparation, prepared requests, request serialization, headers, cookies, authentication, proxies, and request bodies, but it does not supply exact source locations or a complete function-by-function call chain. [Data: Reports (2, 37, 8)]\n\n----Analyst 2----\nImportance Score: 80\nNo source changes are proposed, and no tests or runtime behavior are claimed. The snapshot is insufficient to provide exact source line numbers, the complete `requests.get` wrapper body, the precise preparation call chain, or the adapter-selection and `adapter.send` invocation details. [Data: Reports (0, 73, 81)]\n\n----Analyst 5----\nImportance Score: 80\nThe evidence supports only a high-level architectural conclusion: Requests is the central HTTP client, uses HTTP adapters for standard and proxy-enabled transport, and relies on urllib3 for connection-pool creation, proxy authorization, transport configuration, response processing, and streamed-response handling. These records do not identify the exact modules or functions involved in `requests.get(url)` or establish the precise adapter-selection logic. [Data: Reports (38, 47)]\n\n----Analyst 6----\nImportance Score: 80\nPreparation is supported conceptually: a PreparedRequest represents the prepared HTTP request associated with a Response and may represent the next request in a redirect chain. The supplied evidence does not identify the exact preparation function, source module, or line numbers used for requests.get(url). [Data: Reports (16, 31)]\n\n----Analyst 5----\nImportance Score: 70\nA proposed trace would need to verify, from source evidence, the public wrapper, request preparation, adapter selection, and the handoff into `adapter.send`; the supplied snapshot contains no such source-level evidence. This is a proposed investigation path, not a fact established by the records. [Data: Reports (38, 47)]\n\n----Analyst 7----\nImportance Score: 70\nThe reports establish that Requests has transport-related testing infrastructure, including HTTP and HTTPS servers, TLS verification, redirects, authentication, connection-pool behavior, and protocol edge cases. These are test and capability descriptions, not evidence of the concrete runtime adapter chosen for a particular `url` or proof that any test was run for this trace. [Data: Reports (3, 54, 78)]",
+  "reduce_context_tokens": 2862,
+  "upstream_visible_token_counts": {
+    "input": 88102,
+    "output": 3733,
+    "input_categories": {
+      "build_context": 0,
+      "map": 84473,
+      "reduce": 3629
+    },
+    "output_categories": {
+      "build_context": 0,
+      "map": 3090,
+      "reduce": 643
+    }
+  },
+  "upstream_counts_note": "Official prompt counts omit user messages and provider reasoning; ledger usage is authoritative.",
+  "source_excerpts_provided": 0,
+  "community_reports_provided": 84
+}

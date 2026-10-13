@@ -1,0 +1,120 @@
+{
+  "question_id": "Q01",
+  "group": "precise",
+  "method": "global",
+  "answer": "**Supported fact**\n\nCase-insensitive header-key lookup is implemented by Requests\u2019 `CASEINSENSITIVEDICT` component. It treats differently capitalized keys as equivalent and retains the spelling used by the most recent assignment. The component is used to store HTTP response headers. [Data: Reports (1, 74, 32)]\n\nThe behavior is associated with the `TESTCASEINSENSITIVEDICT` / \u201cCASE-INSENSITIVE DICT TEST\u201d coverage, including access, assignment, iteration, representation, copying, equality, and deletion. [Data: Reports (32)]\n\n**Exact location and uncertainty**\n\nThe supplied evidence does not identify the exact source module, class/function definition, or source-line location for `CASEINSENSITIVEDICT`. Therefore, the implementation cannot be located more precisely from this snapshot without inventing details. [Data: Reports (1, 74, 76, 32, +more)]\n\n`requests._internal_utils.to_native_string` is mentioned only for `Host`-header normalization, not for case-insensitive lookup or last-spelling retention. `LookupDict` in `requests.structures` is described as supporting attribute-backed lookup, item access, and `get`, but the evidence does not establish that it implements this header behavior. [Data: Reports (59, 24)]\n\n**Proposed changes**\n\nNo proposed code change is supported by the supplied evidence.",
+  "elapsed_seconds": 45.61878583393991,
+  "call_sequences": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "map_points": [
+    [
+      {
+        "answer": "Case-insensitive header-key lookup is implemented by the Requests data structure named CASEINSENSITIVEDICT. It treats differently capitalized keys as equivalent while retaining the spelling used by the most recent assignment [Data: Reports (32)].",
+        "score": 95
+      },
+      {
+        "answer": "The supplied snapshot does not identify the exact source module or function where CASEINSENSITIVEDICT is implemented. It only provides the component name and behavioral description; therefore, a more precise module/function location cannot be established from the available evidence [Data: Reports (32)].",
+        "score": 90
+      },
+      {
+        "answer": "The behavior is covered by TESTCASEINSENSITIVEDICT and the CASE-INSENSITIVE DICT TEST group, including case-insensitive access, assignment, iteration, representation, copying, equality, and deletion. The snapshot does not provide source lines or test file paths, and no proposed code changes are supported by the evidence [Data: Reports (32)].",
+        "score": 70
+      }
+    ],
+    [
+      {
+        "answer": "The supplied snapshot is insufficient to identify where case-insensitive header-key lookup that retains the last spelling of a key is implemented. It does not name a module or function implementing that specific behavior, and it provides no source lines or runtime evidence for it. [Data: Reports (0, 59)]",
+        "score": 100
+      },
+      {
+        "answer": "The closest supported location is `requests._internal_utils.to_native_string`, which `MockRequest` uses to normalize the `Host` header; however, the evidence describes header normalization rather than case-insensitive lookup or retention of the last key spelling. [Data: Reports (59)]",
+        "score": 65
+      },
+      {
+        "answer": "The snapshot also identifies `LookupDict` in `requests.structures` as supporting attribute-backed lookup, item access, and `get`, but it does not state that `LookupDict` performs case-insensitive header-key lookup or preserves the last spelling. [Data: Reports (24)]",
+        "score": 45
+      },
+      {
+        "answer": "No proposed code change is supported by the supplied evidence; locating the implementation would require additional source text or a report naming the relevant header mapping module and function. [Data: Reports (0, 24, 59)]",
+        "score": 25
+      }
+    ],
+    [
+      {
+        "answer": "Case-insensitive header-key lookup is implemented by the CASEINSENSITIVEDICT component. It provides case-insensitive access to HTTP headers while retaining the spelling used by the most recently assigned key, and it is used for response headers. [Data: Reports (1)]",
+        "score": 100
+      },
+      {
+        "answer": "The supplied snapshot does not identify the exact source module or function where CASEINSENSITIVEDICT implements this behavior. It provides the component-level description and its relationships, but no source-file or function-level location. [Data: Reports (1)]",
+        "score": 95
+      }
+    ],
+    [
+      {
+        "answer": "The supplied snapshot does not identify the exact module or function where case-insensitive header-key lookup is implemented while retaining the last spelling of a key. It only provides broader evidence that Requests tests header-related behavior, including authorization-header formatting, Unicode headers, and proxy-authorization handling [Data: Reports (2, 37, 4)].",
+        "score": 100
+      },
+      {
+        "answer": "No proposed source change, exact source line, or dedicated test name for the described last-spelling-preserving header lookup is provided in the snapshot. Therefore, the implementation location cannot be determined from the supplied evidence without inventing details [Data: Reports (2, 37, 64)].",
+        "score": 90
+      }
+    ],
+    [
+      {
+        "answer": "Case-insensitive header-key lookup is implemented by Requests' CASEINSENSITIVEDICT component, which stores and accesses keys without regard to case while preserving the capitalization of the most recently assigned key. It is used by RESPONSE to store HTTP headers [Data: Reports (74)].",
+        "score": 100
+      },
+      {
+        "answer": "The supplied evidence does not identify the exact source module, class/function definition, or source-line location where this behavior is implemented. No proposed code changes or runtime facts are supported by the snapshot [Data: Reports (74)].",
+        "score": 95
+      }
+    ],
+    [
+      {
+        "answer": "The supplied snapshot does not identify the exact module or function where case-insensitive header-key lookup is implemented while retaining the last spelling of a key. It only indicates that Requests includes header handling and header-validation tests, without providing the relevant source location or implementation details. [Data: Reports (16)]",
+        "score": 100
+      },
+      {
+        "answer": "No proposed source change is supported by the supplied evidence. Identifying a specific module or function would require additional source-level records, so the exact location remains uncertain. [Data: Reports (16)]",
+        "score": 85
+      }
+    ],
+    [
+      {
+        "answer": "The supplied evidence identifies a CASE-INSENSITIVE DICTIONARY as the component used to store HTTP response headers, but it does not specify the module or function where case-insensitive header-key lookup is implemented, nor does it state that the implementation retains the last spelling of a key [Data: Reports (76)].",
+        "score": 100
+      },
+      {
+        "answer": "No exact module/function location, source line, proposed change, or runtime behavior for retaining the last spelling of a header key is provided in the snapshot. Therefore, the requested implementation location cannot be determined from the supplied evidence without inventing unsupported details [Data: Reports (76)].",
+        "score": 95
+      }
+    ]
+  ],
+  "reduce_context": "----Analyst 2----\nImportance Score: 100\nThe supplied snapshot is insufficient to identify where case-insensitive header-key lookup that retains the last spelling of a key is implemented. It does not name a module or function implementing that specific behavior, and it provides no source lines or runtime evidence for it. [Data: Reports (0, 59)]\n\n----Analyst 3----\nImportance Score: 100\nCase-insensitive header-key lookup is implemented by the CASEINSENSITIVEDICT component. It provides case-insensitive access to HTTP headers while retaining the spelling used by the most recently assigned key, and it is used for response headers. [Data: Reports (1)]\n\n----Analyst 4----\nImportance Score: 100\nThe supplied snapshot does not identify the exact module or function where case-insensitive header-key lookup is implemented while retaining the last spelling of a key. It only provides broader evidence that Requests tests header-related behavior, including authorization-header formatting, Unicode headers, and proxy-authorization handling [Data: Reports (2, 37, 4)].\n\n----Analyst 5----\nImportance Score: 100\nCase-insensitive header-key lookup is implemented by Requests' CASEINSENSITIVEDICT component, which stores and accesses keys without regard to case while preserving the capitalization of the most recently assigned key. It is used by RESPONSE to store HTTP headers [Data: Reports (74)].\n\n----Analyst 6----\nImportance Score: 100\nThe supplied snapshot does not identify the exact module or function where case-insensitive header-key lookup is implemented while retaining the last spelling of a key. It only indicates that Requests includes header handling and header-validation tests, without providing the relevant source location or implementation details. [Data: Reports (16)]\n\n----Analyst 7----\nImportance Score: 100\nThe supplied evidence identifies a CASE-INSENSITIVE DICTIONARY as the component used to store HTTP response headers, but it does not specify the module or function where case-insensitive header-key lookup is implemented, nor does it state that the implementation retains the last spelling of a key [Data: Reports (76)].\n\n----Analyst 1----\nImportance Score: 95\nCase-insensitive header-key lookup is implemented by the Requests data structure named CASEINSENSITIVEDICT. It treats differently capitalized keys as equivalent while retaining the spelling used by the most recent assignment [Data: Reports (32)].\n\n----Analyst 3----\nImportance Score: 95\nThe supplied snapshot does not identify the exact source module or function where CASEINSENSITIVEDICT implements this behavior. It provides the component-level description and its relationships, but no source-file or function-level location. [Data: Reports (1)]\n\n----Analyst 5----\nImportance Score: 95\nThe supplied evidence does not identify the exact source module, class/function definition, or source-line location where this behavior is implemented. No proposed code changes or runtime facts are supported by the snapshot [Data: Reports (74)].\n\n----Analyst 7----\nImportance Score: 95\nNo exact module/function location, source line, proposed change, or runtime behavior for retaining the last spelling of a header key is provided in the snapshot. Therefore, the requested implementation location cannot be determined from the supplied evidence without inventing unsupported details [Data: Reports (76)].\n\n----Analyst 1----\nImportance Score: 90\nThe supplied snapshot does not identify the exact source module or function where CASEINSENSITIVEDICT is implemented. It only provides the component name and behavioral description; therefore, a more precise module/function location cannot be established from the available evidence [Data: Reports (32)].\n\n----Analyst 4----\nImportance Score: 90\nNo proposed source change, exact source line, or dedicated test name for the described last-spelling-preserving header lookup is provided in the snapshot. Therefore, the implementation location cannot be determined from the supplied evidence without inventing details [Data: Reports (2, 37, 64)].\n\n----Analyst 6----\nImportance Score: 85\nNo proposed source change is supported by the supplied evidence. Identifying a specific module or function would require additional source-level records, so the exact location remains uncertain. [Data: Reports (16)]\n\n----Analyst 1----\nImportance Score: 70\nThe behavior is covered by TESTCASEINSENSITIVEDICT and the CASE-INSENSITIVE DICT TEST group, including case-insensitive access, assignment, iteration, representation, copying, equality, and deletion. The snapshot does not provide source lines or test file paths, and no proposed code changes are supported by the evidence [Data: Reports (32)].\n\n----Analyst 2----\nImportance Score: 65\nThe closest supported location is `requests._internal_utils.to_native_string`, which `MockRequest` uses to normalize the `Host` header; however, the evidence describes header normalization rather than case-insensitive lookup or retention of the last key spelling. [Data: Reports (59)]\n\n----Analyst 2----\nImportance Score: 45\nThe snapshot also identifies `LookupDict` in `requests.structures` as supporting attribute-backed lookup, item access, and `get`, but it does not state that `LookupDict` performs case-insensitive header-key lookup or preserves the last spelling. [Data: Reports (24)]\n\n----Analyst 2----\nImportance Score: 25\nNo proposed code change is supported by the supplied evidence; locating the implementation would require additional source text or a report naming the relevant header mapping module and function. [Data: Reports (0, 24, 59)]",
+  "reduce_context_tokens": 1143,
+  "upstream_visible_token_counts": {
+    "input": 86383,
+    "output": 1565,
+    "input_categories": {
+      "build_context": 0,
+      "map": 84473,
+      "reduce": 1910
+    },
+    "output_categories": {
+      "build_context": 0,
+      "map": 1282,
+      "reduce": 283
+    }
+  },
+  "upstream_counts_note": "Official prompt counts omit user messages and provider reasoning; ledger usage is authoritative.",
+  "source_excerpts_provided": 0,
+  "community_reports_provided": 84
+}

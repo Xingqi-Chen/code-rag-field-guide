@@ -1,8 +1,8 @@
 # Microsoft GraphRAG 适合做开发助手的代码索引吗？
 
-面向非技术同事的完整参考稿；分享时可选读开头结论、实验结果和具体案例。文献检索截止：**2026-10-12**；执行状态更新至**2026-10-13**；固定实现：[Microsoft GraphRAG v3.3.0](https://github.com/microsoft/graphrag/releases/tag/v3.3.0)。已完成文献、静态源码核查、真实微软完整索引及首轮168份、离线补测160份上下文评分。索引规模和服务中断均不作为效果结论。图中例子均为原创教学示意。
+面向非技术同事的完整参考稿；分享时可选读开头结论、实验结果和具体案例。文献检索截止：**2026-10-12**；执行状态更新至**2026-10-13**；固定实现：[Microsoft GraphRAG v3.3.0](https://github.com/microsoft/graphrag/releases/tag/v3.3.0)。已完成文献、静态源码核查、真实微软完整索引及首轮168份、离线补测160份上下文评分，另完成六题Global与BM25的12份真实模型回答。索引规模和服务中断均不作为效果结论。图中例子均为原创教学示意。
 
-## 先给判断：本次默认实体图没有胜过基础检索
+## 先给判断：本次默认Local没有胜过基础检索
 
 我们关心的是：开发助手准备修改代码时，Microsoft GraphRAG 能否交给它**找得准、找得全、版本正确**的材料。解释得通顺、总结得全面，不足以证明这三件事已经做到。
 
@@ -187,6 +187,45 @@ Q19不存在`AsyncSession`，四组仍返回材料；本轮没有生成回答，
 F01的BM25和hybrid原文覆盖了预标证据的60%，Basic和Local为0；F02四组均为0。即使F01拿到了核心实现，编辑模型仍写出了错误的diff行数或上下文；部分其他输出还假定了未给出的源码内容。这说明“材料够不够”和“补丁格式／实现对不对”必须分开。我们只完成了这8次受控尝试，**没有得到可比较的功能正确性结果**。原始响应、原样补丁、逐项审查和应用诊断全部保留在[功能记录](../research/pilot/results/features)，没有人为修好后计为成功。[调用与usage](../research/pilot/results/feature-generations.json)
 
 所有模型请求来自Mac mini命令行，没有使用本机或云浏览器运行实验。生成模型由用户选定为one.fullstar.tech的`gpt-5.6-luna`；向量使用官方OpenAI `text-embedding-3-large`。这是Mac mini编排远端模型的实验，**不是本地权重推理实验**。代理内部实际模型映射不能独立核实。[完整账本](../research/pilot/results/execution.json)保留请求及恢复历史，[原中断账本](../research/pilot/results/execution-interrupted.json)不回写。
+
+### Global补充实测：概览与源码定位要分开
+
+把Global想成请七位读者各读一批导读，再请一位编辑汇总。这次真的运行了官方map→reduce模型流程，复用84份已有社区报告，没有重建图。四道精确／规划题为Q01找字典、Q07追调用、Q13看修改影响、F02规划默认超时；另加G01认证职责分布、G02新增认证方式的两道全局题。对照组把BM25取回的源码直接交给同一个模型回答。题目、评分依据与层级在调用前冻结；此前检索结果已知，因此这是小规模、有目的选题的后续探索，不是独立人类盲测。[协议与证据](../research/pilot/results/global)
+
+**Global给出了较广的概念与测试主题，但不能用这种广度替代精确位置。** Q01能说出大小写无关字典及最后拼写行为，却承认无法给出模块和方法位置；Q07能描述Session、准备请求和适配器的角色，却没有建立所要求的完整调用链。Q13补到了容器测试主题，BM25这一题没有取回测试文件；但Global仍缺少精确准备方法，并把社区报告的一处错误说法带进了答案。
+
+F02规划题中，Global提出了区分“没传timeout”和“明确传None”的可行方案，并覆盖冻结的测试要求；BM25也有可行方案，但测试计划没有明确覆盖全部Session便捷入口。这说明Global可以参与设计讨论；细节有不少直接来自题设要求，不能把规划得分归因于图索引，也没有由此获得新补丁或测试通过结果。
+
+独立审阅按执行前的必要要点给0／0.5／1分，再按题归一化。分数表示**要点覆盖**；回答中的额外错误、错误出处和遗漏另列，不能把满分读成“整篇答案完全正确”。四道精确／规划题，Global按题平均52.5%，BM25为81.25%；两道认证全局题分别为45%与65%。下表及这两组平均均不并入原来15道测试题的检索Recall。[精确题审阅](../research/pilot/results/global/review-precise.json)、[全局题审阅](../research/pilot/results/global/review-global.json)、[复算结果](../research/pilot/results/global/scores.json)
+
+| 分组与问题 | Global要点覆盖 | BM25要点覆盖 |
+| --- | ---: | ---: |
+| 精确：Q01字典定位 | 25% | 100% |
+| 精确：Q07调用链 | 10% | 60% |
+| 精确：Q13修改影响 | 75% | 75% |
+| 规划：F02默认超时 | 100% | 90% |
+| 全局：G01认证职责 | 40% | 60% |
+| 全局：G02认证扩展 | 50% | 70% |
+
+在两道全局题上，Global列出的认证处理器、Digest挑战和测试主题更广；但缺少`AuthBase.__call__`、`PreparedRequest.prepare_auth`等关键接口位置，BM25给出了更多直接的准备／合并证据。两组都漏了重定向后的netrc重新认证。**本轮Global在两道全局题也未胜过BM25；题数和主题都很有限，不能据此否定所有全局概览场景。**
+
+实际反例也来自两边：
+
+- **报告有编号，仍可能概括错。** Q13-Global说准备后的header键可以是native字符串或bytes键；Report35有同样的概括。但实现会通过`to_native_string`转换键，测试验证的是不同输入类型最终都变成native字符串。[准备实现](https://github.com/psf/requests/blob/0e322af87745eff34caffe4df68456ebc20d9068/src/requests/models.py#L483)、[对应测试](https://github.com/psf/requests/blob/0e322af87745eff34caffe4df68456ebc20d9068/tests/test_requests.py#L1687)
+- **正确源码ID，不保证自写行号正确。** Q07-BM25的Session调用描述大体正确，却把`prepare_headers`标为465–475行，实际为483–492行；适配器选择等位置也有错位。自动为答案加“看似精确”的行号仍需核验。[原回答](../research/pilot/results/global/answers/Q07-bm25.json)
+- **汇总也会造出不存在的出处。** G02-Global最终引用Reports(88)，但84份输入报告、map引用和reduce材料里都没有这个报告ID。它还把`HTTPAdapter.__getstate__/__setstate__`写成不存在的`getstate/setstate`。[原回答](../research/pilot/results/global/answers/G02-global.json)
+- **拿到原文，仍可能读反。** G02-BM25把一侧空response hooks列表解释为禁用另一侧；给定源码实际返回并保留另一侧hooks。问题发生在回答解释层，不是取回材料后就自动消失。[真实合并逻辑](https://github.com/psf/requests/blob/0e322af87745eff34caffe4df68456ebc20d9068/src/requests/sessions.py#L91)
+
+不能只比较最后汇总窗口。Global每题先读七批报告正文，共78,250 token，再做reduce；BM25每题只读一次不超过12,000-token源码。两组模型标识、用户问题与请求输出上限相同，系统提示和总计算预算并不相同。
+
+| 六题合计 | 生成请求 | provider输入token | provider输出token | 请求时间合计 |
+| --- | ---: | ---: | ---: | ---: |
+| Global：42 map＋6 reduce | 48 | 616,316 | 39,412 | 500.22秒 |
+| BM25：6次直接回答 | 6 | 78,396 | 10,374 | 83.60秒 |
+
+整批真实执行584.54秒，54次全部完成、零重试、零新embedding；Global输入约为BM25的7.86倍。三次BM25的provider输出超过请求2048上限，保留原始超限记录。按用户要求不计算Fullstar费用，模型后端身份仍只按代理返回标识记录。[分阶段用量与复算](../research/pilot/full-run.md)、[全部请求与答案](../research/pilot/results/global)
+
+这六题不能确定Global在所有架构问题上的价值；两道全局题也都围绕认证。它们支持把社区导读当作可核对的概览线索，随后回查源码／接口和测试，而不是将整理得更长、更广当作开发正确性的证明。本轮没有新增hybrid、Basic或Local的回答生成对照，也没有专门优化代码实体类型、报告格式或预算分配。
 
 ### 成本与适用边界
 

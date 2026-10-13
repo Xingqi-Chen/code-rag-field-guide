@@ -2,6 +2,8 @@
 
 **完整索引、首轮168份上下文、离线补测160份上下文和8次功能尝试已完成。** 四组检索效果见[主报告](../../docs/report.md)及[逐题分数](results/scores.json)。八份原始补丁均损坏、无法应用，所以候选功能与回归测试未执行；这不是检索质量的单独因果证据。[完整账本](results/execution.json)、[中断历史](results/execution-interrupted.json)和[接口探测](probe-result.md)分别保存。
 
+新增[Global六题回答实验](results/global)：完整官方map/reduce＋同模型BM25对照，共54次调用、12份答案，复用原图、不新增embedding。题目和逐项评分依据在执行前冻结，但原检索结果已经已知，因此单列为有目的选题的探索性扩展；不改旧gold或召回率。
+
 可以把准备过程理解成先备好同一批书、同一张考卷和评分规则，再让关键词、普通向量和微软图检索参加比较。没有按方法表现换题或改分。
 
 ## 为什么选这个项目
@@ -56,6 +58,7 @@ python3 research/pilot/verify.py
 python3 research/pilot/verify_results.py
 python3 research/pilot/score_results.py --check
 python3 research/pilot/score_budget_supplement.py --check
+python3 research/pilot/verify_global.py --check
 python3 research/pilot/verify_feature_results.py
 python3 research/pilot/verify_selection.py
 python3 research/pilot/verify_probe_result.py

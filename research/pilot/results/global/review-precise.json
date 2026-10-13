@@ -1,0 +1,410 @@
+{
+  "reviewer": "Independent AI review agent /root/audit; not a human reviewer; unblinded",
+  "methodology": {
+    "reviewed_utc": "2026-10-13T04:37:53.290854+00:00",
+    "scope": "四道精确题、两方法，共8份回答。F02-plan 只评规划，不与先前真实补丁尝试混算。",
+    "rubric": "使用冻结 global-gold.json 原顺序条目：0缺失/错误，0.5核心正确但实质不完整，1满足。内容条目和额外事实/定位/引用问题分别记录，必须联合阅读，不能仅凭条目总分推断完整答案质量。",
+    "evidence": "核对实际答案、被引用的 map-contexts reports 段落、BM25 输入来源及固定源码；41个语料文件哈希与冻结清单一致。所有数字 Reports/Sources ID 均能在相应给定材料中找到。Reports ID 只表示生成社区报告引用，不能等同源码证据或真实调用边。",
+    "error_policy": "诚实承认证据不足计遗漏，不计幻觉。错细分行号记事实/定位错误。提议的未来行为与已有事实分开；正确但引用片段截断的事实在 source_grounding 说明支撑不完整，不冒充源码事实错误。未发现需要另列的、在所审材料及固定源码中无法支持的正面事实断言。",
+    "location_policy": "correct_source_locations 仅记录答案实际给出的正确模块/符号/测试位置；类名或规划责任没有文件时明确标注，错误子行号不算准确行定位。审核解释中的纠正行号不替模型补分。",
+    "limits": "独立 AI 判断、非盲法；仅这四题的小样本，不推算行业准确率。未发模型/网络请求、未读凭据、未改题/gold/答案或补丁、未执行第三方测试。",
+    "gold_sha256": "db5eb7d25e682c28603310aa46263797d992a7298c00bfce869aad3033833d7b",
+    "answer_sha256": {
+      "answers/Q01-global.json": "f18a95d19bb7f58190083ed3d455f5c27b8d696adae92a155979a07414f977f0",
+      "answers/Q01-bm25.json": "1ea23cc8b922bcb4f920b7f67b90642c29fe1ca1e1b512c68d678e3138ceccf2",
+      "answers/Q07-global.json": "3f6639a8e804b27586c0ba843a3af3c6ee1c9a8c73856493c129775c7fab71a9",
+      "answers/Q07-bm25.json": "53bdf77be36761a4dfb8509ebc26458552f18f5ddfd8a0c64649720166f469b5",
+      "answers/Q13-global.json": "068557db78e5b60d47446590eadc12b60fcc3af31fa1c80ec85a682fc7987a0c",
+      "answers/Q13-bm25.json": "8cf59ade43e0ac7666e37b0bf59a09d4929956994d64c615b25a17e421d58f1b",
+      "answers/F02-plan-global.json": "1c399ec99a31dcc20c3d4e8a024ac1d49757c86c21f79ed7a4673f9b1e3b842a",
+      "answers/F02-plan-bm25.json": "86848e90a05b9b9ec0198b97c7bafe17b62add2510ade78928307c4a25d3d3e0"
+    }
+  },
+  "assessments": [
+    {
+      "question_id": "Q01",
+      "method": "global",
+      "criteria": [
+        {
+          "id": "Q01-C1",
+          "score": 0.5,
+          "rationale": "正确指出 CaseInsensitiveDict 组件，但明确未给出 src/requests/structures.py；类名部分满足，模块定位缺失。"
+        },
+        {
+          "id": "Q01-C2",
+          "score": 0.5,
+          "rationale": "正确说明最近赋值的键拼写会保留，但未解释 __setitem__ 用 key.lower() 作索引并存储 (key,value)。"
+        },
+        {
+          "id": "Q01-C3",
+          "score": 0,
+          "rationale": "仅说访问大小写无关，没有解释 __getitem__ 对查询键调用 lower()。"
+        },
+        {
+          "id": "Q01-C4",
+          "score": 0,
+          "rationale": "提到测试覆盖 iteration，但没有解释迭代返回保留的原始键拼写。"
+        }
+      ],
+      "factual_errors": [],
+      "unsupported_assertions": [],
+      "omissions": [
+        "CaseInsensitiveDict 的实现模块。",
+        "__setitem__/__getitem__ 的小写索引机制和 __iter__ 的返回规则。"
+      ],
+      "source_grounding": "Reports 1/74/32 确有最后拼写和大小写无关访问的描述，32 确有相关测试摘要；59 的 Host 值转换、24 的 LookupDict 描述也可在固定源码核实。回答仅引用社区报告，没有直接源码 Sources。其“无法更精确定位”是对本次给定报告的限制说明，不解释为整个 Requests 源码没有实现，也不计幻觉。",
+      "correct_source_locations": [
+        "CaseInsensitiveDict（类名正确，回答未给出实现模块）",
+        "requests._internal_utils.to_native_string",
+        "requests.structures.LookupDict"
+      ]
+    },
+    {
+      "question_id": "Q01",
+      "method": "bm25",
+      "criteria": [
+        {
+          "id": "Q01-C1",
+          "score": 1,
+          "rationale": "准确指出 src/requests/structures.py 中的 CaseInsensitiveDict，并引用完整实现 Source 60。"
+        },
+        {
+          "id": "Q01-C2",
+          "score": 1,
+          "rationale": "正确给出 self._store[key.lower()] = (key,value)，解释相同小写键覆盖使右侧最新拼写保留。"
+        },
+        {
+          "id": "Q01-C3",
+          "score": 1,
+          "rationale": "正确说明 __getitem__ 将查询键 lower() 后读取已存值。"
+        },
+        {
+          "id": "Q01-C4",
+          "score": 1,
+          "rationale": "正确说明 __iter__ 返回每个已存元组中的 cased key。"
+        }
+      ],
+      "factual_errors": [],
+      "unsupported_assertions": [],
+      "omissions": [],
+      "source_grounding": "Source 60 包含全部实现；Source 97 的 test_preserve_last_key_case 确实验证 ACCEPT/USER-AGENT；Source 54 包含 Session.headers = default_headers()；Source 92 包含大小写无关删除头的测试。额外 lower_items/__eq__/copy 等实现描述及测试位置均与固定源码一致。对 default_headers 函数体和完整准备路径未提供的说明限定于给定片段。",
+      "correct_source_locations": [
+        "src/requests/structures.py:CaseInsensitiveDict.__setitem__",
+        "src/requests/structures.py:CaseInsensitiveDict.__getitem__",
+        "src/requests/structures.py:CaseInsensitiveDict.__iter__",
+        "src/requests/structures.py:CaseInsensitiveDict.lower_items/__eq__",
+        "tests/test_requests.py:TestCaseInsensitiveDict.test_preserve_last_key_case",
+        "src/requests/sessions.py:Session.__init__",
+        "tests/test_requests.py:test_header_remove_is_case_insensitive"
+      ]
+    },
+    {
+      "question_id": "Q07",
+      "method": "global",
+      "criteria": [
+        {
+          "id": "Q07-C1",
+          "score": 0,
+          "rationale": "没有识别 api.get→api.request；明确表示包装层未知。"
+        },
+        {
+          "id": "Q07-C2",
+          "score": 0,
+          "rationale": "没有指出 api.request 创建 Session 并调用 Session.request。"
+        },
+        {
+          "id": "Q07-C3",
+          "score": 0,
+          "rationale": "只给出 Request 可准备为 PreparedRequest 的通用角色说明，未识别 Session.request 构造 Request 并调用 prepare_request 这一具体调用步骤。"
+        },
+        {
+          "id": "Q07-C4",
+          "score": 0,
+          "rationale": "没有识别 Session.request→Session.send。"
+        },
+        {
+          "id": "Q07-C5",
+          "score": 0.5,
+          "rationale": "正确说明 Session 按已挂载 URL 最长前缀选择适配器，并以 adapter.send 为题设停止点；但明确没有 get_adapter 方法和实际调用证据，未完成要求的具体链。HTTPAdapter 的文字说明限定于默认 HTTP/HTTPS 路径，不能当任意运行时适配器结论。"
+        }
+      ],
+      "factual_errors": [],
+      "unsupported_assertions": [],
+      "omissions": [
+        "公共包装层的两条实际调用边。",
+        "Session.request→prepare_request→send 的具名调用步骤。",
+        "Session.send 中 get_adapter(request.url) 和 adapter.send 的源码位置。"
+      ],
+      "source_grounding": "Reports 32/73 支持 Session 配置角色，35/30 支持 requests.models.PreparedRequest，50/4/79 支持前缀适配器选择和默认 HTTPAdapter；固定源码也支持这些概念。没有直接 Sources 引用。回答反复注明精确链不受给定报告支持，箭头中的 unspecified/endpoint requested 不能当已核实调用边，也不算它虚构了该调用边。图示 HTTPAdapter 只能连同前文默认路径限定阅读。",
+      "correct_source_locations": [
+        "requests.models.PreparedRequest",
+        "requests.adapters.HTTPAdapter"
+      ]
+    },
+    {
+      "question_id": "Q07",
+      "method": "bm25",
+      "criteria": [
+        {
+          "id": "Q07-C1",
+          "score": 0,
+          "rationale": "承认给定片段不含公共 get 实现，因此未给出 api.get→api.request。"
+        },
+        {
+          "id": "Q07-C2",
+          "score": 0,
+          "rationale": "没有给出 api.request→Session.request。Session.get 是另一入口，不能替代公共包装层这条边。"
+        },
+        {
+          "id": "Q07-C3",
+          "score": 1,
+          "rationale": "正确识别 Session.request 构造 Request 并执行 prep=self.prepare_request(req)。给定 Source 56 含构造调用的尾部及准备调用；前面部分参数叙述需完整源码核实。"
+        },
+        {
+          "id": "Q07-C4",
+          "score": 1,
+          "rationale": "正确引用 resp=self.send(prep, **send_kwargs)。"
+        },
+        {
+          "id": "Q07-C5",
+          "score": 1,
+          "rationale": "正确说明 Session.send→get_adapter→所选 adapter.send，解释最长前缀和自定义挂载条件，并在 send 边界停止。下面单列其错误子行号，不能将这些错误引用当准确定位。"
+        }
+      ],
+      "factual_errors": [
+        {
+          "claim": "PreparedRequest.prepare_method 位于 models.py:L383-L389。",
+          "reason": "该范围是 copy() 的一部分；prepare_method 实际为393–397。",
+          "source": "src/requests/models.py:382–397"
+        },
+        {
+          "claim": "prepare_url 添加默认 /、组合编码参数并 requote 最终 URL，引用 models.py:L391-L463。",
+          "reason": "事实本身正确，但给出的子范围未覆盖这些操作：默认 path 在466–468，参数组合在470–478，最终 requote 在480–481。prepare_url 从409行开始。",
+          "source": "src/requests/models.py:409–481"
+        },
+        {
+          "claim": "PreparedRequest.prepare_headers 位于 models.py:L465-L475。",
+          "reason": "该范围属于 prepare_url；prepare_headers 及验证、插入头的实际位置为483–492。",
+          "source": "src/requests/models.py:483–492"
+        },
+        {
+          "claim": "认证必须在 body 等字段之后准备的依据位于 models.py:L346-L355。",
+          "reason": "该范围是实例字段初始化和 prepare 签名；真正的 prepare_auth 调用及说明在371–377。",
+          "source": "src/requests/models.py:351–377"
+        },
+        {
+          "claim": "Session.send 拒绝未准备 Request 的依据位于 sessions.py:L694-L701。",
+          "reason": "Request 类型检查和 ValueError 在688–689；所引范围包含 hooks、选择适配器和计时。",
+          "source": "src/requests/sessions.py:686–701"
+        },
+        {
+          "claim": "adapter=self.get_adapter(url=request.url) 的依据位于 sessions.py:L702-L717。",
+          "reason": "实际选择语句在697行，不在该子范围；703行 adapter.send 的另一个引用则正确。",
+          "source": "src/requests/sessions.py:696–703"
+        },
+        {
+          "claim": "Session.get_adapter 位于 sessions.py:L748-L763。",
+          "reason": "该范围是 send 返回与 merge_environment_settings 开头；get_adapter 实际为781–792。",
+          "source": "src/requests/sessions.py:748–792"
+        },
+        {
+          "claim": "Session.mount 位于 sessions.py:L765-L775。",
+          "reason": "该范围是环境配置合并；mount 的实际定义和最长前缀排序为799–808。",
+          "source": "src/requests/sessions.py:764–808"
+        }
+      ],
+      "unsupported_assertions": [],
+      "omissions": [
+        "api.get→api.request→Session.request 的公共入口链。",
+        "给定片段没有完整 Session.prepare_request，因此准备对象之间的连接仍有材料缺口。"
+      ],
+      "source_grounding": "Source 56 的大块范围569–717和 Source 57 的704–831均真实；关键 prepare_request、self.send、get_adapter、adapter.send 可核实。回答自行生成的多个更细范围错误，已逐条列出；不能以正确 Source ID 掩盖错误行号。Source 46 支持 PreparedRequest.prepare 的阶段顺序。Request 构造中 method/url/data 的前半部分在563–568，早于 Source 56 起点；这个陈述在固定源码中正确，但给定引用只直接展示构造尾部。prepare_url 的行为也正确但其子范围支撑不全。“supplied snapshot”在此按给定片段理解，非声称整个冻结仓库没有公共包装层。内容标准得分与这些定位错误应同时报告。",
+      "correct_source_locations": [
+        "src/requests/sessions.py:Session.get",
+        "src/requests/sessions.py:Session.request",
+        "src/requests/sessions.py:Session.send",
+        "src/requests/sessions.py:Session.get_adapter（符号和模块正确，回答行号错误）",
+        "src/requests/sessions.py:Session.mount（符号和模块正确，回答行号错误）",
+        "src/requests/models.py:PreparedRequest.prepare",
+        "src/requests/models.py:PreparedRequest.prepare_method/prepare_url/prepare_headers（符号和模块正确，多个子行号错误）",
+        "src/requests/adapters.py:BaseAdapter.send/HTTPAdapter",
+        "docs/user/advanced.rst:Transport Adapters"
+      ]
+    },
+    {
+      "question_id": "Q13",
+      "method": "global",
+      "criteria": [
+        {
+          "id": "Q13-C1",
+          "score": 0.5,
+          "rationale": "正确识别 CaseInsensitiveDict、大小写无关访问和最后拼写，并列出赋值/查找/迭代等检查对象；未给出 set/get 的具体方法或迭代如何返回拼写。"
+        },
+        {
+          "id": "Q13-C2",
+          "score": 0.5,
+          "rationale": "正确定位 requests.models.PreparedRequest 作为准备消费者并提到头验证，但未识别 prepare_headers 这个实际消费者方法。"
+        },
+        {
+          "id": "Q13-C3",
+          "score": 1,
+          "rationale": "准确提出 TestCaseInsensitiveDict 和大小写变化访问、删除、迭代等现有测试目标；固定 tests/test_structures.py 及 test_requests.py 可核实。该条标准不额外要求精确测试文件位置，但答案确实没给出文件。"
+        },
+        {
+          "id": "Q13-C4",
+          "score": 1,
+          "rationale": "明确区分需要检查与必须修改，说明未受影响的测试不必编辑，没有宣称全部消费者都要改。"
+        }
+      ],
+      "factual_errors": [
+        {
+          "claim": "NATIVE HEADER KEY HANDLING verifies that prepared-request header keys remain usable as native string or byte-string keys.",
+          "reason": "该描述混淆输入类型与准备后的键类型。测试同时提供 str/bytes 输入，但验证准备后存在字符串 \"unicode\" 和 \"byte\"；prepare_headers 对名称调用 to_native_string。它不是保证准备后仍保留或能按 bytes 键访问。Report35 中已有相同错误，最终回答继承了它。",
+          "source": "tests/test_requests.py:1687–1695; src/requests/models.py:483–492; src/requests/structures.py:46–52"
+        }
+      ],
+      "unsupported_assertions": [],
+      "omissions": [
+        "CaseInsensitiveDict 实现模块和 set/get/iter 的具体实现关系。",
+        "PreparedRequest.prepare_headers 方法名。",
+        "明确测试文件及具体测试函数位置。"
+      ],
+      "source_grounding": "Reports 32/74 支持容器测试范围；35/30 支持 PreparedRequest 模块；73 支持配置合并；59 支持 MockRequest 对 Host 值的转换；69 的 User-Agent 大小写测试在源码中存在。Reports 35/1 的 native-key 说法存在上列事实错误，说明报告引用不等于源码核验。其余扩展范围以待检查项表述，并未断言它们都需修改。全篇没有直接 Sources 引用。",
+      "correct_source_locations": [
+        "CaseInsensitiveDict（类名正确，未给出实现文件）",
+        "requests.models.PreparedRequest",
+        "requests._internal_utils.to_native_string",
+        "TestCaseInsensitiveDict（测试类正确，未给出测试文件）",
+        "requests.structures.LookupDict"
+      ]
+    },
+    {
+      "question_id": "Q13",
+      "method": "bm25",
+      "criteria": [
+        {
+          "id": "Q13-C1",
+          "score": 1,
+          "rationale": "准确说明 CaseInsensitiveDict 的 set/get 小写索引及保留拼写、迭代、删除、比较、复制等关联操作。"
+        },
+        {
+          "id": "Q13-C2",
+          "score": 1,
+          "rationale": "准确指出 src/requests/models.py:PreparedRequest.prepare_headers，先验证 header，再将名称转 native string 后存入 CaseInsensitiveDict。"
+        },
+        {
+          "id": "Q13-C3",
+          "score": 0,
+          "rationale": "没有识别现有 TestCaseInsensitiveDict 测试；明确说明当前十个源码/文档块没有测试文件，这是诚实的材料限制但仍未完成该标准。"
+        },
+        {
+          "id": "Q13-C4",
+          "score": 1,
+          "rationale": "明确提出先检查行为是否受影响，再决定是否编辑，未把所有使用点都列为必须修改。"
+        }
+      ],
+      "factual_errors": [],
+      "unsupported_assertions": [],
+      "omissions": [
+        "未给出现有 TestCaseInsensitiveDict 及大小写变化访问测试。"
+      ],
+      "source_grounding": "Source 60 是完整容器实现；46/47 包含 prepare_headers、prepare_body 和 prepare_content_length；54 有 rebuild_proxies；26 有 HTTPAdapter.build_response 的 CaseInsensitiveDict 构造。Source14 的大小写无关响应头例子确实存在；小标题表述“Custom Headers/header access”不够精确，例子实际属于 Response Headers。此题实际给定十块没有测试文件，不能把“不知道测试”记成虚构，也不能据此声称冻结仓库没有测试。",
+      "correct_source_locations": [
+        "src/requests/structures.py:CaseInsensitiveDict",
+        "src/requests/models.py:PreparedRequest.prepare_headers",
+        "src/requests/models.py:PreparedRequest.prepare_body",
+        "src/requests/models.py:PreparedRequest.prepare_content_length",
+        "src/requests/sessions.py:SessionRedirectMixin.rebuild_proxies",
+        "src/requests/adapters.py:HTTPAdapter.build_response",
+        "docs/user/quickstart.rst:响应头大小写访问示例"
+      ]
+    },
+    {
+      "question_id": "F02-plan",
+      "method": "global",
+      "criteria": [
+        {
+          "id": "F02-plan-C1",
+          "score": 1,
+          "rationale": "清楚规划可变、每实例独立、初值 None 的 default_timeout，明确不加构造参数和全局默认。"
+        },
+        {
+          "id": "F02-plan-C2",
+          "score": 1,
+          "rationale": "提出 omission sentinel 或等效机制，明确未传用实例默认、显式 None/float/tuple 原样优先；要求 wrappers 不把未传提前变成 None。"
+        },
+        {
+          "id": "F02-plan-C3",
+          "score": 1,
+          "rationale": "明确覆盖 request/get/post 及其余 session wrappers，并多次要求 direct Session.send 保持原合同、不意外使用该默认。关于内部调整的保留仍以不改现有合同为前提。"
+        },
+        {
+          "id": "F02-plan-C4",
+          "score": 1,
+          "rationale": "要求在 dispatch 前解析有效 timeout 并沿 redirects 保持同一值，不重新读取可变默认、不新增形状验证。"
+        },
+        {
+          "id": "F02-plan-C5",
+          "score": 1,
+          "rationale": "测试清单覆盖未传、显式 None/float/tuple、实例隔离和修改、request/get/post/all wrappers、redirects、direct send，另说明文档需区分 omitted 与 None。"
+        }
+      ],
+      "factual_errors": [],
+      "unsupported_assertions": [],
+      "omissions": [],
+      "source_grounding": "这是规划回答。大多数详细设计来自题设要求并明确使用 proposed/shall，应按规划合理性评分，不能把引用的社区报告说成已有 default_timeout 实现。Reports 可支持 Session/请求准备/redirects/测试领域的高层背景；未给出可靠的精确模块、调用位置或当前签名。回答明确承认这些限制，不声称执行过测试。全篇仅 Reports 引用，无直接源码 Sources。固定源码支持把默认解析放在 Session.request、沿既有 send/resolve_redirects 传递的可行性。",
+      "correct_source_locations": [
+        "Session.request（提出的修改责任，未给出实现文件/行号）",
+        "Session.send（正确识别需保留的直接发送边界，未给出文件/行号）"
+      ]
+    },
+    {
+      "question_id": "F02-plan",
+      "method": "bm25",
+      "criteria": [
+        {
+          "id": "F02-plan-C1",
+          "score": 1,
+          "rationale": "明确规划在 Session 初始化增加可变 per-instance default_timeout=None，保持构造器和全局行为不变。"
+        },
+        {
+          "id": "F02-plan-C2",
+          "score": 1,
+          "rationale": "识别当前 timeout=None 无法区分未传，提出 sentinel 并在调用 send 前解析，显式 None 必须胜出。"
+        },
+        {
+          "id": "F02-plan-C3",
+          "score": 1,
+          "rationale": "列出所有 Session wrappers 并要求保留省略语义，明确 direct Session.send 不查 default_timeout；模块级调用仍应保持临时新 session 的默认行为。"
+        },
+        {
+          "id": "F02-plan-C4",
+          "score": 1,
+          "rationale": "要求把已解析的 float/tuple/None 传递至每次重定向，不重新默认化，并不增加验证或规范化规则。"
+        },
+        {
+          "id": "F02-plan-C5",
+          "score": 0.5,
+          "rationale": "具体测试计划覆盖未传、显式 None/float/tuple、重置/实例隔离、redirects、direct send 和文档；但没有明确规划 Session.request/get/post/其他便捷方法的成组测试，主要在实现检查步骤说覆盖 wrappers，在测试清单只单列模块级 API。因此测试覆盖标准部分满足。"
+        }
+      ],
+      "factual_errors": [],
+      "unsupported_assertions": [],
+      "omissions": [
+        "没有明确将全部 Session 便捷方法的 omitted/explicit-None 行为列入测试计划；不应把模块级 API 隔离测试当作这些 Session wrappers 的等价覆盖。"
+      ],
+      "source_grounding": "Source55 确有 Session.request 的 timeout=None 签名、Request 构造及 timeout send_kwargs，但块止于588，实际 self.send 在589；Source30 直接支持 api.request/get/options，post 的转发体在115，晚于给定块终点109。因此这些完整源码中正确的陈述有局部引用支撑不足，不能声称调用体全部直接可见。Source98 确有 TestTimeout 和 test_requests_are_updated_each_time，后者设置 timeout=None 的期望 kwargs；最终 kwargs 断言在2571–2572，超出给定块2570终点，相关测试名称和职责经完整静态源码确认。Source28 支持 HTTPAdapter.send 的 timeout 转换；Source9 支持 Timeout 文档。没有编造测试位置或声称测试已运行。",
+      "correct_source_locations": [
+        "src/requests/sessions.py:Session.request",
+        "src/requests/sessions.py:Session 初始化（给定片段从441开始，未含初始化函数头）",
+        "src/requests/api.py:request/get/options/post",
+        "src/requests/adapters.py:HTTPAdapter.send",
+        "tests/test_requests.py:TestTimeout",
+        "tests/test_requests.py:test_requests_are_updated_each_time",
+        "docs/user/advanced.rst:Timeouts",
+        "docs/user/advanced.rst:Prepared Requests",
+        "src/requests/sessions.py:SessionRedirectMixin.resolve_redirects（正确提出的检查位置，本次未直接提供函数体）"
+      ]
+    }
+  ]
+}

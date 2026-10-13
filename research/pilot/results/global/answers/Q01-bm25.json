@@ -1,0 +1,12 @@
+{
+  "question_id": "Q01",
+  "group": "precise",
+  "method": "bm25",
+  "answer": "**Fact**\n\nCase-insensitive header-key lookup with retention of the most recently assigned spelling is implemented by `CaseInsensitiveDict` in `src/requests/structures.py`:\n\n- `CaseInsensitiveDict.__setitem__` stores entries in `self._store` under `key.lower()`, while retaining the original key alongside the value: `self._store[key.lower()] = (key, value)` (`src/requests/structures.py`, `CaseInsensitiveDict.__setitem__`, Source 60).\n- `CaseInsensitiveDict.__getitem__` performs lookup using `key.lower()` and returns the stored value (`src/requests/structures.py`, `CaseInsensitiveDict.__getitem__`, Source 60).\n- `CaseInsensitiveDict.__iter__` yields the retained, case-sensitive key from each stored `(key, value)` pair (`src/requests/structures.py`, `CaseInsensitiveDict.__iter__`, Source 60).\n- `lower_items()` exposes lowercase keys for case-insensitive comparisons, and `__eq__` compares dictionaries built from those lowercase-key pairs (`src/requests/structures.py`, `CaseInsensitiveDict.lower_items` and `__eq__`, Source 60).\n\nThe \u201clast spelling\u201d behavior follows directly from `__setitem__`: assigning a differently cased equivalent key overwrites the tuple at the same lowercase key with the new spelling. The tests explicitly verify this in `test_preserve_last_key_case`, where `Accept` becomes `ACCEPT` and `user-Agent` becomes `USER-AGENT` after reassignment (`tests/test_requests.py`, `TestCaseInsensitiveDict.test_preserve_last_key_case`, Source 97).\n\nRequests uses this structure for session headers: `Session.__init__` initializes `self.headers = default_headers()`, documented there as a case-insensitive dictionary of headers (`src/requests/sessions.py`, `Session.__init__`, Source 54). Header removal is also tested as case-insensitive: setting `\"foo\"` and supplying `\"FOO\": None` removes the header (`tests/test_requests.py`, `test_header_remove_is_case_insensitive`, Source 92).\n\n**Proposed changes**\n\nNo code change was requested, so none is proposed.\n\n**Uncertainty**\n\nThe supplied evidence identifies the data structure and its behavior, but it does not include the implementation of `default_headers()` or the complete header-preparation path. Therefore, it is insufficient to state precisely where session defaults are constructed or where all header merges occur.",
+  "elapsed_seconds": 8.284304625354707,
+  "call_sequences": [
+    9
+  ],
+  "source_excerpts_provided": 10,
+  "context_tokens": 11344
+}

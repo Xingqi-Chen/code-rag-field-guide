@@ -189,3 +189,63 @@ PYTHONHASHSEED=20261012 PYTHONDONTWRITEBYTECODE=1 \
 ```
 
 该输出目录选项在本次实际运行后补入，不改变已记录的执行源码与脚本hash，也未因此重跑。补测结果属于已看过首轮结果后的预算敏感性分析；题、gold和旧结果不变，不将它包装成新的独立泛化评测。
+
+
+## Global：六题真实回答补充实验
+
+本节是2026-10-13新增的探索性回答评测，与前面20题纯检索和两项补丁实验分别记录。用户明确允许新增模型调用后，在执行前提交了[六题](global-questions.json)、[逐项标准与源码锚点](global-gold.json)、[协议](global-plan.json)、[离线预算核算](results/global/preflight.json)及执行器，冻结提交为 `b3a1201`。问题是Q01定位、Q07调用、Q13影响、原F02改写成只做规划，以及两道新增认证架构／扩展题G01、G02。此前检索结果已知，因此这是有目的选题的后续探索，不能说是从未看过结果的全新盲测；新增题没有用于改索引或调参。
+
+固定同一Requests快照、同一微软v3.3.0运行时及原有索引。按官方 `read_indexer_reports(..., community_level=2)` 选择规则得到84份报告；这里的level是过滤／归并参数，不应误写成84份全都恰好位于第2层。使用报告全文而非短summary，固定seed 20261012，关闭动态社区选择和外部常识补充；报告中的已有抽取异常原样保留。没有重建索引、修图或调用embedding，先前OpenAI累计额度与用量不变。
+
+调用的是实际安装的官方 `GlobalCommunityContext` 与 `GlobalSearch.search`。每题先对7批社区报告分别发起模型map，再由官方解析分数、过滤0分条目、排序并构造reduce，最后真实调用模型汇总。若全部map为0分，官方可直接返回固定拒答、无需reduce。不是只取社区摘要或在本地伪造map输出。[固定官方Global实现](https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/query/structured_search/global_search/search.py)与[报告分批实现](https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/query/context_builder/community_context.py)本次于2026-10-13通过已缓存固定源码核对，未引入截止日后的新版本或文献。
+
+预算需分三层看：每个map批次名义上限12000，7批实际材料合计**78,250 o200k token／题**；reduce筛选材料上限12000；BM25对照只在相同114块上检索一次、直接源码材料上限12000。两组的共同用户问题、同一 `gpt-5.6-luna` 模型标识、2048请求输出上限相同，但系统提示词、调用数量与总阅读量不同，不能称为等总预算或单独证明图的因果优势。本轮统一用BM25作六题对照，以保持同一种检索器且无需新增向量请求；没有新增hybrid、Basic或Local的回答生成对照。每题只尝试一次，固定seed只约束社区分批顺序，不保证远端生成逐字确定。map/reduce的1000／2000是官方提示中的**词数**要求，不是服务端token硬限制。服务此前有忽略输出上限的情况，本轮保留完整响应、真实usage和超限标记，不截掉超出的结果。
+
+离线核算为最多6×(7 map+1 reduce+1 BM25)=54次；执行硬上限60次、3600秒、每次worker60秒、单请求内容16000 token、整批内容864000 token、响应2 MiB、并发1、零自动重试。任何新传输／适配失败或未知结果终止整批，不重发。执行时只读取原有专用Fullstar凭据；不新增账户、权限或订阅，不计算Fullstar价格。
+
+### 实现适配与评分含义
+
+官方固定版本同时在 `GlobalSearch.__init__` 和 `_map_response_single_batch` 传入 `response_format_json_object`，按默认JSON开关使用会造成重复关键字。执行器使用 `json_mode=False` 避开重复，但官方map调用仍显式要求JSON；沿用已验证的Responses传输，JSON形状由原官方提示要求和解析器处理，没有加入新schema约束。reduce的官方流式接口接收到由一份完整、已核验响应构成的单块异步流。上述适配不改官方提示文本、社区分批、map解析、重点筛选或reduce排序。[执行器](global_experiment.py)与[无网络接口检查](results/global/offline-interface-check.json)公开；独立复核在执行前修复了普通适配异常被官方吞掉后继续请求的缺口。
+
+原始请求只保存公开语料、官方提示和模型可见回答，不保存密钥或私有推理。官方prompt计数没有包含全部用户消息和服务端输出开销，所以总账以逐次provider usage为准，同时保留本地正文token计数；不能只报reduce的上下文大小。社区报告编号是导读出处，不是源码行号；评分分别核查回答内容、正确源码定位、来源支撑、遗漏和无依据断言。每条冻结要求取0／0.5／1，按题归一化，精确题与全局题分别呈现；这是独立AI审阅的必要要点覆盖，不是人类验证的准确率，也不混入原有Recall表。F02这里只评价规划，没有执行或验证新的补丁。
+
+### 复算与重新执行
+
+公开结果的算术及来源完整性可在全新clone里离线核验，不需要任何模型或私有缓存：
+
+```bash
+python3 research/pilot/verify_global.py --check
+```
+
+该命令校验冻结文件、map与BM25上下文、全部逐次请求／响应、两组共同问题、上限、usage和人工可检查的AI评分，再重算逐题和分组汇总。本机另以 `--check --tokens` 重数全部请求正文、可见输出、map批次与reduce／BM25材料；该可选检查需要已缓存的tokenizer，CI不下载模型。它能验证评分算术与记录一致，不能自动证明评分判断正确。原始数据放在[Global目录](results/global)，此前所有实验文件保持不变。
+
+以下是**实际执行过的顺序**，不是让读者直接覆盖已发布结果的命令：
+
+```bash
+# 在既有固定索引缓存及已安装运行时上，先离线准备，再提交冻结材料
+PYTHONDONTWRITEBYTECODE=1 .cache/graphrag-venv/bin/python research/pilot/global_experiment.py prepare
+# 获得本轮模型调用授权及执行审批后，仅运行一次
+PYTHONHASHSEED=20261012 PYTHONDONTWRITEBYTECODE=1 .cache/graphrag-venv/bin/python research/pilot/global_experiment.py execute
+```
+
+prepare遇到现有Global结果目录会拒绝覆盖；execute还需要本机未公开的固定parquet缓存，并且遇到已存在的专用运行目录拒绝重启。新clone可复算已公开结果；重新发模型调用则必须在单独研究副本中准备同一版本索引、重新冻结及授权，不能假称仅clone就能逐字重现具有随机性的远端回答。执行阶段也核对了旧索引和旧结果哈希，确保没有回写。
+
+
+### 实际执行记账
+
+执行从2026-10-13 04:24:08 UTC至04:33:52 UTC，控制器共584.54秒。54次请求全部完成：42 map、6 reduce、6 BM25回答；无失败、重试、补问、索引重建或新embedding。模型可见输入正文共606,476个o200k token；服务报告输入694,712、输出49,786 token。provider计数比纯正文多，不能用正文替代账本；本轮不估算Fullstar费用。
+
+| 调用阶段 | 次数 | provider输入token | provider输出token | 请求监督时间合计 |
+| --- | ---: | ---: | ---: | ---: |
+| Global map | 42 | 580,261 | 32,206 | 401.14秒 |
+| Global reduce | 6 | 36,055 | 7,206 | 99.09秒 |
+| BM25单轮回答 | 6 | 78,396 | 10,374 | 83.60秒 |
+
+Global共616,316输入／39,412输出，BM25共78,396输入／10,374输出。Global输入约为BM25的7.86倍；这不是按相同总计算费用比较的实验。三次BM25回答的provider输出分别2357、2236、2396，超过请求2048上限；其可见正文均未超2048。完整响应与usage均保留，没有重复生成或删去超限样本。Global答案中的报告编号已逐一对照输入ID；G02答案引用的Reports(88)不在84份输入报告ID集合；这是需保留的引用失败，不能通过更改答案来修正。
+
+
+### 独立回答审阅结果
+
+四道精确／规划题按题平均，Global为52.5%，BM25为81.25%；两道全局认证题为45%与65%。逐题分数和错误分别见[精确／规划审阅](results/global/review-precise.json)、[全局审阅](results/global/review-global.json)，算术见[scores.json](results/global/scores.json)。题目要点数量不同，因此组平均是每题归一化后平均，不用总得分直接除总要点代替。额外错误与支持不足不会被覆盖率这一数值自动扣除；必须同时阅读审阅列项，不能把它称为完整回答准确率。
+
+Global在F02计划中的要求覆盖较完整，但很多要求来自题目本身；不能归因于图或声称新功能已正确实现。全局两题都围绕认证，本轮只比较一次回答；两位审阅者分别负责两组题，每题一位审阅者、两个方法，没有每题双评或评阅者一致性统计。未新增生成模型裁判调用。审阅静态源码支持检查，不运行被回答提及的HTTP测试。
