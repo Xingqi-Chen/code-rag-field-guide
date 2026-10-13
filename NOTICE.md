@@ -2,7 +2,7 @@
 
 本仓库原创中文说明、研究记录、教学代码、配图和检查脚本使用 [MIT License](LICENSE)。Microsoft GraphRAG 是 Microsoft 的独立开源项目，本仓库不代表 Microsoft，不是其产品或官方评测。
 
-本轮静态研究固定于 [`microsoft/graphrag` v3.3.0](https://github.com/microsoft/graphrag/releases/tag/v3.3.0)，commit `5faaaf4f5685fa2056fa8c3bf9342cb089f2942f`。官方项目采用 [MIT 许可](https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/LICENSE)。本仓库发布研究原创产物、事实摘录、链接与哈希；Global 实验逐次请求还保留了实际使用的官方 map/reduce 提示词，随附 [Microsoft GraphRAG MIT 许可及版权声明](third_party/microsoft-graphrag/LICENSE)。官方完整源码仅留在本地忽略缓存，不随本仓库分发。
+本轮静态研究固定于 [`microsoft/graphrag` v3.3.0](https://github.com/microsoft/graphrag/releases/tag/v3.3.0)，commit `5faaaf4f5685fa2056fa8c3bf9342cb089f2942f`。官方项目采用 [MIT 许可](https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/LICENSE)。本仓库发布研究原创产物、事实摘录、链接与哈希；Global实验逐次请求保留实际使用的官方map/reduce提示词，失败链见证保留8份抽取请求中的官方提示词，随附 [Microsoft GraphRAG MIT 许可及版权声明](third_party/microsoft-graphrag/LICENSE)。官方完整源码仅留在本地忽略缓存，不随本仓库分发。
 
 论文、官方文档及第三方项目名称的权利属于原作者。引用与证据边界见 [研究入口](research/README.md)，不把相近研究当作本项目运行结果。
 
@@ -11,3 +11,5 @@
 真实项目使用 psf/requests v2.32.3，commit `0e322af87745eff34caffe4df68456ebc20d9068`，采用 [Apache-2.0](https://github.com/psf/requests/blob/0e322af87745eff34caffe4df68456ebc20d9068/LICENSE)，另见其 [NOTICE](https://github.com/psf/requests/blob/0e322af87745eff34caffe4df68456ebc20d9068/NOTICE)。上游完整源码／测试仓库仅在忽略缓存中下载和受控运行。实验实际检索到的原文片段及模型补丁已随逐题上下文公开，保留相对文件名、固定版本和行号；其上游部分仍适用Apache-2.0，随附[许可证](third_party/requests/LICENSE)与[NOTICE](third_party/requests/NOTICE)。模型补丁是实验输出，不是Requests官方发布或已经接受的修改。官方SWE-bench论文／数据只用于确认仓库纳入及任务元数据，没有分发其问题或答案patch。
 
 本次公开的实体、关系、社区和社区报告是模型根据上述Requests公开语料生成的实验数据，保留源码归因与固定版本映射；不代表Requests或Microsoft认可这些描述，也不保证它们是经过验证的程序事实。其依据的第三方源码权利及许可不因模型转述而改变。
+
+后续失败链诊断另公开四个Requests原文块与对应八份原样模型可见抽取回复，用于核验遗漏和错误传播；上游原文仍按上述Apache-2.0许可与NOTICE归因，不包括完整第三方仓库。更新处理微测仅发布原创假文档、调用脚本和结果，固定版微软函数仍从本地依赖加载。

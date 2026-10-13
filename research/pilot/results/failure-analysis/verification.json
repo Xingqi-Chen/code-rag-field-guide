@@ -1,0 +1,168 @@
+{
+  "started_utc": "2026-10-13T10:53:10.110172+00:00",
+  "python": "3.14.5",
+  "mode": "Offline verification; no index rebuild or provider runtime",
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ],
+      "relative_cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.226393,
+      "output": ".........................\n----------------------------------------------------------------------\nRan 25 tests in 0.119s\n\nOK\n"
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "research/pilot/tests"
+      ],
+      "relative_cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.104857,
+      "output": "...................\n----------------------------------------------------------------------\nRan 19 tests in 0.001s\n\nOK\n"
+    },
+    {
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "test_shop"
+      ],
+      "relative_cwd": "docs/examples/shop",
+      "exit_code": 0,
+      "elapsed_seconds": 0.035071,
+      "output": "..\n----------------------------------------------------------------------\nRan 2 tests in 0.000s\n\nOK\n"
+    },
+    {
+      "command": [
+        "python3",
+        "research/pilot/verify.py"
+      ],
+      "relative_cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.033469,
+      "output": "Freeze verified: 20 retrieval + 2 feature tasks; 71 source spans; 41 input files; source_check=False; no inference.\n"
+    },
+    {
+      "command": [
+        "python3",
+        "research/pilot/verify_selection.py"
+      ],
+      "relative_cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.034481,
+      "output": "Selection hashes (8 files), frozen 8 IDs / 4 dev queries, token sums and USD arithmetic: PASS.\nOffline preparation only; no secret loading, model request, runtime limiter or compatibility verification.\n"
+    },
+    {
+      "command": [
+        "python3",
+        "research/pilot/verify_probe_result.py"
+      ],
+      "relative_cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.147868,
+      "output": "Published probe: pinned runtime, one HTTP 401, zero OpenAI requests, unchanged sample and bounded recorded usage verified offline.\nExplicit key-update continuation: inherited totals, HTTP 500 stop, 12 vectors / 4,327 tokens, cost and cumulative time verified offline.\nAuthorized one-shot Responses glean: one 200/completed, no embeddings/retry, cumulative 4/17 and 2/3 verified offline.\nRemaining probe: 12 validated generation calls, 42 entity/46 relation records, report stopped before dispatch; cumulative 16 generation, 2 embedding, 137.816 seconds verified offline.\n"
+    },
+    {
+      "command": [
+        "python3",
+        "research/pilot/verify_results.py"
+      ],
+      "relative_cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.190762,
+      "output": "Validated 168 unique actual contexts, exact source bytes and provenance; token_recount=False.\n"
+    },
+    {
+      "command": [
+        "python3",
+        "research/pilot/score_results.py",
+        "--check"
+      ],
+      "relative_cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.208551,
+      "output": "[\n  {\n    \"method\": \"bm25\",\n    \"budget\": 4000,\n    \"split\": \"test\",\n    \"kind\": \"all\",\n    \"questions\": 16,\n    \"scorable_questions\": 15,\n    \"coverage80\": 0.35333333333333333,\n    \"coverage100\": 0.35333333333333333,\n    \"recall5\": 0.35333333333333333,\n    \"recall10\": 0.35333333333333333,\n    \"mrr\": 0.3888888888888889,\n    \"context_tokens\": 3566.6875,\n    \"source_chunks\": 3.0625,\n    \"compute_seconds\": 0.03150781523436308\n  },\n  {\n    \"method\": \"hybrid\",\n    \"budget\": 4000,\n    \"split\": \"test\",\n    \"kind\": \"all\",\n    \"questions\": 16,\n    \"scorable_questions\": 15,\n    \"coverage80\": 0.4288888888888889,\n    \"coverage100\": 0.4288888888888889,\n    \"recall5\": 0.4288888888888889,\n    \"recall10\": 0.4288888888888889,\n    \"mrr\": 0.4666666666666667,\n    \"context_tokens\": 3625.875,\n    \"source_chunks\": 3.1875,\n    \"compute_seconds\": 0.05124135414371267\n  },\n  {\n    \"method\": \"ms_basic\",\n    \"budget\": 4000,\n    \"split\": \"test\",\n    \"kind\": \"all\",\n    \"questions\": 16,\n    \"scorable_questions\": 15,\n    \"coverage80\": 0.35777777777777775,\n    \"coverage100\": 0.35777777777777775,\n    \"recall5\": 0.2911111111111111,\n    \"recall10\": 0.35777777777777775,\n    \"mrr\": 0.35555555555555557,\n    \"context_tokens\": 3592.5,\n    \"source_chunks\": 3.6875,\n    \"compute_seconds\": 0.010763939935714006\n  },\n  {\n    \"method\": \"ms_local\",\n    \"budget\": 4000,\n    \"split\": \"test\",\n    \"kind\": \"all\",\n    \"questions\": 16,\n    \"scorable_questions\": 15,\n    \"coverage80\": 0.05555555555555555,\n    \"coverage100\": 0.05555555555555555,\n    \"recall5\": 0.05555555555555555,\n    \"recall10\": 0.05555555555555555,\n    \"mrr\": 0.2,\n    \"context_tokens\": 2648.25,\n    \"source_chunks\": 1.125,\n    \"compute_seconds\": 0.014454017917159945\n  }\n]\n"
+    },
+    {
+      "command": [
+        "python3",
+        "research/pilot/score_budget_supplement.py",
+        "--check"
+      ],
+      "relative_cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.461374,
+      "output": "{\n  \"verified_new_contexts\": 160,\n  \"original_contexts_reused\": 168,\n  \"external_model_calls\": 0,\n  \"summary\": [\n    {\n      \"method\": \"bm25\",\n      \"budget\": 4000,\n      \"split\": \"test\",\n      \"kind\": \"all\",\n      \"questions\": 16,\n      \"scorable_questions\": 15,\n      \"coverage80\": 0.35333333333333333,\n      \"coverage100\": 0.35333333333333333,\n      \"recall5\": 0.35333333333333333,\n      \"recall10\": 0.35333333333333333,\n      \"mrr\": 0.3888888888888889,\n      \"context_tokens\": 3566.6875,\n      \"source_chunks\": 3.0625,\n      \"compute_seconds\": 0.03150781523436308,\n      \"min_context_tokens\": 3147,\n      \"max_context_tokens\": 3781,\n      \"mean_source_text_tokens\": 3449.9375,\n      \"mean_budget_utilization\": 0.891671875,\n      \"mean_duplicate_source_line_fraction\": 0.015454576207348022,\n      \"duplicate_text_unit_ids_total\": 0,\n      \"mean_unjudged_unique_source_line_fraction\": 0.9855609349850856,\n      \"mean_reports\": 0,\n      \"contexts_with_reports\": 0,\n      \"adapter_dropped_tail_rows_total\": 1775\n    },\n    {\n      \"method\": \"hybrid\",\n      \"budget\": 4000,\n      \"split\": \"test\",\n      \"kind\": \"all\",\n      \"questions\": 16,\n      \"scorable_questions\": 15,\n      \"coverage80\": 0.4288888888888889,\n      \"coverage100\": 0.4288888888888889,\n      \"recall5\": 0.4288888888888889,\n      \"recall10\": 0.4288888888888889,\n      \"mrr\": 0.4666666666666667,\n      \"context_tokens\": 3625.875,\n      \"source_chunks\": 3.1875,\n      \"compute_seconds\": 0.05124135414371267,\n      \"min_context_tokens\": 2975,\n      \"max_context_tokens\": 3863,\n      \"mean_source_text_tokens\": 3479.0625,\n      \"mean_budget_utilization\": 0.90646875,\n      \"mean_duplicate_source_line_fraction\": 0.00723127560341388,\n      \"duplicate_text_unit_ids_total\": 0,\n      \"mean_unjudged_unique_source_line_fraction\": 0.9767332506570516,\n      \"mean_reports\": 0,\n      \"contexts_with_reports\": 0,\n      \"adapter_dropped_tail_rows_total\": 493\n    },\n    {\n      \"method\": \"ms_basic\",\n      \"budget\": 4000,\n      \"split\": \"test\",\n      \"kind\": \"all\",\n      \"questions\": 16,\n      \"scorable_questions\": 15,\n      \"coverage80\": 0.35777777777777775,\n      \"coverage100\": 0.35777777777777775,\n      \"recall5\": 0.2911111111111111,\n      \"recall10\": 0.35777777777777775,\n      \"mrr\": 0.35555555555555557,\n      \"context_tokens\": 3592.5,\n      \"source_chunks\": 3.6875,\n      \"compute_seconds\": 0.010763939935714006,\n      \"min_context_tokens\": 2796,\n      \"max_context_tokens\": 3888,\n      \"mean_source_text_tokens\": 3454.75,\n      \"mean_budget_utilization\": 0.898125,\n      \"mean_duplicate_source_line_fraction\": 0.014819773674205249,\n      \"duplicate_text_unit_ids_total\": 0,\n      \"mean_unjudged_unique_source_line_fraction\": 0.9852772554069417,\n      \"mean_reports\": 0,\n      \"contexts_with_reports\": 0,\n      \"adapter_dropped_tail_rows_total\": 1\n    },\n    {\n      \"method\": \"ms_local\",\n      \"budget\": 4000,\n      \"split\": \"test\",\n      \"kind\": \"all\",\n      \"questions\": 16,\n      \"scorable_questions\": 15,\n      \"coverage80\": 0.05555555555555555,\n      \"coverage100\": 0.05555555555555555,\n      \"recall5\": 0.05555555555555555,\n      \"recall10\": 0.05555555555555555,\n      \"mrr\": 0.2,\n      \"context_tokens\": 2648.25,\n      \"source_chunks\": 1.125,\n      \"compute_seconds\": 0.014454017917159945,\n      \"min_context_tokens\": 2156,\n      \"max_context_tokens\": 3110,\n      \"mean_source_text_tokens\": 1250.625,\n      \"mean_budget_utilization\": 0.6620625,\n      \"mean_duplicate_source_line_fraction\": 0.0,\n      \"duplicate_text_unit_ids_total\": 0,\n      \"mean_unjudged_unique_source_line_fraction\": 0.9829942310848844,\n      \"mean_reports\": 0,\n      \"contexts_with_reports\": 0,\n      \"adapter_dropped_tail_rows_total\": 0\n    },\n    {\n      \"method\": \"bm25\",\n      \"budget\": 8000,\n      \"split\": \"test\",\n      \"kind\": \"all\",\n      \"questions\": 16,\n      \"scorable_questions\": 15,\n      \"coverage80\": 0.43666666666666665,\n      \"coverage100\": 0.43666666666666665,\n      \"recall5\": 0.4033333333333333,\n      \"recall10\": 0.43666666666666665,\n      \"mrr\": 0.4,\n      \"context_tokens\": 7240.4375,\n      \"source_chunks\": 6.125,\n      \"compute_seconds\": 0.03178056003525853,\n      \"min_context_tokens\": 6842,\n      \"max_context_tokens\": 7514,\n      \"mean_source_text_tokens\": 7010.6875,\n      \"mean_budget_utilization\": 0.9050546875,\n      \"mean_duplicate_source_line_fraction\": 0.016972274201082507,\n      \"duplicate_text_unit_ids_total\": 0,\n      \"mean_unjudged_unique_source_line_fraction\": 0.9906922966053853,\n      \"mean_reports\": 0,\n      \"contexts_with_reports\": 0,\n      \"adapter_dropped_tail_rows_total\": 1726\n    },\n    {\n      \"method\": \"hybrid\",\n      \"budget\": 8000,\n      \"split\": \"test\",\n      \"kind\": \"all\",\n      \"questions\": 16,\n      \"scorable_questions\": 15,\n      \"coverage80\": 0.5633333333333334,\n      \"coverage100\": 0.5633333333333334,\n      \"recall5\": 0.48444444444444446,\n      \"recall10\": 0.5633333333333334,\n      \"mrr\": 0.5077777777777778,\n      \"context_tokens\": 7429.3125,\n      \"source_chunks\": 6.375,\n      \"compute_seconds\": 0.051605536544229835,\n      \"min_context_tokens\": 6877,\n      \"max_context_tokens\": 7995,\n      \"mean_source_text_tokens\": 7134.4375,\n      \"mean_budget_utilization\": 0.9286640625,\n      \"mean_duplicate_source_line_fraction\": 0.016767266135045523,\n      \"duplicate_text_unit_ids_total\": 0,\n      \"mean_unjudged_unique_source_line_fraction\": 0.9854885931218681,\n      \"mean_reports\": 0,\n      \"contexts_with_reports\": 0,\n      \"adapter_dropped_tail_rows_total\": 442\n    },\n    {\n      \"method\": \"ms_basic\",\n      \"budget\": 8000,\n      \"split\": \"test\",\n      \"kind\": \"all\",\n      \"questions\": 16,\n      \"scorable_questions\": 15,\n      \"coverage80\": 0.5577777777777778,\n      \"coverage100\": 0.5577777777777778,\n      \"recall5\": 0.4255555555555556,\n      \"recall10\": 0.5577777777777778,\n      \"mrr\": 0.3762962962962963,\n      \"context_tokens\": 7372.6875,\n      \"source_chunks\": 7,\n      \"compute_seconds\": 0.005360656359698623,\n      \"min_context_tokens\": 6892,\n      \"max_context_tokens\": 7854,\n      \"mean_source_text_tokens\": 7059.4375,\n      \"mean_budget_utilization\": 0.9215859375,\n      \"mean_duplicate_source_line_fraction\": 0.019489819308076903,\n      \"duplicate_text_unit_ids_total\": 0,\n      \"mean_unjudged_unique_source_line_fraction\": 0.9855386042608508,\n      \"mean_reports\": 0,\n      \"contexts_with_reports\": 0,\n      \"adapter_dropped_tail_rows_total\": 5\n    },\n    {\n      \"method\": \"ms_local\",\n      \"budget\": 8000,\n      \"split\": \"test\",\n      \"kind\": \"all\",\n      \"questions\": 16,\n      \"scorable_questions\": 15,\n      \"coverage80\": 0.21,\n      \"coverage100\": 0.21,\n      \"recall5\": 0.21,\n      \"recall10\": 0.21,\n      \"mrr\": 0.2777777777777778,\n      \"context_tokens\": 6025.9375,\n      \"source_chunks\": 3.0625,\n      \"compute_seconds\": 0.0151780677260831,\n      \"min_context_tokens\": 5399,\n      \"max_context_tokens\": 6543,\n      \"mean_source_text_tokens\": 3542.125,\n      \"mean_budget_utilization\": 0.7532421875,\n      \"mean_duplicate_source_line_fraction\": 0.011732576594185664,\n      \"duplicate_text_unit_ids_total\": 0,\n      \"mean_unjudged_unique_source_line_fraction\": 0.9861710510216241,\n      \"mean_reports\": 0,\n      \"contexts_with_reports\": 0,\n      \"adapter_dropped_tail_rows_total\": 0\n    },\n    {\n      \"method\": \"bm25\",\n      \"budget\": 12000,\n      \"split\": \"test\",\n      \"kind\": \"all\",\n      \"questions\": 16,\n      \"scorable_questions\": 15,\n      \"coverage80\": 0.6433333333333333,\n      \"coverage100\": 0.6433333333333333,\n      \"recall5\": 0.4033333333333333,\n      \"recall10\": 0.6433333333333333,\n      \"mrr\": 0.4216666666666667,\n      \"context_tokens\": 11448.625,\n      \"source_chunks\": 9.75,\n      \"compute_seconds\": 0.03257247665897012,\n      \"min_context_tokens\": 10989,\n      \"max_context_tokens\": 11926,\n      \"mean_source_text_tokens\": 11087.5,\n      \"mean_budget_utilization\": 0.9540520833333334,\n      \"mean_duplicate_source_line_fraction\": 0.022879331077840907,\n      \"duplicate_text_unit_ids_total\": 0,\n      \"mean_unjudged_unique_source_line_fraction\": 0.9898726892816696,\n      \"mean_reports\": 0,\n      \"contexts_with_reports\": 0,\n      \"adapter_dropped_tail_rows_total\": 1668\n    },\n    {\n      \"method\": \"hybrid\",\n      \"budget\": 12000,\n      \"split\": \"test\",\n      \"kind\": \"all\",\n      \"questions\": 16,\n      \"scorable_questions\": 15,\n      \"coverage80\": 0.71,\n      \"coverage100\": 0.71,\n      \"recall5\": 0.48444444444444446,\n      \"recall10\": 0.71,\n      \"mrr\": 0.5227777777777778,\n      \"context_tokens\": 11267.5625,\n      \"source_chunks\": 9.8125,\n      \"compute_seconds\": 0.05132186989067122,\n      \"min_context_tokens\": 10814,\n      \"max_context_tokens\": 11910,\n      \"mean_source_text_tokens\": 10831.8125,\n      \"mean_budget_utilization\": 0.9389635416666666,\n      \"mean_duplicate_source_line_fraction\": 0.021177246197906476,\n      \"duplicate_text_unit_ids_total\": 0,\n      \"mean_unjudged_unique_source_line_fraction\": 0.9867892700599205,\n      \"mean_reports\": 0,\n      \"contexts_with_reports\": 0,\n      \"adapter_dropped_tail_rows_total\": 387\n    },\n    {\n      \"method\": \"ms_basic\",\n      \"budget\": 12000,\n      \"split\": \"test\",\n      \"kind\": \"all\",\n      \"questions\": 16,\n      \"scorable_questions\": 15,\n      \"coverage80\": 0.5744444444444444,\n      \"coverage100\": 0.5744444444444444,\n      \"recall5\": 0.4255555555555556,\n      \"recall10\": 0.5744444444444444,\n      \"mrr\": 0.38582010582010584,\n      \"context_tokens\": 10548.875,\n      \"source_chunks\": 9.6875,\n      \"compute_seconds\": 0.010693666583392769,\n      \"min_context_tokens\": 7034,\n      \"max_context_tokens\": 11996,\n      \"mean_source_text_tokens\": 10059.9375,\n      \"mean_budget_utilization\": 0.8790729166666666,\n      \"mean_duplicate_source_line_fraction\": 0.021832996024851024,\n      \"duplicate_text_unit_ids_total\": 0,\n      \"mean_unjudged_unique_source_line_fraction\": 0.9895740797817472,\n      \"mean_reports\": 0,\n      \"contexts_with_reports\": 0,\n      \"adapter_dropped_tail_rows_total\": 5\n    },\n    {\n      \"method\": \"ms_local\",\n      \"budget\": 12000,\n      \"split\": \"test\",\n      \"kind\": \"all\",\n      \"questions\": 16,\n      \"scorable_questions\": 15,\n      \"coverage80\": 0.21,\n      \"coverage100\": 0.21,\n      \"recall5\": 0.21,\n      \"recall10\": 0.21,\n      \"mrr\": 0.2777777777777778,\n      \"context_tokens\": 10272.25,\n      \"source_chunks\": 5.125,\n      \"compute_seconds\": 0.023253997322171926,\n      \"min_context_tokens\": 9578,\n      \"max_context_tokens\": 11486,\n      \"mean_source_text_tokens\": 5891.6875,\n      \"mean_budget_utilization\": 0.8560208333333333,\n      \"mean_duplicate_source_line_fraction\": 0.012237910543952804,\n      \"duplicate_text_unit_ids_total\": 0,\n      \"mean_unjudged_unique_source_line_fraction\": 0.991752874513001,\n      \"mean_reports\": 1,\n      \"contexts_with_reports\": 16,\n      \"adapter_dropped_tail_rows_total\": 0\n    },\n    {\n      \"method\": \"bm25\",\n      \"budget\": 16000,\n      \"split\": \"test\",\n      \"kind\": \"all\",\n      \"questions\": 16,\n      \"scorable_questions\": 15,\n      \"coverage80\": 0.6933333333333334,\n      \"coverage100\": 0.6933333333333334,\n      \"recall5\": 0.4033333333333333,\n      \"recall10\": 0.6433333333333333,\n      \"mrr\": 0.43285547785547784,\n      \"context_tokens\": 15441.3125,\n      \"source_chunks\": 13.0625,\n      \"compute_seconds\": 0.03253474994562566,\n      \"min_context_tokens\": 14767,\n      \"max_context_tokens\": 15983,\n      \"mean_source_text_tokens\": 14947.3125,\n      \"mean_budget_utilization\": 0.96508203125,\n      \"mean_duplicate_source_line_fraction\": 0.02359961999657371,\n      \"duplicate_text_unit_ids_total\": 0,\n      \"mean_unjudged_unique_source_line_fraction\": 0.9916801800618181,\n      \"mean_reports\": 0,\n      \"contexts_with_reports\": 0,\n      \"adapter_dropped_tail_rows_total\": 1615\n    },\n    {\n      \"method\": \"hybrid\",\n      \"budget\": 16000,\n      \"split\": \"test\",\n      \"kind\": \"all\",\n      \"questions\": 16,\n      \"scorable_questions\": 15,\n      \"coverage80\": 0.7788888888888889,\n      \"coverage100\": 0.7788888888888889,\n      \"recall5\": 0.48444444444444446,\n      \"recall10\": 0.7566666666666667,\n      \"mrr\": 0.5279059829059829,\n      \"context_tokens\": 15242.375,\n      \"source_chunks\": 13.5,\n      \"compute_seconds\": 0.0513923357357271,\n      \"min_context_tokens\": 14849,\n      \"max_context_tokens\": 15873,\n      \"mean_source_text_tokens\": 14665.9375,\n      \"mean_budget_utilization\": 0.9526484375,\n      \"mean_duplicate_source_line_fraction\": 0.021031915903892848,\n      \"duplicate_text_unit_ids_total\": 0,\n      \"mean_unjudged_unique_source_line_fraction\": 0.9896787940031608,\n      \"mean_reports\": 0,\n      \"contexts_with_reports\": 0,\n      \"adapter_dropped_tail_rows_total\": 328\n    },\n    {\n      \"method\": \"ms_basic\",\n      \"budget\": 16000,\n      \"split\": \"test\",\n      \"kind\": \"all\",\n      \"questions\": 16,\n      \"scorable_questions\": 15,\n      \"coverage80\": 0.5744444444444444,\n      \"coverage100\": 0.5744444444444444,\n      \"recall5\": 0.4255555555555556,\n      \"recall10\": 0.5744444444444444,\n      \"mrr\": 0.38582010582010584,\n      \"context_tokens\": 10941.25,\n      \"source_chunks\": 10,\n      \"compute_seconds\": 0.0054378280765376985,\n      \"min_context_tokens\": 7034,\n      \"max_context_tokens\": 12557,\n      \"mean_source_text_tokens\": 10433.5625,\n      \"mean_budget_utilization\": 0.683828125,\n      \"mean_duplicate_source_line_fraction\": 0.02228579739706524,\n      \"duplicate_text_unit_ids_total\": 0,\n      \"mean_unjudged_unique_source_line_fraction\": 0.9900138373658086,\n      \"mean_reports\": 0,\n      \"contexts_with_reports\": 0,\n      \"adapter_dropped_tail_rows_total\": 0\n    },\n    {\n      \"method\": \"ms_local\",\n      \"budget\": 16000,\n      \"split\": \"test\",\n      \"kind\": \"all\",\n      \"questions\": 16,\n      \"scorable_questions\": 15,\n      \"coverage80\": 0.23222222222222222,\n      \"coverage100\": 0.23222222222222222,\n      \"recall5\": 0.21,\n      \"recall10\": 0.23222222222222222,\n      \"mrr\": 0.2777777777777778,\n      \"context_tokens\": 11646.5,\n      \"source_chunks\": 6.25,\n      \"compute_seconds\": 0.019198625115677714,\n      \"min_context_tokens\": 10816,\n      \"max_context_tokens\": 12773,\n      \"mean_source_text_tokens\": 7214.3125,\n      \"mean_budget_utilization\": 0.72790625,\n      \"mean_duplicate_source_line_fraction\": 0.014666500095211909,\n      \"duplicate_text_unit_ids_total\": 0,\n      \"mean_unjudged_unique_source_line_fraction\": 0.9929811009645135,\n      \"mean_reports\": 1,\n      \"contexts_with_reports\": 16,\n      \"adapter_dropped_tail_rows_total\": 0\n    }\n  ]\n}\n"
+    },
+    {
+      "command": [
+        "python3",
+        "research/pilot/verify_global.py",
+        "--check"
+      ],
+      "relative_cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.053406,
+      "output": "{\"status\": \"complete\", \"physical_generation_calls\": 54, \"provider_input_tokens\": 694712, \"provider_output_tokens\": 49786}\n"
+    },
+    {
+      "command": [
+        "python3",
+        "research/pilot/verify_feature_results.py"
+      ],
+      "relative_cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.104725,
+      "output": "{\"verified_feature_attempts\": 8, \"statuses\": {\"patch_did_not_apply\": 8}, \"executed_candidate_code\": false}\n"
+    },
+    {
+      "command": [
+        ".cache/graphrag-venv/bin/python",
+        "research/pilot/probe_update_semantics.py"
+      ],
+      "relative_cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.277997,
+      "output": "Verified four synthetic update cases with actual pinned functions; zero external calls.\n"
+    },
+    {
+      "command": [
+        "python3",
+        "research/pilot/analyze_failure_chains.py",
+        "--check"
+      ],
+      "relative_cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.087853,
+      "output": "{\"status\": \"verified\", \"preserved_original_files\": 479, \"selected_extraction_units\": 4, \"new_generation_calls\": 0, \"new_embedding_calls\": 0, \"scope\": \"Offline public-evidence reconstruction\"}\n"
+    },
+    {
+      "command": [
+        "python3",
+        "scripts/validate.py"
+      ],
+      "relative_cwd": ".",
+      "exit_code": 0,
+      "elapsed_seconds": 0.237973,
+      "output": "Validated 610 public files, 313 local links/anchors, 4 PNG/SVG pairs, 6 Mermaid flowcharts, source pin and privacy patterns.\n"
+    }
+  ],
+  "finished_utc": "2026-10-13T10:53:12.318870+00:00",
+  "status": "passed",
+  "script_sha256": {
+    "research/pilot/analyze_failure_chains.py": "1c96758e438b662235e33f74bdeb4a6fe4f0817bfc7e59e3bb6d0b511eb58296",
+    "research/pilot/probe_update_semantics.py": "7c7365fbf54a678e0c1aa377a1a9ae5a736c91af57efe765ceaf121fa16a38bf",
+    "scripts/validate.py": "4184bc0d2a5dcc24a375573220e6fba6cc43196e2065c5ed4e742b45f61950e2"
+  }
+}

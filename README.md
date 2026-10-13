@@ -2,7 +2,7 @@
 
 把代码仓库想成图书馆：关键词搜索查原文，向量检索按意思找段落，Microsoft GraphRAG 则先制作“事物卡片”和关系导读。导读可能带来线索；真正改代码，还要找到**具体哪一页、哪个版本、哪些调用者和测试**。
 
-**[阅读中文主报告](docs/report.md)** · [实验方法与复算](research/pilot/full-run.md) · [官方源码与证据](research/README.md)
+**[阅读中文主报告](docs/report.md)** · [从BM25到GraphRAG：通俗原理](docs/graphrag-explained.md) · [实验方法与复算](research/pilot/full-run.md) · [官方源码与证据](research/README.md)
 
 研究固定 **Microsoft GraphRAG v3.3.0**，文献检索截止 **2026-10-12**，执行状态更新至 **2026-10-13**，聚焦四项开发任务。默认文档实体图与程序的符号／调用图是两种东西，不能因为都有“图”，就认定能解决相同问题。
 
@@ -21,6 +21,8 @@
 
 **什么时候值得试：**自然语言线索分散，希望它补到基线漏掉的材料，并愿意为抽取、报告、来源核验和更新付出成本。**什么时候不能依赖：**要求唯一符号位置、完整调用者、确定的运行时目标或修改／删除同步。默认文档实体图没有这些保证。实际Q01中，Local取回的实体描述包含正确的字典名称，却没交回实现源码；“听起来知道答案”与“给开发者足够依据”是两回事。
 
+**为什么会这样：**离线追踪发现，字典实现块没有关联到具体字典实体；header类型误述和错误方法名从补抽一路进入报告、Global答案；另一个无效引用是在最终汇总时才出现。Local的来源候选和预算分配、Basic的固定10块上限也影响表现。默认update按新标题追加，对改函数体、删文件和重命名不提供完整同步；四个无网络小表测试核验了相关处理语义。原因按“直接证据／支持但未隔离／待验证”区分，不能把全部差距归给图算法。[原因、阶段成本与代码变更](docs/report.md#效果不好的原因沿着材料流转找断点) · [原样见证与复算](research/pilot/results/failure-analysis/README.md)
+
 实验由Mac mini编排远端模型；不是本地权重推理。完整索引有639实体、1069关系、84报告，518次生成尝试，实际workflow约71.28分钟；保留了失败、唯一获准重发和真实用量。20个检索问题×4组×4档预算，加2个功能任务×4组，共328份上下文已核验；其中新增160份只复用本机索引和向量，外部模型调用为0。两个功能任务的8份单轮补丁全部因diff损坏无法应用，未进入测试，无法据此比较功能正确性。[完整方法与边界](research/pilot/full-run.md)
 
 [四张图](docs/figures/README.md)及[小店代码](docs/examples/shop/README.md)是原创教学示例，**不是微软实验输出**。旧自制代码图实验保留在[正常Git历史](research/legacy.md)，不算新版微软效果证据。[接口探测历史](research/pilot/probe-result.md)与正式评测分开记账。
@@ -35,6 +37,7 @@ python3 research/pilot/verify_results.py
 python3 research/pilot/score_results.py --check
 python3 research/pilot/score_budget_supplement.py --check
 python3 research/pilot/verify_global.py --check
+python3 research/pilot/analyze_failure_chains.py --check
 python3 scripts/validate.py
 ```
 

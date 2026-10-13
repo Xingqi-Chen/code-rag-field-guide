@@ -2,6 +2,8 @@
 
 面向非技术同事的完整参考稿；分享时可选读开头结论、实验结果和具体案例。文献检索截止：**2026-10-12**；执行状态更新至**2026-10-13**；固定实现：[Microsoft GraphRAG v3.3.0](https://github.com/microsoft/graphrag/releases/tag/v3.3.0)。已完成文献、静态源码核查、真实微软完整索引及首轮168份、离线补测160份上下文评分，另完成六题Global与BM25的12份真实模型回答。索引规模和服务中断均不作为效果结论。图中例子均为原创教学示意。
 
+想先理解方法，可读[BM25、向量、混合检索与GraphRAG原理](graphrag-explained.md)；下文新增失败链追踪、建图阶段计时和日常代码变更分析，均复用既有证据，没有新增模型调用。
+
 ## 先给判断：本次默认Local没有胜过基础检索
 
 我们关心的是：开发助手准备修改代码时，Microsoft GraphRAG 能否交给它**找得准、找得全、版本正确**的材料。解释得通顺、总结得全面，不足以证明这三件事已经做到。
@@ -84,7 +86,7 @@ Microsoft GraphRAG 在这里能评估的是：是否把这些证据交给了下�
 
 **固定源码中有一个具体边界：**v3.3.0 的标准增量路径用文档 `title` 的集合差判断新增，后续处理消费新增文档。相同 title 的文件修改内容，不会因此进入新增集合；删除项虽然被算出，但该默认合并路径没有消费它们来清除旧记录。旧表与增量表主要做追加合并。[增量源码](https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/update/incremental_index.py)、[完整更新核查](../research/implementation.md)
 
-因此，**有 `update` 命令，不等于能同步代码修改和删除**。这是静态源码观察，未在本轮运行复现，不是对所有配置或未来版本的断言。输入标题若只有文件名，同名文件还会增加身份歧义。把 commit 塞进标题令文件“变新”，也不自动清除旧版本。
+因此，**有 `update` 命令，不等于能同步代码修改和删除**。后续用固定版本的真实差分／拼接函数做了四个无网络、内存小表测试，复现了同标题修改不进入新增集合、删除项不被拼接函数清除等行为；没有运行真实模型更新或测其耗时，详见[开发变更分析](#日常开发一改代码哪些材料会过期)。这不是对所有配置或未来版本的断言。输入标题若只有文件名，同名文件还会增加身份歧义。把 commit 塞进标题令文件“变新”，也不自动清除旧版本。
 
 若实际接入开发助手，应固定并校验快照，或单独实现、验证修改／删除同步；全量重建也要保证输出和检索存储隔离到正确版本。不能仅靠模型缓存、文件日期或“上次索引成功”判断新鲜度。
 
@@ -171,7 +173,7 @@ Basic则固定只拿10个向量候选块；16000档已全部装下，平均总�
 
 **图的有限补充例：Q14改JSON Unicode检测。** 4000预算下Local找到了`tests/test_utils.py`中的重点检测测试，拿到1/3证据；Basic为0，BM25与hybrid也各为1/3，但命中的是其他证据。它确有可能提供不同线索；这还不能证明将它与hybrid合并后一定划算，因为本轮未测试合并路线的额外预算和成本。[Local结果](../research/pilot/results/contexts/Q14-ms_local-4000.json)
 
-Q19不存在`AsyncSession`，四组仍返回材料；本轮没有生成回答，不能声称谁正确拒答。Q20应用会动态挂载哪个自定义适配器，仓库本身无法确定；静态关系最多提供选择规则和候选，不能编造应用运行时事实。预先指定的Q01/Q07/Q13/Q20还由两位独立AI审阅代理分工检查隐藏标签的材料，版式可能暴露方法，因此不是人类评分或完全盲评。[定位／调用审阅](../research/pilot/results/qualitative-audit.json)、[影响／动态审阅](../research/pilot/results/qualitative-fact-review.json)与[揭示后的方法映射](../research/pilot/results/qualitative-method-key.json)均公开。
+Q19不存在`AsyncSession`，四组仍返回材料；这20题的检索评测没有生成回答，不能声称谁正确拒答，后文Global六题补测另行评估。Q20应用会动态挂载哪个自定义适配器，仓库本身无法确定；静态关系最多提供选择规则和候选，不能编造应用运行时事实。预先指定的Q01/Q07/Q13/Q20还由两位独立AI审阅代理分工检查隐藏标签的材料，版式可能暴露方法，因此不是人类评分或完全盲评。[定位／调用审阅](../research/pilot/results/qualitative-audit.json)、[影响／动态审阅](../research/pilot/results/qualitative-fact-review.json)与[揭示后的方法映射](../research/pilot/results/qualitative-method-key.json)均公开。
 
 补测前指定继续查看的Q13（header存储影响）在16000档为BM25 75%、hybrid100%、Basic25%、Local0%；Local给出更多相关header测试，但缺少gold标注的容器实现、准备消费者和重点测试原文。Q20在更大窗口仍只能了解注册规则，无法从静态仓库确定用户应用挂载的具体类。它们说明部分附加材料有线索价值，但更多材料没有必然补齐所需证据；没有据此改gold。[16000逐题原材料](../research/pilot/results/budget-supplement/contexts)
 
@@ -216,7 +218,7 @@ F02规划题中，Global提出了区分“没传timeout”和“明确传None”
 - **汇总也会造出不存在的出处。** G02-Global最终引用Reports(88)，但84份输入报告、map引用和reduce材料里都没有这个报告ID。它还把`HTTPAdapter.__getstate__/__setstate__`写成不存在的`getstate/setstate`。[原回答](../research/pilot/results/global/answers/G02-global.json)
 - **拿到原文，仍可能读反。** G02-BM25把一侧空response hooks列表解释为禁用另一侧；给定源码实际返回并保留另一侧hooks。问题发生在回答解释层，不是取回材料后就自动消失。[真实合并逻辑](https://github.com/psf/requests/blob/0e322af87745eff34caffe4df68456ebc20d9068/src/requests/sessions.py#L91)
 
-不能只比较最后汇总窗口。Global每题先读七批报告正文，共78,250 token，再做reduce；BM25每题只读一次不超过12,000-token源码。两组模型标识、用户问题与请求输出上限相同，系统提示和总计算预算并不相同。
+不能只比较最后汇总窗口。Global每题先读七批报告材料，含表头、编号等结构共78,250 token，再做reduce；BM25每题只读一次不超过12,000-token源码材料。两组模型标识、用户问题与请求输出上限相同，系统提示和总计算预算并不相同。
 
 | 六题合计 | 生成请求 | provider输入token | provider输出token | 请求时间合计 |
 | --- | ---: | ---: | ---: | ---: |
@@ -227,13 +229,109 @@ F02规划题中，Global提出了区分“没传timeout”和“明确传None”
 
 这六题不能确定Global在所有架构问题上的价值；两道全局题也都围绕认证。它们支持把社区导读当作可核对的概览线索，随后回查源码／接口和测试，而不是将整理得更长、更广当作开发正确性的证明。本轮没有新增hybrid、Basic或Local的回答生成对照，也没有专门优化代码实体类型、报告格式或预算分配。
 
+## 效果不好的原因：沿着材料流转找断点
+
+下面是**看过结果后的诊断**，不改题目、gold或评分，也不把选出的反例当随机样本。与其说“图没用”，更准确的观察是：原文变成卡片、导读，再变成查询材料的过程中，某些必要事实没有被保留或选中，另一些错误被后续沿用。[可复算诊断及原样抽取回复](../research/pilot/results/failure-analysis/README.md)
+
+```mermaid
+flowchart LR
+    A["源码事实与位置"] --> B["实体和关系抽取"]
+    B --> C["合并描述与社区导读"]
+    C --> D["Local找实体和来源块；Global读报告"]
+    D --> E["候选排序与材料预算"]
+    E --> F["最终材料或回答、引用"]
+```
+
+### 已直接核实的断点
+
+**1. Q01：不是源码没入库，而是具体卡片没连到它。** 实现位于[`structures.py:46–58`](https://github.com/psf/requests/blob/0e322af87745eff34caffe4df68456ebc20d9068/src/requests/structures.py#L46)，完整块`L1–99`在114块中。初抽第121次只生成宽泛的`REQUESTS`，第122次补抽没有再加实体；最终该块也只关联Entity0 `REQUESTS`，没有关系记录。与此同时，Entity138 `CASEINSENSITIVEDICT`的描述基本正确，却只连到适配器、Session和一段请求测试，而不连到实现块。这个名字还分散成Entity250 `CASE-INSENSITIVE DICTIONARY`等卡片，并非一个已消歧的符号条目。
+
+Local的Q01材料确实以Entity138开头。源码候选按所选实体的来源关联收集，先实体次序、再相关关系数排序；从这张具体卡片无法直接走到实现。16000档仍缺`structures.py`，而BM25、hybrid、Basic都取回了它。这一链路证明“原文存在、相关名称存在，但关联与选材没有把实现交回来”，**不证明只修一条边就一定能补齐所有问题**。[实体表](../research/pilot/results/index/entities.json)、[Q01完整对照及来源关联](../research/pilot/results/failure-analysis/analysis.json)
+
+**2. Q07：入口代码被读过，图却主要留下了项目与作者。** 包含`requests.get`和公共`request`入口的[`api.py:1–109`](https://github.com/psf/requests/blob/0e322af87745eff34caffe4df68456ebc20d9068/src/requests/api.py#L1)中，第61／62次初抽与补抽只留下`REQUESTS`、版权作者及两者关系，没有留下`get → request → Session.request`的调用边。最终这块也仅关联这两个实体。Local在16000档返回适配器、Session初始化和测试等六块，仍漏掉冻结的五处调用证据；Global能讲角色，但无法给完整链条。前三组检索也只达到60%，所以跨文件调用不能单靠某种相关性搜索自动保证找全。
+
+**3. Q13：错误在抽取阶段已经出现，随后穿过报告、map和最终回答。** [`test_header_keys_are_native`](https://github.com/psf/requests/blob/0e322af87745eff34caffe4df68456ebc20d9068/tests/test_requests.py#L1687)输入str或bytes，检查准备后的键是native字符串；[`prepare_headers`](https://github.com/psf/requests/blob/0e322af87745eff34caffe4df68456ebc20d9068/src/requests/models.py#L483)明确调用`to_native_string(name)`。第187次补抽却写成“准备后的键仍可为native字符串或byte-string”，最终Entity537保留这一描述。Report35沿用它，Q13的map要点、reduce材料及最终答案再次沿用。这是可逐层核对的错误传播，**不是只能猜测的最终模型幻觉，也不能把错误起点归给社区摘要器**。[抽取见证](../research/pilot/results/failure-analysis/extraction-witnesses.json)、[报告表](../research/pilot/results/index/community_reports.json)、[Q13回答与中间要点](../research/pilot/results/global/answers/Q13-global.json)
+
+**4. G02：符号名在补抽时已失真。** 真正方法是[`HTTPAdapter.__getstate__`／`__setstate__`](https://github.com/psf/requests/blob/0e322af87745eff34caffe4df68456ebc20d9068/src/requests/adapters.py#L224)。第52次补抽把它们写成`HTTPADAPTER GETSTATE`／`SETSTATE`（Entities133／134）；报告4、50、80等继续使用少了双下划线的名字，G02的map、reduce材料和最终答案出现不存在的`HTTPAdapter.getstate/setstate`。概念上能认出“序列化”，不等于能给开发者准确符号。[逐层命中文本](../research/pilot/results/failure-analysis/analysis.json)
+
+**5. G02的Report88是最终汇总新增的错误出处。** 输入84份报告中没有ID88；该题全部map引用及reduce材料也没有它，最终第53次reduce回复却引用了Reports(88)。这定位了错误出现的阶段，不代表同一段的每个判断都错。map里碰巧有重要性分数88，**没有证据证明它造成了这个引用**。BM25也有“拿到正确原文仍把hooks合并逻辑读反”的案例；最终回答层的检查对所有方法都需要。[引用集合复算](../research/pilot/results/failure-analysis/analysis.json)
+
+### 有证据支持，但还没被独立隔离的解释
+
+默认抽取目标偏向“被谈到的事物”，而开发定位需要“具体定义、调用条件和位置”。本次639个实体全落在事件／组织／人物／地理类型，Q01、Q07显示有些关键程序事实未变成有用的来源关联；同名合并、别名分散及无向社区分组又不同于符号绑定和有向调用分析。这支持“默认抽取与任务需求不完全吻合”的解释；**没有换提示词或外接AST后的对照，不能量化它造成多少差距**。
+
+材料预算也参与了结果。Local的源码份额固定50%，16000档平均仅7214个原文token；hybrid约14666。Local的实际总量约11647，空出来的份额没有自动转给源码，候选又受实体来源关联限制。较少的原文与较窄的候选路径很可能加重遗漏，但本轮没有做“同等实际源码量、只改变图”的实验。相反，Basic的12000→16000平台期有一个明确的候选上限：全部10块已装完，不能据此说语义检索已到能力极限。
+
+Local和Global也不能合并归因：**Local的直接问题是选出的原文不足；Global会把概览压缩、错误沿用和回答／引用生成叠加起来。** Global在本轮读了所有选定报告，仍缺精确位置，且Q13与G02有已定位的错误传播；但我们没有比较“不做社区摘要、给同量原文”的Global变体，不能证明所有摘要压缩都损害效果。
+
+### 哪些尚不能当成原因定论？
+
+15份结束标记错拼涉及9块；官方解析仍得到69条实体和103条关系记录。全体197次关系权重回退中，53次在这9块、144次在其余块。Q07入口恰在异常块内，但Q01漏实现、Q13误述类型、G02误写方法名的初抽／补抽都以预期标记结束。**格式异常可能影响解析和权重，尚未证明是主因；格式正确也不保证语义正确。** 没有重抽、修复解析后重建或效果消融，不能把这15份标记换算成准确率损失。[保留的解析统计](../research/pilot/results/extraction-parser-diagnostics.json)
+
+还要把这些限制带进判断：源码原文导向的gold偏重可修改依据，摘要里的正确概念不会计作原文命中；只有一个Requests仓库，题目和复核来自AI，Global新题还经过有目的选择；固定模型、默认提示词和服务表现只是一种组合。传输适配器负责缓存、SSE响应转换、预算与格式校验，Global还处理了官方重复JSON参数问题；输出上限异常和后端身份未知也已保留。统一适配没有删掉Local尾行，但不能因此宣称适配和模型完全没有影响。上述因素没有独立消融，不能把总差距全归给“图算法”。
+
+后续改进应该有对应的验证，而不只是换一个更大的模型：
+
+| 建议 | 对应证据与成本 | 下一次怎样验证；本轮未执行 |
+| --- | --- | --- |
+| 保留路径、作用域、精确符号和来源边；必要时接AST／语言工具 | Q01漏关联、G02改名；增加解析与跨语言维护 | 固定查询与预算，核验定义绑定、调用方向和增删后的边；动态调用仍标未知 |
+| Local并入关键词／向量候选，测试预算再分配 | Q01／Q07和半份源码预算；增加候选与可能的重排成本 | 控制实际原文token、候选数，并加等量随机邻居对照，区分图收益与多拿材料 |
+| 用代码类型／提示词试验，保留原文回查 | 默认类型与Q13错误；需要新抽取和报告调用 | 换新保留题或第二仓库，分别检查抽取与检索，不在这些反例上调参后报泛化 |
+| 报告中的关键类型、方法名及最终引用做机器校验 | Entity537传播、错误方法名、Report88；校验通常可离线，语义回查仍有成本 | 检查符号／报告ID存在，再核对语句含义；不把“ID存在”当内容正确 |
+| 增大Basic的k，测试reranker或多轮读文件 | Basic候选饱和、BM25仍缺链；增加阅读或推理开销 | 固定总成本，分别比较证据覆盖和最终任务正确性 |
+
+这批诊断支持先修事实、来源和候选路径，再考虑更复杂检索；它没有否定所有Graph RAG。程序结构图与默认文档实体图不同；代码专用抽取、不同语言／模型、面向概览的评分和其他仓库都可能改变收益，需要各自证据。
+
+## 建图的时间花在哪里
+
+把“图处理”想成一次数学计算会低估成本。本次大量工作是模型读文本、整理描述和写导读；真正的社区分组很快。以下均来自**正式索引的真实账本**，包括停止前已做的工作及恢复后的缓存读取，排除初探和后续查询。[阶段复算](../research/pilot/results/failure-analysis/analysis.json)
+
+| 阶段 | 物理生成／embedding请求 | 请求耗时合计 | 可单独计量的workflow时间 |
+| --- | --- | ---: | ---: |
+| 加载已冻结输入 | 0／0 | — | 2.826秒 |
+| 官方分块，三次启动累计 | 0／0 | — | 3.106秒 |
+| 实体／关系初抽 | 115／0 | 965.565秒 | 与补抽、描述整理合计3071.764秒 |
+| 补抽 | 114／0 | 1464.604秒 | 无独立workflow计时 |
+| 实体／关系描述整理 | 205／0 | 635.311秒 | 无独立workflow计时 |
+| 社区检测 | 0／0 | — | 0.092秒 |
+| 社区报告 | 84／0 | 1127.433秒 | 1130.013秒 |
+| 源文／实体／报告embedding | 0／46 | 63.081秒 | 68.772秒 |
+
+少量落表和整理步骤约0.131秒另计，总workflow为**4276.704秒，71.28分钟**。请求时间包含客户端派发、传输及响应处理，不是纯模型推理；它已经包含在workflow中，不能再相加。并发任务的请求时间之和也不能当墙钟时间。这里的分块时间只覆盖已冻结114块进入官方流程的一对一处理，原41文件的前期选材、分块与冻结没有可靠单独计时。
+
+518次生成包含第159次超时和唯一获准重发的160次；第14次完整回复因输出超限被拒后复用，没有重发。两次恢复共172次生成缓存命中（14＋158），不能加到物理调用数里。46批embedding为实体20批／639项、报告11批／84项、源码15批／106项；另8个源码向量复用探针缓存。
+
+初探另有16次生成、2批embedding，记录的四批执行时间共137.816秒；安装、接口开发、诊断和授权没有完整计时。正式索引的两段停止／恢复间隔合计约7.63小时，不能全部称为算法计算或精确授权等待；从首次启动到完成共8.82小时。账本中`index_elapsed_seconds=2685.093`仅是最后一次恢复运行，不能替代全程累计。后续查询1批embedding、8次功能生成，以及Global对照的54次生成，均另计。[详细计数及恢复历史](../research/pilot/full-run.md)
+
+## 日常开发一改代码，哪些材料会过期？
+
+设昨天的导读说“A调用B”，今天改成“A调用C”。即使B和C都还存在，旧边也已经错了；报告继续概括旧关系，就可能误导影响分析。向量和语法工具也要更新，但文档实体图多了一层模型生成内容和社区报告的失效管理。
+
+| 日常变化 | 需要保持一致的东西 | 固定v3.3.0默认update的边界 |
+| --- | --- | --- |
+| 只改函数体，标题不变 | 原文、块向量；变动事实涉及的实体／边／描述 | 按title判新增，不会因正文改变就选入delta |
+| 符号重命名或移动文件 | 定义身份、引用、位置；旧名／旧边清理 | 改符号但标题不变会漏更新；新标题被追加，旧标题未被完整清除 |
+| 新增／删除文件 | 增加新块，删除旧块及失效来源、向量 | 新标题可进入流程；删除集合虽计算了，默认后续只消费新增 |
+| 改调用依赖 | 旧边失效、新边产生，必要时重分社区与摘要 | 悬空端点过滤不检查已删除来源或变掉的调用；社区在delta上生成再追加 |
+| 切换分支 | 代码、图表、向量、报告都对应同一commit | 默认按配置目录和时间戳管理，没有自动按Git分支隔离 |
+
+这些边界有固定源码依据：[`get_delta_docs`](https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/update/incremental_index.py#L46)只比较title；[加载更新](https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/workflows/load_update_documents.py#L49)只返回新增；文档和文本块主要追加。[关系合并](https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/update/relationships.py#L46)保留、聚合旧新记录，悬空过滤只检查端点是否存在；它不是按来源删除旧调用。[社区及报告合并](https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/update/communities.py#L44)偏移delta编号并拼接，不能视为对最新合并全图重新分组、重写全部旧报告。
+
+身份也需要外部管理：完整索引的实体ID是随机UUID；增量合并按title保留旧ID，不是语言作用域下的稳定符号身份。块ID来自正文哈希，也不包含Git commit或路径。我们的输入标题含路径与行号，优于默认reader只用文件名，但改内容保持标题仍可能漏掉，行号变化导致标题变化又可能形成追加；它仍不是可靠的改删同步方案。[实体合并](https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/update/entities.py#L33)、[正文块ID](https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/workflows/create_base_text_units.py#L99)
+
+我们实际做了四个**无模型、无网络的微型处理测试**：同标题正文修改没有新增；增加新标题能选入；删除B虽被差分识别，拼接结果仍留B；B改名C后拼接结果同时留B、C。测试调用真实固定版差分与文档拼接函数；没有跑完整更新流水线、向量删除或社区重算。无新增时默认loader提前停止，是另行核对的源码行为。它验证处理语义，**不是实测真实仓库更新耗时、故障率或最终查询影响**。[微测代码](../research/pilot/probe_update_semantics.py)、[实际记录](../research/pilot/results/failure-analysis/update-semantics.json)
+
+对开发工具的合理分工是：频繁保存文件时，先用当前文本及支持增量更新的语法／符号工具；AST／LSP同样可能漏掉动态派发、跨项目和运行时插件，不提供全知保证。GraphRAG的新增语义抽取、描述和报告仍依赖模型调用；这批71分钟是初建数据，不能直接推算每次改动都要71分钟，也没有真实增量耗时可报。源码与成本证据支持优先把它试作**按commit隔离、低频更新、允许延迟的理解快照**，而非宣称适合每次保存后实时刷新。
+
+若要生产使用，应显式隔离每个快照的表与向量存储，记录commit／文件hash，查询时拒绝混版本，并验证旧来源删除和社区一致性。timestamp备份不是分支隔离；绕过默认loader、传入自定义delta或注册workflow是扩展手段，但不会自动解决旧边和报告失效。原有工具也要做缓存失效，只是无需把每次语法事实更新都交给生成模型。[更新存储路径](https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/run/run_pipeline.py#L39)
+
 ### 成本与适用边界
 
 关键词方案不需要模型抽取整个仓库；普通向量方案主要为源码块建立向量；本次Standard图方案还需逐块初抽与补抽、描述合并及社区报告生成，再为图产物建立向量。**索引建设、查询计算、模型最后读多少材料，是三笔不同的成本。** 正式索引实际workflow累计约71.28分钟，输出目录12.31 MB，其中向量存储10.72 MB；中断、诊断和等待约7.63小时另计。索引生成尝试518次，另有功能生成8次，生成费用未知；完成查询后累计向量输入206,333 token，按记录单价估算0.02682329美元，并非账单。服务有忽略输出上限的情况，部分抽取格式也偏离提示要求；官方解析继续处理，但索引成功不证明抽取完整。没有人工修图或修补输出。完整计数与限制见[技术附录](../research/pilot/full-run.md)。
 
 代码变化后，向量和程序图都需要正确更新；默认文档图还增加了模型抽取、名字合并、报告再生成及来源核验的维护工作。上述固定版本的修改／删除边界意味着应按commit隔离快照，不能只检查“上次索引成功”。按用户要求没有资源采样，因此峰值内存未测；不能把停用采样后的0占位值当真实内存。
 
-只有一个较小Python项目，问题由AI研究助手依据源码拟定并由独立审阅代理核对，未做独立人类评分，公开源码可能被模型训练见过；结果不能推广为全行业结论。相同预算约束了“谁拿了更多上下文”，却没有单独隔离图的因果贡献。本轮不做代码提示词定制、外接AST图、reranker、agentic搜索或更新删除实验。未列入gold的材料是未判定，不会一概计作噪声；纯检索证据覆盖也不等于最终回答正确率。
+只有一个较小Python项目，问题由AI研究助手依据源码拟定并由独立审阅代理核对，未做独立人类评分，公开源码可能被模型训练见过；结果不能推广为全行业结论。相同预算约束了“谁拿了更多上下文”，却没有单独隔离图的因果贡献。本轮不做代码提示词定制、外接AST图、reranker、agentic搜索或真实模型更新删除实验；离线四例仅验证更新函数的处理语义。未列入gold的材料是未判定，不会一概计作噪声；纯检索证据覆盖也不等于最终回答正确率。
 
 ## 对团队意味着什么
 

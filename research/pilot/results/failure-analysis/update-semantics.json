@@ -1,0 +1,165 @@
+{
+  "scope": "Actual pinned upstream functions with synthetic in-memory tables; no full pipeline, model, embedding, vector store, or performance experiment.",
+  "microsoft_commit": "5faaaf4f5685fa2056fa8c3bf9342cb089f2942f",
+  "upstream_file_sha256": "f9c47d8959345ede23e6f23415c642a6d54f7f77b7e19c6c921b15ce81d42a99",
+  "upstream_file": "packages/graphrag/graphrag/index/update/incremental_index.py",
+  "cases": [
+    {
+      "case": "same_title_body_edit",
+      "input": [
+        {
+          "id": "new-a",
+          "human_readable_id": 0,
+          "title": "a.py",
+          "text": "def send(): return helper()"
+        },
+        {
+          "id": "old-b",
+          "human_readable_id": 1,
+          "title": "b.py",
+          "text": "def helper(): return 2"
+        }
+      ],
+      "new_titles": [],
+      "deleted_titles": [],
+      "merged_by_concat": [
+        {
+          "id": "old-a",
+          "human_readable_id": 0,
+          "title": "a.py",
+          "text": "def send(): return 1"
+        },
+        {
+          "id": "old-b",
+          "human_readable_id": 1,
+          "title": "b.py",
+          "text": "def helper(): return 2"
+        }
+      ],
+      "default_loader_would_stop": true
+    },
+    {
+      "case": "new_title",
+      "input": [
+        {
+          "id": "old-a",
+          "human_readable_id": 0,
+          "title": "a.py",
+          "text": "def send(): return 1"
+        },
+        {
+          "id": "old-b",
+          "human_readable_id": 1,
+          "title": "b.py",
+          "text": "def helper(): return 2"
+        },
+        {
+          "id": "new-c",
+          "human_readable_id": 0,
+          "title": "c.py",
+          "text": "def added(): return 3"
+        }
+      ],
+      "new_titles": [
+        "c.py"
+      ],
+      "deleted_titles": [],
+      "merged_by_concat": [
+        {
+          "id": "old-a",
+          "human_readable_id": 0,
+          "title": "a.py",
+          "text": "def send(): return 1"
+        },
+        {
+          "id": "old-b",
+          "human_readable_id": 1,
+          "title": "b.py",
+          "text": "def helper(): return 2"
+        },
+        {
+          "id": "new-c",
+          "human_readable_id": 2,
+          "title": "c.py",
+          "text": "def added(): return 3"
+        }
+      ],
+      "default_loader_would_stop": false
+    },
+    {
+      "case": "delete_b",
+      "input": [
+        {
+          "id": "old-a",
+          "human_readable_id": 0,
+          "title": "a.py",
+          "text": "def send(): return 1"
+        }
+      ],
+      "new_titles": [],
+      "deleted_titles": [
+        "b.py"
+      ],
+      "merged_by_concat": [
+        {
+          "id": "old-a",
+          "human_readable_id": 0,
+          "title": "a.py",
+          "text": "def send(): return 1"
+        },
+        {
+          "id": "old-b",
+          "human_readable_id": 1,
+          "title": "b.py",
+          "text": "def helper(): return 2"
+        }
+      ],
+      "default_loader_would_stop": true
+    },
+    {
+      "case": "rename_b_to_c",
+      "input": [
+        {
+          "id": "old-a",
+          "human_readable_id": 0,
+          "title": "a.py",
+          "text": "def send(): return 1"
+        },
+        {
+          "id": "renamed-b",
+          "human_readable_id": 1,
+          "title": "c.py",
+          "text": "def helper(): return 2"
+        }
+      ],
+      "new_titles": [
+        "c.py"
+      ],
+      "deleted_titles": [
+        "b.py"
+      ],
+      "merged_by_concat": [
+        {
+          "id": "old-a",
+          "human_readable_id": 0,
+          "title": "a.py",
+          "text": "def send(): return 1"
+        },
+        {
+          "id": "old-b",
+          "human_readable_id": 1,
+          "title": "b.py",
+          "text": "def helper(): return 2"
+        },
+        {
+          "id": "renamed-b",
+          "human_readable_id": 2,
+          "title": "c.py",
+          "text": "def helper(): return 2"
+        }
+      ],
+      "default_loader_would_stop": false
+    }
+  ],
+  "new_external_calls": 0
+}

@@ -77,9 +77,31 @@ def anchors(text):
         result.add(heading+(f'-{count}' if count else ''))
     return result
 
+def check_mermaid(text):
+    """Check the deliberately small flowchart subset used by our Markdown.
+
+    This is a structural/syntax check, not a screenshot or GitHub renderer test.
+    """
+    blocks=re.findall(r'```mermaid\n(.*?)\n```',text,re.S)
+    node=r'([A-Za-z][A-Za-z0-9_]*)(?:\[(?:"([^"\n]+)"|([^\[\]"\n]+))\])?'
+    for block in blocks:
+        lines=[line.strip() for line in block.splitlines() if line.strip()]
+        assert re.fullmatch(r'flowchart (?:LR|RL|TD|TB|BT)',lines[0]),'Mermaid direction'
+        labels={}; references=set()
+        for line in lines[1:]:
+            for part in line.split(' --> '):
+                match=re.fullmatch(node,part)
+                assert match,('Unsupported Mermaid statement',line)
+                name,quoted,plain=match.groups();label=quoted or plain;references.add(name)
+                if label:
+                    assert name not in labels or labels[name]==label,('Conflicting Mermaid label',name)
+                    labels[name]=label
+        assert references<=labels.keys(),('Undefined Mermaid node',references-labels.keys())
+    return len(blocks)
+
 def main():
     files=subprocess.check_output(['git','-C',str(ROOT),'ls-files','--cached','--others','--exclude-standard','-z']).decode().split('\0')
-    files=sorted(set(filter(None,files))); links=0; pngs=0
+    files=sorted(set(filter(None,files))); links=0; pngs=0; mermaids=0
     for rel in files:
         p=ROOT/rel
         assert not rel.startswith(('.cache/','.venv/')),rel
@@ -96,6 +118,7 @@ def main():
         if p.suffix=='.svg':
             check_svg(s);assert p.with_suffix('.png').exists(),rel
         if p.suffix=='.md':
+            mermaids+=check_mermaid(s)
             s=prose_only(s)
             for alt,target in re.findall(r'!\[([^\]]*)\]\(([^)]+)\)',s):
                 assert alt.strip(),('missing image alt',rel,target)
@@ -112,5 +135,5 @@ def main():
     version=json.loads((ROOT/'research/microsoft-version.json').read_text())
     assert '5faaaf4f5685fa2056fa8c3bf9342cb089f2942f' in json.dumps(version),'fixed Microsoft source revision'
     assert not (ROOT/'results').exists() and not (ROOT/'benchmark').exists(),'old experiment belongs in Git history'
-    print(f'Validated {len(files)} public files, {links} local links/anchors, 4 PNG/SVG pairs, source pin and privacy patterns.')
+    print(f'Validated {len(files)} public files, {links} local links/anchors, 4 PNG/SVG pairs, {mermaids} Mermaid flowcharts, source pin and privacy patterns.')
 if __name__=='__main__':main()
