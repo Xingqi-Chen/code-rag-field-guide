@@ -1,0 +1,192 @@
+{
+  "rubric_sha256": "d1bdca1bf597530a0f90081220b5370893bc04742b080fe3dbd492dd7b3de225",
+  "blind_pack_sha256": "081a0b272d5acd54248f11053c16b7c5800f15c7ca570c713b5ed3ee2cca7c85",
+  "reviewer": {
+    "type": "AI independent method-masked content reviewer",
+    "human": false,
+    "full_blindness_claim": false,
+    "scope": "独立 AI 内容复核。方法身份匿名；只读取本次 blind-content-pack.json 与冻结 answer-gold.json（含逐项口径及其源码摘录），未读取方法映射、检索证据包、其他答案或既有评分报告。不是人类评审，不声称完全盲法。",
+    "scoring_policy": "按冻结 criterion 的 0/0.5/1 评分，内容均值为题内算术均值；不因引用缺失或格式扣内容分，错误账本不额外扣分。补充具体符号若冻结 gold 无法确认，不武断判为不存在；实际材料支持性与引用解析留待后续 evidence 审计。",
+    "frozen_before_evidence_review": true
+  },
+  "rows": [
+    {
+      "anonymous_id": "R002",
+      "question_id": "Q10",
+      "answer_sha256": "e056f865f63f6749fa8fb13bc60b3e44d57fef8c61fcd9ed63b6d194d4b8a8fc",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q10-C1",
+          "score": 0.5,
+          "rationale": "指出 Session.prepare_request 向 p.prepare 传递合并后的 cookies，并介绍 merge_cookies；但未说明以新的 RequestsCookieJar 为容器，嵌套合并 self.cookies 与 request cookies 两个来源。"
+        },
+        {
+          "id": "Q10-C2",
+          "score": 1,
+          "rationale": "明确 Session.prepare_request 创建 PreparedRequest 并将合并 cookie 状态传入 p.prepare，随后 prepare 调用 self.prepare_cookies(cookies)，两段传递顺序完整。"
+        },
+        {
+          "id": "Q10-C3",
+          "score": 1,
+          "rationale": "明确 prepare_cookies 调用 get_cookie_header(self._cookies, self)，辅助函数以 MockRequest 包装请求，再由 cookie jar 添加 Cookie header 并取回结果。"
+        },
+        {
+          "id": "Q10-C4",
+          "score": 1,
+          "rationale": "说明 get_cookie_header 返回 Cookie 值或 None，只有返回值时才写入 self.headers[\"Cookie\"]；整段明确位于发送前的请求准备阶段。"
+        }
+      ],
+      "content_mean": 0.875,
+      "errors": []
+    },
+    {
+      "anonymous_id": "R003",
+      "question_id": "Q11",
+      "answer_sha256": "dbd9257114084a461e2c892f5cd124d97ec80f89ab57bfdaf096f25512199746",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q11-C1",
+          "score": 1,
+          "rationale": "给出 HTTPAdapter.build_response 构造 Response、设置响应头，并执行 response.encoding = get_encoding_from_headers(response.headers) 的完整赋值链。"
+        },
+        {
+          "id": "Q11-C2",
+          "score": 0.5,
+          "rationale": "说明 Content-Type 的 charset 参数、无头时 None 和 text/plain 无 charset 时 ISO-8859-1；缺少 application/json 无 charset 时默认 UTF-8 的分支。"
+        },
+        {
+          "id": "Q11-C3",
+          "score": 0,
+          "rationale": "未提及 Response.text 在 self.encoding 为 None 时使用 apparent_encoding；文本类型的 ISO-8859-1 默认值不能替代这一正文解码回退。"
+        }
+      ],
+      "content_mean": 0.5,
+      "errors": []
+    },
+    {
+      "anonymous_id": "R006",
+      "question_id": "Q18",
+      "answer_sha256": "461ad5b4845ef48fc9ffb619801b5be19db5e63d230dec98520cddebf518cd44",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q18-C1",
+          "score": 1,
+          "rationale": "明确 dispatch_hook 仅用非 None 回调返回值替换当前数据，返回 None 保留旧数据，并明确无条件赋值是拟议行为变化。"
+        },
+        {
+          "id": "Q18-C2",
+          "score": 0,
+          "rationale": "未指出 Session.send 将 dispatch_hook 结果赋回 r 后访问 r.history 和 r.raw 提取 cookies，也未说明替换为 None 对这些属性访问的风险；cookie-policy-copy 与 morsel_to_cookie 测试不能代替该下游消费点。"
+        },
+        {
+          "id": "Q18-C3",
+          "score": 0.5,
+          "rationale": "首段正确定位 tests/test_hooks.py::test_hooks 的 None-return 回调和保留旧数据预期；未说明 [hook, lambda x: None, hook] 的前后回调序列，结尾又转向 test_cookie_policy_copy 并称无法确定具体受威胁测试，未保持对直接回归测试的一致识别。"
+        }
+      ],
+      "content_mean": 0.5,
+      "errors": [
+        {
+          "question_id": "Q18",
+          "method": "R006 (anonymous)",
+          "answer_quote": "Therefore, the dispatch rule can be identified precisely, but a definitive downstream cookie consumer and concrete threatened test cannot be established from the supplied snapshot.",
+          "claim": "无法确定具体受 None 替换规则影响的既有测试。",
+          "category": "contradicted_by_frozen_source",
+          "source_or_query_anchor": "answer-gold.json Q18-E3 / Q18-C3；本答案首段已定位 tests/test_hooks.py::test_hooks 的 None-return 用例。",
+          "rationale": "冻结 Q18-E3 的 [hook, lambda x: None, hook] 用例直接验证 None 返回值保留旧数据，答案首段也已正确确认此事实；结尾却将具体受威胁测试说成无法确定，与前述识别及冻结测试事实不一致。此项仅记录内容上的矛盾，不对内容均值再次扣分，也不据此断定另一个 cookie-policy-copy 测试不存在。",
+          "affected_criterion_ids": [
+            "Q18-C3"
+          ]
+        }
+      ]
+    },
+    {
+      "anonymous_id": "R005",
+      "question_id": "Q16",
+      "answer_sha256": "e19f447806ce227da3222f624894164ae2d2b32c80057d3dd66552db19551828",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q16-C1",
+          "score": 1,
+          "rationale": "明确 merge_setting 先合并 request/session 映射，request 值优先，再删除合并结果中值为 None 的键，而非删除整个 setting。"
+        },
+        {
+          "id": "Q16-C2",
+          "score": 0,
+          "rationale": "未说明只有 request_setting 与 session_setting 均为 Mapping 才进入字典键删除路径，也未说明非双 Mapping 情况直接返回 request_setting。"
+        },
+        {
+          "id": "Q16-C3",
+          "score": 1,
+          "rationale": "明确定位 src/requests/sessions.py 的 Session.prepare_request，并说明 headers 和 params 都通过 merge_setting 合并 request/session 值。"
+        },
+        {
+          "id": "Q16-C4",
+          "score": 0.5,
+          "rationale": "正确指出 Session.merge_environment_settings，并列出 proxies、stream、verify、cert 参数；但明确表示无法确定其内部是否调用 merge_setting，因而缺少这四项共享 helper 的合并调用。"
+        }
+      ],
+      "content_mean": 0.625,
+      "errors": []
+    },
+    {
+      "anonymous_id": "R001",
+      "question_id": "Q08",
+      "answer_sha256": "b81fe13f05a725b70b264d9df17913e2d7b4e21b9eacd012da4b76b43bb91711",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q08-C1",
+          "score": 0.5,
+          "rationale": "正确指出 Session.prepare_request 通过 merge_setting 合并 session.headers 与 request headers，且 request 值优先并可用 None 删除；没有识别该调用使用 CaseInsensitiveDict，测试呈现大小写无关删除不足以完整定位所用容器。"
+        },
+        {
+          "id": "Q08-C2",
+          "score": 0,
+          "rationale": "仅给出 Session.prepare_request 到 PreparedRequest.headers 的概括，未指出合并 headers 先传入 PreparedRequest.prepare、再进入 prepare_headers 的任一步调用。"
+        },
+        {
+          "id": "Q08-C3",
+          "score": 0,
+          "rationale": "未识别 prepare_headers 内逐个调用 check_header_validity 并在验证后存储 header；检查测试中准备或发送后的 headers 不等于源码输入校验调用。"
+        },
+        {
+          "id": "Q08-C4",
+          "score": 0,
+          "rationale": "未提及 check_header_validity 对名称和值分别调用 _validate_header_part，也没有描述 header 名称和值的格式校验。"
+        }
+      ],
+      "content_mean": 0.125,
+      "errors": []
+    },
+    {
+      "anonymous_id": "R004",
+      "question_id": "Q14",
+      "answer_sha256": "b3771421ea39d8a39c159fec9c3c1f4f2ab9ebd925fe38c344d2eee53ec19b7c",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q14-C1",
+          "score": 0.5,
+          "rationale": "识别 guess_json_utf(self.content) 负责 JSON 字节编码探测，并提到 BOM 检测；未定位 src/requests/utils.py，也未说明前四字节的空字节数量和位置模式。"
+        },
+        {
+          "id": "Q14-C2",
+          "score": 0.5,
+          "rationale": "识别响应对象的 json 方法直接调用 guess_json_utf 并使用探测编码解码正文；未定位 models.py 的 Response.json、未给出探测结果非 None 时才进入该路径的条件，也未说明解码结果传给 complexjson.loads。"
+        },
+        {
+          "id": "Q14-C3",
+          "score": 1,
+          "rationale": "精确定位 tests/test_utils.py 的 TestGuessJSONUTF.test_encoded，并列出八种 UTF 编码覆盖，满足现有参数化检测测试的要求。"
+        }
+      ],
+      "content_mean": 0.6666666666666666,
+      "errors": []
+    }
+  ]
+}

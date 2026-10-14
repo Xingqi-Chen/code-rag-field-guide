@@ -1,0 +1,664 @@
+{
+  "manifest_sha256": "a556bb80771b85c3d4042d000980c754931bf329279def43dcfb7b12e9fd7bd6",
+  "content_review_sha256": "dc3d6f2aa4b792ef9414622db1ed0f79b9122a35c692649d67946bce36e2dd1c",
+  "rubric_sha256": "d1bdca1bf597530a0f90081220b5370893bc04742b080fe3dbd492dd7b3de225",
+  "reviewer": {
+    "type": "AI independent evidence reviewer after frozen method-masked content review",
+    "human": false,
+    "full_blindness_claim": false,
+    "scope": "第二阶段独立AI审阅，完整检查manifest与六包的阶段消息、最终答案、实际Sources、primer报告及local表格。未读方法映射、旧评分或外网材料。public图索引与冻结Requests源码只核实已供给描述和引用的归因。内容分保持冻结。",
+    "evidence_boundary": "criterion分评实际事实材料能否支持必要点，不评答案是否写到。逐包独立，不迁入别包Sources/图关系；未供给的完整图及来源大块中未被已供给描述表达的事实，不自动当模型收到。HyDE、follow-up查询及模型中间答案不是独立事实，可沿引用回查真实上游材料。",
+    "citation_unit": "按最终答案每个[Data:...]引用组审查，共26组。Sources数字为实际表格记录ID；裸文件行范围在相邻组核对，不当成Sources ID或重复计数。",
+    "boolean_semantics": "resolves=true表示所有ID能在实际表格或已供给报告的可追溯引用链找到；location_match=true为所称对象/位置匹配，false为至少一处错误对象，null为owner/位置无法判定。supports=true仅表示该组完全支持所引断言，对应support_score=1；部分支持使用supports=false、support_score=0.5，零支持使用false、0；null仅用于无法判定。",
+    "missing_policy": "未标引独立论断另列，区分query假设、总结、正确范围限定、错误材料不足判断；不把无引用直接判为伪造。additional_errors不额外扣内容或证据分；与内容账本相同断言明确去重。",
+    "integrity_checks": {
+      "packs_checked": 6,
+      "pack_hashes_match_manifest": true,
+      "supplied_source_entries_hashed": 24,
+      "supplied_source_hashes_match": true,
+      "referenced_provenance_chunks_hashed": 38,
+      "provenance_source_hashes_match": true,
+      "citation_groups": 26,
+      "content_review_unchanged": true,
+      "answer_quotes_and_citations_are_actual_answer_substrings": true,
+      "supports_true_requires_full_support_score_1": true
+    },
+    "calibration_note": {
+      "scope": "按冻结聚合协议校准布尔字段，不重评数字分数或实质理由。",
+      "change": "六组部分支持引用由supports=true改为false，support_score仍为0.5。此前reviewer说明将supports解释为至少支持核心部分，与原协议的fully supporting语义不一致，现统一为原协议。",
+      "changed_citation_groups": [
+        {
+          "anonymous_id": "R002",
+          "question_id": "Q10",
+          "citation_group": 3
+        },
+        {
+          "anonymous_id": "R003",
+          "question_id": "Q11",
+          "citation_group": 1
+        },
+        {
+          "anonymous_id": "R003",
+          "question_id": "Q11",
+          "citation_group": 3
+        },
+        {
+          "anonymous_id": "R006",
+          "question_id": "Q18",
+          "citation_group": 2
+        },
+        {
+          "anonymous_id": "R001",
+          "question_id": "Q08",
+          "citation_group": 1
+        },
+        {
+          "anonymous_id": "R004",
+          "question_id": "Q14",
+          "citation_group": 1
+        }
+      ],
+      "preserved": "所有criterion evidence_score、citation support_score、rationale、内容评分与错误记录均保持。",
+      "substring_validation": "全部26组answer_quote及citation、全部missing_citation_claims和additional_errors的answer_quote均已核对为对应实际answer的子串。Q11首组换行原本即为实际换行；JSON序列化中的\\n只是转义表示，未发现需要修复的字面反斜线n。",
+      "quote_repairs": []
+    }
+  },
+  "rows": [
+    {
+      "anonymous_id": "R002",
+      "question_id": "Q10",
+      "answer_sha256": "e056f865f63f6749fa8fb13bc60b3e44d57fef8c61fcd9ed63b6d194d4b8a8fc",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q10-C1",
+          "evidence_score": 1,
+          "rationale": "Sources 55 原文包含 request.cookies 归一化、新 RequestsCookieJar 和嵌套 merge_cookies，把 self.cookies 与请求 cookies 合并；答案声称材料不足不改变实际证据覆盖。",
+          "supplied_reference": "call 3 local / Sources (55), sessions.py:L441-L588",
+          "source_anchor": "Q10-E1: src/requests/sessions.py:L474-L476"
+        },
+        {
+          "id": "Q10-C2",
+          "evidence_score": 1,
+          "rationale": "Sources 55 明示 cookies=merged_cookies 传入 p.prepare；primer 和 local 的 Entities 693 明示 prepare 调用 self.prepare_cookies(cookies)。图描述的 models.py 归因核对一致，两级链均获支持。",
+          "supplied_reference": "call 3 Sources (55); call 2 primer / Entities (693); calls 3,4,6 Entities (693)",
+          "source_anchor": "Q10-E2 sessions.py:L483-L495；Q10-E3 models.py:L369；Entities 693 -> models.py:L335-L501、L488-L655"
+        },
+        {
+          "id": "Q10-C3",
+          "evidence_score": 1,
+          "rationale": "Sources 47 给出 prepare_cookies 调用 get_cookie_header；primer 的 Entities 520 和 Relationships 576 明示 MockRequest 包装、jar 添加 header 及取回 Cookie。公开图归因与冻结源码相符。",
+          "supplied_reference": "call 6 Sources (47), Entities (520,693); call 2 primer / Entities (520), Relationships (576)",
+          "source_anchor": "Q10-E4 models.py:L626-L628；Q10-E5 cookies.py:L140-L148；Entities 520 / Relationships 576 -> cookies.py:L1-L179"
+        },
+        {
+          "id": "Q10-C4",
+          "evidence_score": 1,
+          "rationale": "Sources 47 直接给出 cookie_header 非 None 才写 self.headers[Cookie]；Sources 55 的 prepare_request 返回已准备对象和 prepare 链明确此事发生于发送前。",
+          "supplied_reference": "call 6 Sources (47); call 3 Sources (55)",
+          "source_anchor": "Q10-E4 src/requests/models.py:L626-L628；Q10-E2 src/requests/sessions.py:L483-L495"
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "`Session.prepare_request()` is the session-aware entry point. In `src/requests/sessions.py`, it creates a `PreparedRequest`, then calls `p.prepare(...)` with the merged cookie state before returning the prepared object",
+          "citation": "[Data: Sources (55)]",
+          "resolves": true,
+          "location_match": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Sources 55 是记录号，对应 sessions.py:L441-L588；原文含 p=PreparedRequest()、p.prepare(...cookies=merged_cookies...) 与 return p，完整支持该段。"
+        },
+        {
+          "answer_quote": "During preparation, `prepare` invokes `self.prepare_cookies(cookies)`. `PreparedRequest.prepare_cookies()` is defined in `src/requests/models.py` within the supplied `L488-L655` source span. It preserves `cookies` when they are already a `cookielib.CookieJar`; otherwise, it converts them with `cookiejar_from_dict(cookies)` and stores the result in `self._cookies`",
+          "citation": "[Data: Sources (47); Entities (693)]",
+          "resolves": true,
+          "location_match": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Sources 47 匹配 models.py:L488-L655 的 CookieJar 归一化；Entities 693 还归因到 models.py:L335-L501，其 self.prepare_cookies(cookies) 描述与冻结源码一致。"
+        },
+        {
+          "answer_quote": "Cookie merging can use `merge_cookies(cookiejar, cookies)`. This validates cookie-jar types, converts dictionary input with `cookiejar_from_dict` using overwrite disabled, and updates the destination when the source is a compatible `CookieJar`. `cookiejar_from_dict` creates or updates a jar, conditionally replaces cookie names according to its overwrite flag, and calls `cookiejar.set_cookie`",
+          "citation": "[Data: Entities (582, 581); Relationships (666, 668, 1316, 663, 1712)]",
+          "resolves": true,
+          "location_match": false,
+          "supports": false,
+          "support_score": 0.5,
+          "rationale": "Entities 582/581 及 Relationships 666/668/663 支持类型检查、overwrite=False、更新和建jar。但1316是 add_dict_to_cookiejar -> cookiejar_from_dict，1712是redirect测试 -> cookiejar_from_dict，均不是到 set_cookie 的出边。真正关系665在primer中却未列入最终组，因此可解析但部分调用位置不匹配，所列关系不能完整支持最后的调用断言。"
+        },
+        {
+          "answer_quote": "After storing the jar, `PreparedRequest.prepare_cookies()` calls `get_cookie_header(self._cookies, self)`. That function wraps the request in `MockRequest`, asks the cookie jar to add the cookie header, and returns the resulting `Cookie` value or `None`. If a value is returned, `prepare_cookies()` assigns it to `self.headers[\"Cookie\"]`",
+          "citation": "[Data: Sources (47); Entities (520, 693); Relationships (576)]",
+          "resolves": true,
+          "location_match": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Sources 47 支持调用和条件写header；Entities 520 / Relationships 576 归因 cookies.py:L1-L179，对应 get_cookie_header、MockRequest 和 jar.add_cookie_header，Q10-E5核对一致。"
+        },
+        {
+          "answer_quote": "The header is not regenerated by later calls unless the existing `Cookie` header is removed first",
+          "citation": "[Data: Sources (47)]",
+          "resolves": true,
+          "location_match": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Sources 47 的 prepare_cookies 文档明确已有 Cookie header 时不重新生成，需先删除，完整支持此处断言。"
+        },
+        {
+          "answer_quote": "In `Session.request()`, the next documented step is `prep = self.prepare_request(req)`, followed by environment resolution and construction of `send_kwargs`; the code then reaches the `# Send the request.` section",
+          "citation": "[Data: Sources (55)]",
+          "resolves": true,
+          "location_match": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Sources 55 含 prepare_request、环境设置、send_kwargs 与 Send 注释，支持准备流程；真实片段终止于 send_kwargs.update(settings)，未包含后续self.send，不把物理行号当来源ID。"
+        }
+      ],
+      "missing_citation_claims": [
+        {
+          "answer_quote": "If `get_cookie_header()` returns `None`, the supplied evidence does not establish whether an existing `Cookie` header is removed, retained, or handled in another way.",
+          "claim": "None分支是否保留已有Cookie无法判断。",
+          "rationale": "此句无标引且与Sources47的条件赋值代码相反，另列错误。"
+        },
+        {
+          "answer_quote": "The supplied snapshot does not include the subsequent transport invocation, so it cannot identify the exact `send(prep, **send_kwargs)` line or adapter location.",
+          "claim": "源码截断在transport send之前。",
+          "rationale": "未单独标引；Sources55真实终点是send_kwargs.update(settings)，支持此限定。"
+        },
+        {
+          "answer_quote": "It also does not show the exact cookie-merge statements inside `Session.prepare_request()`.",
+          "claim": "输入缺少cookie合并语句。",
+          "rationale": "未标引且与Sources55相反；末段声称无法确定合并/prepare_cookies顺序属于同一重复错误。"
+        },
+        {
+          "answer_quote": "Therefore, the supported trace is: session preparation produces a `PreparedRequest` with merged cookie state; `PreparedRequest.prepare_cookies()` normalizes that state, builds the `Cookie` header through `get_cookie_header()`, and returns the prepared request before the request proceeds to the transport stage.",
+          "claim": "准备链总结。",
+          "rationale": "本段未另标引，主要继承前文证据；返回PreparedRequest的是Session.prepare_request，句子有主语歧义，按流程总结阅读，不武断记新事实错误。"
+        }
+      ],
+      "additional_errors": [
+        {
+          "anonymous_id": "R002",
+          "question_id": "Q10",
+          "answer_quote": "It also does not show the exact cookie-merge statements inside `Session.prepare_request()`.",
+          "claim": "输入缺少cookie合并及准备先后关系。",
+          "category": "contradicted_by_frozen_source",
+          "source_or_query_anchor": "R002 call3 Sources55 / sessions.py:L465-L476、L483-L498；call2 Entities693",
+          "rationale": "原文已含request cookies归一化、nested merge_cookies、新RequestsCookieJar及cookies=merged_cookies；Entities693提供prepare->prepare_cookies。末段不能确定顺序是同一重复遗漏，不额外扣分。",
+          "affected_criterion_ids": [
+            "Q10-C1",
+            "Q10-C2"
+          ]
+        },
+        {
+          "anonymous_id": "R002",
+          "question_id": "Q10",
+          "answer_quote": "If `get_cookie_header()` returns `None`, the supplied evidence does not establish whether an existing `Cookie` header is removed, retained, or handled in another way.",
+          "claim": "None分支是否修改已有Cookie无法确定。",
+          "category": "contradicted_by_frozen_source",
+          "source_or_query_anchor": "R002 call6 Sources47 / models.py:L626-L628",
+          "rationale": "已提供代码仅在非None时赋值，没有None分支赋值或删除；该方法保留已有header，可由原文确定。",
+          "affected_criterion_ids": [
+            "Q10-C4"
+          ]
+        },
+        {
+          "anonymous_id": "R002",
+          "question_id": "Q10",
+          "answer_quote": "`cookiejar_from_dict` creates or updates a jar, conditionally replaces cookie names according to its overwrite flag, and calls `cookiejar.set_cookie`",
+          "claim": "所列关系完整支持cookiejar_from_dict到set_cookie内部调用。",
+          "category": "citation_mismatch",
+          "source_or_query_anchor": "最终引用组3；Relationships1316、1712及真正支持关系665",
+          "rationale": "1316/1712是其他函数和测试调用cookiejar_from_dict的入边；出边665在primer出现但最终未列。函数事实由源码与primer核实为真，此处只登记引用定位问题。",
+          "affected_criterion_ids": []
+        }
+      ]
+    },
+    {
+      "anonymous_id": "R003",
+      "question_id": "Q11",
+      "answer_sha256": "dbd9257114084a461e2c892f5cd124d97ec80f89ab57bfdaf096f25512199746",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q11-C1",
+          "evidence_score": 1,
+          "rationale": "Sources 26 完整给出 build_response 构造 Response、从传输 headers 建立 CaseInsensitiveDict，再将 get_encoding_from_headers(response.headers) 赋给 response.encoding。",
+          "supplied_reference": "call 5 local / Sources (26), adapters.py:L298-L429",
+          "source_anchor": "Q11-E1 src/requests/adapters.py:L378"
+        },
+        {
+          "id": "Q11-C2",
+          "evidence_score": 0.5,
+          "rationale": "primer 的解析器描述和 Sources 109 的测试支持 charset 的 UTF-8 示例、无 headers 得 None、text/plain 默认 ISO-8859-1；实际输入没有 JSON 无 charset 默认 UTF-8 分支，不能借未提供的完整 utility 源码补齐。",
+          "supplied_reference": "call 2 primer / Entities (331,919,1554,1555); call 3 Sources (109)",
+          "source_anchor": "已供给 tests/test_utils.py:L612-L623；Q11-E2 utils.py:L546-L561 仅作评分标准核对"
+        },
+        {
+          "id": "Q11-C3",
+          "evidence_score": 0,
+          "rationale": "输入出现 Entities 726/734 的 apparent_encoding 属性描述，却未给出 Response.text 在 self.encoding=None 时选择它的条件。apparent_encoding 自身实现不能替代所需 text 回退。",
+          "supplied_reference": "calls 4,5 local / Entities (726,734)；检查全部6项 Sources，无 Response.text 条件链",
+          "source_anchor": "Q11-E3 src/requests/models.py:L924-L934 未作为此分支材料提供；Entities 734 provenance 只核实已描述属性"
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "`HTTPAdapter.build_response` constructs a `Response`, wraps the transport headers in a `CaseInsensitiveDict`, and assigns:\n\n```python\nresponse.encoding = get_encoding_from_headers(response.headers)\n```\n\nThe utility examines the `Content-Type` header. When present, it parses the media type and parameters, including a `charset` parameter, and uses the resulting encoding for `Response.text`.",
+          "citation": "[Data: Sources (26); Entities (331, 919, 1554)]",
+          "resolves": true,
+          "location_match": true,
+          "supports": false,
+          "support_score": 0.5,
+          "rationale": "Sources 26 完整支持 build_response 赋值链；Entities 919/1554 支持 Content-Type 参数解析，331支持utility调用。但本引用组未直接给出 Response.text 消费encoding的规则，该信息只在其他输入的 R.ENCODING 概述出现，故本组覆盖核心而非所有断言。"
+        },
+        {
+          "answer_quote": "The supplied tests show these cases: no headers returns `None`; `application/json; charset=utf-8` returns `\"utf-8\"`; and `text/plain` without a charset returns `\"ISO-8859-1\"`. Thus, the fallback is `ISO-8859-1` when the content type is textual but does not specify a charset.",
+          "citation": "[Data: Sources (109); Entities (1555)]",
+          "resolves": true,
+          "location_match": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Sources 109 原文正好包含空headers->None、application/json;charset=utf-8->utf-8、text/plain->ISO-8859-1三种测试；Entities1555同源。"
+        },
+        {
+          "answer_quote": "The evidence is insufficient to conclude that an invalid or unsupported charset also falls back to `ISO-8859-1`; no such specific test or implementation is provided. The exact module location is likewise uncertain: the utility is described as imported from either `.utils` or `requests.utils`.",
+          "citation": "[Data: Entities (331); Relationships (2763)]",
+          "resolves": true,
+          "location_match": false,
+          "supports": false,
+          "support_score": 0.5,
+          "rationale": "Entities331确有 .utils/requests.utils 不确定措辞，但其归因到Requests adapters.py和tests/test_utils.py，两种导入实际都指requests.utils。Relationships2763是 _parse_content_type_header 的测试调用，不是 get_encoding_from_headers 模块归因；位置不匹配。当前输入无 invalid charset 默认ISO-8859-1测试，这一保留意见符合材料范围。"
+        }
+      ],
+      "missing_citation_claims": [],
+      "additional_errors": [
+        {
+          "anonymous_id": "R003",
+          "question_id": "Q11",
+          "answer_quote": "The exact module location is likewise uncertain: the utility is described as imported from either `.utils` or `requests.utils`.",
+          "claim": "以相对/绝对导入不同写法推断utility模块位置不确定。",
+          "category": "contradicted_by_frozen_source",
+          "source_or_query_anchor": "Entities331 -> adapters.py:L1-L169、tests/test_utils.py:L1-L180；Q11-E2 utils.py:L546-L561",
+          "rationale": "图摘要含过度保留措辞，但Requests adapters.py中的.utils和测试的requests.utils指同一模块；Relationships2763属于_parse_content_type_header测试，不能证明模块不确定。只记上游摘要误导，不改内容分。",
+          "affected_criterion_ids": []
+        }
+      ]
+    },
+    {
+      "anonymous_id": "R006",
+      "question_id": "Q18",
+      "answer_sha256": "461ad5b4845ef48fc9ffb619801b5be19db5e63d230dec98520cddebf518cd44",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q18-C1",
+          "evidence_score": 1,
+          "rationale": "Sources 43 提供完整 dispatch_hook，明确 _hook_data is not None 才替换 hook_data；无条件替换是本题指定假设。",
+          "supplied_reference": "call 4 local / Sources (43); query",
+          "source_anchor": "Q18-E1 src/requests/hooks.py:L30-L32"
+        },
+        {
+          "id": "Q18-C2",
+          "evidence_score": 0.5,
+          "rationale": "Entities 320 已描述 r.history、resp.request/resp.raw 及当前响应 cookies；Relationships 1107 明示 send 调用 dispatch_hook，均可溯源到 sessions.py。但输入未明确呈现 dispatch 返回值赋回 r 与两个后续属性访问的完整连接，也未完整绑定 Session.send owner，故只支持核心方向。",
+          "supplied_reference": "call 3 local / Entities (320); call 4 local / Relationships (1107)",
+          "source_anchor": "Q18-E2 sessions.py:L710-L718；Entities 320 -> sessions.py:L569-L717、L704-L831；Relationships 1107 -> sessions.py:L569-L717"
+        },
+        {
+          "id": "Q18-C3",
+          "evidence_score": 1,
+          "rationale": "Sources 74 提供完整 test_hooks 文件，包含 [hook, lambda x: None, hook]、结果 ta 及返回 value[1:] 的 hook；材料足以确定该既有测试，与答案是否准确写出无关。",
+          "supplied_reference": "call 4 local / Sources (74), tests/test_hooks.py:L1-L22",
+          "source_anchor": "Q18-E3 tests/test_hooks.py:L10-L18"
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "The existing dispatch rule is `requests.hooks.dispatch_hook` in `src/requests/hooks.py`. It invokes each callback and updates the current data only when the callback result is not `None`; a `None` result preserves the existing data. This behavior is covered by `tests/test_hooks.py::test_hooks`, which includes a callback returning `None` and verifies that the prior value remains available",
+          "citation": "[Data: Sources (43, 74)]",
+          "resolves": true,
+          "location_match": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Sources43给出非None才替换，Sources74给出[hook,lambda x:None,hook]与结果ta，直接支持规则和现有测试。"
+        },
+        {
+          "answer_quote": "The snapshot does not establish a call-graph connection from `dispatch_hook` or response callbacks to a cookie consumer. The closest directly supported consumer is the copied cookie jar in `test_cookie_policy_copy`: it sets a custom policy with `RequestsCookieJar.set_policy()` and then reads it with `get_policy()` after copying the jar",
+          "citation": "[Data: Entities (1228, 1239, 1251, 1252); Relationships (1954, 1957, 1986, 1988)]",
+          "resolves": true,
+          "location_match": true,
+          "supports": false,
+          "support_score": 0.5,
+          "rationale": "所列实体/关系都定位到test_cookie_policy_copy，实际Sources90也证明set_policy、复制后get_policy。但它们不支持这是response-hook下游或“最近”关联目标；实际另有Entities320和Relationships1107给出部分真实线索。"
+        },
+        {
+          "answer_quote": "The evidence also identifies `TestMorselToCookieExpires.test_expires_none` in `tests/test_requests.py` as a cookie-processing test that calls `morsel_to_cookie(morsel)` and checks that the returned cookie has `expires is None`. However, it does not show that this function is a response callback or that it uses `dispatch_hook`",
+          "citation": "[Data: Entities (1368); Sources (97)]",
+          "resolves": true,
+          "location_match": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Entities1368与Sources97均定位TestMorselToCookieExpires.test_expires_none，原文含morsel_to_cookie与expires is None；答案没有把它断言成hook实现，限定合理。"
+        },
+        {
+          "answer_quote": "Based on the supplied evidence, the existing test most plausibly threatened is `test_cookie_policy_copy`, because it verifies preservation of cookie-jar policy across copying. That threat remains hypothetical: the records do not show response-callback dispatch reaching `RequestsCookieJar`, nor do they establish that unconditional replacement with `None` would affect this test",
+          "citation": "[Data: Entities (1228, 1251, 1252)]",
+          "resolves": true,
+          "location_match": true,
+          "supports": false,
+          "support_score": 0,
+          "rationale": "所引实体及冻结源码只证明policy-copy测试操作，不提供hook替换数据影响此测试的因果链；most plausibly threatened这一核心推断不由本组支持。标为hypothetical也不能变成证据。"
+        }
+      ],
+      "missing_citation_claims": [
+        {
+          "answer_quote": "The proposed change would make the assignment unconditional: dispatch would replace the current data with the callback result, including `None`. This is a hypothetical change, not an established behavior in the supplied evidence.",
+          "claim": "无条件用None替换是题目假设。",
+          "rationale": "没有源码引用但权威依据是query；未将提案当现有事实。"
+        },
+        {
+          "answer_quote": "Therefore, the dispatch rule can be identified precisely, but a definitive downstream cookie consumer and concrete threatened test cannot be established from the supplied snapshot.",
+          "claim": "无法建立具体受威胁测试及完整下游链。",
+          "rationale": "无标引；完整下游连接确不足，但具体测试无法建立被实际Sources74否定；与content-review同一错误，不重复扣分。"
+        }
+      ],
+      "additional_errors": [
+        {
+          "anonymous_id": "R006",
+          "question_id": "Q18",
+          "answer_quote": "Based on the supplied evidence, the existing test most plausibly threatened is `test_cookie_policy_copy`, because it verifies preservation of cookie-jar policy across copying.",
+          "claim": "None-return替换最可能威胁policy-copy测试。",
+          "category": "unsupported_by_supplied_evidence",
+          "source_or_query_anchor": "R006 call3 Sources90 / tests/test_requests.py:L1369-L1375；Entities1228,1251,1252",
+          "rationale": "该测试只构造jar、set_policy及copy().get_policy，不经过response hook；图也无因果连接。hypothetical不能使优先级推测获得证据，直接测试实际在Sources74。",
+          "affected_criterion_ids": [
+            "Q18-C2",
+            "Q18-C3"
+          ]
+        },
+        {
+          "anonymous_id": "R006",
+          "question_id": "Q18",
+          "answer_quote": "Therefore, the dispatch rule can be identified precisely, but a definitive downstream cookie consumer and concrete threatened test cannot be established from the supplied snapshot.",
+          "claim": "实际材料无法定位具体受None替换影响的测试。",
+          "category": "contradicted_by_frozen_source",
+          "source_or_query_anchor": "R006 call4 Sources74 / tests/test_hooks.py:L5-L18；content-review R006错误",
+          "rationale": "本轮确认完整[hook,lambda x:None,hook]和结果ta实际送入模型，因此不是检索材料缺口。与冻结content-review为同一断言，只补充证据确认，不重复扣分。",
+          "affected_criterion_ids": [
+            "Q18-C3"
+          ]
+        }
+      ]
+    },
+    {
+      "anonymous_id": "R005",
+      "question_id": "Q16",
+      "answer_sha256": "e19f447806ce227da3222f624894164ae2d2b32c80057d3dd66552db19551828",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q16-C1",
+          "evidence_score": 1,
+          "rationale": "Entities 767 实际描述明确 request 覆盖 session 后删除映射中值为 None 的键；其 text_unit_ids 指向 sessions.py:L1-L166，源码中的合并后删除片段核对一致。",
+          "supplied_reference": "calls 3,5,6 local / Entities (767)",
+          "source_anchor": "Q16-E2 src/requests/sessions.py:L84-L87；Entities 767 -> sessions.py:L1-L166"
+        },
+        {
+          "id": "Q16-C2",
+          "evidence_score": 0,
+          "rationale": "Entities 767 只描述参数为 None 的早退及 mapping 合并，未说明非双 Mapping 时 return request_setting。本包没有 Sources 52 或其他描述非 Mapping 绕过的记录，不能移用 R001 的 helper 原文。",
+          "supplied_reference": "calls 3,5,6 local / Entities (767)；本包 Sources 为91、106、2、55",
+          "source_anchor": "Q16-E1 src/requests/sessions.py:L74-L79 未提供此分支"
+        },
+        {
+          "id": "Q16-C3",
+          "evidence_score": 1,
+          "rationale": "Sources 55 明确显示 prepare_request 的 p.prepare 参数分别对 headers 和 params 调用 merge_setting，headers 还使用 CaseInsensitiveDict；两个调用均有原文。",
+          "supplied_reference": "call 6 local / Sources (55), sessions.py:L441-L588",
+          "source_anchor": "Q16-E3 src/requests/sessions.py:L490-L495"
+        },
+        {
+          "id": "Q16-C4",
+          "evidence_score": 0.5,
+          "rationale": "Sources 55、Entities 807/811 和 Relationships 1096 显示向 merge_environment_settings 传入 proxies、stream、verify、cert，但本包没有其内部四次 merge_setting 调用。R001 的 Relationships 1111 未供给本包，不能计入。",
+          "supplied_reference": "call 6 Sources (55), Entities (807,811), Relationships (1096); call 5 Sources (2)",
+          "source_anchor": "已供给 sessions.py:L579-L581；Q16-E4 sessions.py:L774-L777 内部合并未提供"
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "The affected rule is `merge_setting(request_setting, session_setting, ...)`: request-level values take precedence over session-level values, and any key whose resulting value is `None` is removed from the merged mapping. If `None`-valued keys stop being removed, request/session merges could incorrectly send settings explicitly intended for deletion.",
+          "citation": "[Data: Entities (767, 768); Sources (55)]",
+          "resolves": true,
+          "location_match": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Entities767直接描述合并后None键删除，归因可验证于sessions.py:L1-L166；Sources55给出准备调用，768只是hook合并旁证。改变删除规则的影响是明确条件推断。"
+        },
+        {
+          "answer_quote": "The evidenced call site is `Session.prepare_request()` / `requests.Session.prepare_request(request)`, located in `src/requests/sessions.py:L441-L588`. This method applies `merge_setting` to request and session headers and parameters, among other settings. Therefore, the affected behavior includes removing a session header such as `Accept-Encoding` when the request supplies `None`, and removing a session key case-insensitively when the request supplies a differently cased `None` key.",
+          "citation": "[Data: Sources (55); Entities (1120, 1112, 767); Relationships (1725, 1728, 2060)]",
+          "resolves": true,
+          "location_match": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Sources55原文覆盖headers/params调用，Relationships2060支持request用异形大小写None删除session键。1725/1728实际把Accept-Encoding=None放在session；答案将request None写成影响推断，结合helper可支持，不能把它当该测试原句。"
+        },
+        {
+          "answer_quote": "The parameter merge is also affected: request values take precedence, distinct case-sensitive keys such as session `foo` and request `FOO` are retained, and supplied `OrderedDict` order is preserved.",
+          "citation": "[Data: Entities (1269, 1094, 1109); Relationships (2062, 1640)]",
+          "resolves": true,
+          "location_match": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Entities1269/Relationships2062对应L1672-L1676的foo与FOO保留；1094/1109/1640对应参数顺序测试。request优先由本答前段Entities767支持；引用未被当作已执行测试。"
+        },
+        {
+          "answer_quote": "The second affected call site is `Session.merge_environment_settings(...)`, invoked by `request` after `prepare_request` with the URL, proxies, stream, verify, and cert settings. However, the supplied evidence does not include that method’s implementation, so it does not establish whether it directly calls `merge_setting` or give a more precise implementation location.",
+          "citation": "[Data: Sources (55); Entities (811, 807); Relationships (1096)]",
+          "resolves": true,
+          "location_match": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Sources55、Relationships1096直接给出环境设置调用参数，807/811仅描述引用、未给内部实现。本包确实缺少内部四次merge_setting，不能因全图另有关系就当本包已收到。"
+        }
+      ],
+      "missing_citation_claims": [
+        {
+          "answer_quote": "Accordingly, the proposed change is to preserve the `None`-means-delete behavior in the `prepare_request` header/parameter merge and audit `merge_environment_settings` for the same behavior.",
+          "claim": "建议保留当前None删除规则并检查环境合并。",
+          "rationale": "未标引的建议，不是已存在实现的证明；题目本身要求假设改变后的影响。"
+        },
+        {
+          "answer_quote": "The header/parameter impact is established by the snapshot; the environment-setting impact is an identified follow-up target, but its exact merge expression and behavior remain uncertain from the supplied evidence.",
+          "claim": "header/params明确而环境内部调用材料不足。",
+          "rationale": "未另标引的范围总结；本包实际Sources55及缺少内部四调用支持该限定。"
+        }
+      ],
+      "additional_errors": []
+    },
+    {
+      "anonymous_id": "R001",
+      "question_id": "Q08",
+      "answer_sha256": "b81fe13f05a725b70b264d9df17913e2d7b4e21b9eacd012da4b76b43bb91711",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q08-C1",
+          "evidence_score": 0.5,
+          "rationale": "Entities 803 和 Relationships 1092 描述 prepare_request 合并 session/request 设置并调用 merge_setting 处理 headers；Sources 52 提供 helper 规则。但未给出该 header 调用的 dict_class=CaseInsensitiveDict 参数，只有容器导入不足以证明其实际选用。",
+          "supplied_reference": "calls 3,4,5 Entities (803,23); call 5 Relationships (1092), Sources (52)",
+          "source_anchor": "Q08-E1 sessions.py:L483-L492；Relationships 1092 -> sessions.py:L441-L588，只核实已描述合并调用"
+        },
+        {
+          "id": "Q08-C2",
+          "evidence_score": 0,
+          "rationale": "本包给出 session-aware prepare_request 及 Request.prepare 的概要，却没有 merged headers 传入 PreparedRequest.prepare 再到 prepare_headers 的链；另一对象 Request.prepare 的同名描述不能替代。",
+          "supplied_reference": "calls 3,4,5 Entities (11,13,23,803); Sources (81,2,52,85)",
+          "source_anchor": "Q08-E1 / Q08-E2 sessions.py:L483-L492、models.py:L368；所需内部 header 传递未提供"
+        },
+        {
+          "id": "Q08-C3",
+          "evidence_score": 0,
+          "rationale": "实际 Sources/图描述均没有 prepare_headers 逐个调用 check_header_validity 后存储的规则；header 测试和 adapter.add_headers 的空方法不是该输入校验代码。",
+          "supplied_reference": "calls 2-6 报告/表格；Entities (1129,1130,387) 仅为邻近测试或其他方法",
+          "source_anchor": "Q08-E3 / Q02-E1 src/requests/models.py:L484-L494，未提供所需规则"
+        },
+        {
+          "id": "Q08-C4",
+          "evidence_score": 0,
+          "rationale": "未提供 check_header_validity 对名称和值分别调用 _validate_header_part 的源码或图描述；准备后/发送后的 header 断言不能支持内部双项格式校验。",
+          "supplied_reference": "calls 2-6 报告/表格；无 check_header_validity/_validate_header_part 事实记录",
+          "source_anchor": "Q08-E4 src/requests/utils.py:L1034-L1042，未提供"
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "Session-level headers are configured on a `requests.Session`; for example, `SESSION.HEADERS.UPDATE` adds `Proxy-Authorization` and a bearer value to the session header mapping. The test then invokes `session.request(method=method, url=url, **kwargs)`, establishing the session-level configuration-to-request boundary. The relevant test is `test_proxy_authorization_preserved_on_request(self, httpbin)` in `tests/test_requests.py`, within the supplied excerpt at `L640-L786`.",
+          "citation": "[Data: Entities (1147, 1148); Relationships (1757); Sources (85)]",
+          "resolves": true,
+          "location_match": true,
+          "supports": false,
+          "support_score": 0.5,
+          "rationale": "ID均可解析到该测试，支持 session headers.update 和 GET 请求；但 Sources 85 实际是 session.request(method=\"GET\", url=httpbin(\"get\"))。答案的 method=method、url=url、**kwargs 是通用包装调用，不能视为该测试原句。"
+        },
+        {
+          "answer_quote": "The session-aware preparation step is `Session.prepare_request()` in `src/requests/sessions.py`. Its exact source line is not supplied, but the evidence identifies it as the method that applies session state and produces a `PreparedRequest`. During this process, `prepare_request()` calls `merge_setting()` for settings including headers.",
+          "citation": "[Data: Entities (803, 23); Relationships (1092); Sources (52)]",
+          "resolves": true,
+          "location_match": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Entities 803/23 和 Relationships 1092 支持 session-aware preparation、PreparedRequest 与 header 合并，归因到 sessions.py:L441-L588/advanced.rst:L125-L271。Sources 52 只定位 helper，未把 L1-L166 错算成 prepare_request 行。"
+        },
+        {
+          "answer_quote": "`session.headers` + request headers -> `Session.prepare_request()` -> `merge_setting()` -> `PreparedRequest.headers`.",
+          "citation": "[Data: Entities (767); Relationships (1092); Sources (52)]",
+          "resolves": true,
+          "location_match": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Sources 52 原文支持 session 映射复制、request 覆盖和 None 键删除；Relationships 1092 的归因支持 prepare_request 调用。联合引用支持该概括流程。"
+        },
+        {
+          "answer_quote": "Request-level removal is demonstrated by `test_header_remove_is_case_insensitive`: a session header named `\"foo\"` is configured, then a request supplies `headers={\"FOO\": None}`, and the test verifies that `\"foo\"` is absent from `r.request.headers`. This establishes that request-level `None` values can remove session-configured headers despite casing differences.",
+          "citation": "[Data: Entities (1268); Relationships (2060)]",
+          "resolves": true,
+          "location_match": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Entities 1268/Relationships 2060 归因到 tests/test_requests.py:L1624-L1760；冻结原文 L1665-L1670 与 foo/FOO=None/删除 foo 一致。"
+        },
+        {
+          "answer_quote": "Validation occurs through observable prepared or sent headers. The prepared-request tests verify that a session header set to `None` is absent from `prep.headers` and that ordered session/request headers preserve order while a request value overrides `\"Second\"` with `\"222\"`. The supplied snapshot names these tests as `test_headers_on_session_with_None_are_not_sent` and `test_headers_preserve_order`, but does not provide their exact source locations.",
+          "citation": "[Data: Entities (1129, 1130, 17)]",
+          "resolves": true,
+          "location_match": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Entities 1129/1130 归因到 tests/test_requests.py:L397-L519，L484-L510 核实 session None header 删除及 Second 被222覆盖后的顺序；Entities 17 是辅助 header 文档，未当测试替身。"
+        },
+        {
+          "answer_quote": "In the proxy-authorization test, the response is decoded with `resp.json()`, the returned `headers` field is read, and `SENT_HEADERS.GET` retrieves `\"Proxy-Authorization\"`. The test then compares that value with the expected bearer value. This validates the header observed after the request was sent, rather than exposing the internal preparation or transport implementation.",
+          "citation": "[Data: Entities (1133, 1149); Relationships (1758, 1759)]",
+          "resolves": true,
+          "location_match": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Entities 1133/1149、Relationships 1758/1759 从 primer 可追溯到同一 proxy-authorization 测试；实际 Sources 85 也直接包含 resp.json().get(\"headers\", {}) 与 sent_headers.get 比较。"
+        }
+      ],
+      "missing_citation_claims": [
+        {
+          "answer_quote": "The snapshot does not show the implementation of `Session.request()`, so it cannot establish the exact forwarding path from `headers` in `session.request(..., **kwargs)` into a `Request` object and then into `prepare_request()`.",
+          "claim": "本包缺少Session.request的headers转交实现。",
+          "rationale": "无显式引用；检查本包Sources81/2/52/85与图描述支持此范围限定，不因缺引用判假。"
+        },
+        {
+          "answer_quote": "It also does not identify a separate header-validation function or provide its source line.",
+          "claim": "本包无内部header-validation函数及行号。",
+          "rationale": "无显式引用；实际未供给check_header_validity/_validate_header_part事实。"
+        },
+        {
+          "answer_quote": "The defensible trace is therefore session/request header configuration, session-aware preparation and merging, inspection of `PreparedRequest.headers` or returned headers, and assertion-based validation; any more detailed call sequence would be a reconstruction rather than a supplied source fact.",
+          "claim": "对配置、合并及测试断言的总结。",
+          "rationale": "本段未另标引，部分继承前文引用；测试断言不能补足题目所需输入校验链，缺项已由criterion分表达。"
+        }
+      ],
+      "additional_errors": [
+        {
+          "anonymous_id": "R001",
+          "question_id": "Q08",
+          "answer_quote": "The test then invokes `session.request(method=method, url=url, **kwargs)`, establishing the session-level configuration-to-request boundary.",
+          "claim": "把通用request包装调用拼写归给proxy-authorization测试。",
+          "category": "citation_mismatch",
+          "source_or_query_anchor": "R001 call6 Sources85 / tests/test_requests.py:L641-L648",
+          "rationale": "测试原句是session.request(method=\"GET\",url=httpbin(\"get\"))；会话请求方向正确，但精确表达式不匹配。",
+          "affected_criterion_ids": []
+        }
+      ]
+    },
+    {
+      "anonymous_id": "R004",
+      "question_id": "Q14",
+      "answer_sha256": "b3771421ea39d8a39c159fec9c3c1f4f2ab9ebd925fe38c344d2eee53ec19b7c",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q14-C1",
+          "evidence_score": 0.5,
+          "rationale": "primer 给出 guess_json_utf 的 utils 导入、BOM 比较、sample.count(_null)，关系归因落到 utils.py。实际材料未说明 sample=data[:4] 及空字节位置如何决定编码，不足以完整支持前四字节模式规则。",
+          "supplied_reference": "call 2 primer / Entities (652,942,965), Relationships (1386-1390,1409); calls 3-6 Entities (652)",
+          "source_anchor": "Q14-E1 utils.py:L957-L986；Relationships 1386-1390/1409 -> utils.py:L942-L1092，仅核实已有摘要"
+        },
+        {
+          "id": "Q14-C2",
+          "evidence_score": 0.5,
+          "rationale": "Entities 652 明示 JSON 响应处理调用 guess_json_utf(self.content)；Entities 2/6 是 r.json/post1.json 的使用。输入未完整给出 models.Response.json owner、探测结果非 None 条件和 complexjson.loads(self.content.decode(encoding))，不能从归因大块补入未描述细节。",
+          "supplied_reference": "calls 3-6 Entities (652); calls 4,6 Entities (2,6,375)",
+          "source_anchor": "Q14-E2 models.py:L960-L963；Entities 652 -> models.py:L930-L1037，仅作已供给描述归因"
+        },
+        {
+          "id": "Q14-C3",
+          "evidence_score": 1,
+          "rationale": "Sources 107 直接包含 TestGuessJSONUTF.test_encoded 八种 UTF 参数与比较断言，也包含另外两项 BOM/非法输入测试；名称和覆盖均可原文核对。",
+          "supplied_reference": "calls 3-6 Sources (107), Entities (1532,1533)",
+          "source_anchor": "Q14-E3 tests/test_utils.py:L377-L392；Sources 107 tests/test_utils.py:L308-L472"
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "The direct response-decoding consumer is the response object's `json` method, `r.json()`. When no explicit encoding is available, it calls `guess_json_utf(self.content)` to detect a JSON-compatible encoding before decoding the response body. The supplied evidence does not identify the owning module, class, or exact source line for `json`.",
+          "citation": "[Data: Entities (2, 652, 6)]",
+          "resolves": true,
+          "location_match": null,
+          "supports": false,
+          "support_score": 0.5,
+          "rationale": "三个实体都已提供；652的归因含models.py:L930-L1037并支持json处理调用guess_json_utf。2/6是多个r.json/post1.json的使用，不确定owner，location_match记null。输入未呈现“无显式encoding”条件或完整解码链；冻结源码还要求正文非空且长度>3，所以只支持核心。"
+        },
+        {
+          "answer_quote": "The existing focused detection test is `TestGuessJSONUTF.test_encoded` in `tests/test_utils.py` (reported at `tests/test_utils.py:L308-L472`). It checks `guess_json_utf` using eight encoding spellings: `utf-32`, `utf-8-sig`, `utf-16`, `utf-8`, `utf-16-be`, `utf-16-le`, `utf-32-be`, and `utf-32-le`.",
+          "citation": "[Data: Sources (107); Entities (1532, 1533)]",
+          "resolves": true,
+          "location_match": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Sources107真实范围tests/test_utils.py:L308-L472，其中L377-L392正是八编码参数与断言；Entities1532/1533同源。107为记录号，L308-L472为物理范围。"
+        },
+        {
+          "answer_quote": "For a detection change, `test_encoded` is the primary focused test. The related `TestGuessJSONUTF.test_guess_by_bom` and `test_bad_utf_like_encoding` tests cover BOM-based UTF-16/UTF-32 detection and invalid UTF-like input, respectively.",
+          "citation": "[Data: Entities (1534, 1535, 652); Relationships (2740, 2741, 1386, 1387, 1388, 1389, 1390)]",
+          "resolves": true,
+          "location_match": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Entities1534/1535和Relationships2740/2741归因到实际Sources107的两个测试，支持BOM和四零字节场景；1386-1390是探测器读取BOM常量的关系，源码归因也匹配。"
+        }
+      ],
+      "missing_citation_claims": [],
+      "additional_errors": []
+    }
+  ]
+}

@@ -1,12 +1,16 @@
 """Prepare inspectable actual inputs only after content grades are frozen."""
+import argparse
 import hashlib
 import json
 from pathlib import Path
 HERE=Path(__file__).resolve().parent;OLD=HERE.parent/'strategy-routing';OUT=HERE/'results'
 read=lambda p:json.loads(p.read_text())
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
-def write(p,x):p.parent.mkdir(parents=True,exist_ok=True);p.write_text(json.dumps(x,ensure_ascii=False,indent=2)+'\n')
-def main():
+def main(check=False):
+    def write(p,x):
+        text=json.dumps(x,ensure_ascii=False,indent=2)+'\n'
+        if check:assert p.read_text()==text,('evidence pack differs from public inputs',p.name)
+        else:p.parent.mkdir(parents=True,exist_ok=True);p.write_text(text)
     review=read(HERE/'content-review.json');pack=read(OUT/'blind-content-pack.json');execution=read(OUT/'execution.json')
     assert review['blind_pack_sha256']==sha(OUT/'blind-content-pack.json') and review['rubric_sha256']==sha(OLD/'answer-gold.json')
     assert {r['anonymous_id'] for r in review['rows']}=={r['anonymous_id'] for r in pack['rows']}
@@ -30,5 +34,6 @@ def main():
             'provenance_only_resources':{'graph':'research/pilot/results/code-prompt/index/','rubric':'research/pilot/strategy-routing/answer-gold.json'}}
         path=OUT/'evidence-packs'/f"{answer['anonymous_id']}.json";write(path,value);rows.append({'anonymous_id':answer['anonymous_id'],'question_id':q,'file':path.name,'sha256':sha(path)})
     write(OUT/'evidence-packs/manifest.json',{'rubric_sha256':sha(OLD/'answer-gold.json'),'content_review_sha256':sha(HERE/'content-review.json'),'rows':rows})
-    print('Prepared six evidence packs; zero API calls.')
-if __name__=='__main__':main()
+    print(('Verified' if check else 'Prepared')+' six evidence packs from public inputs; zero API calls.')
+if __name__=='__main__':
+    parser=argparse.ArgumentParser();parser.add_argument('--check',action='store_true');args=parser.parse_args();main(args.check)

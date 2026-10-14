@@ -1,0 +1,159 @@
+{
+  "schema": "strategy-routing-retry-publication-text-review-v1",
+  "reviewer": "independent AI publication_text_review agent",
+  "review_date_utc": "2026-10-14",
+  "status": "completed_passed",
+  "scope": "Read-only review of revised README and report, especially six-cell conditional retry. Check stage separation, denominator/causal interpretation, accessible Chinese and consistency with public scores/execution. No body, scores, old results or gold edits; no API calls or credentials.",
+  "draft_snapshot_sha256": {
+    "README.md": "1a7aa451dc92470586b9547f1fd5e042b70fcdaa7f527521f79cf87e015a166c",
+    "docs/report.md": "722350f0e1b1d26150f2f4d37e2c94d3f54fdad3aa1f33a1c7330109bebfa926",
+    "research/pilot/strategy-routing-retry/results/scores.json": "24ccf91951ca2ea6385a3110be8c202c32182be93084fd3835fb1e57d24c356a",
+    "research/pilot/strategy-routing-retry/results/execution.json": "93f15780cf46f1983635e66d0d9043f6b76900f1a3f5c37fdbc8d2c44bd95951",
+    "research/pilot/strategy-routing-retry/results/execution-statistics.json": "154d221a95f811584f6a05685be3d1b7c67df6031e92dbd95a365fad911c3ed7",
+    "research/pilot/strategy-routing-retry/content-review.json": "dc3d6f2aa4b792ef9414622db1ed0f79b9122a35c692649d67946bce36e2dd1c"
+  },
+  "checks_passed": [
+    {
+      "check": "Independent score arithmetic and exact reuse",
+      "evidence": "Recomputed six new content means directly from content-review.json criteria, replaced only those six original failed routed cells, and used frozen queries membership. Main test16=0.728125; dev4=0.875. All other 86 merged rows retain the exact original answer SHA and content score."
+    },
+    {
+      "check": "Scope and samples",
+      "evidence": "Initial 13 DRIFT cells are correctly described as 7 completed and 6 failed. Only Q08/Q10/Q11/Q14/Q16/Q18 were retried; Q11 remains dev. Original 92 cells remain the sample size, supplementary six and all baseline answers are reused, with historical initial results preserved."
+    },
+    {
+      "check": "Individual and paired values",
+      "evidence": "New values Q08=.125,Q10=.875,Q11=.5,Q14=2/3,Q16=.625,Q18=.5 agree with independent criterion means. Reported main-test paired results 6/4/6 versus BM25 and 4/6/6 versus Basic and hybrid agree with scores.json; all three reported descriptive intervals cross zero."
+    },
+    {
+      "check": "Source coverage",
+      "evidence": "Main-test raw-source coverage 43.6% is the rounded 0.43555555555555553 over 15 scorable questions. The report correctly distinguishes it from necessary-content score, graph-summary support and single-query ranking."
+    },
+    {
+      "check": "Failure accounting",
+      "evidence": "Public 73-event retry ledger contains 41 generation and 32 embedding attempts, with 36 and 24 validated responses. Thirteen failed wire envelopes contain 12 explicit SSLEOFError diagnostics and one unknown subtype. Five new generation and eight embedding provider usages remain unknown; original six decoder usages remain unknown."
+    },
+    {
+      "check": "Cost/time numbers",
+      "evidence": "124871 common generation-input reservations, provider-known 167800 input/22771 output, cumulative 1539 reservations and3219901 common tokens,667077 embedding-token reservations and179 attempts match public statistics. Embedding estimates explicitly use reserved tokens and are not bills. 426.0+16.9 seconds rounds to443.0 with disclosed mixed timing and excluded waiting/loading."
+    },
+    {
+      "check": "Causal and historical framing",
+      "evidence": "The report explicitly distinguishes new-message compatibility evidence from unknown old raw replies, calls this known-failure conditional retry, retains old failures/costs and states that model randomness, service changes and additional attempts were not isolated. The initial case chapter now clearly fixes its historical scope."
+    },
+    {
+      "check": "New message counts",
+      "evidence": "Public transport_diagnostics in event026 (Q11 primer) reports3 assistant messages; event053 (Q16 primer) reports2. These match the new text. Empty-message positions and exact old/new equivalence remain for the dedicated final diagnosis audit."
+    }
+  ],
+  "required_numeric_corrections": [],
+  "small_text_recommendations": [
+    {
+      "id": "RPT-01",
+      "file": "README.md",
+      "text": "失败修复改变了分数，但没有证明图胜过基线。",
+      "suggestion": "条件重试后的分数提高，但没有证明图胜过基线。",
+      "reason": "The body correctly disclaims pure causality, but the bold lead can still imply that repair alone caused the entire score change.",
+      "resolution": "Applied by parent and verified in intermediate follow-up."
+    },
+    {
+      "id": "RPT-02",
+      "file": "docs/report.md",
+      "line": 92,
+      "text": "图、问题、gold、提示词、模型、种子和预算不变",
+      "suggestion": "图、问题、gold、提示词、模型、种子和预算上限不变；实际新增尝试和费用另计",
+      "reason": "The cap remained fixed, whereas actual attempts, input and spending grew. Clarify cap versus spend immediately.",
+      "resolution": "Applied by parent and verified in intermediate follow-up."
+    },
+    {
+      "id": "RPT-03",
+      "file": "docs/report.md",
+      "line": 46,
+      "text": "本轮保留了规范化可见回复和错误记录，没有保留原始SSE事件流",
+      "suggestion": "初轮保留了规范化可见回复和错误记录，没有保留原始SSE事件流",
+      "reason": "The heading already scopes this paragraph to the initial run; explicit wording prevents confusion with raw capture in the new retry.",
+      "resolution": "Applied by parent and verified in intermediate follow-up."
+    }
+  ],
+  "pending_final_checks": [],
+  "conclusion": "Final scoped publication text review passed. Initial and conditional-retry outcomes, test/dev/supplement denominators, content versus material-support versus raw-source metrics, two newly observed decoder incompatibilities versus six unknown historical failures, and additional cost are clearly distinguished. All requested final document/result hashes are bound above; no remaining required wording change or blocker in this review scope.",
+  "intermediate_followup": {
+    "status": "passed_pending_final_evidence_and_hash_binding",
+    "sha256": {
+      "README.md": "1a7aa451dc92470586b9547f1fd5e042b70fcdaa7f527521f79cf87e015a166c",
+      "docs/report.md": "722350f0e1b1d26150f2f4d37e2c94d3f54fdad3aa1f33a1c7330109bebfa926",
+      "research/pilot/strategy-routing-retry/results/README.md": "791d2acda3f432728f1e27a1d3354ff84176caf25cd47eefda9bbb6c91298cb3",
+      "research/pilot/strategy-routing-retry/results/retry-diagnosis.json": "7627d7b555324a95780e062e014e99d35240caacb1d48293afee56dc84f207a6",
+      "research/README.md": "ba35a8c89d69b0511d2238f4b56ca51632a7b4177164120a6dcd47c7231d533b",
+      "research/process.md": "c807e2eb00b76def91e2f562f2d3ee996915bc8eb33a6a297ad970c29de1f21f",
+      "NOTICE.md": "4a588c2693104ea6bcf34d057eb10223f0dd6bff565e2337f5e243b4ae6fd978"
+    },
+    "diagnosis_binding_verification": "Final diagnosis SHA7627d7b555324a95780e062e014e99d35240caacb1d48293afee56dc84f207a6 matches the supplied independent audit. Independently checked all73 public wire hashes and execution SHA against its file bindings.",
+    "message_structure_evidence": {
+      "Q11_event26_visible_character_counts": [
+        0,
+        0,
+        2748
+      ],
+      "Q16_event53_visible_character_counts": [
+        0,
+        3117
+      ],
+      "both_unique_nonempty_json_equals_concatenation": true,
+      "old_accepts_and_same_output": 34,
+      "complete_new_generation_denominator": 36
+    },
+    "interpretation": "New empty-message compatibility evidence is explicitly restricted to two newly observed replies, not retroactively assigned to six old raw responses. Old missing raw and new private raw capture/public normalized output are consistently distinguished in the reviewed texts.",
+    "cost_wording": "Budget cap versus actual additional attempts/costs is now explicit. New results README separately lists new41generation/32embedding attempts, unknown usage, existing expenses and mixed timing.",
+    "new_finding_resolved": {
+      "file": "research/process.md",
+      "previous_text": "初轮55.4%及失败原文完整保留",
+      "current_text": "初轮55.4%及失败记录完整保留",
+      "reason": "Old failed raw response bodies are unavailable; records remain intact. Parent correction verified."
+    },
+    "remaining_text_corrections": []
+  },
+  "final_review": {
+    "status": "completed_passed",
+    "scope": "Final reviewed retry narrative, new material-support paragraph and documentation, with independent arithmetic from frozen criterion judgments and cohort membership. This does not replace the separate content/evidence fact reviewers or full publication verifier.",
+    "sha256": {
+      "README.md": "1a7aa451dc92470586b9547f1fd5e042b70fcdaa7f527521f79cf87e015a166c",
+      "docs/report.md": "a5875352a5e4ccd7e01d751d35ad6d0fc9b1d79a71f270fd306d130e56b00c80",
+      "research/pilot/strategy-routing-retry/results/README.md": "64c352d43532e5e3a5c82a392533971a6481dc676f868ded1e9edca3fa03891a",
+      "research/README.md": "ba35a8c89d69b0511d2238f4b56ca51632a7b4177164120a6dcd47c7231d533b",
+      "research/process.md": "c807e2eb00b76def91e2f562f2d3ee996915bc8eb33a6a297ad970c29de1f21f",
+      "NOTICE.md": "4a588c2693104ea6bcf34d057eb10223f0dd6bff565e2337f5e243b4ae6fd978",
+      "research/pilot/strategy-routing-retry/results/scores.json": "24ccf91951ca2ea6385a3110be8c202c32182be93084fd3835fb1e57d24c356a",
+      "research/pilot/strategy-routing-retry/results/evidence-scores.json": "2cd9d8ce80193800fa07bd2b038832a66cd1b8eb74250edf9dd0b7797eb8d672",
+      "research/pilot/strategy-routing-retry/results/retry-diagnosis.json": "7627d7b555324a95780e062e014e99d35240caacb1d48293afee56dc84f207a6",
+      "research/pilot/strategy-routing-retry/content-review.json": "dc3d6f2aa4b792ef9414622db1ed0f79b9122a35c692649d67946bce36e2dd1c",
+      "research/pilot/strategy-routing-retry/evidence-review.json": "da659aeb41dab8a384502d0c40fb9b641b5cb900c1793dd1adaafb4b272d7452",
+      "research/pilot/strategy-routing-retry/results/execution.json": "93f15780cf46f1983635e66d0d9043f6b76900f1a3f5c37fdbc8d2c44bd95951",
+      "research/pilot/strategy-routing-retry/results/execution-statistics.json": "154d221a95f811584f6a05685be3d1b7c67df6031e92dbd95a365fad911c3ed7",
+      "research/pilot/strategy-routing/queries.json": "fd94cba5f5c49797863df3f60c236fed533d282b29c77fb13825191988b3e34d",
+      "research/pilot/strategy-routing/answer-gold.json": "d1bdca1bf597530a0f90081220b5370893bc04742b080fe3dbd492dd7b3de225"
+    },
+    "evidence_review_binding": "da659aeb41dab8a384502d0c40fb9b641b5cb900c1793dd1adaafb4b272d7452",
+    "independent_checks": [
+      "Recomputed each of the6 new evidence means directly from evidence-review criterion scores; matched merged per-row values.",
+      "All86 non-retried evidence rows are exact object-equal to the original evidence-scores rows, including citation/error counts.",
+      "Used frozen query membership to recompute all4 main-test16 material-support means. GraphRAG=.7989583333333333; BM25=.7494791666666667; Basic=.8197916666666667; hybrid=.8302083333333333. Displayed79.9/74.9/82.0/83.0% round correctly.",
+      "Counted26 citation groups across6 new evidence-review rows; this is distinct from the80 groups across the merged routed main-test16 cohort.",
+      "Verified Q10 has1.0 material support and.875 content completion; its actual answer incorrectly says exact cookie-merge statements were not provided. The text accurately uses this as a material-to-answer omission example, without attributing every lost point to retrieval.",
+      "GraphRAG43.6% raw-source coverage is correctly labelled as43.55555555555555% rounded over15 scorable retrieval questions; support from traceable graph descriptions is not counted as raw source.",
+      "Final scores bind the actual execution SHA93f15780cf46f1983635e66d0d9043f6b76900f1a3f5c37fdbc8d2c44bd95951; earlier draft metadata mismatch is no longer present.",
+      "New evidence paragraph, results README, navigation, process record and NOTICE preserve the distinction between old raw-response absence, new private raw capture, public normalized outputs, budget caps and actual additional spending."
+    ],
+    "main_test16_evidence_scores": {
+      "routed_graphrag": 0.7989583333333333,
+      "bm25": 0.7494791666666667,
+      "ms_basic": 0.8197916666666667,
+      "hybrid": 0.8302083333333333
+    },
+    "new_evidence_rows": 6,
+    "new_citation_groups": 26,
+    "exact_reused_evidence_rows": 86,
+    "remaining_required_text_changes": [],
+    "remaining_blockers": []
+  }
+}
