@@ -1,6 +1,8 @@
 # 代码提示词实验：真实中断与恢复记录
 
-**当前状态：第623次HTTP 503暂停，等待单独有限恢复许可。** 16:53 UTC收到JSON错误，分类`model_related`，2.280秒；未保存完整错误正文，也没有模型回复或usage，因此不猜测具体故障。615份成功生成缓存和134个导入向量核验通过。此前只批准超时／HTTP 520，控制器没有重发503。[诊断](http503-diagnosis.json)、[累计623条记录](execution-interrupted-09.json)及[待批准恢复入口](../../resume_code_prompt_http503.py)、[独立复核](http503-recovery-review.json)和[实际离线检查](verification-09.json)可核对。新入口只允许同一逻辑请求的503与超时／520共享最多两次额外尝试；120秒、累计预算和无总截止状态不变，尚未执行。
+**当前状态：已获准恢复，正在继续建图。** 2026-10-14 00:24:02 UTC用户批准超时、连接中断、429和5xx共享每请求最多两次额外尝试，遵守Retry-After；00:31:24批准生成预算记录上限提高至1,600，其余预算不变。623→624在4.372秒成功，615份成功缓存复用；675为从未发送的额度检查点，切换时再复用666份成功回复。尚无新Local评分。
+
+[统一重试授权](transient-retry-authorization.json)、[实际切换](transient-retry-amendment.json)、[成功关联](transient-recovery-progress.json)、[独立复核](transient-retry-review.json)及[额度变更](generation-cap-amendment.json)记录最新状态。[原503诊断](http503-diagnosis.json)和[暂停快照](execution-interrupted-09.json)不覆盖。之前准备的503单独恢复入口未执行，实际使用统一策略入口。下面是此前停机与恢复的历史事实。
 
 第554次因执行通道丢失而未写回账本，但HTTP 200完整回复已经落盘。恢复时离线验证547份成功回复和134个向量，554不重发；之后成功推进555–622。[恢复证据](host-recovery-554.json)记录原账本状态与未知耗时。准确的进程停止时刻未捕获，累计workflow时间含未知停机间隔，不是精确有效运行时间。
 

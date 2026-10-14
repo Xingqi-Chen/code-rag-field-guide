@@ -19,12 +19,20 @@ def main():
     assert s['limits']['wall_seconds'] is None and s['limits']['generation_request_seconds']==120
     assert [e['sequence'] for e in events]==list(range(1,len(events)+1))
     assert all(e['phase']=='index' for e in events)
-    assert s['index_generation_attempts']==sum(e['service']=='generation' for e in events)<=1200
+    cap=read(OUT/'generation-cap-amendment.json')
+    assert cap['previous_generation_cap']==1200 and cap['generation_cap']==1600
+    assert cap['human_approval_utc']=='2026-10-14T00:31:24+00:00'
+    assert cap['new_limits']=={**cap['previous_limits'],'generation_index_attempts':1600}
+    assert s['limits']==cap['new_limits']
+    assert s['index_generation_attempts']==sum(e['service']=='generation' for e in events)<=1600
     assert s['embedding_attempts']==sum(e['service']=='embedding' for e in events)
     assert s['generation_input_tokens']==sum(e['input_tokens'] for e in events if e['service']=='generation')<=8000000
     assert s['embedding_reserved_tokens']==206333+sum(e['input_tokens'] for e in events if e['service']=='embedding')
     assert Decimal(s['known_embedding_input_estimate_usd'])==Decimal(s['embedding_reserved_tokens'])*Decimal('.13')/1000000<=1
-    assert s['non_dispatched_reservations']==[195]
+    assert s['non_dispatched_reservations']==[195,675]
+    assert cap['non_dispatched_checkpoint_event']==675
+    assert events[674]['request_dispatched'] is False and events[675]['status']=='validated'
+    assert events[674]['request_body_sha256']==events[675]['request_body_sha256']
     dispatched=[e for e in events if e.get('request_dispatched') is not False]
     assert dict(Counter(e['service'] for e in dispatched))==s['provider_dispatch_attempts']
     assert [e['sequence'] for e in dispatched if 'usage' not in e]==s['unknown_usage_sequences']

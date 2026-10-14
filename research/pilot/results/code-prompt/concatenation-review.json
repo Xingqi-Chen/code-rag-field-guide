@@ -1,0 +1,270 @@
+{
+  "schema_version": "1.0",
+  "review_date_utc": "2026-10-14",
+  "language": "zh-CN",
+  "scope": "发布前独立离线复核；只使用现成响应、诊断文件、前次四例审阅和官方解析器源码。",
+  "input_artifacts": {
+    "diagnostics": "concatenation-diagnostics.json",
+    "diagnostics_sha256": "8d910c17b4329e320469fe6534b95db60be7eaebed0c6c370243f2eb0e54f355",
+    "previous_review": "preindex-witness-review.json",
+    "previous_review_sha256": "deada5c5f09eabbc8ab983d5d63e1cf55231c9f934ad97f6ba8aa219bfddb4e1"
+  },
+  "verdict": "计数与解释边界通过复核。旧轮94条实体/1条关系、新轮102条实体/7条关系，均是逐响应解析记录总数减去官方直接拼接解析记录总数；不是全图缺失节点/边数，也不是修复版评分。",
+  "verification": {
+    "network_calls": 0,
+    "model_calls": 0,
+    "raw_response_count": 456,
+    "runs": 2,
+    "all_response_hashes_match_diagnostics": true,
+    "all_per_chunk_counts_match_independent_replay": true,
+    "all_missing_entity_and_changed_or_missing_relation_multisets_match": true,
+    "all_aggregate_counts_match": true,
+    "method": "用标准库独立复现官方 split(##)、去边界括号、按 <|> 分字段、精确记录类型判断、clean_str、大写名称和关系权重 float/失败回退规则；未运行索引、未替换官方 parser、未改图或评分。读取响应仅取 message.content，未读取请求体或凭据。",
+    "input_chunks_per_run": 114,
+    "input_scope": "固定输入块包含源码、测试与文档，不全是源代码文件。"
+  },
+  "aggregate_counts": {
+    "default": {
+      "initial_entities": 340,
+      "initial_relations": 284,
+      "glean_entities": 914,
+      "glean_relations": 1125,
+      "concatenated_entities": 1160,
+      "concatenated_relations": 1408,
+      "entity_record_count_gap": 94,
+      "relationship_record_count_gap": 1,
+      "chunks": 114,
+      "chunks_with_entity_record_count_gap": 94,
+      "chunks_with_relationship_record_count_gap": 1,
+      "changed_or_missing_relation_record_occurrences": 3,
+      "rows_with_changed_or_missing_relation_records": 2,
+      "added_or_changed_relation_record_occurrences": 2
+    },
+    "code-prompt": {
+      "initial_entities": 2744,
+      "initial_relations": 2117,
+      "glean_entities": 815,
+      "glean_relations": 1184,
+      "concatenated_entities": 3457,
+      "concatenated_relations": 3294,
+      "entity_record_count_gap": 102,
+      "relationship_record_count_gap": 7,
+      "chunks": 114,
+      "chunks_with_entity_record_count_gap": 102,
+      "chunks_with_relationship_record_count_gap": 7,
+      "changed_or_missing_relation_record_occurrences": 7,
+      "rows_with_changed_or_missing_relation_records": 7,
+      "added_or_changed_relation_record_occurrences": 0
+    }
+  },
+  "count_interpretation": [
+    "旧轮实体逐响应 340+914=1254，拼接1160，差94；关系284+1125=1409，拼接1408，差1。",
+    "新轮实体逐响应2744+815=3559，拼接3457，差102；关系2117+1184=3301，拼接3294，差7。",
+    "旧轮 changed_or_missing_relation_records 共3条记录出现次数，涉及2块；只有1条关系计数差额，另有2条关系记录因权重变化而不再完全相等。",
+    "新轮 changed_or_missing_relation_records 共7条，涉及7块；本次重放中均对应关系记录计数少1，没有发现额外的关系权重变形记录。",
+    "记录按出现次数计数，未做实体名称或关系端点去重；102不等于102种独立符号，7不等于7条全图唯一边。",
+    "同名实体、同端点关系可由其他块重复提供，且后续流程可能合并；本审阅没有据差额断言最终全图缺失相应节点或边。",
+    "逐响应解析也会接受不准确文本、重复记录或格式污染记录。它只是诊断参照，并不是经过正确性核验的真值，也不是已建好或已评分的修复版图。"
+  ],
+  "official_parser": {
+    "repository": "microsoft/graphrag",
+    "commit": "5faaaf4f5685fa2056fa8c3bf9342cb089f2942f",
+    "file": "packages/graphrag/graphrag/index/operations/extract_graph/graph_extractor.py",
+    "url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/operations/extract_graph/graph_extractor.py",
+    "evidence": [
+      {
+        "line_start": 107,
+        "line_end": 109,
+        "meaning": "results += response_text，不自动补记录分隔符。"
+      },
+      {
+        "line_start": 135,
+        "line_end": 145,
+        "meaning": "按 ## 拆分；仅当整个片段等于完成标记时跳过；首字段必须精确等于 entity。"
+      },
+      {
+        "line_start": 156,
+        "line_end": 163,
+        "meaning": "relationship 也要求精确首字段；权重读最后字段，float 转换失败则回退1.0。"
+      }
+    ]
+  },
+  "spot_checks": [
+    {
+      "run": "code-prompt",
+      "source_title": "src/requests/structures.py:L1-L99",
+      "initial_sequence": 126,
+      "glean_sequence": 127,
+      "initial_text_sha256": "398a6b2e96850ca285b7ab2c67ff656eae48ccb5e1c7f3056479b6428b90fc28",
+      "glean_text_sha256": "fab6cc5d654825d88dde7e1198640e25e6ed2daed6e1e7d6c5ac9fc0ad3365b7",
+      "boundary_excerpt": "inheritance; the exact runtime implementation is not shown.<|>8)\n##\n<|COMPLETE|>(\"entity\"<|>update<|>external_symbol<|>`update` is explicitly called as `self.update(data, **kwargs)` in `CaseInsensitiveDict.__init__`; its definition is not visible here.)\n##\n(\"entity\"<|>lower<|>external_symb",
+      "entity_record_count_gap": 1,
+      "relationship_record_count_gap": 0,
+      "assessment": "新 Q01 的初抽结束标记与 glean 首条 UPDATE 实体粘连，首字段不再精确等于 entity；丢的是这一次实体记录。43 条关系仍被识别，不代表全图一定不存在 UPDATE。"
+    },
+    {
+      "run": "code-prompt",
+      "source_title": "src/requests/_internal_utils.py:L1-L50",
+      "initial_sequence": 47,
+      "glean_sequence": 48,
+      "initial_text_sha256": "d85f488f2454774d6e70aad0804e0275f577b13d55105d3fa2f5d5719c27ea43",
+      "glean_text_sha256": "e7b28cdd0462c4a35d73cbbb97d788b83b69996eff9e5edfcb621a90d31e6319",
+      "boundary_excerpt": "ception type, visible handler `except UnicodeEncodeError`.<|>10)\n##\n<|COMPLETE|>(\"relationship\"<|>_HEADER_VALIDATORS_STR<|>_VALID_HEADER_NAME_RE_STR<|>READS, direction constant to referenced validator constant, visible tuple expression `(_VALID_HEADER_NAME_RE_STR, _VALID_HEADER_VALUE_RE_ST",
+      "entity_record_count_gap": 0,
+      "relationship_record_count_gap": 1,
+      "separate_relation_records": [
+        {
+          "source": "_HEADER_VALIDATORS_STR",
+          "target": "_VALID_HEADER_NAME_RE_STR",
+          "description": "READS, direction constant to referenced validator constant, visible tuple expression `(_VALID_HEADER_NAME_RE_STR, _VALID_HEADER_VALUE_RE_STR)`.",
+          "source_id": "x",
+          "weight": 10.0
+        }
+      ],
+      "combined_relation_records": [],
+      "assessment": "结束标记位于单独 ## 片段，glean 首条恰为 relationship。无分隔拼接使首字段变成结束标记加 relationship，整条 READS 记录未识别；关系总数 34→33。"
+    },
+    {
+      "run": "code-prompt",
+      "source_title": "src/requests/api.py:L101-L157",
+      "initial_sequence": 63,
+      "glean_sequence": 64,
+      "initial_text_sha256": "869f704048062c2a645159a001e555035a3d3dcec90adf8c2f8aea645c2b5fb7",
+      "glean_text_sha256": "5427a980c677e9f1b02c8c7b3435844006b9735d54a0cac18b1ad07b51ecde07",
+      "boundary_excerpt": ")`; the runtime binding of `request` is not visible here.<|>10)\n##\n<|>COMPLETE|>(\"relationship\"<|>post<|>request<|>RETURNS, `post` directly returns the result of `request(\"post\", url, data=data, json=json, **kwargs)`; the returned runtime type is not defined in this chunk.<|>10)\n##\n(\"relat",
+      "entity_record_count_gap": 0,
+      "relationship_record_count_gap": 1,
+      "separate_relation_records": [
+        {
+          "source": "POST",
+          "target": "REQUEST",
+          "description": "CALLS, `post` calls the unresolved `request` callable with `request(\"post\", url, data=data, json=json, **kwargs)`; the runtime binding of `request` is not visible here.",
+          "source_id": "x",
+          "weight": 10.0
+        },
+        {
+          "source": "POST",
+          "target": "REQUEST",
+          "description": "RETURNS, `post` directly returns the result of `request(\"post\", url, data=data, json=json, **kwargs)`; the returned runtime type is not defined in this chunk.",
+          "source_id": "x",
+          "weight": 10.0
+        }
+      ],
+      "combined_relation_records": [
+        {
+          "source": "POST",
+          "target": "REQUEST",
+          "description": "CALLS, `post` calls the unresolved `request` callable with `request(\"post\", url, data=data, json=json, **kwargs)`; the runtime binding of `request` is not visible here.",
+          "source_id": "x",
+          "weight": 10.0
+        }
+      ],
+      "assessment": "初抽写成非标准 <|>COMPLETE|>，而非 <|COMPLETE|>，仍与 glean 首条 RETURNS 粘连。原初抽 POST→REQUEST 的 CALLS 保留，glean 的同端点 RETURNS 丢失；关系总数 12→11。相同端点不表示相同关系记录。"
+    },
+    {
+      "run": "default",
+      "source_title": "docs/user/advanced.rst:L125-L271",
+      "initial_sequence": 5,
+      "glean_sequence": 6,
+      "initial_text_sha256": "1a2c46e6fca26d8fa1beae07cc914be700683d687cd999c0ca8b8d6faca89000",
+      "glean_text_sha256": "13398e05cc8350cc61091c9beaded48a5514bd033614e23a3ecce86cb0eda1a8",
+      "boundary_excerpt": " an HTTPS request made with certificate verification disabled.<|>4)\n<|COMPLETE|>(\"entity\"<|>PYTHON<|>organization<|>Python is the programming language in which the Requests library and its request-preparation examples are implemented.<|>8)\n##\n(\"entity\"<|>REQUEST<|>organization<|>Request is",
+      "entity_record_count_gap": 1,
+      "relationship_record_count_gap": 0,
+      "separate_relation_records": [
+        {
+          "source": "REQUESTS",
+          "target": "KENNETH REITZ",
+          "description": "Requests documentation references kennethreitz.org as an example domain for an HTTPS request made with certificate verification disabled.",
+          "source_id": "x",
+          "weight": 1.0
+        }
+      ],
+      "combined_relation_records": [
+        {
+          "source": "REQUESTS",
+          "target": "KENNETH REITZ",
+          "description": "Requests documentation references kennethreitz.org as an example domain for an HTTPS request made with certificate verification disabled.",
+          "source_id": "x",
+          "weight": 8.0
+        }
+      ],
+      "assessment": "初抽末条关系之后没有 ##，原权重 4 后面带结束标记，单独解析 float 失败回退 1.0。拼上首条 PYTHON entity 后，解析器用 record_attributes[-1]，误取该相邻实体额外字段的 8，拼接后同一关系权重变为 8.0。关系条数仍为19；这是变形，不是新增正确关系。"
+    },
+    {
+      "run": "default",
+      "source_title": "tests/testserver/server.py:L1-L176",
+      "initial_sequence": 226,
+      "glean_sequence": 227,
+      "initial_text_sha256": "65f49ddd1f8c3a421dd60543cc42b37bc9e665ed16bb0ad255917b25f6ee6fc5",
+      "glean_text_sha256": "96590e1d8a6fe84d216ed826fc5302c2dc8f15ece1ea9c9ebd952bf845634c4f",
+      "boundary_excerpt": "osing, and sets it during exception handling to avoid blocking<|>8)\n<|COMPLETE|>(\"relationship\"<|>TLSSERVER<|>READY EVENT<|>TLSServer inherits Server's lifecycle behavior and sets the ready event after its TLS-wrapped listening socket is created and bound<|>8)\n##\n(\"relationship\"<|>TLSSERVE",
+      "entity_record_count_gap": 0,
+      "relationship_record_count_gap": 1,
+      "separate_relation_records": [
+        {
+          "source": "SERVER",
+          "target": "WAIT TO CLOSE EVENT",
+          "description": "Server optionally waits for the wait-to-close event before closing, and sets it during exception handling to avoid blocking",
+          "source_id": "x",
+          "weight": 1.0
+        }
+      ],
+      "combined_relation_records": [
+        {
+          "source": "SERVER",
+          "target": "WAIT TO CLOSE EVENT",
+          "description": "Server optionally waits for the wait-to-close event before closing, and sets it during exception handling to avoid blocking",
+          "source_id": "x",
+          "weight": 8.0
+        }
+      ],
+      "assessment": "同样因末条关系和 glean 首条关系缺少 ##，单独解析的末条权重为回退 1.0；拼接后误取 glean 首条 TLSSERVER→READY EVENT 的末字段 8，前条权重成为 8.0，首条 glean 关系也被吞并。计数少1，但精确记录多重集差额有2条：一条变形、一条缺失。"
+    }
+  ],
+  "previous_four_case_consistency": [
+    {
+      "title": "src/requests/structures.py:L1-L99",
+      "same_counts_as_preindex_review": true,
+      "new_entity_record_gap": 1,
+      "new_relationship_record_gap": 0,
+      "lost_new_entity_names": [
+        "UPDATE"
+      ]
+    },
+    {
+      "title": "src/requests/api.py:L1-L109",
+      "same_counts_as_preindex_review": true,
+      "new_entity_record_gap": 1,
+      "new_relationship_record_gap": 0,
+      "lost_new_entity_names": [
+        "REQUESTS"
+      ]
+    },
+    {
+      "title": "src/requests/adapters.py:L156-L310",
+      "same_counts_as_preindex_review": true,
+      "new_entity_record_gap": 1,
+      "new_relationship_record_gap": 0,
+      "lost_new_entity_names": [
+        "CLOSE"
+      ]
+    },
+    {
+      "title": "tests/test_requests.py:L1624-L1760",
+      "same_counts_as_preindex_review": true,
+      "new_entity_record_gap": 1,
+      "new_relationship_record_gap": 0,
+      "lost_new_entity_names": [
+        "REQUESTS"
+      ]
+    }
+  ],
+  "previous_review_boundary": "四例计数与前次一致。其具体方法/局部链段/键类型/dunder 文本纠正，以及越过块边界断言等审阅结论不由此次计数检查推翻；本次没有重新给代码语义准确率或检索收益评分。前次报告的暂停状态是当时快照，不用于断言当前索引仍暂停。",
+  "publication_wording": "在两轮各114个固定输入块（含源码、测试与文档）的现有响应上，逐条解析与官方原样拼接解析相比，旧轮多识别94条实体记录及1条关系记录，新轮多识别102条实体记录及7条关系记录。另观察到旧轮两条关系记录权重受拼接污染而改变。这是抽取响应边界的离线诊断，不能等同于全图缺失量或修复后的检索分数。",
+  "limitations": [
+    "本次核对全部456份响应的格式及诊断一致性，但只选5处边界例子作详细说明；不对全部生成内容作事实正确性审查。",
+    "未修改提示词、图、gold、解析器、评分或运行账本；唯一写入为本审阅记录。",
+    "尚待最终图案例核验；不得从单独解析参照外推图质量、Local召回率、答案质量或feature成功率变化。"
+  ]
+}

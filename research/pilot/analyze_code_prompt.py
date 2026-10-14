@@ -80,7 +80,7 @@ def calculate():
             'shared_source_vector_sha256':retrieval['shared_vector_sha256']},
         'limitations':['One fixed repository and15 scorable test questions; no population significance claim.',
             'Old baselines are preserved; new graph built after inspecting their failures.',
-            'Mixed60/120-second timeouts, revised retry policy and removed total deadline are disclosed execution changes.',
+            'Mixed60/120-second timeouts, unified bounded transient retries, removed total deadline and authorized generation cap1200→1600 are disclosed execution changes.',
             'No equal-actual-source-token or randomized graph control was added in this variant.',
             'Missing provider usage remains unknown; no generation invoice or measured memory figure.']}
 
