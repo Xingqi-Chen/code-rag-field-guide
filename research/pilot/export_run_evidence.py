@@ -13,6 +13,7 @@ HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[1]
 RUN=ROOT/'.cache/pilot/full-20261012'
 from result_paths import OUT
+from index_artifacts import write_table
 
 
 def write(name,obj):
@@ -164,8 +165,9 @@ def main(initial_prompts=None):
         path=RUN/'output'/f'{name}.parquet'
         df=pd.read_parquet(path)
         rows=json.loads(df.to_json(orient='records'))
-        write(f'index/{name}.json',rows)
-        tables[name]={'rows':len(df),'parquet_bytes':path.stat().st_size,'sha256':hashlib.sha256(path.read_bytes()).hexdigest()}
+        layout=write_table(OUT/f'index/{name}.json',rows)
+        tables[name]={'rows':len(df),'parquet_bytes':path.stat().st_size,'sha256':hashlib.sha256(path.read_bytes()).hexdigest(),
+            'public_json_layout':layout}
     entities=pd.read_parquet(RUN/'output/entities.parquet')
     covered={str(x) for row in entities['text_unit_ids'] for x in row}
     tables['text_units']={'rows':114,'text_units_referenced_by_entities':len(covered)}

@@ -6,12 +6,22 @@ import json
 from pathlib import Path
 
 from verify_code_prompt import no_network  # Installs the network-denying audit hook.
+from index_artifacts import read_table
 
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[1]
 OUT=HERE/'results/code-prompt'
 read=lambda p:json.loads(p.read_text())
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+
+
+def graph_semantic_sha(rows):
+    canonical=lambda v:json.dumps(v,ensure_ascii=False,sort_keys=True,separators=(',',':'),allow_nan=False)
+    def semantic(row):
+        result={k:v for k,v in row.items() if k not in {'id','human_readable_id'}}
+        if result.get('text_unit_ids') is not None:result['text_unit_ids']=sorted(result['text_unit_ids'])
+        return result
+    return hashlib.sha256(canonical(sorted(canonical(semantic(row)) for row in rows)).encode()).hexdigest()
 
 
 def main():
@@ -70,13 +80,15 @@ def main():
     assert events[1026]['schema_syntax_exception']['candidate_content_sha256']==diagnosis['candidate_content_sha256']
     assert 'recovery' not in events[1026]  # Transport validation/usage already succeeded before syntax failure.
     index=read(OUT/'index-summary.json');sample=read(OUT/'quality-sample.json')
+    fixed_review=read(OUT/'fixed-graph-review.json')
     for kind in ['entities','relationships','communities','community_reports']:
-        rows=read(OUT/f'index/{kind}.json')
+        rows=read_table(OUT/f'index/{kind}.json')
         assert len(rows)==index['tables'][kind]['rows'] and len({r['id'] for r in rows})==len(rows)
         if kind in ['entities','relationships']:
+            assert graph_semantic_sha(rows)==fixed_review['whole_graph_semantic_sha256'][kind]
             ordered=sorted(rows,key=lambda r:hashlib.sha256(f"20261012:{kind}:{r['id']}".encode()).hexdigest())
             assert [r['record'] for r in sample['samples']['code-prompt'][kind]]==ordered[:20]
-    assert dict(Counter(r['type'] for r in read(OUT/'index/entities.json')))==index['entity_type_counts']
+    assert dict(Counter(r['type'] for r in read_table(OUT/'index/entities.json')))==index['entity_type_counts']
     parser=read(OUT/'concatenation-diagnostics.json')
     assert parser['new_model_calls']==0
     for run in parser['runs'].values():

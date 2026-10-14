@@ -15,6 +15,7 @@ import sys
 
 os.environ['LITELLM_LOCAL_MODEL_COST_MAP']='True'
 import code_prompt_experiment as variant
+from index_artifacts import read_table
 
 ROOT,RUN,OUT,BASE=variant.ROOT,variant.RUN,variant.OUT,variant.BASE
 read,write,sha=variant.read,variant.write,variant.sha
@@ -84,7 +85,7 @@ def sample():
         units={u['ms_text_unit_id']:u for u in read(BASE/'index/text-unit-provenance.json')}
         chosen={}
         for kind in ['entities','relationships']:
-            rows=read(base/f'index/{kind}.json')
+            rows=read_table(base/f'index/{kind}.json')
             ordered=sorted(rows,key=lambda r:hashlib.sha256(f"20261012:{kind}:{r['id']}".encode()).hexdigest())
             chosen[kind]=[{'record':r,'sources':[{'title':units[u]['title'],'input_id':units[u]['id']} for u in r['text_unit_ids']],
                 'sample_hash':hashlib.sha256(f"20261012:{kind}:{r['id']}".encode()).hexdigest()} for r in ordered[:20]]
