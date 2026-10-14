@@ -51,7 +51,10 @@ class CodeRuntime(OriginalRuntime):
         reply=super().complete(messages,response_format)
         if response_format is not None and (RUN/'schema-1027-amendment.json').exists():
             import code_prompt_schema_exception
-            return code_prompt_schema_exception.apply(self,messages,response_format,reply)
+            reply=code_prompt_schema_exception.apply(self,messages,response_format,reply)
+        if response_format is not None and (RUN/'json-tail-comma-amendment.json').exists():
+            import code_prompt_json_syntax
+            reply=code_prompt_json_syntax.apply(self,messages,response_format,reply)
         return reply
 
     def remaining_seconds(self):

@@ -7,6 +7,7 @@ from pathlib import Path
 
 from verify_code_prompt import no_network  # Installs the network-denying audit hook.
 from index_artifacts import read_table
+from code_prompt_json_syntax import candidate as tail_comma_candidate
 
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[1]
@@ -79,6 +80,30 @@ def main():
     assert sum(e['request_body_sha256']==syntax['request_body_sha256'] for e in events)==1
     assert events[1026]['schema_syntax_exception']['candidate_content_sha256']==diagnosis['candidate_content_sha256']
     assert 'recovery' not in events[1026]  # Transport validation/usage already succeeded before syntax failure.
+    policy=read(OUT/'json-tail-comma-amendment.json')
+    assert s['json_tail_comma_policy']==policy and policy['human_approval_utc']=='2026-10-14T01:27:36+00:00'
+    assert policy['limits_before']==policy['limits_after']==s['limits']
+    assert policy['transient_retry_policy_unchanged'] and not policy['total_deadline_reintroduced']
+    repairs=s['json_syntax_repairs'];assert any(r['original_event']==1091 for r in repairs)
+    assert len({r['original_event'] for r in repairs})==len(repairs)
+    for repair in repairs:
+        path=OUT/repair['evidence_file'];assert sha(path)==repair['evidence_sha256']
+        record=read(path);original=record['original_content'];fixed,offsets,strings=tail_comma_candidate(original)
+        assert fixed==record['candidate_content'] and offsets==record['removed_character_offsets_zero_based']
+        assert offsets and tail_comma_candidate(fixed)[2]==strings
+        assert hashlib.sha256(original.encode()).hexdigest()==record['original_content_sha256']
+        assert hashlib.sha256(fixed.encode()).hexdigest()==record['candidate_content_sha256']
+        try:json.loads(original)
+        except json.JSONDecodeError:pass
+        else:raise AssertionError('Valid JSON must not pass through the repair path')
+        assert isinstance(json.loads(fixed),dict) and record['original_schema_validated']
+        event=events[record['original_event']-1]
+        assert event['usage']==record['original_usage'] and record['provider_calls_for_repair']==0
+        assert event['request_body_sha256']==record['request_body_sha256']
+        assert event['schema_syntax_exception']['evidence_file']==repair['evidence_file']
+        matching=[e for e in events if e['request_body_sha256']==record['request_body_sha256']]
+        assert sum(e['status']=='validated' for e in matching)==1
+        assert max(e['sequence'] for e in matching)==record['original_event']  # Never resend after complete reply.
     index=read(OUT/'index-summary.json');sample=read(OUT/'quality-sample.json')
     fixed_review=read(OUT/'fixed-graph-review.json')
     for kind in ['entities','relationships','communities','community_reports']:

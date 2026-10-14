@@ -39,7 +39,8 @@ def main(initial_prompts=None):
         'executions','recoveries','index_elapsed_seconds','index_finished_utc',
         'retrieval_finished_utc','generation_finished_utc','stopped_utc','stop_reason',
         'window_started_utc','window_deadline_utc','execution_windows','evaluation_authorization','host_interruption_timing',
-        'schema_format_exceptions','schema_exception_applications']
+        'schema_format_exceptions','schema_exception_applications',
+        'json_tail_comma_policy','json_syntax_repairs','json_syntax_repair_applications']
     public={k:state[k] for k in public_keys if k in state}
     event_keys=['sequence','service','phase','workflow','input_tokens','items','status',
         'request_body_sha256','started_utc','source_commit','supervisor_reason','worker_exit',
@@ -94,6 +95,14 @@ def main(initial_prompts=None):
             event['visible_output_common_tokens']=recovery['visible_output_common_tokens']
             event['requested_output_limit_exceeded']=(reply['usage']['completion_tokens']>2048
                 or recovery['visible_output_common_tokens']>2048)
+        syntax=next((r for r in state.get('json_syntax_repairs',[]) if r['original_event']==seq),None)
+        if syntax:
+            assert 'schema_syntax_exception' not in event
+            event['schema_syntax_exception']={
+                'original_content_sha256':syntax['original_content_sha256'],
+                'candidate_content_sha256':syntax['candidate_content_sha256'],
+                'authorization_utc':syntax['human_approval_utc'],'evidence_file':syntax['evidence_file'],
+                'note':'Run-authorized trailing commas only; original reply/cache/usage retained and original schema checked. No model resend.'}
     public['operation_counts']=dict(classifications)
     if any(e.get('request_dispatched') is False for e in public['events']):
         public['provider_dispatch_attempts']=dict(Counter(e['service'] for e in public['events'] if e.get('request_dispatched') is not False))

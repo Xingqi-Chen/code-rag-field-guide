@@ -56,3 +56,6 @@ python3 research/pilot/verify_code_prompt.py
 
 
 用户于2026-10-14 01:03:05 UTC批准一个精确格式例外：第1027次已保存的社区报告回复，仅删除离线核实的4个对象末尾逗号后按原schema校验。原回复、差异和usage保留，不重发，不授权其他JSON或语义修复。该处理在内存副本上进行；正式结果须披露其与完全未经修改的官方输出路径之区别。[授权与精确候选](../results/code-prompt/schema-1027-authorization.json)及[恢复入口](../resume_code_prompt_schema.py)。其余预算、提示词、检索参数和评分不变。
+
+
+用户于2026-10-14 01:27:36 UTC进一步批准本轮统一纯JSON尾逗号处理，从保留的1091回复继续。只删除字符串外、下一非空白字符为闭括号的逗号；候选须通过原schema，所有字符串内容保持不变；不重发已有完整回复，逐条保存原文、偏移和候选。该授权不含任意JSON或语义修复，不改变预算与检索／评分。[统一授权](../results/code-prompt/json-tail-comma-authorization.json)与[实现](../code_prompt_json_syntax.py)。
