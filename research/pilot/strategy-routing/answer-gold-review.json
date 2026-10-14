@@ -1,0 +1,108 @@
+{
+  "schema": "strategy-routing-answer-gold-review-v1",
+  "review_date_utc": "2026-10-14",
+  "review_target": "research/pilot/strategy-routing/answer-gold.json",
+  "target_sha256": "d1bdca1bf597530a0f90081220b5370893bc04742b080fe3dbd492dd7b3de225",
+  "outcome": "passed_with_stated_limits",
+  "reviewer_scope": "委派AI独立于执行/路由实现；本文件为同一审阅者构建标准后的第二遍一致性检查，不冒称另一名盲评者或人类复核。",
+  "checks": [
+    {
+      "check": "20题原文、kind、split逐字保留",
+      "passed": true
+    },
+    {
+      "check": "23唯一题，每题3–6点，criterion与rubric一一对应",
+      "passed": true,
+      "criteria_total": 87
+    },
+    {
+      "check": "六题global原标准整对象保留；对应criteria/evidence与原文件深比较相同",
+      "passed": true
+    },
+    {
+      "check": "Q01/Q07/Q13两个组使用同一标准和同一新回答，不重新生成挑优",
+      "passed": true
+    },
+    {
+      "check": "回答test16含Q19/Q20、dev4单列；检索15仅排除Q19",
+      "passed": true
+    },
+    {
+      "check": "每点至少有已验源码锚点或明确题目需求/边界依据",
+      "passed": true
+    },
+    {
+      "check": "所有既有源码锚点span_sha256与冻结源码逐项匹配",
+      "passed": true,
+      "source_anchor_count": 94
+    },
+    {
+      "check": "所有allowlist源码/文档文件哈希匹配",
+      "passed": true,
+      "files_checked": 41
+    },
+    {
+      "check": "AsyncSession负例只用allowlist Python AST ClassDef精确名称检查，零命中且零解析失败",
+      "passed": true,
+      "files_checked": 34
+    },
+    {
+      "check": "没有内容分与引用/证据充分度混为单一分数；错误断言另外记账且不重复扣分",
+      "passed": true
+    },
+    {
+      "check": "无长度奖励；后果推断与既有事实区分；feature只规划不要求真实补丁/测试运行",
+      "passed": true
+    },
+    {
+      "check": "本轮零网络/API；未读取scores.json或新生成答案；只写两个新文件",
+      "passed": true
+    },
+    {
+      "check": "公开负例allowlist路径存在且字节与冻结准备manifest一致",
+      "passed": true,
+      "file": "research/pilot/files.json"
+    }
+  ],
+  "potential_ambiguities_resolved": [
+    {
+      "issue": "global Q07-C3要求构造Request，旧检索gold主要锚点只含prepare_request调用",
+      "resolution": "增加冻结sessions.py:L563-L575回答定位锚点；不改变原检索gold、分母或global criterion。"
+    },
+    {
+      "issue": "global Q13-C1包括iteration而原Q13检索gold仅set/get",
+      "resolution": "增加structures.py:L57-L58回答定位；只补解释既有global标准，不扩大主检索评分范围。"
+    },
+    {
+      "issue": "Q20选择规则需要前缀顺序，原Q20片段只含注册/扫描/send",
+      "resolution": "补mount:L799-L808支持长前缀优先；要求保留运行时精确类未知，不能用默认HTTPAdapter替代。"
+    },
+    {
+      "issue": "Q19无正向行号而回答仍需计分",
+      "resolution": "3个行为要点按未找到、限定范围、不替代评分，检索召回仍无分母；不要求模型虚构执行过全库搜索。"
+    },
+    {
+      "issue": "G02此前是某固定诊断见证的标签，但本轮题目是新认证方案扩展规划",
+      "resolution": "本轮只采用global-questions.json的认证扩展问题与global-gold标准；未将HTTPAdapter dunder诊断见证当G02题意。"
+    },
+    {
+      "issue": "未来feature方案和现有源码陈述容易混淆",
+      "resolution": "F02-plan以冻结题目定义期望行为；源码仅定位已有责任及兼容边界，不声称default_timeout已实现。"
+    },
+    {
+      "issue": "同一错误既扣criterion又被账本再扣",
+      "resolution": "相关criterion按口径评分；账本只单独报告风险，不做二次惩罚。"
+    },
+    {
+      "issue": "Q12条件替换与回调返回类型边界可能重复计点；Q16旁支auth可能超过问题必要要求",
+      "resolution": "Q12-C3只评数据传递，C4评动态目标/返回类型保证；Q16-C3满分只要求headers与params，auth为可提但非必答。"
+    },
+    {
+      "issue": "空回答/运行失败若被丢出分母会使完成率较低的方法看似更好",
+      "resolution": "任务主均值保留题并记0，同时单列失败；完成题附表不替换主结果。重试只能按另行冻结执行协议，不允许挑优。"
+    }
+  ],
+  "not_blind": "此前研究历史已在本会话可见；不能声称无先验。制定本轮标准时未按过去分数/答案选点；没有新答案可供调分。",
+  "allowed_next_step": "由主代理将标准连同路由/执行协议冻结后再启动已获授权的实验；本任务没有启动任何调用。",
+  "remaining_blockers": []
+}

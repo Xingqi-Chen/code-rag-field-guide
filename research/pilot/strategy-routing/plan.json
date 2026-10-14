@@ -1,0 +1,120 @@
+{
+  "status": "awaiting_generation_cap_confirmation_before_any_paid_call",
+  "purpose": "One predeclared text-routed Local/Global/DRIFT method compared with BM25, Microsoft Basic and hybrid; no per-query oracle or three-strategy cross product.",
+  "input_snapshot_commit": "0e322af87745eff34caffe4df68456ebc20d9068",
+  "graph_result_commit": "452448a31c61d64d5ea80adeeb54e8a851feac3d",
+  "cohorts": {
+    "main20": {
+      "questions": 20,
+      "answer_test_denominator": 16,
+      "answer_dev_denominator": 4,
+      "retrieval_test_scorable_denominator": 15
+    },
+    "supplement6": {
+      "questions": 6,
+      "overlap_with_main": [
+        "Q01",
+        "Q07",
+        "Q13"
+      ],
+      "additional_unique": [
+        "F02-plan",
+        "G01",
+        "G02"
+      ],
+      "aggregate_separately": true
+    }
+  },
+  "methods": [
+    "routed_graphrag",
+    "bm25",
+    "ms_basic",
+    "hybrid"
+  ],
+  "routing": "routing_rules.route(query), ordered deterministic regex; unknown classification falls back to Local; failures do not trigger another route.",
+  "parameters": {
+    "local_context_tokens": 12000,
+    "baseline_context_tokens": 12000,
+    "global_community_level": 0,
+    "global_map_context_tokens": 12000,
+    "global_map_batches": 4,
+    "global_max_map_length": 1000,
+    "global_max_reduce_length": 2000,
+    "drift_community_level": 2,
+    "drift_k_followups": 2,
+    "n_depth": 2,
+    "primer_folds": 1,
+    "concurrency": 1,
+    "local_search_max_data_tokens": 4000,
+    "local_search_text_unit_prop": 0.5,
+    "local_search_community_prop": 0.15,
+    "drift_reduce": true,
+    "requested_output_tokens_per_request": 2048,
+    "common_input_tokens_per_request": 16000,
+    "common_input_tokens_per_question_method_including_retries": 64000,
+    "runtime_physical_concurrency": 1,
+    "generation_request_seconds": 120,
+    "embedding_request_seconds": 30,
+    "total_wall_deadline": null
+  },
+  "budget": {
+    "drift_logical_generation_per_question_max": 7,
+    "global_logical_generation_per_question_max": 5,
+    "nominal_generation_max": 178,
+    "generation_with_two_extra_transient_attempts_per_request_max": 534,
+    "carry": {
+      "generation_reservations": 1349,
+      "generation_common_input_tokens": 1977136,
+      "embedding_tokens": 658211,
+      "embedding_attempts": 103
+    },
+    "generation_limit_current": 1600,
+    "generation_reservations_remaining": 251,
+    "generation_limit_required_for_full_retry_bound": 1883,
+    "generation_limit_increase_required": 283,
+    "per_question_method_common_input_cap_including_retries": 64000,
+    "unique_questions": 23,
+    "answer_methods": 4,
+    "new_common_input_hard_max": 5888000,
+    "cumulative_common_input_hard_max": 7865136,
+    "generation_common_input_limit_unchanged": 8000000,
+    "embedding_new_items_max_no_retry": 68,
+    "embedding_attempts_max_with_retries": 204,
+    "embedding_tokens_max_with_retries": 1632000,
+    "embedding_cumulative_usd_hard_max": "0.29772743",
+    "embedding_cumulative_usd_limit_unchanged": "1.00",
+    "note": "Worst transient bound assumes two extra attempts for every logical generation/embedding request. Common-input64k is a hard cumulative per-question-method cap; repeated transient failures may exhaust it before all stages finish. Such failures remain in denominators. Provider-reported input may differ; requested output2048 is known not to be enforced by this proxy, so no total-generation-dollar guarantee."
+  },
+  "generation_model": "gpt-5.6-luna via existing approved provider; backend identity not independently verified",
+  "embedding_model": "text-embedding-3-large,3072 dimensions via existing approved provider",
+  "prompt_policy": "Append the same supplied-snapshot-only evidence restriction to every generation subcall. HyDE/intermediate answers are synthetic search material, never raw source evidence. No gold, rubric, hidden tests, prior answers or scores sent to models.",
+  "randomness": {
+    "seed": 20261012,
+    "hyde_template": "Replace only primer.secrets reference with a deterministic choice selecting minimum sha256(seed:raw_query:report_id). Save report ID and hash. No gold or result access.",
+    "followups": "Use a dedicated random.Random seeded from seed and raw question per search for state.random.shuffle; preserve upstream shuffle behavior. PYTHONHASHSEED fixed before process startup.",
+    "remote_generation_not_deterministic": true
+  },
+  "accounting": [
+    "Carry forward1349 generation reservations,1977136 common-input tokens,658211 embedding tokens and103 current-ledger embedding attempts. Do not alter prior index ledger.",
+    "Count all actual attempts and every new administrative reservation; requested1883 includes no extra hidden probes or reservations.",
+    "Report provider usage separately from common-token input; unknown usage is unknown, never0.",
+    "Save every actual stage prompt/response, context tables, source provenance and timestamp; suppress credentials and private filesystem paths.",
+    "All retries count against per-request, per-question-method and cumulative caps."
+  ],
+  "failure_policy": "At most two additional attempts per same request for previously authorized transient classes; preserve successful reply/cache and never resend it. Deterministic minimal syntax-only repair may reuse a complete reply with original/diff/schema audit, no missing fields or semantic repairs. Budget/schema/semantic failures remain in denominators; no post-result routing or unlimited retries.",
+  "evaluation": [
+    "Answer necessary-point0/.5/1, equal weight per question; source/citation support, specific errors and unsupported assertions separate.",
+    "Separate raw-source evidence union over actual read stages from final-generation raw-source context. Intermediate text/report descriptions are not source evidence.",
+    "Track actual calls,input/output,all context/source tokens and unique source rows,wall latency and failure rate per question/method.",
+    "Main20 test/dev separate. Supplement6 separate; overlapping new answers reused,old experimental answers not mixed.",
+    "No feature patches or tests in this round; planning results do not measure implementation success.",
+    "Failure with no final answer gets0 answer coverage and explicit failed status; partial retrieval footprint may be reported separately."
+  ],
+  "limitations": [
+    "Previously seen questions and prior-result-aware researchers; route fixed before new results,not a new blinded benchmark.",
+    "Equal64k total common-input ceiling is not equal actual spend; single-round baselines may use less.",
+    "Limited DRIFT parameters and deterministic randomness adapters are explicit deviations from defaults; no claim of default-DRIFT or static-call-graph completeness.",
+    "Official DRIFT can rank/shuffle incomplete actions across all pending branches; two epochs are not guaranteed two-hop traversal.",
+    "Shared proxy may exceed requested output2048; no hard total-output or generation-dollar guarantee."
+  ]
+}

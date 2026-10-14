@@ -1,0 +1,171 @@
+{
+  "reviewer": {
+    "identity": "independent AI audit agent",
+    "human": false,
+    "blind": false
+  },
+  "reviewed_utc": "2026-10-14T03:48:35.800553+00:00",
+  "status": "preparation_arithmetic_and_official_call_bound_passed_execution_adapter_not_yet_reviewed",
+  "scope": "Offline source inspection, synthetic official DRIFT orchestration, exact preflight reconstruction, existing report-vector reads and budget arithmetic. No paid execution approval is implied.",
+  "external_api_calls": 0,
+  "credentials_read": false,
+  "old_ledger_index_scores_modified": false,
+  "paid_ledger_sha256_before_and_after": "dbc338e5f13bd2703b7b4c1110b3d4f569a2a6a4d8db5f6182f7de079e2c6860",
+  "evidence": {
+    "preflight_sha256": "8011adb19356dd32799b39368fe5b4cbc0a3d75cce6af24efae539f28e0e0ad7",
+    "prepare_sha256": "0251eff4627fc686c1ee53c640d54f3a48b5fa01448d3714d9d1a8a4ed596da7",
+    "routing_rules_sha256": "6d5b920e8e87fc00e0f4c9e5927bf9a75c06b048ce294eff5e4fba4999c57236",
+    "mock_file": "research/pilot/strategy-routing/mock_drift.py",
+    "mock_sha256": "5a86604136c3eadc0e77f0ecd957bc1a5985a013a3fcd6c8ec3bc0d8051808da",
+    "mock_result_file": "research/pilot/strategy-routing/mock-result.json",
+    "mock_result_sha256": "eb44142cc0629701b89b002bce0c0728fbfbbed7a57dddafa93f31e8c05c7307",
+    "official_source_sha256": {
+      "query/structured_search/drift_search/search.py": "32870526eb655235a656b33bb954004c81c49b8146189d3d8bd627ec6a702416",
+      "query/structured_search/drift_search/primer.py": "9dcecfd6028a5b1a29846c88c4535970e8fa35887cd4fb4ab5ff4db773864110",
+      "query/structured_search/drift_search/action.py": "4b0d08d24e4a2f4bcd7e0a784723e9d58a2e67ea18a9cb19d4d706c542fa42dd",
+      "query/structured_search/drift_search/drift_context.py": "d3da533d9eb6833bd4af048ab45b94f533e3fa3afd32fcd57ca2f5386442f038",
+      "query/structured_search/drift_search/state.py": "2af60554879cb4eb54df0e1683afc9171867783fc9b7a210ce4ebe819f159175"
+    }
+  },
+  "independent_reconstruction": {
+    "unique_queries": 23,
+    "method_count": 4,
+    "answer_cells": 92,
+    "routes": {
+      "local": 8,
+      "drift": 13,
+      "global": 2
+    },
+    "question_text_and_route_hashes_match_preflight": true,
+    "cohorts": "Original main20 and supplemental6 stay separate. Q01/Q07/Q13 reuse the same new answer in both views; only F02-plan/G01/G02 add unique queries.",
+    "drift_level2_reports": 367,
+    "existing_report_vectors_verified": 367,
+    "vector_dimensions": 3072,
+    "global_level0_reports": 23,
+    "global_map_batches": 4,
+    "global_map_context_tokens": [
+      10796,
+      11422,
+      10705,
+      1721
+    ],
+    "global_map_chunks_equal_prepared_bytes": true,
+    "two_largest_drift_report_tokens": [
+      1683,
+      1681
+    ]
+  },
+  "official_call_bound": {
+    "config": {
+      "drift_k_followups": 2,
+      "n_depth": 2,
+      "primer_folds": 1,
+      "local_search_n": 1
+    },
+    "drift_generation_max": 7,
+    "drift_generation_components": {
+      "hyde": 1,
+      "primer": 1,
+      "local": 4,
+      "reduce": 1
+    },
+    "drift_dynamic_embedding_max": 5,
+    "embedding_explanation": "One HyDE answer embedding plus one embedding for each of at most four Local subqueries. Reusing report embeddings does not remove these dynamic embeddings. Local vector retrieval is source-inspected; the mock uses a stub for that component.",
+    "global_generation_max": 5,
+    "global_components": {
+      "map": 4,
+      "reduce": 1
+    },
+    "global_conditions": "Static level0 selection, dynamic_community_selection=False, fixed four batches, allow_general_knowledge=False. A no-positive-map-points result may skip reduce and use fewer calls.",
+    "depth_meaning": "Two epochs choosing at most two actions each from all incomplete actions. This is not a guarantee of following a two-hop chain; the second epoch can select remaining primer siblings.",
+    "concurrency": "DRIFT uses gather and does not enforce config.concurrency on this path. The paid adapter/runtime must serialize actual generation and embedding dispatch and hold its lock through reservation and completion.",
+    "source_locations": [
+      "query/structured_search/drift_search/search.py:186",
+      "query/structured_search/drift_search/search.py:242",
+      "query/structured_search/drift_search/search.py:247",
+      "query/structured_search/drift_search/primer.py:127",
+      "query/context_builder/entity_extraction.py:64"
+    ]
+  },
+  "budget_recalculation": {
+    "normal_generation_equation": "23*3 + 8 + 13*7 + 2*(4+1) = 178",
+    "normal_generation_max": 178,
+    "physical_generation_with_two_extra_attempts_per_logical_request_max": 534,
+    "carry_generation_reservations": 1349,
+    "current_generation_limit": 1600,
+    "current_remaining": 251,
+    "generation_limit_needed_for_full_retry_bound": 1883,
+    "increase_required": 283,
+    "common_input_equation": "1977136 + 23*4*64000 = 7865136 <= 8000000",
+    "cumulative_common_input_max": 7865136,
+    "common_input_remaining_margin": 134864,
+    "new_embedding_items_equation": "13*(1+4) + 3 = 68; the three newly added original questions share exact embedding cache across methods.",
+    "new_embedding_physical_attempts_max": 204,
+    "new_embedding_tokens_max_at_8000_each": 1632000,
+    "embedding_carry_tokens": 658211,
+    "cumulative_embedding_tokens_max": 2290211,
+    "cumulative_embedding_usd_estimate_max": "0.29772743",
+    "embedding_physical_attempts_carry": 103,
+    "embedding_physical_attempts_cumulative_max": 307,
+    "conditions": [
+      "1883 contains no spare probe, administrative reservation or extra diagnostic generation allowance. All reservations, including unsent administrative reservations, still count against the fixed cap.",
+      "The 64k cap is cumulative common-encoding generation input for each question-method cell, including all subcalls and all dispatched or conservatively reserved retries; it is not 64k per individual request.",
+      "A cell can exhaust 64k before its full retry allowance is consumed. Record failure and retain the original denominator; do not switch strategy or silently omit the cell.",
+      "Per-request 16k generation-input and 8000 embedding-token bounds must be enforced before dispatch, including generated HyDE text and follow-up questions.",
+      "The 68 embedding bound requires exact original-query text reuse across methods and no hidden embedding of alternate query forms or instructions.",
+      "2048 is only requested output. Known upstream overruns make a hard total generation-dollar or output-token guarantee invalid. Unknown usage remains unknown."
+    ]
+  },
+  "execution_requirements_not_yet_validated": [
+    {
+      "severity": "blocking_before_paid_start",
+      "id": "new_adapter",
+      "finding": "The existing full_runtime completion adapter cannot be reused unchanged: it rejects DRIFT stream/temperature/top_p/n/max_completion_tokens/response_format_json_object kwargs and replaces any response_format with the community REPORT_SCHEMA. The old Global adapter likewise lacks PrimerResponse handling.",
+      "required": "Use a dedicated routing adapter accepting exactly the observed official arguments, supporting PrimerResponse and Local async chunks. Validate its actual transmitted payload and structured result offline before dispatch; preserve stop escalation past upstream catch(Exception).",
+      "source": "research/pilot/full_runtime.py:347; research/pilot/full_runtime.py:410; mock-result.json"
+    },
+    {
+      "severity": "blocking_before_paid_start",
+      "id": "hard_budgets_and_concurrency",
+      "finding": "Official DRIFT data_max_tokens, primer_llm_max_tokens and concurrency fields do not enforce the proposed total, primer input or dispatch concurrency in this code path. Reduce concatenates all available answers without a token truncation guard.",
+      "required": "Enforce per-request16k, per-cell64k, carried total input/call/embedding limits and concurrency1 in the new runtime before every physical dispatch. Freeze the failure behavior and test its boundaries."
+    },
+    {
+      "severity": "blocking_before_paid_start",
+      "id": "routing_state_isolation",
+      "finding": "DRIFTSearch retains QueryState and skips priming once its graph is nonempty. Reusing one engine across independent questions would leak prior answers and contexts.",
+      "required": "Instantiate a fresh DRIFT engine/state per question; give each question its own deterministic selection state and isolated budget counters."
+    },
+    {
+      "severity": "blocking_before_paid_start",
+      "id": "prior_caches_and_retries",
+      "finding": "The arithmetic assumes no repeated successful subrequest is sent during resume and no repeated failed subrequest exceeds its shared allowance.",
+      "required": "Persist exact request-body and schema cache keys, deterministic template/action state and per-cell counters. Replay successes exactly; transient categories share at most three physical attempts, honoring Retry-After and preserving unknown usage. Do not route elsewhere after budget/parser failure."
+    },
+    {
+      "severity": "approval_pending",
+      "id": "generation_cap",
+      "finding": "The proposed 1883 generation reservation ceiling is an increase of283 over the existing1600. This audit validates the arithmetic, not authorization of that increase.",
+      "required": "Keep paid execution stopped until the parent confirms the specific amendment is authorized."
+    }
+  ],
+  "fairness_and_disclosure": [
+    "Treat text-routed Local/Global/DRIFT as one fixed method. Routing code reads question text only and is frozen before new outputs; no all-strategy cross-product or best-result selection.",
+    "This is a follow-up study designed after earlier results were inspected, not a newly unseen benchmark. Keep main20 and supplemental6 separate and disclose their three overlapping questions.",
+    "Common input ceilings are equal maximum budgets, not equal actual computation: BM25/Basic/hybrid normally generate once while DRIFT and Global consume multiple calls and different source/report mixes. Report actual total input, output, calls, embeddings and elapsed time per cell.",
+    "Freeze baseline context/token budgets and Basic k10 before generation. Reuse the same source text/vector snapshot; retain same evidence provenance for all source excerpts. Gold must be absent from routing, retrieval and model messages.",
+    "Official DRIFT prompts allow general knowledge. If baselines are evidence-only, add the same frozen evidence restriction to every strategy subcall, including HyDE, primer, Local and reduce, and disclose that prompt adaptation.",
+    "Official HyDE uses secrets.choice, which random.seed and PYTHONHASHSEED do not control. A frozen sha256(seed:raw_query:report_id) template choice and a question-specific random.Random for action shuffle are reproducibility adaptations, not untouched upstream randomness. Record actual chosen IDs and action order.",
+    "PrimerResponse is a Pydantic model with coercion and no strict score-range/length constraints. Local actions use try_parse_json_object, which can clean/repair malformed JSON and accept duplicate last values; this is not strict schema validation. Save original response, parsed value and any transformation, and stop on unsupported parsing failures without another paid request.",
+    "The pre-existing code graph includes disclosed report-format repairs and four upstream-loose report parses. Reuse it unchanged and carry these limitations into this new comparison.",
+    "DRIFT SearchResult.context_data contains Local action contexts, not the full primer/HyDE report input. Preserve every stage request/response and original report/source mapping; do not infer all exposed evidence from final context_data alone.",
+    "Official DRIFT SearchResult.completion_time is computed before reduce. Measure end-to-end time externally through final reduce, and count tokens from the runtime ledger because upstream prompt counts can omit user messages.",
+    "New answer quality must be scored against a frozen answer rubric; source Recall/coverage from the old retrieval-only study is a different measure. F02-plan is planning only, not patch execution. Negative and failed answers require explicit rubric treatment, not silent exclusion."
+  ],
+  "mock_interpretation": "The official DRIFT orchestration and its typed/stream interface were exercised with synthetic model responses. It proves a call-path bound under the stated configuration, not network compatibility, retrieval quality, budget enforcement, answer accuracy or successful paid execution.",
+  "write_scope": [
+    "research/pilot/strategy-routing/mock_drift.py",
+    "research/pilot/strategy-routing/mock-result.json",
+    "research/pilot/strategy-routing/budget-review.json"
+  ]
+}

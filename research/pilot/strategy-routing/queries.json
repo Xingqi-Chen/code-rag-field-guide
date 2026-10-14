@@ -1,0 +1,281 @@
+[
+  {
+    "id": "Q01",
+    "query": "Where is case-insensitive header-key lookup implemented while retaining the last spelling of a key?",
+    "original_split": "test",
+    "cohorts": [
+      "main20",
+      "supplement6"
+    ],
+    "route": {
+      "method": "local",
+      "rule": "fixed_local_fallback"
+    }
+  },
+  {
+    "id": "Q02",
+    "query": "Find where outgoing header names and values are validated before they are added to a prepared request.",
+    "original_split": "test",
+    "cohorts": [
+      "main20"
+    ],
+    "route": {
+      "method": "local",
+      "rule": "fixed_local_fallback"
+    }
+  },
+  {
+    "id": "Q03",
+    "query": "Why can an HTTP response object be false in an if statement even though a response was received?",
+    "original_split": "dev",
+    "cohorts": [
+      "main20"
+    ],
+    "route": {
+      "method": "local",
+      "rule": "fixed_local_fallback"
+    }
+  },
+  {
+    "id": "Q04",
+    "query": "Locate the method that removes a registered response callback and tells the caller whether it existed.",
+    "original_split": "dev",
+    "cohorts": [
+      "main20"
+    ],
+    "route": {
+      "method": "local",
+      "rule": "fixed_local_fallback"
+    }
+  },
+  {
+    "id": "Q05",
+    "query": "Where are JSON decoding errors converted into the library-specific exception for response.json()?",
+    "original_split": "test",
+    "cohorts": [
+      "main20"
+    ],
+    "route": {
+      "method": "local",
+      "rule": "fixed_local_fallback"
+    }
+  },
+  {
+    "id": "Q06",
+    "query": "Locate how streamed lines carry an unfinished last line across chunks, including a custom delimiter.",
+    "original_split": "dev",
+    "cohorts": [
+      "main20"
+    ],
+    "route": {
+      "method": "local",
+      "rule": "fixed_local_fallback"
+    }
+  },
+  {
+    "id": "Q07",
+    "query": "Trace requests.get(url) from its public wrapper through preparation to the selected transport adapter; stop at adapter.send.",
+    "original_split": "test",
+    "cohorts": [
+      "main20",
+      "supplement6"
+    ],
+    "route": {
+      "method": "drift",
+      "rule": "explicit_trace"
+    }
+  },
+  {
+    "id": "Q08",
+    "query": "Trace session-level and request-level headers into the prepared request and then to header validation.",
+    "original_split": "test",
+    "cohorts": [
+      "main20"
+    ],
+    "route": {
+      "method": "drift",
+      "rule": "explicit_trace"
+    }
+  },
+  {
+    "id": "Q09",
+    "query": "During a cross-host redirect, trace the decision to remove an Authorization header and identify the condition for replacing auth from the environment.",
+    "original_split": "test",
+    "cohorts": [
+      "main20"
+    ],
+    "route": {
+      "method": "drift",
+      "rule": "explicit_trace"
+    }
+  },
+  {
+    "id": "Q10",
+    "query": "Trace cookie merging and construction of the Cookie header while a Session prepares a request, before transport.",
+    "original_split": "test",
+    "cohorts": [
+      "main20"
+    ],
+    "route": {
+      "method": "drift",
+      "rule": "explicit_trace"
+    }
+  },
+  {
+    "id": "Q11",
+    "query": "How does a transport response header set the text encoding used by a Response, and what is the fallback if it remains unset?",
+    "original_split": "dev",
+    "cohorts": [
+      "main20"
+    ],
+    "route": {
+      "method": "drift",
+      "rule": "explicit_trace"
+    }
+  },
+  {
+    "id": "Q12",
+    "query": "Follow response callback dispatch from Session.send. Does every registered callable necessarily return the Response that later steps use?",
+    "original_split": "test",
+    "cohorts": [
+      "main20"
+    ],
+    "route": {
+      "method": "drift",
+      "rule": "explicit_trace"
+    }
+  },
+  {
+    "id": "Q13",
+    "query": "If case-insensitive header key storage changes, identify the container operations, preparation consumer, and existing tests that must be inspected; do not claim they all require edits.",
+    "original_split": "test",
+    "cohorts": [
+      "main20",
+      "supplement6"
+    ],
+    "route": {
+      "method": "drift",
+      "rule": "change_impact_or_plan"
+    }
+  },
+  {
+    "id": "Q14",
+    "query": "If JSON Unicode detection changes, identify its direct response-decoding consumer and the existing focused detection test.",
+    "original_split": "test",
+    "cohorts": [
+      "main20"
+    ],
+    "route": {
+      "method": "drift",
+      "rule": "change_impact_or_plan"
+    }
+  },
+  {
+    "id": "Q15",
+    "query": "When changing rewind behavior for redirected streamed request bodies, which preparation state, redirect condition and focused error test need review?",
+    "original_split": "test",
+    "cohorts": [
+      "main20"
+    ],
+    "route": {
+      "method": "drift",
+      "rule": "change_impact_or_plan"
+    }
+  },
+  {
+    "id": "Q16",
+    "query": "If None-valued keys stop being removed when request and session settings merge, identify the merge rule and both the header/parameter and environment-setting call sites affected.",
+    "original_split": "test",
+    "cohorts": [
+      "main20"
+    ],
+    "route": {
+      "method": "drift",
+      "rule": "change_impact_or_plan"
+    }
+  },
+  {
+    "id": "Q17",
+    "query": "If adapter matching changes to case-sensitive or shortest-prefix-first, which registration order, selection loop and send call sites must be inspected?",
+    "original_split": "test",
+    "cohorts": [
+      "main20"
+    ],
+    "route": {
+      "method": "drift",
+      "rule": "change_impact_or_plan"
+    }
+  },
+  {
+    "id": "Q18",
+    "query": "If response callbacks are changed to replace data even when they return None, identify the dispatch rule, downstream cookie consumer and an existing test that this threatens.",
+    "original_split": "test",
+    "cohorts": [
+      "main20"
+    ],
+    "route": {
+      "method": "drift",
+      "rule": "change_impact_or_plan"
+    }
+  },
+  {
+    "id": "Q19",
+    "query": "Find the implementation of a class named AsyncSession in this indexed snapshot. If there is none, say it was not found rather than substitute a synchronous Session.",
+    "original_split": "test",
+    "cohorts": [
+      "main20"
+    ],
+    "route": {
+      "method": "local",
+      "rule": "fixed_local_fallback"
+    }
+  },
+  {
+    "id": "Q20",
+    "query": "An application mounts a custom adapter at runtime. From this repository alone, identify the exact class whose send method runs for that application.",
+    "original_split": "test",
+    "cohorts": [
+      "main20"
+    ],
+    "route": {
+      "method": "local",
+      "rule": "fixed_local_fallback"
+    }
+  },
+  {
+    "id": "F02-plan",
+    "query": "Plan the following feature; do not write a patch. Identify implementation responsibilities, behavioral edge cases, and tests to add or inspect. Add a per-instance mutable Session.default_timeout attribute, initialized to None. Calls through Session.request/get/post and other existing method wrappers that OMIT timeout must use that attribute. An explicitly supplied timeout, including None, must win. Support the existing float and (connect, read) timeout shapes without adding validation rules. Redirects must keep the effective timeout. Preserve the direct Session.send contract; do not introduce global defaults or change Session constructor arguments. Document the distinction between omitted timeout and explicit None. This is an original exploratory feature, not an upstream issue.",
+    "original_split": null,
+    "cohorts": [
+      "supplement6"
+    ],
+    "route": {
+      "method": "drift",
+      "rule": "change_impact_or_plan"
+    }
+  },
+  {
+    "id": "G01",
+    "query": "Explain how authentication responsibilities are distributed across this Requests snapshot: built-in handlers, request preparation, session/environment selection, redirects, proxy authentication, documentation and tests. Distinguish core support from third-party extensions.",
+    "original_split": null,
+    "cohorts": [
+      "supplement6"
+    ],
+    "route": {
+      "method": "global",
+      "rule": "global_scope"
+    }
+  },
+  {
+    "id": "G02",
+    "query": "A maintainer wants to support a new authentication scheme. Based on this Requests snapshot, explain which extension points and module responsibilities should be inspected, how request setup and optional response challenges fit together, and which existing behavior needs regression tests. Distinguish inspection targets from files that necessarily require changes.",
+    "original_split": null,
+    "cohorts": [
+      "supplement6"
+    ],
+    "route": {
+      "method": "global",
+      "rule": "global_scope"
+    }
+  }
+]
