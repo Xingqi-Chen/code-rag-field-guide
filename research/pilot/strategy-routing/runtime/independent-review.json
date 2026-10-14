@@ -1,0 +1,199 @@
+{
+  "status": "independent_review_passed",
+  "reviewed_utc": "2026-10-14T04:17:46.533458+00:00",
+  "reviewer": {
+    "identity": "independent AI audit agent",
+    "human": false,
+    "blind": false
+  },
+  "scope": "Offline review of the fixed strategy-routing runtime and production worker boundary, using temporary ledgers, synthetic model/embedding replies, an in-memory HTTP opener and the real pinned source graph and official query engines. No execution was started.",
+  "new_model_api_calls": 0,
+  "new_embedding_api_calls": 0,
+  "actual_credential_reads": 0,
+  "live_readiness_created": false,
+  "old_ledger_graph_scores_modified": false,
+  "user_authorization": {
+    "file": "research/pilot/strategy-routing/runtime/authorization.json",
+    "human_reply_utc": "2026-10-14T03:57:08+00:00",
+    "generation_reservations_new": 1883,
+    "note": "The review verifies implementation against the recorded authorization; it does not supply new budget authorization."
+  },
+  "implementation_sha256": {
+    "research/pilot/strategy-routing/runtime/bounded.py": "deef76323943bf32cb3aa28fe183bec71182bd8e8094415a79377d4da1965c51",
+    "research/pilot/strategy-routing/runtime/transport.py": "1b6e4ab987b4ff509a98367c2dde26d34303a05c874bdf4f7c07b52971b74f0e",
+    "research/pilot/strategy-routing/runtime/official.py": "814cee392a035243ba043e6acacb1383f677001f1b01774dd06b7526d283427e",
+    "research/pilot/strategy-routing/runtime/runner.py": "8142559bd79edffb10a2b4bcc8fdf0fe1f5738a2e7fc2cfe75b8a672350cd96a",
+    "research/pilot/strategy-routing/runtime/offline_worker.py": "02841c1b4f02f0975565824dcbeae18fd1c93bb9115798a5f86208b88ee174e6",
+    "research/pilot/strategy-routing/runtime/offline_integration.py": "2c8d5cd2b7546400ba1fb4b95a76963044cc6b890fd2c9dcbd527b8d12bc33f3",
+    "research/pilot/strategy-routing/runtime/tests/test_boundaries.py": "f9e73e34e08b67ed1ce24b0237dcb26a44d8712b300471042195e6a7bd5e3ad1",
+    "research/pilot/strategy-routing/runtime/authorization.json": "61ac67f82da919dcaadff9d54d1cf488892a2bdf9415ecfd1d8764bf0e208f53",
+    "research/pilot/strategy-routing/runtime/input-manifest.json": "6d8570cee4cb6eb0f157253ab95fb85d3712c98258312adfa5ff4ccd7a761960",
+    "research/pilot/probe_runtime.py": "6489f4d87d3bc0f2e6f55e3d6e9b70db6105212f8da6fcc60d8f3c99a5211820",
+    "research/pilot/code_prompt_transport.py": "5d7ab414ee5eb2f280c71834ccdf3824555d00b90aba050ce12f326b08e55e5d",
+    "research/pilot/full_retrieve.py": "3b73f89bc4a4fac0cd2a17cae33a38c145c679e943ee407314f85ec6721ccc2d",
+    "research/pilot/baselines.py": "3a8b2d12c0cf74fc122bffc4dc723cbda09fb93f17bb75b8139a9b39af26a37c",
+    "research/pilot/code_prompt_experiment.py": "517e8d13458ac5544e817b37dd16d4e0d79b8fef85201fd74bdd1dcb12f87466",
+    "research/pilot/full_index.py": "c50fe5e9102c43cddbaba7d140c17d8f83ffde419fdce9466696fd92a32038e6",
+    "research/pilot/full_runtime.py": "8763318bbccb05c59b5d1c4b7a9d415560a8bec8e0631c746a562009ad6d5e74",
+    "research/pilot/strategy-routing/runtime/offline-verification.json": "b930c62c188c3f175ea90ad80c961040e57b0f0da2b2454f97f59573bc2a3ae0"
+  },
+  "freeze_sha256": "3505ba039faa1591c49452e211d77ac6c52710ab673196d13c6d12bbc8467c0b",
+  "all_frozen_files_verified_unchanged": true,
+  "additional_input_manifest": {
+    "file": "research/pilot/strategy-routing/runtime/input-manifest.json",
+    "sha256": "6d8570cee4cb6eb0f157253ab95fb85d3712c98258312adfa5ff4ccd7a761960",
+    "files_verified": 526,
+    "total_bytes": 55793909,
+    "coverage": [
+      "80 reused contexts",
+      "134 imported embedding cache files and their manifest",
+      "231 vector-store files",
+      "fixed graph tables and source provenance",
+      "installed official query implementation and configuration inputs"
+    ]
+  },
+  "old_paid_ledger_sha256_before_and_after": "dbc338e5f13bd2703b7b4c1110b3d4f569a2a6a4d8db5f6182f7de079e2c6860",
+  "tests": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 LITELLM_LOCAL_MODEL_COST_MAP=True .cache/graphrag-venv/bin/python -m unittest discover -s research/pilot/strategy-routing/runtime/tests -v",
+      "exit_code": 0,
+      "passed": 22,
+      "coverage": [
+        "Live gate before directory creation or transport",
+        "Exact generation reservation/request/total/cell input boundaries",
+        "Embedding item and dollar caps",
+        "Successful cache replay without new reservation",
+        "Unknown usage remains null and observed output overrun is recorded",
+        "Three shared transient attempts and Retry-After",
+        "Generation and embedding serialize through one lock",
+        "Resume rejects counter reset and modified completed response",
+        "Pending unknown dispatch stops; complete saved reply recovers without redispatch",
+        "HTTP authorization rejection stops the next cell",
+        "Strict duplicate/nonfinite JSON rejection",
+        "Empty readiness manifest is rejected"
+      ]
+    },
+    {
+      "command": "PYTHONHASHSEED=20261012 PYTHONDONTWRITEBYTECODE=1 LITELLM_LOCAL_MODEL_COST_MAP=True .cache/graphrag-venv/bin/python research/pilot/strategy-routing/runtime/offline_integration.py",
+      "exit_code": 0,
+      "worker_checks": {
+        "synthetic_http_opener_calls": 3,
+        "timeouts_seconds": [
+          120,
+          120,
+          30
+        ],
+        "primer_schema_preserved": true,
+        "local_json_mode_preserved": true,
+        "embedding_validator_not_recursive": true,
+        "duplicate_worker_dispatch_prevented": true,
+        "duplicate_worker_preserves_completed_response_bytes": true
+      },
+      "official_checks": {
+        "drift_generation": 7,
+        "drift_dynamic_embedding": 5,
+        "drift_local_context_stages": 4,
+        "global_generation": 5,
+        "global_embedding": 0,
+        "cached_main_contexts": 80,
+        "extra_question_baseline_methods": 3,
+        "fresh_question_state": true,
+        "deterministic_replay_no_new_events": true,
+        "same_evidence_restriction_all_generation_subcalls": true,
+        "invalid_local_reply_stops_further_cell_subcalls": true
+      },
+      "stderr_note": "The deliberate invalid-Local test produces an upstream gather task-exception warning. The rejected cell guards prevent another dispatch; the test exits0. This is not a real API failure or successful answer-quality result."
+    },
+    {
+      "type": "independent additional temporary-directory/in-memory checks",
+      "checks": [
+        "Empty live-readiness implementation hash set rejects fatally",
+        "HTTP401,402,403 with missing or unfamiliar category, credential permissions and503 billing errors prevent next-cell dispatch",
+        "A gate that changes after Runtime construction stops before a new reservation or dispatch",
+        "503 then worker timeout then520 consumes exactly3 attempts and waits5 then15 seconds",
+        "Explicit request_dispatched:false forbids retry even for a timeout category"
+      ],
+      "passed": 5,
+      "network_calls": 0,
+      "actual_credential_reads": 0
+    }
+  ],
+  "resolved_findings": [
+    {
+      "id": "embedding-validator-recursion",
+      "severity_at_discovery": "blocking",
+      "resolution": "The worker uses an independent exact embedding validator, not the probe.validate_payload reference that it replaces. Actual worker behavior is now exercised with a synthetic HTTP opener."
+    },
+    {
+      "id": "fatal-error-scope",
+      "severity_at_discovery": "blocking",
+      "resolution": "HTTP401/402/403 normalize to fatal authorization reasons even without a recognized body category. Credential/account/security/global-budget/integrity/uncertain-dispatch failures stop the run. Transport gate Halts propagate fatally, and readiness is checked before reservation."
+    },
+    {
+      "id": "resume-counter-integrity",
+      "severity_at_discovery": "blocking",
+      "resolution": "Resume reconstructs cumulative and per-cell input counters from exact request files/events, verifies event sequence/body/key/index and refuses mismatches. The independently reproduced counter-reset case is covered by the regression test."
+    },
+    {
+      "id": "completed-response-preservation",
+      "severity_at_discovery": "blocking",
+      "resolution": "Completed response hashes are bound in the new ledger and verified on resume. A worker invoked again after its response already exists returns without overwriting it. A valid completed reply left before supervisor acknowledgement is recovered without sending another request."
+    },
+    {
+      "id": "review-gate-and-input-binding",
+      "severity_at_discovery": "blocking",
+      "resolution": "Readiness requires a fixed implementation file set instead of accepting an empty hash map. A separate new input manifest binds526 old read-only files; frozen protocol files and old paid ledger remain unchanged."
+    },
+    {
+      "id": "source-provenance-fairness",
+      "severity_at_discovery": "methodology correction",
+      "resolution": "DRIFT Local model-visible context now uses the shared source/provenance CSV renderer and whole-row4000-token prefix. The original upstream context is retained separately. Ranking, official query engine, frozen routing and gold are unchanged."
+    },
+    {
+      "id": "recovery-time-and-duplicate-evidence",
+      "severity_at_discovery": "accounting correction",
+      "resolution": "Execution segments are retained, completed segment durations are summed, and interrupted unknown-duration segments are counted explicitly. Repeated identical assembled evidence has a stable key and read_occurrences rather than duplicate rows."
+    }
+  ],
+  "verified_execution_properties": {
+    "routes": "One frozen routed GraphRAG method over23 unique queries, compared with BM25/Basic/hybrid; no result-based route switch.",
+    "budgets": {
+      "carry_generation_reservations": 1349,
+      "generation_reservations_ceiling": 1883,
+      "carry_common_input": 1977136,
+      "total_common_input_ceiling": 8000000,
+      "generation_request_input_max": 16000,
+      "question_method_cumulative_input_max": 64000,
+      "carry_embedding_tokens": 658211,
+      "embedding_item_max": 8000,
+      "embedding_cumulative_usd_ceiling": "1.00",
+      "embedding_attempts_ceiling": 1000,
+      "requested_output_tokens": 2048
+    },
+    "transport": "Only the existing fixed Responses and OpenAI embedding endpoints are available through the reviewed probe helper. No redirect, SDK fallback or hidden retry is introduced. Generation worker120seconds and embedding worker30seconds; outer supervisor adds2seconds. No overall wall deadline.",
+    "serialization": "Shared runtime lock spans wait, reservation, transport and response handling; process-level active.lock excludes a second controller. The worker also claims each dispatch slot exclusively.",
+    "retry": "At most two extra authorized transient attempts per exact service/body; timeout, connection interruptions,429 and5xx share the allowance and5/15-second minimum backoff with Retry-After. Unknown usage is never converted to zero.",
+    "replay": "Successful request bodies/schemas reuse exact cached replies. Each question has fresh QueryState; deterministic template and pending-action selection make whole-query replay stable.",
+    "failures": "A cell budget or complete-response content failure remains an explicit failed cell without route switching. Account/security/global budget/integrity failures stop the entire run.",
+    "source_isolation": "The completed graph and imported embeddings are only read. New reservations, responses, cache indices and answers use a distinct run directory. No index pipeline is launched.",
+    "execution_sessions": "Each create/resume records actual git HEAD, reviewed implementation hashes, Python version, process hash seed and prior counters before entering the query loop.",
+    "dispatch_markers": "Transport records the local worker dispatch_started marker in request_dispatched; explicit false prevents retry while retaining the conservative budget reservation."
+  },
+  "unresolved_blocking_findings": [],
+  "disclosures_and_followup_validation": [
+    "These are offline software and boundary tests, not real endpoint compatibility tests, retrieval-quality results or answer-accuracy evidence.",
+    "The adapter requests JSON/schema modes and rejects duplicate fields and schema failures more strictly than the upstream permissive JSON repair path. This behavior and any resulting failed cells must be disclosed; no paid regeneration is used to repair a complete reply.",
+    "The adapter accepts upstream temperature0/top_p1/n1 defaults but uses the fixed provider payload with temperature omitted, as its decision log records. Do not describe transmitted sampling arguments as identical to every upstream default.",
+    "DRIFT Local provenance rendering and4000-token whole-row clipping are explicit context serialization adaptations; save both the actual model-visible context and upstream context.",
+    "Assembled context is not automatically model-exposed evidence. Global records all four prepared map chunks before all dispatches; Local context can be assembled before a budget failure. Derive actual exposure and raw-source unions from the corresponding real request events and saved input, and label uncertain dispatch separately.",
+    "Request/response logs cover HyDE and primer as well as Local/reduce; final upstream context_data alone is not the full evidence footprint.",
+    "Execution segments with unknown interrupted duration must remain unknown; the sum of known segments is not a complete end-to-end latency when such segments exist. Recovery waiting time and replay occurrences must be identified.",
+    "The1883 cap has no allowance for hidden probes or new administrative reservations. Per-cell64k may stop execution before all nominal stages/retries; such failures remain in the frozen scoring denominator.",
+    "Provider output can exceed requested2048; actual usage and overruns must be retained, and missing usage remains unknown. The embedding estimate is not total model cost.",
+    "No new real answers have been reviewed. Final scoring,92-cell completeness, cohort denominators, exposure accounting, public export redaction and conclusion checks remain later work.",
+    "request_dispatched:true records a local dispatch-start marker written immediately before opener.open; it does not prove remote receipt or successful processing. Unknown outcomes and marker-to-network crash windows remain conservative reservations/attempts, not confirmed provider usage."
+  ],
+  "write_scope": [
+    "research/pilot/strategy-routing/runtime/independent-review.json"
+  ]
+}

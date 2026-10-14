@@ -13,7 +13,7 @@
 - [Global六题真实回答补充](pilot/results/global)：复用84份社区报告，42次map＋6次reduce，与6次同模型BM25回答对照；[冻结协议](pilot/global-plan.json)、[题目](pilot/global-questions.json)、[评分依据](pilot/global-gold.json)和全部请求／回答公开，独立于原有检索分数。
 - [失败链、阶段成本与更新语义](pilot/results/failure-analysis/README.md)：原样抽取见证、错误传播、引用核验及四例无网络更新函数微测；不新增模型调用，不改旧结果。
 - [代码提示词＋实体类型完成结果](pilot/results/code-prompt/README.md)：第二次完整索引、80份新Local上下文、400行合并分数及逐题／格式独立复核；未新增Global或功能生成。
-- [下一轮统一GraphRAG路由方案](pilot/strategy-routing/README.md)：只读预检与题型／评分冻结；需先确认累计生成上限1883，尚无新付费测试成绩。
+- [下一轮统一GraphRAG路由方案](pilot/strategy-routing/README.md)：保留题型／评分冻结；[独立运行器](pilot/strategy-routing/runtime/README.md)已完成离线检查，用户已批准累计生成上限1883。
 - [本轮过程与发布检查](process.md)。
 - [旧版与正常 Git 历史](legacy.md)：旧自制代码图实验退出新版证据。
 
