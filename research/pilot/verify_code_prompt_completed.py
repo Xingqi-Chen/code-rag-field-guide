@@ -57,6 +57,18 @@ def main():
     assert host['recovery']['new_calls_for_recovery']==0
     assert s['host_interruption_timing']['actual_process_end_utc'] is None
     assert 554 in s['request_timing']['missing_supervised_timing_sequences']
+    syntax=read(OUT/'schema-1027-amendment.json');diagnosis=read(OUT/'schema-1027-diagnosis.json')
+    assert syntax['human_approval_utc']=='2026-10-14T01:03:05+00:00'
+    assert syntax['approved_single_format_exception'] and syntax['event']==1027
+    assert syntax['new_provider_calls_for_repair']==0 and syntax['not_general_json_or_semantic_repair']
+    assert syntax['removed_character_offsets_zero_based']==[1595,2236,2876,3461]
+    assert s['schema_format_exceptions']==[syntax]
+    assert s['schema_exception_applications'] and all(a['original_event']==1027 and a['provider_calls_for_repair']==0
+        for a in s['schema_exception_applications'])
+    assert events[1026]['usage']==syntax['original_usage']==diagnosis['usage']
+    assert sum(e['request_body_sha256']==syntax['request_body_sha256'] for e in events)==1
+    assert events[1026]['schema_syntax_exception']['candidate_content_sha256']==diagnosis['candidate_content_sha256']
+    assert 'recovery' not in events[1026]  # Transport validation/usage already succeeded before syntax failure.
     index=read(OUT/'index-summary.json');sample=read(OUT/'quality-sample.json')
     for kind in ['entities','relationships','communities','community_reports']:
         rows=read(OUT/f'index/{kind}.json')

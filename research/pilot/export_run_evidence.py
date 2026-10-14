@@ -37,7 +37,8 @@ def main(initial_prompts=None):
         'embedding_cache_items','imported_successful_probe_cache','source_commit','workflows',
         'executions','recoveries','index_elapsed_seconds','index_finished_utc',
         'retrieval_finished_utc','generation_finished_utc','stopped_utc','stop_reason',
-        'window_started_utc','window_deadline_utc','execution_windows','evaluation_authorization','host_interruption_timing']
+        'window_started_utc','window_deadline_utc','execution_windows','evaluation_authorization','host_interruption_timing',
+        'schema_format_exceptions','schema_exception_applications']
     public={k:state[k] for k in public_keys if k in state}
     event_keys=['sequence','service','phase','workflow','input_tokens','items','status',
         'request_body_sha256','started_utc','source_commit','supervisor_reason','worker_exit',
@@ -78,7 +79,13 @@ def main(initial_prompts=None):
                 'normalized_visible_output_sha256':hashlib.sha256(text.encode()).hexdigest()})
         recovery=next((r for r in state.get('recoveries',[]) if r['event']==seq
                        and r.get('response_reused_without_resending')),None)
-        if recovery:
+        if recovery and recovery.get('reason')=='approved_single_cached_report_syntax_exception':
+            event['schema_syntax_exception']={
+                'original_content_sha256':recovery['original_content_sha256'],
+                'candidate_content_sha256':recovery['candidate_content_sha256'],
+                'authorization_utc':recovery['authorization_utc'],
+                'note':'Original transport-valid reply retained; four approved trailing commas removed in memory for the unchanged report schema. No resending or usage alteration.'}
+        elif recovery:
             event['recovery']=('Complete reply validated offline after executor transport loss and reused without resending; original stale ledger retained.'
                 if recovery.get('original_status')=='reserved_before_dispatch' else
                 'Complete reply independently validated and reused; original rejection retained.')

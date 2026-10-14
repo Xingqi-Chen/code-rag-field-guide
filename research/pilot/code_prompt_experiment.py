@@ -47,6 +47,13 @@ def write(path, data):
 
 
 class CodeRuntime(OriginalRuntime):
+    def complete(self,messages,response_format=None):
+        reply=super().complete(messages,response_format)
+        if response_format is not None and (RUN/'schema-1027-amendment.json').exists():
+            import code_prompt_schema_exception
+            return code_prompt_schema_exception.apply(self,messages,response_format,reply)
+        return reply
+
     def remaining_seconds(self):
         if self.ledger.get('wall_deadline_removed') is True:
             return math.inf

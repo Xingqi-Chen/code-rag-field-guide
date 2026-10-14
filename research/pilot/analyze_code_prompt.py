@@ -53,6 +53,7 @@ def run_summary(base):
         'index_calendar_seconds':execution['index_elapsed_calendar_seconds'],
         'completion_cache_hits':execution['completion_cache_hits'],
         'operations':operations,'memory_measurement':execution['memory_measurement'],
+        'schema_format_exceptions':execution.get('schema_format_exceptions',[]),
         **({'host_interruption_timing':execution['host_interruption_timing']} if 'host_interruption_timing' in execution else {})}
 
 
@@ -82,6 +83,7 @@ def calculate():
         'limitations':['One fixed repository and15 scorable test questions; no population significance claim.',
             'Old baselines are preserved; new graph built after inspecting their failures.',
             'Mixed60/120-second timeouts, unified bounded transient retries, removed total deadline and authorized generation cap1200→1600 are disclosed execution changes.',
+            'Only cached report1027 has an explicitly approved four-comma syntax exception; original reply and usage retained. This is not an entirely unmodified official output path.',
             'No equal-actual-source-token or randomized graph control was added in this variant.',
             'Missing provider usage remains unknown; no generation invoice or measured memory figure.']}
 
