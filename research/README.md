@@ -12,7 +12,8 @@
 - [8000／16000离线预算补测](pilot/results/budget-supplement)：保留4000／12000，新增模型调用为0；[四档实际长度与重叠](pilot/results/budget-supplement/budget-analysis.json)。
 - [Global六题真实回答补充](pilot/results/global)：复用84份社区报告，42次map＋6次reduce，与6次同模型BM25回答对照；[冻结协议](pilot/global-plan.json)、[题目](pilot/global-questions.json)、[评分依据](pilot/global-gold.json)和全部请求／回答公开，独立于原有检索分数。
 - [失败链、阶段成本与更新语义](pilot/results/failure-analysis/README.md)：原样抽取见证、错误传播、引用核验及四例无网络更新函数微测；不新增模型调用，不改旧结果。
+- [代码提示词＋实体类型完成结果](pilot/results/code-prompt/README.md)：第二次完整索引、80份新Local上下文、400行合并分数及逐题／格式独立复核；未新增Global或功能生成。
 - [本轮过程与发布检查](process.md)。
 - [旧版与正常 Git 历史](legacy.md)：旧自制代码图实验退出新版证据。
 
-文献检索截止及访问日：2026-10-12；执行状态更新至2026-10-13。区分三种表述：**已确认的机制事实**由官方文档／固定源码支持；**效果证据**要求实际评测且身份可核实；**试点建议**是基于已知机制和证据缺口的判断，不能当作实测结果。
+文献检索截止及访问日：2026-10-12；执行状态更新至2026-10-14。区分三种表述：**已确认的机制事实**由官方文档／固定源码支持；**效果证据**要求实际评测且身份可核实；**试点建议**是基于已知机制和证据缺口的判断，不能当作实测结果。

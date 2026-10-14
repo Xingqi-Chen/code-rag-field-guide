@@ -1,0 +1,383 @@
+{
+  "variant": "code-prompt",
+  "question_id": "Q18",
+  "method": "ms_local_code_prompt",
+  "budget": 4000,
+  "query": "If response callbacks are changed to replace data even when they return None, identify the dispatch rule, downstream cookie consumer and an existing test that this threatens.",
+  "upstream_raw_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n1015|HOOKS.DISPATCH_HOOK|The external callable `hooks.dispatch_hook` is explicitly referenced in `test_hooks` as `hooks.dispatch_hook(\"response\", {\"response\": hooks_list}, \"Data\")`; its definition and runtime receiver binding are not visible here.|1\n1122|TEST_REQUEST_COOKIE_OVERRIDES_SESSION_COOKIE|The test function `test_request_cookie_overrides_session_cookie` is defined here. It asserts that request cookies set `foo` to `\"baz\"` while the session cookie remains `\"bar\"`.|4\n1123|TEST_REQUEST_COOKIES_NOT_PERSISTED|The test function `test_request_cookies_not_persisted` is defined here. It sends a request with `cookies={\"foo\": \"baz\"}` and asserts `not s.cookies`, establishing that request cookies do not add cookies to the session.|3\n1368|TESTMORSELTOCOOKIEEXPIRES.TEST_EXPIRES_NONE|The test method `TestMorselToCookieExpires.test_expires_none` is defined here. It sets `Morsel[\"expires\"]` to `None`, calls `morsel_to_cookie`, and asserts `cookie.expires is None`.|3\n1017|TEST_HOOKS|The test function `test_hooks(hooks_list, result)` is defined here; it asserts that `hooks.dispatch_hook(\"response\", {\"response\": hooks_list}, \"Data\") == result` for the supplied parameter cases.|3\n1126|TEST_COOKIELIB_COOKIEJAR_ON_REDIRECT|The test function `test_cookielib_cookiejar_on_redirect` is defined here. It prepares a request with a generic `CookieJar`, sends it, resolves a redirect, and asserts the redirect request retains a generic `CookieJar` containing both `foo == \"bar\"` and `cookie == \"tasty\"`.|12\n1230|TEST_EMPTY_RESPONSE_HAS_CONTENT_NONE|The test function `test_empty_response_has_content_none` is defined here. It constructs `requests.Response()` and asserts `r.content is None`.|1\n1059|TEST_FRAGMENT_UPDATE_ON_REDIRECT|Defined here as `def test_fragment_update_on_redirect()`. Its documentation claims redirect fragments should be retained only when a later Location lacks a new fragment; the visible setup uses a response handler that sends two 302 responses followed by a 200 response.|1\n1328|TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE|The exact test method `test_response_json_when_content_is_None(self, httpbin)` is defined here. It mutates a response to represent absent content, asserts `r.content is None`, and expects `r.json()` to raise `ValueError`.|5\n1121|TEST_COOKIE_PERSISTS_VIA_API|The test function `test_cookie_persists_via_api` is defined here. It creates a session, sends `cookies={\"foo\": \"bar\"}` through `httpbin(\"redirect/1\")`, and asserts that `foo` occurs in the request Cookie headers across the redirect history.|3\n1239|MYCOOKIEPOLICY|The class `MyCookiePolicy` is defined locally inside `test_cookie_policy_copy` and has no visible body beyond `pass`. It inherits from `cookielib.DefaultCookiePolicy`.|2\n1118|S.RESOLVE_REDIRECTS|The attribute call `s.resolve_redirects(resp, prep_req)` is explicitly referenced; the receiver's concrete runtime class is not proven by this chunk.|1\n1129|TEST_HEADERS_ON_SESSION_WITH_NONE_ARE_NOT_SENT|The test function `test_headers_on_session_with_None_are_not_sent` is defined here. It assigns `None` to `ses.headers[\"Accept-Encoding\"]`, prepares a request, and asserts that header is absent from `prep.headers`.|4\n1323|TEST_UNCONSUMED_SESSION_RESPONSE_CLOSES_CONNECTION|The exact test method `test_unconsumed_session_response_closes_connection(self, httpbin)` is defined here. It closes an unconsumed streamed session response through `contextlib.closing` and asserts content is unconsumed while the raw response is closed.|4\n1153|TEST_DIGEST_AUTH_RETURNS_COOKIE|Defines the visible test method `test_DIGEST_AUTH_RETURNS_COOKIE(self, httpbin)`; checks that an unauthenticated digest-auth response contains cookie `fake` and that authenticated access returns status 200. The owning class and `self.digest_auth_algo` definition are not visible.|3\n1127|TEST_REQUESTS_IN_HISTORY_ARE_NOT_OVERRIDDEN|The test function `test_requests_in_history_are_not_overridden` is defined here. It performs `requests.get(httpbin(\"redirect/3\"))` and asserts response history URLs equal the corresponding request URLs.|4\n1228|TEST_COOKIE_POLICY_COPY|The test function `test_cookie_policy_copy` is defined here. It installs a `MyCookiePolicy` on a cookie jar and asserts that the copied jar returns a policy of the same type.|6\n592|COOKIEJAR.UPDATE|`cookiejar.update` is explicitly referenced as a receiver-qualified callable in `merge_cookies`; the receiver's concrete class and method binding are unresolved.|1\n1237|TEST_REQUEST_AND_RESPONSE_ARE_PICKLEABLE|The test function `test_request_and_response_are_pickleable` is defined here. It performs a request, pickles and unpickles the request and response, and asserts preservation of request URL and headers.|4\n1416|TEST_DIFFERENT_CONNECTION_POOL_FOR_TLS_SETTINGS_VERIFY_TRUE.RESPONSE_HANDLER|The nested function `response_handler(sock)` is defined inside `test_different_connection_pool_for_tls_settings_verify_True`; it calls `consume_socket_content(sock, timeout=0.5)`.|2\n\n\n-----Relationships-----\nid|source|target|description|weight|links\n1483|TEST_HOOKS|HOOKS.DISPATCH_HOOK|CALLS, the test body visibly calls `hooks.dispatch_hook(\"response\", {\"response\": hooks_list}, \"Data\")` inside an equality assertion; the receiver's runtime binding is not proven beyond the imported `hooks` name|10.0|1\n\n\n-----Sources-----\nid|text\n74|import pytest\n\nfrom requests import hooks\n\n\ndef hook(value):\n    return value[1:]\n\n\n@pytest.mark.parametrize(\n    \"hooks_list, result\",\n    (\n        (hook, \"ata\"),\n        ([hook, lambda x: None, hook], \"ta\"),\n    ),\n)\ndef test_hooks(hooks_list, result):\n    assert hooks.dispatch_hook(\"response\", {\"response\": hooks_list}, \"Data\") == result\n\n\ndef test_default_hooks():\n    assert hooks.default_hooks() == {\"response\": []}\n\n83|        assert s.cookies[\"foo\"] == '\"bar:baz\"'\n\n    def test_cookie_persists_via_api(self, httpbin):\n        s = requests.session()\n        r = s.get(httpbin(\"redirect/1\"), cookies={\"foo\": \"bar\"})\n        assert \"foo\" in r.request.headers[\"Cookie\"]\n        assert \"foo\" in r.history[0].request.headers[\"Cookie\"]\n\n    def test_request_cookie_overrides_session_cookie(self, httpbin):\n        s = requests.session()\n        s.cookies[\"foo\"] = \"bar\"\n        r = s.get(httpbin(\"cookies\"), cookies={\"foo\": \"baz\"})\n        assert r.json()[\"cookies\"][\"foo\"] == \"baz\"\n        # Session cookie should not be modified\n        assert s.cookies[\"foo\"] == \"bar\"\n\n    def test_request_cookies_not_persisted(self, httpbin):\n        s = requests.session()\n        s.get(httpbin(\"cookies\"), cookies={\"foo\": \"baz\"})\n        # Sending a request with cookies should not add cookies to the session\n        assert not s.cookies\n\n    def test_generic_cookiejar_works(self, httpbin):\n        cj = cookielib.CookieJar()\n        cookiejar_from_dict({\"foo\": \"bar\"}, cj)\n        s = requests.session()\n        s.cookies = cj\n        r = s.get(httpbin(\"cookies\"))\n        # Make sure the cookie was sent\n        assert r.json()[\"cookies\"][\"foo\"] == \"bar\"\n        # Make sure the session cj is still the custom one\n        assert s.cookies is cj\n\n    def test_param_cookiejar_works(self, httpbin):\n        cj = cookielib.CookieJar()\n        cookiejar_from_dict({\"foo\": \"bar\"}, cj)\n        s = requests.session()\n        r = s.get(httpbin(\"cookies\"), cookies=cj)\n        # Make sure the cookie was sent\n        assert r.json()[\"cookies\"][\"foo\"] == \"bar\"\n\n    def test_cookielib_cookiejar_on_redirect(self, httpbin):\n        \"\"\"Tests resolve_redirect doesn't fail when merging cookies\n        with non-RequestsCookieJar cookiejar.\n\n        See GH #3579\n        \"\"\"\n        cj = cookiejar_from_dict({\"foo\": \"bar\"}, cookielib.CookieJar())\n        s = requests.Session()\n        s.cookies = cookiejar_from_dict({\"cookie\": \"tasty\"})\n\n        # Prepare request without using Session\n        req = requests.Request(\"GET\", httpbin(\"headers\"), cookies=cj)\n        prep_req = req.prepare()\n\n        # Send request and simulate redirect\n        resp = s.send(prep_req)\n        resp.status_code = 302\n        resp.headers[\"location\"] = httpbin(\"get\")\n        redirects = s.resolve_redirects(resp, prep_req)\n        resp = next(redirects)\n\n        # Verify CookieJar isn't being converted to RequestsCookieJar\n        assert isinstance(prep_req._cookies, cookielib.CookieJar)\n        assert isinstance(resp.request._cookies, cookielib.CookieJar)\n        assert not isinstance(resp.request._cookies, requests.cookies.RequestsCookieJar)\n\n        cookies = {}\n        for c in resp.request._cookies:\n            cookies[c.name] = c.value\n        assert cookies[\"foo\"] == \"bar\"\n        assert cookies[\"cookie\"] == \"tasty\"\n\n    def test_requests_in_history_are_not_overridden(self, httpbin):\n        resp = requests.get(httpbin(\"redirect/3\"))\n        urls = [r.url for r in resp.history]\n        req_urls = [r.request.url for r in resp.history]\n        assert urls == req_urls\n\n    def test_history_is_always_a_list(self, httpbin):\n        \"\"\"Show that even with redirects, Response.history is always a list.\"\"\"\n        resp = requests.get(httpbin(\"get\"))\n        assert isinstance(resp.history, list)\n        resp = requests.get(httpbin(\"redirect/1\"))\n        assert isinstance(resp.history, list)\n        assert not isinstance(resp.history, tuple)\n\n    def test_headers_on_session_with_None_are_not_sent(self, httpbin):\n        \"\"\"Do not send headers in Session.headers with None values.\"\"\"\n        ses = requests.Session()\n        ses.headers[\"Accept-Encoding\"] = None\n        req = requests.Request(\"GET\", httpbin(\"get\"))\n        prep = ses.prepare_request(req)\n        assert \"Accept-Encoding\" not in prep.headers\n\n    def test_headers_preserve_order(self, httpbin):\n        \"\"\"Preserve order when headers provided as OrderedDict.\"\"\"\n        ses = requests.Session()\n        ses.headers = collections.OrderedDict()\n        ses.headers[\"Accept-Encoding\"] = \"identity\"\n        ses.headers[\"First\"] = \"1\"\n        ses.headers[\"Second\"] = \"2\"\n        headers = collections.OrderedDict([(\"Third\", \"3\"), (\"Fourth\", \"4\")])\n        headers[\"Fifth\"] = \"5\"\n        headers[\"Second\"] = \"222\"\n        req = requests.Request(\"GET\", httpbin(\"get\"), headers=headers)\n        prep = ses.prepare_request(req)\n        items = list(prep.headers.items())\n        assert items[0] == (\"Accept-Encoding\", \"identity\")\n        assert items[1] == (\"First\", \"1\")\n        assert items[2] == (\"Second\", \"222\")\n        assert items[3] == (\"Third\", \"3\")\n        assert items[4] == (\"Fourth\", \"4\")\n        assert items[5] == (\"Fifth\", \"5\")\n\n    @pytest.mark.parametrize(\"key\", (\"User-agent\", \"user-agent\"))\n    def test_user_agent_transfers(self, httpbin, key):\n        heads = {key: \"Mozilla/5.0 (github.com/psf/requests)\"}\n\n        r = requests.get(httpbin(\"user-agent\"), headers=heads)\n        assert heads[key] in r.text\n\n    def test_HTTP_200_OK_HEAD(self, httpbin):\n\n",
+  "upstream_raw_records": {
+    "relationships": [
+      {
+        "id": "1483",
+        "source": "TEST_HOOKS",
+        "target": "HOOKS.DISPATCH_HOOK",
+        "description": "CALLS, the test body visibly calls `hooks.dispatch_hook(\"response\", {\"response\": hooks_list}, \"Data\")` inside an equality assertion; the receiver's runtime binding is not proven beyond the imported `hooks` name",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      }
+    ],
+    "entities": [
+      {
+        "id": "1015",
+        "entity": "HOOKS.DISPATCH_HOOK",
+        "description": "The external callable `hooks.dispatch_hook` is explicitly referenced in `test_hooks` as `hooks.dispatch_hook(\"response\", {\"response\": hooks_list}, \"Data\")`; its definition and runtime receiver binding are not visible here.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1122",
+        "entity": "TEST_REQUEST_COOKIE_OVERRIDES_SESSION_COOKIE",
+        "description": "The test function `test_request_cookie_overrides_session_cookie` is defined here. It asserts that request cookies set `foo` to `\"baz\"` while the session cookie remains `\"bar\"`.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "1123",
+        "entity": "TEST_REQUEST_COOKIES_NOT_PERSISTED",
+        "description": "The test function `test_request_cookies_not_persisted` is defined here. It sends a request with `cookies={\"foo\": \"baz\"}` and asserts `not s.cookies`, establishing that request cookies do not add cookies to the session.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "1368",
+        "entity": "TESTMORSELTOCOOKIEEXPIRES.TEST_EXPIRES_NONE",
+        "description": "The test method `TestMorselToCookieExpires.test_expires_none` is defined here. It sets `Morsel[\"expires\"]` to `None`, calls `morsel_to_cookie`, and asserts `cookie.expires is None`.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "1017",
+        "entity": "TEST_HOOKS",
+        "description": "The test function `test_hooks(hooks_list, result)` is defined here; it asserts that `hooks.dispatch_hook(\"response\", {\"response\": hooks_list}, \"Data\") == result` for the supplied parameter cases.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "1126",
+        "entity": "TEST_COOKIELIB_COOKIEJAR_ON_REDIRECT",
+        "description": "The test function `test_cookielib_cookiejar_on_redirect` is defined here. It prepares a request with a generic `CookieJar`, sends it, resolves a redirect, and asserts the redirect request retains a generic `CookieJar` containing both `foo == \"bar\"` and `cookie == \"tasty\"`.",
+        "number of relationships": "12",
+        "in_context": true
+      },
+      {
+        "id": "1230",
+        "entity": "TEST_EMPTY_RESPONSE_HAS_CONTENT_NONE",
+        "description": "The test function `test_empty_response_has_content_none` is defined here. It constructs `requests.Response()` and asserts `r.content is None`.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1059",
+        "entity": "TEST_FRAGMENT_UPDATE_ON_REDIRECT",
+        "description": "Defined here as `def test_fragment_update_on_redirect()`. Its documentation claims redirect fragments should be retained only when a later Location lacks a new fragment; the visible setup uses a response handler that sends two 302 responses followed by a 200 response.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1328",
+        "entity": "TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE",
+        "description": "The exact test method `test_response_json_when_content_is_None(self, httpbin)` is defined here. It mutates a response to represent absent content, asserts `r.content is None`, and expects `r.json()` to raise `ValueError`.",
+        "number of relationships": "5",
+        "in_context": true
+      },
+      {
+        "id": "1121",
+        "entity": "TEST_COOKIE_PERSISTS_VIA_API",
+        "description": "The test function `test_cookie_persists_via_api` is defined here. It creates a session, sends `cookies={\"foo\": \"bar\"}` through `httpbin(\"redirect/1\")`, and asserts that `foo` occurs in the request Cookie headers across the redirect history.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "1239",
+        "entity": "MYCOOKIEPOLICY",
+        "description": "The class `MyCookiePolicy` is defined locally inside `test_cookie_policy_copy` and has no visible body beyond `pass`. It inherits from `cookielib.DefaultCookiePolicy`.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "1118",
+        "entity": "S.RESOLVE_REDIRECTS",
+        "description": "The attribute call `s.resolve_redirects(resp, prep_req)` is explicitly referenced; the receiver's concrete runtime class is not proven by this chunk.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1129",
+        "entity": "TEST_HEADERS_ON_SESSION_WITH_NONE_ARE_NOT_SENT",
+        "description": "The test function `test_headers_on_session_with_None_are_not_sent` is defined here. It assigns `None` to `ses.headers[\"Accept-Encoding\"]`, prepares a request, and asserts that header is absent from `prep.headers`.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "1323",
+        "entity": "TEST_UNCONSUMED_SESSION_RESPONSE_CLOSES_CONNECTION",
+        "description": "The exact test method `test_unconsumed_session_response_closes_connection(self, httpbin)` is defined here. It closes an unconsumed streamed session response through `contextlib.closing` and asserts content is unconsumed while the raw response is closed.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "1153",
+        "entity": "TEST_DIGEST_AUTH_RETURNS_COOKIE",
+        "description": "Defines the visible test method `test_DIGEST_AUTH_RETURNS_COOKIE(self, httpbin)`; checks that an unauthenticated digest-auth response contains cookie `fake` and that authenticated access returns status 200. The owning class and `self.digest_auth_algo` definition are not visible.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "1127",
+        "entity": "TEST_REQUESTS_IN_HISTORY_ARE_NOT_OVERRIDDEN",
+        "description": "The test function `test_requests_in_history_are_not_overridden` is defined here. It performs `requests.get(httpbin(\"redirect/3\"))` and asserts response history URLs equal the corresponding request URLs.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "1228",
+        "entity": "TEST_COOKIE_POLICY_COPY",
+        "description": "The test function `test_cookie_policy_copy` is defined here. It installs a `MyCookiePolicy` on a cookie jar and asserts that the copied jar returns a policy of the same type.",
+        "number of relationships": "6",
+        "in_context": true
+      },
+      {
+        "id": "592",
+        "entity": "COOKIEJAR.UPDATE",
+        "description": "`cookiejar.update` is explicitly referenced as a receiver-qualified callable in `merge_cookies`; the receiver's concrete class and method binding are unresolved.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1237",
+        "entity": "TEST_REQUEST_AND_RESPONSE_ARE_PICKLEABLE",
+        "description": "The test function `test_request_and_response_are_pickleable` is defined here. It performs a request, pickles and unpickles the request and response, and asserts preservation of request URL and headers.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "1416",
+        "entity": "TEST_DIFFERENT_CONNECTION_POOL_FOR_TLS_SETTINGS_VERIFY_TRUE.RESPONSE_HANDLER",
+        "description": "The nested function `response_handler(sock)` is defined inside `test_different_connection_pool_for_tls_settings_verify_True`; it calls `consume_socket_content(sock, timeout=0.5)`.",
+        "number of relationships": "2",
+        "in_context": true
+      }
+    ],
+    "sources": [
+      {
+        "id": "74",
+        "text": "import pytest\n\nfrom requests import hooks\n\n\ndef hook(value):\n    return value[1:]\n\n\n@pytest.mark.parametrize(\n    \"hooks_list, result\",\n    (\n        (hook, \"ata\"),\n        ([hook, lambda x: None, hook], \"ta\"),\n    ),\n)\ndef test_hooks(hooks_list, result):\n    assert hooks.dispatch_hook(\"response\", {\"response\": hooks_list}, \"Data\") == result\n\n\ndef test_default_hooks():\n    assert hooks.default_hooks() == {\"response\": []}\n"
+      },
+      {
+        "id": "83",
+        "text": "        assert s.cookies[\"foo\"] == '\"bar:baz\"'\n\n    def test_cookie_persists_via_api(self, httpbin):\n        s = requests.session()\n        r = s.get(httpbin(\"redirect/1\"), cookies={\"foo\": \"bar\"})\n        assert \"foo\" in r.request.headers[\"Cookie\"]\n        assert \"foo\" in r.history[0].request.headers[\"Cookie\"]\n\n    def test_request_cookie_overrides_session_cookie(self, httpbin):\n        s = requests.session()\n        s.cookies[\"foo\"] = \"bar\"\n        r = s.get(httpbin(\"cookies\"), cookies={\"foo\": \"baz\"})\n        assert r.json()[\"cookies\"][\"foo\"] == \"baz\"\n        # Session cookie should not be modified\n        assert s.cookies[\"foo\"] == \"bar\"\n\n    def test_request_cookies_not_persisted(self, httpbin):\n        s = requests.session()\n        s.get(httpbin(\"cookies\"), cookies={\"foo\": \"baz\"})\n        # Sending a request with cookies should not add cookies to the session\n        assert not s.cookies\n\n    def test_generic_cookiejar_works(self, httpbin):\n        cj = cookielib.CookieJar()\n        cookiejar_from_dict({\"foo\": \"bar\"}, cj)\n        s = requests.session()\n        s.cookies = cj\n        r = s.get(httpbin(\"cookies\"))\n        # Make sure the cookie was sent\n        assert r.json()[\"cookies\"][\"foo\"] == \"bar\"\n        # Make sure the session cj is still the custom one\n        assert s.cookies is cj\n\n    def test_param_cookiejar_works(self, httpbin):\n        cj = cookielib.CookieJar()\n        cookiejar_from_dict({\"foo\": \"bar\"}, cj)\n        s = requests.session()\n        r = s.get(httpbin(\"cookies\"), cookies=cj)\n        # Make sure the cookie was sent\n        assert r.json()[\"cookies\"][\"foo\"] == \"bar\"\n\n    def test_cookielib_cookiejar_on_redirect(self, httpbin):\n        \"\"\"Tests resolve_redirect doesn't fail when merging cookies\n        with non-RequestsCookieJar cookiejar.\n\n        See GH #3579\n        \"\"\"\n        cj = cookiejar_from_dict({\"foo\": \"bar\"}, cookielib.CookieJar())\n        s = requests.Session()\n        s.cookies = cookiejar_from_dict({\"cookie\": \"tasty\"})\n\n        # Prepare request without using Session\n        req = requests.Request(\"GET\", httpbin(\"headers\"), cookies=cj)\n        prep_req = req.prepare()\n\n        # Send request and simulate redirect\n        resp = s.send(prep_req)\n        resp.status_code = 302\n        resp.headers[\"location\"] = httpbin(\"get\")\n        redirects = s.resolve_redirects(resp, prep_req)\n        resp = next(redirects)\n\n        # Verify CookieJar isn't being converted to RequestsCookieJar\n        assert isinstance(prep_req._cookies, cookielib.CookieJar)\n        assert isinstance(resp.request._cookies, cookielib.CookieJar)\n        assert not isinstance(resp.request._cookies, requests.cookies.RequestsCookieJar)\n\n        cookies = {}\n        for c in resp.request._cookies:\n            cookies[c.name] = c.value\n        assert cookies[\"foo\"] == \"bar\"\n        assert cookies[\"cookie\"] == \"tasty\"\n\n    def test_requests_in_history_are_not_overridden(self, httpbin):\n        resp = requests.get(httpbin(\"redirect/3\"))\n        urls = [r.url for r in resp.history]\n        req_urls = [r.request.url for r in resp.history]\n        assert urls == req_urls\n\n    def test_history_is_always_a_list(self, httpbin):\n        \"\"\"Show that even with redirects, Response.history is always a list.\"\"\"\n        resp = requests.get(httpbin(\"get\"))\n        assert isinstance(resp.history, list)\n        resp = requests.get(httpbin(\"redirect/1\"))\n        assert isinstance(resp.history, list)\n        assert not isinstance(resp.history, tuple)\n\n    def test_headers_on_session_with_None_are_not_sent(self, httpbin):\n        \"\"\"Do not send headers in Session.headers with None values.\"\"\"\n        ses = requests.Session()\n        ses.headers[\"Accept-Encoding\"] = None\n        req = requests.Request(\"GET\", httpbin(\"get\"))\n        prep = ses.prepare_request(req)\n        assert \"Accept-Encoding\" not in prep.headers\n\n    def test_headers_preserve_order(self, httpbin):\n        \"\"\"Preserve order when headers provided as OrderedDict.\"\"\"\n        ses = requests.Session()\n        ses.headers = collections.OrderedDict()\n        ses.headers[\"Accept-Encoding\"] = \"identity\"\n        ses.headers[\"First\"] = \"1\"\n        ses.headers[\"Second\"] = \"2\"\n        headers = collections.OrderedDict([(\"Third\", \"3\"), (\"Fourth\", \"4\")])\n        headers[\"Fifth\"] = \"5\"\n        headers[\"Second\"] = \"222\"\n        req = requests.Request(\"GET\", httpbin(\"get\"), headers=headers)\n        prep = ses.prepare_request(req)\n        items = list(prep.headers.items())\n        assert items[0] == (\"Accept-Encoding\", \"identity\")\n        assert items[1] == (\"First\", \"1\")\n        assert items[2] == (\"Second\", \"222\")\n        assert items[3] == (\"Third\", \"3\")\n        assert items[4] == (\"Fourth\", \"4\")\n        assert items[5] == (\"Fifth\", \"5\")\n\n    @pytest.mark.parametrize(\"key\", (\"User-agent\", \"user-agent\"))\n    def test_user_agent_transfers(self, httpbin, key):\n        heads = {key: \"Mozilla/5.0 (github.com/psf/requests)\"}\n\n        r = requests.get(httpbin(\"user-agent\"), headers=heads)\n        assert heads[key] in r.text\n\n    def test_HTTP_200_OK_HEAD(self, httpbin):\n"
+      }
+    ]
+  },
+  "final_context": "-----Entities-----\nid|entity|description|number of relationships\n1015|HOOKS.DISPATCH_HOOK|\"The external callable `hooks.dispatch_hook` is explicitly referenced in `test_hooks` as `hooks.dispatch_hook(\"\"response\"\", {\"\"response\"\": hooks_list}, \"\"Data\"\")`; its definition and runtime receiver binding are not visible here.\"|1\n1122|TEST_REQUEST_COOKIE_OVERRIDES_SESSION_COOKIE|\"The test function `test_request_cookie_overrides_session_cookie` is defined here. It asserts that request cookies set `foo` to `\"\"baz\"\"` while the session cookie remains `\"\"bar\"\"`.\"|4\n1123|TEST_REQUEST_COOKIES_NOT_PERSISTED|\"The test function `test_request_cookies_not_persisted` is defined here. It sends a request with `cookies={\"\"foo\"\": \"\"baz\"\"}` and asserts `not s.cookies`, establishing that request cookies do not add cookies to the session.\"|3\n1368|TESTMORSELTOCOOKIEEXPIRES.TEST_EXPIRES_NONE|\"The test method `TestMorselToCookieExpires.test_expires_none` is defined here. It sets `Morsel[\"\"expires\"\"]` to `None`, calls `morsel_to_cookie`, and asserts `cookie.expires is None`.\"|3\n1017|TEST_HOOKS|\"The test function `test_hooks(hooks_list, result)` is defined here; it asserts that `hooks.dispatch_hook(\"\"response\"\", {\"\"response\"\": hooks_list}, \"\"Data\"\") == result` for the supplied parameter cases.\"|3\n1126|TEST_COOKIELIB_COOKIEJAR_ON_REDIRECT|\"The test function `test_cookielib_cookiejar_on_redirect` is defined here. It prepares a request with a generic `CookieJar`, sends it, resolves a redirect, and asserts the redirect request retains a generic `CookieJar` containing both `foo == \"\"bar\"\"` and `cookie == \"\"tasty\"\"`.\"|12\n1230|TEST_EMPTY_RESPONSE_HAS_CONTENT_NONE|The test function `test_empty_response_has_content_none` is defined here. It constructs `requests.Response()` and asserts `r.content is None`.|1\n1059|TEST_FRAGMENT_UPDATE_ON_REDIRECT|Defined here as `def test_fragment_update_on_redirect()`. Its documentation claims redirect fragments should be retained only when a later Location lacks a new fragment; the visible setup uses a response handler that sends two 302 responses followed by a 200 response.|1\n1328|TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE|The exact test method `test_response_json_when_content_is_None(self, httpbin)` is defined here. It mutates a response to represent absent content, asserts `r.content is None`, and expects `r.json()` to raise `ValueError`.|5\n1121|TEST_COOKIE_PERSISTS_VIA_API|\"The test function `test_cookie_persists_via_api` is defined here. It creates a session, sends `cookies={\"\"foo\"\": \"\"bar\"\"}` through `httpbin(\"\"redirect/1\"\")`, and asserts that `foo` occurs in the request Cookie headers across the redirect history.\"|3\n1239|MYCOOKIEPOLICY|The class `MyCookiePolicy` is defined locally inside `test_cookie_policy_copy` and has no visible body beyond `pass`. It inherits from `cookielib.DefaultCookiePolicy`.|2\n1118|S.RESOLVE_REDIRECTS|The attribute call `s.resolve_redirects(resp, prep_req)` is explicitly referenced; the receiver's concrete runtime class is not proven by this chunk.|1\n1129|TEST_HEADERS_ON_SESSION_WITH_NONE_ARE_NOT_SENT|\"The test function `test_headers_on_session_with_None_are_not_sent` is defined here. It assigns `None` to `ses.headers[\"\"Accept-Encoding\"\"]`, prepares a request, and asserts that header is absent from `prep.headers`.\"|4\n1323|TEST_UNCONSUMED_SESSION_RESPONSE_CLOSES_CONNECTION|The exact test method `test_unconsumed_session_response_closes_connection(self, httpbin)` is defined here. It closes an unconsumed streamed session response through `contextlib.closing` and asserts content is unconsumed while the raw response is closed.|4\n1153|TEST_DIGEST_AUTH_RETURNS_COOKIE|Defines the visible test method `test_DIGEST_AUTH_RETURNS_COOKIE(self, httpbin)`; checks that an unauthenticated digest-auth response contains cookie `fake` and that authenticated access returns status 200. The owning class and `self.digest_auth_algo` definition are not visible.|3\n1127|TEST_REQUESTS_IN_HISTORY_ARE_NOT_OVERRIDDEN|\"The test function `test_requests_in_history_are_not_overridden` is defined here. It performs `requests.get(httpbin(\"\"redirect/3\"\"))` and asserts response history URLs equal the corresponding request URLs.\"|4\n1228|TEST_COOKIE_POLICY_COPY|The test function `test_cookie_policy_copy` is defined here. It installs a `MyCookiePolicy` on a cookie jar and asserts that the copied jar returns a policy of the same type.|6\n592|COOKIEJAR.UPDATE|`cookiejar.update` is explicitly referenced as a receiver-qualified callable in `merge_cookies`; the receiver's concrete class and method binding are unresolved.|1\n1237|TEST_REQUEST_AND_RESPONSE_ARE_PICKLEABLE|The test function `test_request_and_response_are_pickleable` is defined here. It performs a request, pickles and unpickles the request and response, and asserts preservation of request URL and headers.|4\n1416|TEST_DIFFERENT_CONNECTION_POOL_FOR_TLS_SETTINGS_VERIFY_TRUE.RESPONSE_HANDLER|The nested function `response_handler(sock)` is defined inside `test_different_connection_pool_for_tls_settings_verify_True`; it calls `consume_socket_content(sock, timeout=0.5)`.|2\n\n-----Relationships-----\nid|source|target|description|weight|links\n1483|TEST_HOOKS|HOOKS.DISPATCH_HOOK|\"CALLS, the test body visibly calls `hooks.dispatch_hook(\"\"response\"\", {\"\"response\"\": hooks_list}, \"\"Data\"\")` inside an equality assertion; the receiver's runtime binding is not proven beyond the imported `hooks` name\"|10.0|1\n\n-----Sources-----\nid|source|text\n74|tests/test_hooks.py:L1-L22|\"import pytest\n\nfrom requests import hooks\n\n\ndef hook(value):\n    return value[1:]\n\n\n@pytest.mark.parametrize(\n    \"\"hooks_list, result\"\",\n    (\n        (hook, \"\"ata\"\"),\n        ([hook, lambda x: None, hook], \"\"ta\"\"),\n    ),\n)\ndef test_hooks(hooks_list, result):\n    assert hooks.dispatch_hook(\"\"response\"\", {\"\"response\"\": hooks_list}, \"\"Data\"\") == result\n\n\ndef test_default_hooks():\n    assert hooks.default_hooks() == {\"\"response\"\": []}\n\"\n83|tests/test_requests.py:L397-L519|\"        assert s.cookies[\"\"foo\"\"] == '\"\"bar:baz\"\"'\n\n    def test_cookie_persists_via_api(self, httpbin):\n        s = requests.session()\n        r = s.get(httpbin(\"\"redirect/1\"\"), cookies={\"\"foo\"\": \"\"bar\"\"})\n        assert \"\"foo\"\" in r.request.headers[\"\"Cookie\"\"]\n        assert \"\"foo\"\" in r.history[0].request.headers[\"\"Cookie\"\"]\n\n    def test_request_cookie_overrides_session_cookie(self, httpbin):\n        s = requests.session()\n        s.cookies[\"\"foo\"\"] = \"\"bar\"\"\n        r = s.get(httpbin(\"\"cookies\"\"), cookies={\"\"foo\"\": \"\"baz\"\"})\n        assert r.json()[\"\"cookies\"\"][\"\"foo\"\"] == \"\"baz\"\"\n        # Session cookie should not be modified\n        assert s.cookies[\"\"foo\"\"] == \"\"bar\"\"\n\n    def test_request_cookies_not_persisted(self, httpbin):\n        s = requests.session()\n        s.get(httpbin(\"\"cookies\"\"), cookies={\"\"foo\"\": \"\"baz\"\"})\n        # Sending a request with cookies should not add cookies to the session\n        assert not s.cookies\n\n    def test_generic_cookiejar_works(self, httpbin):\n        cj = cookielib.CookieJar()\n        cookiejar_from_dict({\"\"foo\"\": \"\"bar\"\"}, cj)\n        s = requests.session()\n        s.cookies = cj\n        r = s.get(httpbin(\"\"cookies\"\"))\n        # Make sure the cookie was sent\n        assert r.json()[\"\"cookies\"\"][\"\"foo\"\"] == \"\"bar\"\"\n        # Make sure the session cj is still the custom one\n        assert s.cookies is cj\n\n    def test_param_cookiejar_works(self, httpbin):\n        cj = cookielib.CookieJar()\n        cookiejar_from_dict({\"\"foo\"\": \"\"bar\"\"}, cj)\n        s = requests.session()\n        r = s.get(httpbin(\"\"cookies\"\"), cookies=cj)\n        # Make sure the cookie was sent\n        assert r.json()[\"\"cookies\"\"][\"\"foo\"\"] == \"\"bar\"\"\n\n    def test_cookielib_cookiejar_on_redirect(self, httpbin):\n        \"\"\"\"\"\"Tests resolve_redirect doesn't fail when merging cookies\n        with non-RequestsCookieJar cookiejar.\n\n        See GH #3579\n        \"\"\"\"\"\"\n        cj = cookiejar_from_dict({\"\"foo\"\": \"\"bar\"\"}, cookielib.CookieJar())\n        s = requests.Session()\n        s.cookies = cookiejar_from_dict({\"\"cookie\"\": \"\"tasty\"\"})\n\n        # Prepare request without using Session\n        req = requests.Request(\"\"GET\"\", httpbin(\"\"headers\"\"), cookies=cj)\n        prep_req = req.prepare()\n\n        # Send request and simulate redirect\n        resp = s.send(prep_req)\n        resp.status_code = 302\n        resp.headers[\"\"location\"\"] = httpbin(\"\"get\"\")\n        redirects = s.resolve_redirects(resp, prep_req)\n        resp = next(redirects)\n\n        # Verify CookieJar isn't being converted to RequestsCookieJar\n        assert isinstance(prep_req._cookies, cookielib.CookieJar)\n        assert isinstance(resp.request._cookies, cookielib.CookieJar)\n        assert not isinstance(resp.request._cookies, requests.cookies.RequestsCookieJar)\n\n        cookies = {}\n        for c in resp.request._cookies:\n            cookies[c.name] = c.value\n        assert cookies[\"\"foo\"\"] == \"\"bar\"\"\n        assert cookies[\"\"cookie\"\"] == \"\"tasty\"\"\n\n    def test_requests_in_history_are_not_overridden(self, httpbin):\n        resp = requests.get(httpbin(\"\"redirect/3\"\"))\n        urls = [r.url for r in resp.history]\n        req_urls = [r.request.url for r in resp.history]\n        assert urls == req_urls\n\n    def test_history_is_always_a_list(self, httpbin):\n        \"\"\"\"\"\"Show that even with redirects, Response.history is always a list.\"\"\"\"\"\"\n        resp = requests.get(httpbin(\"\"get\"\"))\n        assert isinstance(resp.history, list)\n        resp = requests.get(httpbin(\"\"redirect/1\"\"))\n        assert isinstance(resp.history, list)\n        assert not isinstance(resp.history, tuple)\n\n    def test_headers_on_session_with_None_are_not_sent(self, httpbin):\n        \"\"\"\"\"\"Do not send headers in Session.headers with None values.\"\"\"\"\"\"\n        ses = requests.Session()\n        ses.headers[\"\"Accept-Encoding\"\"] = None\n        req = requests.Request(\"\"GET\"\", httpbin(\"\"get\"\"))\n        prep = ses.prepare_request(req)\n        assert \"\"Accept-Encoding\"\" not in prep.headers\n\n    def test_headers_preserve_order(self, httpbin):\n        \"\"\"\"\"\"Preserve order when headers provided as OrderedDict.\"\"\"\"\"\"\n        ses = requests.Session()\n        ses.headers = collections.OrderedDict()\n        ses.headers[\"\"Accept-Encoding\"\"] = \"\"identity\"\"\n        ses.headers[\"\"First\"\"] = \"\"1\"\"\n        ses.headers[\"\"Second\"\"] = \"\"2\"\"\n        headers = collections.OrderedDict([(\"\"Third\"\", \"\"3\"\"), (\"\"Fourth\"\", \"\"4\"\")])\n        headers[\"\"Fifth\"\"] = \"\"5\"\"\n        headers[\"\"Second\"\"] = \"\"222\"\"\n        req = requests.Request(\"\"GET\"\", httpbin(\"\"get\"\"), headers=headers)\n        prep = ses.prepare_request(req)\n        items = list(prep.headers.items())\n        assert items[0] == (\"\"Accept-Encoding\"\", \"\"identity\"\")\n        assert items[1] == (\"\"First\"\", \"\"1\"\")\n        assert items[2] == (\"\"Second\"\", \"\"222\"\")\n        assert items[3] == (\"\"Third\"\", \"\"3\"\")\n        assert items[4] == (\"\"Fourth\"\", \"\"4\"\")\n        assert items[5] == (\"\"Fifth\"\", \"\"5\"\")\n\n    @pytest.mark.parametrize(\"\"key\"\", (\"\"User-agent\"\", \"\"user-agent\"\"))\n    def test_user_agent_transfers(self, httpbin, key):\n        heads = {key: \"\"Mozilla/5.0 (github.com/psf/requests)\"\"}\n\n        r = requests.get(httpbin(\"\"user-agent\"\"), headers=heads)\n        assert heads[key] in r.text\n\n    def test_HTTP_200_OK_HEAD(self, httpbin):\n\"\n",
+  "final_tables": [
+    {
+      "name": "entities",
+      "columns": [
+        "id",
+        "entity",
+        "description",
+        "number of relationships"
+      ],
+      "rows": [
+        {
+          "id": "1015",
+          "entity": "HOOKS.DISPATCH_HOOK",
+          "description": "The external callable `hooks.dispatch_hook` is explicitly referenced in `test_hooks` as `hooks.dispatch_hook(\"response\", {\"response\": hooks_list}, \"Data\")`; its definition and runtime receiver binding are not visible here.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1122",
+          "entity": "TEST_REQUEST_COOKIE_OVERRIDES_SESSION_COOKIE",
+          "description": "The test function `test_request_cookie_overrides_session_cookie` is defined here. It asserts that request cookies set `foo` to `\"baz\"` while the session cookie remains `\"bar\"`.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "1123",
+          "entity": "TEST_REQUEST_COOKIES_NOT_PERSISTED",
+          "description": "The test function `test_request_cookies_not_persisted` is defined here. It sends a request with `cookies={\"foo\": \"baz\"}` and asserts `not s.cookies`, establishing that request cookies do not add cookies to the session.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "1368",
+          "entity": "TESTMORSELTOCOOKIEEXPIRES.TEST_EXPIRES_NONE",
+          "description": "The test method `TestMorselToCookieExpires.test_expires_none` is defined here. It sets `Morsel[\"expires\"]` to `None`, calls `morsel_to_cookie`, and asserts `cookie.expires is None`.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "1017",
+          "entity": "TEST_HOOKS",
+          "description": "The test function `test_hooks(hooks_list, result)` is defined here; it asserts that `hooks.dispatch_hook(\"response\", {\"response\": hooks_list}, \"Data\") == result` for the supplied parameter cases.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "1126",
+          "entity": "TEST_COOKIELIB_COOKIEJAR_ON_REDIRECT",
+          "description": "The test function `test_cookielib_cookiejar_on_redirect` is defined here. It prepares a request with a generic `CookieJar`, sends it, resolves a redirect, and asserts the redirect request retains a generic `CookieJar` containing both `foo == \"bar\"` and `cookie == \"tasty\"`.",
+          "number of relationships": "12"
+        },
+        {
+          "id": "1230",
+          "entity": "TEST_EMPTY_RESPONSE_HAS_CONTENT_NONE",
+          "description": "The test function `test_empty_response_has_content_none` is defined here. It constructs `requests.Response()` and asserts `r.content is None`.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1059",
+          "entity": "TEST_FRAGMENT_UPDATE_ON_REDIRECT",
+          "description": "Defined here as `def test_fragment_update_on_redirect()`. Its documentation claims redirect fragments should be retained only when a later Location lacks a new fragment; the visible setup uses a response handler that sends two 302 responses followed by a 200 response.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1328",
+          "entity": "TEST_RESPONSE_JSON_WHEN_CONTENT_IS_NONE",
+          "description": "The exact test method `test_response_json_when_content_is_None(self, httpbin)` is defined here. It mutates a response to represent absent content, asserts `r.content is None`, and expects `r.json()` to raise `ValueError`.",
+          "number of relationships": "5"
+        },
+        {
+          "id": "1121",
+          "entity": "TEST_COOKIE_PERSISTS_VIA_API",
+          "description": "The test function `test_cookie_persists_via_api` is defined here. It creates a session, sends `cookies={\"foo\": \"bar\"}` through `httpbin(\"redirect/1\")`, and asserts that `foo` occurs in the request Cookie headers across the redirect history.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "1239",
+          "entity": "MYCOOKIEPOLICY",
+          "description": "The class `MyCookiePolicy` is defined locally inside `test_cookie_policy_copy` and has no visible body beyond `pass`. It inherits from `cookielib.DefaultCookiePolicy`.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "1118",
+          "entity": "S.RESOLVE_REDIRECTS",
+          "description": "The attribute call `s.resolve_redirects(resp, prep_req)` is explicitly referenced; the receiver's concrete runtime class is not proven by this chunk.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1129",
+          "entity": "TEST_HEADERS_ON_SESSION_WITH_NONE_ARE_NOT_SENT",
+          "description": "The test function `test_headers_on_session_with_None_are_not_sent` is defined here. It assigns `None` to `ses.headers[\"Accept-Encoding\"]`, prepares a request, and asserts that header is absent from `prep.headers`.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "1323",
+          "entity": "TEST_UNCONSUMED_SESSION_RESPONSE_CLOSES_CONNECTION",
+          "description": "The exact test method `test_unconsumed_session_response_closes_connection(self, httpbin)` is defined here. It closes an unconsumed streamed session response through `contextlib.closing` and asserts content is unconsumed while the raw response is closed.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "1153",
+          "entity": "TEST_DIGEST_AUTH_RETURNS_COOKIE",
+          "description": "Defines the visible test method `test_DIGEST_AUTH_RETURNS_COOKIE(self, httpbin)`; checks that an unauthenticated digest-auth response contains cookie `fake` and that authenticated access returns status 200. The owning class and `self.digest_auth_algo` definition are not visible.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "1127",
+          "entity": "TEST_REQUESTS_IN_HISTORY_ARE_NOT_OVERRIDDEN",
+          "description": "The test function `test_requests_in_history_are_not_overridden` is defined here. It performs `requests.get(httpbin(\"redirect/3\"))` and asserts response history URLs equal the corresponding request URLs.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "1228",
+          "entity": "TEST_COOKIE_POLICY_COPY",
+          "description": "The test function `test_cookie_policy_copy` is defined here. It installs a `MyCookiePolicy` on a cookie jar and asserts that the copied jar returns a policy of the same type.",
+          "number of relationships": "6"
+        },
+        {
+          "id": "592",
+          "entity": "COOKIEJAR.UPDATE",
+          "description": "`cookiejar.update` is explicitly referenced as a receiver-qualified callable in `merge_cookies`; the receiver's concrete class and method binding are unresolved.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1237",
+          "entity": "TEST_REQUEST_AND_RESPONSE_ARE_PICKLEABLE",
+          "description": "The test function `test_request_and_response_are_pickleable` is defined here. It performs a request, pickles and unpickles the request and response, and asserts preservation of request URL and headers.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "1416",
+          "entity": "TEST_DIFFERENT_CONNECTION_POOL_FOR_TLS_SETTINGS_VERIFY_TRUE.RESPONSE_HANDLER",
+          "description": "The nested function `response_handler(sock)` is defined inside `test_different_connection_pool_for_tls_settings_verify_True`; it calls `consume_socket_content(sock, timeout=0.5)`.",
+          "number of relationships": "2"
+        }
+      ]
+    },
+    {
+      "name": "relationships",
+      "columns": [
+        "id",
+        "source",
+        "target",
+        "description",
+        "weight",
+        "links"
+      ],
+      "rows": [
+        {
+          "id": "1483",
+          "source": "TEST_HOOKS",
+          "target": "HOOKS.DISPATCH_HOOK",
+          "description": "CALLS, the test body visibly calls `hooks.dispatch_hook(\"response\", {\"response\": hooks_list}, \"Data\")` inside an equality assertion; the receiver's runtime binding is not proven beyond the imported `hooks` name",
+          "weight": "10.0",
+          "links": "1"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "columns": [
+        "id",
+        "source",
+        "text"
+      ],
+      "rows": [
+        {
+          "id": "74",
+          "text": "import pytest\n\nfrom requests import hooks\n\n\ndef hook(value):\n    return value[1:]\n\n\n@pytest.mark.parametrize(\n    \"hooks_list, result\",\n    (\n        (hook, \"ata\"),\n        ([hook, lambda x: None, hook], \"ta\"),\n    ),\n)\ndef test_hooks(hooks_list, result):\n    assert hooks.dispatch_hook(\"response\", {\"response\": hooks_list}, \"Data\") == result\n\n\ndef test_default_hooks():\n    assert hooks.default_hooks() == {\"response\": []}\n",
+          "source": "tests/test_hooks.py:L1-L22"
+        },
+        {
+          "id": "83",
+          "text": "        assert s.cookies[\"foo\"] == '\"bar:baz\"'\n\n    def test_cookie_persists_via_api(self, httpbin):\n        s = requests.session()\n        r = s.get(httpbin(\"redirect/1\"), cookies={\"foo\": \"bar\"})\n        assert \"foo\" in r.request.headers[\"Cookie\"]\n        assert \"foo\" in r.history[0].request.headers[\"Cookie\"]\n\n    def test_request_cookie_overrides_session_cookie(self, httpbin):\n        s = requests.session()\n        s.cookies[\"foo\"] = \"bar\"\n        r = s.get(httpbin(\"cookies\"), cookies={\"foo\": \"baz\"})\n        assert r.json()[\"cookies\"][\"foo\"] == \"baz\"\n        # Session cookie should not be modified\n        assert s.cookies[\"foo\"] == \"bar\"\n\n    def test_request_cookies_not_persisted(self, httpbin):\n        s = requests.session()\n        s.get(httpbin(\"cookies\"), cookies={\"foo\": \"baz\"})\n        # Sending a request with cookies should not add cookies to the session\n        assert not s.cookies\n\n    def test_generic_cookiejar_works(self, httpbin):\n        cj = cookielib.CookieJar()\n        cookiejar_from_dict({\"foo\": \"bar\"}, cj)\n        s = requests.session()\n        s.cookies = cj\n        r = s.get(httpbin(\"cookies\"))\n        # Make sure the cookie was sent\n        assert r.json()[\"cookies\"][\"foo\"] == \"bar\"\n        # Make sure the session cj is still the custom one\n        assert s.cookies is cj\n\n    def test_param_cookiejar_works(self, httpbin):\n        cj = cookielib.CookieJar()\n        cookiejar_from_dict({\"foo\": \"bar\"}, cj)\n        s = requests.session()\n        r = s.get(httpbin(\"cookies\"), cookies=cj)\n        # Make sure the cookie was sent\n        assert r.json()[\"cookies\"][\"foo\"] == \"bar\"\n\n    def test_cookielib_cookiejar_on_redirect(self, httpbin):\n        \"\"\"Tests resolve_redirect doesn't fail when merging cookies\n        with non-RequestsCookieJar cookiejar.\n\n        See GH #3579\n        \"\"\"\n        cj = cookiejar_from_dict({\"foo\": \"bar\"}, cookielib.CookieJar())\n        s = requests.Session()\n        s.cookies = cookiejar_from_dict({\"cookie\": \"tasty\"})\n\n        # Prepare request without using Session\n        req = requests.Request(\"GET\", httpbin(\"headers\"), cookies=cj)\n        prep_req = req.prepare()\n\n        # Send request and simulate redirect\n        resp = s.send(prep_req)\n        resp.status_code = 302\n        resp.headers[\"location\"] = httpbin(\"get\")\n        redirects = s.resolve_redirects(resp, prep_req)\n        resp = next(redirects)\n\n        # Verify CookieJar isn't being converted to RequestsCookieJar\n        assert isinstance(prep_req._cookies, cookielib.CookieJar)\n        assert isinstance(resp.request._cookies, cookielib.CookieJar)\n        assert not isinstance(resp.request._cookies, requests.cookies.RequestsCookieJar)\n\n        cookies = {}\n        for c in resp.request._cookies:\n            cookies[c.name] = c.value\n        assert cookies[\"foo\"] == \"bar\"\n        assert cookies[\"cookie\"] == \"tasty\"\n\n    def test_requests_in_history_are_not_overridden(self, httpbin):\n        resp = requests.get(httpbin(\"redirect/3\"))\n        urls = [r.url for r in resp.history]\n        req_urls = [r.request.url for r in resp.history]\n        assert urls == req_urls\n\n    def test_history_is_always_a_list(self, httpbin):\n        \"\"\"Show that even with redirects, Response.history is always a list.\"\"\"\n        resp = requests.get(httpbin(\"get\"))\n        assert isinstance(resp.history, list)\n        resp = requests.get(httpbin(\"redirect/1\"))\n        assert isinstance(resp.history, list)\n        assert not isinstance(resp.history, tuple)\n\n    def test_headers_on_session_with_None_are_not_sent(self, httpbin):\n        \"\"\"Do not send headers in Session.headers with None values.\"\"\"\n        ses = requests.Session()\n        ses.headers[\"Accept-Encoding\"] = None\n        req = requests.Request(\"GET\", httpbin(\"get\"))\n        prep = ses.prepare_request(req)\n        assert \"Accept-Encoding\" not in prep.headers\n\n    def test_headers_preserve_order(self, httpbin):\n        \"\"\"Preserve order when headers provided as OrderedDict.\"\"\"\n        ses = requests.Session()\n        ses.headers = collections.OrderedDict()\n        ses.headers[\"Accept-Encoding\"] = \"identity\"\n        ses.headers[\"First\"] = \"1\"\n        ses.headers[\"Second\"] = \"2\"\n        headers = collections.OrderedDict([(\"Third\", \"3\"), (\"Fourth\", \"4\")])\n        headers[\"Fifth\"] = \"5\"\n        headers[\"Second\"] = \"222\"\n        req = requests.Request(\"GET\", httpbin(\"get\"), headers=headers)\n        prep = ses.prepare_request(req)\n        items = list(prep.headers.items())\n        assert items[0] == (\"Accept-Encoding\", \"identity\")\n        assert items[1] == (\"First\", \"1\")\n        assert items[2] == (\"Second\", \"222\")\n        assert items[3] == (\"Third\", \"3\")\n        assert items[4] == (\"Fourth\", \"4\")\n        assert items[5] == (\"Fifth\", \"5\")\n\n    @pytest.mark.parametrize(\"key\", (\"User-agent\", \"user-agent\"))\n    def test_user_agent_transfers(self, httpbin, key):\n        heads = {key: \"Mozilla/5.0 (github.com/psf/requests)\"}\n\n        r = requests.get(httpbin(\"user-agent\"), headers=heads)\n        assert heads[key] in r.text\n\n    def test_HTTP_200_OK_HEAD(self, httpbin):\n",
+          "source": "tests/test_requests.py:L397-L519"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "short_id": "74",
+      "text_unit_id": "cb4cdd655d14dd1eb571dfe0ca1362cc2e6c57b5adac1bb8ac4377df45d4aa7fd4c43a53b9bd9ff79bd9c5e0acca6a170ce709f386dd5c4dbc9c6c232056b277",
+      "id": "72bdee69fe40f08a377e9bd4097601ea97602d23cb86a215d5185134d0068ad5",
+      "title": "tests/test_hooks.py:L1-L22",
+      "path": "tests/test_hooks.py",
+      "start_line": 1,
+      "end_line": 22,
+      "tokens": 102,
+      "text_sha256": "a9e5163f538543a660be3b06650cd0b803ff0c503f5948f66b6fc50ede38109c",
+      "ms_text_unit_id": "cb4cdd655d14dd1eb571dfe0ca1362cc2e6c57b5adac1bb8ac4377df45d4aa7fd4c43a53b9bd9ff79bd9c5e0acca6a170ce709f386dd5c4dbc9c6c232056b277"
+    },
+    {
+      "short_id": "83",
+      "text_unit_id": "ebcec01851c6de400d256bec2306e9a5dbabb310f35df8afcf6940e0a619aab0eebad1e48eb1b3dc5755e9092b9e83e06052eb0c71ac2fe8e4482000a7c8bf0d",
+      "id": "d990cc1c1e966f6e504c2b701dcab3dc28d04eb97af585d787a78dbbf45d457b",
+      "title": "tests/test_requests.py:L397-L519",
+      "path": "tests/test_requests.py",
+      "start_line": 397,
+      "end_line": 519,
+      "tokens": 1197,
+      "text_sha256": "cdb73c5739bc970ac655501b87fe88200321ad55d0a1a71467724ef0321518b5",
+      "ms_text_unit_id": "ebcec01851c6de400d256bec2306e9a5dbabb310f35df8afcf6940e0a619aab0eebad1e48eb1b3dc5755e9092b9e83e06052eb0c71ac2fe8e4482000a7c8bf0d"
+    }
+  ],
+  "raw_context_tokens": 2584,
+  "final_context_tokens": 2745,
+  "source_text_tokens": 1299,
+  "source_chunks": 2,
+  "retrieval_compute_seconds": 0.010628833435475826,
+  "adaptation_seconds": 0.0033579161390662193,
+  "empty_reason": null,
+  "community_level": 2,
+  "dropped_tail_rows": 0
+}

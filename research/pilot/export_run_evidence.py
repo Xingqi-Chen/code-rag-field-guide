@@ -193,6 +193,8 @@ def main(initial_prompts=None):
     write('index-summary.json',{'tables':tables,'entity_type_counts':entities['type'].value_counts().to_dict(),
         'all_output_file_bytes':sum(p.stat().st_size for p in public_index_files),
         'vector_store_bytes':sum(p.stat().st_size for p in (RUN/'output/lancedb').rglob('*') if p.is_file()),
+        'raw_graph_snapshot_bytes':sum(p.stat().st_size for p in public_index_files if p.name in {'raw_entities.parquet','raw_relationships.parquet'}),
+        'top_level_output_file_bytes':{p.name:p.stat().st_size for p in public_index_files if p.parent==RUN/'output'},
         'original_cache_and_vectors_published':False})
     print(json.dumps({'exported':True,'operation_counts':public['operation_counts'],'embedding_estimate_usd':public['known_embedding_input_estimate_usd']}))
 

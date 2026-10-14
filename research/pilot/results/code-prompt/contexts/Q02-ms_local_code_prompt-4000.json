@@ -1,0 +1,404 @@
+{
+  "variant": "code-prompt",
+  "question_id": "Q02",
+  "method": "ms_local_code_prompt",
+  "budget": 4000,
+  "query": "Find where outgoing header names and values are validated before they are added to a prepared request.",
+  "upstream_raw_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n650|CHECK_HEADER_VALIDITY|`CHECK_HEADER_VALIDITY` refers to the `check_header_validity` utility imported from `.utils`. It is explicitly called by `prepare_headers` for each header before the headers are stored, although its definition and implementation are not visible in the available code. No other uses of `check_header_validity` are visible in the provided code segment.|3\n1272|TEST_HEADER_VALIDATION|The test `test_header_validation` is visibly defined here. Its documentation states that valid header contents must not be rejected; it calls `requests.get(httpbin(\"get\"), headers=valid_headers)` and asserts each input header value equals the corresponding request header value.|2\n691|PREPARE_HEADERS|The method `prepare_headers(self, headers)` is defined here, initializes `self.headers` as `CaseInsensitiveDict`, validates each header with `check_header_validity`, converts header names with `to_native_string`, and stores the values. The owning class is not visible in this chunk.|5\n958|_VALIDATE_HEADER_PART|The function `_validate_header_part(header, header_part, header_validator_index)` is defined here. It selects a string or byte validator, raises `InvalidHeader` for unsupported types or failed validation, and otherwise completes without returning a value.|7\n968|MATCH|`match` is explicitly called through `validator.match(header_part)` in `_validate_header_part`; the validator's concrete implementation is not visible.|1\n286|HEADER_VALIDATORS|Module-level dictionary constant named exactly `HEADER_VALIDATORS`; maps the explicitly referenced types `bytes` and `str` to the byte and string validator tuples.|6\n284|_HEADER_VALIDATORS_STR|Module-level tuple constant named exactly `_HEADER_VALIDATORS_STR`; stores `_VALID_HEADER_NAME_RE_STR` and `_VALID_HEADER_VALUE_RE_STR`.|5\n1498|TESTUNQUOTEHEADERVALUE.TEST_VALID|Test method `TestUnquoteHeaderValue.test_valid` asserts that `unquote_header_value` preserves unquoted values and removes surrounding quotes and escapes backslashes for the listed inputs.|3\n11|REQUEST.PREPARE|`REQUEST.PREPARE` refers to the `Request.prepare` method. The method constructs a `PreparedRequest` object, passes the request configuration and hooks to its `prepare(...)` method, and returns the prepared request. It is invoked through expressions such as `req.prepare()` and `r.prepare()`, although some references do not establish the receiver’s concrete class or runtime binding. In usage, the returned prepared request is assigned to `prepped`, after which its body and headers may be modified before it is sent.|6\n803|PREPARE_REQUEST|The method `prepare_request` is defined in the visible class body, but the owning class is not shown; it converts request cookies, merges session and request settings, prepares a `PreparedRequest`, and returns it.|11\n283|_VALID_HEADER_VALUE_RE_STR|Module-level constant named exactly `_VALID_HEADER_VALUE_RE_STR`; defined as `re.compile(r\"^\\S[^\\r\\n]*$|^$\")` for string header-value validation.|2\n1274|TEST_HEADER_NO_RETURN_CHARS|The parametrized test `test_header_no_return_chars` is visibly defined here. It enters `pytest.raises(InvalidHeader)` while calling `requests.get(..., headers=invalid_header)` for header names or values containing carriage-return or line-feed sequences.|5\n686|PREPARE|The method `prepare(self, method=None, url=None, headers=None, files=None, data=None, params=None, auth=None, cookies=None, hooks=None, json=None)` is defined here and coordinates request preparation by calling method, URL, header, cookie, body, authentication, and hook preparation methods. The owning class is not visible in this chunk.|19\n511|MOCKREQUEST.ADD_UNREDIRECTED_HEADER|Defined method exact `add_unredirected_header(self, name, value)`; writes the name/value pair into `_new_headers`.|1\n281|_VALID_HEADER_NAME_RE_STR|Module-level constant named exactly `_VALID_HEADER_NAME_RE_STR`; defined as `re.compile(r\"^[^:\\s][^:\\r\\n]*$\")` for string header-name validation.|1\n1130|TEST_HEADERS_PRESERVE_ORDER|The test function `test_headers_preserve_order` is defined here. It uses `collections.OrderedDict` for session and request headers and asserts the prepared header items preserve the expected order and override `Second` with `\"222\"`.|6\n508|MOCKREQUEST.HAS_HEADER|Defined method exact `has_header(self, name)`; checks whether `name` exists in the request headers or newly collected headers.|1\n1273|TEST_HEADER_VALUE_NOT_STR|The parametrized test `test_header_value_not_str` is visibly defined here. It enters `pytest.raises(InvalidHeader)` while calling `requests.get(..., headers=invalid_header)` for non-string/non-bytes header values, then asserts the parametrized key occurs in the exception text.|5\n\n\n-----Relationships-----\nid|source|target|description|weight|links\n2068|TEST_HEADER_VALIDATION|HTTPBIN|CALLS, direction test_header_validation -> httpbin: the test visibly calls `httpbin(\"get\")` as the URL argument to `requests.get`.|9.0|1\n2067|TEST_HEADER_VALIDATION|REQUESTS.GET|TESTS, direction test_header_validation -> requests.get: the test calls `requests.get(httpbin(\"get\"), headers=valid_headers)` and checks copied request header values.|9.0|1\n851|REQUESTS.MODELS|CHECK_HEADER_VALIDITY|IMPORTS, direction `requests.models` -> `check_header_validity`, visible expression in the `from .utils import (...)` block|9.0|1\n1398|CHECK_HEADER_VALIDITY|_VALIDATE_HEADER_PART|CALLS, `check_header_validity` calls `_validate_header_part(header, name, 0)` and `_validate_header_part(header, value, 1)` for the unpacked header parts.|10.0|1\n915|PREPARE_HEADERS|CHECK_HEADER_VALIDITY|CALLS, `prepare_headers` calls `check_header_validity(header)` for each header before storing it; the callee definition is not visible.|10.0|1\n\n\n-----Sources-----\nid|text\n44|\"\"\"\nrequests.models\n~~~~~~~~~~~~~~~\n\nThis module contains the primary objects that power Requests.\n\"\"\"\n\nimport datetime\n\n# Import encoding now, to avoid implicit import later.\n# Implicit import within threads may cause LookupError when standard library is in a ZIP,\n# such as in Embedded Python. See https://github.com/psf/requests/issues/3578.\nimport encodings.idna  # noqa: F401\nfrom io import UnsupportedOperation\n\nfrom urllib3.exceptions import (\n    DecodeError,\n    LocationParseError,\n    ProtocolError,\n    ReadTimeoutError,\n    SSLError,\n)\nfrom urllib3.fields import RequestField\nfrom urllib3.filepost import encode_multipart_formdata\nfrom urllib3.util import parse_url\n\nfrom ._internal_utils import to_native_string, unicode_is_ascii\nfrom .auth import HTTPBasicAuth\nfrom .compat import (\n    Callable,\n    JSONDecodeError,\n    Mapping,\n    basestring,\n    builtin_str,\n    chardet,\n    cookielib,\n)\nfrom .compat import json as complexjson\nfrom .compat import urlencode, urlsplit, urlunparse\nfrom .cookies import _copy_cookie_jar, cookiejar_from_dict, get_cookie_header\nfrom .exceptions import (\n    ChunkedEncodingError,\n    ConnectionError,\n    ContentDecodingError,\n    HTTPError,\n    InvalidJSONError,\n    InvalidURL,\n)\nfrom .exceptions import JSONDecodeError as RequestsJSONDecodeError\nfrom .exceptions import MissingSchema\nfrom .exceptions import SSLError as RequestsSSLError\nfrom .exceptions import StreamConsumedError\nfrom .hooks import default_hooks\nfrom .status_codes import codes\nfrom .structures import CaseInsensitiveDict\nfrom .utils import (\n    check_header_validity,\n    get_auth_from_url,\n    guess_filename,\n    guess_json_utf,\n    iter_slices,\n    parse_header_links,\n    requote_uri,\n    stream_decode_response_unicode,\n    super_len,\n    to_key_val_list,\n)\n\n#: The set of HTTP status codes that indicate an automatically\n#: processable redirect.\nREDIRECT_STATI = (\n    codes.moved,  # 301\n    codes.found,  # 302\n    codes.other,  # 303\n    codes.temporary_redirect,  # 307\n    codes.permanent_redirect,  # 308\n)\n\nDEFAULT_REDIRECT_LIMIT = 30\nCONTENT_CHUNK_SIZE = 10 * 1024\nITER_CHUNK_SIZE = 512\n\n\nclass RequestEncodingMixin:\n    @property\n    def path_url(self):\n        \"\"\"Build the path URL to use.\"\"\"\n\n        url = []\n\n        p = urlsplit(self.url)\n\n        path = p.path\n        if not path:\n            path = \"/\"\n\n        url.append(path)\n\n        query = p.query\n        if query:\n            url.append(\"?\")\n            url.append(query)\n\n        return \"\".join(url)\n\n    @staticmethod\n    def _encode_params(data):\n        \"\"\"Encode parameters in a piece of data.\n\n        Will successfully encode parameters when passed as a dict or a list of\n        2-tuples. Order is retained if data is a list of 2-tuples but arbitrary\n        if parameters are supplied as a dict.\n        \"\"\"\n\n        if isinstance(data, (str, bytes)):\n            return data\n        elif hasattr(data, \"read\"):\n            return data\n        elif hasattr(data, \"__iter__\"):\n            result = []\n            for k, vs in to_key_val_list(data):\n                if isinstance(vs, basestring) or not hasattr(vs, \"__iter__\"):\n                    vs = [vs]\n                for v in vs:\n                    if v is not None:\n                        result.append(\n                            (\n                                k.encode(\"utf-8\") if isinstance(k, str) else k,\n                                v.encode(\"utf-8\") if isinstance(v, str) else v,\n                            )\n                        )\n            return urlencode(result, doseq=True)\n        else:\n            return data\n\n    @staticmethod\n    def _encode_files(files, data):\n        \"\"\"Build the body for a multipart/form-data request.\n\n        Will successfully encode files when passed as a dict or a list of\n        tuples. Order is retained if data is a list of tuples but arbitrary\n        if parameters are supplied as a dict.\n        The tuples may be 2-tuples (filename, fileobj), 3-tuples (filename, fileobj, contentype)\n        or 4-tuples (filename, fileobj, contentype, custom_headers).\n        \"\"\"\n        if not files:\n            raise ValueError(\"Files must be provided.\")\n        elif isinstance(data, basestring):\n            raise ValueError(\"Data must not be a string.\")\n\n        new_fields = []\n        fields = to_key_val_list(data or {})\n        files = to_key_val_list(files or {})\n\n        for field, val in fields:\n            if isinstance(val, basestring) or not hasattr(val, \"__iter__\"):\n                val = [val]\n            for v in val:\n                if v is not None:\n                    # Don't call str() on bytestrings: in Py3 it all goes wrong.\n                    if not isinstance(v, bytes):\n                        v = str(v)\n\n                    new_fields.append(\n                        (\n                            field.decode(\"utf-8\")\n                            if isinstance(field, bytes)\n                            else field,\n                            v.encode(\"utf-8\") if isinstance(v, str) else v,\n                        )\n                    )\n\n        for k, v in files:\n            # support for explicit filename\n            ft = None\n            fh = None\n            if isinstance(v, (tuple, list)):\n                if len(v) == 2:\n                    fn, fp = v\n                elif len(v) == 3:\n                    fn, fp, ft = v\n                else:\n                    fn, fp, ft, fh = v\n            else:\n                fn = guess_filename(v) or k\n\n",
+  "upstream_raw_records": {
+    "relationships": [
+      {
+        "id": "2068",
+        "source": "TEST_HEADER_VALIDATION",
+        "target": "HTTPBIN",
+        "description": "CALLS, direction test_header_validation -> httpbin: the test visibly calls `httpbin(\"get\")` as the URL argument to `requests.get`.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "2067",
+        "source": "TEST_HEADER_VALIDATION",
+        "target": "REQUESTS.GET",
+        "description": "TESTS, direction test_header_validation -> requests.get: the test calls `requests.get(httpbin(\"get\"), headers=valid_headers)` and checks copied request header values.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "851",
+        "source": "REQUESTS.MODELS",
+        "target": "CHECK_HEADER_VALIDITY",
+        "description": "IMPORTS, direction `requests.models` -> `check_header_validity`, visible expression in the `from .utils import (...)` block",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "1398",
+        "source": "CHECK_HEADER_VALIDITY",
+        "target": "_VALIDATE_HEADER_PART",
+        "description": "CALLS, `check_header_validity` calls `_validate_header_part(header, name, 0)` and `_validate_header_part(header, value, 1)` for the unpacked header parts.",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "915",
+        "source": "PREPARE_HEADERS",
+        "target": "CHECK_HEADER_VALIDITY",
+        "description": "CALLS, `prepare_headers` calls `check_header_validity(header)` for each header before storing it; the callee definition is not visible.",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      }
+    ],
+    "entities": [
+      {
+        "id": "650",
+        "entity": "CHECK_HEADER_VALIDITY",
+        "description": "`CHECK_HEADER_VALIDITY` refers to the `check_header_validity` utility imported from `.utils`. It is explicitly called by `prepare_headers` for each header before the headers are stored, although its definition and implementation are not visible in the available code. No other uses of `check_header_validity` are visible in the provided code segment.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "1272",
+        "entity": "TEST_HEADER_VALIDATION",
+        "description": "The test `test_header_validation` is visibly defined here. Its documentation states that valid header contents must not be rejected; it calls `requests.get(httpbin(\"get\"), headers=valid_headers)` and asserts each input header value equals the corresponding request header value.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "691",
+        "entity": "PREPARE_HEADERS",
+        "description": "The method `prepare_headers(self, headers)` is defined here, initializes `self.headers` as `CaseInsensitiveDict`, validates each header with `check_header_validity`, converts header names with `to_native_string`, and stores the values. The owning class is not visible in this chunk.",
+        "number of relationships": "5",
+        "in_context": true
+      },
+      {
+        "id": "958",
+        "entity": "_VALIDATE_HEADER_PART",
+        "description": "The function `_validate_header_part(header, header_part, header_validator_index)` is defined here. It selects a string or byte validator, raises `InvalidHeader` for unsupported types or failed validation, and otherwise completes without returning a value.",
+        "number of relationships": "7",
+        "in_context": true
+      },
+      {
+        "id": "968",
+        "entity": "MATCH",
+        "description": "`match` is explicitly called through `validator.match(header_part)` in `_validate_header_part`; the validator's concrete implementation is not visible.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "286",
+        "entity": "HEADER_VALIDATORS",
+        "description": "Module-level dictionary constant named exactly `HEADER_VALIDATORS`; maps the explicitly referenced types `bytes` and `str` to the byte and string validator tuples.",
+        "number of relationships": "6",
+        "in_context": true
+      },
+      {
+        "id": "284",
+        "entity": "_HEADER_VALIDATORS_STR",
+        "description": "Module-level tuple constant named exactly `_HEADER_VALIDATORS_STR`; stores `_VALID_HEADER_NAME_RE_STR` and `_VALID_HEADER_VALUE_RE_STR`.",
+        "number of relationships": "5",
+        "in_context": true
+      },
+      {
+        "id": "1498",
+        "entity": "TESTUNQUOTEHEADERVALUE.TEST_VALID",
+        "description": "Test method `TestUnquoteHeaderValue.test_valid` asserts that `unquote_header_value` preserves unquoted values and removes surrounding quotes and escapes backslashes for the listed inputs.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "11",
+        "entity": "REQUEST.PREPARE",
+        "description": "`REQUEST.PREPARE` refers to the `Request.prepare` method. The method constructs a `PreparedRequest` object, passes the request configuration and hooks to its `prepare(...)` method, and returns the prepared request. It is invoked through expressions such as `req.prepare()` and `r.prepare()`, although some references do not establish the receiver’s concrete class or runtime binding. In usage, the returned prepared request is assigned to `prepped`, after which its body and headers may be modified before it is sent.",
+        "number of relationships": "6",
+        "in_context": true
+      },
+      {
+        "id": "803",
+        "entity": "PREPARE_REQUEST",
+        "description": "The method `prepare_request` is defined in the visible class body, but the owning class is not shown; it converts request cookies, merges session and request settings, prepares a `PreparedRequest`, and returns it.",
+        "number of relationships": "11",
+        "in_context": true
+      },
+      {
+        "id": "283",
+        "entity": "_VALID_HEADER_VALUE_RE_STR",
+        "description": "Module-level constant named exactly `_VALID_HEADER_VALUE_RE_STR`; defined as `re.compile(r\"^\\S[^\\r\\n]*$|^$\")` for string header-value validation.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "1274",
+        "entity": "TEST_HEADER_NO_RETURN_CHARS",
+        "description": "The parametrized test `test_header_no_return_chars` is visibly defined here. It enters `pytest.raises(InvalidHeader)` while calling `requests.get(..., headers=invalid_header)` for header names or values containing carriage-return or line-feed sequences.",
+        "number of relationships": "5",
+        "in_context": true
+      },
+      {
+        "id": "686",
+        "entity": "PREPARE",
+        "description": "The method `prepare(self, method=None, url=None, headers=None, files=None, data=None, params=None, auth=None, cookies=None, hooks=None, json=None)` is defined here and coordinates request preparation by calling method, URL, header, cookie, body, authentication, and hook preparation methods. The owning class is not visible in this chunk.",
+        "number of relationships": "19",
+        "in_context": true
+      },
+      {
+        "id": "511",
+        "entity": "MOCKREQUEST.ADD_UNREDIRECTED_HEADER",
+        "description": "Defined method exact `add_unredirected_header(self, name, value)`; writes the name/value pair into `_new_headers`.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "281",
+        "entity": "_VALID_HEADER_NAME_RE_STR",
+        "description": "Module-level constant named exactly `_VALID_HEADER_NAME_RE_STR`; defined as `re.compile(r\"^[^:\\s][^:\\r\\n]*$\")` for string header-name validation.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1130",
+        "entity": "TEST_HEADERS_PRESERVE_ORDER",
+        "description": "The test function `test_headers_preserve_order` is defined here. It uses `collections.OrderedDict` for session and request headers and asserts the prepared header items preserve the expected order and override `Second` with `\"222\"`.",
+        "number of relationships": "6",
+        "in_context": true
+      },
+      {
+        "id": "508",
+        "entity": "MOCKREQUEST.HAS_HEADER",
+        "description": "Defined method exact `has_header(self, name)`; checks whether `name` exists in the request headers or newly collected headers.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1273",
+        "entity": "TEST_HEADER_VALUE_NOT_STR",
+        "description": "The parametrized test `test_header_value_not_str` is visibly defined here. It enters `pytest.raises(InvalidHeader)` while calling `requests.get(..., headers=invalid_header)` for non-string/non-bytes header values, then asserts the parametrized key occurs in the exception text.",
+        "number of relationships": "5",
+        "in_context": true
+      }
+    ],
+    "sources": [
+      {
+        "id": "44",
+        "text": "\"\"\"\nrequests.models\n~~~~~~~~~~~~~~~\n\nThis module contains the primary objects that power Requests.\n\"\"\"\n\nimport datetime\n\n# Import encoding now, to avoid implicit import later.\n# Implicit import within threads may cause LookupError when standard library is in a ZIP,\n# such as in Embedded Python. See https://github.com/psf/requests/issues/3578.\nimport encodings.idna  # noqa: F401\nfrom io import UnsupportedOperation\n\nfrom urllib3.exceptions import (\n    DecodeError,\n    LocationParseError,\n    ProtocolError,\n    ReadTimeoutError,\n    SSLError,\n)\nfrom urllib3.fields import RequestField\nfrom urllib3.filepost import encode_multipart_formdata\nfrom urllib3.util import parse_url\n\nfrom ._internal_utils import to_native_string, unicode_is_ascii\nfrom .auth import HTTPBasicAuth\nfrom .compat import (\n    Callable,\n    JSONDecodeError,\n    Mapping,\n    basestring,\n    builtin_str,\n    chardet,\n    cookielib,\n)\nfrom .compat import json as complexjson\nfrom .compat import urlencode, urlsplit, urlunparse\nfrom .cookies import _copy_cookie_jar, cookiejar_from_dict, get_cookie_header\nfrom .exceptions import (\n    ChunkedEncodingError,\n    ConnectionError,\n    ContentDecodingError,\n    HTTPError,\n    InvalidJSONError,\n    InvalidURL,\n)\nfrom .exceptions import JSONDecodeError as RequestsJSONDecodeError\nfrom .exceptions import MissingSchema\nfrom .exceptions import SSLError as RequestsSSLError\nfrom .exceptions import StreamConsumedError\nfrom .hooks import default_hooks\nfrom .status_codes import codes\nfrom .structures import CaseInsensitiveDict\nfrom .utils import (\n    check_header_validity,\n    get_auth_from_url,\n    guess_filename,\n    guess_json_utf,\n    iter_slices,\n    parse_header_links,\n    requote_uri,\n    stream_decode_response_unicode,\n    super_len,\n    to_key_val_list,\n)\n\n#: The set of HTTP status codes that indicate an automatically\n#: processable redirect.\nREDIRECT_STATI = (\n    codes.moved,  # 301\n    codes.found,  # 302\n    codes.other,  # 303\n    codes.temporary_redirect,  # 307\n    codes.permanent_redirect,  # 308\n)\n\nDEFAULT_REDIRECT_LIMIT = 30\nCONTENT_CHUNK_SIZE = 10 * 1024\nITER_CHUNK_SIZE = 512\n\n\nclass RequestEncodingMixin:\n    @property\n    def path_url(self):\n        \"\"\"Build the path URL to use.\"\"\"\n\n        url = []\n\n        p = urlsplit(self.url)\n\n        path = p.path\n        if not path:\n            path = \"/\"\n\n        url.append(path)\n\n        query = p.query\n        if query:\n            url.append(\"?\")\n            url.append(query)\n\n        return \"\".join(url)\n\n    @staticmethod\n    def _encode_params(data):\n        \"\"\"Encode parameters in a piece of data.\n\n        Will successfully encode parameters when passed as a dict or a list of\n        2-tuples. Order is retained if data is a list of 2-tuples but arbitrary\n        if parameters are supplied as a dict.\n        \"\"\"\n\n        if isinstance(data, (str, bytes)):\n            return data\n        elif hasattr(data, \"read\"):\n            return data\n        elif hasattr(data, \"__iter__\"):\n            result = []\n            for k, vs in to_key_val_list(data):\n                if isinstance(vs, basestring) or not hasattr(vs, \"__iter__\"):\n                    vs = [vs]\n                for v in vs:\n                    if v is not None:\n                        result.append(\n                            (\n                                k.encode(\"utf-8\") if isinstance(k, str) else k,\n                                v.encode(\"utf-8\") if isinstance(v, str) else v,\n                            )\n                        )\n            return urlencode(result, doseq=True)\n        else:\n            return data\n\n    @staticmethod\n    def _encode_files(files, data):\n        \"\"\"Build the body for a multipart/form-data request.\n\n        Will successfully encode files when passed as a dict or a list of\n        tuples. Order is retained if data is a list of tuples but arbitrary\n        if parameters are supplied as a dict.\n        The tuples may be 2-tuples (filename, fileobj), 3-tuples (filename, fileobj, contentype)\n        or 4-tuples (filename, fileobj, contentype, custom_headers).\n        \"\"\"\n        if not files:\n            raise ValueError(\"Files must be provided.\")\n        elif isinstance(data, basestring):\n            raise ValueError(\"Data must not be a string.\")\n\n        new_fields = []\n        fields = to_key_val_list(data or {})\n        files = to_key_val_list(files or {})\n\n        for field, val in fields:\n            if isinstance(val, basestring) or not hasattr(val, \"__iter__\"):\n                val = [val]\n            for v in val:\n                if v is not None:\n                    # Don't call str() on bytestrings: in Py3 it all goes wrong.\n                    if not isinstance(v, bytes):\n                        v = str(v)\n\n                    new_fields.append(\n                        (\n                            field.decode(\"utf-8\")\n                            if isinstance(field, bytes)\n                            else field,\n                            v.encode(\"utf-8\") if isinstance(v, str) else v,\n                        )\n                    )\n\n        for k, v in files:\n            # support for explicit filename\n            ft = None\n            fh = None\n            if isinstance(v, (tuple, list)):\n                if len(v) == 2:\n                    fn, fp = v\n                elif len(v) == 3:\n                    fn, fp, ft = v\n                else:\n                    fn, fp, ft, fh = v\n            else:\n                fn = guess_filename(v) or k\n"
+      }
+    ]
+  },
+  "final_context": "-----Entities-----\nid|entity|description|number of relationships\n650|CHECK_HEADER_VALIDITY|`CHECK_HEADER_VALIDITY` refers to the `check_header_validity` utility imported from `.utils`. It is explicitly called by `prepare_headers` for each header before the headers are stored, although its definition and implementation are not visible in the available code. No other uses of `check_header_validity` are visible in the provided code segment.|3\n1272|TEST_HEADER_VALIDATION|\"The test `test_header_validation` is visibly defined here. Its documentation states that valid header contents must not be rejected; it calls `requests.get(httpbin(\"\"get\"\"), headers=valid_headers)` and asserts each input header value equals the corresponding request header value.\"|2\n691|PREPARE_HEADERS|The method `prepare_headers(self, headers)` is defined here, initializes `self.headers` as `CaseInsensitiveDict`, validates each header with `check_header_validity`, converts header names with `to_native_string`, and stores the values. The owning class is not visible in this chunk.|5\n958|_VALIDATE_HEADER_PART|The function `_validate_header_part(header, header_part, header_validator_index)` is defined here. It selects a string or byte validator, raises `InvalidHeader` for unsupported types or failed validation, and otherwise completes without returning a value.|7\n968|MATCH|`match` is explicitly called through `validator.match(header_part)` in `_validate_header_part`; the validator's concrete implementation is not visible.|1\n286|HEADER_VALIDATORS|Module-level dictionary constant named exactly `HEADER_VALIDATORS`; maps the explicitly referenced types `bytes` and `str` to the byte and string validator tuples.|6\n284|_HEADER_VALIDATORS_STR|Module-level tuple constant named exactly `_HEADER_VALIDATORS_STR`; stores `_VALID_HEADER_NAME_RE_STR` and `_VALID_HEADER_VALUE_RE_STR`.|5\n1498|TESTUNQUOTEHEADERVALUE.TEST_VALID|Test method `TestUnquoteHeaderValue.test_valid` asserts that `unquote_header_value` preserves unquoted values and removes surrounding quotes and escapes backslashes for the listed inputs.|3\n11|REQUEST.PREPARE|`REQUEST.PREPARE` refers to the `Request.prepare` method. The method constructs a `PreparedRequest` object, passes the request configuration and hooks to its `prepare(...)` method, and returns the prepared request. It is invoked through expressions such as `req.prepare()` and `r.prepare()`, although some references do not establish the receiver’s concrete class or runtime binding. In usage, the returned prepared request is assigned to `prepped`, after which its body and headers may be modified before it is sent.|6\n803|PREPARE_REQUEST|The method `prepare_request` is defined in the visible class body, but the owning class is not shown; it converts request cookies, merges session and request settings, prepares a `PreparedRequest`, and returns it.|11\n283|_VALID_HEADER_VALUE_RE_STR|\"Module-level constant named exactly `_VALID_HEADER_VALUE_RE_STR`; defined as `re.compile(r\"\"^\\S[^\\r\\n]*$|^$\"\")` for string header-value validation.\"|2\n1274|TEST_HEADER_NO_RETURN_CHARS|The parametrized test `test_header_no_return_chars` is visibly defined here. It enters `pytest.raises(InvalidHeader)` while calling `requests.get(..., headers=invalid_header)` for header names or values containing carriage-return or line-feed sequences.|5\n686|PREPARE|The method `prepare(self, method=None, url=None, headers=None, files=None, data=None, params=None, auth=None, cookies=None, hooks=None, json=None)` is defined here and coordinates request preparation by calling method, URL, header, cookie, body, authentication, and hook preparation methods. The owning class is not visible in this chunk.|19\n511|MOCKREQUEST.ADD_UNREDIRECTED_HEADER|Defined method exact `add_unredirected_header(self, name, value)`; writes the name/value pair into `_new_headers`.|1\n281|_VALID_HEADER_NAME_RE_STR|\"Module-level constant named exactly `_VALID_HEADER_NAME_RE_STR`; defined as `re.compile(r\"\"^[^:\\s][^:\\r\\n]*$\"\")` for string header-name validation.\"|1\n1130|TEST_HEADERS_PRESERVE_ORDER|\"The test function `test_headers_preserve_order` is defined here. It uses `collections.OrderedDict` for session and request headers and asserts the prepared header items preserve the expected order and override `Second` with `\"\"222\"\"`.\"|6\n508|MOCKREQUEST.HAS_HEADER|Defined method exact `has_header(self, name)`; checks whether `name` exists in the request headers or newly collected headers.|1\n1273|TEST_HEADER_VALUE_NOT_STR|The parametrized test `test_header_value_not_str` is visibly defined here. It enters `pytest.raises(InvalidHeader)` while calling `requests.get(..., headers=invalid_header)` for non-string/non-bytes header values, then asserts the parametrized key occurs in the exception text.|5\n\n-----Relationships-----\nid|source|target|description|weight|links\n2068|TEST_HEADER_VALIDATION|HTTPBIN|\"CALLS, direction test_header_validation -> httpbin: the test visibly calls `httpbin(\"\"get\"\")` as the URL argument to `requests.get`.\"|9.0|1\n2067|TEST_HEADER_VALIDATION|REQUESTS.GET|\"TESTS, direction test_header_validation -> requests.get: the test calls `requests.get(httpbin(\"\"get\"\"), headers=valid_headers)` and checks copied request header values.\"|9.0|1\n851|REQUESTS.MODELS|CHECK_HEADER_VALIDITY|IMPORTS, direction `requests.models` -> `check_header_validity`, visible expression in the `from .utils import (...)` block|9.0|1\n1398|CHECK_HEADER_VALIDITY|_VALIDATE_HEADER_PART|CALLS, `check_header_validity` calls `_validate_header_part(header, name, 0)` and `_validate_header_part(header, value, 1)` for the unpacked header parts.|10.0|1\n915|PREPARE_HEADERS|CHECK_HEADER_VALIDITY|CALLS, `prepare_headers` calls `check_header_validity(header)` for each header before storing it; the callee definition is not visible.|10.0|1\n\n-----Sources-----\nid|source|text\n44|src/requests/models.py:L1-L185|\"\"\"\"\"\"\"\nrequests.models\n~~~~~~~~~~~~~~~\n\nThis module contains the primary objects that power Requests.\n\"\"\"\"\"\"\n\nimport datetime\n\n# Import encoding now, to avoid implicit import later.\n# Implicit import within threads may cause LookupError when standard library is in a ZIP,\n# such as in Embedded Python. See https://github.com/psf/requests/issues/3578.\nimport encodings.idna  # noqa: F401\nfrom io import UnsupportedOperation\n\nfrom urllib3.exceptions import (\n    DecodeError,\n    LocationParseError,\n    ProtocolError,\n    ReadTimeoutError,\n    SSLError,\n)\nfrom urllib3.fields import RequestField\nfrom urllib3.filepost import encode_multipart_formdata\nfrom urllib3.util import parse_url\n\nfrom ._internal_utils import to_native_string, unicode_is_ascii\nfrom .auth import HTTPBasicAuth\nfrom .compat import (\n    Callable,\n    JSONDecodeError,\n    Mapping,\n    basestring,\n    builtin_str,\n    chardet,\n    cookielib,\n)\nfrom .compat import json as complexjson\nfrom .compat import urlencode, urlsplit, urlunparse\nfrom .cookies import _copy_cookie_jar, cookiejar_from_dict, get_cookie_header\nfrom .exceptions import (\n    ChunkedEncodingError,\n    ConnectionError,\n    ContentDecodingError,\n    HTTPError,\n    InvalidJSONError,\n    InvalidURL,\n)\nfrom .exceptions import JSONDecodeError as RequestsJSONDecodeError\nfrom .exceptions import MissingSchema\nfrom .exceptions import SSLError as RequestsSSLError\nfrom .exceptions import StreamConsumedError\nfrom .hooks import default_hooks\nfrom .status_codes import codes\nfrom .structures import CaseInsensitiveDict\nfrom .utils import (\n    check_header_validity,\n    get_auth_from_url,\n    guess_filename,\n    guess_json_utf,\n    iter_slices,\n    parse_header_links,\n    requote_uri,\n    stream_decode_response_unicode,\n    super_len,\n    to_key_val_list,\n)\n\n#: The set of HTTP status codes that indicate an automatically\n#: processable redirect.\nREDIRECT_STATI = (\n    codes.moved,  # 301\n    codes.found,  # 302\n    codes.other,  # 303\n    codes.temporary_redirect,  # 307\n    codes.permanent_redirect,  # 308\n)\n\nDEFAULT_REDIRECT_LIMIT = 30\nCONTENT_CHUNK_SIZE = 10 * 1024\nITER_CHUNK_SIZE = 512\n\n\nclass RequestEncodingMixin:\n    @property\n    def path_url(self):\n        \"\"\"\"\"\"Build the path URL to use.\"\"\"\"\"\"\n\n        url = []\n\n        p = urlsplit(self.url)\n\n        path = p.path\n        if not path:\n            path = \"\"/\"\"\n\n        url.append(path)\n\n        query = p.query\n        if query:\n            url.append(\"\"?\"\")\n            url.append(query)\n\n        return \"\"\"\".join(url)\n\n    @staticmethod\n    def _encode_params(data):\n        \"\"\"\"\"\"Encode parameters in a piece of data.\n\n        Will successfully encode parameters when passed as a dict or a list of\n        2-tuples. Order is retained if data is a list of 2-tuples but arbitrary\n        if parameters are supplied as a dict.\n        \"\"\"\"\"\"\n\n        if isinstance(data, (str, bytes)):\n            return data\n        elif hasattr(data, \"\"read\"\"):\n            return data\n        elif hasattr(data, \"\"__iter__\"\"):\n            result = []\n            for k, vs in to_key_val_list(data):\n                if isinstance(vs, basestring) or not hasattr(vs, \"\"__iter__\"\"):\n                    vs = [vs]\n                for v in vs:\n                    if v is not None:\n                        result.append(\n                            (\n                                k.encode(\"\"utf-8\"\") if isinstance(k, str) else k,\n                                v.encode(\"\"utf-8\"\") if isinstance(v, str) else v,\n                            )\n                        )\n            return urlencode(result, doseq=True)\n        else:\n            return data\n\n    @staticmethod\n    def _encode_files(files, data):\n        \"\"\"\"\"\"Build the body for a multipart/form-data request.\n\n        Will successfully encode files when passed as a dict or a list of\n        tuples. Order is retained if data is a list of tuples but arbitrary\n        if parameters are supplied as a dict.\n        The tuples may be 2-tuples (filename, fileobj), 3-tuples (filename, fileobj, contentype)\n        or 4-tuples (filename, fileobj, contentype, custom_headers).\n        \"\"\"\"\"\"\n        if not files:\n            raise ValueError(\"\"Files must be provided.\"\")\n        elif isinstance(data, basestring):\n            raise ValueError(\"\"Data must not be a string.\"\")\n\n        new_fields = []\n        fields = to_key_val_list(data or {})\n        files = to_key_val_list(files or {})\n\n        for field, val in fields:\n            if isinstance(val, basestring) or not hasattr(val, \"\"__iter__\"\"):\n                val = [val]\n            for v in val:\n                if v is not None:\n                    # Don't call str() on bytestrings: in Py3 it all goes wrong.\n                    if not isinstance(v, bytes):\n                        v = str(v)\n\n                    new_fields.append(\n                        (\n                            field.decode(\"\"utf-8\"\")\n                            if isinstance(field, bytes)\n                            else field,\n                            v.encode(\"\"utf-8\"\") if isinstance(v, str) else v,\n                        )\n                    )\n\n        for k, v in files:\n            # support for explicit filename\n            ft = None\n            fh = None\n            if isinstance(v, (tuple, list)):\n                if len(v) == 2:\n                    fn, fp = v\n                elif len(v) == 3:\n                    fn, fp, ft = v\n                else:\n                    fn, fp, ft, fh = v\n            else:\n                fn = guess_filename(v) or k\n\"\n",
+  "final_tables": [
+    {
+      "name": "entities",
+      "columns": [
+        "id",
+        "entity",
+        "description",
+        "number of relationships"
+      ],
+      "rows": [
+        {
+          "id": "650",
+          "entity": "CHECK_HEADER_VALIDITY",
+          "description": "`CHECK_HEADER_VALIDITY` refers to the `check_header_validity` utility imported from `.utils`. It is explicitly called by `prepare_headers` for each header before the headers are stored, although its definition and implementation are not visible in the available code. No other uses of `check_header_validity` are visible in the provided code segment.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "1272",
+          "entity": "TEST_HEADER_VALIDATION",
+          "description": "The test `test_header_validation` is visibly defined here. Its documentation states that valid header contents must not be rejected; it calls `requests.get(httpbin(\"get\"), headers=valid_headers)` and asserts each input header value equals the corresponding request header value.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "691",
+          "entity": "PREPARE_HEADERS",
+          "description": "The method `prepare_headers(self, headers)` is defined here, initializes `self.headers` as `CaseInsensitiveDict`, validates each header with `check_header_validity`, converts header names with `to_native_string`, and stores the values. The owning class is not visible in this chunk.",
+          "number of relationships": "5"
+        },
+        {
+          "id": "958",
+          "entity": "_VALIDATE_HEADER_PART",
+          "description": "The function `_validate_header_part(header, header_part, header_validator_index)` is defined here. It selects a string or byte validator, raises `InvalidHeader` for unsupported types or failed validation, and otherwise completes without returning a value.",
+          "number of relationships": "7"
+        },
+        {
+          "id": "968",
+          "entity": "MATCH",
+          "description": "`match` is explicitly called through `validator.match(header_part)` in `_validate_header_part`; the validator's concrete implementation is not visible.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "286",
+          "entity": "HEADER_VALIDATORS",
+          "description": "Module-level dictionary constant named exactly `HEADER_VALIDATORS`; maps the explicitly referenced types `bytes` and `str` to the byte and string validator tuples.",
+          "number of relationships": "6"
+        },
+        {
+          "id": "284",
+          "entity": "_HEADER_VALIDATORS_STR",
+          "description": "Module-level tuple constant named exactly `_HEADER_VALIDATORS_STR`; stores `_VALID_HEADER_NAME_RE_STR` and `_VALID_HEADER_VALUE_RE_STR`.",
+          "number of relationships": "5"
+        },
+        {
+          "id": "1498",
+          "entity": "TESTUNQUOTEHEADERVALUE.TEST_VALID",
+          "description": "Test method `TestUnquoteHeaderValue.test_valid` asserts that `unquote_header_value` preserves unquoted values and removes surrounding quotes and escapes backslashes for the listed inputs.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "11",
+          "entity": "REQUEST.PREPARE",
+          "description": "`REQUEST.PREPARE` refers to the `Request.prepare` method. The method constructs a `PreparedRequest` object, passes the request configuration and hooks to its `prepare(...)` method, and returns the prepared request. It is invoked through expressions such as `req.prepare()` and `r.prepare()`, although some references do not establish the receiver’s concrete class or runtime binding. In usage, the returned prepared request is assigned to `prepped`, after which its body and headers may be modified before it is sent.",
+          "number of relationships": "6"
+        },
+        {
+          "id": "803",
+          "entity": "PREPARE_REQUEST",
+          "description": "The method `prepare_request` is defined in the visible class body, but the owning class is not shown; it converts request cookies, merges session and request settings, prepares a `PreparedRequest`, and returns it.",
+          "number of relationships": "11"
+        },
+        {
+          "id": "283",
+          "entity": "_VALID_HEADER_VALUE_RE_STR",
+          "description": "Module-level constant named exactly `_VALID_HEADER_VALUE_RE_STR`; defined as `re.compile(r\"^\\S[^\\r\\n]*$|^$\")` for string header-value validation.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "1274",
+          "entity": "TEST_HEADER_NO_RETURN_CHARS",
+          "description": "The parametrized test `test_header_no_return_chars` is visibly defined here. It enters `pytest.raises(InvalidHeader)` while calling `requests.get(..., headers=invalid_header)` for header names or values containing carriage-return or line-feed sequences.",
+          "number of relationships": "5"
+        },
+        {
+          "id": "686",
+          "entity": "PREPARE",
+          "description": "The method `prepare(self, method=None, url=None, headers=None, files=None, data=None, params=None, auth=None, cookies=None, hooks=None, json=None)` is defined here and coordinates request preparation by calling method, URL, header, cookie, body, authentication, and hook preparation methods. The owning class is not visible in this chunk.",
+          "number of relationships": "19"
+        },
+        {
+          "id": "511",
+          "entity": "MOCKREQUEST.ADD_UNREDIRECTED_HEADER",
+          "description": "Defined method exact `add_unredirected_header(self, name, value)`; writes the name/value pair into `_new_headers`.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "281",
+          "entity": "_VALID_HEADER_NAME_RE_STR",
+          "description": "Module-level constant named exactly `_VALID_HEADER_NAME_RE_STR`; defined as `re.compile(r\"^[^:\\s][^:\\r\\n]*$\")` for string header-name validation.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1130",
+          "entity": "TEST_HEADERS_PRESERVE_ORDER",
+          "description": "The test function `test_headers_preserve_order` is defined here. It uses `collections.OrderedDict` for session and request headers and asserts the prepared header items preserve the expected order and override `Second` with `\"222\"`.",
+          "number of relationships": "6"
+        },
+        {
+          "id": "508",
+          "entity": "MOCKREQUEST.HAS_HEADER",
+          "description": "Defined method exact `has_header(self, name)`; checks whether `name` exists in the request headers or newly collected headers.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1273",
+          "entity": "TEST_HEADER_VALUE_NOT_STR",
+          "description": "The parametrized test `test_header_value_not_str` is visibly defined here. It enters `pytest.raises(InvalidHeader)` while calling `requests.get(..., headers=invalid_header)` for non-string/non-bytes header values, then asserts the parametrized key occurs in the exception text.",
+          "number of relationships": "5"
+        }
+      ]
+    },
+    {
+      "name": "relationships",
+      "columns": [
+        "id",
+        "source",
+        "target",
+        "description",
+        "weight",
+        "links"
+      ],
+      "rows": [
+        {
+          "id": "2068",
+          "source": "TEST_HEADER_VALIDATION",
+          "target": "HTTPBIN",
+          "description": "CALLS, direction test_header_validation -> httpbin: the test visibly calls `httpbin(\"get\")` as the URL argument to `requests.get`.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "2067",
+          "source": "TEST_HEADER_VALIDATION",
+          "target": "REQUESTS.GET",
+          "description": "TESTS, direction test_header_validation -> requests.get: the test calls `requests.get(httpbin(\"get\"), headers=valid_headers)` and checks copied request header values.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "851",
+          "source": "REQUESTS.MODELS",
+          "target": "CHECK_HEADER_VALIDITY",
+          "description": "IMPORTS, direction `requests.models` -> `check_header_validity`, visible expression in the `from .utils import (...)` block",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "1398",
+          "source": "CHECK_HEADER_VALIDITY",
+          "target": "_VALIDATE_HEADER_PART",
+          "description": "CALLS, `check_header_validity` calls `_validate_header_part(header, name, 0)` and `_validate_header_part(header, value, 1)` for the unpacked header parts.",
+          "weight": "10.0",
+          "links": "1"
+        },
+        {
+          "id": "915",
+          "source": "PREPARE_HEADERS",
+          "target": "CHECK_HEADER_VALIDITY",
+          "description": "CALLS, `prepare_headers` calls `check_header_validity(header)` for each header before storing it; the callee definition is not visible.",
+          "weight": "10.0",
+          "links": "1"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "columns": [
+        "id",
+        "source",
+        "text"
+      ],
+      "rows": [
+        {
+          "id": "44",
+          "text": "\"\"\"\nrequests.models\n~~~~~~~~~~~~~~~\n\nThis module contains the primary objects that power Requests.\n\"\"\"\n\nimport datetime\n\n# Import encoding now, to avoid implicit import later.\n# Implicit import within threads may cause LookupError when standard library is in a ZIP,\n# such as in Embedded Python. See https://github.com/psf/requests/issues/3578.\nimport encodings.idna  # noqa: F401\nfrom io import UnsupportedOperation\n\nfrom urllib3.exceptions import (\n    DecodeError,\n    LocationParseError,\n    ProtocolError,\n    ReadTimeoutError,\n    SSLError,\n)\nfrom urllib3.fields import RequestField\nfrom urllib3.filepost import encode_multipart_formdata\nfrom urllib3.util import parse_url\n\nfrom ._internal_utils import to_native_string, unicode_is_ascii\nfrom .auth import HTTPBasicAuth\nfrom .compat import (\n    Callable,\n    JSONDecodeError,\n    Mapping,\n    basestring,\n    builtin_str,\n    chardet,\n    cookielib,\n)\nfrom .compat import json as complexjson\nfrom .compat import urlencode, urlsplit, urlunparse\nfrom .cookies import _copy_cookie_jar, cookiejar_from_dict, get_cookie_header\nfrom .exceptions import (\n    ChunkedEncodingError,\n    ConnectionError,\n    ContentDecodingError,\n    HTTPError,\n    InvalidJSONError,\n    InvalidURL,\n)\nfrom .exceptions import JSONDecodeError as RequestsJSONDecodeError\nfrom .exceptions import MissingSchema\nfrom .exceptions import SSLError as RequestsSSLError\nfrom .exceptions import StreamConsumedError\nfrom .hooks import default_hooks\nfrom .status_codes import codes\nfrom .structures import CaseInsensitiveDict\nfrom .utils import (\n    check_header_validity,\n    get_auth_from_url,\n    guess_filename,\n    guess_json_utf,\n    iter_slices,\n    parse_header_links,\n    requote_uri,\n    stream_decode_response_unicode,\n    super_len,\n    to_key_val_list,\n)\n\n#: The set of HTTP status codes that indicate an automatically\n#: processable redirect.\nREDIRECT_STATI = (\n    codes.moved,  # 301\n    codes.found,  # 302\n    codes.other,  # 303\n    codes.temporary_redirect,  # 307\n    codes.permanent_redirect,  # 308\n)\n\nDEFAULT_REDIRECT_LIMIT = 30\nCONTENT_CHUNK_SIZE = 10 * 1024\nITER_CHUNK_SIZE = 512\n\n\nclass RequestEncodingMixin:\n    @property\n    def path_url(self):\n        \"\"\"Build the path URL to use.\"\"\"\n\n        url = []\n\n        p = urlsplit(self.url)\n\n        path = p.path\n        if not path:\n            path = \"/\"\n\n        url.append(path)\n\n        query = p.query\n        if query:\n            url.append(\"?\")\n            url.append(query)\n\n        return \"\".join(url)\n\n    @staticmethod\n    def _encode_params(data):\n        \"\"\"Encode parameters in a piece of data.\n\n        Will successfully encode parameters when passed as a dict or a list of\n        2-tuples. Order is retained if data is a list of 2-tuples but arbitrary\n        if parameters are supplied as a dict.\n        \"\"\"\n\n        if isinstance(data, (str, bytes)):\n            return data\n        elif hasattr(data, \"read\"):\n            return data\n        elif hasattr(data, \"__iter__\"):\n            result = []\n            for k, vs in to_key_val_list(data):\n                if isinstance(vs, basestring) or not hasattr(vs, \"__iter__\"):\n                    vs = [vs]\n                for v in vs:\n                    if v is not None:\n                        result.append(\n                            (\n                                k.encode(\"utf-8\") if isinstance(k, str) else k,\n                                v.encode(\"utf-8\") if isinstance(v, str) else v,\n                            )\n                        )\n            return urlencode(result, doseq=True)\n        else:\n            return data\n\n    @staticmethod\n    def _encode_files(files, data):\n        \"\"\"Build the body for a multipart/form-data request.\n\n        Will successfully encode files when passed as a dict or a list of\n        tuples. Order is retained if data is a list of tuples but arbitrary\n        if parameters are supplied as a dict.\n        The tuples may be 2-tuples (filename, fileobj), 3-tuples (filename, fileobj, contentype)\n        or 4-tuples (filename, fileobj, contentype, custom_headers).\n        \"\"\"\n        if not files:\n            raise ValueError(\"Files must be provided.\")\n        elif isinstance(data, basestring):\n            raise ValueError(\"Data must not be a string.\")\n\n        new_fields = []\n        fields = to_key_val_list(data or {})\n        files = to_key_val_list(files or {})\n\n        for field, val in fields:\n            if isinstance(val, basestring) or not hasattr(val, \"__iter__\"):\n                val = [val]\n            for v in val:\n                if v is not None:\n                    # Don't call str() on bytestrings: in Py3 it all goes wrong.\n                    if not isinstance(v, bytes):\n                        v = str(v)\n\n                    new_fields.append(\n                        (\n                            field.decode(\"utf-8\")\n                            if isinstance(field, bytes)\n                            else field,\n                            v.encode(\"utf-8\") if isinstance(v, str) else v,\n                        )\n                    )\n\n        for k, v in files:\n            # support for explicit filename\n            ft = None\n            fh = None\n            if isinstance(v, (tuple, list)):\n                if len(v) == 2:\n                    fn, fp = v\n                elif len(v) == 3:\n                    fn, fp, ft = v\n                else:\n                    fn, fp, ft, fh = v\n            else:\n                fn = guess_filename(v) or k\n",
+          "source": "src/requests/models.py:L1-L185"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "short_id": "44",
+      "text_unit_id": "771e4903fda73a194d5f66a667619b42b504825dda1259bec5448de65ba6ce2e4731189b7a7d45251bfa4c2777f6805f7101c8561ae23b655dce17ff7efc6fe8",
+      "id": "ce7864049adc0b732691fc982285b9c3c7ab256d3e2b7eb0a01e725c608ec2bb",
+      "title": "src/requests/models.py:L1-L185",
+      "path": "src/requests/models.py",
+      "start_line": 1,
+      "end_line": 185,
+      "tokens": 1198,
+      "text_sha256": "1a3f450c06d441bdc75b7b08154ed905d510f4a3c38ad37aab8c881fe95d4c39",
+      "ms_text_unit_id": "771e4903fda73a194d5f66a667619b42b504825dda1259bec5448de65ba6ce2e4731189b7a7d45251bfa4c2777f6805f7101c8561ae23b655dce17ff7efc6fe8"
+    }
+  ],
+  "raw_context_tokens": 2530,
+  "final_context_tokens": 2582,
+  "source_text_tokens": 1198,
+  "source_chunks": 1,
+  "retrieval_compute_seconds": 0.01138966716825962,
+  "adaptation_seconds": 0.0036666663363575935,
+  "empty_reason": null,
+  "community_level": 2,
+  "dropped_tail_rows": 0
+}

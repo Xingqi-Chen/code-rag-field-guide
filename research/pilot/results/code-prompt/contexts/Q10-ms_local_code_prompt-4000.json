@@ -1,0 +1,340 @@
+{
+  "variant": "code-prompt",
+  "question_id": "Q10",
+  "method": "ms_local_code_prompt",
+  "budget": 4000,
+  "query": "Trace cookie merging and construction of the Cookie header while a Session prepares a request, before transport.",
+  "upstream_raw_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n23|SESSION.PREPARE_REQUEST|`Session.prepare_request()` is explicitly referenced as the session-aware preparation method that applies session-level state, including cookies, to a `Request`.|2\n803|PREPARE_REQUEST|The method `prepare_request` is defined in the visible class body, but the owning class is not shown; it converts request cookies, merges session and request settings, prepares a `PreparedRequest`, and returns it.|11\n18|SESSION.COOKIES|The value spelling `Session.cookies` is explicitly referenced in `Session.cookies` and described as the session cookie collection that persists across requests; its definition is not visible here.|1\n693|PREPARE_COOKIES|`PREPARE_COOKIES` refers to the `prepare_cookies(self, cookies)` method, whose owning class is not identifiable from the provided code. The method accepts cookies, preserves them when they are already provided as a `cookielib.CookieJar`, or converts other cookie data using `cookiejar_from_dict(cookies)`. It then generates a cookie header through `get_cookie_header` and assigns that value to `self.headers[\"Cookie\"]` when a header is returned. The method is explicitly invoked by `prepare` via `self.prepare_cookies(cookies)`.|5\n1122|TEST_REQUEST_COOKIE_OVERRIDES_SESSION_COOKIE|The test function `test_request_cookie_overrides_session_cookie` is defined here. It asserts that request cookies set `foo` to `\"baz\"` while the session cookie remains `\"bar\"`.|4\n1123|TEST_REQUEST_COOKIES_NOT_PERSISTED|The test function `test_request_cookies_not_persisted` is defined here. It sends a request with `cookies={\"foo\": \"baz\"}` and asserts `not s.cookies`, establishing that request cookies do not add cookies to the session.|3\n1121|TEST_COOKIE_PERSISTS_VIA_API|The test function `test_cookie_persists_via_api` is defined here. It creates a session, sends `cookies={\"foo\": \"bar\"}` through `httpbin(\"redirect/1\")`, and asserts that `foo` occurs in the request Cookie headers across the redirect history.|3\n17|SESSION.HEADERS|The class-scoped value spelling `Session.headers` is explicitly referenced through `s.headers.update({'x-test': 'true'})`; the example documents default session headers, but does not show a class definition.|2\n582|MERGE_COOKIES|The function `merge_cookies(cookiejar, cookies)` is defined here. It validates that the destination is a CookieJar, merges dictionaries through `cookiejar_from_dict(..., overwrite=False)`, updates compatible CookieJar inputs, and returns `cookiejar`.|8\n520|GET_COOKIE_HEADER|Defined function exact `get_cookie_header(jar, request)`; wraps the request, asks the jar to add a cookie header, and returns the collected `Cookie` header or `None`.|5\n25|SESSION.MERGE_ENVIRONMENT_SETTINGS|`SESSION.MERGE_ENVIRONMENT_SETTINGS` refers to the `Session.merge_environment_settings()` method, which is invoked syntactically through a session-like receiver, `s`. The receiver’s concrete class and runtime binding are not established in the available context. It is explicitly called as `s.merge_environment_settings(prepped.url, {}, None, None, None)` to obtain settings derived from the environment before a prepared request is sent.|2\n48|SESSION.CERT|The unresolved session attribute `Session.cert` is explicitly written through `s.cert = '/path/client.cert'`; the receiver is created by `requests.Session()`, but the owning implementation is not visible here.|1\n533|MORSEL_TO_COOKIE|`MORSEL_TO_COOKIE` (spelled exactly as `morsel_to_cookie`) is an externally defined callable imported from `requests.cookies`. It converts a `Morsel` object into a cookie, and is explicitly referenced by `RequestsCookieJar.set` for that conversion. Its implementation is not visible in the provided context, and no direct use appears in one referenced code chunk. Visible tests pass a `Morsel` to `morsel_to_cookie` and verify converted `expires` values as well as expected exception behavior.|15\n526|HTTP.COOKIEJAR.COOKIEJAR|Explicitly referenced in documentation as the cookie jar interface that consumes `MockRequest` and as the documented jar type accepted by `extract_cookies_to_jar`; its definition is not visible.|1\n320|EXTRACT_COOKIES_TO_JAR|`EXTRACT_COOKIES_TO_JAR` is a callable imported from the `.cookies` module and used to extract and persist server-provided cookies from raw HTTP responses into request, session, or response cookie jars. It is invoked while preparing resent requests, including with `prep._cookies`, `r.request`, and `r.raw`; by `build_response` with `response.cookies`, `req`, and `resp`; and for each response in `r.history` using `self.cookies`, `resp.request`, and `resp.raw`. Some references show the import without visible usage, while other occurrences indicate that the callable processes both response history and the current response. Its definition is not visible in the provided code.|9\n1257|TEST_SESSION_PICKLING|The visible test function `test_session_pickling` creates a request and session, pickle-round-trips the session, assigns `s.proxies = getproxies()`, prepares and sends the request, and asserts status 200. Its owning class is not visible in this chunk.|8\n796|SESSION.__INIT__|The method `Session.__init__(self)` is defined here. It initializes session defaults including headers, authentication, proxies, hooks, parameters, TLS verification, certificates, redirect limits, environment trust, cookies, and HTTP adapters.|7\n\n\n-----Relationships-----\nid|source|target|description|weight|links\n22|SESSION|SESSION.PREPARE_REQUEST|CALLS, direction `Session` -> `Session.prepare_request`; visible expression `prepped = s.prepare_request(req)` after `s = Session()`. The receiver is tied to the locally constructed `Session` only within this documentation example.|9.0|1\n23|SESSION.PREPARE_REQUEST|PREPAREDREQUEST|RETURNS, direction `Session.prepare_request` -> `PreparedRequest`; the text explicitly describes this call as producing a `PreparedRequest` with session state applied.|9.0|1\n\n\n-----Sources-----\nid|text\n2|from an API call or a Session call, the ``request`` attribute is actually the\n``PreparedRequest`` that was used. In some cases you may wish to do some extra\nwork to the body or headers (or anything else really) before sending a\nrequest. The simple recipe for this is the following::\n\n    from requests import Request, Session\n\n    s = Session()\n\n    req = Request('POST', url, data=data, headers=headers)\n    prepped = req.prepare()\n\n    # do something with prepped.body\n    prepped.body = 'No, I want exactly this as the body.'\n\n    # do something with prepped.headers\n    del prepped.headers['Content-Type']\n\n    resp = s.send(prepped,\n        stream=stream,\n        verify=verify,\n        proxies=proxies,\n        cert=cert,\n        timeout=timeout\n    )\n\n    print(resp.status_code)\n\nSince you are not doing anything special with the ``Request`` object, you\nprepare it immediately and modify the ``PreparedRequest`` object. You then\nsend that with the other parameters you would have sent to ``requests.*`` or\n``Session.*``.\n\nHowever, the above code will lose some of the advantages of having a Requests\n:class:`Session <requests.Session>` object. In particular,\n:class:`Session <requests.Session>`-level state such as cookies will\nnot get applied to your request. To get a\n:class:`PreparedRequest <requests.PreparedRequest>` with that state\napplied, replace the call to :meth:`Request.prepare()\n<requests.Request.prepare>` with a call to\n:meth:`Session.prepare_request() <requests.Session.prepare_request>`, like this::\n\n    from requests import Request, Session\n\n    s = Session()\n    req = Request('GET',  url, data=data, headers=headers)\n\n    prepped = s.prepare_request(req)\n\n    # do something with prepped.body\n    prepped.body = 'Seriously, send exactly these bytes.'\n\n    # do something with prepped.headers\n    prepped.headers['Keep-Dead'] = 'parrot'\n\n    resp = s.send(prepped,\n        stream=stream,\n        verify=verify,\n        proxies=proxies,\n        cert=cert,\n        timeout=timeout\n    )\n\n    print(resp.status_code)\n\nWhen you are using the prepared request flow, keep in mind that it does not take into account the environment.\nThis can cause problems if you are using environment variables to change the behaviour of requests.\nFor example: Self-signed SSL certificates specified in ``REQUESTS_CA_BUNDLE`` will not be taken into account.\nAs a result an ``SSL: CERTIFICATE_VERIFY_FAILED`` is thrown.\nYou can get around this behaviour by explicitly merging the environment settings into your session::\n\n    from requests import Request, Session\n\n    s = Session()\n    req = Request('GET', url)\n\n    prepped = s.prepare_request(req)\n\n    # Merge environment settings into session\n    settings = s.merge_environment_settings(prepped.url, {}, None, None, None)\n    resp = s.send(prepped, **settings)\n\n    print(resp.status_code)\n\n.. _verification:\n\nSSL Cert Verification\n---------------------\n\nRequests verifies SSL certificates for HTTPS requests, just like a web browser.\nBy default, SSL verification is enabled, and Requests will throw a SSLError if\nit's unable to verify the certificate::\n\n    >>> requests.get('https://requestb.in')\n    requests.exceptions.SSLError: hostname 'requestb.in' doesn't match either of '*.herokuapp.com', 'herokuapp.com'\n\nI don't have SSL setup on this domain, so it throws an exception. Excellent. GitHub does though::\n\n    >>> requests.get('https://github.com')\n    <Response [200]>\n\nYou can pass ``verify`` the path to a CA_BUNDLE file or directory with certificates of trusted CAs::\n\n    >>> requests.get('https://github.com', verify='/path/to/certfile')\n\nor persistent::\n\n    s = requests.Session()\n    s.verify = '/path/to/certfile'\n\n.. note:: If ``verify`` is set to a path to a directory, the directory must have been processed using\n  the ``c_rehash`` utility supplied with OpenSSL.\n\nThis list of trusted CAs can also be specified through the ``REQUESTS_CA_BUNDLE`` environment variable.\nIf ``REQUESTS_CA_BUNDLE`` is not set, ``CURL_CA_BUNDLE`` will be used as fallback.\n\nRequests can also ignore verifying the SSL certificate if you set ``verify`` to False::\n\n    >>> requests.get('https://kennethreitz.org', verify=False)\n    <Response [200]>\n\nNote that when ``verify`` is set to ``False``, requests will accept any TLS\ncertificate presented by the server, and will ignore hostname mismatches\nand/or expired certificates, which will make your application vulnerable to\nman-in-the-middle (MitM) attacks. Setting verify to ``False`` may be useful\nduring local development or testing.\n\nBy default, ``verify`` is set to True. Option ``verify`` only applies to host certs.\n\nClient Side Certificates\n------------------------\n\nYou can also specify a local cert to use as client side certificate, as a single\nfile (containing the private key and the certificate) or as a tuple of both\nfiles' paths::\n\n    >>> requests.get('https://kennethreitz.org', cert=('/path/client.cert', '/path/client.key'))\n    <Response [200]>\n\nor persistent::\n\n    s = requests.Session()\n    s.cert = '/path/client.cert'\n\nIf you specify a wrong path or an invalid cert, you'll get a SSLError::\n\n    >>> requests.get('https://kennethreitz.org', cert='/wrong_path/client.pem')\n\n",
+  "upstream_raw_records": {
+    "relationships": [
+      {
+        "id": "22",
+        "source": "SESSION",
+        "target": "SESSION.PREPARE_REQUEST",
+        "description": "CALLS, direction `Session` -> `Session.prepare_request`; visible expression `prepped = s.prepare_request(req)` after `s = Session()`. The receiver is tied to the locally constructed `Session` only within this documentation example.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "23",
+        "source": "SESSION.PREPARE_REQUEST",
+        "target": "PREPAREDREQUEST",
+        "description": "RETURNS, direction `Session.prepare_request` -> `PreparedRequest`; the text explicitly describes this call as producing a `PreparedRequest` with session state applied.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      }
+    ],
+    "entities": [
+      {
+        "id": "23",
+        "entity": "SESSION.PREPARE_REQUEST",
+        "description": "`Session.prepare_request()` is explicitly referenced as the session-aware preparation method that applies session-level state, including cookies, to a `Request`.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "803",
+        "entity": "PREPARE_REQUEST",
+        "description": "The method `prepare_request` is defined in the visible class body, but the owning class is not shown; it converts request cookies, merges session and request settings, prepares a `PreparedRequest`, and returns it.",
+        "number of relationships": "11",
+        "in_context": true
+      },
+      {
+        "id": "18",
+        "entity": "SESSION.COOKIES",
+        "description": "The value spelling `Session.cookies` is explicitly referenced in `Session.cookies` and described as the session cookie collection that persists across requests; its definition is not visible here.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "693",
+        "entity": "PREPARE_COOKIES",
+        "description": "`PREPARE_COOKIES` refers to the `prepare_cookies(self, cookies)` method, whose owning class is not identifiable from the provided code. The method accepts cookies, preserves them when they are already provided as a `cookielib.CookieJar`, or converts other cookie data using `cookiejar_from_dict(cookies)`. It then generates a cookie header through `get_cookie_header` and assigns that value to `self.headers[\"Cookie\"]` when a header is returned. The method is explicitly invoked by `prepare` via `self.prepare_cookies(cookies)`.",
+        "number of relationships": "5",
+        "in_context": true
+      },
+      {
+        "id": "1122",
+        "entity": "TEST_REQUEST_COOKIE_OVERRIDES_SESSION_COOKIE",
+        "description": "The test function `test_request_cookie_overrides_session_cookie` is defined here. It asserts that request cookies set `foo` to `\"baz\"` while the session cookie remains `\"bar\"`.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "1123",
+        "entity": "TEST_REQUEST_COOKIES_NOT_PERSISTED",
+        "description": "The test function `test_request_cookies_not_persisted` is defined here. It sends a request with `cookies={\"foo\": \"baz\"}` and asserts `not s.cookies`, establishing that request cookies do not add cookies to the session.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "1121",
+        "entity": "TEST_COOKIE_PERSISTS_VIA_API",
+        "description": "The test function `test_cookie_persists_via_api` is defined here. It creates a session, sends `cookies={\"foo\": \"bar\"}` through `httpbin(\"redirect/1\")`, and asserts that `foo` occurs in the request Cookie headers across the redirect history.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "17",
+        "entity": "SESSION.HEADERS",
+        "description": "The class-scoped value spelling `Session.headers` is explicitly referenced through `s.headers.update({'x-test': 'true'})`; the example documents default session headers, but does not show a class definition.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "582",
+        "entity": "MERGE_COOKIES",
+        "description": "The function `merge_cookies(cookiejar, cookies)` is defined here. It validates that the destination is a CookieJar, merges dictionaries through `cookiejar_from_dict(..., overwrite=False)`, updates compatible CookieJar inputs, and returns `cookiejar`.",
+        "number of relationships": "8",
+        "in_context": true
+      },
+      {
+        "id": "520",
+        "entity": "GET_COOKIE_HEADER",
+        "description": "Defined function exact `get_cookie_header(jar, request)`; wraps the request, asks the jar to add a cookie header, and returns the collected `Cookie` header or `None`.",
+        "number of relationships": "5",
+        "in_context": true
+      },
+      {
+        "id": "25",
+        "entity": "SESSION.MERGE_ENVIRONMENT_SETTINGS",
+        "description": "`SESSION.MERGE_ENVIRONMENT_SETTINGS` refers to the `Session.merge_environment_settings()` method, which is invoked syntactically through a session-like receiver, `s`. The receiver’s concrete class and runtime binding are not established in the available context. It is explicitly called as `s.merge_environment_settings(prepped.url, {}, None, None, None)` to obtain settings derived from the environment before a prepared request is sent.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "48",
+        "entity": "SESSION.CERT",
+        "description": "The unresolved session attribute `Session.cert` is explicitly written through `s.cert = '/path/client.cert'`; the receiver is created by `requests.Session()`, but the owning implementation is not visible here.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "533",
+        "entity": "MORSEL_TO_COOKIE",
+        "description": "`MORSEL_TO_COOKIE` (spelled exactly as `morsel_to_cookie`) is an externally defined callable imported from `requests.cookies`. It converts a `Morsel` object into a cookie, and is explicitly referenced by `RequestsCookieJar.set` for that conversion. Its implementation is not visible in the provided context, and no direct use appears in one referenced code chunk. Visible tests pass a `Morsel` to `morsel_to_cookie` and verify converted `expires` values as well as expected exception behavior.",
+        "number of relationships": "15",
+        "in_context": true
+      },
+      {
+        "id": "526",
+        "entity": "HTTP.COOKIEJAR.COOKIEJAR",
+        "description": "Explicitly referenced in documentation as the cookie jar interface that consumes `MockRequest` and as the documented jar type accepted by `extract_cookies_to_jar`; its definition is not visible.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "320",
+        "entity": "EXTRACT_COOKIES_TO_JAR",
+        "description": "`EXTRACT_COOKIES_TO_JAR` is a callable imported from the `.cookies` module and used to extract and persist server-provided cookies from raw HTTP responses into request, session, or response cookie jars. It is invoked while preparing resent requests, including with `prep._cookies`, `r.request`, and `r.raw`; by `build_response` with `response.cookies`, `req`, and `resp`; and for each response in `r.history` using `self.cookies`, `resp.request`, and `resp.raw`. Some references show the import without visible usage, while other occurrences indicate that the callable processes both response history and the current response. Its definition is not visible in the provided code.",
+        "number of relationships": "9",
+        "in_context": true
+      },
+      {
+        "id": "1257",
+        "entity": "TEST_SESSION_PICKLING",
+        "description": "The visible test function `test_session_pickling` creates a request and session, pickle-round-trips the session, assigns `s.proxies = getproxies()`, prepares and sends the request, and asserts status 200. Its owning class is not visible in this chunk.",
+        "number of relationships": "8",
+        "in_context": true
+      },
+      {
+        "id": "796",
+        "entity": "SESSION.__INIT__",
+        "description": "The method `Session.__init__(self)` is defined here. It initializes session defaults including headers, authentication, proxies, hooks, parameters, TLS verification, certificates, redirect limits, environment trust, cookies, and HTTP adapters.",
+        "number of relationships": "7",
+        "in_context": true
+      }
+    ],
+    "sources": [
+      {
+        "id": "2",
+        "text": "from an API call or a Session call, the ``request`` attribute is actually the\n``PreparedRequest`` that was used. In some cases you may wish to do some extra\nwork to the body or headers (or anything else really) before sending a\nrequest. The simple recipe for this is the following::\n\n    from requests import Request, Session\n\n    s = Session()\n\n    req = Request('POST', url, data=data, headers=headers)\n    prepped = req.prepare()\n\n    # do something with prepped.body\n    prepped.body = 'No, I want exactly this as the body.'\n\n    # do something with prepped.headers\n    del prepped.headers['Content-Type']\n\n    resp = s.send(prepped,\n        stream=stream,\n        verify=verify,\n        proxies=proxies,\n        cert=cert,\n        timeout=timeout\n    )\n\n    print(resp.status_code)\n\nSince you are not doing anything special with the ``Request`` object, you\nprepare it immediately and modify the ``PreparedRequest`` object. You then\nsend that with the other parameters you would have sent to ``requests.*`` or\n``Session.*``.\n\nHowever, the above code will lose some of the advantages of having a Requests\n:class:`Session <requests.Session>` object. In particular,\n:class:`Session <requests.Session>`-level state such as cookies will\nnot get applied to your request. To get a\n:class:`PreparedRequest <requests.PreparedRequest>` with that state\napplied, replace the call to :meth:`Request.prepare()\n<requests.Request.prepare>` with a call to\n:meth:`Session.prepare_request() <requests.Session.prepare_request>`, like this::\n\n    from requests import Request, Session\n\n    s = Session()\n    req = Request('GET',  url, data=data, headers=headers)\n\n    prepped = s.prepare_request(req)\n\n    # do something with prepped.body\n    prepped.body = 'Seriously, send exactly these bytes.'\n\n    # do something with prepped.headers\n    prepped.headers['Keep-Dead'] = 'parrot'\n\n    resp = s.send(prepped,\n        stream=stream,\n        verify=verify,\n        proxies=proxies,\n        cert=cert,\n        timeout=timeout\n    )\n\n    print(resp.status_code)\n\nWhen you are using the prepared request flow, keep in mind that it does not take into account the environment.\nThis can cause problems if you are using environment variables to change the behaviour of requests.\nFor example: Self-signed SSL certificates specified in ``REQUESTS_CA_BUNDLE`` will not be taken into account.\nAs a result an ``SSL: CERTIFICATE_VERIFY_FAILED`` is thrown.\nYou can get around this behaviour by explicitly merging the environment settings into your session::\n\n    from requests import Request, Session\n\n    s = Session()\n    req = Request('GET', url)\n\n    prepped = s.prepare_request(req)\n\n    # Merge environment settings into session\n    settings = s.merge_environment_settings(prepped.url, {}, None, None, None)\n    resp = s.send(prepped, **settings)\n\n    print(resp.status_code)\n\n.. _verification:\n\nSSL Cert Verification\n---------------------\n\nRequests verifies SSL certificates for HTTPS requests, just like a web browser.\nBy default, SSL verification is enabled, and Requests will throw a SSLError if\nit's unable to verify the certificate::\n\n    >>> requests.get('https://requestb.in')\n    requests.exceptions.SSLError: hostname 'requestb.in' doesn't match either of '*.herokuapp.com', 'herokuapp.com'\n\nI don't have SSL setup on this domain, so it throws an exception. Excellent. GitHub does though::\n\n    >>> requests.get('https://github.com')\n    <Response [200]>\n\nYou can pass ``verify`` the path to a CA_BUNDLE file or directory with certificates of trusted CAs::\n\n    >>> requests.get('https://github.com', verify='/path/to/certfile')\n\nor persistent::\n\n    s = requests.Session()\n    s.verify = '/path/to/certfile'\n\n.. note:: If ``verify`` is set to a path to a directory, the directory must have been processed using\n  the ``c_rehash`` utility supplied with OpenSSL.\n\nThis list of trusted CAs can also be specified through the ``REQUESTS_CA_BUNDLE`` environment variable.\nIf ``REQUESTS_CA_BUNDLE`` is not set, ``CURL_CA_BUNDLE`` will be used as fallback.\n\nRequests can also ignore verifying the SSL certificate if you set ``verify`` to False::\n\n    >>> requests.get('https://kennethreitz.org', verify=False)\n    <Response [200]>\n\nNote that when ``verify`` is set to ``False``, requests will accept any TLS\ncertificate presented by the server, and will ignore hostname mismatches\nand/or expired certificates, which will make your application vulnerable to\nman-in-the-middle (MitM) attacks. Setting verify to ``False`` may be useful\nduring local development or testing.\n\nBy default, ``verify`` is set to True. Option ``verify`` only applies to host certs.\n\nClient Side Certificates\n------------------------\n\nYou can also specify a local cert to use as client side certificate, as a single\nfile (containing the private key and the certificate) or as a tuple of both\nfiles' paths::\n\n    >>> requests.get('https://kennethreitz.org', cert=('/path/client.cert', '/path/client.key'))\n    <Response [200]>\n\nor persistent::\n\n    s = requests.Session()\n    s.cert = '/path/client.cert'\n\nIf you specify a wrong path or an invalid cert, you'll get a SSLError::\n\n    >>> requests.get('https://kennethreitz.org', cert='/wrong_path/client.pem')\n"
+      }
+    ]
+  },
+  "final_context": "-----Entities-----\nid|entity|description|number of relationships\n23|SESSION.PREPARE_REQUEST|`Session.prepare_request()` is explicitly referenced as the session-aware preparation method that applies session-level state, including cookies, to a `Request`.|2\n803|PREPARE_REQUEST|The method `prepare_request` is defined in the visible class body, but the owning class is not shown; it converts request cookies, merges session and request settings, prepares a `PreparedRequest`, and returns it.|11\n18|SESSION.COOKIES|The value spelling `Session.cookies` is explicitly referenced in `Session.cookies` and described as the session cookie collection that persists across requests; its definition is not visible here.|1\n693|PREPARE_COOKIES|\"`PREPARE_COOKIES` refers to the `prepare_cookies(self, cookies)` method, whose owning class is not identifiable from the provided code. The method accepts cookies, preserves them when they are already provided as a `cookielib.CookieJar`, or converts other cookie data using `cookiejar_from_dict(cookies)`. It then generates a cookie header through `get_cookie_header` and assigns that value to `self.headers[\"\"Cookie\"\"]` when a header is returned. The method is explicitly invoked by `prepare` via `self.prepare_cookies(cookies)`.\"|5\n1122|TEST_REQUEST_COOKIE_OVERRIDES_SESSION_COOKIE|\"The test function `test_request_cookie_overrides_session_cookie` is defined here. It asserts that request cookies set `foo` to `\"\"baz\"\"` while the session cookie remains `\"\"bar\"\"`.\"|4\n1123|TEST_REQUEST_COOKIES_NOT_PERSISTED|\"The test function `test_request_cookies_not_persisted` is defined here. It sends a request with `cookies={\"\"foo\"\": \"\"baz\"\"}` and asserts `not s.cookies`, establishing that request cookies do not add cookies to the session.\"|3\n1121|TEST_COOKIE_PERSISTS_VIA_API|\"The test function `test_cookie_persists_via_api` is defined here. It creates a session, sends `cookies={\"\"foo\"\": \"\"bar\"\"}` through `httpbin(\"\"redirect/1\"\")`, and asserts that `foo` occurs in the request Cookie headers across the redirect history.\"|3\n17|SESSION.HEADERS|The class-scoped value spelling `Session.headers` is explicitly referenced through `s.headers.update({'x-test': 'true'})`; the example documents default session headers, but does not show a class definition.|2\n582|MERGE_COOKIES|The function `merge_cookies(cookiejar, cookies)` is defined here. It validates that the destination is a CookieJar, merges dictionaries through `cookiejar_from_dict(..., overwrite=False)`, updates compatible CookieJar inputs, and returns `cookiejar`.|8\n520|GET_COOKIE_HEADER|Defined function exact `get_cookie_header(jar, request)`; wraps the request, asks the jar to add a cookie header, and returns the collected `Cookie` header or `None`.|5\n25|SESSION.MERGE_ENVIRONMENT_SETTINGS|`SESSION.MERGE_ENVIRONMENT_SETTINGS` refers to the `Session.merge_environment_settings()` method, which is invoked syntactically through a session-like receiver, `s`. The receiver’s concrete class and runtime binding are not established in the available context. It is explicitly called as `s.merge_environment_settings(prepped.url, {}, None, None, None)` to obtain settings derived from the environment before a prepared request is sent.|2\n48|SESSION.CERT|The unresolved session attribute `Session.cert` is explicitly written through `s.cert = '/path/client.cert'`; the receiver is created by `requests.Session()`, but the owning implementation is not visible here.|1\n533|MORSEL_TO_COOKIE|`MORSEL_TO_COOKIE` (spelled exactly as `morsel_to_cookie`) is an externally defined callable imported from `requests.cookies`. It converts a `Morsel` object into a cookie, and is explicitly referenced by `RequestsCookieJar.set` for that conversion. Its implementation is not visible in the provided context, and no direct use appears in one referenced code chunk. Visible tests pass a `Morsel` to `morsel_to_cookie` and verify converted `expires` values as well as expected exception behavior.|15\n526|HTTP.COOKIEJAR.COOKIEJAR|Explicitly referenced in documentation as the cookie jar interface that consumes `MockRequest` and as the documented jar type accepted by `extract_cookies_to_jar`; its definition is not visible.|1\n320|EXTRACT_COOKIES_TO_JAR|`EXTRACT_COOKIES_TO_JAR` is a callable imported from the `.cookies` module and used to extract and persist server-provided cookies from raw HTTP responses into request, session, or response cookie jars. It is invoked while preparing resent requests, including with `prep._cookies`, `r.request`, and `r.raw`; by `build_response` with `response.cookies`, `req`, and `resp`; and for each response in `r.history` using `self.cookies`, `resp.request`, and `resp.raw`. Some references show the import without visible usage, while other occurrences indicate that the callable processes both response history and the current response. Its definition is not visible in the provided code.|9\n1257|TEST_SESSION_PICKLING|The visible test function `test_session_pickling` creates a request and session, pickle-round-trips the session, assigns `s.proxies = getproxies()`, prepares and sends the request, and asserts status 200. Its owning class is not visible in this chunk.|8\n796|SESSION.__INIT__|The method `Session.__init__(self)` is defined here. It initializes session defaults including headers, authentication, proxies, hooks, parameters, TLS verification, certificates, redirect limits, environment trust, cookies, and HTTP adapters.|7\n\n-----Relationships-----\nid|source|target|description|weight|links\n22|SESSION|SESSION.PREPARE_REQUEST|CALLS, direction `Session` -> `Session.prepare_request`; visible expression `prepped = s.prepare_request(req)` after `s = Session()`. The receiver is tied to the locally constructed `Session` only within this documentation example.|9.0|1\n23|SESSION.PREPARE_REQUEST|PREPAREDREQUEST|RETURNS, direction `Session.prepare_request` -> `PreparedRequest`; the text explicitly describes this call as producing a `PreparedRequest` with session state applied.|9.0|1\n\n-----Sources-----\nid|source|text\n2|docs/user/advanced.rst:L125-L271|\"from an API call or a Session call, the ``request`` attribute is actually the\n``PreparedRequest`` that was used. In some cases you may wish to do some extra\nwork to the body or headers (or anything else really) before sending a\nrequest. The simple recipe for this is the following::\n\n    from requests import Request, Session\n\n    s = Session()\n\n    req = Request('POST', url, data=data, headers=headers)\n    prepped = req.prepare()\n\n    # do something with prepped.body\n    prepped.body = 'No, I want exactly this as the body.'\n\n    # do something with prepped.headers\n    del prepped.headers['Content-Type']\n\n    resp = s.send(prepped,\n        stream=stream,\n        verify=verify,\n        proxies=proxies,\n        cert=cert,\n        timeout=timeout\n    )\n\n    print(resp.status_code)\n\nSince you are not doing anything special with the ``Request`` object, you\nprepare it immediately and modify the ``PreparedRequest`` object. You then\nsend that with the other parameters you would have sent to ``requests.*`` or\n``Session.*``.\n\nHowever, the above code will lose some of the advantages of having a Requests\n:class:`Session <requests.Session>` object. In particular,\n:class:`Session <requests.Session>`-level state such as cookies will\nnot get applied to your request. To get a\n:class:`PreparedRequest <requests.PreparedRequest>` with that state\napplied, replace the call to :meth:`Request.prepare()\n<requests.Request.prepare>` with a call to\n:meth:`Session.prepare_request() <requests.Session.prepare_request>`, like this::\n\n    from requests import Request, Session\n\n    s = Session()\n    req = Request('GET',  url, data=data, headers=headers)\n\n    prepped = s.prepare_request(req)\n\n    # do something with prepped.body\n    prepped.body = 'Seriously, send exactly these bytes.'\n\n    # do something with prepped.headers\n    prepped.headers['Keep-Dead'] = 'parrot'\n\n    resp = s.send(prepped,\n        stream=stream,\n        verify=verify,\n        proxies=proxies,\n        cert=cert,\n        timeout=timeout\n    )\n\n    print(resp.status_code)\n\nWhen you are using the prepared request flow, keep in mind that it does not take into account the environment.\nThis can cause problems if you are using environment variables to change the behaviour of requests.\nFor example: Self-signed SSL certificates specified in ``REQUESTS_CA_BUNDLE`` will not be taken into account.\nAs a result an ``SSL: CERTIFICATE_VERIFY_FAILED`` is thrown.\nYou can get around this behaviour by explicitly merging the environment settings into your session::\n\n    from requests import Request, Session\n\n    s = Session()\n    req = Request('GET', url)\n\n    prepped = s.prepare_request(req)\n\n    # Merge environment settings into session\n    settings = s.merge_environment_settings(prepped.url, {}, None, None, None)\n    resp = s.send(prepped, **settings)\n\n    print(resp.status_code)\n\n.. _verification:\n\nSSL Cert Verification\n---------------------\n\nRequests verifies SSL certificates for HTTPS requests, just like a web browser.\nBy default, SSL verification is enabled, and Requests will throw a SSLError if\nit's unable to verify the certificate::\n\n    >>> requests.get('https://requestb.in')\n    requests.exceptions.SSLError: hostname 'requestb.in' doesn't match either of '*.herokuapp.com', 'herokuapp.com'\n\nI don't have SSL setup on this domain, so it throws an exception. Excellent. GitHub does though::\n\n    >>> requests.get('https://github.com')\n    <Response [200]>\n\nYou can pass ``verify`` the path to a CA_BUNDLE file or directory with certificates of trusted CAs::\n\n    >>> requests.get('https://github.com', verify='/path/to/certfile')\n\nor persistent::\n\n    s = requests.Session()\n    s.verify = '/path/to/certfile'\n\n.. note:: If ``verify`` is set to a path to a directory, the directory must have been processed using\n  the ``c_rehash`` utility supplied with OpenSSL.\n\nThis list of trusted CAs can also be specified through the ``REQUESTS_CA_BUNDLE`` environment variable.\nIf ``REQUESTS_CA_BUNDLE`` is not set, ``CURL_CA_BUNDLE`` will be used as fallback.\n\nRequests can also ignore verifying the SSL certificate if you set ``verify`` to False::\n\n    >>> requests.get('https://kennethreitz.org', verify=False)\n    <Response [200]>\n\nNote that when ``verify`` is set to ``False``, requests will accept any TLS\ncertificate presented by the server, and will ignore hostname mismatches\nand/or expired certificates, which will make your application vulnerable to\nman-in-the-middle (MitM) attacks. Setting verify to ``False`` may be useful\nduring local development or testing.\n\nBy default, ``verify`` is set to True. Option ``verify`` only applies to host certs.\n\nClient Side Certificates\n------------------------\n\nYou can also specify a local cert to use as client side certificate, as a single\nfile (containing the private key and the certificate) or as a tuple of both\nfiles' paths::\n\n    >>> requests.get('https://kennethreitz.org', cert=('/path/client.cert', '/path/client.key'))\n    <Response [200]>\n\nor persistent::\n\n    s = requests.Session()\n    s.cert = '/path/client.cert'\n\nIf you specify a wrong path or an invalid cert, you'll get a SSLError::\n\n    >>> requests.get('https://kennethreitz.org', cert='/wrong_path/client.pem')\n\"\n",
+  "final_tables": [
+    {
+      "name": "entities",
+      "columns": [
+        "id",
+        "entity",
+        "description",
+        "number of relationships"
+      ],
+      "rows": [
+        {
+          "id": "23",
+          "entity": "SESSION.PREPARE_REQUEST",
+          "description": "`Session.prepare_request()` is explicitly referenced as the session-aware preparation method that applies session-level state, including cookies, to a `Request`.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "803",
+          "entity": "PREPARE_REQUEST",
+          "description": "The method `prepare_request` is defined in the visible class body, but the owning class is not shown; it converts request cookies, merges session and request settings, prepares a `PreparedRequest`, and returns it.",
+          "number of relationships": "11"
+        },
+        {
+          "id": "18",
+          "entity": "SESSION.COOKIES",
+          "description": "The value spelling `Session.cookies` is explicitly referenced in `Session.cookies` and described as the session cookie collection that persists across requests; its definition is not visible here.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "693",
+          "entity": "PREPARE_COOKIES",
+          "description": "`PREPARE_COOKIES` refers to the `prepare_cookies(self, cookies)` method, whose owning class is not identifiable from the provided code. The method accepts cookies, preserves them when they are already provided as a `cookielib.CookieJar`, or converts other cookie data using `cookiejar_from_dict(cookies)`. It then generates a cookie header through `get_cookie_header` and assigns that value to `self.headers[\"Cookie\"]` when a header is returned. The method is explicitly invoked by `prepare` via `self.prepare_cookies(cookies)`.",
+          "number of relationships": "5"
+        },
+        {
+          "id": "1122",
+          "entity": "TEST_REQUEST_COOKIE_OVERRIDES_SESSION_COOKIE",
+          "description": "The test function `test_request_cookie_overrides_session_cookie` is defined here. It asserts that request cookies set `foo` to `\"baz\"` while the session cookie remains `\"bar\"`.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "1123",
+          "entity": "TEST_REQUEST_COOKIES_NOT_PERSISTED",
+          "description": "The test function `test_request_cookies_not_persisted` is defined here. It sends a request with `cookies={\"foo\": \"baz\"}` and asserts `not s.cookies`, establishing that request cookies do not add cookies to the session.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "1121",
+          "entity": "TEST_COOKIE_PERSISTS_VIA_API",
+          "description": "The test function `test_cookie_persists_via_api` is defined here. It creates a session, sends `cookies={\"foo\": \"bar\"}` through `httpbin(\"redirect/1\")`, and asserts that `foo` occurs in the request Cookie headers across the redirect history.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "17",
+          "entity": "SESSION.HEADERS",
+          "description": "The class-scoped value spelling `Session.headers` is explicitly referenced through `s.headers.update({'x-test': 'true'})`; the example documents default session headers, but does not show a class definition.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "582",
+          "entity": "MERGE_COOKIES",
+          "description": "The function `merge_cookies(cookiejar, cookies)` is defined here. It validates that the destination is a CookieJar, merges dictionaries through `cookiejar_from_dict(..., overwrite=False)`, updates compatible CookieJar inputs, and returns `cookiejar`.",
+          "number of relationships": "8"
+        },
+        {
+          "id": "520",
+          "entity": "GET_COOKIE_HEADER",
+          "description": "Defined function exact `get_cookie_header(jar, request)`; wraps the request, asks the jar to add a cookie header, and returns the collected `Cookie` header or `None`.",
+          "number of relationships": "5"
+        },
+        {
+          "id": "25",
+          "entity": "SESSION.MERGE_ENVIRONMENT_SETTINGS",
+          "description": "`SESSION.MERGE_ENVIRONMENT_SETTINGS` refers to the `Session.merge_environment_settings()` method, which is invoked syntactically through a session-like receiver, `s`. The receiver’s concrete class and runtime binding are not established in the available context. It is explicitly called as `s.merge_environment_settings(prepped.url, {}, None, None, None)` to obtain settings derived from the environment before a prepared request is sent.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "48",
+          "entity": "SESSION.CERT",
+          "description": "The unresolved session attribute `Session.cert` is explicitly written through `s.cert = '/path/client.cert'`; the receiver is created by `requests.Session()`, but the owning implementation is not visible here.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "533",
+          "entity": "MORSEL_TO_COOKIE",
+          "description": "`MORSEL_TO_COOKIE` (spelled exactly as `morsel_to_cookie`) is an externally defined callable imported from `requests.cookies`. It converts a `Morsel` object into a cookie, and is explicitly referenced by `RequestsCookieJar.set` for that conversion. Its implementation is not visible in the provided context, and no direct use appears in one referenced code chunk. Visible tests pass a `Morsel` to `morsel_to_cookie` and verify converted `expires` values as well as expected exception behavior.",
+          "number of relationships": "15"
+        },
+        {
+          "id": "526",
+          "entity": "HTTP.COOKIEJAR.COOKIEJAR",
+          "description": "Explicitly referenced in documentation as the cookie jar interface that consumes `MockRequest` and as the documented jar type accepted by `extract_cookies_to_jar`; its definition is not visible.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "320",
+          "entity": "EXTRACT_COOKIES_TO_JAR",
+          "description": "`EXTRACT_COOKIES_TO_JAR` is a callable imported from the `.cookies` module and used to extract and persist server-provided cookies from raw HTTP responses into request, session, or response cookie jars. It is invoked while preparing resent requests, including with `prep._cookies`, `r.request`, and `r.raw`; by `build_response` with `response.cookies`, `req`, and `resp`; and for each response in `r.history` using `self.cookies`, `resp.request`, and `resp.raw`. Some references show the import without visible usage, while other occurrences indicate that the callable processes both response history and the current response. Its definition is not visible in the provided code.",
+          "number of relationships": "9"
+        },
+        {
+          "id": "1257",
+          "entity": "TEST_SESSION_PICKLING",
+          "description": "The visible test function `test_session_pickling` creates a request and session, pickle-round-trips the session, assigns `s.proxies = getproxies()`, prepares and sends the request, and asserts status 200. Its owning class is not visible in this chunk.",
+          "number of relationships": "8"
+        },
+        {
+          "id": "796",
+          "entity": "SESSION.__INIT__",
+          "description": "The method `Session.__init__(self)` is defined here. It initializes session defaults including headers, authentication, proxies, hooks, parameters, TLS verification, certificates, redirect limits, environment trust, cookies, and HTTP adapters.",
+          "number of relationships": "7"
+        }
+      ]
+    },
+    {
+      "name": "relationships",
+      "columns": [
+        "id",
+        "source",
+        "target",
+        "description",
+        "weight",
+        "links"
+      ],
+      "rows": [
+        {
+          "id": "22",
+          "source": "SESSION",
+          "target": "SESSION.PREPARE_REQUEST",
+          "description": "CALLS, direction `Session` -> `Session.prepare_request`; visible expression `prepped = s.prepare_request(req)` after `s = Session()`. The receiver is tied to the locally constructed `Session` only within this documentation example.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "23",
+          "source": "SESSION.PREPARE_REQUEST",
+          "target": "PREPAREDREQUEST",
+          "description": "RETURNS, direction `Session.prepare_request` -> `PreparedRequest`; the text explicitly describes this call as producing a `PreparedRequest` with session state applied.",
+          "weight": "9.0",
+          "links": "1"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "columns": [
+        "id",
+        "source",
+        "text"
+      ],
+      "rows": [
+        {
+          "id": "2",
+          "text": "from an API call or a Session call, the ``request`` attribute is actually the\n``PreparedRequest`` that was used. In some cases you may wish to do some extra\nwork to the body or headers (or anything else really) before sending a\nrequest. The simple recipe for this is the following::\n\n    from requests import Request, Session\n\n    s = Session()\n\n    req = Request('POST', url, data=data, headers=headers)\n    prepped = req.prepare()\n\n    # do something with prepped.body\n    prepped.body = 'No, I want exactly this as the body.'\n\n    # do something with prepped.headers\n    del prepped.headers['Content-Type']\n\n    resp = s.send(prepped,\n        stream=stream,\n        verify=verify,\n        proxies=proxies,\n        cert=cert,\n        timeout=timeout\n    )\n\n    print(resp.status_code)\n\nSince you are not doing anything special with the ``Request`` object, you\nprepare it immediately and modify the ``PreparedRequest`` object. You then\nsend that with the other parameters you would have sent to ``requests.*`` or\n``Session.*``.\n\nHowever, the above code will lose some of the advantages of having a Requests\n:class:`Session <requests.Session>` object. In particular,\n:class:`Session <requests.Session>`-level state such as cookies will\nnot get applied to your request. To get a\n:class:`PreparedRequest <requests.PreparedRequest>` with that state\napplied, replace the call to :meth:`Request.prepare()\n<requests.Request.prepare>` with a call to\n:meth:`Session.prepare_request() <requests.Session.prepare_request>`, like this::\n\n    from requests import Request, Session\n\n    s = Session()\n    req = Request('GET',  url, data=data, headers=headers)\n\n    prepped = s.prepare_request(req)\n\n    # do something with prepped.body\n    prepped.body = 'Seriously, send exactly these bytes.'\n\n    # do something with prepped.headers\n    prepped.headers['Keep-Dead'] = 'parrot'\n\n    resp = s.send(prepped,\n        stream=stream,\n        verify=verify,\n        proxies=proxies,\n        cert=cert,\n        timeout=timeout\n    )\n\n    print(resp.status_code)\n\nWhen you are using the prepared request flow, keep in mind that it does not take into account the environment.\nThis can cause problems if you are using environment variables to change the behaviour of requests.\nFor example: Self-signed SSL certificates specified in ``REQUESTS_CA_BUNDLE`` will not be taken into account.\nAs a result an ``SSL: CERTIFICATE_VERIFY_FAILED`` is thrown.\nYou can get around this behaviour by explicitly merging the environment settings into your session::\n\n    from requests import Request, Session\n\n    s = Session()\n    req = Request('GET', url)\n\n    prepped = s.prepare_request(req)\n\n    # Merge environment settings into session\n    settings = s.merge_environment_settings(prepped.url, {}, None, None, None)\n    resp = s.send(prepped, **settings)\n\n    print(resp.status_code)\n\n.. _verification:\n\nSSL Cert Verification\n---------------------\n\nRequests verifies SSL certificates for HTTPS requests, just like a web browser.\nBy default, SSL verification is enabled, and Requests will throw a SSLError if\nit's unable to verify the certificate::\n\n    >>> requests.get('https://requestb.in')\n    requests.exceptions.SSLError: hostname 'requestb.in' doesn't match either of '*.herokuapp.com', 'herokuapp.com'\n\nI don't have SSL setup on this domain, so it throws an exception. Excellent. GitHub does though::\n\n    >>> requests.get('https://github.com')\n    <Response [200]>\n\nYou can pass ``verify`` the path to a CA_BUNDLE file or directory with certificates of trusted CAs::\n\n    >>> requests.get('https://github.com', verify='/path/to/certfile')\n\nor persistent::\n\n    s = requests.Session()\n    s.verify = '/path/to/certfile'\n\n.. note:: If ``verify`` is set to a path to a directory, the directory must have been processed using\n  the ``c_rehash`` utility supplied with OpenSSL.\n\nThis list of trusted CAs can also be specified through the ``REQUESTS_CA_BUNDLE`` environment variable.\nIf ``REQUESTS_CA_BUNDLE`` is not set, ``CURL_CA_BUNDLE`` will be used as fallback.\n\nRequests can also ignore verifying the SSL certificate if you set ``verify`` to False::\n\n    >>> requests.get('https://kennethreitz.org', verify=False)\n    <Response [200]>\n\nNote that when ``verify`` is set to ``False``, requests will accept any TLS\ncertificate presented by the server, and will ignore hostname mismatches\nand/or expired certificates, which will make your application vulnerable to\nman-in-the-middle (MitM) attacks. Setting verify to ``False`` may be useful\nduring local development or testing.\n\nBy default, ``verify`` is set to True. Option ``verify`` only applies to host certs.\n\nClient Side Certificates\n------------------------\n\nYou can also specify a local cert to use as client side certificate, as a single\nfile (containing the private key and the certificate) or as a tuple of both\nfiles' paths::\n\n    >>> requests.get('https://kennethreitz.org', cert=('/path/client.cert', '/path/client.key'))\n    <Response [200]>\n\nor persistent::\n\n    s = requests.Session()\n    s.cert = '/path/client.cert'\n\nIf you specify a wrong path or an invalid cert, you'll get a SSLError::\n\n    >>> requests.get('https://kennethreitz.org', cert='/wrong_path/client.pem')\n",
+          "source": "docs/user/advanced.rst:L125-L271"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "short_id": "2",
+      "text_unit_id": "5331b84c4ee414531020175aaac10ddf0c8492ecbbd220ad32b87854b94b837b16a108993f977b74ce670e34f896a0625eb0c3871502e97d5ef868ad4c60b1c0",
+      "id": "2979c4d9d21eb7aeb8e70fc2118ea94ce52561f021a8cbae5483bbd4e9396311",
+      "title": "docs/user/advanced.rst:L125-L271",
+      "path": "docs/user/advanced.rst",
+      "start_line": 125,
+      "end_line": 271,
+      "tokens": 1177,
+      "text_sha256": "86603228b9a717c7bf10af7874fc4d29f16bf1f5828fb0329289ee1381167e66",
+      "ms_text_unit_id": "5331b84c4ee414531020175aaac10ddf0c8492ecbbd220ad32b87854b94b837b16a108993f977b74ce670e34f896a0625eb0c3871502e97d5ef868ad4c60b1c0"
+    }
+  ],
+  "raw_context_tokens": 2536,
+  "final_context_tokens": 2562,
+  "source_text_tokens": 1177,
+  "source_chunks": 1,
+  "retrieval_compute_seconds": 0.01109133381396532,
+  "adaptation_seconds": 0.0030461661517620087,
+  "empty_reason": null,
+  "community_level": 2,
+  "dropped_tail_rows": 0
+}

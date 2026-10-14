@@ -1,0 +1,1723 @@
+{
+  "schema": 1,
+  "reviewer": {
+    "type": "independent_ai_agent",
+    "human_review": false,
+    "blind_review": false
+  },
+  "reviewed_utc": "2026-10-14T02:56:28.551286+00:00",
+  "scope": "Offline full inspection of adopted community-report text. Publish four unmodified anomalous replies and compare official permissive decoding, the fixed request schema and unique-field validation; no report repair or experiment rerun.",
+  "schema_sha256": "368de36eaed0f2a7e16e430a3a8f784f0cc9fd0d0ff2e505409caab6451ca2a0",
+  "offset_convention": "Zero-based Unicode character offsets into original_content; ends exclusive. Line/column are one-based. No byte-offset claim.",
+  "counts": {
+    "default": {
+      "official_parser_accepted": 84,
+      "requested_schema_after_standard_JSON_decode_passed": 84,
+      "strict_unique_fields_schema_passed": 84
+    },
+    "code_prompt": {
+      "official_parser_accepted": 372,
+      "requested_schema_after_standard_JSON_decode_passed": 370,
+      "strict_unique_fields_schema_passed": 368
+    }
+  },
+  "adopted_code_prompt_format_repairs": [
+    1027,
+    1091,
+    1147
+  ],
+  "anomalies": [
+    {
+      "event_sequence": 1062,
+      "request_body_sha256": "73efa9116f885e659b98f10ed20ae0a201fbab14931e9ae486b95787207d2bec",
+      "original_response_file_sha256": "641c3e8738f8d6ee23b1928b03add07226f474e7a038d3714aa8cb1bc24ea9b2",
+      "original_content": "{\n  \"title\": \"Proxy Environment and Bypass Tests\",\n  \"summary\": \"This community centers on tests for environment-based proxy handling. The test `TESTGETENVIRONPROXIES.TEST_NOT_BYPASS_NO_PROXY_KEYWORD` is linked to `GET_ENVIRON_PROXIES` through a test relationship, while the `TESTGETENVIRONPROXIES.NO_PROXY` fixture interacts with `MONKEYPATCH.SETENV` and reads `REQUEST.PARAM`. The available evidence indicates coverage of explicit `no_proxy` arguments, environment-variable selection, and proxy-bypass behavior, including a Windows registry-related test context. No evidence is provided about production deployment, legal compliance, security incidents, or external reputation.\",\n  \"rating\": 3.5,\n  \"rating_explanation\": \"The community has moderate technical importance because it tests proxy resolution and bypass behavior, but the available evidence describes test infrastructure rather than a deployed system or demonstrated harmful activity.\",\n  \"findings\": [\n    {\n      \"summary\": \"The community focuses on proxy-resolution behavior\",\n      \"explanation\": \"The central test `TESTGETENVIRONPROXIES.TEST_NOT_BYPASS_NO_PROXY_KEYWORD` exercises `GET_ENVIRON_PROXIES` after setting `http_proxy` and passing an explicit `no_proxy` value. The relationship description states that the test asserts `get_environ_proxies(url, no_proxy=no_proxy) != {}`, indicating that the test checks whether proxy configuration remains available when an explicit exclusion value is supplied. [Data: Entities (1505); Relationships (2687)]\\n\\nThis evidence supports a software-testing focus on how proxy settings are interpreted. It does not establish how the underlying function behaves outside the stated test case or whether the tested code is used in a production environment.\",\n      \"explanation\": \"The central test `TESTGETENVIRONPROXIES.TEST_NOT_BYPASS_NO_PROXY_KEYWORD` exercises `GET_ENVIRON_PROXIES` after setting `http_proxy` and passing an explicit `no_proxy` value. The relationship description states that the test asserts `get_environ_proxies(url, no_proxy=no_proxy) != {}`, indicating that the test checks whether proxy configuration remains available when an explicit exclusion value is supplied. [Data: Entities (1505); Relationships (2687)]\\n\\nThis evidence supports a software-testing focus on how proxy settings are interpreted. It does not establish how the underlying function behaves outside the stated test case or whether the tested code is used in a production environment.\"\n    },\n    {\n      \"summary\": \"The no-proxy fixture covers both variable-name conventions\",\n      \"explanation\": \"The `TESTGETENVIRONPROXIES.NO_PROXY` fixture is described as autouse and parametrized for both `no_proxy` and `NO_PROXY`. It sets the selected environment variable to a list of proxy exclusions, indicating that the tests account for both lowercase and uppercase environment-variable forms. [Data: Entities (1501); Relationships (2703)]\\n\\nThe fixture's relationship to `REQUEST.PARAM` shows that `request.param` selects which variable name is used. This supports the conclusion that case variation in environment configuration is an intentional test dimension, though no evidence specifies the exact exclusion values or expected outcomes for each parameter. [Data: Relationships (2703)]\",\n      \"explanation\": \"The `TESTGETENVIRONPROXIES.NO_PROXY` fixture is described as autouse and parametrized for both `no_proxy` and `NO_PROXY`. It sets the selected environment variable to a list of proxy exclusions, indicating that the tests account for both lowercase and uppercase environment-variable forms. [Data: Entities (1501); Relationships (2703)]\\n\\nThe fixture's relationship to `REQUEST.PARAM` shows that `request.param` selects which variable name is used. This supports the conclusion that case variation in environment configuration is an intentional test dimension, though no evidence specifies the exact exclusion values or expected outcomes for each parameter. [Data: Relationships (2703)]\"\n    },\n    {\n      \"summary\": \"Environment mutation is provided through a monkeypatch fixture\",\n      \"explanation\": \"`MONKEYPATCH.SETENV` is identified as a fixture method referenced through `monkeypatch.setenv(name, value)`. Its documented use in the available context is to set environment variables during testing, including proxy-related variables. [Data: Entities (1562)]\\n\\nThe `TESTGET_ENVIRONPROXIES.NO_PROXY` fixture is connected to this callable by a `CALLS` relationship, with the visible expression `monkeypatch.setenv(request.param, ...)`. This indicates that the tests modify environment state through a test-controlled mechanism rather than relying only on pre-existing process configuration. [Data: Relationships (2704)]\",\n      \"explanation\": \"`MONKEYPATCH.SETENV` is identified as a fixture method referenced through `monkeypatch.setenv(name, value)`. Its documented use in the available context is to set environment variables during testing, including proxy-related variables. [Data: Entities (1562)]\\n\\nThe `TESTGET_ENVIRONPROXIES.NO_PROXY` fixture is connected to this callable by a `CALLS` relationship, with the visible expression `monkeypatch.setenv(request.param, ...)`. This indicates that the tests modify environment state through a test-controlled mechanism rather than relying only on pre-existing process configuration. [Data: Relationships (2704)]\"\n    },\n    {\n      \"summary\": \"The test setup covers multiple proxy protocols\",\n      \"explanation\": \"The available description for `MONKEYPATCH.SETENV` states that, in `test_should_bypass_proxies_win_registry`, it sets `no_proxy`, `NO_PROXY`, `http_proxy`, `https_proxy`, and `ftp_proxy` to empty strings. This shows that the relevant test setup considers multiple proxy protocol variables as well as both forms of the no-proxy variable. [Data: Entities (1562)]\\n\\nThe evidence links this setup to proxy-bypass behavior and Windows registry-based proxy handling. It does not show the test's final assertions or establish whether the registry configuration is valid, effective, or secure in a broader environment. [Data: Entities (1562)]\",\n      \"explanation\": \"The available description for `MONKEYPATCH.SETENV` states that, in `test_should_bypass_proxies_win_registry`, it sets `no_proxy`, `NO_PROXY`, `http_proxy`, `https_proxy`, and `ftp_proxy` to empty strings. This shows that the relevant test setup considers multiple proxy protocol variables as well as both forms of the no-proxy variable. [Data: Entities (1562)]\\n\\nThe evidence links this setup to proxy-bypass behavior and Windows registry-based proxy handling. It does not show the test's final assertions or establish whether the registry configuration is valid, effective, or secure in a broader environment. [Data: Entities (1562)]\"\n    },\n    {\n      \"summary\": \"The request fixture drives parametrized environment selection\",\n      \"explanation\": \"`REQUEST.PARAM` is described as the attribute used to identify the selected fixture parameter. The relationship to `TESTGETENVIRONPROXIES.NO_PROXY` is a `READS` relationship, and the description states that it selects either `no_proxy` or `NO_PROXY` as the environment-variable name. [Data: Entities (1522); Relationships (2703)]\\n\\nThe available context does not define the `request` fixture itself, so its broader behavior cannot be assessed. The supported conclusion is limited to its role in selecting the environment-variable variant used by this test fixture.\",\n      \"explanation\": \"`REQUEST.PARAM` is described as the attribute used to identify the selected fixture parameter. The relationship to `TESTGETENVIRONPROXIES.NO_PROXY` is a `READS` relationship, and the description states that it selects either `no_proxy` or `NO_PROXY` as the environment-variable name. [Data: Entities (1522); Relationships (2703)]\\n\\nThe available context does not define the `request` fixture itself, so its broader behavior cannot be assessed. The supported conclusion is limited to its role in selecting the environment-variable variant used by this test fixture.\"\n    }\n  ]\n}",
+      "original_content_sha256": "5d0f502bfc06f5e379c353ac9352c4ca7708c56305c110771fac95109c54f230",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 4023,
+        "completion_tokens": 1778,
+        "total_tokens": 5801
+      },
+      "explicit_format_repair_applied": false,
+      "official_parser_accepted": true,
+      "requested_REPORT_SCHEMA_after_standard_JSON_decode_passed": true,
+      "strict_unique_fields_schema_passed": false,
+      "duplicate_fields": [
+        {
+          "json_path": [
+            "findings",
+            0,
+            "explanation"
+          ],
+          "occurrences": [
+            {
+              "key": {
+                "start": {
+                  "character_offset_zero_based": 1049,
+                  "line_one_based": 9,
+                  "column_one_based": 7
+                },
+                "end_exclusive_offset": 1062
+              },
+              "value": {
+                "start": {
+                  "character_offset_zero_based": 1064,
+                  "line_one_based": 9,
+                  "column_one_based": 22
+                },
+                "end_exclusive_offset": 1762
+              },
+              "decoded_value": "The central test `TESTGETENVIRONPROXIES.TEST_NOT_BYPASS_NO_PROXY_KEYWORD` exercises `GET_ENVIRON_PROXIES` after setting `http_proxy` and passing an explicit `no_proxy` value. The relationship description states that the test asserts `get_environ_proxies(url, no_proxy=no_proxy) != {}`, indicating that the test checks whether proxy configuration remains available when an explicit exclusion value is supplied. [Data: Entities (1505); Relationships (2687)]\n\nThis evidence supports a software-testing focus on how proxy settings are interpreted. It does not establish how the underlying function behaves outside the stated test case or whether the tested code is used in a production environment.",
+              "decoded_value_sha256": "1d425333e96eac4935eb8a95e879bc37ea932873cc076112a2b10802b4314c62"
+            },
+            {
+              "key": {
+                "start": {
+                  "character_offset_zero_based": 1770,
+                  "line_one_based": 10,
+                  "column_one_based": 7
+                },
+                "end_exclusive_offset": 1783
+              },
+              "value": {
+                "start": {
+                  "character_offset_zero_based": 1785,
+                  "line_one_based": 10,
+                  "column_one_based": 22
+                },
+                "end_exclusive_offset": 2483
+              },
+              "decoded_value": "The central test `TESTGETENVIRONPROXIES.TEST_NOT_BYPASS_NO_PROXY_KEYWORD` exercises `GET_ENVIRON_PROXIES` after setting `http_proxy` and passing an explicit `no_proxy` value. The relationship description states that the test asserts `get_environ_proxies(url, no_proxy=no_proxy) != {}`, indicating that the test checks whether proxy configuration remains available when an explicit exclusion value is supplied. [Data: Entities (1505); Relationships (2687)]\n\nThis evidence supports a software-testing focus on how proxy settings are interpreted. It does not establish how the underlying function behaves outside the stated test case or whether the tested code is used in a production environment.",
+              "decoded_value_sha256": "1d425333e96eac4935eb8a95e879bc37ea932873cc076112a2b10802b4314c62"
+            }
+          ],
+          "all_decoded_values_identical": true,
+          "final_graph_value_equals_last_occurrence": true,
+          "final_graph_value_differs_from_first": false
+        },
+        {
+          "json_path": [
+            "findings",
+            1,
+            "explanation"
+          ],
+          "occurrences": [
+            {
+              "key": {
+                "start": {
+                  "character_offset_zero_based": 2582,
+                  "line_one_based": 14,
+                  "column_one_based": 7
+                },
+                "end_exclusive_offset": 2595
+              },
+              "value": {
+                "start": {
+                  "character_offset_zero_based": 2597,
+                  "line_one_based": 14,
+                  "column_one_based": 22
+                },
+                "end_exclusive_offset": 3285
+              },
+              "decoded_value": "The `TESTGETENVIRONPROXIES.NO_PROXY` fixture is described as autouse and parametrized for both `no_proxy` and `NO_PROXY`. It sets the selected environment variable to a list of proxy exclusions, indicating that the tests account for both lowercase and uppercase environment-variable forms. [Data: Entities (1501); Relationships (2703)]\n\nThe fixture's relationship to `REQUEST.PARAM` shows that `request.param` selects which variable name is used. This supports the conclusion that case variation in environment configuration is an intentional test dimension, though no evidence specifies the exact exclusion values or expected outcomes for each parameter. [Data: Relationships (2703)]",
+              "decoded_value_sha256": "a7a3955351736219732fcbb6a09c2e254a8e6496707e638d3f6d67c08a0396cd"
+            },
+            {
+              "key": {
+                "start": {
+                  "character_offset_zero_based": 3293,
+                  "line_one_based": 15,
+                  "column_one_based": 7
+                },
+                "end_exclusive_offset": 3306
+              },
+              "value": {
+                "start": {
+                  "character_offset_zero_based": 3308,
+                  "line_one_based": 15,
+                  "column_one_based": 22
+                },
+                "end_exclusive_offset": 3996
+              },
+              "decoded_value": "The `TESTGETENVIRONPROXIES.NO_PROXY` fixture is described as autouse and parametrized for both `no_proxy` and `NO_PROXY`. It sets the selected environment variable to a list of proxy exclusions, indicating that the tests account for both lowercase and uppercase environment-variable forms. [Data: Entities (1501); Relationships (2703)]\n\nThe fixture's relationship to `REQUEST.PARAM` shows that `request.param` selects which variable name is used. This supports the conclusion that case variation in environment configuration is an intentional test dimension, though no evidence specifies the exact exclusion values or expected outcomes for each parameter. [Data: Relationships (2703)]",
+              "decoded_value_sha256": "a7a3955351736219732fcbb6a09c2e254a8e6496707e638d3f6d67c08a0396cd"
+            }
+          ],
+          "all_decoded_values_identical": true,
+          "final_graph_value_equals_last_occurrence": true,
+          "final_graph_value_differs_from_first": false
+        },
+        {
+          "json_path": [
+            "findings",
+            2,
+            "explanation"
+          ],
+          "occurrences": [
+            {
+              "key": {
+                "start": {
+                  "character_offset_zero_based": 4099,
+                  "line_one_based": 19,
+                  "column_one_based": 7
+                },
+                "end_exclusive_offset": 4112
+              },
+              "value": {
+                "start": {
+                  "character_offset_zero_based": 4114,
+                  "line_one_based": 19,
+                  "column_one_based": 22
+                },
+                "end_exclusive_offset": 4735
+              },
+              "decoded_value": "`MONKEYPATCH.SETENV` is identified as a fixture method referenced through `monkeypatch.setenv(name, value)`. Its documented use in the available context is to set environment variables during testing, including proxy-related variables. [Data: Entities (1562)]\n\nThe `TESTGET_ENVIRONPROXIES.NO_PROXY` fixture is connected to this callable by a `CALLS` relationship, with the visible expression `monkeypatch.setenv(request.param, ...)`. This indicates that the tests modify environment state through a test-controlled mechanism rather than relying only on pre-existing process configuration. [Data: Relationships (2704)]",
+              "decoded_value_sha256": "7f238613e00a3cff7a36c6b0d0ed80260beaedbc501e03bcaf78361465777e64"
+            },
+            {
+              "key": {
+                "start": {
+                  "character_offset_zero_based": 4743,
+                  "line_one_based": 20,
+                  "column_one_based": 7
+                },
+                "end_exclusive_offset": 4756
+              },
+              "value": {
+                "start": {
+                  "character_offset_zero_based": 4758,
+                  "line_one_based": 20,
+                  "column_one_based": 22
+                },
+                "end_exclusive_offset": 5379
+              },
+              "decoded_value": "`MONKEYPATCH.SETENV` is identified as a fixture method referenced through `monkeypatch.setenv(name, value)`. Its documented use in the available context is to set environment variables during testing, including proxy-related variables. [Data: Entities (1562)]\n\nThe `TESTGET_ENVIRONPROXIES.NO_PROXY` fixture is connected to this callable by a `CALLS` relationship, with the visible expression `monkeypatch.setenv(request.param, ...)`. This indicates that the tests modify environment state through a test-controlled mechanism rather than relying only on pre-existing process configuration. [Data: Relationships (2704)]",
+              "decoded_value_sha256": "7f238613e00a3cff7a36c6b0d0ed80260beaedbc501e03bcaf78361465777e64"
+            }
+          ],
+          "all_decoded_values_identical": true,
+          "final_graph_value_equals_last_occurrence": true,
+          "final_graph_value_differs_from_first": false
+        },
+        {
+          "json_path": [
+            "findings",
+            3,
+            "explanation"
+          ],
+          "occurrences": [
+            {
+              "key": {
+                "start": {
+                  "character_offset_zero_based": 5466,
+                  "line_one_based": 24,
+                  "column_one_based": 7
+                },
+                "end_exclusive_offset": 5479
+              },
+              "value": {
+                "start": {
+                  "character_offset_zero_based": 5481,
+                  "line_one_based": 24,
+                  "column_one_based": 22
+                },
+                "end_exclusive_offset": 6118
+              },
+              "decoded_value": "The available description for `MONKEYPATCH.SETENV` states that, in `test_should_bypass_proxies_win_registry`, it sets `no_proxy`, `NO_PROXY`, `http_proxy`, `https_proxy`, and `ftp_proxy` to empty strings. This shows that the relevant test setup considers multiple proxy protocol variables as well as both forms of the no-proxy variable. [Data: Entities (1562)]\n\nThe evidence links this setup to proxy-bypass behavior and Windows registry-based proxy handling. It does not show the test's final assertions or establish whether the registry configuration is valid, effective, or secure in a broader environment. [Data: Entities (1562)]",
+              "decoded_value_sha256": "46ad9a75200e2f85e92ca0d79a7aa8e221fd32f61c78af7fa44cb0968e75f7fa"
+            },
+            {
+              "key": {
+                "start": {
+                  "character_offset_zero_based": 6126,
+                  "line_one_based": 25,
+                  "column_one_based": 7
+                },
+                "end_exclusive_offset": 6139
+              },
+              "value": {
+                "start": {
+                  "character_offset_zero_based": 6141,
+                  "line_one_based": 25,
+                  "column_one_based": 22
+                },
+                "end_exclusive_offset": 6778
+              },
+              "decoded_value": "The available description for `MONKEYPATCH.SETENV` states that, in `test_should_bypass_proxies_win_registry`, it sets `no_proxy`, `NO_PROXY`, `http_proxy`, `https_proxy`, and `ftp_proxy` to empty strings. This shows that the relevant test setup considers multiple proxy protocol variables as well as both forms of the no-proxy variable. [Data: Entities (1562)]\n\nThe evidence links this setup to proxy-bypass behavior and Windows registry-based proxy handling. It does not show the test's final assertions or establish whether the registry configuration is valid, effective, or secure in a broader environment. [Data: Entities (1562)]",
+              "decoded_value_sha256": "46ad9a75200e2f85e92ca0d79a7aa8e221fd32f61c78af7fa44cb0968e75f7fa"
+            }
+          ],
+          "all_decoded_values_identical": true,
+          "final_graph_value_equals_last_occurrence": true,
+          "final_graph_value_differs_from_first": false
+        },
+        {
+          "json_path": [
+            "findings",
+            4,
+            "explanation"
+          ],
+          "occurrences": [
+            {
+              "key": {
+                "start": {
+                  "character_offset_zero_based": 6880,
+                  "line_one_based": 29,
+                  "column_one_based": 7
+                },
+                "end_exclusive_offset": 6893
+              },
+              "value": {
+                "start": {
+                  "character_offset_zero_based": 6895,
+                  "line_one_based": 29,
+                  "column_one_based": 22
+                },
+                "end_exclusive_offset": 7462
+              },
+              "decoded_value": "`REQUEST.PARAM` is described as the attribute used to identify the selected fixture parameter. The relationship to `TESTGETENVIRONPROXIES.NO_PROXY` is a `READS` relationship, and the description states that it selects either `no_proxy` or `NO_PROXY` as the environment-variable name. [Data: Entities (1522); Relationships (2703)]\n\nThe available context does not define the `request` fixture itself, so its broader behavior cannot be assessed. The supported conclusion is limited to its role in selecting the environment-variable variant used by this test fixture.",
+              "decoded_value_sha256": "e89edfa86543fd6b4d079b905101cbd3365ad6b4cdaf974204c70313487a3c8a"
+            },
+            {
+              "key": {
+                "start": {
+                  "character_offset_zero_based": 7470,
+                  "line_one_based": 30,
+                  "column_one_based": 7
+                },
+                "end_exclusive_offset": 7483
+              },
+              "value": {
+                "start": {
+                  "character_offset_zero_based": 7485,
+                  "line_one_based": 30,
+                  "column_one_based": 22
+                },
+                "end_exclusive_offset": 8052
+              },
+              "decoded_value": "`REQUEST.PARAM` is described as the attribute used to identify the selected fixture parameter. The relationship to `TESTGETENVIRONPROXIES.NO_PROXY` is a `READS` relationship, and the description states that it selects either `no_proxy` or `NO_PROXY` as the environment-variable name. [Data: Entities (1522); Relationships (2703)]\n\nThe available context does not define the `request` fixture itself, so its broader behavior cannot be assessed. The supported conclusion is limited to its role in selecting the environment-variable variant used by this test fixture.",
+              "decoded_value_sha256": "e89edfa86543fd6b4d079b905101cbd3365ad6b4cdaf974204c70313487a3c8a"
+            }
+          ],
+          "all_decoded_values_identical": true,
+          "final_graph_value_equals_last_occurrence": true,
+          "final_graph_value_differs_from_first": false
+        }
+      ],
+      "additional_fields": [],
+      "final_graph": {
+        "public_table": "index/community_reports.json",
+        "id": "12b09e1a466930c48d73c0ea9303fa3f63f0f5695a9e2f890057030f334c240cb2e36388aae2c1ba554f5de33099ede91e0341dccb31cdf708c944b2bd4c7694",
+        "human_readable_id": 241,
+        "community": 241,
+        "level": 2,
+        "title": "Proxy Environment and Bypass Tests",
+        "full_content_sha256": "52a95a6e4d2dd84be4b2193ac58743b3ca511532affe333e33158b3267fb5eb9",
+        "full_content_json_sha256": "94ea234087a5cfa017e2388da6e62fdfc6fa09bd054bdbd243c411db1dc38d0f",
+        "stored_model_equals_official_model": true,
+        "rendered_text_equals_official_formatter": true,
+        "duplicate_values_follow_last_occurrence": true,
+        "additional_fields_ignored_by_official_model": true
+      }
+    },
+    {
+      "event_sequence": 1117,
+      "request_body_sha256": "8545aaaf86b652b857005851527b690137bd56f36be08348d76931e8516f5d2c",
+      "original_response_file_sha256": "f829d957e36d62c9ddc6aff8a6273229825701db8fdab6f667adf82f8d4a6fa3",
+      "original_content": "{\n  \"title\": \"Requests Response Redirect Handling\",\n  \"summary\": \"The community consists of response-related attributes and methods connected to HTTP redirect-status constants in a Requests-like code structure. The central entity is `Response`, which exposes headers, status codes, redirect checks, permanent-redirect checks, and a representation method. `Response.is_redirect` evaluates whether a `Location` header exists and whether the status code belongs to `REDIRECT_STATI`, while `Response.is_permanent_redirect` checks the same header condition against `codes.moved_permanently` and `codes.permanent_redirect`. The broader `requests.models` module reads `codes.permanent_redirect` when initializing `REDIRECT_STATI`. The available data describes technical relationships and code behavior but provides no evidence about legal compliance, reputation, security incidents, or operational deployment.\",\n  \"rating\": 4.5,\n  \"rating_explanation\": \"The community has moderate technical importance because it implements core HTTP response and redirect classification behavior, although the available evidence does not establish broader organizational, legal, or societal impact.\",\n  \"findings\": [\n    {\n      \"summary\": \"Response is the central technical entity\",\n      \"explanation\": \"The `Response` entity is connected to multiple response properties and methods, including `Response.headers`, `Response.status_code`, `Response.is_redirect`, `Response.is_permanent_redirect`, and `Response.__repr__`. This makes it the principal object coordinating the community's observable HTTP response behavior [Data: Entities (19, 146, 723, 724, 718); Relationships (14, 985, 980, 985, 116)].\\n\\nThe data supports a code-level interpretation of `Response` as an object that exposes server response headers and numeric HTTP status codes, but it does not identify the complete owning package or establish how the object is used in production.\",\n      \"\": \"\"\n    },\n    {\n      \"summary\": \"Redirect classification depends on both headers and status codes\",\n      \"explanation\": \"`Response.is_redirect` returns a redirect classification when `Location` is present in `self.headers` and `self.status_code` is included in `REDIRECT_STATI`. This indicates that redirect detection is based on a combination of response metadata and status-code membership rather than status code alone [Data: Entities (723, 19, 146); Relationships (14, 979)].\\n\\nThe available evidence does not define the full contents of `REDIRECT_STATI`, so the complete set of statuses recognized as redirects cannot be determined from this community alone.\",\n      \"\": \"\"\n    },\n    {\n      \"summary\": \"Permanent redirects have dedicated handling\",\n      \"explanation\": \"`Response.is_permanent_redirect` uses the presence of a `Location` header together with a status-code comparison against `codes.moved_permanently` and `codes.permanent_redirect`. The same behavior is represented by the standalone `is_permanent_redirect` method description, which confirms the two allowed status constants [Data: Entities (724, 733, 675, 730); Relationships (980, 991)].\\n\\nThis structure distinguishes permanent redirects from the broader redirect category and shows that the implementation explicitly recognizes two permanent-redirect status values. The underlying definitions of the external constants are not visible in the supplied data, so their numeric values are not established here.\",\n      \"\": \"\"\n    },\n    {\n      \"summary\": \"The requests.models module supplies redirect-status configuration\",\n      \"explanation\": \"The `requests.models` module reads `codes.permanent_redirect` while initializing `REDIRECT_STATI`. This connects module-level redirect configuration to the response-level redirect checks and indicates that the status set used by redirect detection is assembled from shared status-code constants [Data: Relationships (865); Entities (675, 723)].\\n\\nThe relationship is specifically documented as a read from `requests.models` to `codes.permanent_redirect`; the available records do not show the complete initialization expression or identify all members of `REDIRECT_STATI`.\",\n      \"\": \"\"\n    },\n    {\n      \"summary\": \"Response representations expose the numeric status code\",\n      \"explanation\": \"`Response.__repr__` formats the object as `<Response [status_code]>`, reading `self.status_code` to provide a concise textual representation. This gives the response object's representation a direct dependency on its numeric HTTP status code [Data: Entities (718, 146); Relationships (985)].\\n\\nThe representation behavior is diagnostic or descriptive in the supplied evidence. No data indicates that it changes redirect handling, response contents, or network behavior.\",\n      \"\": \"\"\n    },\n    {\n      \"summary\": \"Several definitions remain unresolved in the available evidence\",\n      \"explanation\": \"The descriptions for `Response.headers`, `Response.status_code`, `codes.moved_permanently`, and `codes.permanent_redirect` state that their concrete definitions or underlying values are not visible in this chunk. `Response.TEXT` is also linked to `Response.STATUS_CODE` only through documentation references, with no direct dependency shown [Data: Entities (19, 730, 675, 146); Relationships (116)].\\n\\nConsequently, the community can be characterized reliably at the level of documented references and method conditions, but not as a complete implementation inventory. The supplied data contains no claims or records addressing legal compliance, reputation, vulnerabilities, misuse, or organizational ownership.\",\n      \"\": \"\"\n    }\n  ]\n}",
+      "original_content_sha256": "5f6ef4d246066c1d891af96173c0b32f2b3cc03f5b9def1f79b0a44c5baaf896",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 4371,
+        "completion_tokens": 1224,
+        "total_tokens": 5595
+      },
+      "explicit_format_repair_applied": false,
+      "official_parser_accepted": true,
+      "requested_REPORT_SCHEMA_after_standard_JSON_decode_passed": false,
+      "strict_unique_fields_schema_passed": false,
+      "duplicate_fields": [],
+      "additional_fields": [
+        {
+          "json_path": [
+            "findings",
+            0,
+            ""
+          ],
+          "validator": "additionalProperties",
+          "location": {
+            "key": {
+              "start": {
+                "character_offset_zero_based": 1937,
+                "line_one_based": 10,
+                "column_one_based": 7
+              },
+              "end_exclusive_offset": 1939
+            },
+            "value": {
+              "start": {
+                "character_offset_zero_based": 1941,
+                "line_one_based": 10,
+                "column_one_based": 11
+              },
+              "end_exclusive_offset": 1943
+            },
+            "decoded_value": "",
+            "decoded_value_sha256": "12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126"
+          },
+          "absent_from_official_model_and_final_graph": true
+        },
+        {
+          "json_path": [
+            "findings",
+            1,
+            ""
+          ],
+          "validator": "additionalProperties",
+          "location": {
+            "key": {
+              "start": {
+                "character_offset_zero_based": 2616,
+                "line_one_based": 15,
+                "column_one_based": 7
+              },
+              "end_exclusive_offset": 2618
+            },
+            "value": {
+              "start": {
+                "character_offset_zero_based": 2620,
+                "line_one_based": 15,
+                "column_one_based": 11
+              },
+              "end_exclusive_offset": 2622
+            },
+            "decoded_value": "",
+            "decoded_value_sha256": "12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126"
+          },
+          "absent_from_official_model_and_final_graph": true
+        },
+        {
+          "json_path": [
+            "findings",
+            2,
+            ""
+          ],
+          "validator": "additionalProperties",
+          "location": {
+            "key": {
+              "start": {
+                "character_offset_zero_based": 3439,
+                "line_one_based": 20,
+                "column_one_based": 7
+              },
+              "end_exclusive_offset": 3441
+            },
+            "value": {
+              "start": {
+                "character_offset_zero_based": 3443,
+                "line_one_based": 20,
+                "column_one_based": 11
+              },
+              "end_exclusive_offset": 3445
+            },
+            "decoded_value": "",
+            "decoded_value_sha256": "12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126"
+          },
+          "absent_from_official_model_and_final_graph": true
+        },
+        {
+          "json_path": [
+            "findings",
+            3,
+            ""
+          ],
+          "validator": "additionalProperties",
+          "location": {
+            "key": {
+              "start": {
+                "character_offset_zero_based": 4149,
+                "line_one_based": 25,
+                "column_one_based": 7
+              },
+              "end_exclusive_offset": 4151
+            },
+            "value": {
+              "start": {
+                "character_offset_zero_based": 4153,
+                "line_one_based": 25,
+                "column_one_based": 11
+              },
+              "end_exclusive_offset": 4155
+            },
+            "decoded_value": "",
+            "decoded_value_sha256": "12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126"
+          },
+          "absent_from_official_model_and_final_graph": true
+        },
+        {
+          "json_path": [
+            "findings",
+            4,
+            ""
+          ],
+          "validator": "additionalProperties",
+          "location": {
+            "key": {
+              "start": {
+                "character_offset_zero_based": 4746,
+                "line_one_based": 30,
+                "column_one_based": 7
+              },
+              "end_exclusive_offset": 4748
+            },
+            "value": {
+              "start": {
+                "character_offset_zero_based": 4750,
+                "line_one_based": 30,
+                "column_one_based": 11
+              },
+              "end_exclusive_offset": 4752
+            },
+            "decoded_value": "",
+            "decoded_value_sha256": "12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126"
+          },
+          "absent_from_official_model_and_final_graph": true
+        },
+        {
+          "json_path": [
+            "findings",
+            5,
+            ""
+          ],
+          "validator": "additionalProperties",
+          "location": {
+            "key": {
+              "start": {
+                "character_offset_zero_based": 5593,
+                "line_one_based": 35,
+                "column_one_based": 7
+              },
+              "end_exclusive_offset": 5595
+            },
+            "value": {
+              "start": {
+                "character_offset_zero_based": 5597,
+                "line_one_based": 35,
+                "column_one_based": 11
+              },
+              "end_exclusive_offset": 5599
+            },
+            "decoded_value": "",
+            "decoded_value_sha256": "12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126"
+          },
+          "absent_from_official_model_and_final_graph": true
+        }
+      ],
+      "final_graph": {
+        "public_table": "index/community_reports.json",
+        "id": "7da75e42b96a2883fa7a9b70c5a89fc6ccf43b7f884e60c76fedb47b7ca56a8797079179ee0248ea75ff7cf0bee7eb33b5b408d8e1cb3c3ec89cde450ae2bf2d",
+        "human_readable_id": 296,
+        "community": 296,
+        "level": 2,
+        "title": "Requests Response Redirect Handling",
+        "full_content_sha256": "299f474dc26be4a1cb1a448ceadee28657e4e4df79e8982b963e1b6695287830",
+        "full_content_json_sha256": "7e2bf9f182acca102c9eb99931ed35258b4f7a6fe51f1941e1bf4be6740a854c",
+        "stored_model_equals_official_model": true,
+        "rendered_text_equals_official_formatter": true,
+        "duplicate_values_follow_last_occurrence": true,
+        "additional_fields_ignored_by_official_model": true
+      }
+    },
+    {
+      "event_sequence": 1253,
+      "request_body_sha256": "00d56eb384509f495b7f31c38c5f8b7bcadaf712be6fd3f0b0c2f52b97a845c8",
+      "original_response_file_sha256": "48bb212a5ae01368375890f311ff3ae8ad6e3adbed101f83686894e166f67075",
+      "original_content": "{\n  \"title\": \"Server and TLSServer Initialization with TLS Certificate and Mutual-TLS Support\",\n  \"summary\": \"This community centers on the `SERVER.__INIT__` and `TLSSERVER.__INIT__` methods. `TLSSERVER.__INIT__` calls the base server initializer, creates an `ssl.SSLContext` using `ssl.PROTOCOL_TLS_SERVER`, loads a configured certificate chain and private key, and can optionally configure client-certificate verification with `ssl.CERT_OPTIONAL` and a configured CA location. The community also includes the base server's default `consume_socket_content` handler and several externally defined SSL objects and callables whose implementations are not visible in the provided data. [Data: Entities (1591, 1600, 373, 1603, 1604, +more); Relationships (2840, 2860, 2861, 2862, 2863, +more)]\",\n  \"rating\": 7.0,\n  \"rating_explanation\": \"The community has high technical importance because it initializes network server behavior and supports TLS certificate loading and optional mutual-TLS client verification, although several underlying SSL implementations are external or unresolved.\",\n  \"findings\": [\n    {\n      \"summary\": \"TLSServer extends the base server initialization flow\",\n      \"explanation\": \"`TLSSERVER.__INIT__` invokes `super().__init__(...)`, establishing the inherited server configuration before performing TLS-specific setup. The base initializer selects the supplied handler or defaults to `consume_socket_content`, stores server configuration, creates empty handler results, and creates readiness and stop events. [Data: Entities (1591, 1600); Relationships (2840, 2860)]\\n\\nThis relationship makes the TLS server dependent on the base server lifecycle and request-handling setup. The provided data establishes the initialization sequence, but does not provide evidence about the subsequent socket-acceptance, request-processing, shutdown, or error-handling behavior.\",\n      \"explanation\": \"The base server and TLS server are directly connected through inheritance and constructor delegation. This is a central structural relationship in the community because TLS-specific behavior is layered on top of the common server configuration rather than implemented as an independent initialization path. [Data: Entities (1591, 1600); Relationships (2860)]\"\n    },\n    {\n      \"summary\": \"TLS context creation is the primary security capability\",\n      \"explanation\": \"`TLSSERVER.__INIT__` creates an `ssl.SSLContext` with `ssl.PROTOCOL_TLS_SERVER`. The provided entity data identifies `SSL.SSLCONTEXT` as an external documented class representing a custom TLS/SSL context, while the protocol constant is also external and its definition is not visible in the supplied code. [Data: Entities (1600, 373, 1603); Relationships (2861, 2862)]\\n\\nThe data therefore supports the conclusion that the constructor is designed to establish a server-side TLS context. It does not establish the concrete protocol settings, cipher configuration, certificate validation behavior beyond the explicitly described branches, or whether a custom context is executed in production.\",\n      \"explanation\": \"Because the implementation of `ssl.SSLContext` and `ssl.PROTOCOL_TLS_SERVER` is outside the provided code, the community's TLS posture cannot be fully assessed from these records alone. The explicit construction call demonstrates intended technical capability, but not the resulting runtime security configuration. [Data: Entities (373, 1603); Relationships (2861, 2862)]\"\n    },\n    {\n      \"summary\": \"Certificate-chain and private-key loading are explicitly configured\",\n      \"explanation\": \"The TLS initializer calls `self.ssl_context.load_cert_chain(self.cert_chain, keyfile=self.keyfile)`. The associated unresolved callable is described as loading the configured certificate chain and private key into the SSL context. [Data: Entities (1600, 1622); Relationships (2863)]\\n\\nThis indicates that certificate material is a required part of the described TLS setup and that the constructor passes both the certificate-chain value and key-file value to the context. The records do not state where these files are stored, how they are protected, whether they are validated before use, or how failures are handled.\",\n      \"explanation\": \"Certificate loading connects the application-level TLS server constructor to the SSL context's cryptographic material. This is operationally significant for encrypted server communications, but the provided evidence is limited to the initialization call and does not support claims about certificate validity, key strength, rotation, or deployment practices. [Data: Entities (1600, 1622); Relationships (2863)]\"\n    },\n    {\n      \"summary\": \"Optional mutual TLS is supported\",\n      \"explanation\": \"When `mutual_tls` is enabled, `TLSSERVER.__INIT__` assigns `self.ssl_context.verify_mode = ssl.CERT_OPTIONAL`. The constructor also conditionally calls `self.ssl_context.load_verify_locations(self.cacert)` to load the configured CA certificate path. [Data: Entities (1600, 1604, 1623); Relationships (2864, 2865)]\\n\\nThese records support the presence of an optional client-certificate verification branch. They do not establish whether mutual TLS is enabled by default, which clients are expected to authenticate, or whether the loaded CA material is complete and correctly configured.\",\n      \"explanation\": \"The mutual-TLS branch adds a client-authentication capability beyond server certificate presentation. Because the configured mode is explicitly described as `CERT_OPTIONAL`, the evidence does not support characterizing client certificates as universally required for every connection. [Data: Entities (1600, 1604); Relationships (2864)]\"\n    },\n    {\n      \"summary\": \"External SSL dependencies limit verification of behavior\",\n      \"explanation\": \"Several members of the community are explicitly external or unresolved: `ssl.SSLContext`, `ssl.PROTOCOL_TLS_SERVER`, `ssl.CERT_OPTIONAL`, `self.ssl_context.load_cert_chain`, and `self.ssl_context.load_verify_locations`. Their definitions or implementations are not visible in the provided code. [Data: Entities (373, 1603, 1604, 1622, 1623)]\\n\\nAs a result, the available evidence can describe references and constructor calls but cannot independently verify the detailed behavior of those dependencies. In particular, it cannot establish production execution of documentation examples involving custom SSL contexts or assess runtime validation and exception behavior.\",\n      \"explanation\": \"The unresolved dependencies are important assessment limitations rather than confirmed defects. Further review would require the relevant Python SSL implementation context and the surrounding server code, but those materials are not included in the supplied records. [Data: Entities (373, 1603, 1604, 1622, 1623)]\"\n    },\n    {\n      \"summary\": \"The community is concentrated around initialization rather than full server operation\",\n      \"explanation\": \"The available entities and relationships focus on constructor behavior: base configuration, handler selection, TLS-context creation, certificate loading, optional verification-mode assignment, and CA-location loading. The base initializer also creates handler results and readiness and stop events. [Data: Entities (1591, 1600); Relationships (2840, 2860, 2861, 2863, 2864, 2865)]\\n\\nNo supplied record describes listening sockets, connection acceptance, request limits in operation, event signaling behavior, logging, access control outside client certificates, or shutdown execution. Therefore, the community represents a technically important initialization boundary, but not a complete operational or compliance assessment of the server.\",\n      \"explanation\": \"The concentration of records around initialization means conclusions should remain scoped to setup-time behavior. The data supports identifying intended capabilities and dependencies, but not measuring availability, resilience, actual network exposure, or legal compliance. [Data: Entities (1591, 1600); Relationships (2840, 2860, 2861, 2863, 2864, +more)]\"\n    }\n  ]\n}",
+      "original_content_sha256": "fabdade37eaba83c4d573ba99ac1c6779008d6e55d2a705461f56e9485c76694",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 4411,
+        "completion_tokens": 1747,
+        "total_tokens": 6158
+      },
+      "explicit_format_repair_applied": false,
+      "official_parser_accepted": true,
+      "requested_REPORT_SCHEMA_after_standard_JSON_decode_passed": true,
+      "strict_unique_fields_schema_passed": false,
+      "duplicate_fields": [
+        {
+          "json_path": [
+            "findings",
+            0,
+            "explanation"
+          ],
+          "occurrences": [
+            {
+              "key": {
+                "start": {
+                  "character_offset_zero_based": 1187,
+                  "line_one_based": 9,
+                  "column_one_based": 7
+                },
+                "end_exclusive_offset": 1200
+              },
+              "value": {
+                "start": {
+                  "character_offset_zero_based": 1202,
+                  "line_one_based": 9,
+                  "column_one_based": 22
+                },
+                "end_exclusive_offset": 1887
+              },
+              "decoded_value": "`TLSSERVER.__INIT__` invokes `super().__init__(...)`, establishing the inherited server configuration before performing TLS-specific setup. The base initializer selects the supplied handler or defaults to `consume_socket_content`, stores server configuration, creates empty handler results, and creates readiness and stop events. [Data: Entities (1591, 1600); Relationships (2840, 2860)]\n\nThis relationship makes the TLS server dependent on the base server lifecycle and request-handling setup. The provided data establishes the initialization sequence, but does not provide evidence about the subsequent socket-acceptance, request-processing, shutdown, or error-handling behavior.",
+              "decoded_value_sha256": "b671a87587a8b36a9573371e8c349da8130038f268b59b6209a9b0d463e41c22"
+            },
+            {
+              "key": {
+                "start": {
+                  "character_offset_zero_based": 1895,
+                  "line_one_based": 10,
+                  "column_one_based": 7
+                },
+                "end_exclusive_offset": 1908
+              },
+              "value": {
+                "start": {
+                  "character_offset_zero_based": 1910,
+                  "line_one_based": 10,
+                  "column_one_based": 22
+                },
+                "end_exclusive_offset": 2270
+              },
+              "decoded_value": "The base server and TLS server are directly connected through inheritance and constructor delegation. This is a central structural relationship in the community because TLS-specific behavior is layered on top of the common server configuration rather than implemented as an independent initialization path. [Data: Entities (1591, 1600); Relationships (2860)]",
+              "decoded_value_sha256": "86c4197e5aa108caec8dfce82a2d6963e1a66e4b26283948bb7dd63f4192cab3"
+            }
+          ],
+          "all_decoded_values_identical": false,
+          "final_graph_value_equals_last_occurrence": true,
+          "final_graph_value_differs_from_first": true
+        },
+        {
+          "json_path": [
+            "findings",
+            1,
+            "explanation"
+          ],
+          "occurrences": [
+            {
+              "key": {
+                "start": {
+                  "character_offset_zero_based": 2366,
+                  "line_one_based": 14,
+                  "column_one_based": 7
+                },
+                "end_exclusive_offset": 2379
+              },
+              "value": {
+                "start": {
+                  "character_offset_zero_based": 2381,
+                  "line_one_based": 14,
+                  "column_one_based": 22
+                },
+                "end_exclusive_offset": 3075
+              },
+              "decoded_value": "`TLSSERVER.__INIT__` creates an `ssl.SSLContext` with `ssl.PROTOCOL_TLS_SERVER`. The provided entity data identifies `SSL.SSLCONTEXT` as an external documented class representing a custom TLS/SSL context, while the protocol constant is also external and its definition is not visible in the supplied code. [Data: Entities (1600, 373, 1603); Relationships (2861, 2862)]\n\nThe data therefore supports the conclusion that the constructor is designed to establish a server-side TLS context. It does not establish the concrete protocol settings, cipher configuration, certificate validation behavior beyond the explicitly described branches, or whether a custom context is executed in production.",
+              "decoded_value_sha256": "517f7dae0fb37c4333e66beda8dd2a7550ec6477c49699c48c5aebdca8d4cc28"
+            },
+            {
+              "key": {
+                "start": {
+                  "character_offset_zero_based": 3083,
+                  "line_one_based": 15,
+                  "column_one_based": 7
+                },
+                "end_exclusive_offset": 3096
+              },
+              "value": {
+                "start": {
+                  "character_offset_zero_based": 3098,
+                  "line_one_based": 15,
+                  "column_one_based": 22
+                },
+                "end_exclusive_offset": 3471
+              },
+              "decoded_value": "Because the implementation of `ssl.SSLContext` and `ssl.PROTOCOL_TLS_SERVER` is outside the provided code, the community's TLS posture cannot be fully assessed from these records alone. The explicit construction call demonstrates intended technical capability, but not the resulting runtime security configuration. [Data: Entities (373, 1603); Relationships (2861, 2862)]",
+              "decoded_value_sha256": "b419b920b610d3beb4d665df24cd2cb7e5c2ff04c60977ef8d5281f18cb7168c"
+            }
+          ],
+          "all_decoded_values_identical": false,
+          "final_graph_value_equals_last_occurrence": true,
+          "final_graph_value_differs_from_first": true
+        },
+        {
+          "json_path": [
+            "findings",
+            2,
+            "explanation"
+          ],
+          "occurrences": [
+            {
+              "key": {
+                "start": {
+                  "character_offset_zero_based": 3579,
+                  "line_one_based": 19,
+                  "column_one_based": 7
+                },
+                "end_exclusive_offset": 3592
+              },
+              "value": {
+                "start": {
+                  "character_offset_zero_based": 3594,
+                  "line_one_based": 19,
+                  "column_one_based": 22
+                },
+                "end_exclusive_offset": 4215
+              },
+              "decoded_value": "The TLS initializer calls `self.ssl_context.load_cert_chain(self.cert_chain, keyfile=self.keyfile)`. The associated unresolved callable is described as loading the configured certificate chain and private key into the SSL context. [Data: Entities (1600, 1622); Relationships (2863)]\n\nThis indicates that certificate material is a required part of the described TLS setup and that the constructor passes both the certificate-chain value and key-file value to the context. The records do not state where these files are stored, how they are protected, whether they are validated before use, or how failures are handled.",
+              "decoded_value_sha256": "a9c6600a01a260f6f9461147cd79ffd6227a8fca46700c9dbf7708d871031bf0"
+            },
+            {
+              "key": {
+                "start": {
+                  "character_offset_zero_based": 4223,
+                  "line_one_based": 20,
+                  "column_one_based": 7
+                },
+                "end_exclusive_offset": 4236
+              },
+              "value": {
+                "start": {
+                  "character_offset_zero_based": 4238,
+                  "line_one_based": 20,
+                  "column_one_based": 22
+                },
+                "end_exclusive_offset": 4650
+              },
+              "decoded_value": "Certificate loading connects the application-level TLS server constructor to the SSL context's cryptographic material. This is operationally significant for encrypted server communications, but the provided evidence is limited to the initialization call and does not support claims about certificate validity, key strength, rotation, or deployment practices. [Data: Entities (1600, 1622); Relationships (2863)]",
+              "decoded_value_sha256": "4e34b1417980d15842b432a06eb68f4620fcffb85a84e9d56089b300c06418fb"
+            }
+          ],
+          "all_decoded_values_identical": false,
+          "final_graph_value_equals_last_occurrence": true,
+          "final_graph_value_differs_from_first": true
+        },
+        {
+          "json_path": [
+            "findings",
+            3,
+            "explanation"
+          ],
+          "occurrences": [
+            {
+              "key": {
+                "start": {
+                  "character_offset_zero_based": 4723,
+                  "line_one_based": 24,
+                  "column_one_based": 7
+                },
+                "end_exclusive_offset": 4736
+              },
+              "value": {
+                "start": {
+                  "character_offset_zero_based": 4738,
+                  "line_one_based": 24,
+                  "column_one_based": 22
+                },
+                "end_exclusive_offset": 5326
+              },
+              "decoded_value": "When `mutual_tls` is enabled, `TLSSERVER.__INIT__` assigns `self.ssl_context.verify_mode = ssl.CERT_OPTIONAL`. The constructor also conditionally calls `self.ssl_context.load_verify_locations(self.cacert)` to load the configured CA certificate path. [Data: Entities (1600, 1604, 1623); Relationships (2864, 2865)]\n\nThese records support the presence of an optional client-certificate verification branch. They do not establish whether mutual TLS is enabled by default, which clients are expected to authenticate, or whether the loaded CA material is complete and correctly configured.",
+              "decoded_value_sha256": "6493a935260bef2a0ecd16d20ca8f6e52e548acab1350dedc7731f1b4e5d15bb"
+            },
+            {
+              "key": {
+                "start": {
+                  "character_offset_zero_based": 5334,
+                  "line_one_based": 25,
+                  "column_one_based": 7
+                },
+                "end_exclusive_offset": 5347
+              },
+              "value": {
+                "start": {
+                  "character_offset_zero_based": 5349,
+                  "line_one_based": 25,
+                  "column_one_based": 22
+                },
+                "end_exclusive_offset": 5687
+              },
+              "decoded_value": "The mutual-TLS branch adds a client-authentication capability beyond server certificate presentation. Because the configured mode is explicitly described as `CERT_OPTIONAL`, the evidence does not support characterizing client certificates as universally required for every connection. [Data: Entities (1600, 1604); Relationships (2864)]",
+              "decoded_value_sha256": "11e400e4c3ed6d2432c6396fb46f9baee34b08042668bc8c87b013214c2aa4a3"
+            }
+          ],
+          "all_decoded_values_identical": false,
+          "final_graph_value_equals_last_occurrence": true,
+          "final_graph_value_differs_from_first": true
+        },
+        {
+          "json_path": [
+            "findings",
+            4,
+            "explanation"
+          ],
+          "occurrences": [
+            {
+              "key": {
+                "start": {
+                  "character_offset_zero_based": 5784,
+                  "line_one_based": 29,
+                  "column_one_based": 7
+                },
+                "end_exclusive_offset": 5797
+              },
+              "value": {
+                "start": {
+                  "character_offset_zero_based": 5799,
+                  "line_one_based": 29,
+                  "column_one_based": 22
+                },
+                "end_exclusive_offset": 6469
+              },
+              "decoded_value": "Several members of the community are explicitly external or unresolved: `ssl.SSLContext`, `ssl.PROTOCOL_TLS_SERVER`, `ssl.CERT_OPTIONAL`, `self.ssl_context.load_cert_chain`, and `self.ssl_context.load_verify_locations`. Their definitions or implementations are not visible in the provided code. [Data: Entities (373, 1603, 1604, 1622, 1623)]\n\nAs a result, the available evidence can describe references and constructor calls but cannot independently verify the detailed behavior of those dependencies. In particular, it cannot establish production execution of documentation examples involving custom SSL contexts or assess runtime validation and exception behavior.",
+              "decoded_value_sha256": "1ba49a546a4349fe595baef34a7d1f434b24c0bce9a15739e019c4736f60943e"
+            },
+            {
+              "key": {
+                "start": {
+                  "character_offset_zero_based": 6477,
+                  "line_one_based": 30,
+                  "column_one_based": 7
+                },
+                "end_exclusive_offset": 6490
+              },
+              "value": {
+                "start": {
+                  "character_offset_zero_based": 6492,
+                  "line_one_based": 30,
+                  "column_one_based": 22
+                },
+                "end_exclusive_offset": 6807
+              },
+              "decoded_value": "The unresolved dependencies are important assessment limitations rather than confirmed defects. Further review would require the relevant Python SSL implementation context and the surrounding server code, but those materials are not included in the supplied records. [Data: Entities (373, 1603, 1604, 1622, 1623)]",
+              "decoded_value_sha256": "f4b4573856a7bda49e3ac2f0d909a8e8af409a1a7dac10da37a6fba96d143879"
+            }
+          ],
+          "all_decoded_values_identical": false,
+          "final_graph_value_equals_last_occurrence": true,
+          "final_graph_value_differs_from_first": true
+        },
+        {
+          "json_path": [
+            "findings",
+            5,
+            "explanation"
+          ],
+          "occurrences": [
+            {
+              "key": {
+                "start": {
+                  "character_offset_zero_based": 6933,
+                  "line_one_based": 34,
+                  "column_one_based": 7
+                },
+                "end_exclusive_offset": 6946
+              },
+              "value": {
+                "start": {
+                  "character_offset_zero_based": 6948,
+                  "line_one_based": 34,
+                  "column_one_based": 22
+                },
+                "end_exclusive_offset": 7691
+              },
+              "decoded_value": "The available entities and relationships focus on constructor behavior: base configuration, handler selection, TLS-context creation, certificate loading, optional verification-mode assignment, and CA-location loading. The base initializer also creates handler results and readiness and stop events. [Data: Entities (1591, 1600); Relationships (2840, 2860, 2861, 2863, 2864, 2865)]\n\nNo supplied record describes listening sockets, connection acceptance, request limits in operation, event signaling behavior, logging, access control outside client certificates, or shutdown execution. Therefore, the community represents a technically important initialization boundary, but not a complete operational or compliance assessment of the server.",
+              "decoded_value_sha256": "d88962988845fc82c5f893d7c10d1f39667f19470ed78179b95864378e283623"
+            },
+            {
+              "key": {
+                "start": {
+                  "character_offset_zero_based": 7699,
+                  "line_one_based": 35,
+                  "column_one_based": 7
+                },
+                "end_exclusive_offset": 7712
+              },
+              "value": {
+                "start": {
+                  "character_offset_zero_based": 7714,
+                  "line_one_based": 35,
+                  "column_one_based": 22
+                },
+                "end_exclusive_offset": 8072
+              },
+              "decoded_value": "The concentration of records around initialization means conclusions should remain scoped to setup-time behavior. The data supports identifying intended capabilities and dependencies, but not measuring availability, resilience, actual network exposure, or legal compliance. [Data: Entities (1591, 1600); Relationships (2840, 2860, 2861, 2863, 2864, +more)]",
+              "decoded_value_sha256": "fe9635bd641629e21cce80982c7dca3524525db9e0d545cf9c624f21d59e15db"
+            }
+          ],
+          "all_decoded_values_identical": false,
+          "final_graph_value_equals_last_occurrence": true,
+          "final_graph_value_differs_from_first": true
+        }
+      ],
+      "additional_fields": [],
+      "final_graph": {
+        "public_table": "index/community_reports.json",
+        "id": "91c2ccad489bd0faaab819293c4ac4ea33ea4d56adcd162a3d0f23a209127a498994a6fc8762356a9d012604263274e4fe5586f333013daa3ce22233d72eb6f4",
+        "human_readable_id": 86,
+        "community": 86,
+        "level": 1,
+        "title": "Server and TLSServer Initialization with TLS Certificate and Mutual-TLS Support",
+        "full_content_sha256": "a36380b20c1954867b19621d63d75d8f0a3edab0339487af7326ffeeceed922f",
+        "full_content_json_sha256": "74fae267a85eeb54327e23cfb10dab09dfb4d888d10a09a8d14c65e6a8db3d90",
+        "stored_model_equals_official_model": true,
+        "rendered_text_equals_official_formatter": true,
+        "duplicate_values_follow_last_occurrence": true,
+        "additional_fields_ignored_by_official_model": true
+      }
+    },
+    {
+      "event_sequence": 1292,
+      "request_body_sha256": "ae341ed729f1071abe5582d29a9bd0feb272647f950ee1fac7cf7d88167073ec",
+      "original_response_file_sha256": "612820451d0fa78b6765c595444627b3db479120b37dd98b41e6cde54c452984",
+      "original_content": "{\n  \"title\": \"_init, _codes, and Documentation Generation\",\n  \"summary\": \"The community centers on the module-level `_init` function and its interaction with the `_codes` mapping, the nested `_init.doc` formatter, and several callable or method references. `_init` iterates over `_codes.items()`, uses `sorted(_codes)` to order status-code entries, conditionally calls `title.startswith` and `title.upper()` to create aliases, and rebuilds the module documentation value. `_init.doc` reads `_codes[code]` and uses a join operation to format names. Additional relationships connect the broader `join` method to URL construction in `RequestEncodingMixin.path_url`. The available data describes implementation behavior and symbol connectivity but does not establish legal, reputational, or security claims.\",\n  \"rating\": 4.0,\n  \"rating_explanation\": \"The community has moderate technical importance because it coordinates HTTP status-code data and documentation generation, while the available evidence does not indicate broader operational, legal, or security impact.\",\n  \"findings\": [\n    {\n      \"summary\": \"_init is the central coordinating function\",\n      \"explanation\": \"_init has the highest recorded connectivity in the community and coordinates iteration, ordering, filtering, alias generation, and documentation reconstruction. It calls `sorted`, `_codes.items`, `title.startswith`, and `title.upper`, and it reads and writes the module documentation value [Data: Entities (822); Relationships (1134, 1127, 1129, 1130, 1135)].\\n\\nThis makes `_init` the primary integration point among the status-code mapping and the related formatting operations. The evidence describes concrete code behavior, but it does not show when `_init` executes, who invokes it, or whether failures in any operation are handled.\",\n      \"source\": \"Entities (822); Relationships (1134, 1127, 1129, 1130, 1135)\"\n    },\n    {\n      \"summary\": \"_codes supplies the status-code data\",\n      \"explanation\": \"_codes is described as a module-level dictionary mapping numeric HTTP status codes to tuples of status-name strings. `_init` enumerates this mapping through `_codes.items()`, while `_init.doc` indexes it with `_codes[code]` to retrieve names for formatting [Data: Entities (821, 825); Relationships (1127, 1140, 1133)].\\n\\nThe mapping is therefore the community's main data source for both initialization and documentation output. The available context does not provide the actual codes, names, mutation behavior, validation rules, or provenance of the mapping contents.\",\n      \"source\": \"Entities (821, 825); Relationships (1127, 1140, 1133)\"\n    },\n    {\n      \"summary\": \"Initialization generates documentation and aliases\",\n      \"explanation\": \"_init rebuilds the module's documentation by reading the existing `__doc__` value and assigning reconstructed text containing a status-code listing. If an existing documentation value is present, the generated text is appended with a newline; the supplied description also states that otherwise the value is set to `None` [Data: Entities (822, 824); Relationships (1135)].\\n\\nDuring the same iteration, `_init` excludes titles beginning with a backslash or slash before creating an uppercase alias with `title.upper()`. These operations indicate that initialization performs both presentation-oriented documentation work and name-normalization or alias-generation work [Data: Entities (826, 827, 835); Relationships (1129, 1130)].\",\n      \"source\": \"Entities (822, 824, 826, 827, 835); Relationships (1129, 1130, 1135)\"\n    },\n    {\n      \"summary\": \"_init.doc formats individual status-code entries\",\n      \"explanation\": \"`_init.doc` is a nested function defined inside `_init`. It receives or uses a numeric code, indexes `_codes[code]`, formats the associated names, and returns a string expression containing the code and names [Data: Entities (823, 834); Relationships (1133)].\\n\\nThe formatter combines the names using a join operation with a comma-and-space separator. This gives the community a reusable per-code documentation mechanism rather than requiring `_init` to construct every formatted entry inline [Data: Entities (828); Relationships (1132)]. The enclosing scope and the complete callable signature are not visible in the supplied context.\",\n      \"source\": \"Entities (823, 828, 834); Relationships (1132, 1133)\"\n    },\n    {\n      \"summary\": \"Sorting provides deterministic ordering for generated output\",\n      \"explanation\": \"The `SORTED` entity represents an explicitly referenced callable used by `_init` to evaluate `sorted(_codes)` before generating the documentation listing. It is also described as appearing in documentation expressions such as `sorted(d.items())` and `sorted(_codes)` [Data: Entities (829); Relationships (1134)].\\n\\nThis indicates that ordering is an intentional part of the documentation-generation path. However, the definition, implementation, and behavior of `sorted` are not visible in the provided data, so no stronger conclusion about ordering guarantees or performance is supported.\",\n      \"source\": \"Entities (829); Relationships (1134)\"\n    },\n    {\n      \"summary\": \"join is reused across formatting and URL construction\",\n      \"explanation\": \"The `JOIN` entity represents a string method invoked in multiple contexts: formatting names in `_init.doc`, concatenating URL elements in `RequestEncodingMixin.path_url`, and combining authentication and network-location components in `prepend_scheme_if_needed` [Data: Entities (670, 828); Relationships (866, 1132)].\\n\\nWithin this community, the directly connected use is `_init.doc`'s name formatting. The separate `RequestEncodingMixin.path_url` relationship shows that the same general method reference participates in URL-related code, but the supplied data does not establish that these contexts share state, inputs, or a common execution path.\",\n      \"source\": \"Entities (670, 828); Relationships (866, 1132)\"\n    },\n    {\n      \"summary\": \"Several symbol definitions remain unresolved\",\n      \"explanation\": \"The provided descriptions explicitly state that the definitions or receiver bindings for `sorted`, `_codes.items`, `title.startswith`, `title.upper`, `upper`, and `join` are not visible or independently declared in the available context [Data: Entities (825, 826, 829, 835); Relationships (1127, 1129, 1130)].\\n\\nThis limits assessment of implementation details, runtime types, exception behavior, and dependencies. The data supports identifying call and read relationships, but it does not support claims about legal compliance, reputation, maliciousness, vulnerabilities, or the operational consequences of these unresolved symbols.\",\n      \"source\": \"Entities (825, 826, 829, 835); Relationships (1127, 1129, 1130)\"\n    }\n  ]\n}",
+      "original_content_sha256": "af736f80d1ff3eb934b191e6a4cf334d51f1696512d1614f059934d4c5813b57",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "usage": {
+        "prompt_tokens": 4671,
+        "completion_tokens": 1571,
+        "total_tokens": 6242
+      },
+      "explicit_format_repair_applied": false,
+      "official_parser_accepted": true,
+      "requested_REPORT_SCHEMA_after_standard_JSON_decode_passed": false,
+      "strict_unique_fields_schema_passed": false,
+      "duplicate_fields": [],
+      "additional_fields": [
+        {
+          "json_path": [
+            "findings",
+            0,
+            "source"
+          ],
+          "validator": "additionalProperties",
+          "location": {
+            "key": {
+              "start": {
+                "character_offset_zero_based": 1821,
+                "line_one_based": 10,
+                "column_one_based": 7
+              },
+              "end_exclusive_offset": 1829
+            },
+            "value": {
+              "start": {
+                "character_offset_zero_based": 1831,
+                "line_one_based": 10,
+                "column_one_based": 17
+              },
+              "end_exclusive_offset": 1893
+            },
+            "decoded_value": "Entities (822); Relationships (1134, 1127, 1129, 1130, 1135)",
+            "decoded_value_sha256": "6b645b5c94ba78ee42a39318f0aa458839f3e537acb6ac85a32972759960e05f"
+          },
+          "absent_from_official_model_and_final_graph": true
+        },
+        {
+          "json_path": [
+            "findings",
+            1,
+            "source"
+          ],
+          "validator": "additionalProperties",
+          "location": {
+            "key": {
+              "start": {
+                "character_offset_zero_based": 2565,
+                "line_one_based": 15,
+                "column_one_based": 7
+              },
+              "end_exclusive_offset": 2573
+            },
+            "value": {
+              "start": {
+                "character_offset_zero_based": 2575,
+                "line_one_based": 15,
+                "column_one_based": 17
+              },
+              "end_exclusive_offset": 2630
+            },
+            "decoded_value": "Entities (821, 825); Relationships (1127, 1140, 1133)",
+            "decoded_value_sha256": "f8ec755e87c154883321dcdff3e2471d42a367e7074a27c77124aa968d79de38"
+          },
+          "absent_from_official_model_and_final_graph": true
+        },
+        {
+          "json_path": [
+            "findings",
+            2,
+            "source"
+          ],
+          "validator": "additionalProperties",
+          "location": {
+            "key": {
+              "start": {
+                "character_offset_zero_based": 3476,
+                "line_one_based": 20,
+                "column_one_based": 7
+              },
+              "end_exclusive_offset": 3484
+            },
+            "value": {
+              "start": {
+                "character_offset_zero_based": 3486,
+                "line_one_based": 20,
+                "column_one_based": 17
+              },
+              "end_exclusive_offset": 3556
+            },
+            "decoded_value": "Entities (822, 824, 826, 827, 835); Relationships (1129, 1130, 1135)",
+            "decoded_value_sha256": "2936a0f2add96aa4b0209cc83411e311f2caa34c49731062f8ca6d94b1c88637"
+          },
+          "absent_from_official_model_and_final_graph": true
+        },
+        {
+          "json_path": [
+            "findings",
+            3,
+            "source"
+          ],
+          "validator": "additionalProperties",
+          "location": {
+            "key": {
+              "start": {
+                "character_offset_zero_based": 4306,
+                "line_one_based": 25,
+                "column_one_based": 7
+              },
+              "end_exclusive_offset": 4314
+            },
+            "value": {
+              "start": {
+                "character_offset_zero_based": 4316,
+                "line_one_based": 25,
+                "column_one_based": 17
+              },
+              "end_exclusive_offset": 4370
+            },
+            "decoded_value": "Entities (823, 828, 834); Relationships (1132, 1133)",
+            "decoded_value_sha256": "430a0e5ee42c947b4594106672d3970dba3532684147c747e3efb7bb96c5b5f8"
+          },
+          "absent_from_official_model_and_final_graph": true
+        },
+        {
+          "json_path": [
+            "findings",
+            4,
+            "source"
+          ],
+          "validator": "additionalProperties",
+          "location": {
+            "key": {
+              "start": {
+                "character_offset_zero_based": 5086,
+                "line_one_based": 30,
+                "column_one_based": 7
+              },
+              "end_exclusive_offset": 5094
+            },
+            "value": {
+              "start": {
+                "character_offset_zero_based": 5096,
+                "line_one_based": 30,
+                "column_one_based": 17
+              },
+              "end_exclusive_offset": 5134
+            },
+            "decoded_value": "Entities (829); Relationships (1134)",
+            "decoded_value_sha256": "b5f4b4b8605391d3fe64bb11066f3bb22bf1c73f4d3118d6cd2ba42db98d55ee"
+          },
+          "absent_from_official_model_and_final_graph": true
+        },
+        {
+          "json_path": [
+            "findings",
+            5,
+            "source"
+          ],
+          "validator": "additionalProperties",
+          "location": {
+            "key": {
+              "start": {
+                "character_offset_zero_based": 5904,
+                "line_one_based": 35,
+                "column_one_based": 7
+              },
+              "end_exclusive_offset": 5912
+            },
+            "value": {
+              "start": {
+                "character_offset_zero_based": 5914,
+                "line_one_based": 35,
+                "column_one_based": 17
+              },
+              "end_exclusive_offset": 5962
+            },
+            "decoded_value": "Entities (670, 828); Relationships (866, 1132)",
+            "decoded_value_sha256": "820ff0ba22072637862551610c4e588bba5824a5f56fa382cbb98e4a755ff3c6"
+          },
+          "absent_from_official_model_and_final_graph": true
+        },
+        {
+          "json_path": [
+            "findings",
+            6,
+            "source"
+          ],
+          "validator": "additionalProperties",
+          "location": {
+            "key": {
+              "start": {
+                "character_offset_zero_based": 6706,
+                "line_one_based": 40,
+                "column_one_based": 7
+              },
+              "end_exclusive_offset": 6714
+            },
+            "value": {
+              "start": {
+                "character_offset_zero_based": 6716,
+                "line_one_based": 40,
+                "column_one_based": 17
+              },
+              "end_exclusive_offset": 6781
+            },
+            "decoded_value": "Entities (825, 826, 829, 835); Relationships (1127, 1129, 1130)",
+            "decoded_value_sha256": "4e3fde4c5b040c28f3893b6fcb2e288e52d54af37c5b5c83927a89282f5733c4"
+          },
+          "absent_from_official_model_and_final_graph": true
+        }
+      ],
+      "final_graph": {
+        "public_table": "index/community_reports.json",
+        "id": "220530b5411a40fa6364a4f1550b2d498633ef881aa72ae55282929be8c60e4d29fbcc2ca70f39247da5da5e50fb1cd5a68f9778b4200b090fd022ec18b6b95c",
+        "human_readable_id": 125,
+        "community": 125,
+        "level": 1,
+        "title": "_init, _codes, and Documentation Generation",
+        "full_content_sha256": "dbea835bf1d0aaaca23bac45e55b56da8d8b88c1702f2a1e944e5b9f3a19c540",
+        "full_content_json_sha256": "533f75b48982ec69a32d61aab7748ade1428a490b26a74d6078584eff27d2311",
+        "stored_model_equals_official_model": true,
+        "rendered_text_equals_official_formatter": true,
+        "duplicate_values_follow_last_occurrence": true,
+        "additional_fields_ignored_by_official_model": true
+      }
+    }
+  ],
+  "baseline_comparison": [
+    {
+      "event_sequence": 435,
+      "original_content_sha256": "6a3c1ca1c4298f8a7c817901ca548d05a5645c35024e595133e37a4cf99b35fd",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 436,
+      "original_content_sha256": "9f8320cb99735205fca30a0ea70e5009e886381ba529eaa4de1a93438ec3e9a7",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 437,
+      "original_content_sha256": "1797e8cbd209143c91c7916916a93969262b91e5dbb9faef19cd1672437f947f",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 438,
+      "original_content_sha256": "09fafbff8b87752028e2b53e0a5767ef1b1ebc6217f1bfb472bdf6fd96f261b4",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 439,
+      "original_content_sha256": "a3edb82299757e0b7a7cc3f53b2797c4b076f29ac3543e4d140e4b2eab640516",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 440,
+      "original_content_sha256": "e3d9376dea66bdf8a283d5bdcc4e4d6475214e3ff1e6592dedd30c33f489bd62",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 441,
+      "original_content_sha256": "40c0c355d6bd5c84b2edd0ef4322890840c80fa308038065502724d701ae1b36",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 442,
+      "original_content_sha256": "22715d0345ae3b34569de042c1887261c7cbac721cd6e5a3d7e475de65bdc427",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 443,
+      "original_content_sha256": "62b1f1b636f82b4c8a26353e416d4e54d420fe42b14341ab9c3c5d9d355ee76b",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 444,
+      "original_content_sha256": "d4331c15fe75a919e45f971bd41d19a0fb6ff60cff596dabad0123401d484f45",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 445,
+      "original_content_sha256": "8ec1c6620469e3e77d39f8f80396b59a54b8deb962b93228fb309de43ebcaf7c",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 446,
+      "original_content_sha256": "42808490dbf9be98bef37f20fade54ce45920c973d244928480add1ad02d98d5",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 447,
+      "original_content_sha256": "5388c75d4915aab579e9aea67871e315106b823ec9b769293eeb9dd8804cd515",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 448,
+      "original_content_sha256": "26b9e66455ea5152396f8822d8267d6889161505c6ad3c2f9c77c3463567b30f",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 449,
+      "original_content_sha256": "3397f782bb6f09f008e35c0c509d1bf60bb3c88db65d765e6079f25918c1a63b",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 450,
+      "original_content_sha256": "a5fc8a1a6036a303f806e0c60a5568dbf8b51570024080b3c6af9cbaa0c85b7d",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 451,
+      "original_content_sha256": "b28c1f2f382665518811aabf4870303bc15bf12f0d7f87ae059e8fae52cf3da4",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 452,
+      "original_content_sha256": "77800ac96667f6030a86c2fee31edea45086d2b6231c5e111573d6fb50418667",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 453,
+      "original_content_sha256": "d4647204ddeb2c46e68d8a2af1bb39e771c076ceb37027bc20e2689dbbc86ab4",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 454,
+      "original_content_sha256": "a254ba613ac468dc8452e1a33277ed9eb7c41df4305e0da0e7f5483efd86fd54",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 455,
+      "original_content_sha256": "01934496168cd935d1a574edda8060f0b9ce45573af8175ffae2a7aa2db9acb1",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 456,
+      "original_content_sha256": "a8144e4c1f3b3ecbdfdd2a337857c82cee9b9c7661f0866591a239cd1e832a2a",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 457,
+      "original_content_sha256": "31eaf5f9d23fbd0ef93d67c1e4d6d2fa17a51213f89ee452d505e2afc2f7be3c",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 458,
+      "original_content_sha256": "9b27f8b5148346239dc73e6b58eedf2edd0b226e6286d629257cb8788184325f",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 459,
+      "original_content_sha256": "dd8771ac6afef77a3344cdf3cd0135414d44daaff272b6ee21999906fc6a3179",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 460,
+      "original_content_sha256": "63a9ab16aee66a8dbd2e22dd944cd6128bd7106ed0f0955ee3271a4e30777809",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 461,
+      "original_content_sha256": "a863a36b61cc0b038d73f3424c48a19cad186863d4b7ea9623c50b106df96d44",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 462,
+      "original_content_sha256": "9f091b82e7738788bd03194fed86eba7dc06603b9d38ee2a7c00f1601455206a",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 463,
+      "original_content_sha256": "5851611ef723df4b5a1ed0dbdeffee7d93a1863fa60d709b28d2314528878f9a",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 464,
+      "original_content_sha256": "ae678308e4d3d8423985f6779a0bd9dee0919946a939fcae408c4774a4b2398a",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 465,
+      "original_content_sha256": "908d0110e6e5c3ff58f3f8c6abb7bb9eaf3f50e031775cb08411773e5b4a0132",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 466,
+      "original_content_sha256": "a9522680bffb6aa445eb51d9172f419989e07a6dee94f9510b043ef92e3cc3b8",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 467,
+      "original_content_sha256": "35c337eed74916e063878663493ebee3a89072502fc1c6ac5ec9437cfc0955f7",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 468,
+      "original_content_sha256": "1455da47b3e1f6525adce10821fbaa3afbdf7e79d64715512345413dd795bb94",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 469,
+      "original_content_sha256": "268057de28c70ef4974911f12e494d82d7d5135816b8949b13dab7b0054654db",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 470,
+      "original_content_sha256": "33a6cb0ba1877a3125ba3a1cc68533ea38a865b9a28da0a64e9fe29c1280a0dc",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 471,
+      "original_content_sha256": "22a0b87760b86f0b51ff9c76577de8ab7bdadbab7adb1531fd87811743f246d3",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 472,
+      "original_content_sha256": "3430fedff5d2399fc415c18de2763ce29a324458041fe8dceaaed0b7b229be2f",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 473,
+      "original_content_sha256": "97d468404032811e089091356bc20ea24f6e8c25938ddfba4f3f18e63aefa25a",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 474,
+      "original_content_sha256": "9d9568ba0c3a61cf0b180f4be44106700559bee9684329e646a534f044ee7b6d",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 475,
+      "original_content_sha256": "19805981680a7295bad8d4bfe22cb07d11020e54945b5111bae662f6975e8f6c",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 476,
+      "original_content_sha256": "e6afea0c0f45f2046bd87c50ca60fde6a6ad4df6edddbc806f69ea563f7977d8",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 477,
+      "original_content_sha256": "fbec5ae21fadc142859f2a51dd1d18819246d550621e411eff794dfac364e168",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 478,
+      "original_content_sha256": "ac78f3029261d94405acaba2edbcd2342cbd067803ae4383c4058845cb993a15",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 479,
+      "original_content_sha256": "524b48e7dc8e795be8c0eb184a749c5df46d28c975d5c79977971c6524f6b4cb",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 480,
+      "original_content_sha256": "a50f3f3f074be04b2695dba91f9fd4731532bf8edbba2b87a4b752b99154ae0d",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 481,
+      "original_content_sha256": "e9b9a0dad5f7041983730aadfc994550754f26ed14f5b1e6babe9992713a5d44",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 482,
+      "original_content_sha256": "94b124950edd9de5bbcd3ed6884cc575d5868076c8ba8386608107b7ea696d86",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 483,
+      "original_content_sha256": "965dc4e03e710665fd2bacb3c77969ce820a046028c7de375e64e17f64ba9a27",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 484,
+      "original_content_sha256": "6003bde799cc918eca53bdb8bbcadca60464f839932d89c48610c6d8ffcac917",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 485,
+      "original_content_sha256": "5455d868eadc8cee829d65c867e2004bf78b1bf2a585b5798610d0f585c51991",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 486,
+      "original_content_sha256": "0641de5c9ac772e39e45d17e5303af264ef70d1dbd8a397b412476700fde4c6a",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 487,
+      "original_content_sha256": "9087034bf8582a2757034a574450c6df4f30f07b5c5100a78b6a6feb71682b79",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 488,
+      "original_content_sha256": "3cf4876dcead2dc787b875baf21273ae54ba5849bfcb64f8c1d872d2bccc4245",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 489,
+      "original_content_sha256": "88557d5301240845d99cd69392b499f4a8bdfbd934bc3135ee46337de430b433",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 490,
+      "original_content_sha256": "37cfdafe180a1f12ddd516b0a83eccda4d7242421839c4e7b95478950b6f77a7",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 491,
+      "original_content_sha256": "73a3db7b75b6f66791cb6ec2a00e155f31bbdfd75448593f13d6032358f5bc67",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 492,
+      "original_content_sha256": "7955c9ae19e025468a07f740eceb5c34df4c2e5f48b6ed577bf21364af30a4a5",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 493,
+      "original_content_sha256": "eae5fd27c454b97ed3694b20eef2decb49b0e0f57f06847213f90abe45b76460",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 494,
+      "original_content_sha256": "ffed2c778cb7d3987e72affbf205f59df130bd82fe52aa175772359bc7ecd400",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 495,
+      "original_content_sha256": "783beddfd761459160be662e9c2fb1c1353950bde4f132cdf51d2f077197dce5",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 496,
+      "original_content_sha256": "a9ccd056667b1058677271a245f2c5709a4752bdf698256b7748ee0be59cf04e",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 497,
+      "original_content_sha256": "13f44ce3b18a3b6c6aa3883c1aa85c06bc6f8579b0ed212ab8c1649446189f5a",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 498,
+      "original_content_sha256": "ce9baeed7ae448c4576eda4b721771e750612cb6fcbfb518b9753ea58a7688c0",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 499,
+      "original_content_sha256": "a9423a372968d1ecd9af1ed3d69c5e2b925e2e8b3da32d4e8e66a5009d32d5ae",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 500,
+      "original_content_sha256": "0d45e5aaeac03b7172e37919cba0dd98cf2158eda6cf1045ba37f105162991d2",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 501,
+      "original_content_sha256": "86c97c455d45aadc9249917c49952e38a7e9d6755711d1f3592f47f2fce77096",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 502,
+      "original_content_sha256": "d882b9824ededfd57b08ae0767bd2d3a54245a92c5965df34aec675794231604",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 503,
+      "original_content_sha256": "41c55070da358a8f21e96f099291917c2d779c39c3d02cef09d4f7d107fcf2dd",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 504,
+      "original_content_sha256": "8a0980f41bcf7319843618a905e519156b23d08ba474e5cc717c431a2b055a0c",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 505,
+      "original_content_sha256": "fdf6db72f46e5206743ddcb51fecfeb7f2e29b4ad577c0f9d8f0ba284b0b8e6e",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 506,
+      "original_content_sha256": "557b43f7116e423abea40b0c9bff3af15500f31fb6d366b178c2f891d29af8e4",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 507,
+      "original_content_sha256": "b6166b536a4cd2d21729ccb66a35d79e6a4464d804825c52729ec2b7d325a0f6",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 508,
+      "original_content_sha256": "19781f3d8112e80f6107f2f9ba5dad2abda2b13870b45f5d93c806194231e198",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 509,
+      "original_content_sha256": "c2e46c9a7e3497470a3f40bee55ef44389bb40b40e43ab0d2aa256781ab42309",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 510,
+      "original_content_sha256": "9a71f0c7173b2bcc8880492effd92aaf5f509a9c7354d810c01b1ef1d8e502eb",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 511,
+      "original_content_sha256": "c7123749e1975df359afd45d947a5c9a0361da2130cad457c579dcaeec620cbe",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 512,
+      "original_content_sha256": "e7a1372d5c805e997683582388005fd28b66559933e2071159a3d2d97a138cfe",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 513,
+      "original_content_sha256": "bbf7ac096b59a86be0063a68c114bf50366dd97218f76fb3cc94e288b06240e1",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 514,
+      "original_content_sha256": "f3433e75998a304a04fd349bf3985dfe23cb509af1aed2124f319a083c2e7a6d",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 515,
+      "original_content_sha256": "5cf521e174b4c2dfe380bab1304ff978e1ae0f04b57e69c387c227026c819860",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 516,
+      "original_content_sha256": "10cbda0826070001680d7b29220ef2123c948777d7f23b956ed841ca19cb386b",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 517,
+      "original_content_sha256": "58e2a2633c6990344242d36c01d9905bc640c240ebd6cdf1ae605d99200b116b",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    },
+    {
+      "event_sequence": 518,
+      "original_content_sha256": "b31455c381814676908b1982ba1c0a3e8414ebd5355c18e37a77526de4023e16",
+      "official_parser_accepted": true,
+      "requested_schema_passed": true,
+      "strict_unique_fields_schema_passed": true
+    }
+  ],
+  "interpretation": [
+    "The official parser accepted all adopted reports. Acceptance is not equivalent to strict request-schema or unique-key conformance.",
+    "1062 repeats identical explanation values;1253 repeats differing explanation values. Standard JSON decoding retains the last occurrence, and the stored graph and rendered text match that choice.",
+    "1117 has six extra empty-name fields and1292 has seven extra source fields in findings. The official model ignores those fields; final normalized report JSON and rendered text match the official model.",
+    "These four reports were not changed by the authorized format overlays and must not be counted among the three repaired replies.",
+    "Schema and parser checks do not establish factual correctness or explain a causal retrieval-score effect."
+  ],
+  "execution_boundary": {
+    "new_provider_calls": 0,
+    "runtime_modified": false,
+    "original_response_cache_ledger_graph_and_scores_modified": false,
+    "ledger_sha256_unchanged": "dbc338e5f13bd2703b7b4c1110b3d4f569a2a6a4d8db5f6182f7de079e2c6860"
+  }
+}

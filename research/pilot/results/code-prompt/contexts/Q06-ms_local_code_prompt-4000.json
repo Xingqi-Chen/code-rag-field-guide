@@ -1,0 +1,500 @@
+{
+  "variant": "code-prompt",
+  "question_id": "Q06",
+  "method": "ms_local_code_prompt",
+  "budget": 4000,
+  "query": "Locate how streamed lines carry an unfinished last line across chunks, including a custom delimiter.",
+  "upstream_raw_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n744|CHUNK.SPLIT|`chunk.split(delimiter)` is an explicitly referenced callable on an unresolved chunk receiver, used by `iter_lines` when `delimiter` is truthy.|1\n736|ITER_LINES|The method `iter_lines(self, chunk_size=ITER_CHUNK_SIZE, decode_unicode=False, delimiter=None)` is defined here, but its owning class is not visible. It calls `self.iter_content(...)`, splits chunks by the supplied delimiter or line boundaries, retains a pending partial line, and yields lines.|4\n745|CHUNK.SPLITLINES|`chunk.splitlines()` is an explicitly referenced callable on an unresolved chunk receiver, used by `iter_lines` when no delimiter is supplied.|1\n1334|R.ITER_LINES|The exact response method reference `r.iter_lines()` is used in streaming tests; the concrete runtime class of `r` is not otherwise resolved here.|2\n746|LINES.POP|`lines.pop()` is an explicitly referenced callable on the locally produced `lines` sequence, used by `iter_lines` to retain a pending final line.|1\n740|SELF.RAW.STREAM|`self.raw.stream(chunk_size, decode_content=True)` is an explicitly referenced callable on an unresolved `self.raw` receiver; the runtime class and binding are not visible.|1\n1170|TESTSTREAM|Defines the nested class `TestStream`, a stream-like object storing encoded data, a length, and an index. Its visible methods implement length, reading, telling, and seeking.|6\n140|R.ITER_CONTENT|The response method explicitly referenced as `r.iter_content(chunk_size=128)`; documented as iterating streamed response content and automatically decoding `gzip` and `deflate` transfer encodings.|1\n1031|TEST_CHUNKED_ENCODING_ERROR.INCOMPLETE_CHUNKED_RESPONSE_HANDLER|`test_chunked_encoding_error.incomplete_chunked_response_handler(sock)` is defined inside `test_chunked_encoding_error`. It consumes the request and sends only an HTTP status plus `Transfer-Encoding: chunked`, without valid terminating chunks.|3\n1321|TEST_RESPONSE_ITER_LINES|The exact test method `test_response_iter_lines(self, httpbin)` is defined here. It streams `/stream/4`, consumes one line from `r.iter_lines()`, and asserts three lines remain.|6\n656|STREAM_DECODE_RESPONSE_UNICODE|`STREAM_DECODE_RESPONSE_UNICODE` refers to the externally defined callable `stream_decode_response_unicode`, imported from `.utils`. It is associated with handling response chunks when `decode_unicode` is enabled, although its implementation is not visible. No direct invocation is shown in the examined code chunk.|3\n602|CHUNKEDENCODINGERROR|`ChunkedEncodingError` is defined here as a subclass of `RequestException`; it represents invalid content in a response declared as chunked encoding.|5\n735|GENERATE|The nested function `generate()` is defined inside `iter_content`. It streams from `self.raw.stream(...)` when available, otherwise repeatedly reads `self.raw.read(chunk_size)`, translates visible decoding and connection exceptions, and sets `self._content_consumed = True`.|7\n604|STREAMCONSUMEDERROR|`StreamConsumedError` is defined here with bases `RequestException` and `TypeError`; it represents content that was already consumed.|5\n1033|TEST_CHUNKED_UPLOAD_DOESNT_SKIP_HOST_HEADER|`test_chunked_upload_doesnt_skip_host_header()` is defined here and asserts that a streamed POST includes the server-derived `Host: {host}:{port}` header exactly once in the echoed response.|6\n662|ITER_CHUNK_SIZE|`ITER_CHUNK_SIZE` is a module-level constant defined with the value `512`. It is used as the default `chunk_size` parameter by `iter_lines`.|1\n1172|TESTSTREAM.__LEN__|Defines `TestStream.__len__(self)`, returning `self.length`.|1\n\n\n-----Relationships-----\nid|source|target|description|weight\n1019|ITER_LINES|CHUNK.SPLIT|CALLS, `iter_lines` calls `chunk.split(delimiter)` when `delimiter` is truthy; the chunk receiver's concrete type is unresolved|9.0\n1020|ITER_LINES|CHUNK.SPLITLINES|CALLS, `iter_lines` calls `chunk.splitlines()` when `delimiter` is falsy; the chunk receiver's concrete type is unresolved|9.0\n1021|ITER_LINES|LINES.POP|CALLS, `iter_lines` calls `lines.pop()` when the final split element is retained as pending; the sequence implementation is not visible|9.0\n1007|ITER_LINES|ITER_CONTENT|CALLS, `iter_lines` calls `self.iter_content(chunk_size=chunk_size, decode_unicode=decode_unicode)`; the visible receiver is `self`, but its class binding is not shown|10.0\n1810|TEST_POSTBIN_SEEKED_OBJECT_WITH_NO_ITER|TESTSTREAM|CALLS, test_POSTBIN_SEEKED_OBJECT_WITH_NO_ITER constructs `TestStream(\"test\")` twice.|10.0\n1844|TESTSTREAM|TESTSTREAM.__INIT__|DEFINES, TestStream defines the visible method `TestStream.__init__`.|10.0\n1848|TESTSTREAM|TESTSTREAM.SEEK|DEFINES, TestStream defines the visible method `TestStream.seek`.|10.0\n996|GENERATE|SELF.RAW.STREAM|CALLS, `generate` calls `self.raw.stream(chunk_size, decode_content=True)` when the raw receiver has a `stream` attribute; the receiver's concrete class is unresolved|9.0\n2200|TEST_RESPONSE_ITER_LINES|R.ITER_LINES|CALLS, the test evaluates `r.iter_lines()` and consumes its iterator|10.0\n2206|TEST_RESPONSE_ITER_LINES_REENTRANT|R.ITER_LINES|CALLS, the xfailed test evaluates `r.iter_lines()` twice; this documents the claimed non-reentrant behavior but does not establish implementation correctness|10.0\n1845|TESTSTREAM|TESTSTREAM.__LEN__|DEFINES, TestStream defines the visible method `TestStream.__len__`.|10.0\n1846|TESTSTREAM|TESTSTREAM.READ|DEFINES, TestStream defines the visible method `TestStream.read`.|10.0\n1847|TESTSTREAM|TESTSTREAM.TELL|DEFINES, TestStream defines the visible method `TestStream.tell`.|10.0\n\n\n-----Sources-----\nid|text\n49|    def is_permanent_redirect(self):\n        \"\"\"True if this Response one of the permanent versions of redirect.\"\"\"\n        return \"location\" in self.headers and self.status_code in (\n            codes.moved_permanently,\n            codes.permanent_redirect,\n        )\n\n    @property\n    def next(self):\n        \"\"\"Returns a PreparedRequest for the next request in a redirect chain, if there is one.\"\"\"\n        return self._next\n\n    @property\n    def apparent_encoding(self):\n        \"\"\"The apparent encoding, provided by the charset_normalizer or chardet libraries.\"\"\"\n        if chardet is not None:\n            return chardet.detect(self.content)[\"encoding\"]\n        else:\n            # If no character detection library is available, we'll fall back\n            # to a standard Python utf-8 str.\n            return \"utf-8\"\n\n    def iter_content(self, chunk_size=1, decode_unicode=False):\n        \"\"\"Iterates over the response data.  When stream=True is set on the\n        request, this avoids reading the content at once into memory for\n        large responses.  The chunk size is the number of bytes it should\n        read into memory.  This is not necessarily the length of each item\n        returned as decoding can take place.\n\n        chunk_size must be of type int or None. A value of None will\n        function differently depending on the value of `stream`.\n        stream=True will read data as it arrives in whatever size the\n        chunks are received. If stream=False, data is returned as\n        a single chunk.\n\n        If decode_unicode is True, content will be decoded using the best\n        available encoding based on the response.\n        \"\"\"\n\n        def generate():\n            # Special case for urllib3.\n            if hasattr(self.raw, \"stream\"):\n                try:\n                    yield from self.raw.stream(chunk_size, decode_content=True)\n                except ProtocolError as e:\n                    raise ChunkedEncodingError(e)\n                except DecodeError as e:\n                    raise ContentDecodingError(e)\n                except ReadTimeoutError as e:\n                    raise ConnectionError(e)\n                except SSLError as e:\n                    raise RequestsSSLError(e)\n            else:\n                # Standard file-like object.\n                while True:\n                    chunk = self.raw.read(chunk_size)\n                    if not chunk:\n                        break\n                    yield chunk\n\n            self._content_consumed = True\n\n        if self._content_consumed and isinstance(self._content, bool):\n            raise StreamConsumedError()\n        elif chunk_size is not None and not isinstance(chunk_size, int):\n            raise TypeError(\n                f\"chunk_size must be an int, it is instead a {type(chunk_size)}.\"\n            )\n        # simulate reading small chunks of the content\n        reused_chunks = iter_slices(self._content, chunk_size)\n\n        stream_chunks = generate()\n\n        chunks = reused_chunks if self._content_consumed else stream_chunks\n\n        if decode_unicode:\n            chunks = stream_decode_response_unicode(chunks, self)\n\n        return chunks\n\n    def iter_lines(\n        self, chunk_size=ITER_CHUNK_SIZE, decode_unicode=False, delimiter=None\n    ):\n        \"\"\"Iterates over the response data, one line at a time.  When\n        stream=True is set on the request, this avoids reading the\n        content at once into memory for large responses.\n\n        .. note:: This method is not reentrant safe.\n        \"\"\"\n\n        pending = None\n\n        for chunk in self.iter_content(\n            chunk_size=chunk_size, decode_unicode=decode_unicode\n        ):\n            if pending is not None:\n                chunk = pending + chunk\n\n            if delimiter:\n                lines = chunk.split(delimiter)\n            else:\n                lines = chunk.splitlines()\n\n            if lines and lines[-1] and chunk and lines[-1][-1] == chunk[-1]:\n                pending = lines.pop()\n            else:\n                pending = None\n\n            yield from lines\n\n        if pending is not None:\n            yield pending\n\n    @property\n    def content(self):\n        \"\"\"Content of the response, in bytes.\"\"\"\n\n        if self._content is False:\n            # Read the contents.\n            if self._content_consumed:\n                raise RuntimeError(\"The content for this response was already consumed\")\n\n            if self.status_code == 0 or self.raw is None:\n                self._content = None\n            else:\n                self._content = b\"\".join(self.iter_content(CONTENT_CHUNK_SIZE)) or b\"\"\n\n        self._content_consumed = True\n        # don't need to release the connection; that's been handled by urllib3\n        # since we exhausted the data.\n        return self._content\n\n    @property\n    def text(self):\n        \"\"\"Content of the response, in unicode.\n\n        If Response.encoding is None, encoding will be guessed using\n        ``charset_normalizer`` or ``chardet``.\n\n        The encoding of the response content is determined based solely on HTTP\n        headers, following RFC 2616 to the letter. If you can take advantage of\n        non-HTTP knowledge to make a better guess at the encoding, you should\n        set ``r.encoding`` appropriately before accessing this property.\n        \"\"\"\n\n        # Try charset from content-type\n        content = None\n        encoding = self.encoding\n\n        if not self.content:\n            return \"\"\n\n        # Fallback to auto-detected encoding.\n        if self.encoding is None:\n            encoding = self.apparent_encoding\n\n        # Decode unicode from given encoding.\n        try:\n            content = str(self.content, encoding, errors=\"replace\")\n        except (LookupError, TypeError):\n            # A LookupError is raised if the encoding was not found which could\n            # indicate a misspelling or similar mistake.\n            #\n            # A TypeError can be raised if encoding is None\n            #\n            # So we try blindly encoding.\n\n",
+  "upstream_raw_records": {
+    "relationships": [
+      {
+        "id": "1019",
+        "source": "ITER_LINES",
+        "target": "CHUNK.SPLIT",
+        "description": "CALLS, `iter_lines` calls `chunk.split(delimiter)` when `delimiter` is truthy; the chunk receiver's concrete type is unresolved",
+        "weight": "9.0",
+        "in_context": true
+      },
+      {
+        "id": "1020",
+        "source": "ITER_LINES",
+        "target": "CHUNK.SPLITLINES",
+        "description": "CALLS, `iter_lines` calls `chunk.splitlines()` when `delimiter` is falsy; the chunk receiver's concrete type is unresolved",
+        "weight": "9.0",
+        "in_context": true
+      },
+      {
+        "id": "1021",
+        "source": "ITER_LINES",
+        "target": "LINES.POP",
+        "description": "CALLS, `iter_lines` calls `lines.pop()` when the final split element is retained as pending; the sequence implementation is not visible",
+        "weight": "9.0",
+        "in_context": true
+      },
+      {
+        "id": "1007",
+        "source": "ITER_LINES",
+        "target": "ITER_CONTENT",
+        "description": "CALLS, `iter_lines` calls `self.iter_content(chunk_size=chunk_size, decode_unicode=decode_unicode)`; the visible receiver is `self`, but its class binding is not shown",
+        "weight": "10.0",
+        "in_context": true
+      },
+      {
+        "id": "1810",
+        "source": "TEST_POSTBIN_SEEKED_OBJECT_WITH_NO_ITER",
+        "target": "TESTSTREAM",
+        "description": "CALLS, test_POSTBIN_SEEKED_OBJECT_WITH_NO_ITER constructs `TestStream(\"test\")` twice.",
+        "weight": "10.0",
+        "in_context": true
+      },
+      {
+        "id": "1844",
+        "source": "TESTSTREAM",
+        "target": "TESTSTREAM.__INIT__",
+        "description": "DEFINES, TestStream defines the visible method `TestStream.__init__`.",
+        "weight": "10.0",
+        "in_context": true
+      },
+      {
+        "id": "1848",
+        "source": "TESTSTREAM",
+        "target": "TESTSTREAM.SEEK",
+        "description": "DEFINES, TestStream defines the visible method `TestStream.seek`.",
+        "weight": "10.0",
+        "in_context": true
+      },
+      {
+        "id": "996",
+        "source": "GENERATE",
+        "target": "SELF.RAW.STREAM",
+        "description": "CALLS, `generate` calls `self.raw.stream(chunk_size, decode_content=True)` when the raw receiver has a `stream` attribute; the receiver's concrete class is unresolved",
+        "weight": "9.0",
+        "in_context": true
+      },
+      {
+        "id": "2200",
+        "source": "TEST_RESPONSE_ITER_LINES",
+        "target": "R.ITER_LINES",
+        "description": "CALLS, the test evaluates `r.iter_lines()` and consumes its iterator",
+        "weight": "10.0",
+        "in_context": true
+      },
+      {
+        "id": "2206",
+        "source": "TEST_RESPONSE_ITER_LINES_REENTRANT",
+        "target": "R.ITER_LINES",
+        "description": "CALLS, the xfailed test evaluates `r.iter_lines()` twice; this documents the claimed non-reentrant behavior but does not establish implementation correctness",
+        "weight": "10.0",
+        "in_context": true
+      },
+      {
+        "id": "1845",
+        "source": "TESTSTREAM",
+        "target": "TESTSTREAM.__LEN__",
+        "description": "DEFINES, TestStream defines the visible method `TestStream.__len__`.",
+        "weight": "10.0",
+        "in_context": true
+      },
+      {
+        "id": "1846",
+        "source": "TESTSTREAM",
+        "target": "TESTSTREAM.READ",
+        "description": "DEFINES, TestStream defines the visible method `TestStream.read`.",
+        "weight": "10.0",
+        "in_context": true
+      },
+      {
+        "id": "1847",
+        "source": "TESTSTREAM",
+        "target": "TESTSTREAM.TELL",
+        "description": "DEFINES, TestStream defines the visible method `TestStream.tell`.",
+        "weight": "10.0",
+        "in_context": true
+      }
+    ],
+    "entities": [
+      {
+        "id": "744",
+        "entity": "CHUNK.SPLIT",
+        "description": "`chunk.split(delimiter)` is an explicitly referenced callable on an unresolved chunk receiver, used by `iter_lines` when `delimiter` is truthy.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "736",
+        "entity": "ITER_LINES",
+        "description": "The method `iter_lines(self, chunk_size=ITER_CHUNK_SIZE, decode_unicode=False, delimiter=None)` is defined here, but its owning class is not visible. It calls `self.iter_content(...)`, splits chunks by the supplied delimiter or line boundaries, retains a pending partial line, and yields lines.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "745",
+        "entity": "CHUNK.SPLITLINES",
+        "description": "`chunk.splitlines()` is an explicitly referenced callable on an unresolved chunk receiver, used by `iter_lines` when no delimiter is supplied.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1334",
+        "entity": "R.ITER_LINES",
+        "description": "The exact response method reference `r.iter_lines()` is used in streaming tests; the concrete runtime class of `r` is not otherwise resolved here.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "746",
+        "entity": "LINES.POP",
+        "description": "`lines.pop()` is an explicitly referenced callable on the locally produced `lines` sequence, used by `iter_lines` to retain a pending final line.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "740",
+        "entity": "SELF.RAW.STREAM",
+        "description": "`self.raw.stream(chunk_size, decode_content=True)` is an explicitly referenced callable on an unresolved `self.raw` receiver; the runtime class and binding are not visible.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1170",
+        "entity": "TESTSTREAM",
+        "description": "Defines the nested class `TestStream`, a stream-like object storing encoded data, a length, and an index. Its visible methods implement length, reading, telling, and seeking.",
+        "number of relationships": "6",
+        "in_context": true
+      },
+      {
+        "id": "140",
+        "entity": "R.ITER_CONTENT",
+        "description": "The response method explicitly referenced as `r.iter_content(chunk_size=128)`; documented as iterating streamed response content and automatically decoding `gzip` and `deflate` transfer encodings.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1031",
+        "entity": "TEST_CHUNKED_ENCODING_ERROR.INCOMPLETE_CHUNKED_RESPONSE_HANDLER",
+        "description": "`test_chunked_encoding_error.incomplete_chunked_response_handler(sock)` is defined inside `test_chunked_encoding_error`. It consumes the request and sends only an HTTP status plus `Transfer-Encoding: chunked`, without valid terminating chunks.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "1321",
+        "entity": "TEST_RESPONSE_ITER_LINES",
+        "description": "The exact test method `test_response_iter_lines(self, httpbin)` is defined here. It streams `/stream/4`, consumes one line from `r.iter_lines()`, and asserts three lines remain.",
+        "number of relationships": "6",
+        "in_context": true
+      },
+      {
+        "id": "656",
+        "entity": "STREAM_DECODE_RESPONSE_UNICODE",
+        "description": "`STREAM_DECODE_RESPONSE_UNICODE` refers to the externally defined callable `stream_decode_response_unicode`, imported from `.utils`. It is associated with handling response chunks when `decode_unicode` is enabled, although its implementation is not visible. No direct invocation is shown in the examined code chunk.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "602",
+        "entity": "CHUNKEDENCODINGERROR",
+        "description": "`ChunkedEncodingError` is defined here as a subclass of `RequestException`; it represents invalid content in a response declared as chunked encoding.",
+        "number of relationships": "5",
+        "in_context": true
+      },
+      {
+        "id": "735",
+        "entity": "GENERATE",
+        "description": "The nested function `generate()` is defined inside `iter_content`. It streams from `self.raw.stream(...)` when available, otherwise repeatedly reads `self.raw.read(chunk_size)`, translates visible decoding and connection exceptions, and sets `self._content_consumed = True`.",
+        "number of relationships": "7",
+        "in_context": true
+      },
+      {
+        "id": "604",
+        "entity": "STREAMCONSUMEDERROR",
+        "description": "`StreamConsumedError` is defined here with bases `RequestException` and `TypeError`; it represents content that was already consumed.",
+        "number of relationships": "5",
+        "in_context": true
+      },
+      {
+        "id": "1033",
+        "entity": "TEST_CHUNKED_UPLOAD_DOESNT_SKIP_HOST_HEADER",
+        "description": "`test_chunked_upload_doesnt_skip_host_header()` is defined here and asserts that a streamed POST includes the server-derived `Host: {host}:{port}` header exactly once in the echoed response.",
+        "number of relationships": "6",
+        "in_context": true
+      },
+      {
+        "id": "662",
+        "entity": "ITER_CHUNK_SIZE",
+        "description": "`ITER_CHUNK_SIZE` is a module-level constant defined with the value `512`. It is used as the default `chunk_size` parameter by `iter_lines`.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1172",
+        "entity": "TESTSTREAM.__LEN__",
+        "description": "Defines `TestStream.__len__(self)`, returning `self.length`.",
+        "number of relationships": "1",
+        "in_context": true
+      }
+    ],
+    "sources": [
+      {
+        "id": "49",
+        "text": "    def is_permanent_redirect(self):\n        \"\"\"True if this Response one of the permanent versions of redirect.\"\"\"\n        return \"location\" in self.headers and self.status_code in (\n            codes.moved_permanently,\n            codes.permanent_redirect,\n        )\n\n    @property\n    def next(self):\n        \"\"\"Returns a PreparedRequest for the next request in a redirect chain, if there is one.\"\"\"\n        return self._next\n\n    @property\n    def apparent_encoding(self):\n        \"\"\"The apparent encoding, provided by the charset_normalizer or chardet libraries.\"\"\"\n        if chardet is not None:\n            return chardet.detect(self.content)[\"encoding\"]\n        else:\n            # If no character detection library is available, we'll fall back\n            # to a standard Python utf-8 str.\n            return \"utf-8\"\n\n    def iter_content(self, chunk_size=1, decode_unicode=False):\n        \"\"\"Iterates over the response data.  When stream=True is set on the\n        request, this avoids reading the content at once into memory for\n        large responses.  The chunk size is the number of bytes it should\n        read into memory.  This is not necessarily the length of each item\n        returned as decoding can take place.\n\n        chunk_size must be of type int or None. A value of None will\n        function differently depending on the value of `stream`.\n        stream=True will read data as it arrives in whatever size the\n        chunks are received. If stream=False, data is returned as\n        a single chunk.\n\n        If decode_unicode is True, content will be decoded using the best\n        available encoding based on the response.\n        \"\"\"\n\n        def generate():\n            # Special case for urllib3.\n            if hasattr(self.raw, \"stream\"):\n                try:\n                    yield from self.raw.stream(chunk_size, decode_content=True)\n                except ProtocolError as e:\n                    raise ChunkedEncodingError(e)\n                except DecodeError as e:\n                    raise ContentDecodingError(e)\n                except ReadTimeoutError as e:\n                    raise ConnectionError(e)\n                except SSLError as e:\n                    raise RequestsSSLError(e)\n            else:\n                # Standard file-like object.\n                while True:\n                    chunk = self.raw.read(chunk_size)\n                    if not chunk:\n                        break\n                    yield chunk\n\n            self._content_consumed = True\n\n        if self._content_consumed and isinstance(self._content, bool):\n            raise StreamConsumedError()\n        elif chunk_size is not None and not isinstance(chunk_size, int):\n            raise TypeError(\n                f\"chunk_size must be an int, it is instead a {type(chunk_size)}.\"\n            )\n        # simulate reading small chunks of the content\n        reused_chunks = iter_slices(self._content, chunk_size)\n\n        stream_chunks = generate()\n\n        chunks = reused_chunks if self._content_consumed else stream_chunks\n\n        if decode_unicode:\n            chunks = stream_decode_response_unicode(chunks, self)\n\n        return chunks\n\n    def iter_lines(\n        self, chunk_size=ITER_CHUNK_SIZE, decode_unicode=False, delimiter=None\n    ):\n        \"\"\"Iterates over the response data, one line at a time.  When\n        stream=True is set on the request, this avoids reading the\n        content at once into memory for large responses.\n\n        .. note:: This method is not reentrant safe.\n        \"\"\"\n\n        pending = None\n\n        for chunk in self.iter_content(\n            chunk_size=chunk_size, decode_unicode=decode_unicode\n        ):\n            if pending is not None:\n                chunk = pending + chunk\n\n            if delimiter:\n                lines = chunk.split(delimiter)\n            else:\n                lines = chunk.splitlines()\n\n            if lines and lines[-1] and chunk and lines[-1][-1] == chunk[-1]:\n                pending = lines.pop()\n            else:\n                pending = None\n\n            yield from lines\n\n        if pending is not None:\n            yield pending\n\n    @property\n    def content(self):\n        \"\"\"Content of the response, in bytes.\"\"\"\n\n        if self._content is False:\n            # Read the contents.\n            if self._content_consumed:\n                raise RuntimeError(\"The content for this response was already consumed\")\n\n            if self.status_code == 0 or self.raw is None:\n                self._content = None\n            else:\n                self._content = b\"\".join(self.iter_content(CONTENT_CHUNK_SIZE)) or b\"\"\n\n        self._content_consumed = True\n        # don't need to release the connection; that's been handled by urllib3\n        # since we exhausted the data.\n        return self._content\n\n    @property\n    def text(self):\n        \"\"\"Content of the response, in unicode.\n\n        If Response.encoding is None, encoding will be guessed using\n        ``charset_normalizer`` or ``chardet``.\n\n        The encoding of the response content is determined based solely on HTTP\n        headers, following RFC 2616 to the letter. If you can take advantage of\n        non-HTTP knowledge to make a better guess at the encoding, you should\n        set ``r.encoding`` appropriately before accessing this property.\n        \"\"\"\n\n        # Try charset from content-type\n        content = None\n        encoding = self.encoding\n\n        if not self.content:\n            return \"\"\n\n        # Fallback to auto-detected encoding.\n        if self.encoding is None:\n            encoding = self.apparent_encoding\n\n        # Decode unicode from given encoding.\n        try:\n            content = str(self.content, encoding, errors=\"replace\")\n        except (LookupError, TypeError):\n            # A LookupError is raised if the encoding was not found which could\n            # indicate a misspelling or similar mistake.\n            #\n            # A TypeError can be raised if encoding is None\n            #\n            # So we try blindly encoding.\n"
+      }
+    ]
+  },
+  "final_context": "-----Entities-----\nid|entity|description|number of relationships\n744|CHUNK.SPLIT|`chunk.split(delimiter)` is an explicitly referenced callable on an unresolved chunk receiver, used by `iter_lines` when `delimiter` is truthy.|1\n736|ITER_LINES|The method `iter_lines(self, chunk_size=ITER_CHUNK_SIZE, decode_unicode=False, delimiter=None)` is defined here, but its owning class is not visible. It calls `self.iter_content(...)`, splits chunks by the supplied delimiter or line boundaries, retains a pending partial line, and yields lines.|4\n745|CHUNK.SPLITLINES|`chunk.splitlines()` is an explicitly referenced callable on an unresolved chunk receiver, used by `iter_lines` when no delimiter is supplied.|1\n1334|R.ITER_LINES|The exact response method reference `r.iter_lines()` is used in streaming tests; the concrete runtime class of `r` is not otherwise resolved here.|2\n746|LINES.POP|`lines.pop()` is an explicitly referenced callable on the locally produced `lines` sequence, used by `iter_lines` to retain a pending final line.|1\n740|SELF.RAW.STREAM|`self.raw.stream(chunk_size, decode_content=True)` is an explicitly referenced callable on an unresolved `self.raw` receiver; the runtime class and binding are not visible.|1\n1170|TESTSTREAM|Defines the nested class `TestStream`, a stream-like object storing encoded data, a length, and an index. Its visible methods implement length, reading, telling, and seeking.|6\n140|R.ITER_CONTENT|The response method explicitly referenced as `r.iter_content(chunk_size=128)`; documented as iterating streamed response content and automatically decoding `gzip` and `deflate` transfer encodings.|1\n1031|TEST_CHUNKED_ENCODING_ERROR.INCOMPLETE_CHUNKED_RESPONSE_HANDLER|`test_chunked_encoding_error.incomplete_chunked_response_handler(sock)` is defined inside `test_chunked_encoding_error`. It consumes the request and sends only an HTTP status plus `Transfer-Encoding: chunked`, without valid terminating chunks.|3\n1321|TEST_RESPONSE_ITER_LINES|The exact test method `test_response_iter_lines(self, httpbin)` is defined here. It streams `/stream/4`, consumes one line from `r.iter_lines()`, and asserts three lines remain.|6\n656|STREAM_DECODE_RESPONSE_UNICODE|`STREAM_DECODE_RESPONSE_UNICODE` refers to the externally defined callable `stream_decode_response_unicode`, imported from `.utils`. It is associated with handling response chunks when `decode_unicode` is enabled, although its implementation is not visible. No direct invocation is shown in the examined code chunk.|3\n602|CHUNKEDENCODINGERROR|`ChunkedEncodingError` is defined here as a subclass of `RequestException`; it represents invalid content in a response declared as chunked encoding.|5\n735|GENERATE|The nested function `generate()` is defined inside `iter_content`. It streams from `self.raw.stream(...)` when available, otherwise repeatedly reads `self.raw.read(chunk_size)`, translates visible decoding and connection exceptions, and sets `self._content_consumed = True`.|7\n604|STREAMCONSUMEDERROR|`StreamConsumedError` is defined here with bases `RequestException` and `TypeError`; it represents content that was already consumed.|5\n1033|TEST_CHUNKED_UPLOAD_DOESNT_SKIP_HOST_HEADER|`test_chunked_upload_doesnt_skip_host_header()` is defined here and asserts that a streamed POST includes the server-derived `Host: {host}:{port}` header exactly once in the echoed response.|6\n662|ITER_CHUNK_SIZE|`ITER_CHUNK_SIZE` is a module-level constant defined with the value `512`. It is used as the default `chunk_size` parameter by `iter_lines`.|1\n1172|TESTSTREAM.__LEN__|Defines `TestStream.__len__(self)`, returning `self.length`.|1\n\n-----Relationships-----\nid|source|target|description|weight\n1019|ITER_LINES|CHUNK.SPLIT|CALLS, `iter_lines` calls `chunk.split(delimiter)` when `delimiter` is truthy; the chunk receiver's concrete type is unresolved|9.0\n1020|ITER_LINES|CHUNK.SPLITLINES|CALLS, `iter_lines` calls `chunk.splitlines()` when `delimiter` is falsy; the chunk receiver's concrete type is unresolved|9.0\n1021|ITER_LINES|LINES.POP|CALLS, `iter_lines` calls `lines.pop()` when the final split element is retained as pending; the sequence implementation is not visible|9.0\n1007|ITER_LINES|ITER_CONTENT|CALLS, `iter_lines` calls `self.iter_content(chunk_size=chunk_size, decode_unicode=decode_unicode)`; the visible receiver is `self`, but its class binding is not shown|10.0\n1810|TEST_POSTBIN_SEEKED_OBJECT_WITH_NO_ITER|TESTSTREAM|\"CALLS, test_POSTBIN_SEEKED_OBJECT_WITH_NO_ITER constructs `TestStream(\"\"test\"\")` twice.\"|10.0\n1844|TESTSTREAM|TESTSTREAM.__INIT__|DEFINES, TestStream defines the visible method `TestStream.__init__`.|10.0\n1848|TESTSTREAM|TESTSTREAM.SEEK|DEFINES, TestStream defines the visible method `TestStream.seek`.|10.0\n996|GENERATE|SELF.RAW.STREAM|CALLS, `generate` calls `self.raw.stream(chunk_size, decode_content=True)` when the raw receiver has a `stream` attribute; the receiver's concrete class is unresolved|9.0\n2200|TEST_RESPONSE_ITER_LINES|R.ITER_LINES|CALLS, the test evaluates `r.iter_lines()` and consumes its iterator|10.0\n2206|TEST_RESPONSE_ITER_LINES_REENTRANT|R.ITER_LINES|CALLS, the xfailed test evaluates `r.iter_lines()` twice; this documents the claimed non-reentrant behavior but does not establish implementation correctness|10.0\n1845|TESTSTREAM|TESTSTREAM.__LEN__|DEFINES, TestStream defines the visible method `TestStream.__len__`.|10.0\n1846|TESTSTREAM|TESTSTREAM.READ|DEFINES, TestStream defines the visible method `TestStream.read`.|10.0\n1847|TESTSTREAM|TESTSTREAM.TELL|DEFINES, TestStream defines the visible method `TestStream.tell`.|10.0\n\n-----Sources-----\nid|source|text\n49|src/requests/models.py:L777-L942|\"    def is_permanent_redirect(self):\n        \"\"\"\"\"\"True if this Response one of the permanent versions of redirect.\"\"\"\"\"\"\n        return \"\"location\"\" in self.headers and self.status_code in (\n            codes.moved_permanently,\n            codes.permanent_redirect,\n        )\n\n    @property\n    def next(self):\n        \"\"\"\"\"\"Returns a PreparedRequest for the next request in a redirect chain, if there is one.\"\"\"\"\"\"\n        return self._next\n\n    @property\n    def apparent_encoding(self):\n        \"\"\"\"\"\"The apparent encoding, provided by the charset_normalizer or chardet libraries.\"\"\"\"\"\"\n        if chardet is not None:\n            return chardet.detect(self.content)[\"\"encoding\"\"]\n        else:\n            # If no character detection library is available, we'll fall back\n            # to a standard Python utf-8 str.\n            return \"\"utf-8\"\"\n\n    def iter_content(self, chunk_size=1, decode_unicode=False):\n        \"\"\"\"\"\"Iterates over the response data.  When stream=True is set on the\n        request, this avoids reading the content at once into memory for\n        large responses.  The chunk size is the number of bytes it should\n        read into memory.  This is not necessarily the length of each item\n        returned as decoding can take place.\n\n        chunk_size must be of type int or None. A value of None will\n        function differently depending on the value of `stream`.\n        stream=True will read data as it arrives in whatever size the\n        chunks are received. If stream=False, data is returned as\n        a single chunk.\n\n        If decode_unicode is True, content will be decoded using the best\n        available encoding based on the response.\n        \"\"\"\"\"\"\n\n        def generate():\n            # Special case for urllib3.\n            if hasattr(self.raw, \"\"stream\"\"):\n                try:\n                    yield from self.raw.stream(chunk_size, decode_content=True)\n                except ProtocolError as e:\n                    raise ChunkedEncodingError(e)\n                except DecodeError as e:\n                    raise ContentDecodingError(e)\n                except ReadTimeoutError as e:\n                    raise ConnectionError(e)\n                except SSLError as e:\n                    raise RequestsSSLError(e)\n            else:\n                # Standard file-like object.\n                while True:\n                    chunk = self.raw.read(chunk_size)\n                    if not chunk:\n                        break\n                    yield chunk\n\n            self._content_consumed = True\n\n        if self._content_consumed and isinstance(self._content, bool):\n            raise StreamConsumedError()\n        elif chunk_size is not None and not isinstance(chunk_size, int):\n            raise TypeError(\n                f\"\"chunk_size must be an int, it is instead a {type(chunk_size)}.\"\"\n            )\n        # simulate reading small chunks of the content\n        reused_chunks = iter_slices(self._content, chunk_size)\n\n        stream_chunks = generate()\n\n        chunks = reused_chunks if self._content_consumed else stream_chunks\n\n        if decode_unicode:\n            chunks = stream_decode_response_unicode(chunks, self)\n\n        return chunks\n\n    def iter_lines(\n        self, chunk_size=ITER_CHUNK_SIZE, decode_unicode=False, delimiter=None\n    ):\n        \"\"\"\"\"\"Iterates over the response data, one line at a time.  When\n        stream=True is set on the request, this avoids reading the\n        content at once into memory for large responses.\n\n        .. note:: This method is not reentrant safe.\n        \"\"\"\"\"\"\n\n        pending = None\n\n        for chunk in self.iter_content(\n            chunk_size=chunk_size, decode_unicode=decode_unicode\n        ):\n            if pending is not None:\n                chunk = pending + chunk\n\n            if delimiter:\n                lines = chunk.split(delimiter)\n            else:\n                lines = chunk.splitlines()\n\n            if lines and lines[-1] and chunk and lines[-1][-1] == chunk[-1]:\n                pending = lines.pop()\n            else:\n                pending = None\n\n            yield from lines\n\n        if pending is not None:\n            yield pending\n\n    @property\n    def content(self):\n        \"\"\"\"\"\"Content of the response, in bytes.\"\"\"\"\"\"\n\n        if self._content is False:\n            # Read the contents.\n            if self._content_consumed:\n                raise RuntimeError(\"\"The content for this response was already consumed\"\")\n\n            if self.status_code == 0 or self.raw is None:\n                self._content = None\n            else:\n                self._content = b\"\"\"\".join(self.iter_content(CONTENT_CHUNK_SIZE)) or b\"\"\"\"\n\n        self._content_consumed = True\n        # don't need to release the connection; that's been handled by urllib3\n        # since we exhausted the data.\n        return self._content\n\n    @property\n    def text(self):\n        \"\"\"\"\"\"Content of the response, in unicode.\n\n        If Response.encoding is None, encoding will be guessed using\n        ``charset_normalizer`` or ``chardet``.\n\n        The encoding of the response content is determined based solely on HTTP\n        headers, following RFC 2616 to the letter. If you can take advantage of\n        non-HTTP knowledge to make a better guess at the encoding, you should\n        set ``r.encoding`` appropriately before accessing this property.\n        \"\"\"\"\"\"\n\n        # Try charset from content-type\n        content = None\n        encoding = self.encoding\n\n        if not self.content:\n            return \"\"\"\"\n\n        # Fallback to auto-detected encoding.\n        if self.encoding is None:\n            encoding = self.apparent_encoding\n\n        # Decode unicode from given encoding.\n        try:\n            content = str(self.content, encoding, errors=\"\"replace\"\")\n        except (LookupError, TypeError):\n            # A LookupError is raised if the encoding was not found which could\n            # indicate a misspelling or similar mistake.\n            #\n            # A TypeError can be raised if encoding is None\n            #\n            # So we try blindly encoding.\n\"\n",
+  "final_tables": [
+    {
+      "name": "entities",
+      "columns": [
+        "id",
+        "entity",
+        "description",
+        "number of relationships"
+      ],
+      "rows": [
+        {
+          "id": "744",
+          "entity": "CHUNK.SPLIT",
+          "description": "`chunk.split(delimiter)` is an explicitly referenced callable on an unresolved chunk receiver, used by `iter_lines` when `delimiter` is truthy.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "736",
+          "entity": "ITER_LINES",
+          "description": "The method `iter_lines(self, chunk_size=ITER_CHUNK_SIZE, decode_unicode=False, delimiter=None)` is defined here, but its owning class is not visible. It calls `self.iter_content(...)`, splits chunks by the supplied delimiter or line boundaries, retains a pending partial line, and yields lines.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "745",
+          "entity": "CHUNK.SPLITLINES",
+          "description": "`chunk.splitlines()` is an explicitly referenced callable on an unresolved chunk receiver, used by `iter_lines` when no delimiter is supplied.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1334",
+          "entity": "R.ITER_LINES",
+          "description": "The exact response method reference `r.iter_lines()` is used in streaming tests; the concrete runtime class of `r` is not otherwise resolved here.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "746",
+          "entity": "LINES.POP",
+          "description": "`lines.pop()` is an explicitly referenced callable on the locally produced `lines` sequence, used by `iter_lines` to retain a pending final line.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "740",
+          "entity": "SELF.RAW.STREAM",
+          "description": "`self.raw.stream(chunk_size, decode_content=True)` is an explicitly referenced callable on an unresolved `self.raw` receiver; the runtime class and binding are not visible.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1170",
+          "entity": "TESTSTREAM",
+          "description": "Defines the nested class `TestStream`, a stream-like object storing encoded data, a length, and an index. Its visible methods implement length, reading, telling, and seeking.",
+          "number of relationships": "6"
+        },
+        {
+          "id": "140",
+          "entity": "R.ITER_CONTENT",
+          "description": "The response method explicitly referenced as `r.iter_content(chunk_size=128)`; documented as iterating streamed response content and automatically decoding `gzip` and `deflate` transfer encodings.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1031",
+          "entity": "TEST_CHUNKED_ENCODING_ERROR.INCOMPLETE_CHUNKED_RESPONSE_HANDLER",
+          "description": "`test_chunked_encoding_error.incomplete_chunked_response_handler(sock)` is defined inside `test_chunked_encoding_error`. It consumes the request and sends only an HTTP status plus `Transfer-Encoding: chunked`, without valid terminating chunks.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "1321",
+          "entity": "TEST_RESPONSE_ITER_LINES",
+          "description": "The exact test method `test_response_iter_lines(self, httpbin)` is defined here. It streams `/stream/4`, consumes one line from `r.iter_lines()`, and asserts three lines remain.",
+          "number of relationships": "6"
+        },
+        {
+          "id": "656",
+          "entity": "STREAM_DECODE_RESPONSE_UNICODE",
+          "description": "`STREAM_DECODE_RESPONSE_UNICODE` refers to the externally defined callable `stream_decode_response_unicode`, imported from `.utils`. It is associated with handling response chunks when `decode_unicode` is enabled, although its implementation is not visible. No direct invocation is shown in the examined code chunk.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "602",
+          "entity": "CHUNKEDENCODINGERROR",
+          "description": "`ChunkedEncodingError` is defined here as a subclass of `RequestException`; it represents invalid content in a response declared as chunked encoding.",
+          "number of relationships": "5"
+        },
+        {
+          "id": "735",
+          "entity": "GENERATE",
+          "description": "The nested function `generate()` is defined inside `iter_content`. It streams from `self.raw.stream(...)` when available, otherwise repeatedly reads `self.raw.read(chunk_size)`, translates visible decoding and connection exceptions, and sets `self._content_consumed = True`.",
+          "number of relationships": "7"
+        },
+        {
+          "id": "604",
+          "entity": "STREAMCONSUMEDERROR",
+          "description": "`StreamConsumedError` is defined here with bases `RequestException` and `TypeError`; it represents content that was already consumed.",
+          "number of relationships": "5"
+        },
+        {
+          "id": "1033",
+          "entity": "TEST_CHUNKED_UPLOAD_DOESNT_SKIP_HOST_HEADER",
+          "description": "`test_chunked_upload_doesnt_skip_host_header()` is defined here and asserts that a streamed POST includes the server-derived `Host: {host}:{port}` header exactly once in the echoed response.",
+          "number of relationships": "6"
+        },
+        {
+          "id": "662",
+          "entity": "ITER_CHUNK_SIZE",
+          "description": "`ITER_CHUNK_SIZE` is a module-level constant defined with the value `512`. It is used as the default `chunk_size` parameter by `iter_lines`.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1172",
+          "entity": "TESTSTREAM.__LEN__",
+          "description": "Defines `TestStream.__len__(self)`, returning `self.length`.",
+          "number of relationships": "1"
+        }
+      ]
+    },
+    {
+      "name": "relationships",
+      "columns": [
+        "id",
+        "source",
+        "target",
+        "description",
+        "weight"
+      ],
+      "rows": [
+        {
+          "id": "1019",
+          "source": "ITER_LINES",
+          "target": "CHUNK.SPLIT",
+          "description": "CALLS, `iter_lines` calls `chunk.split(delimiter)` when `delimiter` is truthy; the chunk receiver's concrete type is unresolved",
+          "weight": "9.0"
+        },
+        {
+          "id": "1020",
+          "source": "ITER_LINES",
+          "target": "CHUNK.SPLITLINES",
+          "description": "CALLS, `iter_lines` calls `chunk.splitlines()` when `delimiter` is falsy; the chunk receiver's concrete type is unresolved",
+          "weight": "9.0"
+        },
+        {
+          "id": "1021",
+          "source": "ITER_LINES",
+          "target": "LINES.POP",
+          "description": "CALLS, `iter_lines` calls `lines.pop()` when the final split element is retained as pending; the sequence implementation is not visible",
+          "weight": "9.0"
+        },
+        {
+          "id": "1007",
+          "source": "ITER_LINES",
+          "target": "ITER_CONTENT",
+          "description": "CALLS, `iter_lines` calls `self.iter_content(chunk_size=chunk_size, decode_unicode=decode_unicode)`; the visible receiver is `self`, but its class binding is not shown",
+          "weight": "10.0"
+        },
+        {
+          "id": "1810",
+          "source": "TEST_POSTBIN_SEEKED_OBJECT_WITH_NO_ITER",
+          "target": "TESTSTREAM",
+          "description": "CALLS, test_POSTBIN_SEEKED_OBJECT_WITH_NO_ITER constructs `TestStream(\"test\")` twice.",
+          "weight": "10.0"
+        },
+        {
+          "id": "1844",
+          "source": "TESTSTREAM",
+          "target": "TESTSTREAM.__INIT__",
+          "description": "DEFINES, TestStream defines the visible method `TestStream.__init__`.",
+          "weight": "10.0"
+        },
+        {
+          "id": "1848",
+          "source": "TESTSTREAM",
+          "target": "TESTSTREAM.SEEK",
+          "description": "DEFINES, TestStream defines the visible method `TestStream.seek`.",
+          "weight": "10.0"
+        },
+        {
+          "id": "996",
+          "source": "GENERATE",
+          "target": "SELF.RAW.STREAM",
+          "description": "CALLS, `generate` calls `self.raw.stream(chunk_size, decode_content=True)` when the raw receiver has a `stream` attribute; the receiver's concrete class is unresolved",
+          "weight": "9.0"
+        },
+        {
+          "id": "2200",
+          "source": "TEST_RESPONSE_ITER_LINES",
+          "target": "R.ITER_LINES",
+          "description": "CALLS, the test evaluates `r.iter_lines()` and consumes its iterator",
+          "weight": "10.0"
+        },
+        {
+          "id": "2206",
+          "source": "TEST_RESPONSE_ITER_LINES_REENTRANT",
+          "target": "R.ITER_LINES",
+          "description": "CALLS, the xfailed test evaluates `r.iter_lines()` twice; this documents the claimed non-reentrant behavior but does not establish implementation correctness",
+          "weight": "10.0"
+        },
+        {
+          "id": "1845",
+          "source": "TESTSTREAM",
+          "target": "TESTSTREAM.__LEN__",
+          "description": "DEFINES, TestStream defines the visible method `TestStream.__len__`.",
+          "weight": "10.0"
+        },
+        {
+          "id": "1846",
+          "source": "TESTSTREAM",
+          "target": "TESTSTREAM.READ",
+          "description": "DEFINES, TestStream defines the visible method `TestStream.read`.",
+          "weight": "10.0"
+        },
+        {
+          "id": "1847",
+          "source": "TESTSTREAM",
+          "target": "TESTSTREAM.TELL",
+          "description": "DEFINES, TestStream defines the visible method `TestStream.tell`.",
+          "weight": "10.0"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "columns": [
+        "id",
+        "source",
+        "text"
+      ],
+      "rows": [
+        {
+          "id": "49",
+          "text": "    def is_permanent_redirect(self):\n        \"\"\"True if this Response one of the permanent versions of redirect.\"\"\"\n        return \"location\" in self.headers and self.status_code in (\n            codes.moved_permanently,\n            codes.permanent_redirect,\n        )\n\n    @property\n    def next(self):\n        \"\"\"Returns a PreparedRequest for the next request in a redirect chain, if there is one.\"\"\"\n        return self._next\n\n    @property\n    def apparent_encoding(self):\n        \"\"\"The apparent encoding, provided by the charset_normalizer or chardet libraries.\"\"\"\n        if chardet is not None:\n            return chardet.detect(self.content)[\"encoding\"]\n        else:\n            # If no character detection library is available, we'll fall back\n            # to a standard Python utf-8 str.\n            return \"utf-8\"\n\n    def iter_content(self, chunk_size=1, decode_unicode=False):\n        \"\"\"Iterates over the response data.  When stream=True is set on the\n        request, this avoids reading the content at once into memory for\n        large responses.  The chunk size is the number of bytes it should\n        read into memory.  This is not necessarily the length of each item\n        returned as decoding can take place.\n\n        chunk_size must be of type int or None. A value of None will\n        function differently depending on the value of `stream`.\n        stream=True will read data as it arrives in whatever size the\n        chunks are received. If stream=False, data is returned as\n        a single chunk.\n\n        If decode_unicode is True, content will be decoded using the best\n        available encoding based on the response.\n        \"\"\"\n\n        def generate():\n            # Special case for urllib3.\n            if hasattr(self.raw, \"stream\"):\n                try:\n                    yield from self.raw.stream(chunk_size, decode_content=True)\n                except ProtocolError as e:\n                    raise ChunkedEncodingError(e)\n                except DecodeError as e:\n                    raise ContentDecodingError(e)\n                except ReadTimeoutError as e:\n                    raise ConnectionError(e)\n                except SSLError as e:\n                    raise RequestsSSLError(e)\n            else:\n                # Standard file-like object.\n                while True:\n                    chunk = self.raw.read(chunk_size)\n                    if not chunk:\n                        break\n                    yield chunk\n\n            self._content_consumed = True\n\n        if self._content_consumed and isinstance(self._content, bool):\n            raise StreamConsumedError()\n        elif chunk_size is not None and not isinstance(chunk_size, int):\n            raise TypeError(\n                f\"chunk_size must be an int, it is instead a {type(chunk_size)}.\"\n            )\n        # simulate reading small chunks of the content\n        reused_chunks = iter_slices(self._content, chunk_size)\n\n        stream_chunks = generate()\n\n        chunks = reused_chunks if self._content_consumed else stream_chunks\n\n        if decode_unicode:\n            chunks = stream_decode_response_unicode(chunks, self)\n\n        return chunks\n\n    def iter_lines(\n        self, chunk_size=ITER_CHUNK_SIZE, decode_unicode=False, delimiter=None\n    ):\n        \"\"\"Iterates over the response data, one line at a time.  When\n        stream=True is set on the request, this avoids reading the\n        content at once into memory for large responses.\n\n        .. note:: This method is not reentrant safe.\n        \"\"\"\n\n        pending = None\n\n        for chunk in self.iter_content(\n            chunk_size=chunk_size, decode_unicode=decode_unicode\n        ):\n            if pending is not None:\n                chunk = pending + chunk\n\n            if delimiter:\n                lines = chunk.split(delimiter)\n            else:\n                lines = chunk.splitlines()\n\n            if lines and lines[-1] and chunk and lines[-1][-1] == chunk[-1]:\n                pending = lines.pop()\n            else:\n                pending = None\n\n            yield from lines\n\n        if pending is not None:\n            yield pending\n\n    @property\n    def content(self):\n        \"\"\"Content of the response, in bytes.\"\"\"\n\n        if self._content is False:\n            # Read the contents.\n            if self._content_consumed:\n                raise RuntimeError(\"The content for this response was already consumed\")\n\n            if self.status_code == 0 or self.raw is None:\n                self._content = None\n            else:\n                self._content = b\"\".join(self.iter_content(CONTENT_CHUNK_SIZE)) or b\"\"\n\n        self._content_consumed = True\n        # don't need to release the connection; that's been handled by urllib3\n        # since we exhausted the data.\n        return self._content\n\n    @property\n    def text(self):\n        \"\"\"Content of the response, in unicode.\n\n        If Response.encoding is None, encoding will be guessed using\n        ``charset_normalizer`` or ``chardet``.\n\n        The encoding of the response content is determined based solely on HTTP\n        headers, following RFC 2616 to the letter. If you can take advantage of\n        non-HTTP knowledge to make a better guess at the encoding, you should\n        set ``r.encoding`` appropriately before accessing this property.\n        \"\"\"\n\n        # Try charset from content-type\n        content = None\n        encoding = self.encoding\n\n        if not self.content:\n            return \"\"\n\n        # Fallback to auto-detected encoding.\n        if self.encoding is None:\n            encoding = self.apparent_encoding\n\n        # Decode unicode from given encoding.\n        try:\n            content = str(self.content, encoding, errors=\"replace\")\n        except (LookupError, TypeError):\n            # A LookupError is raised if the encoding was not found which could\n            # indicate a misspelling or similar mistake.\n            #\n            # A TypeError can be raised if encoding is None\n            #\n            # So we try blindly encoding.\n",
+          "source": "src/requests/models.py:L777-L942"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "short_id": "49",
+      "text_unit_id": "2aa3a4d67bf046e61f6a0ed501baa22d70798827acb206146ce41358ad56ff12d1eee35099aae5cbc0fcc932a9e52ff47be8ad2b65d05074244b15946372e087",
+      "id": "43af353e619da1a46933db2beb1bb0a5cc2e53eca7e2dd5e29bddd856768c293",
+      "title": "src/requests/models.py:L777-L942",
+      "path": "src/requests/models.py",
+      "start_line": 777,
+      "end_line": 942,
+      "tokens": 1195,
+      "text_sha256": "978c87e6ced94c8ce21e02c4700192fd7a8ef0ef0dbe174e9beeea0a83996a49",
+      "ms_text_unit_id": "2aa3a4d67bf046e61f6a0ed501baa22d70798827acb206146ce41358ad56ff12d1eee35099aae5cbc0fcc932a9e52ff47be8ad2b65d05074244b15946372e087"
+    }
+  ],
+  "raw_context_tokens": 2581,
+  "final_context_tokens": 2620,
+  "source_text_tokens": 1195,
+  "source_chunks": 1,
+  "retrieval_compute_seconds": 0.011969665996730328,
+  "adaptation_seconds": 0.004773042164742947,
+  "empty_reason": null,
+  "community_level": 2,
+  "dropped_tail_rows": 0
+}

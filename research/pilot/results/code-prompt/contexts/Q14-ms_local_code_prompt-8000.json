@@ -1,0 +1,854 @@
+{
+  "variant": "code-prompt",
+  "question_id": "Q14",
+  "method": "ms_local_code_prompt",
+  "budget": 8000,
+  "query": "If JSON Unicode detection changes, identify its direct response-decoding consumer and the existing focused detection test.",
+  "upstream_raw_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n1532|TESTGUESSJSONUTF|The visible class `TestGuessJSONUTF` groups tests for JSON UTF encoding detection, invalid UTF-like input, and BOM-based guessing.|3\n1061|TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS|The test function `test_json_decode_compatibility_for_alt_utf_encodings` is defined here. It requests an HTTP response containing alternate-encoded JSON, clears `r.encoding`, calls `r.json()`, and asserts JSON decoding exception behavior.|9\n652|GUESS_JSON_UTF|`GUESS_JSON_UTF` refers to the `guess_json_utf` callable imported from `requests.utils` or the local `.utils` module. Its definition is not visible in the provided code chunks, but it is explicitly referenced by the JSON response-handling method, which calls `guess_json_utf(self.content)` to detect a JSON-compatible character encoding. Related tests verify its behavior with encoded JSON data, invalid zero-byte patterns, and content prefixed with a byte-order mark (BOM).|15\n1232|TEST_RESPONSE_DECODE_UNICODE|The test function `test_response_decode_unicode` is defined here. It asserts that `Response.iter_content(decode_unicode=True)` yields `str` chunks for both consumed in-memory content and streaming `io.BytesIO` content.|4\n1535|TESTGUESSJSONUTF.TEST_GUESS_BY_BOM|The method `TestGuessJSONUTF.test_guess_by_bom` is parametrized with four endian-specific encodings and asserts that BOM-prefixed data is classified as `\"utf-16\"` or `\"utf-32\"`.|3\n1528|TESTCONTENTENCODINGDETECTION|The visible class `TestContentEncodingDetection` groups tests for content-encoding detection, including empty content, pragma formats, and precedence.|3\n1533|TESTGUESSJSONUTF.TEST_ENCODED|The method `TestGuessJSONUTF.test_encoded` is parametrized over eight UTF encoding spellings, encodes `\"{}\"` with each, and asserts `guess_json_utf(data) == encoding`.|4\n1407|TEST_JSON_DECODE_COMPATIBILITY|The visible test function or method `test_json_decode_compatibility(self, httpbin)` gets `httpbin(\"bytes/20\")`, asserts `r.json()` raises `requests.exceptions.JSONDecodeError`, and asserts the exception is both `RequestException` and `JSONDecodeError`; its owning class is not visible.|9\n1534|TESTGUESSJSONUTF.TEST_BAD_UTF_LIKE_ENCODING|The method `TestGuessJSONUTF.test_bad_utf_like_encoding` asserts `guess_json_utf(b\"\\x00\\x00\\x00\\x00\") is None`.|2\n1530|TESTCONTENTENCODINGDETECTION.TEST_PRAGMAS|The method `TestContentEncodingDetection.test_pragmas` is parametrized with HTML5, HTML4, XHTML, and XML declarations and asserts one detected encoding equal to `\"UTF-8\"`.|3\n962|CODECS.BOM_UTF16_LE|`codecs.BOM_UTF16_LE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.|1\n1390|TEST_JSON_ENCODES_AS_BYTES|The test function `test_json_encodes_as_bytes` is defined here; it prepares a JSON request and asserts `p.body` is a `bytes` instance.|4\n961|CODECS.BOM_UTF8|`codecs.BOM_UTF8` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.|1\n959|CODECS.BOM_UTF32_LE|`codecs.BOM_UTF32_LE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.|1\n963|CODECS.BOM_UTF16_BE|`codecs.BOM_UTF16_BE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.|1\n1408|TEST_JSON_DECODE_PERSISTS_DOC_ATTR|The visible test function or method `test_json_decode_persists_doc_attr(self, httpbin)` gets `httpbin(\"bytes/20\")`, asserts `r.json()` raises `requests.exceptions.JSONDecodeError`, and asserts `excinfo.value.doc == r.text`; its owning class is not visible.|5\n1531|TESTCONTENTENCODINGDETECTION.TEST_PRECEDENCE|The method `TestContentEncodingDetection.test_precedence` calls `get_encodings_from_content(content)` and asserts the ordered result is `[\"HTML5\", \"HTML4\", \"XML\"]`.|2\n960|CODECS.BOM_UTF32_BE|`codecs.BOM_UTF32_BE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.|1\n2|R.JSON|R.JSON refers to the response method `r.json()`, which is used to decode an HTTP response body into parsed JSON data, including comments responses and authenticated comment responses. The method is also exercised in tests for valid JSON and for responses with absent content, such as HTTP 204 responses. When the response contains valid JSON, `r.json()` returns the decoded data, typically as a JSON object. When the content is invalid or absent, it raises `requests.exceptions.JSONDecodeError`. The available descriptions explicitly reference the callable but do not establish the concrete runtime class of the response receiver `r`, its owning class, or the method’s definition.|11\n\n\n-----Relationships-----\nid|source|target|description|weight|links\n2739|TESTGUESSJSONUTF.TEST_ENCODED|GUESS_JSON_UTF|TESTS, direction from test to callable, visible assertion `guess_json_utf(data) == encoding` across the parametrized encodings|10.0|2\n2741|TESTGUESSJSONUTF.TEST_GUESS_BY_BOM|GUESS_JSON_UTF|TESTS, direction from test to callable, visible assertion `guess_json_utf(data) == expected` for BOM-prefixed data|10.0|2\n2740|TESTGUESSJSONUTF.TEST_BAD_UTF_LIKE_ENCODING|GUESS_JSON_UTF|TESTS, direction from test to callable, visible assertion `guess_json_utf(b\"\\x00\\x00\\x00\\x00\") is None`|10.0|2\n2736|TESTGUESSJSONUTF|TESTGUESSJSONUTF.TEST_ENCODED|DEFINES, direction from class to method, the method is visibly indented within `class TestGuessJSONUTF`|10.0|2\n2738|TESTGUESSJSONUTF|TESTGUESSJSONUTF.TEST_GUESS_BY_BOM|DEFINES, direction from class to method, the method is visibly indented within `class TestGuessJSONUTF`|10.0|2\n2737|TESTGUESSJSONUTF|TESTGUESSJSONUTF.TEST_BAD_UTF_LIKE_ENCODING|DEFINES, direction from class to method, the method is visibly indented within `class TestGuessJSONUTF`|10.0|2\n2633|REQUESTS.UTILS|GUESS_JSON_UTF|IMPORTS, direction requests.utils -> guess_json_utf, via the visible `from requests.utils import (...)` statement; no call is visible|10.0|1\n854|REQUESTS.MODELS|GUESS_JSON_UTF|IMPORTS, direction `requests.models` -> `guess_json_utf`, visible expression in the `from .utils import (...)` block|9.0|1\n1578|TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS|REQUESTS.GET|`TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS` calls `REQUESTS.GET` by evaluating `requests.get(url)` to obtain an HTTP response object `r`. The `requests` implementation is not visible in the provided context.|20.0|1\n1580|TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS|PYTEST.RAISES|`TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS` calls `PYTEST.RAISES` as a context manager to verify that invoking `r.json()` raises `requests.exceptions.JSONDecodeError`. The implementation of the external `pytest.raises` context manager is not visible in the provided context.|18.0|1\n1022|JSON|GUESS_JSON_UTF|CALLS, `json` calls `guess_json_utf(self.content)` only when `self.encoding` is falsey, `self.content` is present, and its length exceeds 3; the target definition is not visible.|9.0|1\n1577|TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS|SERVER|The entity `TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS` calls the `SERVER` entity by evaluating `Server(response_handler, wait_to_close_event=close_server)`. The external definition of the `Server` class or callable is not visible in the provided context.|18.0|1\n1576|TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS|THREADING.EVENT|CALLS, the test evaluates `threading.Event()` to create `close_server`; the external constructor definition is not visible here.|18.0|1\n1579|TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS|R.JSON|The entity `TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS` calls `R.JSON` by evaluating `r.json()` after assigning `r.encoding = None`. The evaluation occurs within an exception-assertion context, indicating that the test verifies JSON-decoding behavior or expected failure handling when alternate UTF encodings are involved. The receiver `r` is a local response object, but its concrete class is not established in the available descriptions.|20.0|1\n1583|TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS|JSONDECODEERROR|The entity `TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS` is a test that verifies an exception raised during JSON decoding is an instance of `JSONDECODEERROR` (represented in the assertion as `JSONDecodeError`). The relationship is limited to this visible assertion; the import or declaration defining the `JSONDecodeError` symbol is not present in the available context.|20.0|1\n1391|GUESS_JSON_UTF|_NULL|READS, `guess_json_utf` counts occurrences of `_null` in `sample` with `sample.count(_null)`.|9.0|1\n1392|GUESS_JSON_UTF|_NULL2|READS, `guess_json_utf` compares null-position slices with `_null2` in the `nullcount == 2` branch.|9.0|1\n1393|GUESS_JSON_UTF|_NULL3|READS, `guess_json_utf` compares null-position slices with `_null3` in the `nullcount == 3` branch.|9.0|1\n1575|TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS|RESPONSE_HANDLER|DEFINES, the test contains the nested function definition `def response_handler(sock):`.|10.0|1\n1386|GUESS_JSON_UTF|CODECS.BOM_UTF32_LE|READS, `guess_json_utf` compares `sample` with `codecs.BOM_UTF32_LE` in `if sample in (...)`.|9.0|1\n1387|GUESS_JSON_UTF|CODECS.BOM_UTF32_BE|READS, `guess_json_utf` compares `sample` with `codecs.BOM_UTF32_BE` in `if sample in (...)`.|9.0|1\n1388|GUESS_JSON_UTF|CODECS.BOM_UTF8|READS, `guess_json_utf` compares `sample[:3]` with `codecs.BOM_UTF8` in `if sample[:3] == codecs.BOM_UTF8`.|9.0|1\n1389|GUESS_JSON_UTF|CODECS.BOM_UTF16_LE|READS, `guess_json_utf` compares `sample[:2]` with `codecs.BOM_UTF16_LE` in `if sample[:2] in (...)`.|9.0|1\n1390|GUESS_JSON_UTF|CODECS.BOM_UTF16_BE|READS, `guess_json_utf` compares `sample[:2]` with `codecs.BOM_UTF16_BE` in `if sample[:2] in (...)`.|9.0|1\n1409|GUESS_JSON_UTF|COUNT|CALLS, `guess_json_utf` calls `sample.count(_null)` to count null-byte occurrences; the receiver's concrete runtime type is not established here.|10.0|1\n1581|TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS|REQUESTS.EXCEPTIONS.JSONDECODEERROR|TESTS, the test expects `r.json()` to raise `requests.exceptions.JSONDecodeError` and passes that type to `pytest.raises`.|20.0|1\n1582|TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS|REQUESTS.EXCEPTIONS.REQUESTEXCEPTION|TESTS, the test asserts `isinstance(excinfo.value, requests.exceptions.RequestException)`.|20.0|1\n\n\n-----Sources-----\nid|text\n107|        result = guess_filename(obj)\n        assert result == value\n        assert isinstance(result, expected_type)\n\n\nclass TestExtractZippedPaths:\n    @pytest.mark.parametrize(\n        \"path\",\n        (\n            \"/\",\n            __file__,\n            pytest.__file__,\n            \"/etc/invalid/location\",\n        ),\n    )\n    def test_unzipped_paths_unchanged(self, path):\n        assert path == extract_zipped_paths(path)\n\n    def test_zipped_paths_extracted(self, tmpdir):\n        zipped_py = tmpdir.join(\"test.zip\")\n        with zipfile.ZipFile(zipped_py.strpath, \"w\") as f:\n            f.write(__file__)\n\n        _, name = os.path.splitdrive(__file__)\n        zipped_path = os.path.join(zipped_py.strpath, name.lstrip(r\"\\/\"))\n        extracted_path = extract_zipped_paths(zipped_path)\n\n        assert extracted_path != zipped_path\n        assert os.path.exists(extracted_path)\n        assert filecmp.cmp(extracted_path, __file__)\n\n    def test_invalid_unc_path(self):\n        path = r\"\\\\localhost\\invalid\\location\"\n        assert extract_zipped_paths(path) == path\n\n\nclass TestContentEncodingDetection:\n    def test_none(self):\n        encodings = get_encodings_from_content(\"\")\n        assert not len(encodings)\n\n    @pytest.mark.parametrize(\n        \"content\",\n        (\n            # HTML5 meta charset attribute\n            '<meta charset=\"UTF-8\">',\n            # HTML4 pragma directive\n            '<meta http-equiv=\"Content-type\" content=\"text/html;charset=UTF-8\">',\n            # XHTML 1.x served with text/html MIME type\n            '<meta http-equiv=\"Content-type\" content=\"text/html;charset=UTF-8\" />',\n            # XHTML 1.x served as XML\n            '<?xml version=\"1.0\" encoding=\"UTF-8\"?>',\n        ),\n    )\n    def test_pragmas(self, content):\n        encodings = get_encodings_from_content(content)\n        assert len(encodings) == 1\n        assert encodings[0] == \"UTF-8\"\n\n    def test_precedence(self):\n        content = \"\"\"\n        <?xml version=\"1.0\" encoding=\"XML\"?>\n        <meta charset=\"HTML5\">\n        <meta http-equiv=\"Content-type\" content=\"text/html;charset=HTML4\" />\n        \"\"\".strip()\n        assert get_encodings_from_content(content) == [\"HTML5\", \"HTML4\", \"XML\"]\n\n\nclass TestGuessJSONUTF:\n    @pytest.mark.parametrize(\n        \"encoding\",\n        (\n            \"utf-32\",\n            \"utf-8-sig\",\n            \"utf-16\",\n            \"utf-8\",\n            \"utf-16-be\",\n            \"utf-16-le\",\n            \"utf-32-be\",\n            \"utf-32-le\",\n        ),\n    )\n    def test_encoded(self, encoding):\n        data = \"{}\".encode(encoding)\n        assert guess_json_utf(data) == encoding\n\n    def test_bad_utf_like_encoding(self):\n        assert guess_json_utf(b\"\\x00\\x00\\x00\\x00\") is None\n\n    @pytest.mark.parametrize(\n        (\"encoding\", \"expected\"),\n        (\n            (\"utf-16-be\", \"utf-16\"),\n            (\"utf-16-le\", \"utf-16\"),\n            (\"utf-32-be\", \"utf-32\"),\n            (\"utf-32-le\", \"utf-32\"),\n        ),\n    )\n    def test_guess_by_bom(self, encoding, expected):\n        data = \"\\ufeff{}\".encode(encoding)\n        assert guess_json_utf(data) == expected\n\n\nUSER = PASSWORD = \"%!*'();:@&=+$,/?#[] \"\nENCODED_USER = compat.quote(USER, \"\")\nENCODED_PASSWORD = compat.quote(PASSWORD, \"\")\n\n\n@pytest.mark.parametrize(\n    \"url, auth\",\n    (\n        (\n            f\"http://{ENCODED_USER}:{ENCODED_PASSWORD}@request.com/url.html#test\",\n            (USER, PASSWORD),\n        ),\n        (\"http://user:pass@complex.url.com/path?query=yes\", (\"user\", \"pass\")),\n        (\n            \"http://user:pass%20pass@complex.url.com/path?query=yes\",\n            (\"user\", \"pass pass\"),\n        ),\n        (\"http://user:pass pass@complex.url.com/path?query=yes\", (\"user\", \"pass pass\")),\n        (\n            \"http://user%25user:pass@complex.url.com/path?query=yes\",\n            (\"user%user\", \"pass\"),\n        ),\n        (\n            \"http://user:pass%23pass@complex.url.com/path?query=yes\",\n            (\"user\", \"pass#pass\"),\n        ),\n        (\"http://complex.url.com/path?query=yes\", (\"\", \"\")),\n    ),\n)\ndef test_get_auth_from_url(url, auth):\n    assert get_auth_from_url(url) == auth\n\n\n@pytest.mark.parametrize(\n    \"uri, expected\",\n    (\n        (\n            # Ensure requoting doesn't break expectations\n            \"http://example.com/fiz?buz=%25ppicture\",\n            \"http://example.com/fiz?buz=%25ppicture\",\n        ),\n        (\n            # Ensure we handle unquoted percent signs in redirects\n            \"http://example.com/fiz?buz=%ppicture\",\n            \"http://example.com/fiz?buz=%25ppicture\",\n        ),\n    ),\n)\ndef test_requote_uri_with_unquoted_percents(uri, expected):\n    \"\"\"See: https://github.com/psf/requests/issues/2356\"\"\"\n    assert requote_uri(uri) == expected\n\n\n@pytest.mark.parametrize(\n    \"uri, expected\",\n    (\n        (\n            # Illegal bytes\n            \"http://example.com/?a=%--\",\n            \"http://example.com/?a=%--\",\n        ),\n        (\n\n78|            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /final-url/\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/path/to/thing/#view=edit&token=hunter2'\n        r = requests.get(url)\n\n        assert r.status_code == 200\n        assert len(r.history) == 2\n        assert r.history[0].request.url == url\n\n        # Verify we haven't overwritten the location with our previous fragment.\n        assert r.history[1].request.url == f'http://{host}:{port}/get#relevant-section'\n        # Verify previous fragment is used and not the original.\n        assert r.url == f'http://{host}:{port}/final-url/#relevant-section'\n\n        close_server.set()\n\n\ndef test_json_decode_compatibility_for_alt_utf_encodings():\n\n    def response_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n'\n            b'Content-Length: 18\\r\\n\\r\\n'\n            b'\\xff\\xfe{\\x00\"\\x00K0\"\\x00=\\x00\"\\x00\\xab0\"\\x00\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url)\n    r.encoding = None\n    with pytest.raises(requests.exceptions.JSONDecodeError) as excinfo:\n        r.json()\n    assert isinstance(excinfo.value, requests.exceptions.RequestException)\n    assert isinstance(excinfo.value, JSONDecodeError)\n    assert r.text not in str(excinfo.value)\n\n44|\"\"\"\nrequests.models\n~~~~~~~~~~~~~~~\n\nThis module contains the primary objects that power Requests.\n\"\"\"\n\nimport datetime\n\n# Import encoding now, to avoid implicit import later.\n# Implicit import within threads may cause LookupError when standard library is in a ZIP,\n# such as in Embedded Python. See https://github.com/psf/requests/issues/3578.\nimport encodings.idna  # noqa: F401\nfrom io import UnsupportedOperation\n\nfrom urllib3.exceptions import (\n    DecodeError,\n    LocationParseError,\n    ProtocolError,\n    ReadTimeoutError,\n    SSLError,\n)\nfrom urllib3.fields import RequestField\nfrom urllib3.filepost import encode_multipart_formdata\nfrom urllib3.util import parse_url\n\nfrom ._internal_utils import to_native_string, unicode_is_ascii\nfrom .auth import HTTPBasicAuth\nfrom .compat import (\n    Callable,\n    JSONDecodeError,\n    Mapping,\n    basestring,\n    builtin_str,\n    chardet,\n    cookielib,\n)\nfrom .compat import json as complexjson\nfrom .compat import urlencode, urlsplit, urlunparse\nfrom .cookies import _copy_cookie_jar, cookiejar_from_dict, get_cookie_header\nfrom .exceptions import (\n    ChunkedEncodingError,\n    ConnectionError,\n    ContentDecodingError,\n    HTTPError,\n    InvalidJSONError,\n    InvalidURL,\n)\nfrom .exceptions import JSONDecodeError as RequestsJSONDecodeError\nfrom .exceptions import MissingSchema\nfrom .exceptions import SSLError as RequestsSSLError\nfrom .exceptions import StreamConsumedError\nfrom .hooks import default_hooks\nfrom .status_codes import codes\nfrom .structures import CaseInsensitiveDict\nfrom .utils import (\n    check_header_validity,\n    get_auth_from_url,\n    guess_filename,\n    guess_json_utf,\n    iter_slices,\n    parse_header_links,\n    requote_uri,\n    stream_decode_response_unicode,\n    super_len,\n    to_key_val_list,\n)\n\n#: The set of HTTP status codes that indicate an automatically\n#: processable redirect.\nREDIRECT_STATI = (\n    codes.moved,  # 301\n    codes.found,  # 302\n    codes.other,  # 303\n    codes.temporary_redirect,  # 307\n    codes.permanent_redirect,  # 308\n)\n\nDEFAULT_REDIRECT_LIMIT = 30\nCONTENT_CHUNK_SIZE = 10 * 1024\nITER_CHUNK_SIZE = 512\n\n\nclass RequestEncodingMixin:\n    @property\n    def path_url(self):\n        \"\"\"Build the path URL to use.\"\"\"\n\n        url = []\n\n        p = urlsplit(self.url)\n\n        path = p.path\n        if not path:\n            path = \"/\"\n\n        url.append(path)\n\n        query = p.query\n        if query:\n            url.append(\"?\")\n            url.append(query)\n\n        return \"\".join(url)\n\n    @staticmethod\n    def _encode_params(data):\n        \"\"\"Encode parameters in a piece of data.\n\n        Will successfully encode parameters when passed as a dict or a list of\n        2-tuples. Order is retained if data is a list of 2-tuples but arbitrary\n        if parameters are supplied as a dict.\n        \"\"\"\n\n        if isinstance(data, (str, bytes)):\n            return data\n        elif hasattr(data, \"read\"):\n            return data\n        elif hasattr(data, \"__iter__\"):\n            result = []\n            for k, vs in to_key_val_list(data):\n                if isinstance(vs, basestring) or not hasattr(vs, \"__iter__\"):\n                    vs = [vs]\n                for v in vs:\n                    if v is not None:\n                        result.append(\n                            (\n                                k.encode(\"utf-8\") if isinstance(k, str) else k,\n                                v.encode(\"utf-8\") if isinstance(v, str) else v,\n                            )\n                        )\n            return urlencode(result, doseq=True)\n        else:\n            return data\n\n    @staticmethod\n    def _encode_files(files, data):\n        \"\"\"Build the body for a multipart/form-data request.\n\n        Will successfully encode files when passed as a dict or a list of\n        tuples. Order is retained if data is a list of tuples but arbitrary\n        if parameters are supplied as a dict.\n        The tuples may be 2-tuples (filename, fileobj), 3-tuples (filename, fileobj, contentype)\n        or 4-tuples (filename, fileobj, contentype, custom_headers).\n        \"\"\"\n        if not files:\n            raise ValueError(\"Files must be provided.\")\n        elif isinstance(data, basestring):\n            raise ValueError(\"Data must not be a string.\")\n\n        new_fields = []\n        fields = to_key_val_list(data or {})\n        files = to_key_val_list(files or {})\n\n        for field, val in fields:\n            if isinstance(val, basestring) or not hasattr(val, \"__iter__\"):\n                val = [val]\n            for v in val:\n                if v is not None:\n                    # Don't call str() on bytestrings: in Py3 it all goes wrong.\n                    if not isinstance(v, bytes):\n                        v = str(v)\n\n                    new_fields.append(\n                        (\n                            field.decode(\"utf-8\")\n                            if isinstance(field, bytes)\n                            else field,\n                            v.encode(\"utf-8\") if isinstance(v, str) else v,\n                        )\n                    )\n\n        for k, v in files:\n            # support for explicit filename\n            ft = None\n            fh = None\n            if isinstance(v, (tuple, list)):\n                if len(v) == 2:\n                    fn, fp = v\n                elif len(v) == 3:\n                    fn, fp, ft = v\n                else:\n                    fn, fp, ft, fh = v\n            else:\n                fn = guess_filename(v) or k\n\n50|        if self.encoding is None:\n            encoding = self.apparent_encoding\n\n        # Decode unicode from given encoding.\n        try:\n            content = str(self.content, encoding, errors=\"replace\")\n        except (LookupError, TypeError):\n            # A LookupError is raised if the encoding was not found which could\n            # indicate a misspelling or similar mistake.\n            #\n            # A TypeError can be raised if encoding is None\n            #\n            # So we try blindly encoding.\n            content = str(self.content, errors=\"replace\")\n\n        return content\n\n    def json(self, **kwargs):\n        r\"\"\"Returns the json-encoded content of a response, if any.\n\n        :param \\*\\*kwargs: Optional arguments that ``json.loads`` takes.\n        :raises requests.exceptions.JSONDecodeError: If the response body does not\n            contain valid json.\n        \"\"\"\n\n        if not self.encoding and self.content and len(self.content) > 3:\n            # No encoding set. JSON RFC 4627 section 3 states we should expect\n            # UTF-8, -16 or -32. Detect which one to use; If the detection or\n            # decoding fails, fall back to `self.text` (using charset_normalizer to make\n            # a best guess).\n            encoding = guess_json_utf(self.content)\n            if encoding is not None:\n                try:\n                    return complexjson.loads(self.content.decode(encoding), **kwargs)\n                except UnicodeDecodeError:\n                    # Wrong UTF codec detected; usually because it's not UTF-8\n                    # but some other 8-bit codec.  This is an RFC violation,\n                    # and the server didn't bother to tell us what codec *was*\n                    # used.\n                    pass\n                except JSONDecodeError as e:\n                    raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)\n\n        try:\n            return complexjson.loads(self.text, **kwargs)\n        except JSONDecodeError as e:\n            # Catch JSON-related errors and raise as requests.JSONDecodeError\n            # This aliases json.JSONDecodeError and simplejson.JSONDecodeError\n            raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)\n\n    @property\n    def links(self):\n        \"\"\"Returns the parsed header links of the response, if any.\"\"\"\n\n        header = self.headers.get(\"link\")\n\n        resolved_links = {}\n\n        if header:\n            links = parse_header_links(header)\n\n            for link in links:\n                key = link.get(\"rel\") or link.get(\"url\")\n                resolved_links[key] = link\n\n        return resolved_links\n\n    def raise_for_status(self):\n        \"\"\"Raises :class:`HTTPError`, if one occurred.\"\"\"\n\n        http_error_msg = \"\"\n        if isinstance(self.reason, bytes):\n            # We attempt to decode utf-8 first because some servers\n            # choose to localize their reason strings. If the string\n            # isn't utf-8, we fall back to iso-8859-1 for all other\n            # encodings. (See PR #3538)\n            try:\n                reason = self.reason.decode(\"utf-8\")\n            except UnicodeDecodeError:\n                reason = self.reason.decode(\"iso-8859-1\")\n        else:\n            reason = self.reason\n\n        if 400 <= self.status_code < 500:\n            http_error_msg = (\n                f\"{self.status_code} Client Error: {reason} for url: {self.url}\"\n            )\n\n        elif 500 <= self.status_code < 600:\n            http_error_msg = (\n                f\"{self.status_code} Server Error: {reason} for url: {self.url}\"\n            )\n\n        if http_error_msg:\n            raise HTTPError(http_error_msg, response=self)\n\n    def close(self):\n        \"\"\"Releases the connection back to the pool. Once this method has been\n        called the underlying ``raw`` object must not be accessed again.\n\n        *Note: Should not normally need to be called explicitly.*\n        \"\"\"\n        if not self._content_consumed:\n            self.raw.close()\n\n        release_conn = getattr(self.raw, \"release_conn\", None)\n        if release_conn is not None:\n            release_conn()\n\n",
+  "upstream_raw_records": {
+    "relationships": [
+      {
+        "id": "2739",
+        "source": "TESTGUESSJSONUTF.TEST_ENCODED",
+        "target": "GUESS_JSON_UTF",
+        "description": "TESTS, direction from test to callable, visible assertion `guess_json_utf(data) == encoding` across the parametrized encodings",
+        "weight": "10.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "2741",
+        "source": "TESTGUESSJSONUTF.TEST_GUESS_BY_BOM",
+        "target": "GUESS_JSON_UTF",
+        "description": "TESTS, direction from test to callable, visible assertion `guess_json_utf(data) == expected` for BOM-prefixed data",
+        "weight": "10.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "2740",
+        "source": "TESTGUESSJSONUTF.TEST_BAD_UTF_LIKE_ENCODING",
+        "target": "GUESS_JSON_UTF",
+        "description": "TESTS, direction from test to callable, visible assertion `guess_json_utf(b\"\\x00\\x00\\x00\\x00\") is None`",
+        "weight": "10.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "2736",
+        "source": "TESTGUESSJSONUTF",
+        "target": "TESTGUESSJSONUTF.TEST_ENCODED",
+        "description": "DEFINES, direction from class to method, the method is visibly indented within `class TestGuessJSONUTF`",
+        "weight": "10.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "2738",
+        "source": "TESTGUESSJSONUTF",
+        "target": "TESTGUESSJSONUTF.TEST_GUESS_BY_BOM",
+        "description": "DEFINES, direction from class to method, the method is visibly indented within `class TestGuessJSONUTF`",
+        "weight": "10.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "2737",
+        "source": "TESTGUESSJSONUTF",
+        "target": "TESTGUESSJSONUTF.TEST_BAD_UTF_LIKE_ENCODING",
+        "description": "DEFINES, direction from class to method, the method is visibly indented within `class TestGuessJSONUTF`",
+        "weight": "10.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "2633",
+        "source": "REQUESTS.UTILS",
+        "target": "GUESS_JSON_UTF",
+        "description": "IMPORTS, direction requests.utils -> guess_json_utf, via the visible `from requests.utils import (...)` statement; no call is visible",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "854",
+        "source": "REQUESTS.MODELS",
+        "target": "GUESS_JSON_UTF",
+        "description": "IMPORTS, direction `requests.models` -> `guess_json_utf`, visible expression in the `from .utils import (...)` block",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "1578",
+        "source": "TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS",
+        "target": "REQUESTS.GET",
+        "description": "`TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS` calls `REQUESTS.GET` by evaluating `requests.get(url)` to obtain an HTTP response object `r`. The `requests` implementation is not visible in the provided context.",
+        "weight": "20.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "1580",
+        "source": "TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS",
+        "target": "PYTEST.RAISES",
+        "description": "`TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS` calls `PYTEST.RAISES` as a context manager to verify that invoking `r.json()` raises `requests.exceptions.JSONDecodeError`. The implementation of the external `pytest.raises` context manager is not visible in the provided context.",
+        "weight": "18.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "1022",
+        "source": "JSON",
+        "target": "GUESS_JSON_UTF",
+        "description": "CALLS, `json` calls `guess_json_utf(self.content)` only when `self.encoding` is falsey, `self.content` is present, and its length exceeds 3; the target definition is not visible.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "1577",
+        "source": "TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS",
+        "target": "SERVER",
+        "description": "The entity `TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS` calls the `SERVER` entity by evaluating `Server(response_handler, wait_to_close_event=close_server)`. The external definition of the `Server` class or callable is not visible in the provided context.",
+        "weight": "18.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "1576",
+        "source": "TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS",
+        "target": "THREADING.EVENT",
+        "description": "CALLS, the test evaluates `threading.Event()` to create `close_server`; the external constructor definition is not visible here.",
+        "weight": "18.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "1579",
+        "source": "TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS",
+        "target": "R.JSON",
+        "description": "The entity `TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS` calls `R.JSON` by evaluating `r.json()` after assigning `r.encoding = None`. The evaluation occurs within an exception-assertion context, indicating that the test verifies JSON-decoding behavior or expected failure handling when alternate UTF encodings are involved. The receiver `r` is a local response object, but its concrete class is not established in the available descriptions.",
+        "weight": "20.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "1583",
+        "source": "TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS",
+        "target": "JSONDECODEERROR",
+        "description": "The entity `TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS` is a test that verifies an exception raised during JSON decoding is an instance of `JSONDECODEERROR` (represented in the assertion as `JSONDecodeError`). The relationship is limited to this visible assertion; the import or declaration defining the `JSONDecodeError` symbol is not present in the available context.",
+        "weight": "20.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "1391",
+        "source": "GUESS_JSON_UTF",
+        "target": "_NULL",
+        "description": "READS, `guess_json_utf` counts occurrences of `_null` in `sample` with `sample.count(_null)`.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "1392",
+        "source": "GUESS_JSON_UTF",
+        "target": "_NULL2",
+        "description": "READS, `guess_json_utf` compares null-position slices with `_null2` in the `nullcount == 2` branch.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "1393",
+        "source": "GUESS_JSON_UTF",
+        "target": "_NULL3",
+        "description": "READS, `guess_json_utf` compares null-position slices with `_null3` in the `nullcount == 3` branch.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "1575",
+        "source": "TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS",
+        "target": "RESPONSE_HANDLER",
+        "description": "DEFINES, the test contains the nested function definition `def response_handler(sock):`.",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "1386",
+        "source": "GUESS_JSON_UTF",
+        "target": "CODECS.BOM_UTF32_LE",
+        "description": "READS, `guess_json_utf` compares `sample` with `codecs.BOM_UTF32_LE` in `if sample in (...)`.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "1387",
+        "source": "GUESS_JSON_UTF",
+        "target": "CODECS.BOM_UTF32_BE",
+        "description": "READS, `guess_json_utf` compares `sample` with `codecs.BOM_UTF32_BE` in `if sample in (...)`.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "1388",
+        "source": "GUESS_JSON_UTF",
+        "target": "CODECS.BOM_UTF8",
+        "description": "READS, `guess_json_utf` compares `sample[:3]` with `codecs.BOM_UTF8` in `if sample[:3] == codecs.BOM_UTF8`.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "1389",
+        "source": "GUESS_JSON_UTF",
+        "target": "CODECS.BOM_UTF16_LE",
+        "description": "READS, `guess_json_utf` compares `sample[:2]` with `codecs.BOM_UTF16_LE` in `if sample[:2] in (...)`.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "1390",
+        "source": "GUESS_JSON_UTF",
+        "target": "CODECS.BOM_UTF16_BE",
+        "description": "READS, `guess_json_utf` compares `sample[:2]` with `codecs.BOM_UTF16_BE` in `if sample[:2] in (...)`.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "1409",
+        "source": "GUESS_JSON_UTF",
+        "target": "COUNT",
+        "description": "CALLS, `guess_json_utf` calls `sample.count(_null)` to count null-byte occurrences; the receiver's concrete runtime type is not established here.",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "1581",
+        "source": "TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS",
+        "target": "REQUESTS.EXCEPTIONS.JSONDECODEERROR",
+        "description": "TESTS, the test expects `r.json()` to raise `requests.exceptions.JSONDecodeError` and passes that type to `pytest.raises`.",
+        "weight": "20.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "1582",
+        "source": "TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS",
+        "target": "REQUESTS.EXCEPTIONS.REQUESTEXCEPTION",
+        "description": "TESTS, the test asserts `isinstance(excinfo.value, requests.exceptions.RequestException)`.",
+        "weight": "20.0",
+        "links": "1",
+        "in_context": true
+      }
+    ],
+    "entities": [
+      {
+        "id": "1532",
+        "entity": "TESTGUESSJSONUTF",
+        "description": "The visible class `TestGuessJSONUTF` groups tests for JSON UTF encoding detection, invalid UTF-like input, and BOM-based guessing.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "1061",
+        "entity": "TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS",
+        "description": "The test function `test_json_decode_compatibility_for_alt_utf_encodings` is defined here. It requests an HTTP response containing alternate-encoded JSON, clears `r.encoding`, calls `r.json()`, and asserts JSON decoding exception behavior.",
+        "number of relationships": "9",
+        "in_context": true
+      },
+      {
+        "id": "652",
+        "entity": "GUESS_JSON_UTF",
+        "description": "`GUESS_JSON_UTF` refers to the `guess_json_utf` callable imported from `requests.utils` or the local `.utils` module. Its definition is not visible in the provided code chunks, but it is explicitly referenced by the JSON response-handling method, which calls `guess_json_utf(self.content)` to detect a JSON-compatible character encoding. Related tests verify its behavior with encoded JSON data, invalid zero-byte patterns, and content prefixed with a byte-order mark (BOM).",
+        "number of relationships": "15",
+        "in_context": true
+      },
+      {
+        "id": "1232",
+        "entity": "TEST_RESPONSE_DECODE_UNICODE",
+        "description": "The test function `test_response_decode_unicode` is defined here. It asserts that `Response.iter_content(decode_unicode=True)` yields `str` chunks for both consumed in-memory content and streaming `io.BytesIO` content.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "1535",
+        "entity": "TESTGUESSJSONUTF.TEST_GUESS_BY_BOM",
+        "description": "The method `TestGuessJSONUTF.test_guess_by_bom` is parametrized with four endian-specific encodings and asserts that BOM-prefixed data is classified as `\"utf-16\"` or `\"utf-32\"`.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "1528",
+        "entity": "TESTCONTENTENCODINGDETECTION",
+        "description": "The visible class `TestContentEncodingDetection` groups tests for content-encoding detection, including empty content, pragma formats, and precedence.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "1533",
+        "entity": "TESTGUESSJSONUTF.TEST_ENCODED",
+        "description": "The method `TestGuessJSONUTF.test_encoded` is parametrized over eight UTF encoding spellings, encodes `\"{}\"` with each, and asserts `guess_json_utf(data) == encoding`.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "1407",
+        "entity": "TEST_JSON_DECODE_COMPATIBILITY",
+        "description": "The visible test function or method `test_json_decode_compatibility(self, httpbin)` gets `httpbin(\"bytes/20\")`, asserts `r.json()` raises `requests.exceptions.JSONDecodeError`, and asserts the exception is both `RequestException` and `JSONDecodeError`; its owning class is not visible.",
+        "number of relationships": "9",
+        "in_context": true
+      },
+      {
+        "id": "1534",
+        "entity": "TESTGUESSJSONUTF.TEST_BAD_UTF_LIKE_ENCODING",
+        "description": "The method `TestGuessJSONUTF.test_bad_utf_like_encoding` asserts `guess_json_utf(b\"\\x00\\x00\\x00\\x00\") is None`.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "1530",
+        "entity": "TESTCONTENTENCODINGDETECTION.TEST_PRAGMAS",
+        "description": "The method `TestContentEncodingDetection.test_pragmas` is parametrized with HTML5, HTML4, XHTML, and XML declarations and asserts one detected encoding equal to `\"UTF-8\"`.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "962",
+        "entity": "CODECS.BOM_UTF16_LE",
+        "description": "`codecs.BOM_UTF16_LE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1390",
+        "entity": "TEST_JSON_ENCODES_AS_BYTES",
+        "description": "The test function `test_json_encodes_as_bytes` is defined here; it prepares a JSON request and asserts `p.body` is a `bytes` instance.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "961",
+        "entity": "CODECS.BOM_UTF8",
+        "description": "`codecs.BOM_UTF8` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "959",
+        "entity": "CODECS.BOM_UTF32_LE",
+        "description": "`codecs.BOM_UTF32_LE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "963",
+        "entity": "CODECS.BOM_UTF16_BE",
+        "description": "`codecs.BOM_UTF16_BE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1408",
+        "entity": "TEST_JSON_DECODE_PERSISTS_DOC_ATTR",
+        "description": "The visible test function or method `test_json_decode_persists_doc_attr(self, httpbin)` gets `httpbin(\"bytes/20\")`, asserts `r.json()` raises `requests.exceptions.JSONDecodeError`, and asserts `excinfo.value.doc == r.text`; its owning class is not visible.",
+        "number of relationships": "5",
+        "in_context": true
+      },
+      {
+        "id": "1531",
+        "entity": "TESTCONTENTENCODINGDETECTION.TEST_PRECEDENCE",
+        "description": "The method `TestContentEncodingDetection.test_precedence` calls `get_encodings_from_content(content)` and asserts the ordered result is `[\"HTML5\", \"HTML4\", \"XML\"]`.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "960",
+        "entity": "CODECS.BOM_UTF32_BE",
+        "description": "`codecs.BOM_UTF32_BE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "2",
+        "entity": "R.JSON",
+        "description": "R.JSON refers to the response method `r.json()`, which is used to decode an HTTP response body into parsed JSON data, including comments responses and authenticated comment responses. The method is also exercised in tests for valid JSON and for responses with absent content, such as HTTP 204 responses. When the response contains valid JSON, `r.json()` returns the decoded data, typically as a JSON object. When the content is invalid or absent, it raises `requests.exceptions.JSONDecodeError`. The available descriptions explicitly reference the callable but do not establish the concrete runtime class of the response receiver `r`, its owning class, or the method’s definition.",
+        "number of relationships": "11",
+        "in_context": true
+      }
+    ],
+    "sources": [
+      {
+        "id": "107",
+        "text": "        result = guess_filename(obj)\n        assert result == value\n        assert isinstance(result, expected_type)\n\n\nclass TestExtractZippedPaths:\n    @pytest.mark.parametrize(\n        \"path\",\n        (\n            \"/\",\n            __file__,\n            pytest.__file__,\n            \"/etc/invalid/location\",\n        ),\n    )\n    def test_unzipped_paths_unchanged(self, path):\n        assert path == extract_zipped_paths(path)\n\n    def test_zipped_paths_extracted(self, tmpdir):\n        zipped_py = tmpdir.join(\"test.zip\")\n        with zipfile.ZipFile(zipped_py.strpath, \"w\") as f:\n            f.write(__file__)\n\n        _, name = os.path.splitdrive(__file__)\n        zipped_path = os.path.join(zipped_py.strpath, name.lstrip(r\"\\/\"))\n        extracted_path = extract_zipped_paths(zipped_path)\n\n        assert extracted_path != zipped_path\n        assert os.path.exists(extracted_path)\n        assert filecmp.cmp(extracted_path, __file__)\n\n    def test_invalid_unc_path(self):\n        path = r\"\\\\localhost\\invalid\\location\"\n        assert extract_zipped_paths(path) == path\n\n\nclass TestContentEncodingDetection:\n    def test_none(self):\n        encodings = get_encodings_from_content(\"\")\n        assert not len(encodings)\n\n    @pytest.mark.parametrize(\n        \"content\",\n        (\n            # HTML5 meta charset attribute\n            '<meta charset=\"UTF-8\">',\n            # HTML4 pragma directive\n            '<meta http-equiv=\"Content-type\" content=\"text/html;charset=UTF-8\">',\n            # XHTML 1.x served with text/html MIME type\n            '<meta http-equiv=\"Content-type\" content=\"text/html;charset=UTF-8\" />',\n            # XHTML 1.x served as XML\n            '<?xml version=\"1.0\" encoding=\"UTF-8\"?>',\n        ),\n    )\n    def test_pragmas(self, content):\n        encodings = get_encodings_from_content(content)\n        assert len(encodings) == 1\n        assert encodings[0] == \"UTF-8\"\n\n    def test_precedence(self):\n        content = \"\"\"\n        <?xml version=\"1.0\" encoding=\"XML\"?>\n        <meta charset=\"HTML5\">\n        <meta http-equiv=\"Content-type\" content=\"text/html;charset=HTML4\" />\n        \"\"\".strip()\n        assert get_encodings_from_content(content) == [\"HTML5\", \"HTML4\", \"XML\"]\n\n\nclass TestGuessJSONUTF:\n    @pytest.mark.parametrize(\n        \"encoding\",\n        (\n            \"utf-32\",\n            \"utf-8-sig\",\n            \"utf-16\",\n            \"utf-8\",\n            \"utf-16-be\",\n            \"utf-16-le\",\n            \"utf-32-be\",\n            \"utf-32-le\",\n        ),\n    )\n    def test_encoded(self, encoding):\n        data = \"{}\".encode(encoding)\n        assert guess_json_utf(data) == encoding\n\n    def test_bad_utf_like_encoding(self):\n        assert guess_json_utf(b\"\\x00\\x00\\x00\\x00\") is None\n\n    @pytest.mark.parametrize(\n        (\"encoding\", \"expected\"),\n        (\n            (\"utf-16-be\", \"utf-16\"),\n            (\"utf-16-le\", \"utf-16\"),\n            (\"utf-32-be\", \"utf-32\"),\n            (\"utf-32-le\", \"utf-32\"),\n        ),\n    )\n    def test_guess_by_bom(self, encoding, expected):\n        data = \"\\ufeff{}\".encode(encoding)\n        assert guess_json_utf(data) == expected\n\n\nUSER = PASSWORD = \"%!*'();:@&=+$,/?#[] \"\nENCODED_USER = compat.quote(USER, \"\")\nENCODED_PASSWORD = compat.quote(PASSWORD, \"\")\n\n\n@pytest.mark.parametrize(\n    \"url, auth\",\n    (\n        (\n            f\"http://{ENCODED_USER}:{ENCODED_PASSWORD}@request.com/url.html#test\",\n            (USER, PASSWORD),\n        ),\n        (\"http://user:pass@complex.url.com/path?query=yes\", (\"user\", \"pass\")),\n        (\n            \"http://user:pass%20pass@complex.url.com/path?query=yes\",\n            (\"user\", \"pass pass\"),\n        ),\n        (\"http://user:pass pass@complex.url.com/path?query=yes\", (\"user\", \"pass pass\")),\n        (\n            \"http://user%25user:pass@complex.url.com/path?query=yes\",\n            (\"user%user\", \"pass\"),\n        ),\n        (\n            \"http://user:pass%23pass@complex.url.com/path?query=yes\",\n            (\"user\", \"pass#pass\"),\n        ),\n        (\"http://complex.url.com/path?query=yes\", (\"\", \"\")),\n    ),\n)\ndef test_get_auth_from_url(url, auth):\n    assert get_auth_from_url(url) == auth\n\n\n@pytest.mark.parametrize(\n    \"uri, expected\",\n    (\n        (\n            # Ensure requoting doesn't break expectations\n            \"http://example.com/fiz?buz=%25ppicture\",\n            \"http://example.com/fiz?buz=%25ppicture\",\n        ),\n        (\n            # Ensure we handle unquoted percent signs in redirects\n            \"http://example.com/fiz?buz=%ppicture\",\n            \"http://example.com/fiz?buz=%25ppicture\",\n        ),\n    ),\n)\ndef test_requote_uri_with_unquoted_percents(uri, expected):\n    \"\"\"See: https://github.com/psf/requests/issues/2356\"\"\"\n    assert requote_uri(uri) == expected\n\n\n@pytest.mark.parametrize(\n    \"uri, expected\",\n    (\n        (\n            # Illegal bytes\n            \"http://example.com/?a=%--\",\n            \"http://example.com/?a=%--\",\n        ),\n        (\n"
+      },
+      {
+        "id": "78",
+        "text": "            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /final-url/\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/path/to/thing/#view=edit&token=hunter2'\n        r = requests.get(url)\n\n        assert r.status_code == 200\n        assert len(r.history) == 2\n        assert r.history[0].request.url == url\n\n        # Verify we haven't overwritten the location with our previous fragment.\n        assert r.history[1].request.url == f'http://{host}:{port}/get#relevant-section'\n        # Verify previous fragment is used and not the original.\n        assert r.url == f'http://{host}:{port}/final-url/#relevant-section'\n\n        close_server.set()\n\n\ndef test_json_decode_compatibility_for_alt_utf_encodings():\n\n    def response_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n'\n            b'Content-Length: 18\\r\\n\\r\\n'\n            b'\\xff\\xfe{\\x00\"\\x00K0\"\\x00=\\x00\"\\x00\\xab0\"\\x00\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url)\n    r.encoding = None\n    with pytest.raises(requests.exceptions.JSONDecodeError) as excinfo:\n        r.json()\n    assert isinstance(excinfo.value, requests.exceptions.RequestException)\n    assert isinstance(excinfo.value, JSONDecodeError)\n    assert r.text not in str(excinfo.value)\n"
+      },
+      {
+        "id": "44",
+        "text": "\"\"\"\nrequests.models\n~~~~~~~~~~~~~~~\n\nThis module contains the primary objects that power Requests.\n\"\"\"\n\nimport datetime\n\n# Import encoding now, to avoid implicit import later.\n# Implicit import within threads may cause LookupError when standard library is in a ZIP,\n# such as in Embedded Python. See https://github.com/psf/requests/issues/3578.\nimport encodings.idna  # noqa: F401\nfrom io import UnsupportedOperation\n\nfrom urllib3.exceptions import (\n    DecodeError,\n    LocationParseError,\n    ProtocolError,\n    ReadTimeoutError,\n    SSLError,\n)\nfrom urllib3.fields import RequestField\nfrom urllib3.filepost import encode_multipart_formdata\nfrom urllib3.util import parse_url\n\nfrom ._internal_utils import to_native_string, unicode_is_ascii\nfrom .auth import HTTPBasicAuth\nfrom .compat import (\n    Callable,\n    JSONDecodeError,\n    Mapping,\n    basestring,\n    builtin_str,\n    chardet,\n    cookielib,\n)\nfrom .compat import json as complexjson\nfrom .compat import urlencode, urlsplit, urlunparse\nfrom .cookies import _copy_cookie_jar, cookiejar_from_dict, get_cookie_header\nfrom .exceptions import (\n    ChunkedEncodingError,\n    ConnectionError,\n    ContentDecodingError,\n    HTTPError,\n    InvalidJSONError,\n    InvalidURL,\n)\nfrom .exceptions import JSONDecodeError as RequestsJSONDecodeError\nfrom .exceptions import MissingSchema\nfrom .exceptions import SSLError as RequestsSSLError\nfrom .exceptions import StreamConsumedError\nfrom .hooks import default_hooks\nfrom .status_codes import codes\nfrom .structures import CaseInsensitiveDict\nfrom .utils import (\n    check_header_validity,\n    get_auth_from_url,\n    guess_filename,\n    guess_json_utf,\n    iter_slices,\n    parse_header_links,\n    requote_uri,\n    stream_decode_response_unicode,\n    super_len,\n    to_key_val_list,\n)\n\n#: The set of HTTP status codes that indicate an automatically\n#: processable redirect.\nREDIRECT_STATI = (\n    codes.moved,  # 301\n    codes.found,  # 302\n    codes.other,  # 303\n    codes.temporary_redirect,  # 307\n    codes.permanent_redirect,  # 308\n)\n\nDEFAULT_REDIRECT_LIMIT = 30\nCONTENT_CHUNK_SIZE = 10 * 1024\nITER_CHUNK_SIZE = 512\n\n\nclass RequestEncodingMixin:\n    @property\n    def path_url(self):\n        \"\"\"Build the path URL to use.\"\"\"\n\n        url = []\n\n        p = urlsplit(self.url)\n\n        path = p.path\n        if not path:\n            path = \"/\"\n\n        url.append(path)\n\n        query = p.query\n        if query:\n            url.append(\"?\")\n            url.append(query)\n\n        return \"\".join(url)\n\n    @staticmethod\n    def _encode_params(data):\n        \"\"\"Encode parameters in a piece of data.\n\n        Will successfully encode parameters when passed as a dict or a list of\n        2-tuples. Order is retained if data is a list of 2-tuples but arbitrary\n        if parameters are supplied as a dict.\n        \"\"\"\n\n        if isinstance(data, (str, bytes)):\n            return data\n        elif hasattr(data, \"read\"):\n            return data\n        elif hasattr(data, \"__iter__\"):\n            result = []\n            for k, vs in to_key_val_list(data):\n                if isinstance(vs, basestring) or not hasattr(vs, \"__iter__\"):\n                    vs = [vs]\n                for v in vs:\n                    if v is not None:\n                        result.append(\n                            (\n                                k.encode(\"utf-8\") if isinstance(k, str) else k,\n                                v.encode(\"utf-8\") if isinstance(v, str) else v,\n                            )\n                        )\n            return urlencode(result, doseq=True)\n        else:\n            return data\n\n    @staticmethod\n    def _encode_files(files, data):\n        \"\"\"Build the body for a multipart/form-data request.\n\n        Will successfully encode files when passed as a dict or a list of\n        tuples. Order is retained if data is a list of tuples but arbitrary\n        if parameters are supplied as a dict.\n        The tuples may be 2-tuples (filename, fileobj), 3-tuples (filename, fileobj, contentype)\n        or 4-tuples (filename, fileobj, contentype, custom_headers).\n        \"\"\"\n        if not files:\n            raise ValueError(\"Files must be provided.\")\n        elif isinstance(data, basestring):\n            raise ValueError(\"Data must not be a string.\")\n\n        new_fields = []\n        fields = to_key_val_list(data or {})\n        files = to_key_val_list(files or {})\n\n        for field, val in fields:\n            if isinstance(val, basestring) or not hasattr(val, \"__iter__\"):\n                val = [val]\n            for v in val:\n                if v is not None:\n                    # Don't call str() on bytestrings: in Py3 it all goes wrong.\n                    if not isinstance(v, bytes):\n                        v = str(v)\n\n                    new_fields.append(\n                        (\n                            field.decode(\"utf-8\")\n                            if isinstance(field, bytes)\n                            else field,\n                            v.encode(\"utf-8\") if isinstance(v, str) else v,\n                        )\n                    )\n\n        for k, v in files:\n            # support for explicit filename\n            ft = None\n            fh = None\n            if isinstance(v, (tuple, list)):\n                if len(v) == 2:\n                    fn, fp = v\n                elif len(v) == 3:\n                    fn, fp, ft = v\n                else:\n                    fn, fp, ft, fh = v\n            else:\n                fn = guess_filename(v) or k\n"
+      },
+      {
+        "id": "50",
+        "text": "        if self.encoding is None:\n            encoding = self.apparent_encoding\n\n        # Decode unicode from given encoding.\n        try:\n            content = str(self.content, encoding, errors=\"replace\")\n        except (LookupError, TypeError):\n            # A LookupError is raised if the encoding was not found which could\n            # indicate a misspelling or similar mistake.\n            #\n            # A TypeError can be raised if encoding is None\n            #\n            # So we try blindly encoding.\n            content = str(self.content, errors=\"replace\")\n\n        return content\n\n    def json(self, **kwargs):\n        r\"\"\"Returns the json-encoded content of a response, if any.\n\n        :param \\*\\*kwargs: Optional arguments that ``json.loads`` takes.\n        :raises requests.exceptions.JSONDecodeError: If the response body does not\n            contain valid json.\n        \"\"\"\n\n        if not self.encoding and self.content and len(self.content) > 3:\n            # No encoding set. JSON RFC 4627 section 3 states we should expect\n            # UTF-8, -16 or -32. Detect which one to use; If the detection or\n            # decoding fails, fall back to `self.text` (using charset_normalizer to make\n            # a best guess).\n            encoding = guess_json_utf(self.content)\n            if encoding is not None:\n                try:\n                    return complexjson.loads(self.content.decode(encoding), **kwargs)\n                except UnicodeDecodeError:\n                    # Wrong UTF codec detected; usually because it's not UTF-8\n                    # but some other 8-bit codec.  This is an RFC violation,\n                    # and the server didn't bother to tell us what codec *was*\n                    # used.\n                    pass\n                except JSONDecodeError as e:\n                    raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)\n\n        try:\n            return complexjson.loads(self.text, **kwargs)\n        except JSONDecodeError as e:\n            # Catch JSON-related errors and raise as requests.JSONDecodeError\n            # This aliases json.JSONDecodeError and simplejson.JSONDecodeError\n            raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)\n\n    @property\n    def links(self):\n        \"\"\"Returns the parsed header links of the response, if any.\"\"\"\n\n        header = self.headers.get(\"link\")\n\n        resolved_links = {}\n\n        if header:\n            links = parse_header_links(header)\n\n            for link in links:\n                key = link.get(\"rel\") or link.get(\"url\")\n                resolved_links[key] = link\n\n        return resolved_links\n\n    def raise_for_status(self):\n        \"\"\"Raises :class:`HTTPError`, if one occurred.\"\"\"\n\n        http_error_msg = \"\"\n        if isinstance(self.reason, bytes):\n            # We attempt to decode utf-8 first because some servers\n            # choose to localize their reason strings. If the string\n            # isn't utf-8, we fall back to iso-8859-1 for all other\n            # encodings. (See PR #3538)\n            try:\n                reason = self.reason.decode(\"utf-8\")\n            except UnicodeDecodeError:\n                reason = self.reason.decode(\"iso-8859-1\")\n        else:\n            reason = self.reason\n\n        if 400 <= self.status_code < 500:\n            http_error_msg = (\n                f\"{self.status_code} Client Error: {reason} for url: {self.url}\"\n            )\n\n        elif 500 <= self.status_code < 600:\n            http_error_msg = (\n                f\"{self.status_code} Server Error: {reason} for url: {self.url}\"\n            )\n\n        if http_error_msg:\n            raise HTTPError(http_error_msg, response=self)\n\n    def close(self):\n        \"\"\"Releases the connection back to the pool. Once this method has been\n        called the underlying ``raw`` object must not be accessed again.\n\n        *Note: Should not normally need to be called explicitly.*\n        \"\"\"\n        if not self._content_consumed:\n            self.raw.close()\n\n        release_conn = getattr(self.raw, \"release_conn\", None)\n        if release_conn is not None:\n            release_conn()\n"
+      }
+    ]
+  },
+  "final_context": "-----Entities-----\nid|entity|description|number of relationships\n1532|TESTGUESSJSONUTF|The visible class `TestGuessJSONUTF` groups tests for JSON UTF encoding detection, invalid UTF-like input, and BOM-based guessing.|3\n1061|TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS|The test function `test_json_decode_compatibility_for_alt_utf_encodings` is defined here. It requests an HTTP response containing alternate-encoded JSON, clears `r.encoding`, calls `r.json()`, and asserts JSON decoding exception behavior.|9\n652|GUESS_JSON_UTF|`GUESS_JSON_UTF` refers to the `guess_json_utf` callable imported from `requests.utils` or the local `.utils` module. Its definition is not visible in the provided code chunks, but it is explicitly referenced by the JSON response-handling method, which calls `guess_json_utf(self.content)` to detect a JSON-compatible character encoding. Related tests verify its behavior with encoded JSON data, invalid zero-byte patterns, and content prefixed with a byte-order mark (BOM).|15\n1232|TEST_RESPONSE_DECODE_UNICODE|The test function `test_response_decode_unicode` is defined here. It asserts that `Response.iter_content(decode_unicode=True)` yields `str` chunks for both consumed in-memory content and streaming `io.BytesIO` content.|4\n1535|TESTGUESSJSONUTF.TEST_GUESS_BY_BOM|\"The method `TestGuessJSONUTF.test_guess_by_bom` is parametrized with four endian-specific encodings and asserts that BOM-prefixed data is classified as `\"\"utf-16\"\"` or `\"\"utf-32\"\"`.\"|3\n1528|TESTCONTENTENCODINGDETECTION|The visible class `TestContentEncodingDetection` groups tests for content-encoding detection, including empty content, pragma formats, and precedence.|3\n1533|TESTGUESSJSONUTF.TEST_ENCODED|\"The method `TestGuessJSONUTF.test_encoded` is parametrized over eight UTF encoding spellings, encodes `\"\"{}\"\"` with each, and asserts `guess_json_utf(data) == encoding`.\"|4\n1407|TEST_JSON_DECODE_COMPATIBILITY|\"The visible test function or method `test_json_decode_compatibility(self, httpbin)` gets `httpbin(\"\"bytes/20\"\")`, asserts `r.json()` raises `requests.exceptions.JSONDecodeError`, and asserts the exception is both `RequestException` and `JSONDecodeError`; its owning class is not visible.\"|9\n1534|TESTGUESSJSONUTF.TEST_BAD_UTF_LIKE_ENCODING|\"The method `TestGuessJSONUTF.test_bad_utf_like_encoding` asserts `guess_json_utf(b\"\"\\x00\\x00\\x00\\x00\"\") is None`.\"|2\n1530|TESTCONTENTENCODINGDETECTION.TEST_PRAGMAS|\"The method `TestContentEncodingDetection.test_pragmas` is parametrized with HTML5, HTML4, XHTML, and XML declarations and asserts one detected encoding equal to `\"\"UTF-8\"\"`.\"|3\n962|CODECS.BOM_UTF16_LE|`codecs.BOM_UTF16_LE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.|1\n1390|TEST_JSON_ENCODES_AS_BYTES|The test function `test_json_encodes_as_bytes` is defined here; it prepares a JSON request and asserts `p.body` is a `bytes` instance.|4\n961|CODECS.BOM_UTF8|`codecs.BOM_UTF8` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.|1\n959|CODECS.BOM_UTF32_LE|`codecs.BOM_UTF32_LE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.|1\n963|CODECS.BOM_UTF16_BE|`codecs.BOM_UTF16_BE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.|1\n1408|TEST_JSON_DECODE_PERSISTS_DOC_ATTR|\"The visible test function or method `test_json_decode_persists_doc_attr(self, httpbin)` gets `httpbin(\"\"bytes/20\"\")`, asserts `r.json()` raises `requests.exceptions.JSONDecodeError`, and asserts `excinfo.value.doc == r.text`; its owning class is not visible.\"|5\n1531|TESTCONTENTENCODINGDETECTION.TEST_PRECEDENCE|\"The method `TestContentEncodingDetection.test_precedence` calls `get_encodings_from_content(content)` and asserts the ordered result is `[\"\"HTML5\"\", \"\"HTML4\"\", \"\"XML\"\"]`.\"|2\n960|CODECS.BOM_UTF32_BE|`codecs.BOM_UTF32_BE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.|1\n2|R.JSON|R.JSON refers to the response method `r.json()`, which is used to decode an HTTP response body into parsed JSON data, including comments responses and authenticated comment responses. The method is also exercised in tests for valid JSON and for responses with absent content, such as HTTP 204 responses. When the response contains valid JSON, `r.json()` returns the decoded data, typically as a JSON object. When the content is invalid or absent, it raises `requests.exceptions.JSONDecodeError`. The available descriptions explicitly reference the callable but do not establish the concrete runtime class of the response receiver `r`, its owning class, or the method’s definition.|11\n\n-----Relationships-----\nid|source|target|description|weight|links\n2739|TESTGUESSJSONUTF.TEST_ENCODED|GUESS_JSON_UTF|TESTS, direction from test to callable, visible assertion `guess_json_utf(data) == encoding` across the parametrized encodings|10.0|2\n2741|TESTGUESSJSONUTF.TEST_GUESS_BY_BOM|GUESS_JSON_UTF|TESTS, direction from test to callable, visible assertion `guess_json_utf(data) == expected` for BOM-prefixed data|10.0|2\n2740|TESTGUESSJSONUTF.TEST_BAD_UTF_LIKE_ENCODING|GUESS_JSON_UTF|\"TESTS, direction from test to callable, visible assertion `guess_json_utf(b\"\"\\x00\\x00\\x00\\x00\"\") is None`\"|10.0|2\n2736|TESTGUESSJSONUTF|TESTGUESSJSONUTF.TEST_ENCODED|DEFINES, direction from class to method, the method is visibly indented within `class TestGuessJSONUTF`|10.0|2\n2738|TESTGUESSJSONUTF|TESTGUESSJSONUTF.TEST_GUESS_BY_BOM|DEFINES, direction from class to method, the method is visibly indented within `class TestGuessJSONUTF`|10.0|2\n2737|TESTGUESSJSONUTF|TESTGUESSJSONUTF.TEST_BAD_UTF_LIKE_ENCODING|DEFINES, direction from class to method, the method is visibly indented within `class TestGuessJSONUTF`|10.0|2\n2633|REQUESTS.UTILS|GUESS_JSON_UTF|IMPORTS, direction requests.utils -> guess_json_utf, via the visible `from requests.utils import (...)` statement; no call is visible|10.0|1\n854|REQUESTS.MODELS|GUESS_JSON_UTF|IMPORTS, direction `requests.models` -> `guess_json_utf`, visible expression in the `from .utils import (...)` block|9.0|1\n1578|TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS|REQUESTS.GET|`TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS` calls `REQUESTS.GET` by evaluating `requests.get(url)` to obtain an HTTP response object `r`. The `requests` implementation is not visible in the provided context.|20.0|1\n1580|TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS|PYTEST.RAISES|`TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS` calls `PYTEST.RAISES` as a context manager to verify that invoking `r.json()` raises `requests.exceptions.JSONDecodeError`. The implementation of the external `pytest.raises` context manager is not visible in the provided context.|18.0|1\n1022|JSON|GUESS_JSON_UTF|CALLS, `json` calls `guess_json_utf(self.content)` only when `self.encoding` is falsey, `self.content` is present, and its length exceeds 3; the target definition is not visible.|9.0|1\n1577|TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS|SERVER|The entity `TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS` calls the `SERVER` entity by evaluating `Server(response_handler, wait_to_close_event=close_server)`. The external definition of the `Server` class or callable is not visible in the provided context.|18.0|1\n1576|TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS|THREADING.EVENT|CALLS, the test evaluates `threading.Event()` to create `close_server`; the external constructor definition is not visible here.|18.0|1\n1579|TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS|R.JSON|The entity `TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS` calls `R.JSON` by evaluating `r.json()` after assigning `r.encoding = None`. The evaluation occurs within an exception-assertion context, indicating that the test verifies JSON-decoding behavior or expected failure handling when alternate UTF encodings are involved. The receiver `r` is a local response object, but its concrete class is not established in the available descriptions.|20.0|1\n1583|TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS|JSONDECODEERROR|The entity `TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS` is a test that verifies an exception raised during JSON decoding is an instance of `JSONDECODEERROR` (represented in the assertion as `JSONDecodeError`). The relationship is limited to this visible assertion; the import or declaration defining the `JSONDecodeError` symbol is not present in the available context.|20.0|1\n1391|GUESS_JSON_UTF|_NULL|READS, `guess_json_utf` counts occurrences of `_null` in `sample` with `sample.count(_null)`.|9.0|1\n1392|GUESS_JSON_UTF|_NULL2|READS, `guess_json_utf` compares null-position slices with `_null2` in the `nullcount == 2` branch.|9.0|1\n1393|GUESS_JSON_UTF|_NULL3|READS, `guess_json_utf` compares null-position slices with `_null3` in the `nullcount == 3` branch.|9.0|1\n1575|TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS|RESPONSE_HANDLER|DEFINES, the test contains the nested function definition `def response_handler(sock):`.|10.0|1\n1386|GUESS_JSON_UTF|CODECS.BOM_UTF32_LE|READS, `guess_json_utf` compares `sample` with `codecs.BOM_UTF32_LE` in `if sample in (...)`.|9.0|1\n1387|GUESS_JSON_UTF|CODECS.BOM_UTF32_BE|READS, `guess_json_utf` compares `sample` with `codecs.BOM_UTF32_BE` in `if sample in (...)`.|9.0|1\n1388|GUESS_JSON_UTF|CODECS.BOM_UTF8|READS, `guess_json_utf` compares `sample[:3]` with `codecs.BOM_UTF8` in `if sample[:3] == codecs.BOM_UTF8`.|9.0|1\n1389|GUESS_JSON_UTF|CODECS.BOM_UTF16_LE|READS, `guess_json_utf` compares `sample[:2]` with `codecs.BOM_UTF16_LE` in `if sample[:2] in (...)`.|9.0|1\n1390|GUESS_JSON_UTF|CODECS.BOM_UTF16_BE|READS, `guess_json_utf` compares `sample[:2]` with `codecs.BOM_UTF16_BE` in `if sample[:2] in (...)`.|9.0|1\n1409|GUESS_JSON_UTF|COUNT|CALLS, `guess_json_utf` calls `sample.count(_null)` to count null-byte occurrences; the receiver's concrete runtime type is not established here.|10.0|1\n1581|TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS|REQUESTS.EXCEPTIONS.JSONDECODEERROR|TESTS, the test expects `r.json()` to raise `requests.exceptions.JSONDecodeError` and passes that type to `pytest.raises`.|20.0|1\n1582|TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS|REQUESTS.EXCEPTIONS.REQUESTEXCEPTION|TESTS, the test asserts `isinstance(excinfo.value, requests.exceptions.RequestException)`.|20.0|1\n\n-----Sources-----\nid|source|text\n107|tests/test_utils.py:L308-L472|\"        result = guess_filename(obj)\n        assert result == value\n        assert isinstance(result, expected_type)\n\n\nclass TestExtractZippedPaths:\n    @pytest.mark.parametrize(\n        \"\"path\"\",\n        (\n            \"\"/\"\",\n            __file__,\n            pytest.__file__,\n            \"\"/etc/invalid/location\"\",\n        ),\n    )\n    def test_unzipped_paths_unchanged(self, path):\n        assert path == extract_zipped_paths(path)\n\n    def test_zipped_paths_extracted(self, tmpdir):\n        zipped_py = tmpdir.join(\"\"test.zip\"\")\n        with zipfile.ZipFile(zipped_py.strpath, \"\"w\"\") as f:\n            f.write(__file__)\n\n        _, name = os.path.splitdrive(__file__)\n        zipped_path = os.path.join(zipped_py.strpath, name.lstrip(r\"\"\\/\"\"))\n        extracted_path = extract_zipped_paths(zipped_path)\n\n        assert extracted_path != zipped_path\n        assert os.path.exists(extracted_path)\n        assert filecmp.cmp(extracted_path, __file__)\n\n    def test_invalid_unc_path(self):\n        path = r\"\"\\\\localhost\\invalid\\location\"\"\n        assert extract_zipped_paths(path) == path\n\n\nclass TestContentEncodingDetection:\n    def test_none(self):\n        encodings = get_encodings_from_content(\"\"\"\")\n        assert not len(encodings)\n\n    @pytest.mark.parametrize(\n        \"\"content\"\",\n        (\n            # HTML5 meta charset attribute\n            '<meta charset=\"\"UTF-8\"\">',\n            # HTML4 pragma directive\n            '<meta http-equiv=\"\"Content-type\"\" content=\"\"text/html;charset=UTF-8\"\">',\n            # XHTML 1.x served with text/html MIME type\n            '<meta http-equiv=\"\"Content-type\"\" content=\"\"text/html;charset=UTF-8\"\" />',\n            # XHTML 1.x served as XML\n            '<?xml version=\"\"1.0\"\" encoding=\"\"UTF-8\"\"?>',\n        ),\n    )\n    def test_pragmas(self, content):\n        encodings = get_encodings_from_content(content)\n        assert len(encodings) == 1\n        assert encodings[0] == \"\"UTF-8\"\"\n\n    def test_precedence(self):\n        content = \"\"\"\"\"\"\n        <?xml version=\"\"1.0\"\" encoding=\"\"XML\"\"?>\n        <meta charset=\"\"HTML5\"\">\n        <meta http-equiv=\"\"Content-type\"\" content=\"\"text/html;charset=HTML4\"\" />\n        \"\"\"\"\"\".strip()\n        assert get_encodings_from_content(content) == [\"\"HTML5\"\", \"\"HTML4\"\", \"\"XML\"\"]\n\n\nclass TestGuessJSONUTF:\n    @pytest.mark.parametrize(\n        \"\"encoding\"\",\n        (\n            \"\"utf-32\"\",\n            \"\"utf-8-sig\"\",\n            \"\"utf-16\"\",\n            \"\"utf-8\"\",\n            \"\"utf-16-be\"\",\n            \"\"utf-16-le\"\",\n            \"\"utf-32-be\"\",\n            \"\"utf-32-le\"\",\n        ),\n    )\n    def test_encoded(self, encoding):\n        data = \"\"{}\"\".encode(encoding)\n        assert guess_json_utf(data) == encoding\n\n    def test_bad_utf_like_encoding(self):\n        assert guess_json_utf(b\"\"\\x00\\x00\\x00\\x00\"\") is None\n\n    @pytest.mark.parametrize(\n        (\"\"encoding\"\", \"\"expected\"\"),\n        (\n            (\"\"utf-16-be\"\", \"\"utf-16\"\"),\n            (\"\"utf-16-le\"\", \"\"utf-16\"\"),\n            (\"\"utf-32-be\"\", \"\"utf-32\"\"),\n            (\"\"utf-32-le\"\", \"\"utf-32\"\"),\n        ),\n    )\n    def test_guess_by_bom(self, encoding, expected):\n        data = \"\"\\ufeff{}\"\".encode(encoding)\n        assert guess_json_utf(data) == expected\n\n\nUSER = PASSWORD = \"\"%!*'();:@&=+$,/?#[] \"\"\nENCODED_USER = compat.quote(USER, \"\"\"\")\nENCODED_PASSWORD = compat.quote(PASSWORD, \"\"\"\")\n\n\n@pytest.mark.parametrize(\n    \"\"url, auth\"\",\n    (\n        (\n            f\"\"http://{ENCODED_USER}:{ENCODED_PASSWORD}@request.com/url.html#test\"\",\n            (USER, PASSWORD),\n        ),\n        (\"\"http://user:pass@complex.url.com/path?query=yes\"\", (\"\"user\"\", \"\"pass\"\")),\n        (\n            \"\"http://user:pass%20pass@complex.url.com/path?query=yes\"\",\n            (\"\"user\"\", \"\"pass pass\"\"),\n        ),\n        (\"\"http://user:pass pass@complex.url.com/path?query=yes\"\", (\"\"user\"\", \"\"pass pass\"\")),\n        (\n            \"\"http://user%25user:pass@complex.url.com/path?query=yes\"\",\n            (\"\"user%user\"\", \"\"pass\"\"),\n        ),\n        (\n            \"\"http://user:pass%23pass@complex.url.com/path?query=yes\"\",\n            (\"\"user\"\", \"\"pass#pass\"\"),\n        ),\n        (\"\"http://complex.url.com/path?query=yes\"\", (\"\"\"\", \"\"\"\")),\n    ),\n)\ndef test_get_auth_from_url(url, auth):\n    assert get_auth_from_url(url) == auth\n\n\n@pytest.mark.parametrize(\n    \"\"uri, expected\"\",\n    (\n        (\n            # Ensure requoting doesn't break expectations\n            \"\"http://example.com/fiz?buz=%25ppicture\"\",\n            \"\"http://example.com/fiz?buz=%25ppicture\"\",\n        ),\n        (\n            # Ensure we handle unquoted percent signs in redirects\n            \"\"http://example.com/fiz?buz=%ppicture\"\",\n            \"\"http://example.com/fiz?buz=%25ppicture\"\",\n        ),\n    ),\n)\ndef test_requote_uri_with_unquoted_percents(uri, expected):\n    \"\"\"\"\"\"See: https://github.com/psf/requests/issues/2356\"\"\"\"\"\"\n    assert requote_uri(uri) == expected\n\n\n@pytest.mark.parametrize(\n    \"\"uri, expected\"\",\n    (\n        (\n            # Illegal bytes\n            \"\"http://example.com/?a=%--\"\",\n            \"\"http://example.com/?a=%--\"\",\n        ),\n        (\n\"\n78|tests/test_lowlevel.py:L379-L428|\"            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /final-url/\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/path/to/thing/#view=edit&token=hunter2'\n        r = requests.get(url)\n\n        assert r.status_code == 200\n        assert len(r.history) == 2\n        assert r.history[0].request.url == url\n\n        # Verify we haven't overwritten the location with our previous fragment.\n        assert r.history[1].request.url == f'http://{host}:{port}/get#relevant-section'\n        # Verify previous fragment is used and not the original.\n        assert r.url == f'http://{host}:{port}/final-url/#relevant-section'\n\n        close_server.set()\n\n\ndef test_json_decode_compatibility_for_alt_utf_encodings():\n\n    def response_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n'\n            b'Content-Length: 18\\r\\n\\r\\n'\n            b'\\xff\\xfe{\\x00\"\"\\x00K0\"\"\\x00=\\x00\"\"\\x00\\xab0\"\"\\x00\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url)\n    r.encoding = None\n    with pytest.raises(requests.exceptions.JSONDecodeError) as excinfo:\n        r.json()\n    assert isinstance(excinfo.value, requests.exceptions.RequestException)\n    assert isinstance(excinfo.value, JSONDecodeError)\n    assert r.text not in str(excinfo.value)\n\"\n44|src/requests/models.py:L1-L185|\"\"\"\"\"\"\"\nrequests.models\n~~~~~~~~~~~~~~~\n\nThis module contains the primary objects that power Requests.\n\"\"\"\"\"\"\n\nimport datetime\n\n# Import encoding now, to avoid implicit import later.\n# Implicit import within threads may cause LookupError when standard library is in a ZIP,\n# such as in Embedded Python. See https://github.com/psf/requests/issues/3578.\nimport encodings.idna  # noqa: F401\nfrom io import UnsupportedOperation\n\nfrom urllib3.exceptions import (\n    DecodeError,\n    LocationParseError,\n    ProtocolError,\n    ReadTimeoutError,\n    SSLError,\n)\nfrom urllib3.fields import RequestField\nfrom urllib3.filepost import encode_multipart_formdata\nfrom urllib3.util import parse_url\n\nfrom ._internal_utils import to_native_string, unicode_is_ascii\nfrom .auth import HTTPBasicAuth\nfrom .compat import (\n    Callable,\n    JSONDecodeError,\n    Mapping,\n    basestring,\n    builtin_str,\n    chardet,\n    cookielib,\n)\nfrom .compat import json as complexjson\nfrom .compat import urlencode, urlsplit, urlunparse\nfrom .cookies import _copy_cookie_jar, cookiejar_from_dict, get_cookie_header\nfrom .exceptions import (\n    ChunkedEncodingError,\n    ConnectionError,\n    ContentDecodingError,\n    HTTPError,\n    InvalidJSONError,\n    InvalidURL,\n)\nfrom .exceptions import JSONDecodeError as RequestsJSONDecodeError\nfrom .exceptions import MissingSchema\nfrom .exceptions import SSLError as RequestsSSLError\nfrom .exceptions import StreamConsumedError\nfrom .hooks import default_hooks\nfrom .status_codes import codes\nfrom .structures import CaseInsensitiveDict\nfrom .utils import (\n    check_header_validity,\n    get_auth_from_url,\n    guess_filename,\n    guess_json_utf,\n    iter_slices,\n    parse_header_links,\n    requote_uri,\n    stream_decode_response_unicode,\n    super_len,\n    to_key_val_list,\n)\n\n#: The set of HTTP status codes that indicate an automatically\n#: processable redirect.\nREDIRECT_STATI = (\n    codes.moved,  # 301\n    codes.found,  # 302\n    codes.other,  # 303\n    codes.temporary_redirect,  # 307\n    codes.permanent_redirect,  # 308\n)\n\nDEFAULT_REDIRECT_LIMIT = 30\nCONTENT_CHUNK_SIZE = 10 * 1024\nITER_CHUNK_SIZE = 512\n\n\nclass RequestEncodingMixin:\n    @property\n    def path_url(self):\n        \"\"\"\"\"\"Build the path URL to use.\"\"\"\"\"\"\n\n        url = []\n\n        p = urlsplit(self.url)\n\n        path = p.path\n        if not path:\n            path = \"\"/\"\"\n\n        url.append(path)\n\n        query = p.query\n        if query:\n            url.append(\"\"?\"\")\n            url.append(query)\n\n        return \"\"\"\".join(url)\n\n    @staticmethod\n    def _encode_params(data):\n        \"\"\"\"\"\"Encode parameters in a piece of data.\n\n        Will successfully encode parameters when passed as a dict or a list of\n        2-tuples. Order is retained if data is a list of 2-tuples but arbitrary\n        if parameters are supplied as a dict.\n        \"\"\"\"\"\"\n\n        if isinstance(data, (str, bytes)):\n            return data\n        elif hasattr(data, \"\"read\"\"):\n            return data\n        elif hasattr(data, \"\"__iter__\"\"):\n            result = []\n            for k, vs in to_key_val_list(data):\n                if isinstance(vs, basestring) or not hasattr(vs, \"\"__iter__\"\"):\n                    vs = [vs]\n                for v in vs:\n                    if v is not None:\n                        result.append(\n                            (\n                                k.encode(\"\"utf-8\"\") if isinstance(k, str) else k,\n                                v.encode(\"\"utf-8\"\") if isinstance(v, str) else v,\n                            )\n                        )\n            return urlencode(result, doseq=True)\n        else:\n            return data\n\n    @staticmethod\n    def _encode_files(files, data):\n        \"\"\"\"\"\"Build the body for a multipart/form-data request.\n\n        Will successfully encode files when passed as a dict or a list of\n        tuples. Order is retained if data is a list of tuples but arbitrary\n        if parameters are supplied as a dict.\n        The tuples may be 2-tuples (filename, fileobj), 3-tuples (filename, fileobj, contentype)\n        or 4-tuples (filename, fileobj, contentype, custom_headers).\n        \"\"\"\"\"\"\n        if not files:\n            raise ValueError(\"\"Files must be provided.\"\")\n        elif isinstance(data, basestring):\n            raise ValueError(\"\"Data must not be a string.\"\")\n\n        new_fields = []\n        fields = to_key_val_list(data or {})\n        files = to_key_val_list(files or {})\n\n        for field, val in fields:\n            if isinstance(val, basestring) or not hasattr(val, \"\"__iter__\"\"):\n                val = [val]\n            for v in val:\n                if v is not None:\n                    # Don't call str() on bytestrings: in Py3 it all goes wrong.\n                    if not isinstance(v, bytes):\n                        v = str(v)\n\n                    new_fields.append(\n                        (\n                            field.decode(\"\"utf-8\"\")\n                            if isinstance(field, bytes)\n                            else field,\n                            v.encode(\"\"utf-8\"\") if isinstance(v, str) else v,\n                        )\n                    )\n\n        for k, v in files:\n            # support for explicit filename\n            ft = None\n            fh = None\n            if isinstance(v, (tuple, list)):\n                if len(v) == 2:\n                    fn, fp = v\n                elif len(v) == 3:\n                    fn, fp, ft = v\n                else:\n                    fn, fp, ft, fh = v\n            else:\n                fn = guess_filename(v) or k\n\"\n50|src/requests/models.py:L930-L1037|\"        if self.encoding is None:\n            encoding = self.apparent_encoding\n\n        # Decode unicode from given encoding.\n        try:\n            content = str(self.content, encoding, errors=\"\"replace\"\")\n        except (LookupError, TypeError):\n            # A LookupError is raised if the encoding was not found which could\n            # indicate a misspelling or similar mistake.\n            #\n            # A TypeError can be raised if encoding is None\n            #\n            # So we try blindly encoding.\n            content = str(self.content, errors=\"\"replace\"\")\n\n        return content\n\n    def json(self, **kwargs):\n        r\"\"\"\"\"\"Returns the json-encoded content of a response, if any.\n\n        :param \\*\\*kwargs: Optional arguments that ``json.loads`` takes.\n        :raises requests.exceptions.JSONDecodeError: If the response body does not\n            contain valid json.\n        \"\"\"\"\"\"\n\n        if not self.encoding and self.content and len(self.content) > 3:\n            # No encoding set. JSON RFC 4627 section 3 states we should expect\n            # UTF-8, -16 or -32. Detect which one to use; If the detection or\n            # decoding fails, fall back to `self.text` (using charset_normalizer to make\n            # a best guess).\n            encoding = guess_json_utf(self.content)\n            if encoding is not None:\n                try:\n                    return complexjson.loads(self.content.decode(encoding), **kwargs)\n                except UnicodeDecodeError:\n                    # Wrong UTF codec detected; usually because it's not UTF-8\n                    # but some other 8-bit codec.  This is an RFC violation,\n                    # and the server didn't bother to tell us what codec *was*\n                    # used.\n                    pass\n                except JSONDecodeError as e:\n                    raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)\n\n        try:\n            return complexjson.loads(self.text, **kwargs)\n        except JSONDecodeError as e:\n            # Catch JSON-related errors and raise as requests.JSONDecodeError\n            # This aliases json.JSONDecodeError and simplejson.JSONDecodeError\n            raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)\n\n    @property\n    def links(self):\n        \"\"\"\"\"\"Returns the parsed header links of the response, if any.\"\"\"\"\"\"\n\n        header = self.headers.get(\"\"link\"\")\n\n        resolved_links = {}\n\n        if header:\n            links = parse_header_links(header)\n\n            for link in links:\n                key = link.get(\"\"rel\"\") or link.get(\"\"url\"\")\n                resolved_links[key] = link\n\n        return resolved_links\n\n    def raise_for_status(self):\n        \"\"\"\"\"\"Raises :class:`HTTPError`, if one occurred.\"\"\"\"\"\"\n\n        http_error_msg = \"\"\"\"\n        if isinstance(self.reason, bytes):\n            # We attempt to decode utf-8 first because some servers\n            # choose to localize their reason strings. If the string\n            # isn't utf-8, we fall back to iso-8859-1 for all other\n            # encodings. (See PR #3538)\n            try:\n                reason = self.reason.decode(\"\"utf-8\"\")\n            except UnicodeDecodeError:\n                reason = self.reason.decode(\"\"iso-8859-1\"\")\n        else:\n            reason = self.reason\n\n        if 400 <= self.status_code < 500:\n            http_error_msg = (\n                f\"\"{self.status_code} Client Error: {reason} for url: {self.url}\"\"\n            )\n\n        elif 500 <= self.status_code < 600:\n            http_error_msg = (\n                f\"\"{self.status_code} Server Error: {reason} for url: {self.url}\"\"\n            )\n\n        if http_error_msg:\n            raise HTTPError(http_error_msg, response=self)\n\n    def close(self):\n        \"\"\"\"\"\"Releases the connection back to the pool. Once this method has been\n        called the underlying ``raw`` object must not be accessed again.\n\n        *Note: Should not normally need to be called explicitly.*\n        \"\"\"\"\"\"\n        if not self._content_consumed:\n            self.raw.close()\n\n        release_conn = getattr(self.raw, \"\"release_conn\"\", None)\n        if release_conn is not None:\n            release_conn()\n\"\n",
+  "final_tables": [
+    {
+      "name": "entities",
+      "columns": [
+        "id",
+        "entity",
+        "description",
+        "number of relationships"
+      ],
+      "rows": [
+        {
+          "id": "1532",
+          "entity": "TESTGUESSJSONUTF",
+          "description": "The visible class `TestGuessJSONUTF` groups tests for JSON UTF encoding detection, invalid UTF-like input, and BOM-based guessing.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "1061",
+          "entity": "TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS",
+          "description": "The test function `test_json_decode_compatibility_for_alt_utf_encodings` is defined here. It requests an HTTP response containing alternate-encoded JSON, clears `r.encoding`, calls `r.json()`, and asserts JSON decoding exception behavior.",
+          "number of relationships": "9"
+        },
+        {
+          "id": "652",
+          "entity": "GUESS_JSON_UTF",
+          "description": "`GUESS_JSON_UTF` refers to the `guess_json_utf` callable imported from `requests.utils` or the local `.utils` module. Its definition is not visible in the provided code chunks, but it is explicitly referenced by the JSON response-handling method, which calls `guess_json_utf(self.content)` to detect a JSON-compatible character encoding. Related tests verify its behavior with encoded JSON data, invalid zero-byte patterns, and content prefixed with a byte-order mark (BOM).",
+          "number of relationships": "15"
+        },
+        {
+          "id": "1232",
+          "entity": "TEST_RESPONSE_DECODE_UNICODE",
+          "description": "The test function `test_response_decode_unicode` is defined here. It asserts that `Response.iter_content(decode_unicode=True)` yields `str` chunks for both consumed in-memory content and streaming `io.BytesIO` content.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "1535",
+          "entity": "TESTGUESSJSONUTF.TEST_GUESS_BY_BOM",
+          "description": "The method `TestGuessJSONUTF.test_guess_by_bom` is parametrized with four endian-specific encodings and asserts that BOM-prefixed data is classified as `\"utf-16\"` or `\"utf-32\"`.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "1528",
+          "entity": "TESTCONTENTENCODINGDETECTION",
+          "description": "The visible class `TestContentEncodingDetection` groups tests for content-encoding detection, including empty content, pragma formats, and precedence.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "1533",
+          "entity": "TESTGUESSJSONUTF.TEST_ENCODED",
+          "description": "The method `TestGuessJSONUTF.test_encoded` is parametrized over eight UTF encoding spellings, encodes `\"{}\"` with each, and asserts `guess_json_utf(data) == encoding`.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "1407",
+          "entity": "TEST_JSON_DECODE_COMPATIBILITY",
+          "description": "The visible test function or method `test_json_decode_compatibility(self, httpbin)` gets `httpbin(\"bytes/20\")`, asserts `r.json()` raises `requests.exceptions.JSONDecodeError`, and asserts the exception is both `RequestException` and `JSONDecodeError`; its owning class is not visible.",
+          "number of relationships": "9"
+        },
+        {
+          "id": "1534",
+          "entity": "TESTGUESSJSONUTF.TEST_BAD_UTF_LIKE_ENCODING",
+          "description": "The method `TestGuessJSONUTF.test_bad_utf_like_encoding` asserts `guess_json_utf(b\"\\x00\\x00\\x00\\x00\") is None`.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "1530",
+          "entity": "TESTCONTENTENCODINGDETECTION.TEST_PRAGMAS",
+          "description": "The method `TestContentEncodingDetection.test_pragmas` is parametrized with HTML5, HTML4, XHTML, and XML declarations and asserts one detected encoding equal to `\"UTF-8\"`.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "962",
+          "entity": "CODECS.BOM_UTF16_LE",
+          "description": "`codecs.BOM_UTF16_LE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1390",
+          "entity": "TEST_JSON_ENCODES_AS_BYTES",
+          "description": "The test function `test_json_encodes_as_bytes` is defined here; it prepares a JSON request and asserts `p.body` is a `bytes` instance.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "961",
+          "entity": "CODECS.BOM_UTF8",
+          "description": "`codecs.BOM_UTF8` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "959",
+          "entity": "CODECS.BOM_UTF32_LE",
+          "description": "`codecs.BOM_UTF32_LE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "963",
+          "entity": "CODECS.BOM_UTF16_BE",
+          "description": "`codecs.BOM_UTF16_BE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1408",
+          "entity": "TEST_JSON_DECODE_PERSISTS_DOC_ATTR",
+          "description": "The visible test function or method `test_json_decode_persists_doc_attr(self, httpbin)` gets `httpbin(\"bytes/20\")`, asserts `r.json()` raises `requests.exceptions.JSONDecodeError`, and asserts `excinfo.value.doc == r.text`; its owning class is not visible.",
+          "number of relationships": "5"
+        },
+        {
+          "id": "1531",
+          "entity": "TESTCONTENTENCODINGDETECTION.TEST_PRECEDENCE",
+          "description": "The method `TestContentEncodingDetection.test_precedence` calls `get_encodings_from_content(content)` and asserts the ordered result is `[\"HTML5\", \"HTML4\", \"XML\"]`.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "960",
+          "entity": "CODECS.BOM_UTF32_BE",
+          "description": "`codecs.BOM_UTF32_BE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "2",
+          "entity": "R.JSON",
+          "description": "R.JSON refers to the response method `r.json()`, which is used to decode an HTTP response body into parsed JSON data, including comments responses and authenticated comment responses. The method is also exercised in tests for valid JSON and for responses with absent content, such as HTTP 204 responses. When the response contains valid JSON, `r.json()` returns the decoded data, typically as a JSON object. When the content is invalid or absent, it raises `requests.exceptions.JSONDecodeError`. The available descriptions explicitly reference the callable but do not establish the concrete runtime class of the response receiver `r`, its owning class, or the method’s definition.",
+          "number of relationships": "11"
+        }
+      ]
+    },
+    {
+      "name": "relationships",
+      "columns": [
+        "id",
+        "source",
+        "target",
+        "description",
+        "weight",
+        "links"
+      ],
+      "rows": [
+        {
+          "id": "2739",
+          "source": "TESTGUESSJSONUTF.TEST_ENCODED",
+          "target": "GUESS_JSON_UTF",
+          "description": "TESTS, direction from test to callable, visible assertion `guess_json_utf(data) == encoding` across the parametrized encodings",
+          "weight": "10.0",
+          "links": "2"
+        },
+        {
+          "id": "2741",
+          "source": "TESTGUESSJSONUTF.TEST_GUESS_BY_BOM",
+          "target": "GUESS_JSON_UTF",
+          "description": "TESTS, direction from test to callable, visible assertion `guess_json_utf(data) == expected` for BOM-prefixed data",
+          "weight": "10.0",
+          "links": "2"
+        },
+        {
+          "id": "2740",
+          "source": "TESTGUESSJSONUTF.TEST_BAD_UTF_LIKE_ENCODING",
+          "target": "GUESS_JSON_UTF",
+          "description": "TESTS, direction from test to callable, visible assertion `guess_json_utf(b\"\\x00\\x00\\x00\\x00\") is None`",
+          "weight": "10.0",
+          "links": "2"
+        },
+        {
+          "id": "2736",
+          "source": "TESTGUESSJSONUTF",
+          "target": "TESTGUESSJSONUTF.TEST_ENCODED",
+          "description": "DEFINES, direction from class to method, the method is visibly indented within `class TestGuessJSONUTF`",
+          "weight": "10.0",
+          "links": "2"
+        },
+        {
+          "id": "2738",
+          "source": "TESTGUESSJSONUTF",
+          "target": "TESTGUESSJSONUTF.TEST_GUESS_BY_BOM",
+          "description": "DEFINES, direction from class to method, the method is visibly indented within `class TestGuessJSONUTF`",
+          "weight": "10.0",
+          "links": "2"
+        },
+        {
+          "id": "2737",
+          "source": "TESTGUESSJSONUTF",
+          "target": "TESTGUESSJSONUTF.TEST_BAD_UTF_LIKE_ENCODING",
+          "description": "DEFINES, direction from class to method, the method is visibly indented within `class TestGuessJSONUTF`",
+          "weight": "10.0",
+          "links": "2"
+        },
+        {
+          "id": "2633",
+          "source": "REQUESTS.UTILS",
+          "target": "GUESS_JSON_UTF",
+          "description": "IMPORTS, direction requests.utils -> guess_json_utf, via the visible `from requests.utils import (...)` statement; no call is visible",
+          "weight": "10.0",
+          "links": "1"
+        },
+        {
+          "id": "854",
+          "source": "REQUESTS.MODELS",
+          "target": "GUESS_JSON_UTF",
+          "description": "IMPORTS, direction `requests.models` -> `guess_json_utf`, visible expression in the `from .utils import (...)` block",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "1578",
+          "source": "TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS",
+          "target": "REQUESTS.GET",
+          "description": "`TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS` calls `REQUESTS.GET` by evaluating `requests.get(url)` to obtain an HTTP response object `r`. The `requests` implementation is not visible in the provided context.",
+          "weight": "20.0",
+          "links": "1"
+        },
+        {
+          "id": "1580",
+          "source": "TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS",
+          "target": "PYTEST.RAISES",
+          "description": "`TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS` calls `PYTEST.RAISES` as a context manager to verify that invoking `r.json()` raises `requests.exceptions.JSONDecodeError`. The implementation of the external `pytest.raises` context manager is not visible in the provided context.",
+          "weight": "18.0",
+          "links": "1"
+        },
+        {
+          "id": "1022",
+          "source": "JSON",
+          "target": "GUESS_JSON_UTF",
+          "description": "CALLS, `json` calls `guess_json_utf(self.content)` only when `self.encoding` is falsey, `self.content` is present, and its length exceeds 3; the target definition is not visible.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "1577",
+          "source": "TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS",
+          "target": "SERVER",
+          "description": "The entity `TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS` calls the `SERVER` entity by evaluating `Server(response_handler, wait_to_close_event=close_server)`. The external definition of the `Server` class or callable is not visible in the provided context.",
+          "weight": "18.0",
+          "links": "1"
+        },
+        {
+          "id": "1576",
+          "source": "TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS",
+          "target": "THREADING.EVENT",
+          "description": "CALLS, the test evaluates `threading.Event()` to create `close_server`; the external constructor definition is not visible here.",
+          "weight": "18.0",
+          "links": "1"
+        },
+        {
+          "id": "1579",
+          "source": "TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS",
+          "target": "R.JSON",
+          "description": "The entity `TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS` calls `R.JSON` by evaluating `r.json()` after assigning `r.encoding = None`. The evaluation occurs within an exception-assertion context, indicating that the test verifies JSON-decoding behavior or expected failure handling when alternate UTF encodings are involved. The receiver `r` is a local response object, but its concrete class is not established in the available descriptions.",
+          "weight": "20.0",
+          "links": "1"
+        },
+        {
+          "id": "1583",
+          "source": "TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS",
+          "target": "JSONDECODEERROR",
+          "description": "The entity `TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS` is a test that verifies an exception raised during JSON decoding is an instance of `JSONDECODEERROR` (represented in the assertion as `JSONDecodeError`). The relationship is limited to this visible assertion; the import or declaration defining the `JSONDecodeError` symbol is not present in the available context.",
+          "weight": "20.0",
+          "links": "1"
+        },
+        {
+          "id": "1391",
+          "source": "GUESS_JSON_UTF",
+          "target": "_NULL",
+          "description": "READS, `guess_json_utf` counts occurrences of `_null` in `sample` with `sample.count(_null)`.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "1392",
+          "source": "GUESS_JSON_UTF",
+          "target": "_NULL2",
+          "description": "READS, `guess_json_utf` compares null-position slices with `_null2` in the `nullcount == 2` branch.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "1393",
+          "source": "GUESS_JSON_UTF",
+          "target": "_NULL3",
+          "description": "READS, `guess_json_utf` compares null-position slices with `_null3` in the `nullcount == 3` branch.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "1575",
+          "source": "TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS",
+          "target": "RESPONSE_HANDLER",
+          "description": "DEFINES, the test contains the nested function definition `def response_handler(sock):`.",
+          "weight": "10.0",
+          "links": "1"
+        },
+        {
+          "id": "1386",
+          "source": "GUESS_JSON_UTF",
+          "target": "CODECS.BOM_UTF32_LE",
+          "description": "READS, `guess_json_utf` compares `sample` with `codecs.BOM_UTF32_LE` in `if sample in (...)`.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "1387",
+          "source": "GUESS_JSON_UTF",
+          "target": "CODECS.BOM_UTF32_BE",
+          "description": "READS, `guess_json_utf` compares `sample` with `codecs.BOM_UTF32_BE` in `if sample in (...)`.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "1388",
+          "source": "GUESS_JSON_UTF",
+          "target": "CODECS.BOM_UTF8",
+          "description": "READS, `guess_json_utf` compares `sample[:3]` with `codecs.BOM_UTF8` in `if sample[:3] == codecs.BOM_UTF8`.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "1389",
+          "source": "GUESS_JSON_UTF",
+          "target": "CODECS.BOM_UTF16_LE",
+          "description": "READS, `guess_json_utf` compares `sample[:2]` with `codecs.BOM_UTF16_LE` in `if sample[:2] in (...)`.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "1390",
+          "source": "GUESS_JSON_UTF",
+          "target": "CODECS.BOM_UTF16_BE",
+          "description": "READS, `guess_json_utf` compares `sample[:2]` with `codecs.BOM_UTF16_BE` in `if sample[:2] in (...)`.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "1409",
+          "source": "GUESS_JSON_UTF",
+          "target": "COUNT",
+          "description": "CALLS, `guess_json_utf` calls `sample.count(_null)` to count null-byte occurrences; the receiver's concrete runtime type is not established here.",
+          "weight": "10.0",
+          "links": "1"
+        },
+        {
+          "id": "1581",
+          "source": "TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS",
+          "target": "REQUESTS.EXCEPTIONS.JSONDECODEERROR",
+          "description": "TESTS, the test expects `r.json()` to raise `requests.exceptions.JSONDecodeError` and passes that type to `pytest.raises`.",
+          "weight": "20.0",
+          "links": "1"
+        },
+        {
+          "id": "1582",
+          "source": "TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS",
+          "target": "REQUESTS.EXCEPTIONS.REQUESTEXCEPTION",
+          "description": "TESTS, the test asserts `isinstance(excinfo.value, requests.exceptions.RequestException)`.",
+          "weight": "20.0",
+          "links": "1"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "columns": [
+        "id",
+        "source",
+        "text"
+      ],
+      "rows": [
+        {
+          "id": "107",
+          "text": "        result = guess_filename(obj)\n        assert result == value\n        assert isinstance(result, expected_type)\n\n\nclass TestExtractZippedPaths:\n    @pytest.mark.parametrize(\n        \"path\",\n        (\n            \"/\",\n            __file__,\n            pytest.__file__,\n            \"/etc/invalid/location\",\n        ),\n    )\n    def test_unzipped_paths_unchanged(self, path):\n        assert path == extract_zipped_paths(path)\n\n    def test_zipped_paths_extracted(self, tmpdir):\n        zipped_py = tmpdir.join(\"test.zip\")\n        with zipfile.ZipFile(zipped_py.strpath, \"w\") as f:\n            f.write(__file__)\n\n        _, name = os.path.splitdrive(__file__)\n        zipped_path = os.path.join(zipped_py.strpath, name.lstrip(r\"\\/\"))\n        extracted_path = extract_zipped_paths(zipped_path)\n\n        assert extracted_path != zipped_path\n        assert os.path.exists(extracted_path)\n        assert filecmp.cmp(extracted_path, __file__)\n\n    def test_invalid_unc_path(self):\n        path = r\"\\\\localhost\\invalid\\location\"\n        assert extract_zipped_paths(path) == path\n\n\nclass TestContentEncodingDetection:\n    def test_none(self):\n        encodings = get_encodings_from_content(\"\")\n        assert not len(encodings)\n\n    @pytest.mark.parametrize(\n        \"content\",\n        (\n            # HTML5 meta charset attribute\n            '<meta charset=\"UTF-8\">',\n            # HTML4 pragma directive\n            '<meta http-equiv=\"Content-type\" content=\"text/html;charset=UTF-8\">',\n            # XHTML 1.x served with text/html MIME type\n            '<meta http-equiv=\"Content-type\" content=\"text/html;charset=UTF-8\" />',\n            # XHTML 1.x served as XML\n            '<?xml version=\"1.0\" encoding=\"UTF-8\"?>',\n        ),\n    )\n    def test_pragmas(self, content):\n        encodings = get_encodings_from_content(content)\n        assert len(encodings) == 1\n        assert encodings[0] == \"UTF-8\"\n\n    def test_precedence(self):\n        content = \"\"\"\n        <?xml version=\"1.0\" encoding=\"XML\"?>\n        <meta charset=\"HTML5\">\n        <meta http-equiv=\"Content-type\" content=\"text/html;charset=HTML4\" />\n        \"\"\".strip()\n        assert get_encodings_from_content(content) == [\"HTML5\", \"HTML4\", \"XML\"]\n\n\nclass TestGuessJSONUTF:\n    @pytest.mark.parametrize(\n        \"encoding\",\n        (\n            \"utf-32\",\n            \"utf-8-sig\",\n            \"utf-16\",\n            \"utf-8\",\n            \"utf-16-be\",\n            \"utf-16-le\",\n            \"utf-32-be\",\n            \"utf-32-le\",\n        ),\n    )\n    def test_encoded(self, encoding):\n        data = \"{}\".encode(encoding)\n        assert guess_json_utf(data) == encoding\n\n    def test_bad_utf_like_encoding(self):\n        assert guess_json_utf(b\"\\x00\\x00\\x00\\x00\") is None\n\n    @pytest.mark.parametrize(\n        (\"encoding\", \"expected\"),\n        (\n            (\"utf-16-be\", \"utf-16\"),\n            (\"utf-16-le\", \"utf-16\"),\n            (\"utf-32-be\", \"utf-32\"),\n            (\"utf-32-le\", \"utf-32\"),\n        ),\n    )\n    def test_guess_by_bom(self, encoding, expected):\n        data = \"\\ufeff{}\".encode(encoding)\n        assert guess_json_utf(data) == expected\n\n\nUSER = PASSWORD = \"%!*'();:@&=+$,/?#[] \"\nENCODED_USER = compat.quote(USER, \"\")\nENCODED_PASSWORD = compat.quote(PASSWORD, \"\")\n\n\n@pytest.mark.parametrize(\n    \"url, auth\",\n    (\n        (\n            f\"http://{ENCODED_USER}:{ENCODED_PASSWORD}@request.com/url.html#test\",\n            (USER, PASSWORD),\n        ),\n        (\"http://user:pass@complex.url.com/path?query=yes\", (\"user\", \"pass\")),\n        (\n            \"http://user:pass%20pass@complex.url.com/path?query=yes\",\n            (\"user\", \"pass pass\"),\n        ),\n        (\"http://user:pass pass@complex.url.com/path?query=yes\", (\"user\", \"pass pass\")),\n        (\n            \"http://user%25user:pass@complex.url.com/path?query=yes\",\n            (\"user%user\", \"pass\"),\n        ),\n        (\n            \"http://user:pass%23pass@complex.url.com/path?query=yes\",\n            (\"user\", \"pass#pass\"),\n        ),\n        (\"http://complex.url.com/path?query=yes\", (\"\", \"\")),\n    ),\n)\ndef test_get_auth_from_url(url, auth):\n    assert get_auth_from_url(url) == auth\n\n\n@pytest.mark.parametrize(\n    \"uri, expected\",\n    (\n        (\n            # Ensure requoting doesn't break expectations\n            \"http://example.com/fiz?buz=%25ppicture\",\n            \"http://example.com/fiz?buz=%25ppicture\",\n        ),\n        (\n            # Ensure we handle unquoted percent signs in redirects\n            \"http://example.com/fiz?buz=%ppicture\",\n            \"http://example.com/fiz?buz=%25ppicture\",\n        ),\n    ),\n)\ndef test_requote_uri_with_unquoted_percents(uri, expected):\n    \"\"\"See: https://github.com/psf/requests/issues/2356\"\"\"\n    assert requote_uri(uri) == expected\n\n\n@pytest.mark.parametrize(\n    \"uri, expected\",\n    (\n        (\n            # Illegal bytes\n            \"http://example.com/?a=%--\",\n            \"http://example.com/?a=%--\",\n        ),\n        (\n",
+          "source": "tests/test_utils.py:L308-L472"
+        },
+        {
+          "id": "78",
+          "text": "            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /final-url/\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/path/to/thing/#view=edit&token=hunter2'\n        r = requests.get(url)\n\n        assert r.status_code == 200\n        assert len(r.history) == 2\n        assert r.history[0].request.url == url\n\n        # Verify we haven't overwritten the location with our previous fragment.\n        assert r.history[1].request.url == f'http://{host}:{port}/get#relevant-section'\n        # Verify previous fragment is used and not the original.\n        assert r.url == f'http://{host}:{port}/final-url/#relevant-section'\n\n        close_server.set()\n\n\ndef test_json_decode_compatibility_for_alt_utf_encodings():\n\n    def response_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n'\n            b'Content-Length: 18\\r\\n\\r\\n'\n            b'\\xff\\xfe{\\x00\"\\x00K0\"\\x00=\\x00\"\\x00\\xab0\"\\x00\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url)\n    r.encoding = None\n    with pytest.raises(requests.exceptions.JSONDecodeError) as excinfo:\n        r.json()\n    assert isinstance(excinfo.value, requests.exceptions.RequestException)\n    assert isinstance(excinfo.value, JSONDecodeError)\n    assert r.text not in str(excinfo.value)\n",
+          "source": "tests/test_lowlevel.py:L379-L428"
+        },
+        {
+          "id": "44",
+          "text": "\"\"\"\nrequests.models\n~~~~~~~~~~~~~~~\n\nThis module contains the primary objects that power Requests.\n\"\"\"\n\nimport datetime\n\n# Import encoding now, to avoid implicit import later.\n# Implicit import within threads may cause LookupError when standard library is in a ZIP,\n# such as in Embedded Python. See https://github.com/psf/requests/issues/3578.\nimport encodings.idna  # noqa: F401\nfrom io import UnsupportedOperation\n\nfrom urllib3.exceptions import (\n    DecodeError,\n    LocationParseError,\n    ProtocolError,\n    ReadTimeoutError,\n    SSLError,\n)\nfrom urllib3.fields import RequestField\nfrom urllib3.filepost import encode_multipart_formdata\nfrom urllib3.util import parse_url\n\nfrom ._internal_utils import to_native_string, unicode_is_ascii\nfrom .auth import HTTPBasicAuth\nfrom .compat import (\n    Callable,\n    JSONDecodeError,\n    Mapping,\n    basestring,\n    builtin_str,\n    chardet,\n    cookielib,\n)\nfrom .compat import json as complexjson\nfrom .compat import urlencode, urlsplit, urlunparse\nfrom .cookies import _copy_cookie_jar, cookiejar_from_dict, get_cookie_header\nfrom .exceptions import (\n    ChunkedEncodingError,\n    ConnectionError,\n    ContentDecodingError,\n    HTTPError,\n    InvalidJSONError,\n    InvalidURL,\n)\nfrom .exceptions import JSONDecodeError as RequestsJSONDecodeError\nfrom .exceptions import MissingSchema\nfrom .exceptions import SSLError as RequestsSSLError\nfrom .exceptions import StreamConsumedError\nfrom .hooks import default_hooks\nfrom .status_codes import codes\nfrom .structures import CaseInsensitiveDict\nfrom .utils import (\n    check_header_validity,\n    get_auth_from_url,\n    guess_filename,\n    guess_json_utf,\n    iter_slices,\n    parse_header_links,\n    requote_uri,\n    stream_decode_response_unicode,\n    super_len,\n    to_key_val_list,\n)\n\n#: The set of HTTP status codes that indicate an automatically\n#: processable redirect.\nREDIRECT_STATI = (\n    codes.moved,  # 301\n    codes.found,  # 302\n    codes.other,  # 303\n    codes.temporary_redirect,  # 307\n    codes.permanent_redirect,  # 308\n)\n\nDEFAULT_REDIRECT_LIMIT = 30\nCONTENT_CHUNK_SIZE = 10 * 1024\nITER_CHUNK_SIZE = 512\n\n\nclass RequestEncodingMixin:\n    @property\n    def path_url(self):\n        \"\"\"Build the path URL to use.\"\"\"\n\n        url = []\n\n        p = urlsplit(self.url)\n\n        path = p.path\n        if not path:\n            path = \"/\"\n\n        url.append(path)\n\n        query = p.query\n        if query:\n            url.append(\"?\")\n            url.append(query)\n\n        return \"\".join(url)\n\n    @staticmethod\n    def _encode_params(data):\n        \"\"\"Encode parameters in a piece of data.\n\n        Will successfully encode parameters when passed as a dict or a list of\n        2-tuples. Order is retained if data is a list of 2-tuples but arbitrary\n        if parameters are supplied as a dict.\n        \"\"\"\n\n        if isinstance(data, (str, bytes)):\n            return data\n        elif hasattr(data, \"read\"):\n            return data\n        elif hasattr(data, \"__iter__\"):\n            result = []\n            for k, vs in to_key_val_list(data):\n                if isinstance(vs, basestring) or not hasattr(vs, \"__iter__\"):\n                    vs = [vs]\n                for v in vs:\n                    if v is not None:\n                        result.append(\n                            (\n                                k.encode(\"utf-8\") if isinstance(k, str) else k,\n                                v.encode(\"utf-8\") if isinstance(v, str) else v,\n                            )\n                        )\n            return urlencode(result, doseq=True)\n        else:\n            return data\n\n    @staticmethod\n    def _encode_files(files, data):\n        \"\"\"Build the body for a multipart/form-data request.\n\n        Will successfully encode files when passed as a dict or a list of\n        tuples. Order is retained if data is a list of tuples but arbitrary\n        if parameters are supplied as a dict.\n        The tuples may be 2-tuples (filename, fileobj), 3-tuples (filename, fileobj, contentype)\n        or 4-tuples (filename, fileobj, contentype, custom_headers).\n        \"\"\"\n        if not files:\n            raise ValueError(\"Files must be provided.\")\n        elif isinstance(data, basestring):\n            raise ValueError(\"Data must not be a string.\")\n\n        new_fields = []\n        fields = to_key_val_list(data or {})\n        files = to_key_val_list(files or {})\n\n        for field, val in fields:\n            if isinstance(val, basestring) or not hasattr(val, \"__iter__\"):\n                val = [val]\n            for v in val:\n                if v is not None:\n                    # Don't call str() on bytestrings: in Py3 it all goes wrong.\n                    if not isinstance(v, bytes):\n                        v = str(v)\n\n                    new_fields.append(\n                        (\n                            field.decode(\"utf-8\")\n                            if isinstance(field, bytes)\n                            else field,\n                            v.encode(\"utf-8\") if isinstance(v, str) else v,\n                        )\n                    )\n\n        for k, v in files:\n            # support for explicit filename\n            ft = None\n            fh = None\n            if isinstance(v, (tuple, list)):\n                if len(v) == 2:\n                    fn, fp = v\n                elif len(v) == 3:\n                    fn, fp, ft = v\n                else:\n                    fn, fp, ft, fh = v\n            else:\n                fn = guess_filename(v) or k\n",
+          "source": "src/requests/models.py:L1-L185"
+        },
+        {
+          "id": "50",
+          "text": "        if self.encoding is None:\n            encoding = self.apparent_encoding\n\n        # Decode unicode from given encoding.\n        try:\n            content = str(self.content, encoding, errors=\"replace\")\n        except (LookupError, TypeError):\n            # A LookupError is raised if the encoding was not found which could\n            # indicate a misspelling or similar mistake.\n            #\n            # A TypeError can be raised if encoding is None\n            #\n            # So we try blindly encoding.\n            content = str(self.content, errors=\"replace\")\n\n        return content\n\n    def json(self, **kwargs):\n        r\"\"\"Returns the json-encoded content of a response, if any.\n\n        :param \\*\\*kwargs: Optional arguments that ``json.loads`` takes.\n        :raises requests.exceptions.JSONDecodeError: If the response body does not\n            contain valid json.\n        \"\"\"\n\n        if not self.encoding and self.content and len(self.content) > 3:\n            # No encoding set. JSON RFC 4627 section 3 states we should expect\n            # UTF-8, -16 or -32. Detect which one to use; If the detection or\n            # decoding fails, fall back to `self.text` (using charset_normalizer to make\n            # a best guess).\n            encoding = guess_json_utf(self.content)\n            if encoding is not None:\n                try:\n                    return complexjson.loads(self.content.decode(encoding), **kwargs)\n                except UnicodeDecodeError:\n                    # Wrong UTF codec detected; usually because it's not UTF-8\n                    # but some other 8-bit codec.  This is an RFC violation,\n                    # and the server didn't bother to tell us what codec *was*\n                    # used.\n                    pass\n                except JSONDecodeError as e:\n                    raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)\n\n        try:\n            return complexjson.loads(self.text, **kwargs)\n        except JSONDecodeError as e:\n            # Catch JSON-related errors and raise as requests.JSONDecodeError\n            # This aliases json.JSONDecodeError and simplejson.JSONDecodeError\n            raise RequestsJSONDecodeError(e.msg, e.doc, e.pos)\n\n    @property\n    def links(self):\n        \"\"\"Returns the parsed header links of the response, if any.\"\"\"\n\n        header = self.headers.get(\"link\")\n\n        resolved_links = {}\n\n        if header:\n            links = parse_header_links(header)\n\n            for link in links:\n                key = link.get(\"rel\") or link.get(\"url\")\n                resolved_links[key] = link\n\n        return resolved_links\n\n    def raise_for_status(self):\n        \"\"\"Raises :class:`HTTPError`, if one occurred.\"\"\"\n\n        http_error_msg = \"\"\n        if isinstance(self.reason, bytes):\n            # We attempt to decode utf-8 first because some servers\n            # choose to localize their reason strings. If the string\n            # isn't utf-8, we fall back to iso-8859-1 for all other\n            # encodings. (See PR #3538)\n            try:\n                reason = self.reason.decode(\"utf-8\")\n            except UnicodeDecodeError:\n                reason = self.reason.decode(\"iso-8859-1\")\n        else:\n            reason = self.reason\n\n        if 400 <= self.status_code < 500:\n            http_error_msg = (\n                f\"{self.status_code} Client Error: {reason} for url: {self.url}\"\n            )\n\n        elif 500 <= self.status_code < 600:\n            http_error_msg = (\n                f\"{self.status_code} Server Error: {reason} for url: {self.url}\"\n            )\n\n        if http_error_msg:\n            raise HTTPError(http_error_msg, response=self)\n\n    def close(self):\n        \"\"\"Releases the connection back to the pool. Once this method has been\n        called the underlying ``raw`` object must not be accessed again.\n\n        *Note: Should not normally need to be called explicitly.*\n        \"\"\"\n        if not self._content_consumed:\n            self.raw.close()\n\n        release_conn = getattr(self.raw, \"release_conn\", None)\n        if release_conn is not None:\n            release_conn()\n",
+          "source": "src/requests/models.py:L930-L1037"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "short_id": "107",
+      "text_unit_id": "389dde3cd137709270c2c13a240d8018c44b01110888c0bd9c5337e38016b77fc557047f133187ddaa1c5d5573bd90a8862712ca2b4a0537a35e809db32a8179",
+      "id": "a508132f67cba7cedc589493a9a54cad81ca9b8568c3ab37a5b98ba09b9682e8",
+      "title": "tests/test_utils.py:L308-L472",
+      "path": "tests/test_utils.py",
+      "start_line": 308,
+      "end_line": 472,
+      "tokens": 1200,
+      "text_sha256": "2cdfba69a878cd4b62869f9e5829c27bd72ac6cf08a4888c31e386dbed2db6a2",
+      "ms_text_unit_id": "389dde3cd137709270c2c13a240d8018c44b01110888c0bd9c5337e38016b77fc557047f133187ddaa1c5d5573bd90a8862712ca2b4a0537a35e809db32a8179"
+    },
+    {
+      "short_id": "78",
+      "text_unit_id": "8d707a967d2ac3011d34f329f840b838b9b30e3dbd68ec99c6309f16d86711daa0c5bc66648a3b5f102056a27bfe3c266966a58a0e7f34ea18a86f401ea94eb0",
+      "id": "b0cdef55a2c5ce2dcc3e2fa72c0fd5cd5ece7a243c220abd27873f188aed20c4",
+      "title": "tests/test_lowlevel.py:L379-L428",
+      "path": "tests/test_lowlevel.py",
+      "start_line": 379,
+      "end_line": 428,
+      "tokens": 452,
+      "text_sha256": "21659c862b007521515fb5027d9d9461ea170a47bc715b5a8729fc475f7d401c",
+      "ms_text_unit_id": "8d707a967d2ac3011d34f329f840b838b9b30e3dbd68ec99c6309f16d86711daa0c5bc66648a3b5f102056a27bfe3c266966a58a0e7f34ea18a86f401ea94eb0"
+    },
+    {
+      "short_id": "44",
+      "text_unit_id": "771e4903fda73a194d5f66a667619b42b504825dda1259bec5448de65ba6ce2e4731189b7a7d45251bfa4c2777f6805f7101c8561ae23b655dce17ff7efc6fe8",
+      "id": "ce7864049adc0b732691fc982285b9c3c7ab256d3e2b7eb0a01e725c608ec2bb",
+      "title": "src/requests/models.py:L1-L185",
+      "path": "src/requests/models.py",
+      "start_line": 1,
+      "end_line": 185,
+      "tokens": 1198,
+      "text_sha256": "1a3f450c06d441bdc75b7b08154ed905d510f4a3c38ad37aab8c881fe95d4c39",
+      "ms_text_unit_id": "771e4903fda73a194d5f66a667619b42b504825dda1259bec5448de65ba6ce2e4731189b7a7d45251bfa4c2777f6805f7101c8561ae23b655dce17ff7efc6fe8"
+    },
+    {
+      "short_id": "50",
+      "text_unit_id": "4b4b5fc54c5de1b3bc06ae804b6e1a5b97c7354826ae43cb449d641d0ddfd9ca12e0edbdb3bc23b9ef8590995e18471f832326ab7032bf5ddf89637b8f414d3a",
+      "id": "61cf4146457c9f6b3abd4618550a9b34f9b5c84559b1ce6821dd103889bd5717",
+      "title": "src/requests/models.py:L930-L1037",
+      "path": "src/requests/models.py",
+      "start_line": 930,
+      "end_line": 1037,
+      "tokens": 854,
+      "text_sha256": "f9efde53f47fd33155ca84cc123960363df74a6417650597fe0cee96bfe3c12a",
+      "ms_text_unit_id": "4b4b5fc54c5de1b3bc06ae804b6e1a5b97c7354826ae43cb449d641d0ddfd9ca12e0edbdb3bc23b9ef8590995e18471f832326ab7032bf5ddf89637b8f414d3a"
+    }
+  ],
+  "raw_context_tokens": 6506,
+  "final_context_tokens": 6681,
+  "source_text_tokens": 3704,
+  "source_chunks": 4,
+  "retrieval_compute_seconds": 0.011787458322942257,
+  "adaptation_seconds": 0.014454749412834644,
+  "empty_reason": null,
+  "community_level": 2,
+  "dropped_tail_rows": 0
+}

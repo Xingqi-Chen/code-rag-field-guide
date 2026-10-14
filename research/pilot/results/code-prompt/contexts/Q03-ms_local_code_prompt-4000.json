@@ -1,0 +1,391 @@
+{
+  "variant": "code-prompt",
+  "question_id": "Q03",
+  "method": "ms_local_code_prompt",
+  "budget": 4000,
+  "query": "Why can an HTTP response object be false in an if statement even though a response was received?",
+  "upstream_raw_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n722|RESPONSE.OK|Property method `Response.ok` is defined here. It calls `self.raise_for_status()`, returns `False` when `HTTPError` is caught, and otherwise returns `True`; its documentation states that status codes below 400 are considered successful.|5\n1256|TEST_HTTP_ERROR|The visible test function `test_http_error` constructs `requests.exceptions.HTTPError` instances and `requests.Response` instances, then asserts response attachment, falsy absence of a response, and preservation of the message string. Its owning class is not visible in this chunk.|3\n146|RESPONSE.STATUS_CODE|The response attribute expression `r.status_code` is explicitly referenced and documented as returning numeric HTTP status codes such as `200` and `404`; the receiver's concrete class is not established by this chunk.|4\n719|RESPONSE.__BOOL__|Method `Response.__bool__` is defined here. It returns `self.ok`, whose documented contract is truth for status codes below 400 rather than specifically status code 200.|2\n1441|TESTTESTSERVER.TEST_BASIC_RESPONSE|The test method `TestTestServer.test_basic_response`; creates a basic response server and asserts an empty HTTP response with status 200 and `Content-Length` equal to `\"0\"`.|3\n1440|TESTTESTSERVER.TEST_TEXT_RESPONSE|The test method `TestTestServer.test_text_response`; creates a text response server with an HTTP 200 response and asserts the returned status, body, and `Content-Length` header.|3\n720|RESPONSE.__NONZERO__|Method `Response.__nonzero__` is defined here and returns `self.ok` with the same documented below-400 status contract as `Response.__bool__`.|2\n1231|TEST_RESPONSE_IS_ITERABLE|The test function `test_response_is_iterable` is defined here. It assigns a `StringIO` object to `r.raw`, overrides its `read` method, and asserts that `next(iter(r))` produces a value.|5\n1313|IS_REDIRECT|`is_redirect` is explicitly read from response objects in assertions such as `assert r1.is_redirect`; the response class and attribute definition are not visible.|1\n1195|STATUS_CODE|References the unresolved response attribute `status_code` in assertions such as `post1.status_code == 200`; the response class is not visible.|4\n1060|RESPONSE_HANDLER|`RESPONSE_HANDLER` is defined as the nested function `response_handler(sock)`. It processes incoming socket content by calling `consume_socket_content(sock, timeout=0.5)`, consumes three requests, and sends HTTP responses in sequence. It first sends two `302` redirects with `Location` headers set to `/get#relevant-section` and `/final-url/`, followed by a final raw HTTP `200` response containing alternate-encoded bytes.|9\n19|RESPONSE.HEADERS|The value spelling `Response.headers` is explicitly referenced through `r.headers`; the example reads headers received from the server, and its concrete definition is not visible here.|5\n1230|TEST_EMPTY_RESPONSE_HAS_CONTENT_NONE|The test function `test_empty_response_has_content_none` is defined here. It constructs `requests.Response()` and asserts `r.content is None`.|1\n1196|OK|References the unresolved response attribute `ok` in assertions `not r.ok`; the response class is not visible.|2\n1324|TEST_RESPONSE_ITER_LINES_REENTRANT|The exact xfailed test method `test_response_iter_lines_reentrant(self, httpbin)` is defined here. Its documentation says `Response.iter_lines()` is not reentrant safe; it asserts a second iteration would leave three lines.|6\n34|REQUESTS.RESPONSE|`REQUESTS.RESPONSE` refers to the externally defined `requests.Response` class used to represent HTTP responses. It is documented as the return type for request functions, HTTP verb methods, `send`, and `build_response`, and appears in qualified documentation references for response attributes and methods such as `Response.raise_for_status` and `Response.iter_lines`. The class is also used in examples showing representations such as `<Response [200]>`.\n\nWithin the referenced code and tests, `requests.Response` is used in `isinstance` assertions and is explicitly instantiated, including when constructing responses for HTTP error assertions. Some documentation refers to the response class through `Response <requests.Response>`, while one implementation separately instantiates an unresolved `Response` symbol in the visible chunk. The actual definition and implementation of `requests.Response` are external and are not included in the available code.|27\n138|R.RAW|The response attribute explicitly referenced as `r.raw`; documented as exposing the raw socket response stream without decoding transfer encodings, and requiring `stream=True` in the request example.|2\n\n\n-----Relationships-----\nid|source|target|description|weight|links\n962|RESPONSE|RESPONSE.OK|DEFINES, class `Response` defines property method `ok`|10.0|1\n978|RESPONSE.OK|HTTPERROR|`RESPONSE.OK` is tested to ensure that it catches an `HTTPERROR` raised within the visible `try` block and returns `False`. The behavior specifically distinguishes the caught `HTTPERROR` case; no broader exception-handling behavior is demonstrated. The definition of `HTTPERROR` is external to the provided context.|16.0|1\n975|RESPONSE.__BOOL__|RESPONSE.OK|RETURNS, `Response.__bool__` returns `self.ok`; the property implementation is defined in this chunk|9.0|1\n976|RESPONSE.__NONZERO__|RESPONSE.OK|RETURNS, `Response.__nonzero__` returns `self.ok`; the property implementation is defined in this chunk|9.0|1\n977|RESPONSE.OK|RESPONSE.RAISE_FOR_STATUS|CALLS, `Response.ok` calls `self.raise_for_status()` before catching `HTTPError`; the receiver is the current `Response`, but the target method is not defined in this chunk|8.0|1\n\n\n-----Sources-----\nid|text\n48|        hooks = hooks or []\n        for event in hooks:\n            self.register_hook(event, hooks[event])\n\n\nclass Response:\n    \"\"\"The :class:`Response <Response>` object, which contains a\n    server's response to an HTTP request.\n    \"\"\"\n\n    __attrs__ = [\n        \"_content\",\n        \"status_code\",\n        \"headers\",\n        \"url\",\n        \"history\",\n        \"encoding\",\n        \"reason\",\n        \"cookies\",\n        \"elapsed\",\n        \"request\",\n    ]\n\n    def __init__(self):\n        self._content = False\n        self._content_consumed = False\n        self._next = None\n\n        #: Integer Code of responded HTTP Status, e.g. 404 or 200.\n        self.status_code = None\n\n        #: Case-insensitive Dictionary of Response Headers.\n        #: For example, ``headers['content-encoding']`` will return the\n        #: value of a ``'Content-Encoding'`` response header.\n        self.headers = CaseInsensitiveDict()\n\n        #: File-like object representation of response (for advanced usage).\n        #: Use of ``raw`` requires that ``stream=True`` be set on the request.\n        #: This requirement does not apply for use internally to Requests.\n        self.raw = None\n\n        #: Final URL location of Response.\n        self.url = None\n\n        #: Encoding to decode with when accessing r.text.\n        self.encoding = None\n\n        #: A list of :class:`Response <Response>` objects from\n        #: the history of the Request. Any redirect responses will end\n        #: up here. The list is sorted from the oldest to the most recent request.\n        self.history = []\n\n        #: Textual reason of responded HTTP Status, e.g. \"Not Found\" or \"OK\".\n        self.reason = None\n\n        #: A CookieJar of Cookies the server sent back.\n        self.cookies = cookiejar_from_dict({})\n\n        #: The amount of time elapsed between sending the request\n        #: and the arrival of the response (as a timedelta).\n        #: This property specifically measures the time taken between sending\n        #: the first byte of the request and finishing parsing the headers. It\n        #: is therefore unaffected by consuming the response content or the\n        #: value of the ``stream`` keyword argument.\n        self.elapsed = datetime.timedelta(0)\n\n        #: The :class:`PreparedRequest <PreparedRequest>` object to which this\n        #: is a response.\n        self.request = None\n\n    def __enter__(self):\n        return self\n\n    def __exit__(self, *args):\n        self.close()\n\n    def __getstate__(self):\n        # Consume everything; accessing the content attribute makes\n        # sure the content has been fully read.\n        if not self._content_consumed:\n            self.content\n\n        return {attr: getattr(self, attr, None) for attr in self.__attrs__}\n\n    def __setstate__(self, state):\n        for name, value in state.items():\n            setattr(self, name, value)\n\n        # pickled objects do not have .raw\n        setattr(self, \"_content_consumed\", True)\n        setattr(self, \"raw\", None)\n\n    def __repr__(self):\n        return f\"<Response [{self.status_code}]>\"\n\n    def __bool__(self):\n        \"\"\"Returns True if :attr:`status_code` is less than 400.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code, is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\n        return self.ok\n\n    def __nonzero__(self):\n        \"\"\"Returns True if :attr:`status_code` is less than 400.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code, is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\n        return self.ok\n\n    def __iter__(self):\n        \"\"\"Allows you to use a response as an iterator.\"\"\"\n        return self.iter_content(128)\n\n    @property\n    def ok(self):\n        \"\"\"Returns True if :attr:`status_code` is less than 400, False if not.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\n        try:\n            self.raise_for_status()\n        except HTTPError:\n            return False\n        return True\n\n    @property\n    def is_redirect(self):\n        \"\"\"True if this Response is a well-formed HTTP redirect that could have\n        been processed automatically (by :meth:`Session.resolve_redirects`).\n        \"\"\"\n        return \"location\" in self.headers and self.status_code in REDIRECT_STATI\n\n    @property\n    def is_permanent_redirect(self):\n        \"\"\"True if this Response one of the permanent versions of redirect.\"\"\"\n        return \"location\" in self.headers and self.status_code in (\n            codes.moved_permanently,\n            codes.permanent_redirect,\n        )\n\n    @property\n    def next(self):\n        \"\"\"Returns a PreparedRequest for the next request in a redirect chain, if there is one.\"\"\"\n        return self._next\n\n    @property\n    def apparent_encoding(self):\n\n",
+  "upstream_raw_records": {
+    "relationships": [
+      {
+        "id": "962",
+        "source": "RESPONSE",
+        "target": "RESPONSE.OK",
+        "description": "DEFINES, class `Response` defines property method `ok`",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "978",
+        "source": "RESPONSE.OK",
+        "target": "HTTPERROR",
+        "description": "`RESPONSE.OK` is tested to ensure that it catches an `HTTPERROR` raised within the visible `try` block and returns `False`. The behavior specifically distinguishes the caught `HTTPERROR` case; no broader exception-handling behavior is demonstrated. The definition of `HTTPERROR` is external to the provided context.",
+        "weight": "16.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "975",
+        "source": "RESPONSE.__BOOL__",
+        "target": "RESPONSE.OK",
+        "description": "RETURNS, `Response.__bool__` returns `self.ok`; the property implementation is defined in this chunk",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "976",
+        "source": "RESPONSE.__NONZERO__",
+        "target": "RESPONSE.OK",
+        "description": "RETURNS, `Response.__nonzero__` returns `self.ok`; the property implementation is defined in this chunk",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "977",
+        "source": "RESPONSE.OK",
+        "target": "RESPONSE.RAISE_FOR_STATUS",
+        "description": "CALLS, `Response.ok` calls `self.raise_for_status()` before catching `HTTPError`; the receiver is the current `Response`, but the target method is not defined in this chunk",
+        "weight": "8.0",
+        "links": "1",
+        "in_context": true
+      }
+    ],
+    "entities": [
+      {
+        "id": "722",
+        "entity": "RESPONSE.OK",
+        "description": "Property method `Response.ok` is defined here. It calls `self.raise_for_status()`, returns `False` when `HTTPError` is caught, and otherwise returns `True`; its documentation states that status codes below 400 are considered successful.",
+        "number of relationships": "5",
+        "in_context": true
+      },
+      {
+        "id": "1256",
+        "entity": "TEST_HTTP_ERROR",
+        "description": "The visible test function `test_http_error` constructs `requests.exceptions.HTTPError` instances and `requests.Response` instances, then asserts response attachment, falsy absence of a response, and preservation of the message string. Its owning class is not visible in this chunk.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "146",
+        "entity": "RESPONSE.STATUS_CODE",
+        "description": "The response attribute expression `r.status_code` is explicitly referenced and documented as returning numeric HTTP status codes such as `200` and `404`; the receiver's concrete class is not established by this chunk.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "719",
+        "entity": "RESPONSE.__BOOL__",
+        "description": "Method `Response.__bool__` is defined here. It returns `self.ok`, whose documented contract is truth for status codes below 400 rather than specifically status code 200.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "1441",
+        "entity": "TESTTESTSERVER.TEST_BASIC_RESPONSE",
+        "description": "The test method `TestTestServer.test_basic_response`; creates a basic response server and asserts an empty HTTP response with status 200 and `Content-Length` equal to `\"0\"`.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "1440",
+        "entity": "TESTTESTSERVER.TEST_TEXT_RESPONSE",
+        "description": "The test method `TestTestServer.test_text_response`; creates a text response server with an HTTP 200 response and asserts the returned status, body, and `Content-Length` header.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "720",
+        "entity": "RESPONSE.__NONZERO__",
+        "description": "Method `Response.__nonzero__` is defined here and returns `self.ok` with the same documented below-400 status contract as `Response.__bool__`.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "1231",
+        "entity": "TEST_RESPONSE_IS_ITERABLE",
+        "description": "The test function `test_response_is_iterable` is defined here. It assigns a `StringIO` object to `r.raw`, overrides its `read` method, and asserts that `next(iter(r))` produces a value.",
+        "number of relationships": "5",
+        "in_context": true
+      },
+      {
+        "id": "1313",
+        "entity": "IS_REDIRECT",
+        "description": "`is_redirect` is explicitly read from response objects in assertions such as `assert r1.is_redirect`; the response class and attribute definition are not visible.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1195",
+        "entity": "STATUS_CODE",
+        "description": "References the unresolved response attribute `status_code` in assertions such as `post1.status_code == 200`; the response class is not visible.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "1060",
+        "entity": "RESPONSE_HANDLER",
+        "description": "`RESPONSE_HANDLER` is defined as the nested function `response_handler(sock)`. It processes incoming socket content by calling `consume_socket_content(sock, timeout=0.5)`, consumes three requests, and sends HTTP responses in sequence. It first sends two `302` redirects with `Location` headers set to `/get#relevant-section` and `/final-url/`, followed by a final raw HTTP `200` response containing alternate-encoded bytes.",
+        "number of relationships": "9",
+        "in_context": true
+      },
+      {
+        "id": "19",
+        "entity": "RESPONSE.HEADERS",
+        "description": "The value spelling `Response.headers` is explicitly referenced through `r.headers`; the example reads headers received from the server, and its concrete definition is not visible here.",
+        "number of relationships": "5",
+        "in_context": true
+      },
+      {
+        "id": "1230",
+        "entity": "TEST_EMPTY_RESPONSE_HAS_CONTENT_NONE",
+        "description": "The test function `test_empty_response_has_content_none` is defined here. It constructs `requests.Response()` and asserts `r.content is None`.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1196",
+        "entity": "OK",
+        "description": "References the unresolved response attribute `ok` in assertions `not r.ok`; the response class is not visible.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "1324",
+        "entity": "TEST_RESPONSE_ITER_LINES_REENTRANT",
+        "description": "The exact xfailed test method `test_response_iter_lines_reentrant(self, httpbin)` is defined here. Its documentation says `Response.iter_lines()` is not reentrant safe; it asserts a second iteration would leave three lines.",
+        "number of relationships": "6",
+        "in_context": true
+      },
+      {
+        "id": "34",
+        "entity": "REQUESTS.RESPONSE",
+        "description": "`REQUESTS.RESPONSE` refers to the externally defined `requests.Response` class used to represent HTTP responses. It is documented as the return type for request functions, HTTP verb methods, `send`, and `build_response`, and appears in qualified documentation references for response attributes and methods such as `Response.raise_for_status` and `Response.iter_lines`. The class is also used in examples showing representations such as `<Response [200]>`.\n\nWithin the referenced code and tests, `requests.Response` is used in `isinstance` assertions and is explicitly instantiated, including when constructing responses for HTTP error assertions. Some documentation refers to the response class through `Response <requests.Response>`, while one implementation separately instantiates an unresolved `Response` symbol in the visible chunk. The actual definition and implementation of `requests.Response` are external and are not included in the available code.",
+        "number of relationships": "27",
+        "in_context": true
+      },
+      {
+        "id": "138",
+        "entity": "R.RAW",
+        "description": "The response attribute explicitly referenced as `r.raw`; documented as exposing the raw socket response stream without decoding transfer encodings, and requiring `stream=True` in the request example.",
+        "number of relationships": "2",
+        "in_context": true
+      }
+    ],
+    "sources": [
+      {
+        "id": "48",
+        "text": "        hooks = hooks or []\n        for event in hooks:\n            self.register_hook(event, hooks[event])\n\n\nclass Response:\n    \"\"\"The :class:`Response <Response>` object, which contains a\n    server's response to an HTTP request.\n    \"\"\"\n\n    __attrs__ = [\n        \"_content\",\n        \"status_code\",\n        \"headers\",\n        \"url\",\n        \"history\",\n        \"encoding\",\n        \"reason\",\n        \"cookies\",\n        \"elapsed\",\n        \"request\",\n    ]\n\n    def __init__(self):\n        self._content = False\n        self._content_consumed = False\n        self._next = None\n\n        #: Integer Code of responded HTTP Status, e.g. 404 or 200.\n        self.status_code = None\n\n        #: Case-insensitive Dictionary of Response Headers.\n        #: For example, ``headers['content-encoding']`` will return the\n        #: value of a ``'Content-Encoding'`` response header.\n        self.headers = CaseInsensitiveDict()\n\n        #: File-like object representation of response (for advanced usage).\n        #: Use of ``raw`` requires that ``stream=True`` be set on the request.\n        #: This requirement does not apply for use internally to Requests.\n        self.raw = None\n\n        #: Final URL location of Response.\n        self.url = None\n\n        #: Encoding to decode with when accessing r.text.\n        self.encoding = None\n\n        #: A list of :class:`Response <Response>` objects from\n        #: the history of the Request. Any redirect responses will end\n        #: up here. The list is sorted from the oldest to the most recent request.\n        self.history = []\n\n        #: Textual reason of responded HTTP Status, e.g. \"Not Found\" or \"OK\".\n        self.reason = None\n\n        #: A CookieJar of Cookies the server sent back.\n        self.cookies = cookiejar_from_dict({})\n\n        #: The amount of time elapsed between sending the request\n        #: and the arrival of the response (as a timedelta).\n        #: This property specifically measures the time taken between sending\n        #: the first byte of the request and finishing parsing the headers. It\n        #: is therefore unaffected by consuming the response content or the\n        #: value of the ``stream`` keyword argument.\n        self.elapsed = datetime.timedelta(0)\n\n        #: The :class:`PreparedRequest <PreparedRequest>` object to which this\n        #: is a response.\n        self.request = None\n\n    def __enter__(self):\n        return self\n\n    def __exit__(self, *args):\n        self.close()\n\n    def __getstate__(self):\n        # Consume everything; accessing the content attribute makes\n        # sure the content has been fully read.\n        if not self._content_consumed:\n            self.content\n\n        return {attr: getattr(self, attr, None) for attr in self.__attrs__}\n\n    def __setstate__(self, state):\n        for name, value in state.items():\n            setattr(self, name, value)\n\n        # pickled objects do not have .raw\n        setattr(self, \"_content_consumed\", True)\n        setattr(self, \"raw\", None)\n\n    def __repr__(self):\n        return f\"<Response [{self.status_code}]>\"\n\n    def __bool__(self):\n        \"\"\"Returns True if :attr:`status_code` is less than 400.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code, is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\n        return self.ok\n\n    def __nonzero__(self):\n        \"\"\"Returns True if :attr:`status_code` is less than 400.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code, is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\n        return self.ok\n\n    def __iter__(self):\n        \"\"\"Allows you to use a response as an iterator.\"\"\"\n        return self.iter_content(128)\n\n    @property\n    def ok(self):\n        \"\"\"Returns True if :attr:`status_code` is less than 400, False if not.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\n        try:\n            self.raise_for_status()\n        except HTTPError:\n            return False\n        return True\n\n    @property\n    def is_redirect(self):\n        \"\"\"True if this Response is a well-formed HTTP redirect that could have\n        been processed automatically (by :meth:`Session.resolve_redirects`).\n        \"\"\"\n        return \"location\" in self.headers and self.status_code in REDIRECT_STATI\n\n    @property\n    def is_permanent_redirect(self):\n        \"\"\"True if this Response one of the permanent versions of redirect.\"\"\"\n        return \"location\" in self.headers and self.status_code in (\n            codes.moved_permanently,\n            codes.permanent_redirect,\n        )\n\n    @property\n    def next(self):\n        \"\"\"Returns a PreparedRequest for the next request in a redirect chain, if there is one.\"\"\"\n        return self._next\n\n    @property\n    def apparent_encoding(self):\n"
+      }
+    ]
+  },
+  "final_context": "-----Entities-----\nid|entity|description|number of relationships\n722|RESPONSE.OK|Property method `Response.ok` is defined here. It calls `self.raise_for_status()`, returns `False` when `HTTPError` is caught, and otherwise returns `True`; its documentation states that status codes below 400 are considered successful.|5\n1256|TEST_HTTP_ERROR|The visible test function `test_http_error` constructs `requests.exceptions.HTTPError` instances and `requests.Response` instances, then asserts response attachment, falsy absence of a response, and preservation of the message string. Its owning class is not visible in this chunk.|3\n146|RESPONSE.STATUS_CODE|The response attribute expression `r.status_code` is explicitly referenced and documented as returning numeric HTTP status codes such as `200` and `404`; the receiver's concrete class is not established by this chunk.|4\n719|RESPONSE.__BOOL__|Method `Response.__bool__` is defined here. It returns `self.ok`, whose documented contract is truth for status codes below 400 rather than specifically status code 200.|2\n1441|TESTTESTSERVER.TEST_BASIC_RESPONSE|\"The test method `TestTestServer.test_basic_response`; creates a basic response server and asserts an empty HTTP response with status 200 and `Content-Length` equal to `\"\"0\"\"`.\"|3\n1440|TESTTESTSERVER.TEST_TEXT_RESPONSE|The test method `TestTestServer.test_text_response`; creates a text response server with an HTTP 200 response and asserts the returned status, body, and `Content-Length` header.|3\n720|RESPONSE.__NONZERO__|Method `Response.__nonzero__` is defined here and returns `self.ok` with the same documented below-400 status contract as `Response.__bool__`.|2\n1231|TEST_RESPONSE_IS_ITERABLE|The test function `test_response_is_iterable` is defined here. It assigns a `StringIO` object to `r.raw`, overrides its `read` method, and asserts that `next(iter(r))` produces a value.|5\n1313|IS_REDIRECT|`is_redirect` is explicitly read from response objects in assertions such as `assert r1.is_redirect`; the response class and attribute definition are not visible.|1\n1195|STATUS_CODE|References the unresolved response attribute `status_code` in assertions such as `post1.status_code == 200`; the response class is not visible.|4\n1060|RESPONSE_HANDLER|`RESPONSE_HANDLER` is defined as the nested function `response_handler(sock)`. It processes incoming socket content by calling `consume_socket_content(sock, timeout=0.5)`, consumes three requests, and sends HTTP responses in sequence. It first sends two `302` redirects with `Location` headers set to `/get#relevant-section` and `/final-url/`, followed by a final raw HTTP `200` response containing alternate-encoded bytes.|9\n19|RESPONSE.HEADERS|The value spelling `Response.headers` is explicitly referenced through `r.headers`; the example reads headers received from the server, and its concrete definition is not visible here.|5\n1230|TEST_EMPTY_RESPONSE_HAS_CONTENT_NONE|The test function `test_empty_response_has_content_none` is defined here. It constructs `requests.Response()` and asserts `r.content is None`.|1\n1196|OK|References the unresolved response attribute `ok` in assertions `not r.ok`; the response class is not visible.|2\n1324|TEST_RESPONSE_ITER_LINES_REENTRANT|The exact xfailed test method `test_response_iter_lines_reentrant(self, httpbin)` is defined here. Its documentation says `Response.iter_lines()` is not reentrant safe; it asserts a second iteration would leave three lines.|6\n34|REQUESTS.RESPONSE|\"`REQUESTS.RESPONSE` refers to the externally defined `requests.Response` class used to represent HTTP responses. It is documented as the return type for request functions, HTTP verb methods, `send`, and `build_response`, and appears in qualified documentation references for response attributes and methods such as `Response.raise_for_status` and `Response.iter_lines`. The class is also used in examples showing representations such as `<Response [200]>`.\n\nWithin the referenced code and tests, `requests.Response` is used in `isinstance` assertions and is explicitly instantiated, including when constructing responses for HTTP error assertions. Some documentation refers to the response class through `Response <requests.Response>`, while one implementation separately instantiates an unresolved `Response` symbol in the visible chunk. The actual definition and implementation of `requests.Response` are external and are not included in the available code.\"|27\n138|R.RAW|The response attribute explicitly referenced as `r.raw`; documented as exposing the raw socket response stream without decoding transfer encodings, and requiring `stream=True` in the request example.|2\n\n-----Relationships-----\nid|source|target|description|weight|links\n962|RESPONSE|RESPONSE.OK|DEFINES, class `Response` defines property method `ok`|10.0|1\n978|RESPONSE.OK|HTTPERROR|`RESPONSE.OK` is tested to ensure that it catches an `HTTPERROR` raised within the visible `try` block and returns `False`. The behavior specifically distinguishes the caught `HTTPERROR` case; no broader exception-handling behavior is demonstrated. The definition of `HTTPERROR` is external to the provided context.|16.0|1\n975|RESPONSE.__BOOL__|RESPONSE.OK|RETURNS, `Response.__bool__` returns `self.ok`; the property implementation is defined in this chunk|9.0|1\n976|RESPONSE.__NONZERO__|RESPONSE.OK|RETURNS, `Response.__nonzero__` returns `self.ok`; the property implementation is defined in this chunk|9.0|1\n977|RESPONSE.OK|RESPONSE.RAISE_FOR_STATUS|CALLS, `Response.ok` calls `self.raise_for_status()` before catching `HTTPError`; the receiver is the current `Response`, but the target method is not defined in this chunk|8.0|1\n\n-----Sources-----\nid|source|text\n48|src/requests/models.py:L635-L790|\"        hooks = hooks or []\n        for event in hooks:\n            self.register_hook(event, hooks[event])\n\n\nclass Response:\n    \"\"\"\"\"\"The :class:`Response <Response>` object, which contains a\n    server's response to an HTTP request.\n    \"\"\"\"\"\"\n\n    __attrs__ = [\n        \"\"_content\"\",\n        \"\"status_code\"\",\n        \"\"headers\"\",\n        \"\"url\"\",\n        \"\"history\"\",\n        \"\"encoding\"\",\n        \"\"reason\"\",\n        \"\"cookies\"\",\n        \"\"elapsed\"\",\n        \"\"request\"\",\n    ]\n\n    def __init__(self):\n        self._content = False\n        self._content_consumed = False\n        self._next = None\n\n        #: Integer Code of responded HTTP Status, e.g. 404 or 200.\n        self.status_code = None\n\n        #: Case-insensitive Dictionary of Response Headers.\n        #: For example, ``headers['content-encoding']`` will return the\n        #: value of a ``'Content-Encoding'`` response header.\n        self.headers = CaseInsensitiveDict()\n\n        #: File-like object representation of response (for advanced usage).\n        #: Use of ``raw`` requires that ``stream=True`` be set on the request.\n        #: This requirement does not apply for use internally to Requests.\n        self.raw = None\n\n        #: Final URL location of Response.\n        self.url = None\n\n        #: Encoding to decode with when accessing r.text.\n        self.encoding = None\n\n        #: A list of :class:`Response <Response>` objects from\n        #: the history of the Request. Any redirect responses will end\n        #: up here. The list is sorted from the oldest to the most recent request.\n        self.history = []\n\n        #: Textual reason of responded HTTP Status, e.g. \"\"Not Found\"\" or \"\"OK\"\".\n        self.reason = None\n\n        #: A CookieJar of Cookies the server sent back.\n        self.cookies = cookiejar_from_dict({})\n\n        #: The amount of time elapsed between sending the request\n        #: and the arrival of the response (as a timedelta).\n        #: This property specifically measures the time taken between sending\n        #: the first byte of the request and finishing parsing the headers. It\n        #: is therefore unaffected by consuming the response content or the\n        #: value of the ``stream`` keyword argument.\n        self.elapsed = datetime.timedelta(0)\n\n        #: The :class:`PreparedRequest <PreparedRequest>` object to which this\n        #: is a response.\n        self.request = None\n\n    def __enter__(self):\n        return self\n\n    def __exit__(self, *args):\n        self.close()\n\n    def __getstate__(self):\n        # Consume everything; accessing the content attribute makes\n        # sure the content has been fully read.\n        if not self._content_consumed:\n            self.content\n\n        return {attr: getattr(self, attr, None) for attr in self.__attrs__}\n\n    def __setstate__(self, state):\n        for name, value in state.items():\n            setattr(self, name, value)\n\n        # pickled objects do not have .raw\n        setattr(self, \"\"_content_consumed\"\", True)\n        setattr(self, \"\"raw\"\", None)\n\n    def __repr__(self):\n        return f\"\"<Response [{self.status_code}]>\"\"\n\n    def __bool__(self):\n        \"\"\"\"\"\"Returns True if :attr:`status_code` is less than 400.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code, is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\"\"\"\n        return self.ok\n\n    def __nonzero__(self):\n        \"\"\"\"\"\"Returns True if :attr:`status_code` is less than 400.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code, is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\"\"\"\n        return self.ok\n\n    def __iter__(self):\n        \"\"\"\"\"\"Allows you to use a response as an iterator.\"\"\"\"\"\"\n        return self.iter_content(128)\n\n    @property\n    def ok(self):\n        \"\"\"\"\"\"Returns True if :attr:`status_code` is less than 400, False if not.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\"\"\"\n        try:\n            self.raise_for_status()\n        except HTTPError:\n            return False\n        return True\n\n    @property\n    def is_redirect(self):\n        \"\"\"\"\"\"True if this Response is a well-formed HTTP redirect that could have\n        been processed automatically (by :meth:`Session.resolve_redirects`).\n        \"\"\"\"\"\"\n        return \"\"location\"\" in self.headers and self.status_code in REDIRECT_STATI\n\n    @property\n    def is_permanent_redirect(self):\n        \"\"\"\"\"\"True if this Response one of the permanent versions of redirect.\"\"\"\"\"\"\n        return \"\"location\"\" in self.headers and self.status_code in (\n            codes.moved_permanently,\n            codes.permanent_redirect,\n        )\n\n    @property\n    def next(self):\n        \"\"\"\"\"\"Returns a PreparedRequest for the next request in a redirect chain, if there is one.\"\"\"\"\"\"\n        return self._next\n\n    @property\n    def apparent_encoding(self):\n\"\n",
+  "final_tables": [
+    {
+      "name": "entities",
+      "columns": [
+        "id",
+        "entity",
+        "description",
+        "number of relationships"
+      ],
+      "rows": [
+        {
+          "id": "722",
+          "entity": "RESPONSE.OK",
+          "description": "Property method `Response.ok` is defined here. It calls `self.raise_for_status()`, returns `False` when `HTTPError` is caught, and otherwise returns `True`; its documentation states that status codes below 400 are considered successful.",
+          "number of relationships": "5"
+        },
+        {
+          "id": "1256",
+          "entity": "TEST_HTTP_ERROR",
+          "description": "The visible test function `test_http_error` constructs `requests.exceptions.HTTPError` instances and `requests.Response` instances, then asserts response attachment, falsy absence of a response, and preservation of the message string. Its owning class is not visible in this chunk.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "146",
+          "entity": "RESPONSE.STATUS_CODE",
+          "description": "The response attribute expression `r.status_code` is explicitly referenced and documented as returning numeric HTTP status codes such as `200` and `404`; the receiver's concrete class is not established by this chunk.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "719",
+          "entity": "RESPONSE.__BOOL__",
+          "description": "Method `Response.__bool__` is defined here. It returns `self.ok`, whose documented contract is truth for status codes below 400 rather than specifically status code 200.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "1441",
+          "entity": "TESTTESTSERVER.TEST_BASIC_RESPONSE",
+          "description": "The test method `TestTestServer.test_basic_response`; creates a basic response server and asserts an empty HTTP response with status 200 and `Content-Length` equal to `\"0\"`.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "1440",
+          "entity": "TESTTESTSERVER.TEST_TEXT_RESPONSE",
+          "description": "The test method `TestTestServer.test_text_response`; creates a text response server with an HTTP 200 response and asserts the returned status, body, and `Content-Length` header.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "720",
+          "entity": "RESPONSE.__NONZERO__",
+          "description": "Method `Response.__nonzero__` is defined here and returns `self.ok` with the same documented below-400 status contract as `Response.__bool__`.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "1231",
+          "entity": "TEST_RESPONSE_IS_ITERABLE",
+          "description": "The test function `test_response_is_iterable` is defined here. It assigns a `StringIO` object to `r.raw`, overrides its `read` method, and asserts that `next(iter(r))` produces a value.",
+          "number of relationships": "5"
+        },
+        {
+          "id": "1313",
+          "entity": "IS_REDIRECT",
+          "description": "`is_redirect` is explicitly read from response objects in assertions such as `assert r1.is_redirect`; the response class and attribute definition are not visible.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1195",
+          "entity": "STATUS_CODE",
+          "description": "References the unresolved response attribute `status_code` in assertions such as `post1.status_code == 200`; the response class is not visible.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "1060",
+          "entity": "RESPONSE_HANDLER",
+          "description": "`RESPONSE_HANDLER` is defined as the nested function `response_handler(sock)`. It processes incoming socket content by calling `consume_socket_content(sock, timeout=0.5)`, consumes three requests, and sends HTTP responses in sequence. It first sends two `302` redirects with `Location` headers set to `/get#relevant-section` and `/final-url/`, followed by a final raw HTTP `200` response containing alternate-encoded bytes.",
+          "number of relationships": "9"
+        },
+        {
+          "id": "19",
+          "entity": "RESPONSE.HEADERS",
+          "description": "The value spelling `Response.headers` is explicitly referenced through `r.headers`; the example reads headers received from the server, and its concrete definition is not visible here.",
+          "number of relationships": "5"
+        },
+        {
+          "id": "1230",
+          "entity": "TEST_EMPTY_RESPONSE_HAS_CONTENT_NONE",
+          "description": "The test function `test_empty_response_has_content_none` is defined here. It constructs `requests.Response()` and asserts `r.content is None`.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1196",
+          "entity": "OK",
+          "description": "References the unresolved response attribute `ok` in assertions `not r.ok`; the response class is not visible.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "1324",
+          "entity": "TEST_RESPONSE_ITER_LINES_REENTRANT",
+          "description": "The exact xfailed test method `test_response_iter_lines_reentrant(self, httpbin)` is defined here. Its documentation says `Response.iter_lines()` is not reentrant safe; it asserts a second iteration would leave three lines.",
+          "number of relationships": "6"
+        },
+        {
+          "id": "34",
+          "entity": "REQUESTS.RESPONSE",
+          "description": "`REQUESTS.RESPONSE` refers to the externally defined `requests.Response` class used to represent HTTP responses. It is documented as the return type for request functions, HTTP verb methods, `send`, and `build_response`, and appears in qualified documentation references for response attributes and methods such as `Response.raise_for_status` and `Response.iter_lines`. The class is also used in examples showing representations such as `<Response [200]>`.\n\nWithin the referenced code and tests, `requests.Response` is used in `isinstance` assertions and is explicitly instantiated, including when constructing responses for HTTP error assertions. Some documentation refers to the response class through `Response <requests.Response>`, while one implementation separately instantiates an unresolved `Response` symbol in the visible chunk. The actual definition and implementation of `requests.Response` are external and are not included in the available code.",
+          "number of relationships": "27"
+        },
+        {
+          "id": "138",
+          "entity": "R.RAW",
+          "description": "The response attribute explicitly referenced as `r.raw`; documented as exposing the raw socket response stream without decoding transfer encodings, and requiring `stream=True` in the request example.",
+          "number of relationships": "2"
+        }
+      ]
+    },
+    {
+      "name": "relationships",
+      "columns": [
+        "id",
+        "source",
+        "target",
+        "description",
+        "weight",
+        "links"
+      ],
+      "rows": [
+        {
+          "id": "962",
+          "source": "RESPONSE",
+          "target": "RESPONSE.OK",
+          "description": "DEFINES, class `Response` defines property method `ok`",
+          "weight": "10.0",
+          "links": "1"
+        },
+        {
+          "id": "978",
+          "source": "RESPONSE.OK",
+          "target": "HTTPERROR",
+          "description": "`RESPONSE.OK` is tested to ensure that it catches an `HTTPERROR` raised within the visible `try` block and returns `False`. The behavior specifically distinguishes the caught `HTTPERROR` case; no broader exception-handling behavior is demonstrated. The definition of `HTTPERROR` is external to the provided context.",
+          "weight": "16.0",
+          "links": "1"
+        },
+        {
+          "id": "975",
+          "source": "RESPONSE.__BOOL__",
+          "target": "RESPONSE.OK",
+          "description": "RETURNS, `Response.__bool__` returns `self.ok`; the property implementation is defined in this chunk",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "976",
+          "source": "RESPONSE.__NONZERO__",
+          "target": "RESPONSE.OK",
+          "description": "RETURNS, `Response.__nonzero__` returns `self.ok`; the property implementation is defined in this chunk",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "977",
+          "source": "RESPONSE.OK",
+          "target": "RESPONSE.RAISE_FOR_STATUS",
+          "description": "CALLS, `Response.ok` calls `self.raise_for_status()` before catching `HTTPError`; the receiver is the current `Response`, but the target method is not defined in this chunk",
+          "weight": "8.0",
+          "links": "1"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "columns": [
+        "id",
+        "source",
+        "text"
+      ],
+      "rows": [
+        {
+          "id": "48",
+          "text": "        hooks = hooks or []\n        for event in hooks:\n            self.register_hook(event, hooks[event])\n\n\nclass Response:\n    \"\"\"The :class:`Response <Response>` object, which contains a\n    server's response to an HTTP request.\n    \"\"\"\n\n    __attrs__ = [\n        \"_content\",\n        \"status_code\",\n        \"headers\",\n        \"url\",\n        \"history\",\n        \"encoding\",\n        \"reason\",\n        \"cookies\",\n        \"elapsed\",\n        \"request\",\n    ]\n\n    def __init__(self):\n        self._content = False\n        self._content_consumed = False\n        self._next = None\n\n        #: Integer Code of responded HTTP Status, e.g. 404 or 200.\n        self.status_code = None\n\n        #: Case-insensitive Dictionary of Response Headers.\n        #: For example, ``headers['content-encoding']`` will return the\n        #: value of a ``'Content-Encoding'`` response header.\n        self.headers = CaseInsensitiveDict()\n\n        #: File-like object representation of response (for advanced usage).\n        #: Use of ``raw`` requires that ``stream=True`` be set on the request.\n        #: This requirement does not apply for use internally to Requests.\n        self.raw = None\n\n        #: Final URL location of Response.\n        self.url = None\n\n        #: Encoding to decode with when accessing r.text.\n        self.encoding = None\n\n        #: A list of :class:`Response <Response>` objects from\n        #: the history of the Request. Any redirect responses will end\n        #: up here. The list is sorted from the oldest to the most recent request.\n        self.history = []\n\n        #: Textual reason of responded HTTP Status, e.g. \"Not Found\" or \"OK\".\n        self.reason = None\n\n        #: A CookieJar of Cookies the server sent back.\n        self.cookies = cookiejar_from_dict({})\n\n        #: The amount of time elapsed between sending the request\n        #: and the arrival of the response (as a timedelta).\n        #: This property specifically measures the time taken between sending\n        #: the first byte of the request and finishing parsing the headers. It\n        #: is therefore unaffected by consuming the response content or the\n        #: value of the ``stream`` keyword argument.\n        self.elapsed = datetime.timedelta(0)\n\n        #: The :class:`PreparedRequest <PreparedRequest>` object to which this\n        #: is a response.\n        self.request = None\n\n    def __enter__(self):\n        return self\n\n    def __exit__(self, *args):\n        self.close()\n\n    def __getstate__(self):\n        # Consume everything; accessing the content attribute makes\n        # sure the content has been fully read.\n        if not self._content_consumed:\n            self.content\n\n        return {attr: getattr(self, attr, None) for attr in self.__attrs__}\n\n    def __setstate__(self, state):\n        for name, value in state.items():\n            setattr(self, name, value)\n\n        # pickled objects do not have .raw\n        setattr(self, \"_content_consumed\", True)\n        setattr(self, \"raw\", None)\n\n    def __repr__(self):\n        return f\"<Response [{self.status_code}]>\"\n\n    def __bool__(self):\n        \"\"\"Returns True if :attr:`status_code` is less than 400.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code, is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\n        return self.ok\n\n    def __nonzero__(self):\n        \"\"\"Returns True if :attr:`status_code` is less than 400.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code, is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\n        return self.ok\n\n    def __iter__(self):\n        \"\"\"Allows you to use a response as an iterator.\"\"\"\n        return self.iter_content(128)\n\n    @property\n    def ok(self):\n        \"\"\"Returns True if :attr:`status_code` is less than 400, False if not.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\n        try:\n            self.raise_for_status()\n        except HTTPError:\n            return False\n        return True\n\n    @property\n    def is_redirect(self):\n        \"\"\"True if this Response is a well-formed HTTP redirect that could have\n        been processed automatically (by :meth:`Session.resolve_redirects`).\n        \"\"\"\n        return \"location\" in self.headers and self.status_code in REDIRECT_STATI\n\n    @property\n    def is_permanent_redirect(self):\n        \"\"\"True if this Response one of the permanent versions of redirect.\"\"\"\n        return \"location\" in self.headers and self.status_code in (\n            codes.moved_permanently,\n            codes.permanent_redirect,\n        )\n\n    @property\n    def next(self):\n        \"\"\"Returns a PreparedRequest for the next request in a redirect chain, if there is one.\"\"\"\n        return self._next\n\n    @property\n    def apparent_encoding(self):\n",
+          "source": "src/requests/models.py:L635-L790"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "short_id": "48",
+      "text_unit_id": "c2595a0671c939e229a84e1dcd2321cd3887b1ffe40c2ac840acc8dfb42c7714737e97f632be571e79735c34c1df7dbc3afdba1fc7237c316c18c49240a9e8d7",
+      "id": "af91d526981fde7ba83847cc4e6b45e887780b5d0f8afaba004468b77b9cfffa",
+      "title": "src/requests/models.py:L635-L790",
+      "path": "src/requests/models.py",
+      "start_line": 635,
+      "end_line": 790,
+      "tokens": 1194,
+      "text_sha256": "5c17533c8622760bb0698ad8433f5d83202f1c33b1cdc42a06910b6cc092c938",
+      "ms_text_unit_id": "c2595a0671c939e229a84e1dcd2321cd3887b1ffe40c2ac840acc8dfb42c7714737e97f632be571e79735c34c1df7dbc3afdba1fc7237c316c18c49240a9e8d7"
+    }
+  ],
+  "raw_context_tokens": 2479,
+  "final_context_tokens": 2520,
+  "source_text_tokens": 1194,
+  "source_chunks": 1,
+  "retrieval_compute_seconds": 0.009936874732375145,
+  "adaptation_seconds": 0.003161875531077385,
+  "empty_reason": null,
+  "community_level": 2,
+  "dropped_tail_rows": 0
+}

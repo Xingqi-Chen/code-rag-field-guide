@@ -1,101 +1,72 @@
-# 代码提示词实验：真实中断与恢复记录
+# 代码提示词＋实体类型：已完成结果与复算
 
-**当前状态：1147已按新许可恢复，社区报告继续生成。** 用户2026-10-14 01:51:30 UTC明确批准已复核的四反斜线修复及本轮后续类似确定、最小纯JSON格式处理。原schema必须通过；文字语义／字段值、原回复、缓存及usage保留，完整响应不重发；歧义、缺字段、类型或语义变更排除。[用户授权](json-format-authorization.json)、[实际配置](json-format-amendment.json)、[启动前独立复核](json-format-resume-review.json)、[1147逐字符差异](json-format-repairs/event-1147.json)及[实际恢复](json-format-progress.json)已保存。01:58:06 UTC实际应用，1,138份生成缓存和134向量复用，累计缓存命中6,000；1148新请求随后成功。尚无新Local评分。
+固定Requests快照、114块、20题及gold，Microsoft GraphRAG v3.3.0。在线索引于2026-10-14 02:42:38 UTC完成；80份新Local上下文已离线构建，与320份未改动基线合并为400行评分。**新配置改善Local覆盖，仍低于hybrid；16000档MRR和Recall@5更好。** 可先读[主报告](../../../../docs/report.md)。
 
-此前01:44:55 UTC收到第1147次完整HTTP200回复，但字符串内引号使JSON无效；输入3,904／输出1,147 token已知。前171份报告可用（含1027及1091尾逗号处理），第172份当时仅通过传输／内容完整性验证。旧尾逗号许可未覆盖该错误，原暂停证据保留。
+| 必要源码证据覆盖，15道可评分test | 4000 | 8000 | 12000 | 16000 |
+| --- | ---: | ---: | ---: | ---: |
+| BM25 | 35.3% | 43.7% | 64.3% | 69.3% |
+| hybrid | 42.9% | 56.3% | 71.0% | 77.9% |
+| Basic | 35.8% | 55.8% | 57.4% | 57.4% |
+| Local：默认抽取 | 5.6% | 21.0% | 21.0% | 23.2% |
+| Local：代码提示词＋实体类型 | 19.0% | 42.2% | 53.8% | 55.4% |
 
-[第13份中断快照](execution-interrupted-13.json)、[完整原文与精确候选](schema-1147-diagnosis.json)、[独立复核](schema-1147-review.json)和[离线验证日志](verification-13.json)已保存。候选仅在单个代码片段的4个引号前各插入一个反斜线；解析后仍保留原文`urljoin(httpbin_url, ""/"".join(suffix))`，不把双重引号改成正确源码。原schema和官方结构解析通过；该诊断保留批准前状态，随后按上文新授权实际恢复，未修改原cache／usage或重发。离线检查：`python3 research/pilot/diagnose_code_prompt_quotes.py --check`。
+16000档新Local MRR为0.618889、Recall@5为0.537778；hybrid为0.527906、0.484444。前排优势不等于找全。新Local与hybrid的按16道test平均的实际源码量约7398／14666 token，固定上限不是等量原文。覆盖80%行与100%行口径在全部400行得到相同结果；Q19无gold不计召回，4道dev单列。不是回答正确率。
 
-以下保留此前尾逗号授权及恢复历史。
+## 阅读顺序
 
-**此前状态：本轮纯JSON尾逗号处理已获准，1091恢复成功。** 用户2026-10-14 01:27:36 UTC明确允许后续同类错误无需逐次确认；只删除字符串外、下一非空白字符为对象／数组闭括号的逗号，原schema及字符串逐字校验必须通过。原始完整回复不重发、不改写，逐条保存原文、候选、字符偏移和usage。其他JSON或语义错误仍停止，预算和瞬态重试规则不变。[授权](json-tail-comma-authorization.json)、[实际配置](json-tail-comma-amendment.json)、[独立启动复核](json-tail-comma-resume-review.json)、[1091逐条差异](json-syntax-repairs/event-1091.json)及[实际继续证据](json-tail-comma-progress.json)均已保存。1,082份生成缓存与134向量复用，累计缓存命中4,862；1092作为不同请求随后成功。尚无新Local评分。
+- [完成状态](evaluation-completion.json)：索引快照与后来离线评分的独立完成记录。`execution.json`的`evaluation_complete:false`是**索引完成时的快照**，保持原样；不是当前评分未完成。
+- [逐题分数](scores.json)、[配对／题型／成本汇总](analysis.json)：400行原始评分，60个方法／预算／split汇总；对比不改gold。
+- [80份实际材料](contexts)、[检索清单](retrieval.json)：原官方上下文、实际序列化文本、来源行号、token及耗时。外部调用0，所有`dropped_tail_rows=0`。
+- [实体](index/entities.json)、[关系](index/relationships.json)、[社区](index/communities.json)、[报告分页清单](index/community_reports.json)：不删字段或记录；大表分页有逐页及整表逻辑hash，使用`index_artifacts.read_table`重组验证。
+- [索引规模](index-summary.json)、[运行账本](execution.json)、[共享向量缓存hash](imported-embedding-cache.json)、[源码来源](provenance.json)。公开产物不含权重、向量缓存、凭据或完整第三方仓库。
+- [固定案例图层检查](fixed-graph-review.json)、[Local最终链路检查](fixed-local-review.json)：Q01仍缺实现，Q07补到Session中段，Q13补到部分测试与消费者；G02只检查图／报告，未生成新答案。
+- [按hash选的样本](quality-sample.json)、[新图逐条AI审阅](quality-review-code-prompt.json)、[旧图逐条AI审阅](quality-review-default.json)：各20实体＋20关系，不是全图精度或人类盲评。
+- [抽取见证](extraction-witnesses.json)、[初抽／补抽拼接诊断](concatenation-diagnostics.json)：分别解析与官方拼接解析的记录差，未据此修图／重评。
+- [最终独立审计](final-evaluation-review.json)、[原报告格式审计](report-format-audit.json)：数值、来源、预算、运行边界及官方宽松解析的局限。
 
-此前2026-10-14 01:22:28 UTC，第116份社区报告回复含4个对象末尾多余逗号，未通过原版JSON解析而停止。前115份可用，其中1027使用了一次已获准格式例外；当时该许可不覆盖1091。
+## 实际成本与不确定性
 
-[第12份停止快照](execution-interrupted-12.json)、[1091完整原文与精确候选](schema-1091-diagnosis.json)及[独立复核](schema-1091-review.json)已保存。仅删除4个字符串外逗号后，原schema通过、全部字符串与5条findings保留；诊断文件保留批准前状态，后续执行以上述统一授权和差异记录为准。1091 HTTP200、finish stop，已知provider输入4,252／输出1,029 token，未把格式失败记为未知用量。可离线运行`python3 research/pilot/diagnose_code_prompt_schema.py --event 1091 --check`。
+1628实体、2891关系、372份报告；110/114块有实体关联。1349个生成预算预留中有2个从未派发（195、675），因此实际生成尝试1347次。初抽119、补抽114、描述740、报告374；有效初抽／补抽各114，描述738、报告372。另103批新embedding。缓存命中8434次不能加成新调用。
 
-此前用户于2026-10-14 01:03:05 UTC明确批准仅1027删除4个对象末尾逗号，按原schema验证后继续，不重发、不做其他JSON或语义修复。01:10:51 UTC在读取精确缓存时成功应用；原response／cache哈希和usage均保持不变，1028作为不同的新报告请求随后成功。1,018份原生成回复及134向量核验复用，累计缓存命中3,780。[授权](schema-1027-authorization.json)、[实际配置](schema-1027-amendment.json)、[恢复前独立复核](schema-1027-resume-review.json)及[实际继续证据](schema-1027-progress.json)保留全过程。
+已知生成usage为4134333输入、1132190输出token；事件75、96、107、108、109、272、623、1207、1248缺模型usage，保持未知。新embedding451878 token，加此前206333累计658211；按记录单价估计累计$0.08556743，非账单。生成费用未知。
 
-此前2026-10-14 00:55:31 UTC，第1,027次HTTP200完整回复因4个对象末尾多余逗号未通过原版JSON解析而停止。前51份报告格式有效，第52份当时只有传输／内容完整性验证通过；不能把52次成功HTTP调用写成52份有效报告。
+已记录请求时间合计12384.287秒（206.40分钟），554耗时缺失；workflow累计13036.603秒含554未知停机区间，不是精确计算耗时。已识别停止／恢复间隔35541.479秒，首次启动至完成48579.016秒（13.49小时）；中断、诊断与等待不能全部归为算法或授权等待。输出31645402字节、其中向量26929820；新配置另启用435918字节原始图快照用于审计，默认未单列此项。内存按用户要求未采样。
 
-[中断账本](execution-interrupted-11.json)保留1,027条生成预算记录：195和675未派发，实际服务尝试1,025次；七次原模型用量未知继续保留。图表已生成1,628实体、2,891关系、372个跨层社区。新embedding调用仍为0。
+新配置是在看过旧失败后设计；提示词与实体类型一起变更，没有新独立保留题，没有等实际源码预算／随机邻居消融。运行时限60→120秒、取消总截止、临时重试与1200→1600次数上限变更均披露。因此只报告本次配置差异，不宣称提示词或图的独立因果收益。
 
-[原回复与候选修复](schema-1027-diagnosis.json)仅作离线审查：删除原字符串外、对象闭括号前的4个逗号后，原版schema通过，全部5条findings保留；原回复、缓存、账本和在线解析器未改，没有新模型调用。[独立复核](schema-1027-review.json)检查字符串内容逐字不变。此错误不属于既有临时网络重试许可；候选诊断文件保留批准前状态，随后获得上述单次例外许可，未重发成功请求。可离线运行`python3 research/pilot/diagnose_code_prompt_schema.py --check`复核公开候选。
+## 格式与恢复记录
 
-此前00:24:02 UTC用户批准超时、连接中断、429和5xx共享每请求最多两次额外尝试，遵守Retry-After；00:31:24批准生成预算记录上限提高至1,600，其余预算不变。623→624在4.372秒成功，615份成功缓存复用；675为从未发送的额度检查点，切换时再复用666份成功回复。
+三份不同完整报告做了获授权的最小纯JSON修复，均从原缓存副本处理，原响应／缓存／usage不变、无完整响应重发：
 
-[统一重试授权](transient-retry-authorization.json)、[实际切换](transient-retry-amendment.json)、[成功关联](transient-recovery-progress.json)、[独立复核](transient-retry-review.json)及[额度变更](generation-cap-amendment.json)记录此前恢复状态。[原503诊断](http503-diagnosis.json)和[暂停快照](execution-interrupted-09.json)不覆盖。之前准备的503单独恢复入口未执行，实际使用统一策略入口。下面是此前停机与恢复的历史事实。
+| 回复事件 | 实际处理 | 审计 |
+| --- | --- | --- |
+| 1027 | 删除4个字符串外尾逗号 | [原文及精确差异](schema-1027-diagnosis.json)、[单次授权](schema-1027-amendment.json) |
+| 1091 | 删除字符串外尾逗号 | [诊断](schema-1091-diagnosis.json)、[运行范围政策](json-tail-comma-amendment.json)、[实际记录](json-syntax-repairs/event-1091.json) |
+| 1147 | 插入4个JSON转义反斜线，保留原有双重引号代码文本 | [原文及精确候选](schema-1147-diagnosis.json)、[后续同类最小格式政策](json-format-amendment.json)、[实际记录](json-format-repairs/event-1147.json) |
 
-第554次因执行通道丢失而未写回账本，但HTTP 200完整回复已经落盘。恢复时离线验证547份成功回复和134个向量，554不重发；之后成功推进555–622。[恢复证据](host-recovery-554.json)记录原账本状态与未知耗时。准确的进程停止时刻未捕获，累计workflow时间含未知停机间隔，不是精确有效运行时间。
+三者分别被恢复流程从缓存应用5／4／3次，不是12个不同回复。允许规则只处理确定的最小格式问题，通过原schema、拒绝重复字段和语义修改；不修函数名或代码含义。[独立恢复审阅](json-format-resume-review.json)
 
-更早的HTTP 520已经获准恢复：273与272请求哈希一致，2.906秒成功，265份缓存复用。[授权](http520-authorization.json)、[配置生效](http520-retry-amendment.json)及[273成功关联](http520-recovery-progress.json)单独保存。以下保留历史诊断与阶段快照。
+另有4份未经修复的报告被官方宽松解析接受：1062有同值重复`explanation`；1253有不同值重复`explanation`，后值覆盖前值；1117有空字段名、1292有额外`source`字段，模型解析忽略额外字段。372份中370过原请求schema、368过严格唯一键schema；默认84份三种口径均通过。它们不计入3条修复，不补修或重跑；详见[全量格式审计](report-format-audit.json)。格式通过也不证明内容正确。
 
-[HTTP 520诊断](http520-diagnosis.json)、[本次中断账本](execution-interrupted-07.json)及[恢复入口独立复核](http520-recovery-review.json)保留证据。272条预算记录中，195是未发送的行政占位，实际服务尝试271次；未知模型用量为75／96／107／108／109／272六条。文件编号跟随恢复次数，06是取消总截止前的行政停点，单独保存在[切换记录](deadline-removal-progress.json)。
+13次中断快照`execution-interrupted*.json`、各次amendment／recovery及[过程日志](../../../process.md)保留历史。第554次完整回复离线验证后复用，实际停机端点未知；1207、1248连接错误在既定有界重试规则内恢复。历史诊断中的“未批准”“未完成”或候选`applied:false`描述的是当时状态，不覆盖本页最终状态。
 
-总截止已于15:44 UTC按用户指令取消，单次120秒及累计预算不变。以下表格保留更早第109次停止时的历史快照。
+## 不调用模型的复算
 
-| 项目 | 当前事实 |
-| --- | --- |
-| 开始 | 2026-10-13 13:12:59 UTC |
-| 第一次中断 | 13:37:08 UTC；第75次60.149秒超时，74次成功 |
-| 明确授权与恢复 | 13:55:34 UTC获准；13:56:18 UTC重发为第76次，34.485秒后成功；复用74份缓存 |
-| 第二次中断 | 第96次60.158秒超时，于14:06:08 UTC停止；恢复阶段共20次成功，含第76次 |
-| 第二次明确授权与恢复 | 14:25:48 UTC获准仅重发96一次；第97次于14:26:31 UTC发出，22.563秒后成功；复用94份缓存 |
-| 第三次中断 | 第107次60.112秒超时，于14:31:29 UTC停止；本次恢复共10次成功，含第97次 |
-| 新授权下的两次重试 | 5秒退避后108超时60.231秒；15秒退避后109超时60.273秒；没有第110次 |
-| 生成尝试 | 109次：104次成功、5次未知；成功部分为52次初抽＋52次补抽，覆盖52／114块 |
-| 已知provider输入／输出 | 430,063／220,508 token；不含未知75、96、107、108、109 |
-| 实际workflow／已结束等待 | 合计2458.104秒（约40分58秒）／3618.959秒（约60分19秒）；当前等待尚未结束，另记 |
-| 成功缓存复用 | 四次恢复分别74、94、104、104份，累计376次；并非376份不同回复 |
-| 新embedding | 0次；仍处于逐块抽取 |
-| 累计embedding预留 | 此前206,333 token，估算$0.02682329；不是发票 |
-| 新图／检索 | 未完成；没有80份新Local上下文或新分数 |
-| 当前失败源码块 | `src/requests/sessions.py:L1-L166` 初抽 |
-
-[冻结计划与方法](../../code-prompt/README.md)解释本轮改动、保持不变的条件、模型与预算边界。开始前冻结提交为 `7e0c04fdd577ed346e12e4c5170e0106f224d09e`。这是已知旧结果之后的探索性验证，不是盲测。
-
-## 可检查材料
-
-- [取消总截止的用户指令记录](deadline-removal-request.json)、[实际配置切换](deadline-removal-applied.json)及[独立复核](deadline-removal-review.json)：仅移除总时限，保留累计预算和单次时限。
-- [120秒配置切换](timeout-amendment-120.json)、[启动前独立复核](timeout-amendment-review.json)和[第110次成功证据](recovery-progress-120.json)：保留此前五次未知和全量缓存；没有重置累计预算或截止。
-
-- [第一次中断账本](execution-interrupted.json)与[诊断](timeout-diagnosis.json)：保留原75条快照，未覆盖。
-- [用户单次授权](retry-authorization.json)、[75→76恢复关联](recovery-progress.json)、[首次恢复复核](recovery-review.json)。
-- [第二次中断账本](execution-interrupted-02.json)与[94份缓存及新未知请求诊断](timeout-diagnosis-02.json)：包含96条累计事件及两次未知用量；所有预算继续累计。
-- [第96次恢复入口](../../recover_code_prompt_timeout96.py)及[执行前独立复核](recovery-review-02.json)：随后收到[第二次单次授权](retry-authorization-02.json)，[96→97恢复关联](recovery-progress-02.json)保留实际成功和累计缓存命中。
-- [第三次中断账本](execution-interrupted-03.json)与[104份缓存及新未知请求诊断](timeout-diagnosis-03.json)：包含107条累计事件，保留三次未知和两条已使用授权。
-- [第107次最初拟恢复入口](../../recover_code_prompt_timeout107.py)及[独立复核](recovery-review-03.json)：此文件保留新授权到达前的只读复核；后续实际恢复改由下述有界控制器执行。
-- [本次离线验证日志](verification-03.json)：实际命令、退出码和输出；核对中断账本、原479份结果、公开文件及链接／隐私模式。
-- [本轮后续超时授权](timeout-retry-authorization.json)与[恢复控制器](../../resume_code_prompt_bounded.py)：每个相同请求最多两次额外重试，5／15秒退避；鉴权、权限、预算及非超时错误不重试。
-- [有限重试启动前独立复核](bounded-retry-review.json)、[第108次快照](execution-interrupted-04.json)和[第109次累计快照](execution-interrupted-05.json)：保留107→108→109精确请求关联、退避、实际时刻及未知用量。
-- [重试用尽后独立终审](retry-exhaustion-review.json)与[实际离线检查日志](verification-05.json)：核对五份快照、用量、计时、24项边界测试及公开文件检查。
-- [最初超时只读诊断](timeout-analysis.json)与[重试用尽后的诊断](timeout-exhaustion-diagnosis.json)：均为本机60秒硬定时器触发；没有保存到provider错误响应或部分流，无法判断具体卡在连接、等待首字节或接收响应阶段。这些历史诊断写成时，120秒尚是建议；现已按上文切换。
-- [运行前检查](preflight.json)、[配置](effective-config.json)、[依赖版本](environment.json)、[启动边界复核](preflight-review.json)。
-- [离线后处理复核](postprocessing-review.json)：80格／400行fixture、缓存验证与空图边界检查；是代码验证，**不是新实验分数**。
-- [旧图固定抽样](quality-sample-default.json)及[独立AI审阅](quality-review-default.json)：20个实体和20条关系，17／18条主要陈述受来源支持，另3／2条部分支持。精确代码符号另计，不能用事实支持率代替检索效果或外推全图精度。新图样本尚未产生。
-
-第107、108、109次均没有完整响应，远端完成与费用仍未知。120秒配置于15:10:19 UTC生效，第110次是原107的一次明确特别机会；其27.091秒成功低于原60秒上限，不能证明修改时限使它成功。其他新逻辑请求仍最多两次额外超时重试，5／15秒退避；累计预算不变；原2026-10-13 **16:12:59 UTC** 总截止随后按用户15:30 UTC指令取消。最终比较须披露混合时限及重试策略，不能说仅提示词／实体类型发生变化。
-
-目前**既不能支持，也不能否定“代码专用提示词可改善效果”**，更不能证明它是此前表现差的主要原因。旧默认版结论仍只适用于旧配置。
-
-离线复核：`python3 research/pilot/verify_code_prompt.py`。它核对冻结文件、五个中断快照、四条已获准恢复关联、重试上限、累计用量和40条旧图抽样，不调用模型或声称新检索结果。
-
-## 抽取已完成的四个固定案例
-
-[原文与8份完整新响应](preindex-fixed-witnesses.json)、[独立审阅的14条依据](preindex-witness-review.json)及[官方解析器交叉复核](preindex-official-parser-check.json)已完成。具体方法／链段有所补回，同时有截断边界之外的陈述；四块各漏掉补抽首条实体。这些不是最终图或Local结果，也不用于修改提示词和评分。
-
-安装固定依赖后，可完全离线复核这四块的官方解析计数：
+在仓库根目录执行，以下仅需Python标准库：
 
 ```bash
-.cache/graphrag-venv/bin/python research/pilot/diagnose_code_prompt.py witness-parse-check --check
+python3 research/pilot/verify_code_prompt.py
+python3 research/pilot/verify_code_prompt_completed.py
+python3 research/pilot/evaluate_code_prompt.py check
+python3 research/pilot/analyze_code_prompt.py --check
+python3 research/pilot/complete_code_prompt_evaluation.py --check
+python3 scripts/validate.py
 ```
 
+如已安装[固定运行环境](../../full-run.md)，可以额外按真实`o200k_base`重数token：
 
-## 固定四例的实际图记录审查
+```bash
+.cache/graphrag-venv/bin/python research/pilot/evaluate_code_prompt.py check --tokens
+```
 
-[独立审阅](fixed-graph-review.json)检查图表稳定快照，包含51条最终实体／关系及25条必要原始候选、源码短引和可复算语义哈希。具体方法与header语义改善进入图，同时仍有同名身份混合、类型／定义来源保留不足和部分关系来源不足；有些片段外推获得相邻来源补证，逐条区分。它没有查看新Local分数，也不估计全图精度。372社区包含全部层级，未改变官方社区配置或只选局部层级省去报告。
-
-[离线评分准备复核](scoring-readiness-review.json)验证400行对照和15条可评分test的代码路径，修正了完成验证器及缺失耗时标签；内存fixture不等于真实80份新上下文已经完成。
-
-
-大型公开图表将按页保存：主JSON列出有序分片、逐片hash与整表逻辑hash，不省略字段或记录；`index_artifacts.read_table`验证后重组原顺序。分页只涉及公开文件组织，不影响私有parquet索引、检索参数或评分。当前尚未导出完成索引，分页往返及篡改拒绝测试已通过。
+离线检索实际命令是`evaluate_code_prompt.py retrieve`，使用既有私有parquet索引和134份缓存向量；它拒绝覆盖已有contexts，并有禁止网络审计钩子。已有80份结果无需重新检索即可复算评分。在线建图命令及授权边界见[执行前冻结包](../../code-prompt/README.md)；远端随机生成不保证重跑图完全相同，不能把评分可复算称为生成过程逐字确定。

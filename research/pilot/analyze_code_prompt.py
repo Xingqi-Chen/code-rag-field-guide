@@ -40,6 +40,8 @@ def run_summary(base):
             'missing_supervised_timing_sequences':[e['sequence'] for e in subset if 'elapsed_seconds' not in e]}
     return {'index_tables':index['tables'],'entity_types':index['entity_type_counts'],
         'output_bytes':index['all_output_file_bytes'],'vector_bytes':index['vector_store_bytes'],
+        'raw_graph_snapshot_bytes':index.get('raw_graph_snapshot_bytes'),
+        'storage_note':'Code-prompt enables raw graph snapshots for audit; its total output includes these bytes. Old published summary lacks this separate field; do not treat missing as a new measurement.',
         'budget_generation_reservations':execution['index_generation_attempts'],
         'physical_generation_attempts':sum(e['service']=='generation' for e in dispatched),
         'new_embedding_batches':sum(e['service']=='embedding' for e in dispatched),
@@ -63,6 +65,13 @@ def run_summary(base):
 
 def calculate():
     scores=read(OUT/'scores.json')
+    by_kind=[]
+    groups=sorted({(r['method'],r['budget'],r['kind']) for r in scores['rows'] if r['split']=='test'})
+    for method,budget,kind in groups:
+        group=[r for r in scores['rows'] if r['split']=='test' and (r['method'],r['budget'],r['kind'])==(method,budget,kind)]
+        values=[r['coverage80'] for r in group if r['coverage80'] is not None]
+        by_kind.append({'method':method,'budget':budget,'kind':kind,'questions':len(group),
+            'scorable_questions':len(values),'coverage80':statistics.mean(values) if values else None})
     paired=[]
     for budget in [4000,8000,12000,16000]:
         for baseline in ['bm25','hybrid','ms_basic','ms_local']:
@@ -79,6 +88,7 @@ def calculate():
         'source_sha256':{str(p.relative_to(HERE)):sha(p) for p in size_files},
         'runs':{'default':run_summary(BASE),'code_prompt':run_summary(OUT)},
         'test_aggregates':[r for r in scores['aggregates'] if r['split']=='test'],
+        'test_kind_aggregates':by_kind,
         'paired_test_counts':paired,'preselected_case_scores':cases,
         'offline_retrieval':{'contexts':80,'new_provider_calls':0,
             'elapsed_seconds':retrieval['elapsed_seconds'],'community_level':retrieval['community_level'],

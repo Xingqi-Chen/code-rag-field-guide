@@ -1,0 +1,377 @@
+{
+  "variant": "code-prompt",
+  "question_id": "Q09",
+  "method": "ms_local_code_prompt",
+  "budget": 4000,
+  "query": "During a cross-host redirect, trace the decision to remove an Authorization header and identify the condition for replacing auth from the environment.",
+  "upstream_raw_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n793|SHOULD_STRIP_AUTH|SHOULD_STRIP_AUTH is an explicitly referenced but unresolved callable used to determine whether authentication should be removed during HTTP redirects. It is invoked through a local receiver such as `s` or `self`, including calls like `s.should_strip_auth(old_uri, new_uri)` and `self.should_strip_auth(response.request.url, url)`, with pairs of source and destination HTTP/HTTPS URLs. In the available context, `s` is assigned from `requests.Session()`, but the runtime method binding and callable definition are not proven or visible.|6\n1289|TEST_AUTH_IS_RETAINED_FOR_REDIRECT_ON_HOST|Defines the test function `test_auth_is_retained_for_redirect_on_host(self, httpbin)`. It follows a same-host redirect with credentials and asserts the `Authorization` header is equal on the history request and final request.|2\n789|REBUILD_AUTH|The method `rebuild_auth(self, prepared_request, response)` is defined here. It removes `Authorization` when `self.should_strip_auth(...)` is true, then obtains netrc credentials when trusted environment settings provide them and applies them with `prepared_request.prepare_auth(...)`; the owning class is not visible.|6\n1288|TEST_AUTH_IS_STRIPPED_ON_HTTP_DOWNGRADE|Defines the test function `test_auth_is_stripped_on_http_downgrade(self, httpbin, httpbin_secure, httpbin_ca_bundle)`. It follows an HTTPS-to-HTTP redirect and asserts the redirecting request has `Authorization` while the final request does not.|4\n1036|TEST_DIGESTAUTH_401_COUNT_RESET_ON_REDIRECT|`test_digestauth_401_count_reset_on_redirect()` is defined here and documents a digest-authentication redirect scenario involving a successful authentication followed by a 302 redirect to another digest prompt; the visible chunk ends while defining response data, before any executable assertion or request call is shown.|3\n769|SESSIONREDIRECTMIXIN|`SessionRedirectMixin` is defined here to provide redirect-target decoding, authorization-stripping decisions, and a visibly incomplete `resolve_redirects` method.|2\n1290|TEST_SHOULD_STRIP_AUTH_HOST_CHANGE|Defines the test function `test_should_strip_auth_host_change(self)`. It creates a `requests.Session` and asserts `s.should_strip_auth(\"http://example.com/foo\", \"http://another.example.com/\")` is true for a host change.|2\n1118|S.RESOLVE_REDIRECTS|The attribute call `s.resolve_redirects(resp, prep_req)` is explicitly referenced; the receiver's concrete runtime class is not proven by this chunk.|1\n1057|REDIRECT_RESP_HANDLER|Defined here as the nested `def redirect_resp_handler(sock)`. It consumes an initial request, sends a 301 response with a `Location` containing `path`, records a second request in `redirect_request`, and sends a 200 response.|3\n1048|TEST_DIGESTAUTH_ONLY_ON_4XX|The exact spelling `test_digestauth_only_on_4xx` is defined here as a test documenting and asserting that a 200 response containing `WWW-Authenticate` does not cause a Digest authorization response.|4\n1385|REDIRECTSESSION|The class `RedirectSession` is defined here and inherits from `SessionRedirectMixin`; it stores redirect order, send calls, redirect limits, cookies, and environment trust state.|6\n1148|SESSION.HEADERS.UPDATE|SESSION.HEADERS.UPDATE refers to an explicit call to `session.headers.update({\"Proxy-Authorization\": proxy_auth_value})`. The call updates the headers of a locally created `requests.Session` instance by setting the `Proxy-Authorization` header to `proxy_auth_value`. The concrete implementation of the session's header-update method and the exact session class definition are not visible in the provided context.|1\n\n\n-----Relationships-----\nid|source|target|description|weight|links\n2125|TEST_AUTH_IS_RETAINED_FOR_REDIRECT_ON_HOST|HTTPBIN|CALLS, test_auth_is_retained_for_redirect_on_host invokes `httpbin(\"redirect/1\")` to construct the redirect URL.|9.0|1\n2109|TEST_AUTH_IS_RETAINED_FOR_REDIRECT_ON_HOST|REQUESTS.GET|CALLS, test_auth_is_retained_for_redirect_on_host invokes `requests.get(httpbin(\"redirect/1\"), auth=(\"user\", \"pass\"))`.|10.0|1\n1066|REBUILD_AUTH|SHOULD_STRIP_AUTH|CALLS, `rebuild_auth` calls `self.should_strip_auth(response.request.url, url)` when an `Authorization` header is present; the receiver-qualified callable is not defined in this chunk.|10.0|1\n2140|TEST_SHOULD_STRIP_AUTH_DEFAULT_PORT|SHOULD_STRIP_AUTH|CALLS, the test invokes `s.should_strip_auth(old_uri, new_uri)` and asserts it is false; `s` is locally assigned a session, but the concrete method owner is not proven.|9.0|1\n2126|TEST_SHOULD_STRIP_AUTH_HOST_CHANGE|SHOULD_STRIP_AUTH|CALLS, the test invokes `s.should_strip_auth(\"http://example.com/foo\", \"http://another.example.com/\")`; `s` is local and its runtime method binding is not proven beyond construction from `requests.Session()`.|9.0|1\n2127|TEST_SHOULD_STRIP_AUTH_HTTP_DOWNGRADE|SHOULD_STRIP_AUTH|CALLS, the test invokes `s.should_strip_auth(\"https://example.com/foo\", \"http://example.com/bar\")`; `s` is local and its runtime method binding is not proven beyond construction from `requests.Session()`.|9.0|1\n2128|TEST_SHOULD_STRIP_AUTH_HTTPS_UPGRADE|SHOULD_STRIP_AUTH|CALLS, the test invokes `s.should_strip_auth` for HTTP-to-HTTPS URL pairs, including standard and non-standard port cases; `s` is local and the runtime method binding is not proven.|9.0|1\n2137|TEST_SHOULD_STRIP_AUTH_PORT_CHANGE|SHOULD_STRIP_AUTH|CALLS, the test invokes `s.should_strip_auth(\"http://example.com:1234/foo\", \"https://example.com:4321/bar\")` and asserts a truthy result; `s` is locally assigned a session, but runtime binding is unresolved.|9.0|1\n\n\n-----Sources-----\nid|text\n93|        \"invalid_header\",\n        (\n            {\" foo\": \"bar\"},\n            {\"\\tfoo\": \"bar\"},\n            {\"    foo\": \"bar\"},\n            {\"foo\": \" bar\"},\n            {\"foo\": \"    bar\"},\n            {\"foo\": \"\\tbar\"},\n            {\" \": \"bar\"},\n        ),\n    )\n    def test_header_no_leading_space(self, httpbin, invalid_header):\n        \"\"\"Ensure headers containing leading whitespace raise\n        InvalidHeader Error before sending.\n        \"\"\"\n        with pytest.raises(InvalidHeader):\n            requests.get(httpbin(\"get\"), headers=invalid_header)\n\n    def test_header_with_subclass_types(self, httpbin):\n        \"\"\"If the subclasses does not behave *exactly* like\n        the base bytes/str classes, this is not supported.\n        This test is for backwards compatibility.\n        \"\"\"\n\n        class MyString(str):\n            pass\n\n        class MyBytes(bytes):\n            pass\n\n        r_str = requests.get(httpbin(\"get\"), headers={MyString(\"x-custom\"): \"myheader\"})\n        assert r_str.request.headers[\"x-custom\"] == \"myheader\"\n\n        r_bytes = requests.get(\n            httpbin(\"get\"), headers={MyBytes(b\"x-custom\"): b\"myheader\"}\n        )\n        assert r_bytes.request.headers[\"x-custom\"] == b\"myheader\"\n\n        r_mixed = requests.get(\n            httpbin(\"get\"), headers={MyString(\"x-custom\"): MyBytes(b\"myheader\")}\n        )\n        assert r_mixed.request.headers[\"x-custom\"] == b\"myheader\"\n\n    @pytest.mark.parametrize(\"files\", (\"foo\", b\"foo\", bytearray(b\"foo\")))\n    def test_can_send_objects_with_files(self, httpbin, files):\n        data = {\"a\": \"this is a string\"}\n        files = {\"b\": files}\n        r = requests.Request(\"POST\", httpbin(\"post\"), data=data, files=files)\n        p = r.prepare()\n        assert \"multipart/form-data\" in p.headers[\"Content-Type\"]\n\n    def test_can_send_file_object_with_non_string_filename(self, httpbin):\n        f = io.BytesIO()\n        f.name = 2\n        r = requests.Request(\"POST\", httpbin(\"post\"), files={\"f\": f})\n        p = r.prepare()\n\n        assert \"multipart/form-data\" in p.headers[\"Content-Type\"]\n\n    def test_autoset_header_values_are_native(self, httpbin):\n        data = \"this is a string\"\n        length = \"16\"\n        req = requests.Request(\"POST\", httpbin(\"post\"), data=data)\n        p = req.prepare()\n\n        assert p.headers[\"Content-Length\"] == length\n\n    def test_content_length_for_bytes_data(self, httpbin):\n        data = \"This is a string containing multi-byte UTF-8 ☃️\"\n        encoded_data = data.encode(\"utf-8\")\n        length = str(len(encoded_data))\n        req = requests.Request(\"POST\", httpbin(\"post\"), data=encoded_data)\n        p = req.prepare()\n\n        assert p.headers[\"Content-Length\"] == length\n\n    def test_content_length_for_string_data_counts_bytes(self, httpbin):\n        data = \"This is a string containing multi-byte UTF-8 ☃️\"\n        length = str(len(data.encode(\"utf-8\")))\n        req = requests.Request(\"POST\", httpbin(\"post\"), data=data)\n        p = req.prepare()\n\n        assert p.headers[\"Content-Length\"] == length\n\n    def test_nonhttp_schemes_dont_check_URLs(self):\n        test_urls = (\n            \"data:image/gif;base64,R0lGODlhAQABAHAAACH5BAUAAAAALAAAAAABAAEAAAICRAEAOw==\",\n            \"file:///etc/passwd\",\n            \"magnet:?xt=urn:btih:be08f00302bc2d1d3cfa3af02024fa647a271431\",\n        )\n        for test_url in test_urls:\n            req = requests.Request(\"GET\", test_url)\n            preq = req.prepare()\n            assert test_url == preq.url\n\n    def test_auth_is_stripped_on_http_downgrade(\n        self, httpbin, httpbin_secure, httpbin_ca_bundle\n    ):\n        r = requests.get(\n            httpbin_secure(\"redirect-to\"),\n            params={\"url\": httpbin(\"get\")},\n            auth=(\"user\", \"pass\"),\n            verify=httpbin_ca_bundle,\n        )\n        assert r.history[0].request.headers[\"Authorization\"]\n        assert \"Authorization\" not in r.request.headers\n\n    def test_auth_is_retained_for_redirect_on_host(self, httpbin):\n        r = requests.get(httpbin(\"redirect/1\"), auth=(\"user\", \"pass\"))\n        h1 = r.history[0].request.headers[\"Authorization\"]\n        h2 = r.request.headers[\"Authorization\"]\n\n        assert h1 == h2\n\n    def test_should_strip_auth_host_change(self):\n        s = requests.Session()\n        assert s.should_strip_auth(\n            \"http://example.com/foo\", \"http://another.example.com/\"\n        )\n\n    def test_should_strip_auth_http_downgrade(self):\n        s = requests.Session()\n        assert s.should_strip_auth(\"https://example.com/foo\", \"http://example.com/bar\")\n\n    def test_should_strip_auth_https_upgrade(self):\n        s = requests.Session()\n        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com:80/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com:443/bar\"\n        )\n        # Non-standard ports should trigger stripping\n        assert s.should_strip_auth(\n\n",
+  "upstream_raw_records": {
+    "relationships": [
+      {
+        "id": "2125",
+        "source": "TEST_AUTH_IS_RETAINED_FOR_REDIRECT_ON_HOST",
+        "target": "HTTPBIN",
+        "description": "CALLS, test_auth_is_retained_for_redirect_on_host invokes `httpbin(\"redirect/1\")` to construct the redirect URL.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "2109",
+        "source": "TEST_AUTH_IS_RETAINED_FOR_REDIRECT_ON_HOST",
+        "target": "REQUESTS.GET",
+        "description": "CALLS, test_auth_is_retained_for_redirect_on_host invokes `requests.get(httpbin(\"redirect/1\"), auth=(\"user\", \"pass\"))`.",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "1066",
+        "source": "REBUILD_AUTH",
+        "target": "SHOULD_STRIP_AUTH",
+        "description": "CALLS, `rebuild_auth` calls `self.should_strip_auth(response.request.url, url)` when an `Authorization` header is present; the receiver-qualified callable is not defined in this chunk.",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "2140",
+        "source": "TEST_SHOULD_STRIP_AUTH_DEFAULT_PORT",
+        "target": "SHOULD_STRIP_AUTH",
+        "description": "CALLS, the test invokes `s.should_strip_auth(old_uri, new_uri)` and asserts it is false; `s` is locally assigned a session, but the concrete method owner is not proven.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "2126",
+        "source": "TEST_SHOULD_STRIP_AUTH_HOST_CHANGE",
+        "target": "SHOULD_STRIP_AUTH",
+        "description": "CALLS, the test invokes `s.should_strip_auth(\"http://example.com/foo\", \"http://another.example.com/\")`; `s` is local and its runtime method binding is not proven beyond construction from `requests.Session()`.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "2127",
+        "source": "TEST_SHOULD_STRIP_AUTH_HTTP_DOWNGRADE",
+        "target": "SHOULD_STRIP_AUTH",
+        "description": "CALLS, the test invokes `s.should_strip_auth(\"https://example.com/foo\", \"http://example.com/bar\")`; `s` is local and its runtime method binding is not proven beyond construction from `requests.Session()`.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "2128",
+        "source": "TEST_SHOULD_STRIP_AUTH_HTTPS_UPGRADE",
+        "target": "SHOULD_STRIP_AUTH",
+        "description": "CALLS, the test invokes `s.should_strip_auth` for HTTP-to-HTTPS URL pairs, including standard and non-standard port cases; `s` is local and the runtime method binding is not proven.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "2137",
+        "source": "TEST_SHOULD_STRIP_AUTH_PORT_CHANGE",
+        "target": "SHOULD_STRIP_AUTH",
+        "description": "CALLS, the test invokes `s.should_strip_auth(\"http://example.com:1234/foo\", \"https://example.com:4321/bar\")` and asserts a truthy result; `s` is locally assigned a session, but runtime binding is unresolved.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      }
+    ],
+    "entities": [
+      {
+        "id": "793",
+        "entity": "SHOULD_STRIP_AUTH",
+        "description": "SHOULD_STRIP_AUTH is an explicitly referenced but unresolved callable used to determine whether authentication should be removed during HTTP redirects. It is invoked through a local receiver such as `s` or `self`, including calls like `s.should_strip_auth(old_uri, new_uri)` and `self.should_strip_auth(response.request.url, url)`, with pairs of source and destination HTTP/HTTPS URLs. In the available context, `s` is assigned from `requests.Session()`, but the runtime method binding and callable definition are not proven or visible.",
+        "number of relationships": "6",
+        "in_context": true
+      },
+      {
+        "id": "1289",
+        "entity": "TEST_AUTH_IS_RETAINED_FOR_REDIRECT_ON_HOST",
+        "description": "Defines the test function `test_auth_is_retained_for_redirect_on_host(self, httpbin)`. It follows a same-host redirect with credentials and asserts the `Authorization` header is equal on the history request and final request.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "789",
+        "entity": "REBUILD_AUTH",
+        "description": "The method `rebuild_auth(self, prepared_request, response)` is defined here. It removes `Authorization` when `self.should_strip_auth(...)` is true, then obtains netrc credentials when trusted environment settings provide them and applies them with `prepared_request.prepare_auth(...)`; the owning class is not visible.",
+        "number of relationships": "6",
+        "in_context": true
+      },
+      {
+        "id": "1288",
+        "entity": "TEST_AUTH_IS_STRIPPED_ON_HTTP_DOWNGRADE",
+        "description": "Defines the test function `test_auth_is_stripped_on_http_downgrade(self, httpbin, httpbin_secure, httpbin_ca_bundle)`. It follows an HTTPS-to-HTTP redirect and asserts the redirecting request has `Authorization` while the final request does not.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "1036",
+        "entity": "TEST_DIGESTAUTH_401_COUNT_RESET_ON_REDIRECT",
+        "description": "`test_digestauth_401_count_reset_on_redirect()` is defined here and documents a digest-authentication redirect scenario involving a successful authentication followed by a 302 redirect to another digest prompt; the visible chunk ends while defining response data, before any executable assertion or request call is shown.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "769",
+        "entity": "SESSIONREDIRECTMIXIN",
+        "description": "`SessionRedirectMixin` is defined here to provide redirect-target decoding, authorization-stripping decisions, and a visibly incomplete `resolve_redirects` method.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "1290",
+        "entity": "TEST_SHOULD_STRIP_AUTH_HOST_CHANGE",
+        "description": "Defines the test function `test_should_strip_auth_host_change(self)`. It creates a `requests.Session` and asserts `s.should_strip_auth(\"http://example.com/foo\", \"http://another.example.com/\")` is true for a host change.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "1118",
+        "entity": "S.RESOLVE_REDIRECTS",
+        "description": "The attribute call `s.resolve_redirects(resp, prep_req)` is explicitly referenced; the receiver's concrete runtime class is not proven by this chunk.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1057",
+        "entity": "REDIRECT_RESP_HANDLER",
+        "description": "Defined here as the nested `def redirect_resp_handler(sock)`. It consumes an initial request, sends a 301 response with a `Location` containing `path`, records a second request in `redirect_request`, and sends a 200 response.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "1048",
+        "entity": "TEST_DIGESTAUTH_ONLY_ON_4XX",
+        "description": "The exact spelling `test_digestauth_only_on_4xx` is defined here as a test documenting and asserting that a 200 response containing `WWW-Authenticate` does not cause a Digest authorization response.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "1385",
+        "entity": "REDIRECTSESSION",
+        "description": "The class `RedirectSession` is defined here and inherits from `SessionRedirectMixin`; it stores redirect order, send calls, redirect limits, cookies, and environment trust state.",
+        "number of relationships": "6",
+        "in_context": true
+      },
+      {
+        "id": "1148",
+        "entity": "SESSION.HEADERS.UPDATE",
+        "description": "SESSION.HEADERS.UPDATE refers to an explicit call to `session.headers.update({\"Proxy-Authorization\": proxy_auth_value})`. The call updates the headers of a locally created `requests.Session` instance by setting the `Proxy-Authorization` header to `proxy_auth_value`. The concrete implementation of the session's header-update method and the exact session class definition are not visible in the provided context.",
+        "number of relationships": "1",
+        "in_context": true
+      }
+    ],
+    "sources": [
+      {
+        "id": "93",
+        "text": "        \"invalid_header\",\n        (\n            {\" foo\": \"bar\"},\n            {\"\\tfoo\": \"bar\"},\n            {\"    foo\": \"bar\"},\n            {\"foo\": \" bar\"},\n            {\"foo\": \"    bar\"},\n            {\"foo\": \"\\tbar\"},\n            {\" \": \"bar\"},\n        ),\n    )\n    def test_header_no_leading_space(self, httpbin, invalid_header):\n        \"\"\"Ensure headers containing leading whitespace raise\n        InvalidHeader Error before sending.\n        \"\"\"\n        with pytest.raises(InvalidHeader):\n            requests.get(httpbin(\"get\"), headers=invalid_header)\n\n    def test_header_with_subclass_types(self, httpbin):\n        \"\"\"If the subclasses does not behave *exactly* like\n        the base bytes/str classes, this is not supported.\n        This test is for backwards compatibility.\n        \"\"\"\n\n        class MyString(str):\n            pass\n\n        class MyBytes(bytes):\n            pass\n\n        r_str = requests.get(httpbin(\"get\"), headers={MyString(\"x-custom\"): \"myheader\"})\n        assert r_str.request.headers[\"x-custom\"] == \"myheader\"\n\n        r_bytes = requests.get(\n            httpbin(\"get\"), headers={MyBytes(b\"x-custom\"): b\"myheader\"}\n        )\n        assert r_bytes.request.headers[\"x-custom\"] == b\"myheader\"\n\n        r_mixed = requests.get(\n            httpbin(\"get\"), headers={MyString(\"x-custom\"): MyBytes(b\"myheader\")}\n        )\n        assert r_mixed.request.headers[\"x-custom\"] == b\"myheader\"\n\n    @pytest.mark.parametrize(\"files\", (\"foo\", b\"foo\", bytearray(b\"foo\")))\n    def test_can_send_objects_with_files(self, httpbin, files):\n        data = {\"a\": \"this is a string\"}\n        files = {\"b\": files}\n        r = requests.Request(\"POST\", httpbin(\"post\"), data=data, files=files)\n        p = r.prepare()\n        assert \"multipart/form-data\" in p.headers[\"Content-Type\"]\n\n    def test_can_send_file_object_with_non_string_filename(self, httpbin):\n        f = io.BytesIO()\n        f.name = 2\n        r = requests.Request(\"POST\", httpbin(\"post\"), files={\"f\": f})\n        p = r.prepare()\n\n        assert \"multipart/form-data\" in p.headers[\"Content-Type\"]\n\n    def test_autoset_header_values_are_native(self, httpbin):\n        data = \"this is a string\"\n        length = \"16\"\n        req = requests.Request(\"POST\", httpbin(\"post\"), data=data)\n        p = req.prepare()\n\n        assert p.headers[\"Content-Length\"] == length\n\n    def test_content_length_for_bytes_data(self, httpbin):\n        data = \"This is a string containing multi-byte UTF-8 ☃️\"\n        encoded_data = data.encode(\"utf-8\")\n        length = str(len(encoded_data))\n        req = requests.Request(\"POST\", httpbin(\"post\"), data=encoded_data)\n        p = req.prepare()\n\n        assert p.headers[\"Content-Length\"] == length\n\n    def test_content_length_for_string_data_counts_bytes(self, httpbin):\n        data = \"This is a string containing multi-byte UTF-8 ☃️\"\n        length = str(len(data.encode(\"utf-8\")))\n        req = requests.Request(\"POST\", httpbin(\"post\"), data=data)\n        p = req.prepare()\n\n        assert p.headers[\"Content-Length\"] == length\n\n    def test_nonhttp_schemes_dont_check_URLs(self):\n        test_urls = (\n            \"data:image/gif;base64,R0lGODlhAQABAHAAACH5BAUAAAAALAAAAAABAAEAAAICRAEAOw==\",\n            \"file:///etc/passwd\",\n            \"magnet:?xt=urn:btih:be08f00302bc2d1d3cfa3af02024fa647a271431\",\n        )\n        for test_url in test_urls:\n            req = requests.Request(\"GET\", test_url)\n            preq = req.prepare()\n            assert test_url == preq.url\n\n    def test_auth_is_stripped_on_http_downgrade(\n        self, httpbin, httpbin_secure, httpbin_ca_bundle\n    ):\n        r = requests.get(\n            httpbin_secure(\"redirect-to\"),\n            params={\"url\": httpbin(\"get\")},\n            auth=(\"user\", \"pass\"),\n            verify=httpbin_ca_bundle,\n        )\n        assert r.history[0].request.headers[\"Authorization\"]\n        assert \"Authorization\" not in r.request.headers\n\n    def test_auth_is_retained_for_redirect_on_host(self, httpbin):\n        r = requests.get(httpbin(\"redirect/1\"), auth=(\"user\", \"pass\"))\n        h1 = r.history[0].request.headers[\"Authorization\"]\n        h2 = r.request.headers[\"Authorization\"]\n\n        assert h1 == h2\n\n    def test_should_strip_auth_host_change(self):\n        s = requests.Session()\n        assert s.should_strip_auth(\n            \"http://example.com/foo\", \"http://another.example.com/\"\n        )\n\n    def test_should_strip_auth_http_downgrade(self):\n        s = requests.Session()\n        assert s.should_strip_auth(\"https://example.com/foo\", \"http://example.com/bar\")\n\n    def test_should_strip_auth_https_upgrade(self):\n        s = requests.Session()\n        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com:80/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com:443/bar\"\n        )\n        # Non-standard ports should trigger stripping\n        assert s.should_strip_auth(\n"
+      }
+    ]
+  },
+  "final_context": "-----Entities-----\nid|entity|description|number of relationships\n793|SHOULD_STRIP_AUTH|SHOULD_STRIP_AUTH is an explicitly referenced but unresolved callable used to determine whether authentication should be removed during HTTP redirects. It is invoked through a local receiver such as `s` or `self`, including calls like `s.should_strip_auth(old_uri, new_uri)` and `self.should_strip_auth(response.request.url, url)`, with pairs of source and destination HTTP/HTTPS URLs. In the available context, `s` is assigned from `requests.Session()`, but the runtime method binding and callable definition are not proven or visible.|6\n1289|TEST_AUTH_IS_RETAINED_FOR_REDIRECT_ON_HOST|Defines the test function `test_auth_is_retained_for_redirect_on_host(self, httpbin)`. It follows a same-host redirect with credentials and asserts the `Authorization` header is equal on the history request and final request.|2\n789|REBUILD_AUTH|The method `rebuild_auth(self, prepared_request, response)` is defined here. It removes `Authorization` when `self.should_strip_auth(...)` is true, then obtains netrc credentials when trusted environment settings provide them and applies them with `prepared_request.prepare_auth(...)`; the owning class is not visible.|6\n1288|TEST_AUTH_IS_STRIPPED_ON_HTTP_DOWNGRADE|Defines the test function `test_auth_is_stripped_on_http_downgrade(self, httpbin, httpbin_secure, httpbin_ca_bundle)`. It follows an HTTPS-to-HTTP redirect and asserts the redirecting request has `Authorization` while the final request does not.|4\n1036|TEST_DIGESTAUTH_401_COUNT_RESET_ON_REDIRECT|`test_digestauth_401_count_reset_on_redirect()` is defined here and documents a digest-authentication redirect scenario involving a successful authentication followed by a 302 redirect to another digest prompt; the visible chunk ends while defining response data, before any executable assertion or request call is shown.|3\n769|SESSIONREDIRECTMIXIN|`SessionRedirectMixin` is defined here to provide redirect-target decoding, authorization-stripping decisions, and a visibly incomplete `resolve_redirects` method.|2\n1290|TEST_SHOULD_STRIP_AUTH_HOST_CHANGE|\"Defines the test function `test_should_strip_auth_host_change(self)`. It creates a `requests.Session` and asserts `s.should_strip_auth(\"\"http://example.com/foo\"\", \"\"http://another.example.com/\"\")` is true for a host change.\"|2\n1118|S.RESOLVE_REDIRECTS|The attribute call `s.resolve_redirects(resp, prep_req)` is explicitly referenced; the receiver's concrete runtime class is not proven by this chunk.|1\n1057|REDIRECT_RESP_HANDLER|Defined here as the nested `def redirect_resp_handler(sock)`. It consumes an initial request, sends a 301 response with a `Location` containing `path`, records a second request in `redirect_request`, and sends a 200 response.|3\n1048|TEST_DIGESTAUTH_ONLY_ON_4XX|The exact spelling `test_digestauth_only_on_4xx` is defined here as a test documenting and asserting that a 200 response containing `WWW-Authenticate` does not cause a Digest authorization response.|4\n1385|REDIRECTSESSION|The class `RedirectSession` is defined here and inherits from `SessionRedirectMixin`; it stores redirect order, send calls, redirect limits, cookies, and environment trust state.|6\n1148|SESSION.HEADERS.UPDATE|\"SESSION.HEADERS.UPDATE refers to an explicit call to `session.headers.update({\"\"Proxy-Authorization\"\": proxy_auth_value})`. The call updates the headers of a locally created `requests.Session` instance by setting the `Proxy-Authorization` header to `proxy_auth_value`. The concrete implementation of the session's header-update method and the exact session class definition are not visible in the provided context.\"|1\n\n-----Relationships-----\nid|source|target|description|weight|links\n2125|TEST_AUTH_IS_RETAINED_FOR_REDIRECT_ON_HOST|HTTPBIN|\"CALLS, test_auth_is_retained_for_redirect_on_host invokes `httpbin(\"\"redirect/1\"\")` to construct the redirect URL.\"|9.0|1\n2109|TEST_AUTH_IS_RETAINED_FOR_REDIRECT_ON_HOST|REQUESTS.GET|\"CALLS, test_auth_is_retained_for_redirect_on_host invokes `requests.get(httpbin(\"\"redirect/1\"\"), auth=(\"\"user\"\", \"\"pass\"\"))`.\"|10.0|1\n1066|REBUILD_AUTH|SHOULD_STRIP_AUTH|CALLS, `rebuild_auth` calls `self.should_strip_auth(response.request.url, url)` when an `Authorization` header is present; the receiver-qualified callable is not defined in this chunk.|10.0|1\n2140|TEST_SHOULD_STRIP_AUTH_DEFAULT_PORT|SHOULD_STRIP_AUTH|CALLS, the test invokes `s.should_strip_auth(old_uri, new_uri)` and asserts it is false; `s` is locally assigned a session, but the concrete method owner is not proven.|9.0|1\n2126|TEST_SHOULD_STRIP_AUTH_HOST_CHANGE|SHOULD_STRIP_AUTH|\"CALLS, the test invokes `s.should_strip_auth(\"\"http://example.com/foo\"\", \"\"http://another.example.com/\"\")`; `s` is local and its runtime method binding is not proven beyond construction from `requests.Session()`.\"|9.0|1\n2127|TEST_SHOULD_STRIP_AUTH_HTTP_DOWNGRADE|SHOULD_STRIP_AUTH|\"CALLS, the test invokes `s.should_strip_auth(\"\"https://example.com/foo\"\", \"\"http://example.com/bar\"\")`; `s` is local and its runtime method binding is not proven beyond construction from `requests.Session()`.\"|9.0|1\n2128|TEST_SHOULD_STRIP_AUTH_HTTPS_UPGRADE|SHOULD_STRIP_AUTH|CALLS, the test invokes `s.should_strip_auth` for HTTP-to-HTTPS URL pairs, including standard and non-standard port cases; `s` is local and the runtime method binding is not proven.|9.0|1\n2137|TEST_SHOULD_STRIP_AUTH_PORT_CHANGE|SHOULD_STRIP_AUTH|\"CALLS, the test invokes `s.should_strip_auth(\"\"http://example.com:1234/foo\"\", \"\"https://example.com:4321/bar\"\")` and asserts a truthy result; `s` is locally assigned a session, but runtime binding is unresolved.\"|9.0|1\n\n-----Sources-----\nid|source|text\n93|tests/test_requests.py:L1746-L1882|\"        \"\"invalid_header\"\",\n        (\n            {\"\" foo\"\": \"\"bar\"\"},\n            {\"\"\\tfoo\"\": \"\"bar\"\"},\n            {\"\"    foo\"\": \"\"bar\"\"},\n            {\"\"foo\"\": \"\" bar\"\"},\n            {\"\"foo\"\": \"\"    bar\"\"},\n            {\"\"foo\"\": \"\"\\tbar\"\"},\n            {\"\" \"\": \"\"bar\"\"},\n        ),\n    )\n    def test_header_no_leading_space(self, httpbin, invalid_header):\n        \"\"\"\"\"\"Ensure headers containing leading whitespace raise\n        InvalidHeader Error before sending.\n        \"\"\"\"\"\"\n        with pytest.raises(InvalidHeader):\n            requests.get(httpbin(\"\"get\"\"), headers=invalid_header)\n\n    def test_header_with_subclass_types(self, httpbin):\n        \"\"\"\"\"\"If the subclasses does not behave *exactly* like\n        the base bytes/str classes, this is not supported.\n        This test is for backwards compatibility.\n        \"\"\"\"\"\"\n\n        class MyString(str):\n            pass\n\n        class MyBytes(bytes):\n            pass\n\n        r_str = requests.get(httpbin(\"\"get\"\"), headers={MyString(\"\"x-custom\"\"): \"\"myheader\"\"})\n        assert r_str.request.headers[\"\"x-custom\"\"] == \"\"myheader\"\"\n\n        r_bytes = requests.get(\n            httpbin(\"\"get\"\"), headers={MyBytes(b\"\"x-custom\"\"): b\"\"myheader\"\"}\n        )\n        assert r_bytes.request.headers[\"\"x-custom\"\"] == b\"\"myheader\"\"\n\n        r_mixed = requests.get(\n            httpbin(\"\"get\"\"), headers={MyString(\"\"x-custom\"\"): MyBytes(b\"\"myheader\"\")}\n        )\n        assert r_mixed.request.headers[\"\"x-custom\"\"] == b\"\"myheader\"\"\n\n    @pytest.mark.parametrize(\"\"files\"\", (\"\"foo\"\", b\"\"foo\"\", bytearray(b\"\"foo\"\")))\n    def test_can_send_objects_with_files(self, httpbin, files):\n        data = {\"\"a\"\": \"\"this is a string\"\"}\n        files = {\"\"b\"\": files}\n        r = requests.Request(\"\"POST\"\", httpbin(\"\"post\"\"), data=data, files=files)\n        p = r.prepare()\n        assert \"\"multipart/form-data\"\" in p.headers[\"\"Content-Type\"\"]\n\n    def test_can_send_file_object_with_non_string_filename(self, httpbin):\n        f = io.BytesIO()\n        f.name = 2\n        r = requests.Request(\"\"POST\"\", httpbin(\"\"post\"\"), files={\"\"f\"\": f})\n        p = r.prepare()\n\n        assert \"\"multipart/form-data\"\" in p.headers[\"\"Content-Type\"\"]\n\n    def test_autoset_header_values_are_native(self, httpbin):\n        data = \"\"this is a string\"\"\n        length = \"\"16\"\"\n        req = requests.Request(\"\"POST\"\", httpbin(\"\"post\"\"), data=data)\n        p = req.prepare()\n\n        assert p.headers[\"\"Content-Length\"\"] == length\n\n    def test_content_length_for_bytes_data(self, httpbin):\n        data = \"\"This is a string containing multi-byte UTF-8 ☃️\"\"\n        encoded_data = data.encode(\"\"utf-8\"\")\n        length = str(len(encoded_data))\n        req = requests.Request(\"\"POST\"\", httpbin(\"\"post\"\"), data=encoded_data)\n        p = req.prepare()\n\n        assert p.headers[\"\"Content-Length\"\"] == length\n\n    def test_content_length_for_string_data_counts_bytes(self, httpbin):\n        data = \"\"This is a string containing multi-byte UTF-8 ☃️\"\"\n        length = str(len(data.encode(\"\"utf-8\"\")))\n        req = requests.Request(\"\"POST\"\", httpbin(\"\"post\"\"), data=data)\n        p = req.prepare()\n\n        assert p.headers[\"\"Content-Length\"\"] == length\n\n    def test_nonhttp_schemes_dont_check_URLs(self):\n        test_urls = (\n            \"\"data:image/gif;base64,R0lGODlhAQABAHAAACH5BAUAAAAALAAAAAABAAEAAAICRAEAOw==\"\",\n            \"\"file:///etc/passwd\"\",\n            \"\"magnet:?xt=urn:btih:be08f00302bc2d1d3cfa3af02024fa647a271431\"\",\n        )\n        for test_url in test_urls:\n            req = requests.Request(\"\"GET\"\", test_url)\n            preq = req.prepare()\n            assert test_url == preq.url\n\n    def test_auth_is_stripped_on_http_downgrade(\n        self, httpbin, httpbin_secure, httpbin_ca_bundle\n    ):\n        r = requests.get(\n            httpbin_secure(\"\"redirect-to\"\"),\n            params={\"\"url\"\": httpbin(\"\"get\"\")},\n            auth=(\"\"user\"\", \"\"pass\"\"),\n            verify=httpbin_ca_bundle,\n        )\n        assert r.history[0].request.headers[\"\"Authorization\"\"]\n        assert \"\"Authorization\"\" not in r.request.headers\n\n    def test_auth_is_retained_for_redirect_on_host(self, httpbin):\n        r = requests.get(httpbin(\"\"redirect/1\"\"), auth=(\"\"user\"\", \"\"pass\"\"))\n        h1 = r.history[0].request.headers[\"\"Authorization\"\"]\n        h2 = r.request.headers[\"\"Authorization\"\"]\n\n        assert h1 == h2\n\n    def test_should_strip_auth_host_change(self):\n        s = requests.Session()\n        assert s.should_strip_auth(\n            \"\"http://example.com/foo\"\", \"\"http://another.example.com/\"\"\n        )\n\n    def test_should_strip_auth_http_downgrade(self):\n        s = requests.Session()\n        assert s.should_strip_auth(\"\"https://example.com/foo\"\", \"\"http://example.com/bar\"\")\n\n    def test_should_strip_auth_https_upgrade(self):\n        s = requests.Session()\n        assert not s.should_strip_auth(\n            \"\"http://example.com/foo\"\", \"\"https://example.com/bar\"\"\n        )\n        assert not s.should_strip_auth(\n            \"\"http://example.com:80/foo\"\", \"\"https://example.com/bar\"\"\n        )\n        assert not s.should_strip_auth(\n            \"\"http://example.com/foo\"\", \"\"https://example.com:443/bar\"\"\n        )\n        # Non-standard ports should trigger stripping\n        assert s.should_strip_auth(\n\"\n",
+  "final_tables": [
+    {
+      "name": "entities",
+      "columns": [
+        "id",
+        "entity",
+        "description",
+        "number of relationships"
+      ],
+      "rows": [
+        {
+          "id": "793",
+          "entity": "SHOULD_STRIP_AUTH",
+          "description": "SHOULD_STRIP_AUTH is an explicitly referenced but unresolved callable used to determine whether authentication should be removed during HTTP redirects. It is invoked through a local receiver such as `s` or `self`, including calls like `s.should_strip_auth(old_uri, new_uri)` and `self.should_strip_auth(response.request.url, url)`, with pairs of source and destination HTTP/HTTPS URLs. In the available context, `s` is assigned from `requests.Session()`, but the runtime method binding and callable definition are not proven or visible.",
+          "number of relationships": "6"
+        },
+        {
+          "id": "1289",
+          "entity": "TEST_AUTH_IS_RETAINED_FOR_REDIRECT_ON_HOST",
+          "description": "Defines the test function `test_auth_is_retained_for_redirect_on_host(self, httpbin)`. It follows a same-host redirect with credentials and asserts the `Authorization` header is equal on the history request and final request.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "789",
+          "entity": "REBUILD_AUTH",
+          "description": "The method `rebuild_auth(self, prepared_request, response)` is defined here. It removes `Authorization` when `self.should_strip_auth(...)` is true, then obtains netrc credentials when trusted environment settings provide them and applies them with `prepared_request.prepare_auth(...)`; the owning class is not visible.",
+          "number of relationships": "6"
+        },
+        {
+          "id": "1288",
+          "entity": "TEST_AUTH_IS_STRIPPED_ON_HTTP_DOWNGRADE",
+          "description": "Defines the test function `test_auth_is_stripped_on_http_downgrade(self, httpbin, httpbin_secure, httpbin_ca_bundle)`. It follows an HTTPS-to-HTTP redirect and asserts the redirecting request has `Authorization` while the final request does not.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "1036",
+          "entity": "TEST_DIGESTAUTH_401_COUNT_RESET_ON_REDIRECT",
+          "description": "`test_digestauth_401_count_reset_on_redirect()` is defined here and documents a digest-authentication redirect scenario involving a successful authentication followed by a 302 redirect to another digest prompt; the visible chunk ends while defining response data, before any executable assertion or request call is shown.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "769",
+          "entity": "SESSIONREDIRECTMIXIN",
+          "description": "`SessionRedirectMixin` is defined here to provide redirect-target decoding, authorization-stripping decisions, and a visibly incomplete `resolve_redirects` method.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "1290",
+          "entity": "TEST_SHOULD_STRIP_AUTH_HOST_CHANGE",
+          "description": "Defines the test function `test_should_strip_auth_host_change(self)`. It creates a `requests.Session` and asserts `s.should_strip_auth(\"http://example.com/foo\", \"http://another.example.com/\")` is true for a host change.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "1118",
+          "entity": "S.RESOLVE_REDIRECTS",
+          "description": "The attribute call `s.resolve_redirects(resp, prep_req)` is explicitly referenced; the receiver's concrete runtime class is not proven by this chunk.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1057",
+          "entity": "REDIRECT_RESP_HANDLER",
+          "description": "Defined here as the nested `def redirect_resp_handler(sock)`. It consumes an initial request, sends a 301 response with a `Location` containing `path`, records a second request in `redirect_request`, and sends a 200 response.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "1048",
+          "entity": "TEST_DIGESTAUTH_ONLY_ON_4XX",
+          "description": "The exact spelling `test_digestauth_only_on_4xx` is defined here as a test documenting and asserting that a 200 response containing `WWW-Authenticate` does not cause a Digest authorization response.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "1385",
+          "entity": "REDIRECTSESSION",
+          "description": "The class `RedirectSession` is defined here and inherits from `SessionRedirectMixin`; it stores redirect order, send calls, redirect limits, cookies, and environment trust state.",
+          "number of relationships": "6"
+        },
+        {
+          "id": "1148",
+          "entity": "SESSION.HEADERS.UPDATE",
+          "description": "SESSION.HEADERS.UPDATE refers to an explicit call to `session.headers.update({\"Proxy-Authorization\": proxy_auth_value})`. The call updates the headers of a locally created `requests.Session` instance by setting the `Proxy-Authorization` header to `proxy_auth_value`. The concrete implementation of the session's header-update method and the exact session class definition are not visible in the provided context.",
+          "number of relationships": "1"
+        }
+      ]
+    },
+    {
+      "name": "relationships",
+      "columns": [
+        "id",
+        "source",
+        "target",
+        "description",
+        "weight",
+        "links"
+      ],
+      "rows": [
+        {
+          "id": "2125",
+          "source": "TEST_AUTH_IS_RETAINED_FOR_REDIRECT_ON_HOST",
+          "target": "HTTPBIN",
+          "description": "CALLS, test_auth_is_retained_for_redirect_on_host invokes `httpbin(\"redirect/1\")` to construct the redirect URL.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "2109",
+          "source": "TEST_AUTH_IS_RETAINED_FOR_REDIRECT_ON_HOST",
+          "target": "REQUESTS.GET",
+          "description": "CALLS, test_auth_is_retained_for_redirect_on_host invokes `requests.get(httpbin(\"redirect/1\"), auth=(\"user\", \"pass\"))`.",
+          "weight": "10.0",
+          "links": "1"
+        },
+        {
+          "id": "1066",
+          "source": "REBUILD_AUTH",
+          "target": "SHOULD_STRIP_AUTH",
+          "description": "CALLS, `rebuild_auth` calls `self.should_strip_auth(response.request.url, url)` when an `Authorization` header is present; the receiver-qualified callable is not defined in this chunk.",
+          "weight": "10.0",
+          "links": "1"
+        },
+        {
+          "id": "2140",
+          "source": "TEST_SHOULD_STRIP_AUTH_DEFAULT_PORT",
+          "target": "SHOULD_STRIP_AUTH",
+          "description": "CALLS, the test invokes `s.should_strip_auth(old_uri, new_uri)` and asserts it is false; `s` is locally assigned a session, but the concrete method owner is not proven.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "2126",
+          "source": "TEST_SHOULD_STRIP_AUTH_HOST_CHANGE",
+          "target": "SHOULD_STRIP_AUTH",
+          "description": "CALLS, the test invokes `s.should_strip_auth(\"http://example.com/foo\", \"http://another.example.com/\")`; `s` is local and its runtime method binding is not proven beyond construction from `requests.Session()`.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "2127",
+          "source": "TEST_SHOULD_STRIP_AUTH_HTTP_DOWNGRADE",
+          "target": "SHOULD_STRIP_AUTH",
+          "description": "CALLS, the test invokes `s.should_strip_auth(\"https://example.com/foo\", \"http://example.com/bar\")`; `s` is local and its runtime method binding is not proven beyond construction from `requests.Session()`.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "2128",
+          "source": "TEST_SHOULD_STRIP_AUTH_HTTPS_UPGRADE",
+          "target": "SHOULD_STRIP_AUTH",
+          "description": "CALLS, the test invokes `s.should_strip_auth` for HTTP-to-HTTPS URL pairs, including standard and non-standard port cases; `s` is local and the runtime method binding is not proven.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "2137",
+          "source": "TEST_SHOULD_STRIP_AUTH_PORT_CHANGE",
+          "target": "SHOULD_STRIP_AUTH",
+          "description": "CALLS, the test invokes `s.should_strip_auth(\"http://example.com:1234/foo\", \"https://example.com:4321/bar\")` and asserts a truthy result; `s` is locally assigned a session, but runtime binding is unresolved.",
+          "weight": "9.0",
+          "links": "1"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "columns": [
+        "id",
+        "source",
+        "text"
+      ],
+      "rows": [
+        {
+          "id": "93",
+          "text": "        \"invalid_header\",\n        (\n            {\" foo\": \"bar\"},\n            {\"\\tfoo\": \"bar\"},\n            {\"    foo\": \"bar\"},\n            {\"foo\": \" bar\"},\n            {\"foo\": \"    bar\"},\n            {\"foo\": \"\\tbar\"},\n            {\" \": \"bar\"},\n        ),\n    )\n    def test_header_no_leading_space(self, httpbin, invalid_header):\n        \"\"\"Ensure headers containing leading whitespace raise\n        InvalidHeader Error before sending.\n        \"\"\"\n        with pytest.raises(InvalidHeader):\n            requests.get(httpbin(\"get\"), headers=invalid_header)\n\n    def test_header_with_subclass_types(self, httpbin):\n        \"\"\"If the subclasses does not behave *exactly* like\n        the base bytes/str classes, this is not supported.\n        This test is for backwards compatibility.\n        \"\"\"\n\n        class MyString(str):\n            pass\n\n        class MyBytes(bytes):\n            pass\n\n        r_str = requests.get(httpbin(\"get\"), headers={MyString(\"x-custom\"): \"myheader\"})\n        assert r_str.request.headers[\"x-custom\"] == \"myheader\"\n\n        r_bytes = requests.get(\n            httpbin(\"get\"), headers={MyBytes(b\"x-custom\"): b\"myheader\"}\n        )\n        assert r_bytes.request.headers[\"x-custom\"] == b\"myheader\"\n\n        r_mixed = requests.get(\n            httpbin(\"get\"), headers={MyString(\"x-custom\"): MyBytes(b\"myheader\")}\n        )\n        assert r_mixed.request.headers[\"x-custom\"] == b\"myheader\"\n\n    @pytest.mark.parametrize(\"files\", (\"foo\", b\"foo\", bytearray(b\"foo\")))\n    def test_can_send_objects_with_files(self, httpbin, files):\n        data = {\"a\": \"this is a string\"}\n        files = {\"b\": files}\n        r = requests.Request(\"POST\", httpbin(\"post\"), data=data, files=files)\n        p = r.prepare()\n        assert \"multipart/form-data\" in p.headers[\"Content-Type\"]\n\n    def test_can_send_file_object_with_non_string_filename(self, httpbin):\n        f = io.BytesIO()\n        f.name = 2\n        r = requests.Request(\"POST\", httpbin(\"post\"), files={\"f\": f})\n        p = r.prepare()\n\n        assert \"multipart/form-data\" in p.headers[\"Content-Type\"]\n\n    def test_autoset_header_values_are_native(self, httpbin):\n        data = \"this is a string\"\n        length = \"16\"\n        req = requests.Request(\"POST\", httpbin(\"post\"), data=data)\n        p = req.prepare()\n\n        assert p.headers[\"Content-Length\"] == length\n\n    def test_content_length_for_bytes_data(self, httpbin):\n        data = \"This is a string containing multi-byte UTF-8 ☃️\"\n        encoded_data = data.encode(\"utf-8\")\n        length = str(len(encoded_data))\n        req = requests.Request(\"POST\", httpbin(\"post\"), data=encoded_data)\n        p = req.prepare()\n\n        assert p.headers[\"Content-Length\"] == length\n\n    def test_content_length_for_string_data_counts_bytes(self, httpbin):\n        data = \"This is a string containing multi-byte UTF-8 ☃️\"\n        length = str(len(data.encode(\"utf-8\")))\n        req = requests.Request(\"POST\", httpbin(\"post\"), data=data)\n        p = req.prepare()\n\n        assert p.headers[\"Content-Length\"] == length\n\n    def test_nonhttp_schemes_dont_check_URLs(self):\n        test_urls = (\n            \"data:image/gif;base64,R0lGODlhAQABAHAAACH5BAUAAAAALAAAAAABAAEAAAICRAEAOw==\",\n            \"file:///etc/passwd\",\n            \"magnet:?xt=urn:btih:be08f00302bc2d1d3cfa3af02024fa647a271431\",\n        )\n        for test_url in test_urls:\n            req = requests.Request(\"GET\", test_url)\n            preq = req.prepare()\n            assert test_url == preq.url\n\n    def test_auth_is_stripped_on_http_downgrade(\n        self, httpbin, httpbin_secure, httpbin_ca_bundle\n    ):\n        r = requests.get(\n            httpbin_secure(\"redirect-to\"),\n            params={\"url\": httpbin(\"get\")},\n            auth=(\"user\", \"pass\"),\n            verify=httpbin_ca_bundle,\n        )\n        assert r.history[0].request.headers[\"Authorization\"]\n        assert \"Authorization\" not in r.request.headers\n\n    def test_auth_is_retained_for_redirect_on_host(self, httpbin):\n        r = requests.get(httpbin(\"redirect/1\"), auth=(\"user\", \"pass\"))\n        h1 = r.history[0].request.headers[\"Authorization\"]\n        h2 = r.request.headers[\"Authorization\"]\n\n        assert h1 == h2\n\n    def test_should_strip_auth_host_change(self):\n        s = requests.Session()\n        assert s.should_strip_auth(\n            \"http://example.com/foo\", \"http://another.example.com/\"\n        )\n\n    def test_should_strip_auth_http_downgrade(self):\n        s = requests.Session()\n        assert s.should_strip_auth(\"https://example.com/foo\", \"http://example.com/bar\")\n\n    def test_should_strip_auth_https_upgrade(self):\n        s = requests.Session()\n        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com:80/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com:443/bar\"\n        )\n        # Non-standard ports should trigger stripping\n        assert s.should_strip_auth(\n",
+          "source": "tests/test_requests.py:L1746-L1882"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "short_id": "93",
+      "text_unit_id": "b0f14cc15eeb69052052cdb3419f9d23f61e2011d3957be6386b6a56900e93b7ce06b38b322b2d5bbe5be2a7f5d57c57a523cb46545e23cb9d5410d5225595d7",
+      "id": "9d67c7ae84e8cc4a8868cccfdf3c0c63fe1961016bebbe6f7039b52d28749035",
+      "title": "tests/test_requests.py:L1746-L1882",
+      "path": "tests/test_requests.py",
+      "start_line": 1746,
+      "end_line": 1882,
+      "tokens": 1196,
+      "text_sha256": "5a8065d2e5ca04c9213b63722df31db6ee184c0cb6e0f3f673aac092d99987e9",
+      "ms_text_unit_id": "b0f14cc15eeb69052052cdb3419f9d23f61e2011d3957be6386b6a56900e93b7ce06b38b322b2d5bbe5be2a7f5d57c57a523cb46545e23cb9d5410d5225595d7"
+    }
+  ],
+  "raw_context_tokens": 2562,
+  "final_context_tokens": 2677,
+  "source_text_tokens": 1196,
+  "source_chunks": 1,
+  "retrieval_compute_seconds": 0.010464666411280632,
+  "adaptation_seconds": 0.0031679170206189156,
+  "empty_reason": null,
+  "community_level": 2,
+  "dropped_tail_rows": 0
+}

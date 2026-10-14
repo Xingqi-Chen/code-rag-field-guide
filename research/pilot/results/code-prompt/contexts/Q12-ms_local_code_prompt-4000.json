@@ -1,0 +1,312 @@
+{
+  "variant": "code-prompt",
+  "question_id": "Q12",
+  "method": "ms_local_code_prompt",
+  "budget": 4000,
+  "query": "Follow response callback dispatch from Session.send. Does every registered callable necessarily return the Response that later steps use?",
+  "upstream_raw_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n1387|REDIRECTSESSION.SEND|The method `RedirectSession.send` is defined here; it appends `SendCall(args, kwargs)` to `self.calls` and returns `self.build_response()`.|4\n1015|HOOKS.DISPATCH_HOOK|The external callable `hooks.dispatch_hook` is explicitly referenced in `test_hooks` as `hooks.dispatch_hook(\"response\", {\"response\": hooks_list}, \"Data\")`; its definition and runtime receiver binding are not visible here.|1\n1113|REQUESTS.SESSION.SEND|References the unresolved method `send` on a session receiver, used as `s.send(r.prepare())`; the receiver is syntactically assigned from `requests.Session()` but the method definition is not visible.|2\n1050|SOCK.SEND|SOCK.SEND is an unresolved callable invoked as `sock.send(...)` on a handler’s `sock` receiver. It is used by the visible `response_handler` implementations, including `Server.text_response_server.text_response_handler`, to transmit HTTP response data over a socket. The transmitted payloads include encoded response bytes, raw HTTP response bytes, and the value `text_200_chal`. The concrete type of the `sock` receiver, its socket class, and the implementation or method binding of `send` are not visible in the available descriptions.|8\n1388|REDIRECTSESSION.BUILD_RESPONSE|The method `RedirectSession.build_response` is defined here; it derives a request from the latest recorded call, creates a `requests.Response`, assigns a redirect or 200 status, headers, raw data, and request, then returns the response.|7\n1060|RESPONSE_HANDLER|`RESPONSE_HANDLER` is defined as the nested function `response_handler(sock)`. It processes incoming socket content by calling `consume_socket_content(sock, timeout=0.5)`, consumes three requests, and sends HTTP responses in sequence. It first sends two `302` redirects with `Location` headers set to `/get#relevant-section` and `/final-url/`, followed by a final raw HTTP `200` response containing alternate-encoded bytes.|9\n449|R.REGISTER_HOOK|References the unresolved receiver operation `r.register_hook(\"response\", ...)` in `__call__`; its definition is not visible.|1\n1117|S.SEND|S.SEND refers to the attribute call `s.send(...)`, invoked on a locally created session object to transmit prepared or unprepared requests, including the example `s.send(prep_req)`. The available descriptions explicitly identify the receiver as `s`, but they do not establish its concrete runtime class.|6\n458|REGISTER_HOOK|`REGISTER_HOOK` refers to a callable method explicitly invoked in multiple contexts. It is called as `r.register_hook(\"response\", ...)` in a preceding body fragment and as `self.register_hook(event, hooks[event])` within `prepare_hooks`. The available descriptions do not reveal the receiver types, owning class or definition, or the implementation details of the method.|1\n728|RESPONSE.CLOSE|Unresolved callable reference `Response.close` is used by `Response.__exit__` as `self.close()`; the method definition is not visible in this chunk.|1\n389|SEND|SEND refers to request-sending methods that prepare, execute, and finalize HTTP requests. One implementation fills in default transport settings, rejects an already constructed `Request` instance, selects the appropriate adapter, sends the request, records elapsed time, dispatches response hooks, and persists cookies. Another implementation obtains a connection, verifies certificates, constructs the request URL, adds headers, normalizes timeout values, invokes `conn.urlopen`, and translates visible connection exceptions into request-related errors. Together, SEND handles transport configuration, connection and security setup, request execution, error mapping, response processing, timing, and cookie persistence. The owning classes for these methods are not visible.|23\n24|SESSION.SEND|`Session.send()` is explicitly called as `s.send(prepped, stream=stream, verify=verify, proxies=proxies, cert=cert, timeout=timeout)` to send a prepared request.|1\n34|REQUESTS.RESPONSE|`REQUESTS.RESPONSE` refers to the externally defined `requests.Response` class used to represent HTTP responses. It is documented as the return type for request functions, HTTP verb methods, `send`, and `build_response`, and appears in qualified documentation references for response attributes and methods such as `Response.raise_for_status` and `Response.iter_lines`. The class is also used in examples showing representations such as `<Response [200]>`.\n\nWithin the referenced code and tests, `requests.Response` is used in `isinstance` assertions and is explicitly instantiated, including when constructing responses for HTTP error assertions. Some documentation refers to the response class through `Response <requests.Response>`, while one implementation separately instantiates an unresolved `Response` symbol in the visible chunk. The actual definition and implementation of `requests.Response` are external and are not included in the available code.|27\n729|RESPONSE.RAISE_FOR_STATUS|Unresolved callable reference `Response.raise_for_status` is used by `Response.ok` as `self.raise_for_status()`; its definition is not visible in this chunk.|1\n1384|SENDCALL|The module-level value `SendCall` is defined here by `collections.namedtuple(\"SendCall\", (\"args\", \"kwargs\"))` and is used to record redirect-send arguments.|2\n395|SESSION.REQUEST|SESSION.REQUEST is a method invoked on a locally created `session` object. It accepts an HTTP method, a URL, and optional keyword arguments, as shown by the general call `session.request(method=method, url=url, **kwargs)`. The method is also explicitly called with `method=\"GET\"` and URLs produced by `httpbin(\"get\")` or `httpbin()`. The owning class, concrete session type, and implementation are not visible in the available descriptions.|2\n1385|REDIRECTSESSION|The class `RedirectSession` is defined here and inherits from `SessionRedirectMixin`; it stores redirect order, send calls, redirect limits, cookies, and environment trust state.|6\n\n\n\n\n-----Sources-----\nid|text\n98|\n        morsel = Morsel()\n        morsel[\"expires\"] = None\n        cookie = morsel_to_cookie(morsel)\n        assert cookie.expires is None\n\n\nclass TestMorselToCookieMaxAge:\n\n    \"\"\"Tests for morsel_to_cookie when morsel contains max-age.\"\"\"\n\n    def test_max_age_valid_int(self):\n        \"\"\"Test case where a valid max age in seconds is passed.\"\"\"\n\n        morsel = Morsel()\n        morsel[\"max-age\"] = 60\n        cookie = morsel_to_cookie(morsel)\n        assert isinstance(cookie.expires, int)\n\n    def test_max_age_invalid_str(self):\n        \"\"\"Test case where a invalid max age is passed.\"\"\"\n\n        morsel = Morsel()\n        morsel[\"max-age\"] = \"woops\"\n        with pytest.raises(TypeError):\n            morsel_to_cookie(morsel)\n\n\nclass TestTimeout:\n    def test_stream_timeout(self, httpbin):\n        try:\n            requests.get(httpbin(\"delay/10\"), timeout=2.0)\n        except requests.exceptions.Timeout as e:\n            assert \"Read timed out\" in e.args[0].args[0]\n\n    @pytest.mark.parametrize(\n        \"timeout, error_text\",\n        (\n            ((3, 4, 5), \"(connect, read)\"),\n            (\"foo\", \"must be an int, float or None\"),\n        ),\n    )\n    def test_invalid_timeout(self, httpbin, timeout, error_text):\n        with pytest.raises(ValueError) as e:\n            requests.get(httpbin(\"get\"), timeout=timeout)\n        assert error_text in str(e)\n\n    @pytest.mark.parametrize(\"timeout\", (None, Urllib3Timeout(connect=None, read=None)))\n    def test_none_timeout(self, httpbin, timeout):\n        \"\"\"Check that you can set None as a valid timeout value.\n\n        To actually test this behavior, we'd want to check that setting the\n        timeout to None actually lets the request block past the system default\n        timeout. However, this would make the test suite unbearably slow.\n        Instead we verify that setting the timeout to None does not prevent the\n        request from succeeding.\n        \"\"\"\n        r = requests.get(httpbin(\"get\"), timeout=timeout)\n        assert r.status_code == 200\n\n    @pytest.mark.parametrize(\n        \"timeout\", ((None, 0.1), Urllib3Timeout(connect=None, read=0.1))\n    )\n    def test_read_timeout(self, httpbin, timeout):\n        try:\n            requests.get(httpbin(\"delay/10\"), timeout=timeout)\n            pytest.fail(\"The recv() request should time out.\")\n        except ReadTimeout:\n            pass\n\n    @pytest.mark.parametrize(\n        \"timeout\", ((0.1, None), Urllib3Timeout(connect=0.1, read=None))\n    )\n    def test_connect_timeout(self, timeout):\n        try:\n            requests.get(TARPIT, timeout=timeout)\n            pytest.fail(\"The connect() request should time out.\")\n        except ConnectTimeout as e:\n            assert isinstance(e, ConnectionError)\n            assert isinstance(e, Timeout)\n\n    @pytest.mark.parametrize(\n        \"timeout\", ((0.1, 0.1), Urllib3Timeout(connect=0.1, read=0.1))\n    )\n    def test_total_timeout_connect(self, timeout):\n        try:\n            requests.get(TARPIT, timeout=timeout)\n            pytest.fail(\"The connect() request should time out.\")\n        except ConnectTimeout:\n            pass\n\n    def test_encoded_methods(self, httpbin):\n        \"\"\"See: https://github.com/psf/requests/issues/2316\"\"\"\n        r = requests.request(b\"GET\", httpbin(\"get\"))\n        assert r.ok\n\n\nSendCall = collections.namedtuple(\"SendCall\", (\"args\", \"kwargs\"))\n\n\nclass RedirectSession(SessionRedirectMixin):\n    def __init__(self, order_of_redirects):\n        self.redirects = order_of_redirects\n        self.calls = []\n        self.max_redirects = 30\n        self.cookies = {}\n        self.trust_env = False\n\n    def send(self, *args, **kwargs):\n        self.calls.append(SendCall(args, kwargs))\n        return self.build_response()\n\n    def build_response(self):\n        request = self.calls[-1].args[0]\n        r = requests.Response()\n\n        try:\n            r.status_code = int(self.redirects.pop(0))\n        except IndexError:\n            r.status_code = 200\n\n        r.headers = CaseInsensitiveDict({\"Location\": \"/\"})\n        r.raw = self._build_raw()\n        r.request = request\n        return r\n\n    def _build_raw(self):\n        string = StringIO.StringIO(\"\")\n        setattr(string, \"release_conn\", lambda *args: args)\n        return string\n\n\ndef test_json_encodes_as_bytes():\n    # urllib3 expects bodies as bytes-like objects\n    body = {\"key\": \"value\"}\n    p = PreparedRequest()\n    p.prepare(method=\"GET\", url=\"https://www.example.com/\", json=body)\n    assert isinstance(p.body, bytes)\n\n\ndef test_requests_are_updated_each_time(httpbin):\n    session = RedirectSession([303, 307])\n    prep = requests.Request(\"POST\", httpbin(\"post\")).prepare()\n    r0 = session.send(prep)\n    assert r0.request.method == \"POST\"\n    assert session.calls[-1] == SendCall((r0.request,), {})\n    redirect_generator = session.resolve_redirects(r0, prep)\n    default_keyword_args = {\n        \"stream\": False,\n        \"verify\": True,\n        \"cert\": None,\n        \"timeout\": None,\n        \"allow_redirects\": False,\n        \"proxies\": {},\n    }\n    for response in redirect_generator:\n        assert response.request.method == \"GET\"\n\n74|import pytest\n\nfrom requests import hooks\n\n\ndef hook(value):\n    return value[1:]\n\n\n@pytest.mark.parametrize(\n    \"hooks_list, result\",\n    (\n        (hook, \"ata\"),\n        ([hook, lambda x: None, hook], \"ta\"),\n    ),\n)\ndef test_hooks(hooks_list, result):\n    assert hooks.dispatch_hook(\"response\", {\"response\": hooks_list}, \"Data\") == result\n\n\ndef test_default_hooks():\n    assert hooks.default_hooks() == {\"response\": []}\n\n",
+  "upstream_raw_records": {
+    "entities": [
+      {
+        "id": "1387",
+        "entity": "REDIRECTSESSION.SEND",
+        "description": "The method `RedirectSession.send` is defined here; it appends `SendCall(args, kwargs)` to `self.calls` and returns `self.build_response()`.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "1015",
+        "entity": "HOOKS.DISPATCH_HOOK",
+        "description": "The external callable `hooks.dispatch_hook` is explicitly referenced in `test_hooks` as `hooks.dispatch_hook(\"response\", {\"response\": hooks_list}, \"Data\")`; its definition and runtime receiver binding are not visible here.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1113",
+        "entity": "REQUESTS.SESSION.SEND",
+        "description": "References the unresolved method `send` on a session receiver, used as `s.send(r.prepare())`; the receiver is syntactically assigned from `requests.Session()` but the method definition is not visible.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "1050",
+        "entity": "SOCK.SEND",
+        "description": "SOCK.SEND is an unresolved callable invoked as `sock.send(...)` on a handler’s `sock` receiver. It is used by the visible `response_handler` implementations, including `Server.text_response_server.text_response_handler`, to transmit HTTP response data over a socket. The transmitted payloads include encoded response bytes, raw HTTP response bytes, and the value `text_200_chal`. The concrete type of the `sock` receiver, its socket class, and the implementation or method binding of `send` are not visible in the available descriptions.",
+        "number of relationships": "8",
+        "in_context": true
+      },
+      {
+        "id": "1388",
+        "entity": "REDIRECTSESSION.BUILD_RESPONSE",
+        "description": "The method `RedirectSession.build_response` is defined here; it derives a request from the latest recorded call, creates a `requests.Response`, assigns a redirect or 200 status, headers, raw data, and request, then returns the response.",
+        "number of relationships": "7",
+        "in_context": true
+      },
+      {
+        "id": "1060",
+        "entity": "RESPONSE_HANDLER",
+        "description": "`RESPONSE_HANDLER` is defined as the nested function `response_handler(sock)`. It processes incoming socket content by calling `consume_socket_content(sock, timeout=0.5)`, consumes three requests, and sends HTTP responses in sequence. It first sends two `302` redirects with `Location` headers set to `/get#relevant-section` and `/final-url/`, followed by a final raw HTTP `200` response containing alternate-encoded bytes.",
+        "number of relationships": "9",
+        "in_context": true
+      },
+      {
+        "id": "449",
+        "entity": "R.REGISTER_HOOK",
+        "description": "References the unresolved receiver operation `r.register_hook(\"response\", ...)` in `__call__`; its definition is not visible.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1117",
+        "entity": "S.SEND",
+        "description": "S.SEND refers to the attribute call `s.send(...)`, invoked on a locally created session object to transmit prepared or unprepared requests, including the example `s.send(prep_req)`. The available descriptions explicitly identify the receiver as `s`, but they do not establish its concrete runtime class.",
+        "number of relationships": "6",
+        "in_context": true
+      },
+      {
+        "id": "458",
+        "entity": "REGISTER_HOOK",
+        "description": "`REGISTER_HOOK` refers to a callable method explicitly invoked in multiple contexts. It is called as `r.register_hook(\"response\", ...)` in a preceding body fragment and as `self.register_hook(event, hooks[event])` within `prepare_hooks`. The available descriptions do not reveal the receiver types, owning class or definition, or the implementation details of the method.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "728",
+        "entity": "RESPONSE.CLOSE",
+        "description": "Unresolved callable reference `Response.close` is used by `Response.__exit__` as `self.close()`; the method definition is not visible in this chunk.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "389",
+        "entity": "SEND",
+        "description": "SEND refers to request-sending methods that prepare, execute, and finalize HTTP requests. One implementation fills in default transport settings, rejects an already constructed `Request` instance, selects the appropriate adapter, sends the request, records elapsed time, dispatches response hooks, and persists cookies. Another implementation obtains a connection, verifies certificates, constructs the request URL, adds headers, normalizes timeout values, invokes `conn.urlopen`, and translates visible connection exceptions into request-related errors. Together, SEND handles transport configuration, connection and security setup, request execution, error mapping, response processing, timing, and cookie persistence. The owning classes for these methods are not visible.",
+        "number of relationships": "23",
+        "in_context": true
+      },
+      {
+        "id": "24",
+        "entity": "SESSION.SEND",
+        "description": "`Session.send()` is explicitly called as `s.send(prepped, stream=stream, verify=verify, proxies=proxies, cert=cert, timeout=timeout)` to send a prepared request.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "34",
+        "entity": "REQUESTS.RESPONSE",
+        "description": "`REQUESTS.RESPONSE` refers to the externally defined `requests.Response` class used to represent HTTP responses. It is documented as the return type for request functions, HTTP verb methods, `send`, and `build_response`, and appears in qualified documentation references for response attributes and methods such as `Response.raise_for_status` and `Response.iter_lines`. The class is also used in examples showing representations such as `<Response [200]>`.\n\nWithin the referenced code and tests, `requests.Response` is used in `isinstance` assertions and is explicitly instantiated, including when constructing responses for HTTP error assertions. Some documentation refers to the response class through `Response <requests.Response>`, while one implementation separately instantiates an unresolved `Response` symbol in the visible chunk. The actual definition and implementation of `requests.Response` are external and are not included in the available code.",
+        "number of relationships": "27",
+        "in_context": true
+      },
+      {
+        "id": "729",
+        "entity": "RESPONSE.RAISE_FOR_STATUS",
+        "description": "Unresolved callable reference `Response.raise_for_status` is used by `Response.ok` as `self.raise_for_status()`; its definition is not visible in this chunk.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1384",
+        "entity": "SENDCALL",
+        "description": "The module-level value `SendCall` is defined here by `collections.namedtuple(\"SendCall\", (\"args\", \"kwargs\"))` and is used to record redirect-send arguments.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "395",
+        "entity": "SESSION.REQUEST",
+        "description": "SESSION.REQUEST is a method invoked on a locally created `session` object. It accepts an HTTP method, a URL, and optional keyword arguments, as shown by the general call `session.request(method=method, url=url, **kwargs)`. The method is also explicitly called with `method=\"GET\"` and URLs produced by `httpbin(\"get\")` or `httpbin()`. The owning class, concrete session type, and implementation are not visible in the available descriptions.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "1385",
+        "entity": "REDIRECTSESSION",
+        "description": "The class `RedirectSession` is defined here and inherits from `SessionRedirectMixin`; it stores redirect order, send calls, redirect limits, cookies, and environment trust state.",
+        "number of relationships": "6",
+        "in_context": true
+      }
+    ],
+    "sources": [
+      {
+        "id": "98",
+        "text": "\n        morsel = Morsel()\n        morsel[\"expires\"] = None\n        cookie = morsel_to_cookie(morsel)\n        assert cookie.expires is None\n\n\nclass TestMorselToCookieMaxAge:\n\n    \"\"\"Tests for morsel_to_cookie when morsel contains max-age.\"\"\"\n\n    def test_max_age_valid_int(self):\n        \"\"\"Test case where a valid max age in seconds is passed.\"\"\"\n\n        morsel = Morsel()\n        morsel[\"max-age\"] = 60\n        cookie = morsel_to_cookie(morsel)\n        assert isinstance(cookie.expires, int)\n\n    def test_max_age_invalid_str(self):\n        \"\"\"Test case where a invalid max age is passed.\"\"\"\n\n        morsel = Morsel()\n        morsel[\"max-age\"] = \"woops\"\n        with pytest.raises(TypeError):\n            morsel_to_cookie(morsel)\n\n\nclass TestTimeout:\n    def test_stream_timeout(self, httpbin):\n        try:\n            requests.get(httpbin(\"delay/10\"), timeout=2.0)\n        except requests.exceptions.Timeout as e:\n            assert \"Read timed out\" in e.args[0].args[0]\n\n    @pytest.mark.parametrize(\n        \"timeout, error_text\",\n        (\n            ((3, 4, 5), \"(connect, read)\"),\n            (\"foo\", \"must be an int, float or None\"),\n        ),\n    )\n    def test_invalid_timeout(self, httpbin, timeout, error_text):\n        with pytest.raises(ValueError) as e:\n            requests.get(httpbin(\"get\"), timeout=timeout)\n        assert error_text in str(e)\n\n    @pytest.mark.parametrize(\"timeout\", (None, Urllib3Timeout(connect=None, read=None)))\n    def test_none_timeout(self, httpbin, timeout):\n        \"\"\"Check that you can set None as a valid timeout value.\n\n        To actually test this behavior, we'd want to check that setting the\n        timeout to None actually lets the request block past the system default\n        timeout. However, this would make the test suite unbearably slow.\n        Instead we verify that setting the timeout to None does not prevent the\n        request from succeeding.\n        \"\"\"\n        r = requests.get(httpbin(\"get\"), timeout=timeout)\n        assert r.status_code == 200\n\n    @pytest.mark.parametrize(\n        \"timeout\", ((None, 0.1), Urllib3Timeout(connect=None, read=0.1))\n    )\n    def test_read_timeout(self, httpbin, timeout):\n        try:\n            requests.get(httpbin(\"delay/10\"), timeout=timeout)\n            pytest.fail(\"The recv() request should time out.\")\n        except ReadTimeout:\n            pass\n\n    @pytest.mark.parametrize(\n        \"timeout\", ((0.1, None), Urllib3Timeout(connect=0.1, read=None))\n    )\n    def test_connect_timeout(self, timeout):\n        try:\n            requests.get(TARPIT, timeout=timeout)\n            pytest.fail(\"The connect() request should time out.\")\n        except ConnectTimeout as e:\n            assert isinstance(e, ConnectionError)\n            assert isinstance(e, Timeout)\n\n    @pytest.mark.parametrize(\n        \"timeout\", ((0.1, 0.1), Urllib3Timeout(connect=0.1, read=0.1))\n    )\n    def test_total_timeout_connect(self, timeout):\n        try:\n            requests.get(TARPIT, timeout=timeout)\n            pytest.fail(\"The connect() request should time out.\")\n        except ConnectTimeout:\n            pass\n\n    def test_encoded_methods(self, httpbin):\n        \"\"\"See: https://github.com/psf/requests/issues/2316\"\"\"\n        r = requests.request(b\"GET\", httpbin(\"get\"))\n        assert r.ok\n\n\nSendCall = collections.namedtuple(\"SendCall\", (\"args\", \"kwargs\"))\n\n\nclass RedirectSession(SessionRedirectMixin):\n    def __init__(self, order_of_redirects):\n        self.redirects = order_of_redirects\n        self.calls = []\n        self.max_redirects = 30\n        self.cookies = {}\n        self.trust_env = False\n\n    def send(self, *args, **kwargs):\n        self.calls.append(SendCall(args, kwargs))\n        return self.build_response()\n\n    def build_response(self):\n        request = self.calls[-1].args[0]\n        r = requests.Response()\n\n        try:\n            r.status_code = int(self.redirects.pop(0))\n        except IndexError:\n            r.status_code = 200\n\n        r.headers = CaseInsensitiveDict({\"Location\": \"/\"})\n        r.raw = self._build_raw()\n        r.request = request\n        return r\n\n    def _build_raw(self):\n        string = StringIO.StringIO(\"\")\n        setattr(string, \"release_conn\", lambda *args: args)\n        return string\n\n\ndef test_json_encodes_as_bytes():\n    # urllib3 expects bodies as bytes-like objects\n    body = {\"key\": \"value\"}\n    p = PreparedRequest()\n    p.prepare(method=\"GET\", url=\"https://www.example.com/\", json=body)\n    assert isinstance(p.body, bytes)\n\n\ndef test_requests_are_updated_each_time(httpbin):\n    session = RedirectSession([303, 307])\n    prep = requests.Request(\"POST\", httpbin(\"post\")).prepare()\n    r0 = session.send(prep)\n    assert r0.request.method == \"POST\"\n    assert session.calls[-1] == SendCall((r0.request,), {})\n    redirect_generator = session.resolve_redirects(r0, prep)\n    default_keyword_args = {\n        \"stream\": False,\n        \"verify\": True,\n        \"cert\": None,\n        \"timeout\": None,\n        \"allow_redirects\": False,\n        \"proxies\": {},\n    }\n    for response in redirect_generator:\n        assert response.request.method == \"GET\"\n"
+      },
+      {
+        "id": "74",
+        "text": "import pytest\n\nfrom requests import hooks\n\n\ndef hook(value):\n    return value[1:]\n\n\n@pytest.mark.parametrize(\n    \"hooks_list, result\",\n    (\n        (hook, \"ata\"),\n        ([hook, lambda x: None, hook], \"ta\"),\n    ),\n)\ndef test_hooks(hooks_list, result):\n    assert hooks.dispatch_hook(\"response\", {\"response\": hooks_list}, \"Data\") == result\n\n\ndef test_default_hooks():\n    assert hooks.default_hooks() == {\"response\": []}\n"
+      }
+    ]
+  },
+  "final_context": "-----Entities-----\nid|entity|description|number of relationships\n1387|REDIRECTSESSION.SEND|The method `RedirectSession.send` is defined here; it appends `SendCall(args, kwargs)` to `self.calls` and returns `self.build_response()`.|4\n1015|HOOKS.DISPATCH_HOOK|\"The external callable `hooks.dispatch_hook` is explicitly referenced in `test_hooks` as `hooks.dispatch_hook(\"\"response\"\", {\"\"response\"\": hooks_list}, \"\"Data\"\")`; its definition and runtime receiver binding are not visible here.\"|1\n1113|REQUESTS.SESSION.SEND|References the unresolved method `send` on a session receiver, used as `s.send(r.prepare())`; the receiver is syntactically assigned from `requests.Session()` but the method definition is not visible.|2\n1050|SOCK.SEND|SOCK.SEND is an unresolved callable invoked as `sock.send(...)` on a handler’s `sock` receiver. It is used by the visible `response_handler` implementations, including `Server.text_response_server.text_response_handler`, to transmit HTTP response data over a socket. The transmitted payloads include encoded response bytes, raw HTTP response bytes, and the value `text_200_chal`. The concrete type of the `sock` receiver, its socket class, and the implementation or method binding of `send` are not visible in the available descriptions.|8\n1388|REDIRECTSESSION.BUILD_RESPONSE|The method `RedirectSession.build_response` is defined here; it derives a request from the latest recorded call, creates a `requests.Response`, assigns a redirect or 200 status, headers, raw data, and request, then returns the response.|7\n1060|RESPONSE_HANDLER|`RESPONSE_HANDLER` is defined as the nested function `response_handler(sock)`. It processes incoming socket content by calling `consume_socket_content(sock, timeout=0.5)`, consumes three requests, and sends HTTP responses in sequence. It first sends two `302` redirects with `Location` headers set to `/get#relevant-section` and `/final-url/`, followed by a final raw HTTP `200` response containing alternate-encoded bytes.|9\n449|R.REGISTER_HOOK|\"References the unresolved receiver operation `r.register_hook(\"\"response\"\", ...)` in `__call__`; its definition is not visible.\"|1\n1117|S.SEND|S.SEND refers to the attribute call `s.send(...)`, invoked on a locally created session object to transmit prepared or unprepared requests, including the example `s.send(prep_req)`. The available descriptions explicitly identify the receiver as `s`, but they do not establish its concrete runtime class.|6\n458|REGISTER_HOOK|\"`REGISTER_HOOK` refers to a callable method explicitly invoked in multiple contexts. It is called as `r.register_hook(\"\"response\"\", ...)` in a preceding body fragment and as `self.register_hook(event, hooks[event])` within `prepare_hooks`. The available descriptions do not reveal the receiver types, owning class or definition, or the implementation details of the method.\"|1\n728|RESPONSE.CLOSE|Unresolved callable reference `Response.close` is used by `Response.__exit__` as `self.close()`; the method definition is not visible in this chunk.|1\n389|SEND|SEND refers to request-sending methods that prepare, execute, and finalize HTTP requests. One implementation fills in default transport settings, rejects an already constructed `Request` instance, selects the appropriate adapter, sends the request, records elapsed time, dispatches response hooks, and persists cookies. Another implementation obtains a connection, verifies certificates, constructs the request URL, adds headers, normalizes timeout values, invokes `conn.urlopen`, and translates visible connection exceptions into request-related errors. Together, SEND handles transport configuration, connection and security setup, request execution, error mapping, response processing, timing, and cookie persistence. The owning classes for these methods are not visible.|23\n24|SESSION.SEND|`Session.send()` is explicitly called as `s.send(prepped, stream=stream, verify=verify, proxies=proxies, cert=cert, timeout=timeout)` to send a prepared request.|1\n34|REQUESTS.RESPONSE|\"`REQUESTS.RESPONSE` refers to the externally defined `requests.Response` class used to represent HTTP responses. It is documented as the return type for request functions, HTTP verb methods, `send`, and `build_response`, and appears in qualified documentation references for response attributes and methods such as `Response.raise_for_status` and `Response.iter_lines`. The class is also used in examples showing representations such as `<Response [200]>`.\n\nWithin the referenced code and tests, `requests.Response` is used in `isinstance` assertions and is explicitly instantiated, including when constructing responses for HTTP error assertions. Some documentation refers to the response class through `Response <requests.Response>`, while one implementation separately instantiates an unresolved `Response` symbol in the visible chunk. The actual definition and implementation of `requests.Response` are external and are not included in the available code.\"|27\n729|RESPONSE.RAISE_FOR_STATUS|Unresolved callable reference `Response.raise_for_status` is used by `Response.ok` as `self.raise_for_status()`; its definition is not visible in this chunk.|1\n1384|SENDCALL|\"The module-level value `SendCall` is defined here by `collections.namedtuple(\"\"SendCall\"\", (\"\"args\"\", \"\"kwargs\"\"))` and is used to record redirect-send arguments.\"|2\n395|SESSION.REQUEST|\"SESSION.REQUEST is a method invoked on a locally created `session` object. It accepts an HTTP method, a URL, and optional keyword arguments, as shown by the general call `session.request(method=method, url=url, **kwargs)`. The method is also explicitly called with `method=\"\"GET\"\"` and URLs produced by `httpbin(\"\"get\"\")` or `httpbin()`. The owning class, concrete session type, and implementation are not visible in the available descriptions.\"|2\n1385|REDIRECTSESSION|The class `RedirectSession` is defined here and inherits from `SessionRedirectMixin`; it stores redirect order, send calls, redirect limits, cookies, and environment trust state.|6\n\n-----Sources-----\nid|source|text\n98|tests/test_requests.py:L2414-L2570|\"\n        morsel = Morsel()\n        morsel[\"\"expires\"\"] = None\n        cookie = morsel_to_cookie(morsel)\n        assert cookie.expires is None\n\n\nclass TestMorselToCookieMaxAge:\n\n    \"\"\"\"\"\"Tests for morsel_to_cookie when morsel contains max-age.\"\"\"\"\"\"\n\n    def test_max_age_valid_int(self):\n        \"\"\"\"\"\"Test case where a valid max age in seconds is passed.\"\"\"\"\"\"\n\n        morsel = Morsel()\n        morsel[\"\"max-age\"\"] = 60\n        cookie = morsel_to_cookie(morsel)\n        assert isinstance(cookie.expires, int)\n\n    def test_max_age_invalid_str(self):\n        \"\"\"\"\"\"Test case where a invalid max age is passed.\"\"\"\"\"\"\n\n        morsel = Morsel()\n        morsel[\"\"max-age\"\"] = \"\"woops\"\"\n        with pytest.raises(TypeError):\n            morsel_to_cookie(morsel)\n\n\nclass TestTimeout:\n    def test_stream_timeout(self, httpbin):\n        try:\n            requests.get(httpbin(\"\"delay/10\"\"), timeout=2.0)\n        except requests.exceptions.Timeout as e:\n            assert \"\"Read timed out\"\" in e.args[0].args[0]\n\n    @pytest.mark.parametrize(\n        \"\"timeout, error_text\"\",\n        (\n            ((3, 4, 5), \"\"(connect, read)\"\"),\n            (\"\"foo\"\", \"\"must be an int, float or None\"\"),\n        ),\n    )\n    def test_invalid_timeout(self, httpbin, timeout, error_text):\n        with pytest.raises(ValueError) as e:\n            requests.get(httpbin(\"\"get\"\"), timeout=timeout)\n        assert error_text in str(e)\n\n    @pytest.mark.parametrize(\"\"timeout\"\", (None, Urllib3Timeout(connect=None, read=None)))\n    def test_none_timeout(self, httpbin, timeout):\n        \"\"\"\"\"\"Check that you can set None as a valid timeout value.\n\n        To actually test this behavior, we'd want to check that setting the\n        timeout to None actually lets the request block past the system default\n        timeout. However, this would make the test suite unbearably slow.\n        Instead we verify that setting the timeout to None does not prevent the\n        request from succeeding.\n        \"\"\"\"\"\"\n        r = requests.get(httpbin(\"\"get\"\"), timeout=timeout)\n        assert r.status_code == 200\n\n    @pytest.mark.parametrize(\n        \"\"timeout\"\", ((None, 0.1), Urllib3Timeout(connect=None, read=0.1))\n    )\n    def test_read_timeout(self, httpbin, timeout):\n        try:\n            requests.get(httpbin(\"\"delay/10\"\"), timeout=timeout)\n            pytest.fail(\"\"The recv() request should time out.\"\")\n        except ReadTimeout:\n            pass\n\n    @pytest.mark.parametrize(\n        \"\"timeout\"\", ((0.1, None), Urllib3Timeout(connect=0.1, read=None))\n    )\n    def test_connect_timeout(self, timeout):\n        try:\n            requests.get(TARPIT, timeout=timeout)\n            pytest.fail(\"\"The connect() request should time out.\"\")\n        except ConnectTimeout as e:\n            assert isinstance(e, ConnectionError)\n            assert isinstance(e, Timeout)\n\n    @pytest.mark.parametrize(\n        \"\"timeout\"\", ((0.1, 0.1), Urllib3Timeout(connect=0.1, read=0.1))\n    )\n    def test_total_timeout_connect(self, timeout):\n        try:\n            requests.get(TARPIT, timeout=timeout)\n            pytest.fail(\"\"The connect() request should time out.\"\")\n        except ConnectTimeout:\n            pass\n\n    def test_encoded_methods(self, httpbin):\n        \"\"\"\"\"\"See: https://github.com/psf/requests/issues/2316\"\"\"\"\"\"\n        r = requests.request(b\"\"GET\"\", httpbin(\"\"get\"\"))\n        assert r.ok\n\n\nSendCall = collections.namedtuple(\"\"SendCall\"\", (\"\"args\"\", \"\"kwargs\"\"))\n\n\nclass RedirectSession(SessionRedirectMixin):\n    def __init__(self, order_of_redirects):\n        self.redirects = order_of_redirects\n        self.calls = []\n        self.max_redirects = 30\n        self.cookies = {}\n        self.trust_env = False\n\n    def send(self, *args, **kwargs):\n        self.calls.append(SendCall(args, kwargs))\n        return self.build_response()\n\n    def build_response(self):\n        request = self.calls[-1].args[0]\n        r = requests.Response()\n\n        try:\n            r.status_code = int(self.redirects.pop(0))\n        except IndexError:\n            r.status_code = 200\n\n        r.headers = CaseInsensitiveDict({\"\"Location\"\": \"\"/\"\"})\n        r.raw = self._build_raw()\n        r.request = request\n        return r\n\n    def _build_raw(self):\n        string = StringIO.StringIO(\"\"\"\")\n        setattr(string, \"\"release_conn\"\", lambda *args: args)\n        return string\n\n\ndef test_json_encodes_as_bytes():\n    # urllib3 expects bodies as bytes-like objects\n    body = {\"\"key\"\": \"\"value\"\"}\n    p = PreparedRequest()\n    p.prepare(method=\"\"GET\"\", url=\"\"https://www.example.com/\"\", json=body)\n    assert isinstance(p.body, bytes)\n\n\ndef test_requests_are_updated_each_time(httpbin):\n    session = RedirectSession([303, 307])\n    prep = requests.Request(\"\"POST\"\", httpbin(\"\"post\"\")).prepare()\n    r0 = session.send(prep)\n    assert r0.request.method == \"\"POST\"\"\n    assert session.calls[-1] == SendCall((r0.request,), {})\n    redirect_generator = session.resolve_redirects(r0, prep)\n    default_keyword_args = {\n        \"\"stream\"\": False,\n        \"\"verify\"\": True,\n        \"\"cert\"\": None,\n        \"\"timeout\"\": None,\n        \"\"allow_redirects\"\": False,\n        \"\"proxies\"\": {},\n    }\n    for response in redirect_generator:\n        assert response.request.method == \"\"GET\"\"\n\"\n74|tests/test_hooks.py:L1-L22|\"import pytest\n\nfrom requests import hooks\n\n\ndef hook(value):\n    return value[1:]\n\n\n@pytest.mark.parametrize(\n    \"\"hooks_list, result\"\",\n    (\n        (hook, \"\"ata\"\"),\n        ([hook, lambda x: None, hook], \"\"ta\"\"),\n    ),\n)\ndef test_hooks(hooks_list, result):\n    assert hooks.dispatch_hook(\"\"response\"\", {\"\"response\"\": hooks_list}, \"\"Data\"\") == result\n\n\ndef test_default_hooks():\n    assert hooks.default_hooks() == {\"\"response\"\": []}\n\"\n",
+  "final_tables": [
+    {
+      "name": "entities",
+      "columns": [
+        "id",
+        "entity",
+        "description",
+        "number of relationships"
+      ],
+      "rows": [
+        {
+          "id": "1387",
+          "entity": "REDIRECTSESSION.SEND",
+          "description": "The method `RedirectSession.send` is defined here; it appends `SendCall(args, kwargs)` to `self.calls` and returns `self.build_response()`.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "1015",
+          "entity": "HOOKS.DISPATCH_HOOK",
+          "description": "The external callable `hooks.dispatch_hook` is explicitly referenced in `test_hooks` as `hooks.dispatch_hook(\"response\", {\"response\": hooks_list}, \"Data\")`; its definition and runtime receiver binding are not visible here.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1113",
+          "entity": "REQUESTS.SESSION.SEND",
+          "description": "References the unresolved method `send` on a session receiver, used as `s.send(r.prepare())`; the receiver is syntactically assigned from `requests.Session()` but the method definition is not visible.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "1050",
+          "entity": "SOCK.SEND",
+          "description": "SOCK.SEND is an unresolved callable invoked as `sock.send(...)` on a handler’s `sock` receiver. It is used by the visible `response_handler` implementations, including `Server.text_response_server.text_response_handler`, to transmit HTTP response data over a socket. The transmitted payloads include encoded response bytes, raw HTTP response bytes, and the value `text_200_chal`. The concrete type of the `sock` receiver, its socket class, and the implementation or method binding of `send` are not visible in the available descriptions.",
+          "number of relationships": "8"
+        },
+        {
+          "id": "1388",
+          "entity": "REDIRECTSESSION.BUILD_RESPONSE",
+          "description": "The method `RedirectSession.build_response` is defined here; it derives a request from the latest recorded call, creates a `requests.Response`, assigns a redirect or 200 status, headers, raw data, and request, then returns the response.",
+          "number of relationships": "7"
+        },
+        {
+          "id": "1060",
+          "entity": "RESPONSE_HANDLER",
+          "description": "`RESPONSE_HANDLER` is defined as the nested function `response_handler(sock)`. It processes incoming socket content by calling `consume_socket_content(sock, timeout=0.5)`, consumes three requests, and sends HTTP responses in sequence. It first sends two `302` redirects with `Location` headers set to `/get#relevant-section` and `/final-url/`, followed by a final raw HTTP `200` response containing alternate-encoded bytes.",
+          "number of relationships": "9"
+        },
+        {
+          "id": "449",
+          "entity": "R.REGISTER_HOOK",
+          "description": "References the unresolved receiver operation `r.register_hook(\"response\", ...)` in `__call__`; its definition is not visible.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1117",
+          "entity": "S.SEND",
+          "description": "S.SEND refers to the attribute call `s.send(...)`, invoked on a locally created session object to transmit prepared or unprepared requests, including the example `s.send(prep_req)`. The available descriptions explicitly identify the receiver as `s`, but they do not establish its concrete runtime class.",
+          "number of relationships": "6"
+        },
+        {
+          "id": "458",
+          "entity": "REGISTER_HOOK",
+          "description": "`REGISTER_HOOK` refers to a callable method explicitly invoked in multiple contexts. It is called as `r.register_hook(\"response\", ...)` in a preceding body fragment and as `self.register_hook(event, hooks[event])` within `prepare_hooks`. The available descriptions do not reveal the receiver types, owning class or definition, or the implementation details of the method.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "728",
+          "entity": "RESPONSE.CLOSE",
+          "description": "Unresolved callable reference `Response.close` is used by `Response.__exit__` as `self.close()`; the method definition is not visible in this chunk.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "389",
+          "entity": "SEND",
+          "description": "SEND refers to request-sending methods that prepare, execute, and finalize HTTP requests. One implementation fills in default transport settings, rejects an already constructed `Request` instance, selects the appropriate adapter, sends the request, records elapsed time, dispatches response hooks, and persists cookies. Another implementation obtains a connection, verifies certificates, constructs the request URL, adds headers, normalizes timeout values, invokes `conn.urlopen`, and translates visible connection exceptions into request-related errors. Together, SEND handles transport configuration, connection and security setup, request execution, error mapping, response processing, timing, and cookie persistence. The owning classes for these methods are not visible.",
+          "number of relationships": "23"
+        },
+        {
+          "id": "24",
+          "entity": "SESSION.SEND",
+          "description": "`Session.send()` is explicitly called as `s.send(prepped, stream=stream, verify=verify, proxies=proxies, cert=cert, timeout=timeout)` to send a prepared request.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "34",
+          "entity": "REQUESTS.RESPONSE",
+          "description": "`REQUESTS.RESPONSE` refers to the externally defined `requests.Response` class used to represent HTTP responses. It is documented as the return type for request functions, HTTP verb methods, `send`, and `build_response`, and appears in qualified documentation references for response attributes and methods such as `Response.raise_for_status` and `Response.iter_lines`. The class is also used in examples showing representations such as `<Response [200]>`.\n\nWithin the referenced code and tests, `requests.Response` is used in `isinstance` assertions and is explicitly instantiated, including when constructing responses for HTTP error assertions. Some documentation refers to the response class through `Response <requests.Response>`, while one implementation separately instantiates an unresolved `Response` symbol in the visible chunk. The actual definition and implementation of `requests.Response` are external and are not included in the available code.",
+          "number of relationships": "27"
+        },
+        {
+          "id": "729",
+          "entity": "RESPONSE.RAISE_FOR_STATUS",
+          "description": "Unresolved callable reference `Response.raise_for_status` is used by `Response.ok` as `self.raise_for_status()`; its definition is not visible in this chunk.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1384",
+          "entity": "SENDCALL",
+          "description": "The module-level value `SendCall` is defined here by `collections.namedtuple(\"SendCall\", (\"args\", \"kwargs\"))` and is used to record redirect-send arguments.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "395",
+          "entity": "SESSION.REQUEST",
+          "description": "SESSION.REQUEST is a method invoked on a locally created `session` object. It accepts an HTTP method, a URL, and optional keyword arguments, as shown by the general call `session.request(method=method, url=url, **kwargs)`. The method is also explicitly called with `method=\"GET\"` and URLs produced by `httpbin(\"get\")` or `httpbin()`. The owning class, concrete session type, and implementation are not visible in the available descriptions.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "1385",
+          "entity": "REDIRECTSESSION",
+          "description": "The class `RedirectSession` is defined here and inherits from `SessionRedirectMixin`; it stores redirect order, send calls, redirect limits, cookies, and environment trust state.",
+          "number of relationships": "6"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "columns": [
+        "id",
+        "source",
+        "text"
+      ],
+      "rows": [
+        {
+          "id": "98",
+          "text": "\n        morsel = Morsel()\n        morsel[\"expires\"] = None\n        cookie = morsel_to_cookie(morsel)\n        assert cookie.expires is None\n\n\nclass TestMorselToCookieMaxAge:\n\n    \"\"\"Tests for morsel_to_cookie when morsel contains max-age.\"\"\"\n\n    def test_max_age_valid_int(self):\n        \"\"\"Test case where a valid max age in seconds is passed.\"\"\"\n\n        morsel = Morsel()\n        morsel[\"max-age\"] = 60\n        cookie = morsel_to_cookie(morsel)\n        assert isinstance(cookie.expires, int)\n\n    def test_max_age_invalid_str(self):\n        \"\"\"Test case where a invalid max age is passed.\"\"\"\n\n        morsel = Morsel()\n        morsel[\"max-age\"] = \"woops\"\n        with pytest.raises(TypeError):\n            morsel_to_cookie(morsel)\n\n\nclass TestTimeout:\n    def test_stream_timeout(self, httpbin):\n        try:\n            requests.get(httpbin(\"delay/10\"), timeout=2.0)\n        except requests.exceptions.Timeout as e:\n            assert \"Read timed out\" in e.args[0].args[0]\n\n    @pytest.mark.parametrize(\n        \"timeout, error_text\",\n        (\n            ((3, 4, 5), \"(connect, read)\"),\n            (\"foo\", \"must be an int, float or None\"),\n        ),\n    )\n    def test_invalid_timeout(self, httpbin, timeout, error_text):\n        with pytest.raises(ValueError) as e:\n            requests.get(httpbin(\"get\"), timeout=timeout)\n        assert error_text in str(e)\n\n    @pytest.mark.parametrize(\"timeout\", (None, Urllib3Timeout(connect=None, read=None)))\n    def test_none_timeout(self, httpbin, timeout):\n        \"\"\"Check that you can set None as a valid timeout value.\n\n        To actually test this behavior, we'd want to check that setting the\n        timeout to None actually lets the request block past the system default\n        timeout. However, this would make the test suite unbearably slow.\n        Instead we verify that setting the timeout to None does not prevent the\n        request from succeeding.\n        \"\"\"\n        r = requests.get(httpbin(\"get\"), timeout=timeout)\n        assert r.status_code == 200\n\n    @pytest.mark.parametrize(\n        \"timeout\", ((None, 0.1), Urllib3Timeout(connect=None, read=0.1))\n    )\n    def test_read_timeout(self, httpbin, timeout):\n        try:\n            requests.get(httpbin(\"delay/10\"), timeout=timeout)\n            pytest.fail(\"The recv() request should time out.\")\n        except ReadTimeout:\n            pass\n\n    @pytest.mark.parametrize(\n        \"timeout\", ((0.1, None), Urllib3Timeout(connect=0.1, read=None))\n    )\n    def test_connect_timeout(self, timeout):\n        try:\n            requests.get(TARPIT, timeout=timeout)\n            pytest.fail(\"The connect() request should time out.\")\n        except ConnectTimeout as e:\n            assert isinstance(e, ConnectionError)\n            assert isinstance(e, Timeout)\n\n    @pytest.mark.parametrize(\n        \"timeout\", ((0.1, 0.1), Urllib3Timeout(connect=0.1, read=0.1))\n    )\n    def test_total_timeout_connect(self, timeout):\n        try:\n            requests.get(TARPIT, timeout=timeout)\n            pytest.fail(\"The connect() request should time out.\")\n        except ConnectTimeout:\n            pass\n\n    def test_encoded_methods(self, httpbin):\n        \"\"\"See: https://github.com/psf/requests/issues/2316\"\"\"\n        r = requests.request(b\"GET\", httpbin(\"get\"))\n        assert r.ok\n\n\nSendCall = collections.namedtuple(\"SendCall\", (\"args\", \"kwargs\"))\n\n\nclass RedirectSession(SessionRedirectMixin):\n    def __init__(self, order_of_redirects):\n        self.redirects = order_of_redirects\n        self.calls = []\n        self.max_redirects = 30\n        self.cookies = {}\n        self.trust_env = False\n\n    def send(self, *args, **kwargs):\n        self.calls.append(SendCall(args, kwargs))\n        return self.build_response()\n\n    def build_response(self):\n        request = self.calls[-1].args[0]\n        r = requests.Response()\n\n        try:\n            r.status_code = int(self.redirects.pop(0))\n        except IndexError:\n            r.status_code = 200\n\n        r.headers = CaseInsensitiveDict({\"Location\": \"/\"})\n        r.raw = self._build_raw()\n        r.request = request\n        return r\n\n    def _build_raw(self):\n        string = StringIO.StringIO(\"\")\n        setattr(string, \"release_conn\", lambda *args: args)\n        return string\n\n\ndef test_json_encodes_as_bytes():\n    # urllib3 expects bodies as bytes-like objects\n    body = {\"key\": \"value\"}\n    p = PreparedRequest()\n    p.prepare(method=\"GET\", url=\"https://www.example.com/\", json=body)\n    assert isinstance(p.body, bytes)\n\n\ndef test_requests_are_updated_each_time(httpbin):\n    session = RedirectSession([303, 307])\n    prep = requests.Request(\"POST\", httpbin(\"post\")).prepare()\n    r0 = session.send(prep)\n    assert r0.request.method == \"POST\"\n    assert session.calls[-1] == SendCall((r0.request,), {})\n    redirect_generator = session.resolve_redirects(r0, prep)\n    default_keyword_args = {\n        \"stream\": False,\n        \"verify\": True,\n        \"cert\": None,\n        \"timeout\": None,\n        \"allow_redirects\": False,\n        \"proxies\": {},\n    }\n    for response in redirect_generator:\n        assert response.request.method == \"GET\"\n",
+          "source": "tests/test_requests.py:L2414-L2570"
+        },
+        {
+          "id": "74",
+          "text": "import pytest\n\nfrom requests import hooks\n\n\ndef hook(value):\n    return value[1:]\n\n\n@pytest.mark.parametrize(\n    \"hooks_list, result\",\n    (\n        (hook, \"ata\"),\n        ([hook, lambda x: None, hook], \"ta\"),\n    ),\n)\ndef test_hooks(hooks_list, result):\n    assert hooks.dispatch_hook(\"response\", {\"response\": hooks_list}, \"Data\") == result\n\n\ndef test_default_hooks():\n    assert hooks.default_hooks() == {\"response\": []}\n",
+          "source": "tests/test_hooks.py:L1-L22"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "short_id": "98",
+      "text_unit_id": "37da1205bca9087f81a5c28961b6f3e9fcfb816c1df9548c0c78121eefb7a5339080dac11060a9f200ad5f13680ea1ef2ee84f58a37a882d9421cf8bda50fe42",
+      "id": "574528d297ed1664e6a804d14629633481f9f2b3e89563c941369817db6f6da6",
+      "title": "tests/test_requests.py:L2414-L2570",
+      "path": "tests/test_requests.py",
+      "start_line": 2414,
+      "end_line": 2570,
+      "tokens": 1194,
+      "text_sha256": "6ffb5e997dcbd4a151e6ae33980ecfc81e2ffea9bd71368c7bb8589ca418c8e3",
+      "ms_text_unit_id": "37da1205bca9087f81a5c28961b6f3e9fcfb816c1df9548c0c78121eefb7a5339080dac11060a9f200ad5f13680ea1ef2ee84f58a37a882d9421cf8bda50fe42"
+    },
+    {
+      "short_id": "74",
+      "text_unit_id": "cb4cdd655d14dd1eb571dfe0ca1362cc2e6c57b5adac1bb8ac4377df45d4aa7fd4c43a53b9bd9ff79bd9c5e0acca6a170ce709f386dd5c4dbc9c6c232056b277",
+      "id": "72bdee69fe40f08a377e9bd4097601ea97602d23cb86a215d5185134d0068ad5",
+      "title": "tests/test_hooks.py:L1-L22",
+      "path": "tests/test_hooks.py",
+      "start_line": 1,
+      "end_line": 22,
+      "tokens": 102,
+      "text_sha256": "a9e5163f538543a660be3b06650cd0b803ff0c503f5948f66b6fc50ede38109c",
+      "ms_text_unit_id": "cb4cdd655d14dd1eb571dfe0ca1362cc2e6c57b5adac1bb8ac4377df45d4aa7fd4c43a53b9bd9ff79bd9c5e0acca6a170ce709f386dd5c4dbc9c6c232056b277"
+    }
+  ],
+  "raw_context_tokens": 2591,
+  "final_context_tokens": 2674,
+  "source_text_tokens": 1296,
+  "source_chunks": 2,
+  "retrieval_compute_seconds": 0.011319916695356369,
+  "adaptation_seconds": 0.0034453338012099266,
+  "empty_reason": null,
+  "community_level": 2,
+  "dropped_tail_rows": 0
+}

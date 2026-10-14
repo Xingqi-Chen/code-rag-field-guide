@@ -1,0 +1,739 @@
+{
+  "variant": "code-prompt",
+  "question_id": "Q17",
+  "method": "ms_local_code_prompt",
+  "budget": 8000,
+  "query": "If adapter matching changes to case-sensitive or shortest-prefix-first, which registration order, selection loop and send call sites must be inspected?",
+  "upstream_raw_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n1264|S.GET_ADAPTER|The unresolved receiver call `s.get_adapter(...)` is referenced three times to select adapters for URLs matching only the general prefix, matching the more-specific prefix, and not matching the configured prefix; the receiver's concrete class is not proven beyond session construction in the test.|1\n813|ADAPTER.SEND|`adapter.send` is an explicitly referenced receiver call in `send`; the adapter's class and method definition are not visible, so its runtime binding is uncertain.|1\n1261|TEST_TRANSPORT_ADAPTER_ORDERING|The visible test function `test_transport_adapter_ordering` constructs sessions, mounts `HTTPAdapter` instances at URL prefixes, and asserts adapter-key ordering and retained `http://` and `https://` mappings. Its owning class is not visible in this chunk.|5\n1263|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING|The visible test function `test_session_get_adapter_prefix_matching` mounts adapters at a general and a more specific prefix, then asserts `get_adapter` returns the corresponding adapter for matching and more-specific URLs. Its owning class is not visible in this chunk.|4\n1267|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_IS_CASE_INSENSITIVE|The test `test_session_get_adapter_prefix_matching_is_case_insensitive` is visibly defined here. It mounts an adapter for `mixed_case_prefix` and asserts that `s.get_adapter(url_matching_prefix_with_different_case) is my_adapter`.|4\n1311|ADAPTER.BUILD_RESPONSE|ADAPTER.BUILD_RESPONSE refers to the exact adapter attribute `adapter.build_response`. Within `_patch_adapter_gzipped_redirect`, this attribute is explicitly read and saved as `org_build_response` before being replaced. The receiver adapter’s concrete runtime class is not established or visible in the available information.|1\n1262|S2.MOUNT|The unresolved receiver call `s2.mount(...)` is referenced to add an HTTPS adapter after assigning `s2.adapters`; the receiver's concrete class is not proven beyond session construction in the test.|1\n1266|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_MIXED_CASE|The test `test_session_get_adapter_prefix_matching_mixed_case` is visibly defined here. It creates a mixed-case URL prefix, mounts an `HTTPAdapter` on a `requests.Session`, and asserts `s.get_adapter(url_matching_prefix) is my_adapter`.|4\n812|GET_ADAPTER|`get_adapter` is an unresolved receiver method explicitly called as `self.get_adapter(url=request.url)` in `send`; its definition and owning class are not visible.|4\n97|HTTPADAPTER|HTTPADAPTER refers to the externally defined `HTTPAdapter` class from the Requests library, typically imported from `requests.adapters` or a local `.adapters` module. It serves as the default transport adapter for HTTP and HTTPS session connections and is instantiated as `HTTPAdapter()` when mounting default adapters for the `http://` and `https://` URL prefixes.\n\nHTTPADAPTER can also be configured with connection-pool or retry options, including constructions such as `HTTPAdapter(max_retries=retries)`, before being mounted on a session. It provides adapter functionality such as `proxy_headers`, and it is used directly in tests and other visible code. The class is also documented and used as the base class for specialized adapters such as `Ssl3HttpAdapter`.\n\nAlthough HTTPADAPTER is imported and referenced repeatedly—including for session mounting, retry configuration, proxy handling, subclassing, and tests—its actual implementation is not visible in the provided material.|24\n105|S.MOUNT|S.MOUNT refers to calls on an unresolved receiver `s` that register HTTP transport adapters for URL prefixes. One referenced expression mounts `HTTPAdapter(max_retries=retries)` at the `'https://'` prefix, while another mounts a default `HTTPAdapter()` at a variable `prefix`. The receiver `s` appears to be a session constructed in the test, but its concrete class and owning caller are not established by the available context.|3\n1310|SESSION.GET_ADAPTER|`SESSION.GET_ADAPTER` refers to the exact attribute call `session.get_adapter(url=url)`, which is used inside `_patch_adapter_gzipped_redirect`. The receiver is the parameter named `session`, but the available context does not establish its concrete runtime class.|1\n93|REQUESTS.ADAPTERS|`REQUESTS.ADAPTERS` refers to the `requests.adapters` module. It is explicitly imported both as `import requests.adapters` and through `from requests.adapters import HTTPAdapter`, including usage via the `HTTPAdapter` symbol. The module defines transport adapters and contains the visible symbols associated with adapter-based request handling; no additional module behavior is evident from the provided descriptions.|32\n95|SSL3HTTPADAPTER|The class `Ssl3HttpAdapter` is defined in the documentation example as `class Ssl3HttpAdapter(HTTPAdapter)` and is described as a transport adapter that allows SSLv3.|1\n98|BASEADAPTER|BASEADAPTER is an externally defined base class for transport adapters. It serves as the parent class of `HTTPAdapter`, as shown by `class HTTPAdapter(BaseAdapter)`, and is documented as a class that can be subclassed to implement custom transport adapter behavior. Its definition is not included in the provided code.|6\n371|REQUESTS.ADAPTERS.HTTPADAPTER|`requests.adapters.HTTPAdapter` is a documented external class from the Requests library. It is referenced as a class that may be subclassed to expose methods such as `cert_verify`, and it is also instantiated through the expression `requests.adapters.HTTPAdapter()`. However, the class definition is not visible in the available context, and the references do not independently establish a runtime call or inheritance relationship beyond the documented subclassing and instantiation references.|1\n1277|REQUESTS.SESSION.MOUNT|`requests.Session.mount` is an explicitly referenced external method through `s.mount(prefix, adapter)`; the receiver is created with `requests.Session()`, but the method implementation is not visible here.|2\n\n\n-----Relationships-----\nid|source|target|description|weight|links\n2038|TEST_TRANSPORT_ADAPTER_ORDERING|S2.MOUNT|CALLS, direction test_transport_adapter_ordering -> s2.mount, visible expressions `s2.mount(\"https://\", HTTPAdapter())` registers an adapter on `s2`; receiver binding is unresolved.|10.0|1\n2042|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING|S.GET_ADAPTER|`TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING` tests the behavior of `S.GET_ADAPTER` through calls to `s.get_adapter(...)`. It passes URLs that match a general prefix, match a more-specific prefix, and do not match any configured prefix. The test verifies that `S.GET_ADAPTER` selects the appropriate general or more-specific adapter and handles a nonmatching URL as expected. The concrete implementation and receiver binding for `s.get_adapter` are not visible or resolved.|20.0|1\n2035|TEST_TRANSPORT_ADAPTER_ORDERING|REQUESTS.SESSION|CALLS, direction test_transport_adapter_ordering -> requests.Session, visible expressions `requests.Session()` and `s2 = requests.Session()` create sessions whose adapter order is asserted.|10.0|4\n2039|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING|REQUESTS.SESSION|CALLS, direction test_session_get_adapter_prefix_matching -> requests.Session, visible expression `requests.Session()` creates the session used for prefix matching.|10.0|4\n2056|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_MIXED_CASE|REQUESTS.SESSION|TESTS, direction test_session_get_adapter_prefix_matching_mixed_case -> requests.Session: the test instantiates `requests.Session()` and exercises its mounted-adapter lookup through `s.get_adapter(...)`.|9.0|4\n2058|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_IS_CASE_INSENSITIVE|REQUESTS.SESSION|TESTS, direction test_session_get_adapter_prefix_matching_is_case_insensitive -> requests.Session: the test instantiates `requests.Session()` and asserts adapter lookup for a differently cased URL prefix.|9.0|4\n2036|TEST_TRANSPORT_ADAPTER_ORDERING|HTTPADAPTER|CALLS, direction test_transport_adapter_ordering -> HTTPAdapter, visible expressions repeatedly call `HTTPAdapter()` as mount arguments; adapter definition is not visible.|10.0|4\n2040|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING|HTTPADAPTER|CALLS, direction test_session_get_adapter_prefix_matching -> HTTPAdapter, visible expressions `HTTPAdapter()` create the general and more-specific prefix adapters.|10.0|4\n2057|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_MIXED_CASE|HTTPADAPTER|TESTS, direction test_session_get_adapter_prefix_matching_mixed_case -> HTTPAdapter: the test instantiates `HTTPAdapter()` and mounts it on the session.|9.0|4\n2059|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_IS_CASE_INSENSITIVE|HTTPADAPTER|TESTS, direction test_session_get_adapter_prefix_matching_is_case_insensitive -> HTTPAdapter: the test instantiates `HTTPAdapter()` and mounts it before calling `s.get_adapter(...)`.|9.0|4\n1103|SEND|GET_ADAPTER|CALLS, `send` calls the unresolved receiver method `self.get_adapter(url=request.url)`; the runtime owning class is not visible.|9.0|2\n1105|SEND|ADAPTER.SEND|CALLS, `send` calls the syntactically named receiver method `adapter.send(request, **kwargs)`; the adapter binding and runtime target are not established by this chunk.|9.0|2\n2037|TEST_TRANSPORT_ADAPTER_ORDERING|S.MOUNT|`TEST_TRANSPORT_ADAPTER_ORDERING` calls `s.mount(\"http://...\", HTTPAdapter())` to register transport adapters on `S.MOUNT` (`s`). It tests that adapters mounted at different URL prefixes are ordered in `s.adapters` from the most specific prefix to the least specific prefix. The receiver binding for `s` remains unresolved.|20.0|2\n2041|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING|S.MOUNT|CALLS, direction test_session_get_adapter_prefix_matching -> s.mount, visible expressions `s.mount(prefix, prefix_adapter)` and `s.mount(more_specific_prefix, more_specific_prefix_adapter)` register prefix adapters; receiver binding is unresolved.|10.0|2\n2081|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_MIXED_CASE|REQUESTS.SESSION.GET_ADAPTER|CALLS, direction test_session_get_adapter_prefix_matching_mixed_case -> requests.Session.get_adapter: the test visibly calls `s.get_adapter(url_matching_prefix)` after constructing `s` with `requests.Session()`; the receiver binding is local but syntactically supported by that construction.|9.0|2\n2082|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_MIXED_CASE|REQUESTS.SESSION.MOUNT|CALLS, direction test_session_get_adapter_prefix_matching_mixed_case -> requests.Session.mount: the test visibly calls `s.mount(mixed_case_prefix, my_adapter)`; the receiver binding is local but syntactically supported by `requests.Session()`.|9.0|2\n2083|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_IS_CASE_INSENSITIVE|REQUESTS.SESSION.GET_ADAPTER|CALLS, direction test_session_get_adapter_prefix_matching_is_case_insensitive -> requests.Session.get_adapter: the test visibly calls `s.get_adapter(url_matching_prefix_with_different_case)` after constructing `s` with `requests.Session()`.|9.0|2\n2084|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_IS_CASE_INSENSITIVE|REQUESTS.SESSION.MOUNT|CALLS, direction test_session_get_adapter_prefix_matching_is_case_insensitive -> requests.Session.mount: the test visibly calls `s.mount(mixed_case_prefix, my_adapter)` after constructing `s` with `requests.Session()`.|9.0|2\n2052|TEST_TRANSPORT_ADAPTER_ORDERING|LIST|CALLS, direction test_transport_adapter_ordering -> list, visible expressions `list(s.adapters)` and `list(s2.adapters)` materialize adapter mappings for ordering assertions.|10.0|1\n1112|GET_ADAPTER|INVALIDSCHEMA|CALLS, `get_adapter` constructs and raises `InvalidSchema(...)` after no adapter prefix matches the lowercased URL; the exception definition is not visible.|9.0|1\n1119|GET_ADAPTER|LOWER|CALLS, `get_adapter` calls `url.lower()` and `prefix.lower()` while comparing adapter prefixes; the receiver-specific implementation is not visible.|9.0|1\n1120|GET_ADAPTER|STARTSWITH|CALLS, `get_adapter` evaluates `url.lower().startswith(prefix.lower())` for each configured adapter prefix; the receiver-specific implementation is not visible.|9.0|1\n2168|_PATCH_ADAPTER_GZIPPED_REDIRECT|ADAPTER.BUILD_RESPONSE|`_PATCH_ADAPTER_GZIPPED_REDIRECT` reads the adapter’s `build_response` method into `org_build_response`, then replaces `adapter.build_response` with a nested wrapper. The wrapper preserves and invokes the saved original method. The adapter’s runtime type is unresolved and is not proven by the available descriptions.|16.0|1\n\n\n-----Sources-----\nid|text\n91|        pr = pickle.loads(pickle.dumps(r))\n        assert r.request.url == pr.request.url\n        assert r.request.headers == pr.request.headers\n\n    def test_prepared_request_is_pickleable(self, httpbin):\n        p = requests.Request(\"GET\", httpbin(\"get\")).prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_file_is_pickleable(self, httpbin):\n        with open(__file__, \"rb\") as f:\n            r = requests.Request(\"POST\", httpbin(\"post\"), files={\"file\": f})\n            p = r.prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_hook_is_pickleable(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"), hooks=default_hooks())\n        p = r.prepare()\n\n        # Verify PreparedRequest can be pickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n        assert r.hooks == p.hooks\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_cannot_send_unprepared_requests(self, httpbin):\n        r = requests.Request(url=httpbin())\n        with pytest.raises(ValueError):\n            requests.Session().send(r)\n\n    def test_http_error(self):\n        error = requests.exceptions.HTTPError()\n        assert not error.response\n        response = requests.Response()\n        error = requests.exceptions.HTTPError(response=response)\n        assert error.response == response\n        error = requests.exceptions.HTTPError(\"message\", response=response)\n        assert str(error) == \"message\"\n        assert error.response == response\n\n    def test_session_pickling(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"))\n        s = requests.Session()\n\n        s = pickle.loads(pickle.dumps(s))\n        s.proxies = getproxies()\n\n        r = s.send(r.prepare())\n        assert r.status_code == 200\n\n    def test_fixes_1329(self, httpbin):\n        \"\"\"Ensure that header updates are done case-insensitively.\"\"\"\n        s = requests.Session()\n        s.headers.update({\"ACCEPT\": \"BOGUS\"})\n        s.headers.update({\"accept\": \"application/json\"})\n        r = s.get(httpbin(\"get\"))\n        headers = r.request.headers\n        assert headers[\"accept\"] == \"application/json\"\n        assert headers[\"Accept\"] == \"application/json\"\n        assert headers[\"ACCEPT\"] == \"application/json\"\n\n    def test_uppercase_scheme_redirect(self, httpbin):\n        parts = urlparse(httpbin(\"html\"))\n        url = \"HTTP://\" + parts.netloc + parts.path\n        r = requests.get(httpbin(\"redirect-to\"), params={\"url\": url})\n        assert r.status_code == 200\n        assert r.url.lower() == url.lower()\n\n    def test_transport_adapter_ordering(self):\n        s = requests.Session()\n        order = [\"https://\", \"http://\"]\n        assert order == list(s.adapters)\n        s.mount(\"http://git\", HTTPAdapter())\n        s.mount(\"http://github\", HTTPAdapter())\n        s.mount(\"http://github.com\", HTTPAdapter())\n        s.mount(\"http://github.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://github.com\",\n            \"http://github\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s.mount(\"http://gittip\", HTTPAdapter())\n        s.mount(\"http://gittip.com\", HTTPAdapter())\n        s.mount(\"http://gittip.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://gittip.com/about/\",\n            \"http://github.com\",\n            \"http://gittip.com\",\n            \"http://github\",\n            \"http://gittip\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s2 = requests.Session()\n        s2.adapters = {\"http://\": HTTPAdapter()}\n        s2.mount(\"https://\", HTTPAdapter())\n        assert \"http://\" in s2.adapters\n        assert \"https://\" in s2.adapters\n\n    def test_session_get_adapter_prefix_matching(self):\n        prefix = \"https://example.com\"\n        more_specific_prefix = prefix + \"/some/path\"\n\n        url_matching_only_prefix = prefix + \"/another/path\"\n        url_matching_more_specific_prefix = more_specific_prefix + \"/longer/path\"\n        url_not_matching_prefix = \"https://another.example.com/\"\n\n        s = requests.Session()\n        prefix_adapter = HTTPAdapter()\n        more_specific_prefix_adapter = HTTPAdapter()\n        s.mount(prefix, prefix_adapter)\n        s.mount(more_specific_prefix, more_specific_prefix_adapter)\n\n        assert s.get_adapter(url_matching_only_prefix) is prefix_adapter\n        assert (\n\n56|            json=json,\n            params=params or {},\n            auth=auth,\n            cookies=cookies,\n            hooks=hooks,\n        )\n        prep = self.prepare_request(req)\n\n        proxies = proxies or {}\n\n        settings = self.merge_environment_settings(\n            prep.url, proxies, stream, verify, cert\n        )\n\n        # Send the request.\n        send_kwargs = {\n            \"timeout\": timeout,\n            \"allow_redirects\": allow_redirects,\n        }\n        send_kwargs.update(settings)\n        resp = self.send(prep, **send_kwargs)\n\n        return resp\n\n    def get(self, url, **kwargs):\n        r\"\"\"Sends a GET request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        kwargs.setdefault(\"allow_redirects\", True)\n        return self.request(\"GET\", url, **kwargs)\n\n    def options(self, url, **kwargs):\n        r\"\"\"Sends a OPTIONS request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        kwargs.setdefault(\"allow_redirects\", True)\n        return self.request(\"OPTIONS\", url, **kwargs)\n\n    def head(self, url, **kwargs):\n        r\"\"\"Sends a HEAD request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        kwargs.setdefault(\"allow_redirects\", False)\n        return self.request(\"HEAD\", url, **kwargs)\n\n    def post(self, url, data=None, json=None, **kwargs):\n        r\"\"\"Sends a POST request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param json: (optional) json to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        return self.request(\"POST\", url, data=data, json=json, **kwargs)\n\n    def put(self, url, data=None, **kwargs):\n        r\"\"\"Sends a PUT request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        return self.request(\"PUT\", url, data=data, **kwargs)\n\n    def patch(self, url, data=None, **kwargs):\n        r\"\"\"Sends a PATCH request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        return self.request(\"PATCH\", url, data=data, **kwargs)\n\n    def delete(self, url, **kwargs):\n        r\"\"\"Sends a DELETE request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        return self.request(\"DELETE\", url, **kwargs)\n\n    def send(self, request, **kwargs):\n        \"\"\"Send a given PreparedRequest.\n\n        :rtype: requests.Response\n        \"\"\"\n        # Set defaults that the hooks can utilize to ensure they always have\n        # the correct parameters to reproduce the previous request.\n        kwargs.setdefault(\"stream\", self.stream)\n        kwargs.setdefault(\"verify\", self.verify)\n        kwargs.setdefault(\"cert\", self.cert)\n        if \"proxies\" not in kwargs:\n            kwargs[\"proxies\"] = resolve_proxies(request, self.proxies, self.trust_env)\n\n        # It's possible that users might accidentally send a Request object.\n        # Guard against that specific failure case.\n        if isinstance(request, Request):\n            raise ValueError(\"You can only send PreparedRequests.\")\n\n        # Set up variables needed for resolve_redirects and dispatching of hooks\n        allow_redirects = kwargs.pop(\"allow_redirects\", True)\n        stream = kwargs.get(\"stream\")\n        hooks = request.hooks\n\n        # Get the appropriate adapter to use\n        adapter = self.get_adapter(url=request.url)\n\n        # Start time (approximately) of the request\n        start = preferred_clock()\n\n        # Send the request\n        r = adapter.send(request, **kwargs)\n\n        # Total elapsed time of the request (approximately)\n        elapsed = preferred_clock() - start\n        r.elapsed = timedelta(seconds=elapsed)\n\n        # Response manipulation hooks\n        r = dispatch_hook(\"response\", hooks, r, **kwargs)\n\n        # Persist cookies\n        if r.history:\n            # If the hooks create history then we want those cookies too\n            for resp in r.history:\n                extract_cookies_to_jar(self.cookies, resp.request, resp.raw)\n\n\n92|        url_matching_more_specific_prefix = more_specific_prefix + \"/longer/path\"\n        url_not_matching_prefix = \"https://another.example.com/\"\n\n        s = requests.Session()\n        prefix_adapter = HTTPAdapter()\n        more_specific_prefix_adapter = HTTPAdapter()\n        s.mount(prefix, prefix_adapter)\n        s.mount(more_specific_prefix, more_specific_prefix_adapter)\n\n        assert s.get_adapter(url_matching_only_prefix) is prefix_adapter\n        assert (\n            s.get_adapter(url_matching_more_specific_prefix)\n            is more_specific_prefix_adapter\n        )\n        assert s.get_adapter(url_not_matching_prefix) not in (\n            prefix_adapter,\n            more_specific_prefix_adapter,\n        )\n\n    def test_session_get_adapter_prefix_matching_mixed_case(self):\n        mixed_case_prefix = \"hTtPs://eXamPle.CoM/MixEd_CAse_PREfix\"\n        url_matching_prefix = mixed_case_prefix + \"/full_url\"\n\n        s = requests.Session()\n        my_adapter = HTTPAdapter()\n        s.mount(mixed_case_prefix, my_adapter)\n\n        assert s.get_adapter(url_matching_prefix) is my_adapter\n\n    def test_session_get_adapter_prefix_matching_is_case_insensitive(self):\n        mixed_case_prefix = \"hTtPs://eXamPle.CoM/MixEd_CAse_PREfix\"\n        url_matching_prefix_with_different_case = (\n            \"HtTpS://exaMPLe.cOm/MiXeD_caSE_preFIX/another_url\"\n        )\n\n        s = requests.Session()\n        my_adapter = HTTPAdapter()\n        s.mount(mixed_case_prefix, my_adapter)\n\n        assert s.get_adapter(url_matching_prefix_with_different_case) is my_adapter\n\n    def test_header_remove_is_case_insensitive(self, httpbin):\n        # From issue #1321\n        s = requests.Session()\n        s.headers[\"foo\"] = \"bar\"\n        r = s.get(httpbin(\"get\"), headers={\"FOO\": None})\n        assert \"foo\" not in r.request.headers\n\n    def test_params_are_merged_case_sensitive(self, httpbin):\n        s = requests.Session()\n        s.params[\"foo\"] = \"bar\"\n        r = s.get(httpbin(\"get\"), params={\"FOO\": \"bar\"})\n        assert r.json()[\"args\"] == {\"foo\": \"bar\", \"FOO\": \"bar\"}\n\n    def test_long_authinfo_in_url(self):\n        url = \"http://{}:{}@{}:9000/path?query#frag\".format(\n            \"E8A3BE87-9E3F-4620-8858-95478E385B5B\",\n            \"EA770032-DA4D-4D84-8CE9-29C6D910BF1E\",\n            \"exactly-------------sixty-----------three------------characters\",\n        )\n        r = requests.Request(\"GET\", url).prepare()\n        assert r.url == url\n\n    def test_header_keys_are_native(self, httpbin):\n        headers = {\"unicode\": \"blah\", b\"byte\": \"blah\"}\n        r = requests.Request(\"GET\", httpbin(\"get\"), headers=headers)\n        p = r.prepare()\n\n        # This is testing that they are builtin strings. A bit weird, but there\n        # we go.\n        assert \"unicode\" in p.headers.keys()\n        assert \"byte\" in p.headers.keys()\n\n    def test_header_validation(self, httpbin):\n        \"\"\"Ensure prepare_headers regex isn't flagging valid header contents.\"\"\"\n        valid_headers = {\n            \"foo\": \"bar baz qux\",\n            \"bar\": b\"fbbq\",\n            \"baz\": \"\",\n            \"qux\": \"1\",\n        }\n        r = requests.get(httpbin(\"get\"), headers=valid_headers)\n        for key in valid_headers.keys():\n            assert valid_headers[key] == r.request.headers[key]\n\n    @pytest.mark.parametrize(\n        \"invalid_header, key\",\n        (\n            ({\"foo\": 3}, \"foo\"),\n            ({\"bar\": {\"foo\": \"bar\"}}, \"bar\"),\n            ({\"baz\": [\"foo\", \"bar\"]}, \"baz\"),\n        ),\n    )\n    def test_header_value_not_str(self, httpbin, invalid_header, key):\n        \"\"\"Ensure the header value is of type string or bytes as\n        per discussion in GH issue #3386\n        \"\"\"\n        with pytest.raises(InvalidHeader) as excinfo:\n            requests.get(httpbin(\"get\"), headers=invalid_header)\n        assert key in str(excinfo.value)\n\n    @pytest.mark.parametrize(\n        \"invalid_header\",\n        (\n            {\"foo\": \"bar\\r\\nbaz: qux\"},\n            {\"foo\": \"bar\\n\\rbaz: qux\"},\n            {\"foo\": \"bar\\nbaz: qux\"},\n            {\"foo\": \"bar\\rbaz: qux\"},\n            {\"fo\\ro\": \"bar\"},\n            {\"fo\\r\\no\": \"bar\"},\n            {\"fo\\n\\ro\": \"bar\"},\n            {\"fo\\no\": \"bar\"},\n        ),\n    )\n    def test_header_no_return_chars(self, httpbin, invalid_header):\n        \"\"\"Ensure that a header containing return character sequences raise an\n        exception. Otherwise, multiple headers are created from single string.\n        \"\"\"\n        with pytest.raises(InvalidHeader):\n            requests.get(httpbin(\"get\"), headers=invalid_header)\n\n    @pytest.mark.parametrize(\n        \"invalid_header\",\n        (\n            {\" foo\": \"bar\"},\n            {\"\\tfoo\": \"bar\"},\n            {\"    foo\": \"bar\"},\n            {\"foo\": \" bar\"},\n            {\"foo\": \"    bar\"},\n            {\"foo\": \"\\tbar\"},\n            {\" \": \"bar\"},\n        ),\n    )\n    def test_header_no_leading_space(self, httpbin, invalid_header):\n        \"\"\"Ensure headers containing leading whitespace raise\n        InvalidHeader Error before sending.\n        \"\"\"\n\n",
+  "upstream_raw_records": {
+    "relationships": [
+      {
+        "id": "2038",
+        "source": "TEST_TRANSPORT_ADAPTER_ORDERING",
+        "target": "S2.MOUNT",
+        "description": "CALLS, direction test_transport_adapter_ordering -> s2.mount, visible expressions `s2.mount(\"https://\", HTTPAdapter())` registers an adapter on `s2`; receiver binding is unresolved.",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "2042",
+        "source": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING",
+        "target": "S.GET_ADAPTER",
+        "description": "`TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING` tests the behavior of `S.GET_ADAPTER` through calls to `s.get_adapter(...)`. It passes URLs that match a general prefix, match a more-specific prefix, and do not match any configured prefix. The test verifies that `S.GET_ADAPTER` selects the appropriate general or more-specific adapter and handles a nonmatching URL as expected. The concrete implementation and receiver binding for `s.get_adapter` are not visible or resolved.",
+        "weight": "20.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "2035",
+        "source": "TEST_TRANSPORT_ADAPTER_ORDERING",
+        "target": "REQUESTS.SESSION",
+        "description": "CALLS, direction test_transport_adapter_ordering -> requests.Session, visible expressions `requests.Session()` and `s2 = requests.Session()` create sessions whose adapter order is asserted.",
+        "weight": "10.0",
+        "links": "4",
+        "in_context": true
+      },
+      {
+        "id": "2039",
+        "source": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING",
+        "target": "REQUESTS.SESSION",
+        "description": "CALLS, direction test_session_get_adapter_prefix_matching -> requests.Session, visible expression `requests.Session()` creates the session used for prefix matching.",
+        "weight": "10.0",
+        "links": "4",
+        "in_context": true
+      },
+      {
+        "id": "2056",
+        "source": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_MIXED_CASE",
+        "target": "REQUESTS.SESSION",
+        "description": "TESTS, direction test_session_get_adapter_prefix_matching_mixed_case -> requests.Session: the test instantiates `requests.Session()` and exercises its mounted-adapter lookup through `s.get_adapter(...)`.",
+        "weight": "9.0",
+        "links": "4",
+        "in_context": true
+      },
+      {
+        "id": "2058",
+        "source": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_IS_CASE_INSENSITIVE",
+        "target": "REQUESTS.SESSION",
+        "description": "TESTS, direction test_session_get_adapter_prefix_matching_is_case_insensitive -> requests.Session: the test instantiates `requests.Session()` and asserts adapter lookup for a differently cased URL prefix.",
+        "weight": "9.0",
+        "links": "4",
+        "in_context": true
+      },
+      {
+        "id": "2036",
+        "source": "TEST_TRANSPORT_ADAPTER_ORDERING",
+        "target": "HTTPADAPTER",
+        "description": "CALLS, direction test_transport_adapter_ordering -> HTTPAdapter, visible expressions repeatedly call `HTTPAdapter()` as mount arguments; adapter definition is not visible.",
+        "weight": "10.0",
+        "links": "4",
+        "in_context": true
+      },
+      {
+        "id": "2040",
+        "source": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING",
+        "target": "HTTPADAPTER",
+        "description": "CALLS, direction test_session_get_adapter_prefix_matching -> HTTPAdapter, visible expressions `HTTPAdapter()` create the general and more-specific prefix adapters.",
+        "weight": "10.0",
+        "links": "4",
+        "in_context": true
+      },
+      {
+        "id": "2057",
+        "source": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_MIXED_CASE",
+        "target": "HTTPADAPTER",
+        "description": "TESTS, direction test_session_get_adapter_prefix_matching_mixed_case -> HTTPAdapter: the test instantiates `HTTPAdapter()` and mounts it on the session.",
+        "weight": "9.0",
+        "links": "4",
+        "in_context": true
+      },
+      {
+        "id": "2059",
+        "source": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_IS_CASE_INSENSITIVE",
+        "target": "HTTPADAPTER",
+        "description": "TESTS, direction test_session_get_adapter_prefix_matching_is_case_insensitive -> HTTPAdapter: the test instantiates `HTTPAdapter()` and mounts it before calling `s.get_adapter(...)`.",
+        "weight": "9.0",
+        "links": "4",
+        "in_context": true
+      },
+      {
+        "id": "1103",
+        "source": "SEND",
+        "target": "GET_ADAPTER",
+        "description": "CALLS, `send` calls the unresolved receiver method `self.get_adapter(url=request.url)`; the runtime owning class is not visible.",
+        "weight": "9.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "1105",
+        "source": "SEND",
+        "target": "ADAPTER.SEND",
+        "description": "CALLS, `send` calls the syntactically named receiver method `adapter.send(request, **kwargs)`; the adapter binding and runtime target are not established by this chunk.",
+        "weight": "9.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "2037",
+        "source": "TEST_TRANSPORT_ADAPTER_ORDERING",
+        "target": "S.MOUNT",
+        "description": "`TEST_TRANSPORT_ADAPTER_ORDERING` calls `s.mount(\"http://...\", HTTPAdapter())` to register transport adapters on `S.MOUNT` (`s`). It tests that adapters mounted at different URL prefixes are ordered in `s.adapters` from the most specific prefix to the least specific prefix. The receiver binding for `s` remains unresolved.",
+        "weight": "20.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "2041",
+        "source": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING",
+        "target": "S.MOUNT",
+        "description": "CALLS, direction test_session_get_adapter_prefix_matching -> s.mount, visible expressions `s.mount(prefix, prefix_adapter)` and `s.mount(more_specific_prefix, more_specific_prefix_adapter)` register prefix adapters; receiver binding is unresolved.",
+        "weight": "10.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "2081",
+        "source": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_MIXED_CASE",
+        "target": "REQUESTS.SESSION.GET_ADAPTER",
+        "description": "CALLS, direction test_session_get_adapter_prefix_matching_mixed_case -> requests.Session.get_adapter: the test visibly calls `s.get_adapter(url_matching_prefix)` after constructing `s` with `requests.Session()`; the receiver binding is local but syntactically supported by that construction.",
+        "weight": "9.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "2082",
+        "source": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_MIXED_CASE",
+        "target": "REQUESTS.SESSION.MOUNT",
+        "description": "CALLS, direction test_session_get_adapter_prefix_matching_mixed_case -> requests.Session.mount: the test visibly calls `s.mount(mixed_case_prefix, my_adapter)`; the receiver binding is local but syntactically supported by `requests.Session()`.",
+        "weight": "9.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "2083",
+        "source": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_IS_CASE_INSENSITIVE",
+        "target": "REQUESTS.SESSION.GET_ADAPTER",
+        "description": "CALLS, direction test_session_get_adapter_prefix_matching_is_case_insensitive -> requests.Session.get_adapter: the test visibly calls `s.get_adapter(url_matching_prefix_with_different_case)` after constructing `s` with `requests.Session()`.",
+        "weight": "9.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "2084",
+        "source": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_IS_CASE_INSENSITIVE",
+        "target": "REQUESTS.SESSION.MOUNT",
+        "description": "CALLS, direction test_session_get_adapter_prefix_matching_is_case_insensitive -> requests.Session.mount: the test visibly calls `s.mount(mixed_case_prefix, my_adapter)` after constructing `s` with `requests.Session()`.",
+        "weight": "9.0",
+        "links": "2",
+        "in_context": true
+      },
+      {
+        "id": "2052",
+        "source": "TEST_TRANSPORT_ADAPTER_ORDERING",
+        "target": "LIST",
+        "description": "CALLS, direction test_transport_adapter_ordering -> list, visible expressions `list(s.adapters)` and `list(s2.adapters)` materialize adapter mappings for ordering assertions.",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "1112",
+        "source": "GET_ADAPTER",
+        "target": "INVALIDSCHEMA",
+        "description": "CALLS, `get_adapter` constructs and raises `InvalidSchema(...)` after no adapter prefix matches the lowercased URL; the exception definition is not visible.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "1119",
+        "source": "GET_ADAPTER",
+        "target": "LOWER",
+        "description": "CALLS, `get_adapter` calls `url.lower()` and `prefix.lower()` while comparing adapter prefixes; the receiver-specific implementation is not visible.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "1120",
+        "source": "GET_ADAPTER",
+        "target": "STARTSWITH",
+        "description": "CALLS, `get_adapter` evaluates `url.lower().startswith(prefix.lower())` for each configured adapter prefix; the receiver-specific implementation is not visible.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "2168",
+        "source": "_PATCH_ADAPTER_GZIPPED_REDIRECT",
+        "target": "ADAPTER.BUILD_RESPONSE",
+        "description": "`_PATCH_ADAPTER_GZIPPED_REDIRECT` reads the adapter’s `build_response` method into `org_build_response`, then replaces `adapter.build_response` with a nested wrapper. The wrapper preserves and invokes the saved original method. The adapter’s runtime type is unresolved and is not proven by the available descriptions.",
+        "weight": "16.0",
+        "links": "1",
+        "in_context": true
+      }
+    ],
+    "entities": [
+      {
+        "id": "1264",
+        "entity": "S.GET_ADAPTER",
+        "description": "The unresolved receiver call `s.get_adapter(...)` is referenced three times to select adapters for URLs matching only the general prefix, matching the more-specific prefix, and not matching the configured prefix; the receiver's concrete class is not proven beyond session construction in the test.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "813",
+        "entity": "ADAPTER.SEND",
+        "description": "`adapter.send` is an explicitly referenced receiver call in `send`; the adapter's class and method definition are not visible, so its runtime binding is uncertain.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1261",
+        "entity": "TEST_TRANSPORT_ADAPTER_ORDERING",
+        "description": "The visible test function `test_transport_adapter_ordering` constructs sessions, mounts `HTTPAdapter` instances at URL prefixes, and asserts adapter-key ordering and retained `http://` and `https://` mappings. Its owning class is not visible in this chunk.",
+        "number of relationships": "5",
+        "in_context": true
+      },
+      {
+        "id": "1263",
+        "entity": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING",
+        "description": "The visible test function `test_session_get_adapter_prefix_matching` mounts adapters at a general and a more specific prefix, then asserts `get_adapter` returns the corresponding adapter for matching and more-specific URLs. Its owning class is not visible in this chunk.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "1267",
+        "entity": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_IS_CASE_INSENSITIVE",
+        "description": "The test `test_session_get_adapter_prefix_matching_is_case_insensitive` is visibly defined here. It mounts an adapter for `mixed_case_prefix` and asserts that `s.get_adapter(url_matching_prefix_with_different_case) is my_adapter`.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "1311",
+        "entity": "ADAPTER.BUILD_RESPONSE",
+        "description": "ADAPTER.BUILD_RESPONSE refers to the exact adapter attribute `adapter.build_response`. Within `_patch_adapter_gzipped_redirect`, this attribute is explicitly read and saved as `org_build_response` before being replaced. The receiver adapter’s concrete runtime class is not established or visible in the available information.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1262",
+        "entity": "S2.MOUNT",
+        "description": "The unresolved receiver call `s2.mount(...)` is referenced to add an HTTPS adapter after assigning `s2.adapters`; the receiver's concrete class is not proven beyond session construction in the test.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1266",
+        "entity": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_MIXED_CASE",
+        "description": "The test `test_session_get_adapter_prefix_matching_mixed_case` is visibly defined here. It creates a mixed-case URL prefix, mounts an `HTTPAdapter` on a `requests.Session`, and asserts `s.get_adapter(url_matching_prefix) is my_adapter`.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "812",
+        "entity": "GET_ADAPTER",
+        "description": "`get_adapter` is an unresolved receiver method explicitly called as `self.get_adapter(url=request.url)` in `send`; its definition and owning class are not visible.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "97",
+        "entity": "HTTPADAPTER",
+        "description": "HTTPADAPTER refers to the externally defined `HTTPAdapter` class from the Requests library, typically imported from `requests.adapters` or a local `.adapters` module. It serves as the default transport adapter for HTTP and HTTPS session connections and is instantiated as `HTTPAdapter()` when mounting default adapters for the `http://` and `https://` URL prefixes.\n\nHTTPADAPTER can also be configured with connection-pool or retry options, including constructions such as `HTTPAdapter(max_retries=retries)`, before being mounted on a session. It provides adapter functionality such as `proxy_headers`, and it is used directly in tests and other visible code. The class is also documented and used as the base class for specialized adapters such as `Ssl3HttpAdapter`.\n\nAlthough HTTPADAPTER is imported and referenced repeatedly—including for session mounting, retry configuration, proxy handling, subclassing, and tests—its actual implementation is not visible in the provided material.",
+        "number of relationships": "24",
+        "in_context": true
+      },
+      {
+        "id": "105",
+        "entity": "S.MOUNT",
+        "description": "S.MOUNT refers to calls on an unresolved receiver `s` that register HTTP transport adapters for URL prefixes. One referenced expression mounts `HTTPAdapter(max_retries=retries)` at the `'https://'` prefix, while another mounts a default `HTTPAdapter()` at a variable `prefix`. The receiver `s` appears to be a session constructed in the test, but its concrete class and owning caller are not established by the available context.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "1310",
+        "entity": "SESSION.GET_ADAPTER",
+        "description": "`SESSION.GET_ADAPTER` refers to the exact attribute call `session.get_adapter(url=url)`, which is used inside `_patch_adapter_gzipped_redirect`. The receiver is the parameter named `session`, but the available context does not establish its concrete runtime class.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "93",
+        "entity": "REQUESTS.ADAPTERS",
+        "description": "`REQUESTS.ADAPTERS` refers to the `requests.adapters` module. It is explicitly imported both as `import requests.adapters` and through `from requests.adapters import HTTPAdapter`, including usage via the `HTTPAdapter` symbol. The module defines transport adapters and contains the visible symbols associated with adapter-based request handling; no additional module behavior is evident from the provided descriptions.",
+        "number of relationships": "32",
+        "in_context": true
+      },
+      {
+        "id": "95",
+        "entity": "SSL3HTTPADAPTER",
+        "description": "The class `Ssl3HttpAdapter` is defined in the documentation example as `class Ssl3HttpAdapter(HTTPAdapter)` and is described as a transport adapter that allows SSLv3.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "98",
+        "entity": "BASEADAPTER",
+        "description": "BASEADAPTER is an externally defined base class for transport adapters. It serves as the parent class of `HTTPAdapter`, as shown by `class HTTPAdapter(BaseAdapter)`, and is documented as a class that can be subclassed to implement custom transport adapter behavior. Its definition is not included in the provided code.",
+        "number of relationships": "6",
+        "in_context": true
+      },
+      {
+        "id": "371",
+        "entity": "REQUESTS.ADAPTERS.HTTPADAPTER",
+        "description": "`requests.adapters.HTTPAdapter` is a documented external class from the Requests library. It is referenced as a class that may be subclassed to expose methods such as `cert_verify`, and it is also instantiated through the expression `requests.adapters.HTTPAdapter()`. However, the class definition is not visible in the available context, and the references do not independently establish a runtime call or inheritance relationship beyond the documented subclassing and instantiation references.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1277",
+        "entity": "REQUESTS.SESSION.MOUNT",
+        "description": "`requests.Session.mount` is an explicitly referenced external method through `s.mount(prefix, adapter)`; the receiver is created with `requests.Session()`, but the method implementation is not visible here.",
+        "number of relationships": "2",
+        "in_context": true
+      }
+    ],
+    "sources": [
+      {
+        "id": "91",
+        "text": "        pr = pickle.loads(pickle.dumps(r))\n        assert r.request.url == pr.request.url\n        assert r.request.headers == pr.request.headers\n\n    def test_prepared_request_is_pickleable(self, httpbin):\n        p = requests.Request(\"GET\", httpbin(\"get\")).prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_file_is_pickleable(self, httpbin):\n        with open(__file__, \"rb\") as f:\n            r = requests.Request(\"POST\", httpbin(\"post\"), files={\"file\": f})\n            p = r.prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_hook_is_pickleable(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"), hooks=default_hooks())\n        p = r.prepare()\n\n        # Verify PreparedRequest can be pickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n        assert r.hooks == p.hooks\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_cannot_send_unprepared_requests(self, httpbin):\n        r = requests.Request(url=httpbin())\n        with pytest.raises(ValueError):\n            requests.Session().send(r)\n\n    def test_http_error(self):\n        error = requests.exceptions.HTTPError()\n        assert not error.response\n        response = requests.Response()\n        error = requests.exceptions.HTTPError(response=response)\n        assert error.response == response\n        error = requests.exceptions.HTTPError(\"message\", response=response)\n        assert str(error) == \"message\"\n        assert error.response == response\n\n    def test_session_pickling(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"))\n        s = requests.Session()\n\n        s = pickle.loads(pickle.dumps(s))\n        s.proxies = getproxies()\n\n        r = s.send(r.prepare())\n        assert r.status_code == 200\n\n    def test_fixes_1329(self, httpbin):\n        \"\"\"Ensure that header updates are done case-insensitively.\"\"\"\n        s = requests.Session()\n        s.headers.update({\"ACCEPT\": \"BOGUS\"})\n        s.headers.update({\"accept\": \"application/json\"})\n        r = s.get(httpbin(\"get\"))\n        headers = r.request.headers\n        assert headers[\"accept\"] == \"application/json\"\n        assert headers[\"Accept\"] == \"application/json\"\n        assert headers[\"ACCEPT\"] == \"application/json\"\n\n    def test_uppercase_scheme_redirect(self, httpbin):\n        parts = urlparse(httpbin(\"html\"))\n        url = \"HTTP://\" + parts.netloc + parts.path\n        r = requests.get(httpbin(\"redirect-to\"), params={\"url\": url})\n        assert r.status_code == 200\n        assert r.url.lower() == url.lower()\n\n    def test_transport_adapter_ordering(self):\n        s = requests.Session()\n        order = [\"https://\", \"http://\"]\n        assert order == list(s.adapters)\n        s.mount(\"http://git\", HTTPAdapter())\n        s.mount(\"http://github\", HTTPAdapter())\n        s.mount(\"http://github.com\", HTTPAdapter())\n        s.mount(\"http://github.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://github.com\",\n            \"http://github\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s.mount(\"http://gittip\", HTTPAdapter())\n        s.mount(\"http://gittip.com\", HTTPAdapter())\n        s.mount(\"http://gittip.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://gittip.com/about/\",\n            \"http://github.com\",\n            \"http://gittip.com\",\n            \"http://github\",\n            \"http://gittip\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s2 = requests.Session()\n        s2.adapters = {\"http://\": HTTPAdapter()}\n        s2.mount(\"https://\", HTTPAdapter())\n        assert \"http://\" in s2.adapters\n        assert \"https://\" in s2.adapters\n\n    def test_session_get_adapter_prefix_matching(self):\n        prefix = \"https://example.com\"\n        more_specific_prefix = prefix + \"/some/path\"\n\n        url_matching_only_prefix = prefix + \"/another/path\"\n        url_matching_more_specific_prefix = more_specific_prefix + \"/longer/path\"\n        url_not_matching_prefix = \"https://another.example.com/\"\n\n        s = requests.Session()\n        prefix_adapter = HTTPAdapter()\n        more_specific_prefix_adapter = HTTPAdapter()\n        s.mount(prefix, prefix_adapter)\n        s.mount(more_specific_prefix, more_specific_prefix_adapter)\n\n        assert s.get_adapter(url_matching_only_prefix) is prefix_adapter\n        assert (\n"
+      },
+      {
+        "id": "56",
+        "text": "            json=json,\n            params=params or {},\n            auth=auth,\n            cookies=cookies,\n            hooks=hooks,\n        )\n        prep = self.prepare_request(req)\n\n        proxies = proxies or {}\n\n        settings = self.merge_environment_settings(\n            prep.url, proxies, stream, verify, cert\n        )\n\n        # Send the request.\n        send_kwargs = {\n            \"timeout\": timeout,\n            \"allow_redirects\": allow_redirects,\n        }\n        send_kwargs.update(settings)\n        resp = self.send(prep, **send_kwargs)\n\n        return resp\n\n    def get(self, url, **kwargs):\n        r\"\"\"Sends a GET request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        kwargs.setdefault(\"allow_redirects\", True)\n        return self.request(\"GET\", url, **kwargs)\n\n    def options(self, url, **kwargs):\n        r\"\"\"Sends a OPTIONS request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        kwargs.setdefault(\"allow_redirects\", True)\n        return self.request(\"OPTIONS\", url, **kwargs)\n\n    def head(self, url, **kwargs):\n        r\"\"\"Sends a HEAD request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        kwargs.setdefault(\"allow_redirects\", False)\n        return self.request(\"HEAD\", url, **kwargs)\n\n    def post(self, url, data=None, json=None, **kwargs):\n        r\"\"\"Sends a POST request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param json: (optional) json to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        return self.request(\"POST\", url, data=data, json=json, **kwargs)\n\n    def put(self, url, data=None, **kwargs):\n        r\"\"\"Sends a PUT request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        return self.request(\"PUT\", url, data=data, **kwargs)\n\n    def patch(self, url, data=None, **kwargs):\n        r\"\"\"Sends a PATCH request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        return self.request(\"PATCH\", url, data=data, **kwargs)\n\n    def delete(self, url, **kwargs):\n        r\"\"\"Sends a DELETE request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        return self.request(\"DELETE\", url, **kwargs)\n\n    def send(self, request, **kwargs):\n        \"\"\"Send a given PreparedRequest.\n\n        :rtype: requests.Response\n        \"\"\"\n        # Set defaults that the hooks can utilize to ensure they always have\n        # the correct parameters to reproduce the previous request.\n        kwargs.setdefault(\"stream\", self.stream)\n        kwargs.setdefault(\"verify\", self.verify)\n        kwargs.setdefault(\"cert\", self.cert)\n        if \"proxies\" not in kwargs:\n            kwargs[\"proxies\"] = resolve_proxies(request, self.proxies, self.trust_env)\n\n        # It's possible that users might accidentally send a Request object.\n        # Guard against that specific failure case.\n        if isinstance(request, Request):\n            raise ValueError(\"You can only send PreparedRequests.\")\n\n        # Set up variables needed for resolve_redirects and dispatching of hooks\n        allow_redirects = kwargs.pop(\"allow_redirects\", True)\n        stream = kwargs.get(\"stream\")\n        hooks = request.hooks\n\n        # Get the appropriate adapter to use\n        adapter = self.get_adapter(url=request.url)\n\n        # Start time (approximately) of the request\n        start = preferred_clock()\n\n        # Send the request\n        r = adapter.send(request, **kwargs)\n\n        # Total elapsed time of the request (approximately)\n        elapsed = preferred_clock() - start\n        r.elapsed = timedelta(seconds=elapsed)\n\n        # Response manipulation hooks\n        r = dispatch_hook(\"response\", hooks, r, **kwargs)\n\n        # Persist cookies\n        if r.history:\n            # If the hooks create history then we want those cookies too\n            for resp in r.history:\n                extract_cookies_to_jar(self.cookies, resp.request, resp.raw)\n\n"
+      },
+      {
+        "id": "92",
+        "text": "        url_matching_more_specific_prefix = more_specific_prefix + \"/longer/path\"\n        url_not_matching_prefix = \"https://another.example.com/\"\n\n        s = requests.Session()\n        prefix_adapter = HTTPAdapter()\n        more_specific_prefix_adapter = HTTPAdapter()\n        s.mount(prefix, prefix_adapter)\n        s.mount(more_specific_prefix, more_specific_prefix_adapter)\n\n        assert s.get_adapter(url_matching_only_prefix) is prefix_adapter\n        assert (\n            s.get_adapter(url_matching_more_specific_prefix)\n            is more_specific_prefix_adapter\n        )\n        assert s.get_adapter(url_not_matching_prefix) not in (\n            prefix_adapter,\n            more_specific_prefix_adapter,\n        )\n\n    def test_session_get_adapter_prefix_matching_mixed_case(self):\n        mixed_case_prefix = \"hTtPs://eXamPle.CoM/MixEd_CAse_PREfix\"\n        url_matching_prefix = mixed_case_prefix + \"/full_url\"\n\n        s = requests.Session()\n        my_adapter = HTTPAdapter()\n        s.mount(mixed_case_prefix, my_adapter)\n\n        assert s.get_adapter(url_matching_prefix) is my_adapter\n\n    def test_session_get_adapter_prefix_matching_is_case_insensitive(self):\n        mixed_case_prefix = \"hTtPs://eXamPle.CoM/MixEd_CAse_PREfix\"\n        url_matching_prefix_with_different_case = (\n            \"HtTpS://exaMPLe.cOm/MiXeD_caSE_preFIX/another_url\"\n        )\n\n        s = requests.Session()\n        my_adapter = HTTPAdapter()\n        s.mount(mixed_case_prefix, my_adapter)\n\n        assert s.get_adapter(url_matching_prefix_with_different_case) is my_adapter\n\n    def test_header_remove_is_case_insensitive(self, httpbin):\n        # From issue #1321\n        s = requests.Session()\n        s.headers[\"foo\"] = \"bar\"\n        r = s.get(httpbin(\"get\"), headers={\"FOO\": None})\n        assert \"foo\" not in r.request.headers\n\n    def test_params_are_merged_case_sensitive(self, httpbin):\n        s = requests.Session()\n        s.params[\"foo\"] = \"bar\"\n        r = s.get(httpbin(\"get\"), params={\"FOO\": \"bar\"})\n        assert r.json()[\"args\"] == {\"foo\": \"bar\", \"FOO\": \"bar\"}\n\n    def test_long_authinfo_in_url(self):\n        url = \"http://{}:{}@{}:9000/path?query#frag\".format(\n            \"E8A3BE87-9E3F-4620-8858-95478E385B5B\",\n            \"EA770032-DA4D-4D84-8CE9-29C6D910BF1E\",\n            \"exactly-------------sixty-----------three------------characters\",\n        )\n        r = requests.Request(\"GET\", url).prepare()\n        assert r.url == url\n\n    def test_header_keys_are_native(self, httpbin):\n        headers = {\"unicode\": \"blah\", b\"byte\": \"blah\"}\n        r = requests.Request(\"GET\", httpbin(\"get\"), headers=headers)\n        p = r.prepare()\n\n        # This is testing that they are builtin strings. A bit weird, but there\n        # we go.\n        assert \"unicode\" in p.headers.keys()\n        assert \"byte\" in p.headers.keys()\n\n    def test_header_validation(self, httpbin):\n        \"\"\"Ensure prepare_headers regex isn't flagging valid header contents.\"\"\"\n        valid_headers = {\n            \"foo\": \"bar baz qux\",\n            \"bar\": b\"fbbq\",\n            \"baz\": \"\",\n            \"qux\": \"1\",\n        }\n        r = requests.get(httpbin(\"get\"), headers=valid_headers)\n        for key in valid_headers.keys():\n            assert valid_headers[key] == r.request.headers[key]\n\n    @pytest.mark.parametrize(\n        \"invalid_header, key\",\n        (\n            ({\"foo\": 3}, \"foo\"),\n            ({\"bar\": {\"foo\": \"bar\"}}, \"bar\"),\n            ({\"baz\": [\"foo\", \"bar\"]}, \"baz\"),\n        ),\n    )\n    def test_header_value_not_str(self, httpbin, invalid_header, key):\n        \"\"\"Ensure the header value is of type string or bytes as\n        per discussion in GH issue #3386\n        \"\"\"\n        with pytest.raises(InvalidHeader) as excinfo:\n            requests.get(httpbin(\"get\"), headers=invalid_header)\n        assert key in str(excinfo.value)\n\n    @pytest.mark.parametrize(\n        \"invalid_header\",\n        (\n            {\"foo\": \"bar\\r\\nbaz: qux\"},\n            {\"foo\": \"bar\\n\\rbaz: qux\"},\n            {\"foo\": \"bar\\nbaz: qux\"},\n            {\"foo\": \"bar\\rbaz: qux\"},\n            {\"fo\\ro\": \"bar\"},\n            {\"fo\\r\\no\": \"bar\"},\n            {\"fo\\n\\ro\": \"bar\"},\n            {\"fo\\no\": \"bar\"},\n        ),\n    )\n    def test_header_no_return_chars(self, httpbin, invalid_header):\n        \"\"\"Ensure that a header containing return character sequences raise an\n        exception. Otherwise, multiple headers are created from single string.\n        \"\"\"\n        with pytest.raises(InvalidHeader):\n            requests.get(httpbin(\"get\"), headers=invalid_header)\n\n    @pytest.mark.parametrize(\n        \"invalid_header\",\n        (\n            {\" foo\": \"bar\"},\n            {\"\\tfoo\": \"bar\"},\n            {\"    foo\": \"bar\"},\n            {\"foo\": \" bar\"},\n            {\"foo\": \"    bar\"},\n            {\"foo\": \"\\tbar\"},\n            {\" \": \"bar\"},\n        ),\n    )\n    def test_header_no_leading_space(self, httpbin, invalid_header):\n        \"\"\"Ensure headers containing leading whitespace raise\n        InvalidHeader Error before sending.\n        \"\"\"\n"
+      }
+    ]
+  },
+  "final_context": "-----Entities-----\nid|entity|description|number of relationships\n1264|S.GET_ADAPTER|The unresolved receiver call `s.get_adapter(...)` is referenced three times to select adapters for URLs matching only the general prefix, matching the more-specific prefix, and not matching the configured prefix; the receiver's concrete class is not proven beyond session construction in the test.|1\n813|ADAPTER.SEND|`adapter.send` is an explicitly referenced receiver call in `send`; the adapter's class and method definition are not visible, so its runtime binding is uncertain.|1\n1261|TEST_TRANSPORT_ADAPTER_ORDERING|The visible test function `test_transport_adapter_ordering` constructs sessions, mounts `HTTPAdapter` instances at URL prefixes, and asserts adapter-key ordering and retained `http://` and `https://` mappings. Its owning class is not visible in this chunk.|5\n1263|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING|The visible test function `test_session_get_adapter_prefix_matching` mounts adapters at a general and a more specific prefix, then asserts `get_adapter` returns the corresponding adapter for matching and more-specific URLs. Its owning class is not visible in this chunk.|4\n1267|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_IS_CASE_INSENSITIVE|The test `test_session_get_adapter_prefix_matching_is_case_insensitive` is visibly defined here. It mounts an adapter for `mixed_case_prefix` and asserts that `s.get_adapter(url_matching_prefix_with_different_case) is my_adapter`.|4\n1311|ADAPTER.BUILD_RESPONSE|ADAPTER.BUILD_RESPONSE refers to the exact adapter attribute `adapter.build_response`. Within `_patch_adapter_gzipped_redirect`, this attribute is explicitly read and saved as `org_build_response` before being replaced. The receiver adapter’s concrete runtime class is not established or visible in the available information.|1\n1262|S2.MOUNT|The unresolved receiver call `s2.mount(...)` is referenced to add an HTTPS adapter after assigning `s2.adapters`; the receiver's concrete class is not proven beyond session construction in the test.|1\n1266|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_MIXED_CASE|The test `test_session_get_adapter_prefix_matching_mixed_case` is visibly defined here. It creates a mixed-case URL prefix, mounts an `HTTPAdapter` on a `requests.Session`, and asserts `s.get_adapter(url_matching_prefix) is my_adapter`.|4\n812|GET_ADAPTER|`get_adapter` is an unresolved receiver method explicitly called as `self.get_adapter(url=request.url)` in `send`; its definition and owning class are not visible.|4\n97|HTTPADAPTER|\"HTTPADAPTER refers to the externally defined `HTTPAdapter` class from the Requests library, typically imported from `requests.adapters` or a local `.adapters` module. It serves as the default transport adapter for HTTP and HTTPS session connections and is instantiated as `HTTPAdapter()` when mounting default adapters for the `http://` and `https://` URL prefixes.\n\nHTTPADAPTER can also be configured with connection-pool or retry options, including constructions such as `HTTPAdapter(max_retries=retries)`, before being mounted on a session. It provides adapter functionality such as `proxy_headers`, and it is used directly in tests and other visible code. The class is also documented and used as the base class for specialized adapters such as `Ssl3HttpAdapter`.\n\nAlthough HTTPADAPTER is imported and referenced repeatedly—including for session mounting, retry configuration, proxy handling, subclassing, and tests—its actual implementation is not visible in the provided material.\"|24\n105|S.MOUNT|S.MOUNT refers to calls on an unresolved receiver `s` that register HTTP transport adapters for URL prefixes. One referenced expression mounts `HTTPAdapter(max_retries=retries)` at the `'https://'` prefix, while another mounts a default `HTTPAdapter()` at a variable `prefix`. The receiver `s` appears to be a session constructed in the test, but its concrete class and owning caller are not established by the available context.|3\n1310|SESSION.GET_ADAPTER|`SESSION.GET_ADAPTER` refers to the exact attribute call `session.get_adapter(url=url)`, which is used inside `_patch_adapter_gzipped_redirect`. The receiver is the parameter named `session`, but the available context does not establish its concrete runtime class.|1\n93|REQUESTS.ADAPTERS|`REQUESTS.ADAPTERS` refers to the `requests.adapters` module. It is explicitly imported both as `import requests.adapters` and through `from requests.adapters import HTTPAdapter`, including usage via the `HTTPAdapter` symbol. The module defines transport adapters and contains the visible symbols associated with adapter-based request handling; no additional module behavior is evident from the provided descriptions.|32\n95|SSL3HTTPADAPTER|The class `Ssl3HttpAdapter` is defined in the documentation example as `class Ssl3HttpAdapter(HTTPAdapter)` and is described as a transport adapter that allows SSLv3.|1\n98|BASEADAPTER|BASEADAPTER is an externally defined base class for transport adapters. It serves as the parent class of `HTTPAdapter`, as shown by `class HTTPAdapter(BaseAdapter)`, and is documented as a class that can be subclassed to implement custom transport adapter behavior. Its definition is not included in the provided code.|6\n371|REQUESTS.ADAPTERS.HTTPADAPTER|`requests.adapters.HTTPAdapter` is a documented external class from the Requests library. It is referenced as a class that may be subclassed to expose methods such as `cert_verify`, and it is also instantiated through the expression `requests.adapters.HTTPAdapter()`. However, the class definition is not visible in the available context, and the references do not independently establish a runtime call or inheritance relationship beyond the documented subclassing and instantiation references.|1\n1277|REQUESTS.SESSION.MOUNT|`requests.Session.mount` is an explicitly referenced external method through `s.mount(prefix, adapter)`; the receiver is created with `requests.Session()`, but the method implementation is not visible here.|2\n\n-----Relationships-----\nid|source|target|description|weight|links\n2038|TEST_TRANSPORT_ADAPTER_ORDERING|S2.MOUNT|\"CALLS, direction test_transport_adapter_ordering -> s2.mount, visible expressions `s2.mount(\"\"https://\"\", HTTPAdapter())` registers an adapter on `s2`; receiver binding is unresolved.\"|10.0|1\n2042|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING|S.GET_ADAPTER|`TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING` tests the behavior of `S.GET_ADAPTER` through calls to `s.get_adapter(...)`. It passes URLs that match a general prefix, match a more-specific prefix, and do not match any configured prefix. The test verifies that `S.GET_ADAPTER` selects the appropriate general or more-specific adapter and handles a nonmatching URL as expected. The concrete implementation and receiver binding for `s.get_adapter` are not visible or resolved.|20.0|1\n2035|TEST_TRANSPORT_ADAPTER_ORDERING|REQUESTS.SESSION|CALLS, direction test_transport_adapter_ordering -> requests.Session, visible expressions `requests.Session()` and `s2 = requests.Session()` create sessions whose adapter order is asserted.|10.0|4\n2039|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING|REQUESTS.SESSION|CALLS, direction test_session_get_adapter_prefix_matching -> requests.Session, visible expression `requests.Session()` creates the session used for prefix matching.|10.0|4\n2056|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_MIXED_CASE|REQUESTS.SESSION|TESTS, direction test_session_get_adapter_prefix_matching_mixed_case -> requests.Session: the test instantiates `requests.Session()` and exercises its mounted-adapter lookup through `s.get_adapter(...)`.|9.0|4\n2058|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_IS_CASE_INSENSITIVE|REQUESTS.SESSION|TESTS, direction test_session_get_adapter_prefix_matching_is_case_insensitive -> requests.Session: the test instantiates `requests.Session()` and asserts adapter lookup for a differently cased URL prefix.|9.0|4\n2036|TEST_TRANSPORT_ADAPTER_ORDERING|HTTPADAPTER|CALLS, direction test_transport_adapter_ordering -> HTTPAdapter, visible expressions repeatedly call `HTTPAdapter()` as mount arguments; adapter definition is not visible.|10.0|4\n2040|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING|HTTPADAPTER|CALLS, direction test_session_get_adapter_prefix_matching -> HTTPAdapter, visible expressions `HTTPAdapter()` create the general and more-specific prefix adapters.|10.0|4\n2057|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_MIXED_CASE|HTTPADAPTER|TESTS, direction test_session_get_adapter_prefix_matching_mixed_case -> HTTPAdapter: the test instantiates `HTTPAdapter()` and mounts it on the session.|9.0|4\n2059|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_IS_CASE_INSENSITIVE|HTTPADAPTER|TESTS, direction test_session_get_adapter_prefix_matching_is_case_insensitive -> HTTPAdapter: the test instantiates `HTTPAdapter()` and mounts it before calling `s.get_adapter(...)`.|9.0|4\n1103|SEND|GET_ADAPTER|CALLS, `send` calls the unresolved receiver method `self.get_adapter(url=request.url)`; the runtime owning class is not visible.|9.0|2\n1105|SEND|ADAPTER.SEND|CALLS, `send` calls the syntactically named receiver method `adapter.send(request, **kwargs)`; the adapter binding and runtime target are not established by this chunk.|9.0|2\n2037|TEST_TRANSPORT_ADAPTER_ORDERING|S.MOUNT|\"`TEST_TRANSPORT_ADAPTER_ORDERING` calls `s.mount(\"\"http://...\"\", HTTPAdapter())` to register transport adapters on `S.MOUNT` (`s`). It tests that adapters mounted at different URL prefixes are ordered in `s.adapters` from the most specific prefix to the least specific prefix. The receiver binding for `s` remains unresolved.\"|20.0|2\n2041|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING|S.MOUNT|CALLS, direction test_session_get_adapter_prefix_matching -> s.mount, visible expressions `s.mount(prefix, prefix_adapter)` and `s.mount(more_specific_prefix, more_specific_prefix_adapter)` register prefix adapters; receiver binding is unresolved.|10.0|2\n2081|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_MIXED_CASE|REQUESTS.SESSION.GET_ADAPTER|CALLS, direction test_session_get_adapter_prefix_matching_mixed_case -> requests.Session.get_adapter: the test visibly calls `s.get_adapter(url_matching_prefix)` after constructing `s` with `requests.Session()`; the receiver binding is local but syntactically supported by that construction.|9.0|2\n2082|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_MIXED_CASE|REQUESTS.SESSION.MOUNT|CALLS, direction test_session_get_adapter_prefix_matching_mixed_case -> requests.Session.mount: the test visibly calls `s.mount(mixed_case_prefix, my_adapter)`; the receiver binding is local but syntactically supported by `requests.Session()`.|9.0|2\n2083|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_IS_CASE_INSENSITIVE|REQUESTS.SESSION.GET_ADAPTER|CALLS, direction test_session_get_adapter_prefix_matching_is_case_insensitive -> requests.Session.get_adapter: the test visibly calls `s.get_adapter(url_matching_prefix_with_different_case)` after constructing `s` with `requests.Session()`.|9.0|2\n2084|TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_IS_CASE_INSENSITIVE|REQUESTS.SESSION.MOUNT|CALLS, direction test_session_get_adapter_prefix_matching_is_case_insensitive -> requests.Session.mount: the test visibly calls `s.mount(mixed_case_prefix, my_adapter)` after constructing `s` with `requests.Session()`.|9.0|2\n2052|TEST_TRANSPORT_ADAPTER_ORDERING|LIST|CALLS, direction test_transport_adapter_ordering -> list, visible expressions `list(s.adapters)` and `list(s2.adapters)` materialize adapter mappings for ordering assertions.|10.0|1\n1112|GET_ADAPTER|INVALIDSCHEMA|CALLS, `get_adapter` constructs and raises `InvalidSchema(...)` after no adapter prefix matches the lowercased URL; the exception definition is not visible.|9.0|1\n1119|GET_ADAPTER|LOWER|CALLS, `get_adapter` calls `url.lower()` and `prefix.lower()` while comparing adapter prefixes; the receiver-specific implementation is not visible.|9.0|1\n1120|GET_ADAPTER|STARTSWITH|CALLS, `get_adapter` evaluates `url.lower().startswith(prefix.lower())` for each configured adapter prefix; the receiver-specific implementation is not visible.|9.0|1\n2168|_PATCH_ADAPTER_GZIPPED_REDIRECT|ADAPTER.BUILD_RESPONSE|`_PATCH_ADAPTER_GZIPPED_REDIRECT` reads the adapter’s `build_response` method into `org_build_response`, then replaces `adapter.build_response` with a nested wrapper. The wrapper preserves and invokes the saved original method. The adapter’s runtime type is unresolved and is not proven by the available descriptions.|16.0|1\n\n-----Sources-----\nid|source|text\n91|tests/test_requests.py:L1488-L1634|\"        pr = pickle.loads(pickle.dumps(r))\n        assert r.request.url == pr.request.url\n        assert r.request.headers == pr.request.headers\n\n    def test_prepared_request_is_pickleable(self, httpbin):\n        p = requests.Request(\"\"GET\"\", httpbin(\"\"get\"\")).prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_file_is_pickleable(self, httpbin):\n        with open(__file__, \"\"rb\"\") as f:\n            r = requests.Request(\"\"POST\"\", httpbin(\"\"post\"\"), files={\"\"file\"\": f})\n            p = r.prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_hook_is_pickleable(self, httpbin):\n        r = requests.Request(\"\"GET\"\", httpbin(\"\"get\"\"), hooks=default_hooks())\n        p = r.prepare()\n\n        # Verify PreparedRequest can be pickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n        assert r.hooks == p.hooks\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_cannot_send_unprepared_requests(self, httpbin):\n        r = requests.Request(url=httpbin())\n        with pytest.raises(ValueError):\n            requests.Session().send(r)\n\n    def test_http_error(self):\n        error = requests.exceptions.HTTPError()\n        assert not error.response\n        response = requests.Response()\n        error = requests.exceptions.HTTPError(response=response)\n        assert error.response == response\n        error = requests.exceptions.HTTPError(\"\"message\"\", response=response)\n        assert str(error) == \"\"message\"\"\n        assert error.response == response\n\n    def test_session_pickling(self, httpbin):\n        r = requests.Request(\"\"GET\"\", httpbin(\"\"get\"\"))\n        s = requests.Session()\n\n        s = pickle.loads(pickle.dumps(s))\n        s.proxies = getproxies()\n\n        r = s.send(r.prepare())\n        assert r.status_code == 200\n\n    def test_fixes_1329(self, httpbin):\n        \"\"\"\"\"\"Ensure that header updates are done case-insensitively.\"\"\"\"\"\"\n        s = requests.Session()\n        s.headers.update({\"\"ACCEPT\"\": \"\"BOGUS\"\"})\n        s.headers.update({\"\"accept\"\": \"\"application/json\"\"})\n        r = s.get(httpbin(\"\"get\"\"))\n        headers = r.request.headers\n        assert headers[\"\"accept\"\"] == \"\"application/json\"\"\n        assert headers[\"\"Accept\"\"] == \"\"application/json\"\"\n        assert headers[\"\"ACCEPT\"\"] == \"\"application/json\"\"\n\n    def test_uppercase_scheme_redirect(self, httpbin):\n        parts = urlparse(httpbin(\"\"html\"\"))\n        url = \"\"HTTP://\"\" + parts.netloc + parts.path\n        r = requests.get(httpbin(\"\"redirect-to\"\"), params={\"\"url\"\": url})\n        assert r.status_code == 200\n        assert r.url.lower() == url.lower()\n\n    def test_transport_adapter_ordering(self):\n        s = requests.Session()\n        order = [\"\"https://\"\", \"\"http://\"\"]\n        assert order == list(s.adapters)\n        s.mount(\"\"http://git\"\", HTTPAdapter())\n        s.mount(\"\"http://github\"\", HTTPAdapter())\n        s.mount(\"\"http://github.com\"\", HTTPAdapter())\n        s.mount(\"\"http://github.com/about/\"\", HTTPAdapter())\n        order = [\n            \"\"http://github.com/about/\"\",\n            \"\"http://github.com\"\",\n            \"\"http://github\"\",\n            \"\"http://git\"\",\n            \"\"https://\"\",\n            \"\"http://\"\",\n        ]\n        assert order == list(s.adapters)\n        s.mount(\"\"http://gittip\"\", HTTPAdapter())\n        s.mount(\"\"http://gittip.com\"\", HTTPAdapter())\n        s.mount(\"\"http://gittip.com/about/\"\", HTTPAdapter())\n        order = [\n            \"\"http://github.com/about/\"\",\n            \"\"http://gittip.com/about/\"\",\n            \"\"http://github.com\"\",\n            \"\"http://gittip.com\"\",\n            \"\"http://github\"\",\n            \"\"http://gittip\"\",\n            \"\"http://git\"\",\n            \"\"https://\"\",\n            \"\"http://\"\",\n        ]\n        assert order == list(s.adapters)\n        s2 = requests.Session()\n        s2.adapters = {\"\"http://\"\": HTTPAdapter()}\n        s2.mount(\"\"https://\"\", HTTPAdapter())\n        assert \"\"http://\"\" in s2.adapters\n        assert \"\"https://\"\" in s2.adapters\n\n    def test_session_get_adapter_prefix_matching(self):\n        prefix = \"\"https://example.com\"\"\n        more_specific_prefix = prefix + \"\"/some/path\"\"\n\n        url_matching_only_prefix = prefix + \"\"/another/path\"\"\n        url_matching_more_specific_prefix = more_specific_prefix + \"\"/longer/path\"\"\n        url_not_matching_prefix = \"\"https://another.example.com/\"\"\n\n        s = requests.Session()\n        prefix_adapter = HTTPAdapter()\n        more_specific_prefix_adapter = HTTPAdapter()\n        s.mount(prefix, prefix_adapter)\n        s.mount(more_specific_prefix, more_specific_prefix_adapter)\n\n        assert s.get_adapter(url_matching_only_prefix) is prefix_adapter\n        assert (\n\"\n56|src/requests/sessions.py:L569-L717|\"            json=json,\n            params=params or {},\n            auth=auth,\n            cookies=cookies,\n            hooks=hooks,\n        )\n        prep = self.prepare_request(req)\n\n        proxies = proxies or {}\n\n        settings = self.merge_environment_settings(\n            prep.url, proxies, stream, verify, cert\n        )\n\n        # Send the request.\n        send_kwargs = {\n            \"\"timeout\"\": timeout,\n            \"\"allow_redirects\"\": allow_redirects,\n        }\n        send_kwargs.update(settings)\n        resp = self.send(prep, **send_kwargs)\n\n        return resp\n\n    def get(self, url, **kwargs):\n        r\"\"\"\"\"\"Sends a GET request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\"\"\"\n\n        kwargs.setdefault(\"\"allow_redirects\"\", True)\n        return self.request(\"\"GET\"\", url, **kwargs)\n\n    def options(self, url, **kwargs):\n        r\"\"\"\"\"\"Sends a OPTIONS request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\"\"\"\n\n        kwargs.setdefault(\"\"allow_redirects\"\", True)\n        return self.request(\"\"OPTIONS\"\", url, **kwargs)\n\n    def head(self, url, **kwargs):\n        r\"\"\"\"\"\"Sends a HEAD request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\"\"\"\n\n        kwargs.setdefault(\"\"allow_redirects\"\", False)\n        return self.request(\"\"HEAD\"\", url, **kwargs)\n\n    def post(self, url, data=None, json=None, **kwargs):\n        r\"\"\"\"\"\"Sends a POST request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param json: (optional) json to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\"\"\"\n\n        return self.request(\"\"POST\"\", url, data=data, json=json, **kwargs)\n\n    def put(self, url, data=None, **kwargs):\n        r\"\"\"\"\"\"Sends a PUT request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\"\"\"\n\n        return self.request(\"\"PUT\"\", url, data=data, **kwargs)\n\n    def patch(self, url, data=None, **kwargs):\n        r\"\"\"\"\"\"Sends a PATCH request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\"\"\"\n\n        return self.request(\"\"PATCH\"\", url, data=data, **kwargs)\n\n    def delete(self, url, **kwargs):\n        r\"\"\"\"\"\"Sends a DELETE request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\"\"\"\n\n        return self.request(\"\"DELETE\"\", url, **kwargs)\n\n    def send(self, request, **kwargs):\n        \"\"\"\"\"\"Send a given PreparedRequest.\n\n        :rtype: requests.Response\n        \"\"\"\"\"\"\n        # Set defaults that the hooks can utilize to ensure they always have\n        # the correct parameters to reproduce the previous request.\n        kwargs.setdefault(\"\"stream\"\", self.stream)\n        kwargs.setdefault(\"\"verify\"\", self.verify)\n        kwargs.setdefault(\"\"cert\"\", self.cert)\n        if \"\"proxies\"\" not in kwargs:\n            kwargs[\"\"proxies\"\"] = resolve_proxies(request, self.proxies, self.trust_env)\n\n        # It's possible that users might accidentally send a Request object.\n        # Guard against that specific failure case.\n        if isinstance(request, Request):\n            raise ValueError(\"\"You can only send PreparedRequests.\"\")\n\n        # Set up variables needed for resolve_redirects and dispatching of hooks\n        allow_redirects = kwargs.pop(\"\"allow_redirects\"\", True)\n        stream = kwargs.get(\"\"stream\"\")\n        hooks = request.hooks\n\n        # Get the appropriate adapter to use\n        adapter = self.get_adapter(url=request.url)\n\n        # Start time (approximately) of the request\n        start = preferred_clock()\n\n        # Send the request\n        r = adapter.send(request, **kwargs)\n\n        # Total elapsed time of the request (approximately)\n        elapsed = preferred_clock() - start\n        r.elapsed = timedelta(seconds=elapsed)\n\n        # Response manipulation hooks\n        r = dispatch_hook(\"\"response\"\", hooks, r, **kwargs)\n\n        # Persist cookies\n        if r.history:\n            # If the hooks create history then we want those cookies too\n            for resp in r.history:\n                extract_cookies_to_jar(self.cookies, resp.request, resp.raw)\n\n\"\n92|tests/test_requests.py:L1624-L1760|\"        url_matching_more_specific_prefix = more_specific_prefix + \"\"/longer/path\"\"\n        url_not_matching_prefix = \"\"https://another.example.com/\"\"\n\n        s = requests.Session()\n        prefix_adapter = HTTPAdapter()\n        more_specific_prefix_adapter = HTTPAdapter()\n        s.mount(prefix, prefix_adapter)\n        s.mount(more_specific_prefix, more_specific_prefix_adapter)\n\n        assert s.get_adapter(url_matching_only_prefix) is prefix_adapter\n        assert (\n            s.get_adapter(url_matching_more_specific_prefix)\n            is more_specific_prefix_adapter\n        )\n        assert s.get_adapter(url_not_matching_prefix) not in (\n            prefix_adapter,\n            more_specific_prefix_adapter,\n        )\n\n    def test_session_get_adapter_prefix_matching_mixed_case(self):\n        mixed_case_prefix = \"\"hTtPs://eXamPle.CoM/MixEd_CAse_PREfix\"\"\n        url_matching_prefix = mixed_case_prefix + \"\"/full_url\"\"\n\n        s = requests.Session()\n        my_adapter = HTTPAdapter()\n        s.mount(mixed_case_prefix, my_adapter)\n\n        assert s.get_adapter(url_matching_prefix) is my_adapter\n\n    def test_session_get_adapter_prefix_matching_is_case_insensitive(self):\n        mixed_case_prefix = \"\"hTtPs://eXamPle.CoM/MixEd_CAse_PREfix\"\"\n        url_matching_prefix_with_different_case = (\n            \"\"HtTpS://exaMPLe.cOm/MiXeD_caSE_preFIX/another_url\"\"\n        )\n\n        s = requests.Session()\n        my_adapter = HTTPAdapter()\n        s.mount(mixed_case_prefix, my_adapter)\n\n        assert s.get_adapter(url_matching_prefix_with_different_case) is my_adapter\n\n    def test_header_remove_is_case_insensitive(self, httpbin):\n        # From issue #1321\n        s = requests.Session()\n        s.headers[\"\"foo\"\"] = \"\"bar\"\"\n        r = s.get(httpbin(\"\"get\"\"), headers={\"\"FOO\"\": None})\n        assert \"\"foo\"\" not in r.request.headers\n\n    def test_params_are_merged_case_sensitive(self, httpbin):\n        s = requests.Session()\n        s.params[\"\"foo\"\"] = \"\"bar\"\"\n        r = s.get(httpbin(\"\"get\"\"), params={\"\"FOO\"\": \"\"bar\"\"})\n        assert r.json()[\"\"args\"\"] == {\"\"foo\"\": \"\"bar\"\", \"\"FOO\"\": \"\"bar\"\"}\n\n    def test_long_authinfo_in_url(self):\n        url = \"\"http://{}:{}@{}:9000/path?query#frag\"\".format(\n            \"\"E8A3BE87-9E3F-4620-8858-95478E385B5B\"\",\n            \"\"EA770032-DA4D-4D84-8CE9-29C6D910BF1E\"\",\n            \"\"exactly-------------sixty-----------three------------characters\"\",\n        )\n        r = requests.Request(\"\"GET\"\", url).prepare()\n        assert r.url == url\n\n    def test_header_keys_are_native(self, httpbin):\n        headers = {\"\"unicode\"\": \"\"blah\"\", b\"\"byte\"\": \"\"blah\"\"}\n        r = requests.Request(\"\"GET\"\", httpbin(\"\"get\"\"), headers=headers)\n        p = r.prepare()\n\n        # This is testing that they are builtin strings. A bit weird, but there\n        # we go.\n        assert \"\"unicode\"\" in p.headers.keys()\n        assert \"\"byte\"\" in p.headers.keys()\n\n    def test_header_validation(self, httpbin):\n        \"\"\"\"\"\"Ensure prepare_headers regex isn't flagging valid header contents.\"\"\"\"\"\"\n        valid_headers = {\n            \"\"foo\"\": \"\"bar baz qux\"\",\n            \"\"bar\"\": b\"\"fbbq\"\",\n            \"\"baz\"\": \"\"\"\",\n            \"\"qux\"\": \"\"1\"\",\n        }\n        r = requests.get(httpbin(\"\"get\"\"), headers=valid_headers)\n        for key in valid_headers.keys():\n            assert valid_headers[key] == r.request.headers[key]\n\n    @pytest.mark.parametrize(\n        \"\"invalid_header, key\"\",\n        (\n            ({\"\"foo\"\": 3}, \"\"foo\"\"),\n            ({\"\"bar\"\": {\"\"foo\"\": \"\"bar\"\"}}, \"\"bar\"\"),\n            ({\"\"baz\"\": [\"\"foo\"\", \"\"bar\"\"]}, \"\"baz\"\"),\n        ),\n    )\n    def test_header_value_not_str(self, httpbin, invalid_header, key):\n        \"\"\"\"\"\"Ensure the header value is of type string or bytes as\n        per discussion in GH issue #3386\n        \"\"\"\"\"\"\n        with pytest.raises(InvalidHeader) as excinfo:\n            requests.get(httpbin(\"\"get\"\"), headers=invalid_header)\n        assert key in str(excinfo.value)\n\n    @pytest.mark.parametrize(\n        \"\"invalid_header\"\",\n        (\n            {\"\"foo\"\": \"\"bar\\r\\nbaz: qux\"\"},\n            {\"\"foo\"\": \"\"bar\\n\\rbaz: qux\"\"},\n            {\"\"foo\"\": \"\"bar\\nbaz: qux\"\"},\n            {\"\"foo\"\": \"\"bar\\rbaz: qux\"\"},\n            {\"\"fo\\ro\"\": \"\"bar\"\"},\n            {\"\"fo\\r\\no\"\": \"\"bar\"\"},\n            {\"\"fo\\n\\ro\"\": \"\"bar\"\"},\n            {\"\"fo\\no\"\": \"\"bar\"\"},\n        ),\n    )\n    def test_header_no_return_chars(self, httpbin, invalid_header):\n        \"\"\"\"\"\"Ensure that a header containing return character sequences raise an\n        exception. Otherwise, multiple headers are created from single string.\n        \"\"\"\"\"\"\n        with pytest.raises(InvalidHeader):\n            requests.get(httpbin(\"\"get\"\"), headers=invalid_header)\n\n    @pytest.mark.parametrize(\n        \"\"invalid_header\"\",\n        (\n            {\"\" foo\"\": \"\"bar\"\"},\n            {\"\"\\tfoo\"\": \"\"bar\"\"},\n            {\"\"    foo\"\": \"\"bar\"\"},\n            {\"\"foo\"\": \"\" bar\"\"},\n            {\"\"foo\"\": \"\"    bar\"\"},\n            {\"\"foo\"\": \"\"\\tbar\"\"},\n            {\"\" \"\": \"\"bar\"\"},\n        ),\n    )\n    def test_header_no_leading_space(self, httpbin, invalid_header):\n        \"\"\"\"\"\"Ensure headers containing leading whitespace raise\n        InvalidHeader Error before sending.\n        \"\"\"\"\"\"\n\"\n",
+  "final_tables": [
+    {
+      "name": "entities",
+      "columns": [
+        "id",
+        "entity",
+        "description",
+        "number of relationships"
+      ],
+      "rows": [
+        {
+          "id": "1264",
+          "entity": "S.GET_ADAPTER",
+          "description": "The unresolved receiver call `s.get_adapter(...)` is referenced three times to select adapters for URLs matching only the general prefix, matching the more-specific prefix, and not matching the configured prefix; the receiver's concrete class is not proven beyond session construction in the test.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "813",
+          "entity": "ADAPTER.SEND",
+          "description": "`adapter.send` is an explicitly referenced receiver call in `send`; the adapter's class and method definition are not visible, so its runtime binding is uncertain.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1261",
+          "entity": "TEST_TRANSPORT_ADAPTER_ORDERING",
+          "description": "The visible test function `test_transport_adapter_ordering` constructs sessions, mounts `HTTPAdapter` instances at URL prefixes, and asserts adapter-key ordering and retained `http://` and `https://` mappings. Its owning class is not visible in this chunk.",
+          "number of relationships": "5"
+        },
+        {
+          "id": "1263",
+          "entity": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING",
+          "description": "The visible test function `test_session_get_adapter_prefix_matching` mounts adapters at a general and a more specific prefix, then asserts `get_adapter` returns the corresponding adapter for matching and more-specific URLs. Its owning class is not visible in this chunk.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "1267",
+          "entity": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_IS_CASE_INSENSITIVE",
+          "description": "The test `test_session_get_adapter_prefix_matching_is_case_insensitive` is visibly defined here. It mounts an adapter for `mixed_case_prefix` and asserts that `s.get_adapter(url_matching_prefix_with_different_case) is my_adapter`.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "1311",
+          "entity": "ADAPTER.BUILD_RESPONSE",
+          "description": "ADAPTER.BUILD_RESPONSE refers to the exact adapter attribute `adapter.build_response`. Within `_patch_adapter_gzipped_redirect`, this attribute is explicitly read and saved as `org_build_response` before being replaced. The receiver adapter’s concrete runtime class is not established or visible in the available information.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1262",
+          "entity": "S2.MOUNT",
+          "description": "The unresolved receiver call `s2.mount(...)` is referenced to add an HTTPS adapter after assigning `s2.adapters`; the receiver's concrete class is not proven beyond session construction in the test.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1266",
+          "entity": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_MIXED_CASE",
+          "description": "The test `test_session_get_adapter_prefix_matching_mixed_case` is visibly defined here. It creates a mixed-case URL prefix, mounts an `HTTPAdapter` on a `requests.Session`, and asserts `s.get_adapter(url_matching_prefix) is my_adapter`.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "812",
+          "entity": "GET_ADAPTER",
+          "description": "`get_adapter` is an unresolved receiver method explicitly called as `self.get_adapter(url=request.url)` in `send`; its definition and owning class are not visible.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "97",
+          "entity": "HTTPADAPTER",
+          "description": "HTTPADAPTER refers to the externally defined `HTTPAdapter` class from the Requests library, typically imported from `requests.adapters` or a local `.adapters` module. It serves as the default transport adapter for HTTP and HTTPS session connections and is instantiated as `HTTPAdapter()` when mounting default adapters for the `http://` and `https://` URL prefixes.\n\nHTTPADAPTER can also be configured with connection-pool or retry options, including constructions such as `HTTPAdapter(max_retries=retries)`, before being mounted on a session. It provides adapter functionality such as `proxy_headers`, and it is used directly in tests and other visible code. The class is also documented and used as the base class for specialized adapters such as `Ssl3HttpAdapter`.\n\nAlthough HTTPADAPTER is imported and referenced repeatedly—including for session mounting, retry configuration, proxy handling, subclassing, and tests—its actual implementation is not visible in the provided material.",
+          "number of relationships": "24"
+        },
+        {
+          "id": "105",
+          "entity": "S.MOUNT",
+          "description": "S.MOUNT refers to calls on an unresolved receiver `s` that register HTTP transport adapters for URL prefixes. One referenced expression mounts `HTTPAdapter(max_retries=retries)` at the `'https://'` prefix, while another mounts a default `HTTPAdapter()` at a variable `prefix`. The receiver `s` appears to be a session constructed in the test, but its concrete class and owning caller are not established by the available context.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "1310",
+          "entity": "SESSION.GET_ADAPTER",
+          "description": "`SESSION.GET_ADAPTER` refers to the exact attribute call `session.get_adapter(url=url)`, which is used inside `_patch_adapter_gzipped_redirect`. The receiver is the parameter named `session`, but the available context does not establish its concrete runtime class.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "93",
+          "entity": "REQUESTS.ADAPTERS",
+          "description": "`REQUESTS.ADAPTERS` refers to the `requests.adapters` module. It is explicitly imported both as `import requests.adapters` and through `from requests.adapters import HTTPAdapter`, including usage via the `HTTPAdapter` symbol. The module defines transport adapters and contains the visible symbols associated with adapter-based request handling; no additional module behavior is evident from the provided descriptions.",
+          "number of relationships": "32"
+        },
+        {
+          "id": "95",
+          "entity": "SSL3HTTPADAPTER",
+          "description": "The class `Ssl3HttpAdapter` is defined in the documentation example as `class Ssl3HttpAdapter(HTTPAdapter)` and is described as a transport adapter that allows SSLv3.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "98",
+          "entity": "BASEADAPTER",
+          "description": "BASEADAPTER is an externally defined base class for transport adapters. It serves as the parent class of `HTTPAdapter`, as shown by `class HTTPAdapter(BaseAdapter)`, and is documented as a class that can be subclassed to implement custom transport adapter behavior. Its definition is not included in the provided code.",
+          "number of relationships": "6"
+        },
+        {
+          "id": "371",
+          "entity": "REQUESTS.ADAPTERS.HTTPADAPTER",
+          "description": "`requests.adapters.HTTPAdapter` is a documented external class from the Requests library. It is referenced as a class that may be subclassed to expose methods such as `cert_verify`, and it is also instantiated through the expression `requests.adapters.HTTPAdapter()`. However, the class definition is not visible in the available context, and the references do not independently establish a runtime call or inheritance relationship beyond the documented subclassing and instantiation references.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1277",
+          "entity": "REQUESTS.SESSION.MOUNT",
+          "description": "`requests.Session.mount` is an explicitly referenced external method through `s.mount(prefix, adapter)`; the receiver is created with `requests.Session()`, but the method implementation is not visible here.",
+          "number of relationships": "2"
+        }
+      ]
+    },
+    {
+      "name": "relationships",
+      "columns": [
+        "id",
+        "source",
+        "target",
+        "description",
+        "weight",
+        "links"
+      ],
+      "rows": [
+        {
+          "id": "2038",
+          "source": "TEST_TRANSPORT_ADAPTER_ORDERING",
+          "target": "S2.MOUNT",
+          "description": "CALLS, direction test_transport_adapter_ordering -> s2.mount, visible expressions `s2.mount(\"https://\", HTTPAdapter())` registers an adapter on `s2`; receiver binding is unresolved.",
+          "weight": "10.0",
+          "links": "1"
+        },
+        {
+          "id": "2042",
+          "source": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING",
+          "target": "S.GET_ADAPTER",
+          "description": "`TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING` tests the behavior of `S.GET_ADAPTER` through calls to `s.get_adapter(...)`. It passes URLs that match a general prefix, match a more-specific prefix, and do not match any configured prefix. The test verifies that `S.GET_ADAPTER` selects the appropriate general or more-specific adapter and handles a nonmatching URL as expected. The concrete implementation and receiver binding for `s.get_adapter` are not visible or resolved.",
+          "weight": "20.0",
+          "links": "1"
+        },
+        {
+          "id": "2035",
+          "source": "TEST_TRANSPORT_ADAPTER_ORDERING",
+          "target": "REQUESTS.SESSION",
+          "description": "CALLS, direction test_transport_adapter_ordering -> requests.Session, visible expressions `requests.Session()` and `s2 = requests.Session()` create sessions whose adapter order is asserted.",
+          "weight": "10.0",
+          "links": "4"
+        },
+        {
+          "id": "2039",
+          "source": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING",
+          "target": "REQUESTS.SESSION",
+          "description": "CALLS, direction test_session_get_adapter_prefix_matching -> requests.Session, visible expression `requests.Session()` creates the session used for prefix matching.",
+          "weight": "10.0",
+          "links": "4"
+        },
+        {
+          "id": "2056",
+          "source": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_MIXED_CASE",
+          "target": "REQUESTS.SESSION",
+          "description": "TESTS, direction test_session_get_adapter_prefix_matching_mixed_case -> requests.Session: the test instantiates `requests.Session()` and exercises its mounted-adapter lookup through `s.get_adapter(...)`.",
+          "weight": "9.0",
+          "links": "4"
+        },
+        {
+          "id": "2058",
+          "source": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_IS_CASE_INSENSITIVE",
+          "target": "REQUESTS.SESSION",
+          "description": "TESTS, direction test_session_get_adapter_prefix_matching_is_case_insensitive -> requests.Session: the test instantiates `requests.Session()` and asserts adapter lookup for a differently cased URL prefix.",
+          "weight": "9.0",
+          "links": "4"
+        },
+        {
+          "id": "2036",
+          "source": "TEST_TRANSPORT_ADAPTER_ORDERING",
+          "target": "HTTPADAPTER",
+          "description": "CALLS, direction test_transport_adapter_ordering -> HTTPAdapter, visible expressions repeatedly call `HTTPAdapter()` as mount arguments; adapter definition is not visible.",
+          "weight": "10.0",
+          "links": "4"
+        },
+        {
+          "id": "2040",
+          "source": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING",
+          "target": "HTTPADAPTER",
+          "description": "CALLS, direction test_session_get_adapter_prefix_matching -> HTTPAdapter, visible expressions `HTTPAdapter()` create the general and more-specific prefix adapters.",
+          "weight": "10.0",
+          "links": "4"
+        },
+        {
+          "id": "2057",
+          "source": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_MIXED_CASE",
+          "target": "HTTPADAPTER",
+          "description": "TESTS, direction test_session_get_adapter_prefix_matching_mixed_case -> HTTPAdapter: the test instantiates `HTTPAdapter()` and mounts it on the session.",
+          "weight": "9.0",
+          "links": "4"
+        },
+        {
+          "id": "2059",
+          "source": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_IS_CASE_INSENSITIVE",
+          "target": "HTTPADAPTER",
+          "description": "TESTS, direction test_session_get_adapter_prefix_matching_is_case_insensitive -> HTTPAdapter: the test instantiates `HTTPAdapter()` and mounts it before calling `s.get_adapter(...)`.",
+          "weight": "9.0",
+          "links": "4"
+        },
+        {
+          "id": "1103",
+          "source": "SEND",
+          "target": "GET_ADAPTER",
+          "description": "CALLS, `send` calls the unresolved receiver method `self.get_adapter(url=request.url)`; the runtime owning class is not visible.",
+          "weight": "9.0",
+          "links": "2"
+        },
+        {
+          "id": "1105",
+          "source": "SEND",
+          "target": "ADAPTER.SEND",
+          "description": "CALLS, `send` calls the syntactically named receiver method `adapter.send(request, **kwargs)`; the adapter binding and runtime target are not established by this chunk.",
+          "weight": "9.0",
+          "links": "2"
+        },
+        {
+          "id": "2037",
+          "source": "TEST_TRANSPORT_ADAPTER_ORDERING",
+          "target": "S.MOUNT",
+          "description": "`TEST_TRANSPORT_ADAPTER_ORDERING` calls `s.mount(\"http://...\", HTTPAdapter())` to register transport adapters on `S.MOUNT` (`s`). It tests that adapters mounted at different URL prefixes are ordered in `s.adapters` from the most specific prefix to the least specific prefix. The receiver binding for `s` remains unresolved.",
+          "weight": "20.0",
+          "links": "2"
+        },
+        {
+          "id": "2041",
+          "source": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING",
+          "target": "S.MOUNT",
+          "description": "CALLS, direction test_session_get_adapter_prefix_matching -> s.mount, visible expressions `s.mount(prefix, prefix_adapter)` and `s.mount(more_specific_prefix, more_specific_prefix_adapter)` register prefix adapters; receiver binding is unresolved.",
+          "weight": "10.0",
+          "links": "2"
+        },
+        {
+          "id": "2081",
+          "source": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_MIXED_CASE",
+          "target": "REQUESTS.SESSION.GET_ADAPTER",
+          "description": "CALLS, direction test_session_get_adapter_prefix_matching_mixed_case -> requests.Session.get_adapter: the test visibly calls `s.get_adapter(url_matching_prefix)` after constructing `s` with `requests.Session()`; the receiver binding is local but syntactically supported by that construction.",
+          "weight": "9.0",
+          "links": "2"
+        },
+        {
+          "id": "2082",
+          "source": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_MIXED_CASE",
+          "target": "REQUESTS.SESSION.MOUNT",
+          "description": "CALLS, direction test_session_get_adapter_prefix_matching_mixed_case -> requests.Session.mount: the test visibly calls `s.mount(mixed_case_prefix, my_adapter)`; the receiver binding is local but syntactically supported by `requests.Session()`.",
+          "weight": "9.0",
+          "links": "2"
+        },
+        {
+          "id": "2083",
+          "source": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_IS_CASE_INSENSITIVE",
+          "target": "REQUESTS.SESSION.GET_ADAPTER",
+          "description": "CALLS, direction test_session_get_adapter_prefix_matching_is_case_insensitive -> requests.Session.get_adapter: the test visibly calls `s.get_adapter(url_matching_prefix_with_different_case)` after constructing `s` with `requests.Session()`.",
+          "weight": "9.0",
+          "links": "2"
+        },
+        {
+          "id": "2084",
+          "source": "TEST_SESSION_GET_ADAPTER_PREFIX_MATCHING_IS_CASE_INSENSITIVE",
+          "target": "REQUESTS.SESSION.MOUNT",
+          "description": "CALLS, direction test_session_get_adapter_prefix_matching_is_case_insensitive -> requests.Session.mount: the test visibly calls `s.mount(mixed_case_prefix, my_adapter)` after constructing `s` with `requests.Session()`.",
+          "weight": "9.0",
+          "links": "2"
+        },
+        {
+          "id": "2052",
+          "source": "TEST_TRANSPORT_ADAPTER_ORDERING",
+          "target": "LIST",
+          "description": "CALLS, direction test_transport_adapter_ordering -> list, visible expressions `list(s.adapters)` and `list(s2.adapters)` materialize adapter mappings for ordering assertions.",
+          "weight": "10.0",
+          "links": "1"
+        },
+        {
+          "id": "1112",
+          "source": "GET_ADAPTER",
+          "target": "INVALIDSCHEMA",
+          "description": "CALLS, `get_adapter` constructs and raises `InvalidSchema(...)` after no adapter prefix matches the lowercased URL; the exception definition is not visible.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "1119",
+          "source": "GET_ADAPTER",
+          "target": "LOWER",
+          "description": "CALLS, `get_adapter` calls `url.lower()` and `prefix.lower()` while comparing adapter prefixes; the receiver-specific implementation is not visible.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "1120",
+          "source": "GET_ADAPTER",
+          "target": "STARTSWITH",
+          "description": "CALLS, `get_adapter` evaluates `url.lower().startswith(prefix.lower())` for each configured adapter prefix; the receiver-specific implementation is not visible.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "2168",
+          "source": "_PATCH_ADAPTER_GZIPPED_REDIRECT",
+          "target": "ADAPTER.BUILD_RESPONSE",
+          "description": "`_PATCH_ADAPTER_GZIPPED_REDIRECT` reads the adapter’s `build_response` method into `org_build_response`, then replaces `adapter.build_response` with a nested wrapper. The wrapper preserves and invokes the saved original method. The adapter’s runtime type is unresolved and is not proven by the available descriptions.",
+          "weight": "16.0",
+          "links": "1"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "columns": [
+        "id",
+        "source",
+        "text"
+      ],
+      "rows": [
+        {
+          "id": "91",
+          "text": "        pr = pickle.loads(pickle.dumps(r))\n        assert r.request.url == pr.request.url\n        assert r.request.headers == pr.request.headers\n\n    def test_prepared_request_is_pickleable(self, httpbin):\n        p = requests.Request(\"GET\", httpbin(\"get\")).prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_file_is_pickleable(self, httpbin):\n        with open(__file__, \"rb\") as f:\n            r = requests.Request(\"POST\", httpbin(\"post\"), files={\"file\": f})\n            p = r.prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_hook_is_pickleable(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"), hooks=default_hooks())\n        p = r.prepare()\n\n        # Verify PreparedRequest can be pickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n        assert r.hooks == p.hooks\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_cannot_send_unprepared_requests(self, httpbin):\n        r = requests.Request(url=httpbin())\n        with pytest.raises(ValueError):\n            requests.Session().send(r)\n\n    def test_http_error(self):\n        error = requests.exceptions.HTTPError()\n        assert not error.response\n        response = requests.Response()\n        error = requests.exceptions.HTTPError(response=response)\n        assert error.response == response\n        error = requests.exceptions.HTTPError(\"message\", response=response)\n        assert str(error) == \"message\"\n        assert error.response == response\n\n    def test_session_pickling(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"))\n        s = requests.Session()\n\n        s = pickle.loads(pickle.dumps(s))\n        s.proxies = getproxies()\n\n        r = s.send(r.prepare())\n        assert r.status_code == 200\n\n    def test_fixes_1329(self, httpbin):\n        \"\"\"Ensure that header updates are done case-insensitively.\"\"\"\n        s = requests.Session()\n        s.headers.update({\"ACCEPT\": \"BOGUS\"})\n        s.headers.update({\"accept\": \"application/json\"})\n        r = s.get(httpbin(\"get\"))\n        headers = r.request.headers\n        assert headers[\"accept\"] == \"application/json\"\n        assert headers[\"Accept\"] == \"application/json\"\n        assert headers[\"ACCEPT\"] == \"application/json\"\n\n    def test_uppercase_scheme_redirect(self, httpbin):\n        parts = urlparse(httpbin(\"html\"))\n        url = \"HTTP://\" + parts.netloc + parts.path\n        r = requests.get(httpbin(\"redirect-to\"), params={\"url\": url})\n        assert r.status_code == 200\n        assert r.url.lower() == url.lower()\n\n    def test_transport_adapter_ordering(self):\n        s = requests.Session()\n        order = [\"https://\", \"http://\"]\n        assert order == list(s.adapters)\n        s.mount(\"http://git\", HTTPAdapter())\n        s.mount(\"http://github\", HTTPAdapter())\n        s.mount(\"http://github.com\", HTTPAdapter())\n        s.mount(\"http://github.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://github.com\",\n            \"http://github\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s.mount(\"http://gittip\", HTTPAdapter())\n        s.mount(\"http://gittip.com\", HTTPAdapter())\n        s.mount(\"http://gittip.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://gittip.com/about/\",\n            \"http://github.com\",\n            \"http://gittip.com\",\n            \"http://github\",\n            \"http://gittip\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s2 = requests.Session()\n        s2.adapters = {\"http://\": HTTPAdapter()}\n        s2.mount(\"https://\", HTTPAdapter())\n        assert \"http://\" in s2.adapters\n        assert \"https://\" in s2.adapters\n\n    def test_session_get_adapter_prefix_matching(self):\n        prefix = \"https://example.com\"\n        more_specific_prefix = prefix + \"/some/path\"\n\n        url_matching_only_prefix = prefix + \"/another/path\"\n        url_matching_more_specific_prefix = more_specific_prefix + \"/longer/path\"\n        url_not_matching_prefix = \"https://another.example.com/\"\n\n        s = requests.Session()\n        prefix_adapter = HTTPAdapter()\n        more_specific_prefix_adapter = HTTPAdapter()\n        s.mount(prefix, prefix_adapter)\n        s.mount(more_specific_prefix, more_specific_prefix_adapter)\n\n        assert s.get_adapter(url_matching_only_prefix) is prefix_adapter\n        assert (\n",
+          "source": "tests/test_requests.py:L1488-L1634"
+        },
+        {
+          "id": "56",
+          "text": "            json=json,\n            params=params or {},\n            auth=auth,\n            cookies=cookies,\n            hooks=hooks,\n        )\n        prep = self.prepare_request(req)\n\n        proxies = proxies or {}\n\n        settings = self.merge_environment_settings(\n            prep.url, proxies, stream, verify, cert\n        )\n\n        # Send the request.\n        send_kwargs = {\n            \"timeout\": timeout,\n            \"allow_redirects\": allow_redirects,\n        }\n        send_kwargs.update(settings)\n        resp = self.send(prep, **send_kwargs)\n\n        return resp\n\n    def get(self, url, **kwargs):\n        r\"\"\"Sends a GET request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        kwargs.setdefault(\"allow_redirects\", True)\n        return self.request(\"GET\", url, **kwargs)\n\n    def options(self, url, **kwargs):\n        r\"\"\"Sends a OPTIONS request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        kwargs.setdefault(\"allow_redirects\", True)\n        return self.request(\"OPTIONS\", url, **kwargs)\n\n    def head(self, url, **kwargs):\n        r\"\"\"Sends a HEAD request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        kwargs.setdefault(\"allow_redirects\", False)\n        return self.request(\"HEAD\", url, **kwargs)\n\n    def post(self, url, data=None, json=None, **kwargs):\n        r\"\"\"Sends a POST request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param json: (optional) json to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        return self.request(\"POST\", url, data=data, json=json, **kwargs)\n\n    def put(self, url, data=None, **kwargs):\n        r\"\"\"Sends a PUT request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        return self.request(\"PUT\", url, data=data, **kwargs)\n\n    def patch(self, url, data=None, **kwargs):\n        r\"\"\"Sends a PATCH request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        return self.request(\"PATCH\", url, data=data, **kwargs)\n\n    def delete(self, url, **kwargs):\n        r\"\"\"Sends a DELETE request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        return self.request(\"DELETE\", url, **kwargs)\n\n    def send(self, request, **kwargs):\n        \"\"\"Send a given PreparedRequest.\n\n        :rtype: requests.Response\n        \"\"\"\n        # Set defaults that the hooks can utilize to ensure they always have\n        # the correct parameters to reproduce the previous request.\n        kwargs.setdefault(\"stream\", self.stream)\n        kwargs.setdefault(\"verify\", self.verify)\n        kwargs.setdefault(\"cert\", self.cert)\n        if \"proxies\" not in kwargs:\n            kwargs[\"proxies\"] = resolve_proxies(request, self.proxies, self.trust_env)\n\n        # It's possible that users might accidentally send a Request object.\n        # Guard against that specific failure case.\n        if isinstance(request, Request):\n            raise ValueError(\"You can only send PreparedRequests.\")\n\n        # Set up variables needed for resolve_redirects and dispatching of hooks\n        allow_redirects = kwargs.pop(\"allow_redirects\", True)\n        stream = kwargs.get(\"stream\")\n        hooks = request.hooks\n\n        # Get the appropriate adapter to use\n        adapter = self.get_adapter(url=request.url)\n\n        # Start time (approximately) of the request\n        start = preferred_clock()\n\n        # Send the request\n        r = adapter.send(request, **kwargs)\n\n        # Total elapsed time of the request (approximately)\n        elapsed = preferred_clock() - start\n        r.elapsed = timedelta(seconds=elapsed)\n\n        # Response manipulation hooks\n        r = dispatch_hook(\"response\", hooks, r, **kwargs)\n\n        # Persist cookies\n        if r.history:\n            # If the hooks create history then we want those cookies too\n            for resp in r.history:\n                extract_cookies_to_jar(self.cookies, resp.request, resp.raw)\n\n",
+          "source": "src/requests/sessions.py:L569-L717"
+        },
+        {
+          "id": "92",
+          "text": "        url_matching_more_specific_prefix = more_specific_prefix + \"/longer/path\"\n        url_not_matching_prefix = \"https://another.example.com/\"\n\n        s = requests.Session()\n        prefix_adapter = HTTPAdapter()\n        more_specific_prefix_adapter = HTTPAdapter()\n        s.mount(prefix, prefix_adapter)\n        s.mount(more_specific_prefix, more_specific_prefix_adapter)\n\n        assert s.get_adapter(url_matching_only_prefix) is prefix_adapter\n        assert (\n            s.get_adapter(url_matching_more_specific_prefix)\n            is more_specific_prefix_adapter\n        )\n        assert s.get_adapter(url_not_matching_prefix) not in (\n            prefix_adapter,\n            more_specific_prefix_adapter,\n        )\n\n    def test_session_get_adapter_prefix_matching_mixed_case(self):\n        mixed_case_prefix = \"hTtPs://eXamPle.CoM/MixEd_CAse_PREfix\"\n        url_matching_prefix = mixed_case_prefix + \"/full_url\"\n\n        s = requests.Session()\n        my_adapter = HTTPAdapter()\n        s.mount(mixed_case_prefix, my_adapter)\n\n        assert s.get_adapter(url_matching_prefix) is my_adapter\n\n    def test_session_get_adapter_prefix_matching_is_case_insensitive(self):\n        mixed_case_prefix = \"hTtPs://eXamPle.CoM/MixEd_CAse_PREfix\"\n        url_matching_prefix_with_different_case = (\n            \"HtTpS://exaMPLe.cOm/MiXeD_caSE_preFIX/another_url\"\n        )\n\n        s = requests.Session()\n        my_adapter = HTTPAdapter()\n        s.mount(mixed_case_prefix, my_adapter)\n\n        assert s.get_adapter(url_matching_prefix_with_different_case) is my_adapter\n\n    def test_header_remove_is_case_insensitive(self, httpbin):\n        # From issue #1321\n        s = requests.Session()\n        s.headers[\"foo\"] = \"bar\"\n        r = s.get(httpbin(\"get\"), headers={\"FOO\": None})\n        assert \"foo\" not in r.request.headers\n\n    def test_params_are_merged_case_sensitive(self, httpbin):\n        s = requests.Session()\n        s.params[\"foo\"] = \"bar\"\n        r = s.get(httpbin(\"get\"), params={\"FOO\": \"bar\"})\n        assert r.json()[\"args\"] == {\"foo\": \"bar\", \"FOO\": \"bar\"}\n\n    def test_long_authinfo_in_url(self):\n        url = \"http://{}:{}@{}:9000/path?query#frag\".format(\n            \"E8A3BE87-9E3F-4620-8858-95478E385B5B\",\n            \"EA770032-DA4D-4D84-8CE9-29C6D910BF1E\",\n            \"exactly-------------sixty-----------three------------characters\",\n        )\n        r = requests.Request(\"GET\", url).prepare()\n        assert r.url == url\n\n    def test_header_keys_are_native(self, httpbin):\n        headers = {\"unicode\": \"blah\", b\"byte\": \"blah\"}\n        r = requests.Request(\"GET\", httpbin(\"get\"), headers=headers)\n        p = r.prepare()\n\n        # This is testing that they are builtin strings. A bit weird, but there\n        # we go.\n        assert \"unicode\" in p.headers.keys()\n        assert \"byte\" in p.headers.keys()\n\n    def test_header_validation(self, httpbin):\n        \"\"\"Ensure prepare_headers regex isn't flagging valid header contents.\"\"\"\n        valid_headers = {\n            \"foo\": \"bar baz qux\",\n            \"bar\": b\"fbbq\",\n            \"baz\": \"\",\n            \"qux\": \"1\",\n        }\n        r = requests.get(httpbin(\"get\"), headers=valid_headers)\n        for key in valid_headers.keys():\n            assert valid_headers[key] == r.request.headers[key]\n\n    @pytest.mark.parametrize(\n        \"invalid_header, key\",\n        (\n            ({\"foo\": 3}, \"foo\"),\n            ({\"bar\": {\"foo\": \"bar\"}}, \"bar\"),\n            ({\"baz\": [\"foo\", \"bar\"]}, \"baz\"),\n        ),\n    )\n    def test_header_value_not_str(self, httpbin, invalid_header, key):\n        \"\"\"Ensure the header value is of type string or bytes as\n        per discussion in GH issue #3386\n        \"\"\"\n        with pytest.raises(InvalidHeader) as excinfo:\n            requests.get(httpbin(\"get\"), headers=invalid_header)\n        assert key in str(excinfo.value)\n\n    @pytest.mark.parametrize(\n        \"invalid_header\",\n        (\n            {\"foo\": \"bar\\r\\nbaz: qux\"},\n            {\"foo\": \"bar\\n\\rbaz: qux\"},\n            {\"foo\": \"bar\\nbaz: qux\"},\n            {\"foo\": \"bar\\rbaz: qux\"},\n            {\"fo\\ro\": \"bar\"},\n            {\"fo\\r\\no\": \"bar\"},\n            {\"fo\\n\\ro\": \"bar\"},\n            {\"fo\\no\": \"bar\"},\n        ),\n    )\n    def test_header_no_return_chars(self, httpbin, invalid_header):\n        \"\"\"Ensure that a header containing return character sequences raise an\n        exception. Otherwise, multiple headers are created from single string.\n        \"\"\"\n        with pytest.raises(InvalidHeader):\n            requests.get(httpbin(\"get\"), headers=invalid_header)\n\n    @pytest.mark.parametrize(\n        \"invalid_header\",\n        (\n            {\" foo\": \"bar\"},\n            {\"\\tfoo\": \"bar\"},\n            {\"    foo\": \"bar\"},\n            {\"foo\": \" bar\"},\n            {\"foo\": \"    bar\"},\n            {\"foo\": \"\\tbar\"},\n            {\" \": \"bar\"},\n        ),\n    )\n    def test_header_no_leading_space(self, httpbin, invalid_header):\n        \"\"\"Ensure headers containing leading whitespace raise\n        InvalidHeader Error before sending.\n        \"\"\"\n",
+          "source": "tests/test_requests.py:L1624-L1760"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "short_id": "91",
+      "text_unit_id": "b4fc31fa0398c423c77ca05d45d3311d21c64d32090eb4a80186e559ba11c7f9857fc547284a1b9e915fb677bf5dcdb6dbb8f2c2edb68f5d45dd5f1b87c1171d",
+      "id": "738fe173f86a3ea0fd04fd1badf08b7af0573474d3cadc7105cab638a4925afc",
+      "title": "tests/test_requests.py:L1488-L1634",
+      "path": "tests/test_requests.py",
+      "start_line": 1488,
+      "end_line": 1634,
+      "tokens": 1191,
+      "text_sha256": "ba556710077543acb07ee95b0ea7f2ca76e248ccaa9baaae1319722182791a75",
+      "ms_text_unit_id": "b4fc31fa0398c423c77ca05d45d3311d21c64d32090eb4a80186e559ba11c7f9857fc547284a1b9e915fb677bf5dcdb6dbb8f2c2edb68f5d45dd5f1b87c1171d"
+    },
+    {
+      "short_id": "56",
+      "text_unit_id": "c1cd745424c9cd15526c9817388dc761eab81a549baf632b9622061dd8600fe1fb5e55d10a13f6b782d3dc128c3753a80008475b6213aa20323d051b6601ea38",
+      "id": "d7e626799389abc05c4760dab8b0116164b3c22fca658f7fe01bebd628df1934",
+      "title": "src/requests/sessions.py:L569-L717",
+      "path": "src/requests/sessions.py",
+      "start_line": 569,
+      "end_line": 717,
+      "tokens": 1196,
+      "text_sha256": "aeffda39beb3981fa06d5f06cf8cd570b80fd60fe7367fce3d8f5b00d309c10c",
+      "ms_text_unit_id": "c1cd745424c9cd15526c9817388dc761eab81a549baf632b9622061dd8600fe1fb5e55d10a13f6b782d3dc128c3753a80008475b6213aa20323d051b6601ea38"
+    },
+    {
+      "short_id": "92",
+      "text_unit_id": "2505e1a48b76732000e23ab0354ff6ed17cd408aa62b7e5e48a9b8276915207765f673c94b2fb4a3fac6de128020683d34064c1670811249899e33b954ef2efe",
+      "id": "2b223db0ce3998330ac5bf060e661b1495b64a7610c9e5a5172cac9c6c07fb18",
+      "title": "tests/test_requests.py:L1624-L1760",
+      "path": "tests/test_requests.py",
+      "start_line": 1624,
+      "end_line": 1760,
+      "tokens": 1194,
+      "text_sha256": "5f99c6d18ca0d3408f9a895aacfc2e59cc41c4ff209ae07314270e7f5947a7d9",
+      "ms_text_unit_id": "2505e1a48b76732000e23ab0354ff6ed17cd408aa62b7e5e48a9b8276915207765f673c94b2fb4a3fac6de128020683d34064c1670811249899e33b954ef2efe"
+    }
+  ],
+  "raw_context_tokens": 6375,
+  "final_context_tokens": 6567,
+  "source_text_tokens": 3581,
+  "source_chunks": 3,
+  "retrieval_compute_seconds": 0.015053791925311089,
+  "adaptation_seconds": 0.012670500203967094,
+  "empty_reason": null,
+  "community_level": 2,
+  "dropped_tail_rows": 0
+}

@@ -1,0 +1,404 @@
+{
+  "variant": "code-prompt",
+  "question_id": "Q14",
+  "method": "ms_local_code_prompt",
+  "budget": 4000,
+  "query": "If JSON Unicode detection changes, identify its direct response-decoding consumer and the existing focused detection test.",
+  "upstream_raw_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n1532|TESTGUESSJSONUTF|The visible class `TestGuessJSONUTF` groups tests for JSON UTF encoding detection, invalid UTF-like input, and BOM-based guessing.|3\n1061|TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS|The test function `test_json_decode_compatibility_for_alt_utf_encodings` is defined here. It requests an HTTP response containing alternate-encoded JSON, clears `r.encoding`, calls `r.json()`, and asserts JSON decoding exception behavior.|9\n652|GUESS_JSON_UTF|`GUESS_JSON_UTF` refers to the `guess_json_utf` callable imported from `requests.utils` or the local `.utils` module. Its definition is not visible in the provided code chunks, but it is explicitly referenced by the JSON response-handling method, which calls `guess_json_utf(self.content)` to detect a JSON-compatible character encoding. Related tests verify its behavior with encoded JSON data, invalid zero-byte patterns, and content prefixed with a byte-order mark (BOM).|15\n1232|TEST_RESPONSE_DECODE_UNICODE|The test function `test_response_decode_unicode` is defined here. It asserts that `Response.iter_content(decode_unicode=True)` yields `str` chunks for both consumed in-memory content and streaming `io.BytesIO` content.|4\n1535|TESTGUESSJSONUTF.TEST_GUESS_BY_BOM|The method `TestGuessJSONUTF.test_guess_by_bom` is parametrized with four endian-specific encodings and asserts that BOM-prefixed data is classified as `\"utf-16\"` or `\"utf-32\"`.|3\n1528|TESTCONTENTENCODINGDETECTION|The visible class `TestContentEncodingDetection` groups tests for content-encoding detection, including empty content, pragma formats, and precedence.|3\n1533|TESTGUESSJSONUTF.TEST_ENCODED|The method `TestGuessJSONUTF.test_encoded` is parametrized over eight UTF encoding spellings, encodes `\"{}\"` with each, and asserts `guess_json_utf(data) == encoding`.|4\n1407|TEST_JSON_DECODE_COMPATIBILITY|The visible test function or method `test_json_decode_compatibility(self, httpbin)` gets `httpbin(\"bytes/20\")`, asserts `r.json()` raises `requests.exceptions.JSONDecodeError`, and asserts the exception is both `RequestException` and `JSONDecodeError`; its owning class is not visible.|9\n1534|TESTGUESSJSONUTF.TEST_BAD_UTF_LIKE_ENCODING|The method `TestGuessJSONUTF.test_bad_utf_like_encoding` asserts `guess_json_utf(b\"\\x00\\x00\\x00\\x00\") is None`.|2\n1530|TESTCONTENTENCODINGDETECTION.TEST_PRAGMAS|The method `TestContentEncodingDetection.test_pragmas` is parametrized with HTML5, HTML4, XHTML, and XML declarations and asserts one detected encoding equal to `\"UTF-8\"`.|3\n962|CODECS.BOM_UTF16_LE|`codecs.BOM_UTF16_LE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.|1\n1390|TEST_JSON_ENCODES_AS_BYTES|The test function `test_json_encodes_as_bytes` is defined here; it prepares a JSON request and asserts `p.body` is a `bytes` instance.|4\n961|CODECS.BOM_UTF8|`codecs.BOM_UTF8` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.|1\n959|CODECS.BOM_UTF32_LE|`codecs.BOM_UTF32_LE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.|1\n963|CODECS.BOM_UTF16_BE|`codecs.BOM_UTF16_BE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.|1\n1408|TEST_JSON_DECODE_PERSISTS_DOC_ATTR|The visible test function or method `test_json_decode_persists_doc_attr(self, httpbin)` gets `httpbin(\"bytes/20\")`, asserts `r.json()` raises `requests.exceptions.JSONDecodeError`, and asserts `excinfo.value.doc == r.text`; its owning class is not visible.|5\n1531|TESTCONTENTENCODINGDETECTION.TEST_PRECEDENCE|The method `TestContentEncodingDetection.test_precedence` calls `get_encodings_from_content(content)` and asserts the ordered result is `[\"HTML5\", \"HTML4\", \"XML\"]`.|2\n960|CODECS.BOM_UTF32_BE|`codecs.BOM_UTF32_BE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.|1\n2|R.JSON|R.JSON refers to the response method `r.json()`, which is used to decode an HTTP response body into parsed JSON data, including comments responses and authenticated comment responses. The method is also exercised in tests for valid JSON and for responses with absent content, such as HTTP 204 responses. When the response contains valid JSON, `r.json()` returns the decoded data, typically as a JSON object. When the content is invalid or absent, it raises `requests.exceptions.JSONDecodeError`. The available descriptions explicitly reference the callable but do not establish the concrete runtime class of the response receiver `r`, its owning class, or the method’s definition.|11\n\n\n-----Relationships-----\nid|source|target|description|weight|links\n2736|TESTGUESSJSONUTF|TESTGUESSJSONUTF.TEST_ENCODED|DEFINES, direction from class to method, the method is visibly indented within `class TestGuessJSONUTF`|10.0|1\n2738|TESTGUESSJSONUTF|TESTGUESSJSONUTF.TEST_GUESS_BY_BOM|DEFINES, direction from class to method, the method is visibly indented within `class TestGuessJSONUTF`|10.0|1\n2737|TESTGUESSJSONUTF|TESTGUESSJSONUTF.TEST_BAD_UTF_LIKE_ENCODING|DEFINES, direction from class to method, the method is visibly indented within `class TestGuessJSONUTF`|10.0|1\n\n\n-----Sources-----\nid|text\n107|        result = guess_filename(obj)\n        assert result == value\n        assert isinstance(result, expected_type)\n\n\nclass TestExtractZippedPaths:\n    @pytest.mark.parametrize(\n        \"path\",\n        (\n            \"/\",\n            __file__,\n            pytest.__file__,\n            \"/etc/invalid/location\",\n        ),\n    )\n    def test_unzipped_paths_unchanged(self, path):\n        assert path == extract_zipped_paths(path)\n\n    def test_zipped_paths_extracted(self, tmpdir):\n        zipped_py = tmpdir.join(\"test.zip\")\n        with zipfile.ZipFile(zipped_py.strpath, \"w\") as f:\n            f.write(__file__)\n\n        _, name = os.path.splitdrive(__file__)\n        zipped_path = os.path.join(zipped_py.strpath, name.lstrip(r\"\\/\"))\n        extracted_path = extract_zipped_paths(zipped_path)\n\n        assert extracted_path != zipped_path\n        assert os.path.exists(extracted_path)\n        assert filecmp.cmp(extracted_path, __file__)\n\n    def test_invalid_unc_path(self):\n        path = r\"\\\\localhost\\invalid\\location\"\n        assert extract_zipped_paths(path) == path\n\n\nclass TestContentEncodingDetection:\n    def test_none(self):\n        encodings = get_encodings_from_content(\"\")\n        assert not len(encodings)\n\n    @pytest.mark.parametrize(\n        \"content\",\n        (\n            # HTML5 meta charset attribute\n            '<meta charset=\"UTF-8\">',\n            # HTML4 pragma directive\n            '<meta http-equiv=\"Content-type\" content=\"text/html;charset=UTF-8\">',\n            # XHTML 1.x served with text/html MIME type\n            '<meta http-equiv=\"Content-type\" content=\"text/html;charset=UTF-8\" />',\n            # XHTML 1.x served as XML\n            '<?xml version=\"1.0\" encoding=\"UTF-8\"?>',\n        ),\n    )\n    def test_pragmas(self, content):\n        encodings = get_encodings_from_content(content)\n        assert len(encodings) == 1\n        assert encodings[0] == \"UTF-8\"\n\n    def test_precedence(self):\n        content = \"\"\"\n        <?xml version=\"1.0\" encoding=\"XML\"?>\n        <meta charset=\"HTML5\">\n        <meta http-equiv=\"Content-type\" content=\"text/html;charset=HTML4\" />\n        \"\"\".strip()\n        assert get_encodings_from_content(content) == [\"HTML5\", \"HTML4\", \"XML\"]\n\n\nclass TestGuessJSONUTF:\n    @pytest.mark.parametrize(\n        \"encoding\",\n        (\n            \"utf-32\",\n            \"utf-8-sig\",\n            \"utf-16\",\n            \"utf-8\",\n            \"utf-16-be\",\n            \"utf-16-le\",\n            \"utf-32-be\",\n            \"utf-32-le\",\n        ),\n    )\n    def test_encoded(self, encoding):\n        data = \"{}\".encode(encoding)\n        assert guess_json_utf(data) == encoding\n\n    def test_bad_utf_like_encoding(self):\n        assert guess_json_utf(b\"\\x00\\x00\\x00\\x00\") is None\n\n    @pytest.mark.parametrize(\n        (\"encoding\", \"expected\"),\n        (\n            (\"utf-16-be\", \"utf-16\"),\n            (\"utf-16-le\", \"utf-16\"),\n            (\"utf-32-be\", \"utf-32\"),\n            (\"utf-32-le\", \"utf-32\"),\n        ),\n    )\n    def test_guess_by_bom(self, encoding, expected):\n        data = \"\\ufeff{}\".encode(encoding)\n        assert guess_json_utf(data) == expected\n\n\nUSER = PASSWORD = \"%!*'();:@&=+$,/?#[] \"\nENCODED_USER = compat.quote(USER, \"\")\nENCODED_PASSWORD = compat.quote(PASSWORD, \"\")\n\n\n@pytest.mark.parametrize(\n    \"url, auth\",\n    (\n        (\n            f\"http://{ENCODED_USER}:{ENCODED_PASSWORD}@request.com/url.html#test\",\n            (USER, PASSWORD),\n        ),\n        (\"http://user:pass@complex.url.com/path?query=yes\", (\"user\", \"pass\")),\n        (\n            \"http://user:pass%20pass@complex.url.com/path?query=yes\",\n            (\"user\", \"pass pass\"),\n        ),\n        (\"http://user:pass pass@complex.url.com/path?query=yes\", (\"user\", \"pass pass\")),\n        (\n            \"http://user%25user:pass@complex.url.com/path?query=yes\",\n            (\"user%user\", \"pass\"),\n        ),\n        (\n            \"http://user:pass%23pass@complex.url.com/path?query=yes\",\n            (\"user\", \"pass#pass\"),\n        ),\n        (\"http://complex.url.com/path?query=yes\", (\"\", \"\")),\n    ),\n)\ndef test_get_auth_from_url(url, auth):\n    assert get_auth_from_url(url) == auth\n\n\n@pytest.mark.parametrize(\n    \"uri, expected\",\n    (\n        (\n            # Ensure requoting doesn't break expectations\n            \"http://example.com/fiz?buz=%25ppicture\",\n            \"http://example.com/fiz?buz=%25ppicture\",\n        ),\n        (\n            # Ensure we handle unquoted percent signs in redirects\n            \"http://example.com/fiz?buz=%ppicture\",\n            \"http://example.com/fiz?buz=%25ppicture\",\n        ),\n    ),\n)\ndef test_requote_uri_with_unquoted_percents(uri, expected):\n    \"\"\"See: https://github.com/psf/requests/issues/2356\"\"\"\n    assert requote_uri(uri) == expected\n\n\n@pytest.mark.parametrize(\n    \"uri, expected\",\n    (\n        (\n            # Illegal bytes\n            \"http://example.com/?a=%--\",\n            \"http://example.com/?a=%--\",\n        ),\n        (\n\n78|            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /final-url/\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/path/to/thing/#view=edit&token=hunter2'\n        r = requests.get(url)\n\n        assert r.status_code == 200\n        assert len(r.history) == 2\n        assert r.history[0].request.url == url\n\n        # Verify we haven't overwritten the location with our previous fragment.\n        assert r.history[1].request.url == f'http://{host}:{port}/get#relevant-section'\n        # Verify previous fragment is used and not the original.\n        assert r.url == f'http://{host}:{port}/final-url/#relevant-section'\n\n        close_server.set()\n\n\ndef test_json_decode_compatibility_for_alt_utf_encodings():\n\n    def response_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n'\n            b'Content-Length: 18\\r\\n\\r\\n'\n            b'\\xff\\xfe{\\x00\"\\x00K0\"\\x00=\\x00\"\\x00\\xab0\"\\x00\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url)\n    r.encoding = None\n    with pytest.raises(requests.exceptions.JSONDecodeError) as excinfo:\n        r.json()\n    assert isinstance(excinfo.value, requests.exceptions.RequestException)\n    assert isinstance(excinfo.value, JSONDecodeError)\n    assert r.text not in str(excinfo.value)\n\n",
+  "upstream_raw_records": {
+    "relationships": [
+      {
+        "id": "2736",
+        "source": "TESTGUESSJSONUTF",
+        "target": "TESTGUESSJSONUTF.TEST_ENCODED",
+        "description": "DEFINES, direction from class to method, the method is visibly indented within `class TestGuessJSONUTF`",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "2738",
+        "source": "TESTGUESSJSONUTF",
+        "target": "TESTGUESSJSONUTF.TEST_GUESS_BY_BOM",
+        "description": "DEFINES, direction from class to method, the method is visibly indented within `class TestGuessJSONUTF`",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "2737",
+        "source": "TESTGUESSJSONUTF",
+        "target": "TESTGUESSJSONUTF.TEST_BAD_UTF_LIKE_ENCODING",
+        "description": "DEFINES, direction from class to method, the method is visibly indented within `class TestGuessJSONUTF`",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      }
+    ],
+    "entities": [
+      {
+        "id": "1532",
+        "entity": "TESTGUESSJSONUTF",
+        "description": "The visible class `TestGuessJSONUTF` groups tests for JSON UTF encoding detection, invalid UTF-like input, and BOM-based guessing.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "1061",
+        "entity": "TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS",
+        "description": "The test function `test_json_decode_compatibility_for_alt_utf_encodings` is defined here. It requests an HTTP response containing alternate-encoded JSON, clears `r.encoding`, calls `r.json()`, and asserts JSON decoding exception behavior.",
+        "number of relationships": "9",
+        "in_context": true
+      },
+      {
+        "id": "652",
+        "entity": "GUESS_JSON_UTF",
+        "description": "`GUESS_JSON_UTF` refers to the `guess_json_utf` callable imported from `requests.utils` or the local `.utils` module. Its definition is not visible in the provided code chunks, but it is explicitly referenced by the JSON response-handling method, which calls `guess_json_utf(self.content)` to detect a JSON-compatible character encoding. Related tests verify its behavior with encoded JSON data, invalid zero-byte patterns, and content prefixed with a byte-order mark (BOM).",
+        "number of relationships": "15",
+        "in_context": true
+      },
+      {
+        "id": "1232",
+        "entity": "TEST_RESPONSE_DECODE_UNICODE",
+        "description": "The test function `test_response_decode_unicode` is defined here. It asserts that `Response.iter_content(decode_unicode=True)` yields `str` chunks for both consumed in-memory content and streaming `io.BytesIO` content.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "1535",
+        "entity": "TESTGUESSJSONUTF.TEST_GUESS_BY_BOM",
+        "description": "The method `TestGuessJSONUTF.test_guess_by_bom` is parametrized with four endian-specific encodings and asserts that BOM-prefixed data is classified as `\"utf-16\"` or `\"utf-32\"`.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "1528",
+        "entity": "TESTCONTENTENCODINGDETECTION",
+        "description": "The visible class `TestContentEncodingDetection` groups tests for content-encoding detection, including empty content, pragma formats, and precedence.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "1533",
+        "entity": "TESTGUESSJSONUTF.TEST_ENCODED",
+        "description": "The method `TestGuessJSONUTF.test_encoded` is parametrized over eight UTF encoding spellings, encodes `\"{}\"` with each, and asserts `guess_json_utf(data) == encoding`.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "1407",
+        "entity": "TEST_JSON_DECODE_COMPATIBILITY",
+        "description": "The visible test function or method `test_json_decode_compatibility(self, httpbin)` gets `httpbin(\"bytes/20\")`, asserts `r.json()` raises `requests.exceptions.JSONDecodeError`, and asserts the exception is both `RequestException` and `JSONDecodeError`; its owning class is not visible.",
+        "number of relationships": "9",
+        "in_context": true
+      },
+      {
+        "id": "1534",
+        "entity": "TESTGUESSJSONUTF.TEST_BAD_UTF_LIKE_ENCODING",
+        "description": "The method `TestGuessJSONUTF.test_bad_utf_like_encoding` asserts `guess_json_utf(b\"\\x00\\x00\\x00\\x00\") is None`.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "1530",
+        "entity": "TESTCONTENTENCODINGDETECTION.TEST_PRAGMAS",
+        "description": "The method `TestContentEncodingDetection.test_pragmas` is parametrized with HTML5, HTML4, XHTML, and XML declarations and asserts one detected encoding equal to `\"UTF-8\"`.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "962",
+        "entity": "CODECS.BOM_UTF16_LE",
+        "description": "`codecs.BOM_UTF16_LE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1390",
+        "entity": "TEST_JSON_ENCODES_AS_BYTES",
+        "description": "The test function `test_json_encodes_as_bytes` is defined here; it prepares a JSON request and asserts `p.body` is a `bytes` instance.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "961",
+        "entity": "CODECS.BOM_UTF8",
+        "description": "`codecs.BOM_UTF8` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "959",
+        "entity": "CODECS.BOM_UTF32_LE",
+        "description": "`codecs.BOM_UTF32_LE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "963",
+        "entity": "CODECS.BOM_UTF16_BE",
+        "description": "`codecs.BOM_UTF16_BE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1408",
+        "entity": "TEST_JSON_DECODE_PERSISTS_DOC_ATTR",
+        "description": "The visible test function or method `test_json_decode_persists_doc_attr(self, httpbin)` gets `httpbin(\"bytes/20\")`, asserts `r.json()` raises `requests.exceptions.JSONDecodeError`, and asserts `excinfo.value.doc == r.text`; its owning class is not visible.",
+        "number of relationships": "5",
+        "in_context": true
+      },
+      {
+        "id": "1531",
+        "entity": "TESTCONTENTENCODINGDETECTION.TEST_PRECEDENCE",
+        "description": "The method `TestContentEncodingDetection.test_precedence` calls `get_encodings_from_content(content)` and asserts the ordered result is `[\"HTML5\", \"HTML4\", \"XML\"]`.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "960",
+        "entity": "CODECS.BOM_UTF32_BE",
+        "description": "`codecs.BOM_UTF32_BE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "2",
+        "entity": "R.JSON",
+        "description": "R.JSON refers to the response method `r.json()`, which is used to decode an HTTP response body into parsed JSON data, including comments responses and authenticated comment responses. The method is also exercised in tests for valid JSON and for responses with absent content, such as HTTP 204 responses. When the response contains valid JSON, `r.json()` returns the decoded data, typically as a JSON object. When the content is invalid or absent, it raises `requests.exceptions.JSONDecodeError`. The available descriptions explicitly reference the callable but do not establish the concrete runtime class of the response receiver `r`, its owning class, or the method’s definition.",
+        "number of relationships": "11",
+        "in_context": true
+      }
+    ],
+    "sources": [
+      {
+        "id": "107",
+        "text": "        result = guess_filename(obj)\n        assert result == value\n        assert isinstance(result, expected_type)\n\n\nclass TestExtractZippedPaths:\n    @pytest.mark.parametrize(\n        \"path\",\n        (\n            \"/\",\n            __file__,\n            pytest.__file__,\n            \"/etc/invalid/location\",\n        ),\n    )\n    def test_unzipped_paths_unchanged(self, path):\n        assert path == extract_zipped_paths(path)\n\n    def test_zipped_paths_extracted(self, tmpdir):\n        zipped_py = tmpdir.join(\"test.zip\")\n        with zipfile.ZipFile(zipped_py.strpath, \"w\") as f:\n            f.write(__file__)\n\n        _, name = os.path.splitdrive(__file__)\n        zipped_path = os.path.join(zipped_py.strpath, name.lstrip(r\"\\/\"))\n        extracted_path = extract_zipped_paths(zipped_path)\n\n        assert extracted_path != zipped_path\n        assert os.path.exists(extracted_path)\n        assert filecmp.cmp(extracted_path, __file__)\n\n    def test_invalid_unc_path(self):\n        path = r\"\\\\localhost\\invalid\\location\"\n        assert extract_zipped_paths(path) == path\n\n\nclass TestContentEncodingDetection:\n    def test_none(self):\n        encodings = get_encodings_from_content(\"\")\n        assert not len(encodings)\n\n    @pytest.mark.parametrize(\n        \"content\",\n        (\n            # HTML5 meta charset attribute\n            '<meta charset=\"UTF-8\">',\n            # HTML4 pragma directive\n            '<meta http-equiv=\"Content-type\" content=\"text/html;charset=UTF-8\">',\n            # XHTML 1.x served with text/html MIME type\n            '<meta http-equiv=\"Content-type\" content=\"text/html;charset=UTF-8\" />',\n            # XHTML 1.x served as XML\n            '<?xml version=\"1.0\" encoding=\"UTF-8\"?>',\n        ),\n    )\n    def test_pragmas(self, content):\n        encodings = get_encodings_from_content(content)\n        assert len(encodings) == 1\n        assert encodings[0] == \"UTF-8\"\n\n    def test_precedence(self):\n        content = \"\"\"\n        <?xml version=\"1.0\" encoding=\"XML\"?>\n        <meta charset=\"HTML5\">\n        <meta http-equiv=\"Content-type\" content=\"text/html;charset=HTML4\" />\n        \"\"\".strip()\n        assert get_encodings_from_content(content) == [\"HTML5\", \"HTML4\", \"XML\"]\n\n\nclass TestGuessJSONUTF:\n    @pytest.mark.parametrize(\n        \"encoding\",\n        (\n            \"utf-32\",\n            \"utf-8-sig\",\n            \"utf-16\",\n            \"utf-8\",\n            \"utf-16-be\",\n            \"utf-16-le\",\n            \"utf-32-be\",\n            \"utf-32-le\",\n        ),\n    )\n    def test_encoded(self, encoding):\n        data = \"{}\".encode(encoding)\n        assert guess_json_utf(data) == encoding\n\n    def test_bad_utf_like_encoding(self):\n        assert guess_json_utf(b\"\\x00\\x00\\x00\\x00\") is None\n\n    @pytest.mark.parametrize(\n        (\"encoding\", \"expected\"),\n        (\n            (\"utf-16-be\", \"utf-16\"),\n            (\"utf-16-le\", \"utf-16\"),\n            (\"utf-32-be\", \"utf-32\"),\n            (\"utf-32-le\", \"utf-32\"),\n        ),\n    )\n    def test_guess_by_bom(self, encoding, expected):\n        data = \"\\ufeff{}\".encode(encoding)\n        assert guess_json_utf(data) == expected\n\n\nUSER = PASSWORD = \"%!*'();:@&=+$,/?#[] \"\nENCODED_USER = compat.quote(USER, \"\")\nENCODED_PASSWORD = compat.quote(PASSWORD, \"\")\n\n\n@pytest.mark.parametrize(\n    \"url, auth\",\n    (\n        (\n            f\"http://{ENCODED_USER}:{ENCODED_PASSWORD}@request.com/url.html#test\",\n            (USER, PASSWORD),\n        ),\n        (\"http://user:pass@complex.url.com/path?query=yes\", (\"user\", \"pass\")),\n        (\n            \"http://user:pass%20pass@complex.url.com/path?query=yes\",\n            (\"user\", \"pass pass\"),\n        ),\n        (\"http://user:pass pass@complex.url.com/path?query=yes\", (\"user\", \"pass pass\")),\n        (\n            \"http://user%25user:pass@complex.url.com/path?query=yes\",\n            (\"user%user\", \"pass\"),\n        ),\n        (\n            \"http://user:pass%23pass@complex.url.com/path?query=yes\",\n            (\"user\", \"pass#pass\"),\n        ),\n        (\"http://complex.url.com/path?query=yes\", (\"\", \"\")),\n    ),\n)\ndef test_get_auth_from_url(url, auth):\n    assert get_auth_from_url(url) == auth\n\n\n@pytest.mark.parametrize(\n    \"uri, expected\",\n    (\n        (\n            # Ensure requoting doesn't break expectations\n            \"http://example.com/fiz?buz=%25ppicture\",\n            \"http://example.com/fiz?buz=%25ppicture\",\n        ),\n        (\n            # Ensure we handle unquoted percent signs in redirects\n            \"http://example.com/fiz?buz=%ppicture\",\n            \"http://example.com/fiz?buz=%25ppicture\",\n        ),\n    ),\n)\ndef test_requote_uri_with_unquoted_percents(uri, expected):\n    \"\"\"See: https://github.com/psf/requests/issues/2356\"\"\"\n    assert requote_uri(uri) == expected\n\n\n@pytest.mark.parametrize(\n    \"uri, expected\",\n    (\n        (\n            # Illegal bytes\n            \"http://example.com/?a=%--\",\n            \"http://example.com/?a=%--\",\n        ),\n        (\n"
+      },
+      {
+        "id": "78",
+        "text": "            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /final-url/\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/path/to/thing/#view=edit&token=hunter2'\n        r = requests.get(url)\n\n        assert r.status_code == 200\n        assert len(r.history) == 2\n        assert r.history[0].request.url == url\n\n        # Verify we haven't overwritten the location with our previous fragment.\n        assert r.history[1].request.url == f'http://{host}:{port}/get#relevant-section'\n        # Verify previous fragment is used and not the original.\n        assert r.url == f'http://{host}:{port}/final-url/#relevant-section'\n\n        close_server.set()\n\n\ndef test_json_decode_compatibility_for_alt_utf_encodings():\n\n    def response_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n'\n            b'Content-Length: 18\\r\\n\\r\\n'\n            b'\\xff\\xfe{\\x00\"\\x00K0\"\\x00=\\x00\"\\x00\\xab0\"\\x00\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url)\n    r.encoding = None\n    with pytest.raises(requests.exceptions.JSONDecodeError) as excinfo:\n        r.json()\n    assert isinstance(excinfo.value, requests.exceptions.RequestException)\n    assert isinstance(excinfo.value, JSONDecodeError)\n    assert r.text not in str(excinfo.value)\n"
+      }
+    ]
+  },
+  "final_context": "-----Entities-----\nid|entity|description|number of relationships\n1532|TESTGUESSJSONUTF|The visible class `TestGuessJSONUTF` groups tests for JSON UTF encoding detection, invalid UTF-like input, and BOM-based guessing.|3\n1061|TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS|The test function `test_json_decode_compatibility_for_alt_utf_encodings` is defined here. It requests an HTTP response containing alternate-encoded JSON, clears `r.encoding`, calls `r.json()`, and asserts JSON decoding exception behavior.|9\n652|GUESS_JSON_UTF|`GUESS_JSON_UTF` refers to the `guess_json_utf` callable imported from `requests.utils` or the local `.utils` module. Its definition is not visible in the provided code chunks, but it is explicitly referenced by the JSON response-handling method, which calls `guess_json_utf(self.content)` to detect a JSON-compatible character encoding. Related tests verify its behavior with encoded JSON data, invalid zero-byte patterns, and content prefixed with a byte-order mark (BOM).|15\n1232|TEST_RESPONSE_DECODE_UNICODE|The test function `test_response_decode_unicode` is defined here. It asserts that `Response.iter_content(decode_unicode=True)` yields `str` chunks for both consumed in-memory content and streaming `io.BytesIO` content.|4\n1535|TESTGUESSJSONUTF.TEST_GUESS_BY_BOM|\"The method `TestGuessJSONUTF.test_guess_by_bom` is parametrized with four endian-specific encodings and asserts that BOM-prefixed data is classified as `\"\"utf-16\"\"` or `\"\"utf-32\"\"`.\"|3\n1528|TESTCONTENTENCODINGDETECTION|The visible class `TestContentEncodingDetection` groups tests for content-encoding detection, including empty content, pragma formats, and precedence.|3\n1533|TESTGUESSJSONUTF.TEST_ENCODED|\"The method `TestGuessJSONUTF.test_encoded` is parametrized over eight UTF encoding spellings, encodes `\"\"{}\"\"` with each, and asserts `guess_json_utf(data) == encoding`.\"|4\n1407|TEST_JSON_DECODE_COMPATIBILITY|\"The visible test function or method `test_json_decode_compatibility(self, httpbin)` gets `httpbin(\"\"bytes/20\"\")`, asserts `r.json()` raises `requests.exceptions.JSONDecodeError`, and asserts the exception is both `RequestException` and `JSONDecodeError`; its owning class is not visible.\"|9\n1534|TESTGUESSJSONUTF.TEST_BAD_UTF_LIKE_ENCODING|\"The method `TestGuessJSONUTF.test_bad_utf_like_encoding` asserts `guess_json_utf(b\"\"\\x00\\x00\\x00\\x00\"\") is None`.\"|2\n1530|TESTCONTENTENCODINGDETECTION.TEST_PRAGMAS|\"The method `TestContentEncodingDetection.test_pragmas` is parametrized with HTML5, HTML4, XHTML, and XML declarations and asserts one detected encoding equal to `\"\"UTF-8\"\"`.\"|3\n962|CODECS.BOM_UTF16_LE|`codecs.BOM_UTF16_LE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.|1\n1390|TEST_JSON_ENCODES_AS_BYTES|The test function `test_json_encodes_as_bytes` is defined here; it prepares a JSON request and asserts `p.body` is a `bytes` instance.|4\n961|CODECS.BOM_UTF8|`codecs.BOM_UTF8` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.|1\n959|CODECS.BOM_UTF32_LE|`codecs.BOM_UTF32_LE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.|1\n963|CODECS.BOM_UTF16_BE|`codecs.BOM_UTF16_BE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.|1\n1408|TEST_JSON_DECODE_PERSISTS_DOC_ATTR|\"The visible test function or method `test_json_decode_persists_doc_attr(self, httpbin)` gets `httpbin(\"\"bytes/20\"\")`, asserts `r.json()` raises `requests.exceptions.JSONDecodeError`, and asserts `excinfo.value.doc == r.text`; its owning class is not visible.\"|5\n1531|TESTCONTENTENCODINGDETECTION.TEST_PRECEDENCE|\"The method `TestContentEncodingDetection.test_precedence` calls `get_encodings_from_content(content)` and asserts the ordered result is `[\"\"HTML5\"\", \"\"HTML4\"\", \"\"XML\"\"]`.\"|2\n960|CODECS.BOM_UTF32_BE|`codecs.BOM_UTF32_BE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.|1\n2|R.JSON|R.JSON refers to the response method `r.json()`, which is used to decode an HTTP response body into parsed JSON data, including comments responses and authenticated comment responses. The method is also exercised in tests for valid JSON and for responses with absent content, such as HTTP 204 responses. When the response contains valid JSON, `r.json()` returns the decoded data, typically as a JSON object. When the content is invalid or absent, it raises `requests.exceptions.JSONDecodeError`. The available descriptions explicitly reference the callable but do not establish the concrete runtime class of the response receiver `r`, its owning class, or the method’s definition.|11\n\n-----Relationships-----\nid|source|target|description|weight|links\n2736|TESTGUESSJSONUTF|TESTGUESSJSONUTF.TEST_ENCODED|DEFINES, direction from class to method, the method is visibly indented within `class TestGuessJSONUTF`|10.0|1\n2738|TESTGUESSJSONUTF|TESTGUESSJSONUTF.TEST_GUESS_BY_BOM|DEFINES, direction from class to method, the method is visibly indented within `class TestGuessJSONUTF`|10.0|1\n2737|TESTGUESSJSONUTF|TESTGUESSJSONUTF.TEST_BAD_UTF_LIKE_ENCODING|DEFINES, direction from class to method, the method is visibly indented within `class TestGuessJSONUTF`|10.0|1\n\n-----Sources-----\nid|source|text\n107|tests/test_utils.py:L308-L472|\"        result = guess_filename(obj)\n        assert result == value\n        assert isinstance(result, expected_type)\n\n\nclass TestExtractZippedPaths:\n    @pytest.mark.parametrize(\n        \"\"path\"\",\n        (\n            \"\"/\"\",\n            __file__,\n            pytest.__file__,\n            \"\"/etc/invalid/location\"\",\n        ),\n    )\n    def test_unzipped_paths_unchanged(self, path):\n        assert path == extract_zipped_paths(path)\n\n    def test_zipped_paths_extracted(self, tmpdir):\n        zipped_py = tmpdir.join(\"\"test.zip\"\")\n        with zipfile.ZipFile(zipped_py.strpath, \"\"w\"\") as f:\n            f.write(__file__)\n\n        _, name = os.path.splitdrive(__file__)\n        zipped_path = os.path.join(zipped_py.strpath, name.lstrip(r\"\"\\/\"\"))\n        extracted_path = extract_zipped_paths(zipped_path)\n\n        assert extracted_path != zipped_path\n        assert os.path.exists(extracted_path)\n        assert filecmp.cmp(extracted_path, __file__)\n\n    def test_invalid_unc_path(self):\n        path = r\"\"\\\\localhost\\invalid\\location\"\"\n        assert extract_zipped_paths(path) == path\n\n\nclass TestContentEncodingDetection:\n    def test_none(self):\n        encodings = get_encodings_from_content(\"\"\"\")\n        assert not len(encodings)\n\n    @pytest.mark.parametrize(\n        \"\"content\"\",\n        (\n            # HTML5 meta charset attribute\n            '<meta charset=\"\"UTF-8\"\">',\n            # HTML4 pragma directive\n            '<meta http-equiv=\"\"Content-type\"\" content=\"\"text/html;charset=UTF-8\"\">',\n            # XHTML 1.x served with text/html MIME type\n            '<meta http-equiv=\"\"Content-type\"\" content=\"\"text/html;charset=UTF-8\"\" />',\n            # XHTML 1.x served as XML\n            '<?xml version=\"\"1.0\"\" encoding=\"\"UTF-8\"\"?>',\n        ),\n    )\n    def test_pragmas(self, content):\n        encodings = get_encodings_from_content(content)\n        assert len(encodings) == 1\n        assert encodings[0] == \"\"UTF-8\"\"\n\n    def test_precedence(self):\n        content = \"\"\"\"\"\"\n        <?xml version=\"\"1.0\"\" encoding=\"\"XML\"\"?>\n        <meta charset=\"\"HTML5\"\">\n        <meta http-equiv=\"\"Content-type\"\" content=\"\"text/html;charset=HTML4\"\" />\n        \"\"\"\"\"\".strip()\n        assert get_encodings_from_content(content) == [\"\"HTML5\"\", \"\"HTML4\"\", \"\"XML\"\"]\n\n\nclass TestGuessJSONUTF:\n    @pytest.mark.parametrize(\n        \"\"encoding\"\",\n        (\n            \"\"utf-32\"\",\n            \"\"utf-8-sig\"\",\n            \"\"utf-16\"\",\n            \"\"utf-8\"\",\n            \"\"utf-16-be\"\",\n            \"\"utf-16-le\"\",\n            \"\"utf-32-be\"\",\n            \"\"utf-32-le\"\",\n        ),\n    )\n    def test_encoded(self, encoding):\n        data = \"\"{}\"\".encode(encoding)\n        assert guess_json_utf(data) == encoding\n\n    def test_bad_utf_like_encoding(self):\n        assert guess_json_utf(b\"\"\\x00\\x00\\x00\\x00\"\") is None\n\n    @pytest.mark.parametrize(\n        (\"\"encoding\"\", \"\"expected\"\"),\n        (\n            (\"\"utf-16-be\"\", \"\"utf-16\"\"),\n            (\"\"utf-16-le\"\", \"\"utf-16\"\"),\n            (\"\"utf-32-be\"\", \"\"utf-32\"\"),\n            (\"\"utf-32-le\"\", \"\"utf-32\"\"),\n        ),\n    )\n    def test_guess_by_bom(self, encoding, expected):\n        data = \"\"\\ufeff{}\"\".encode(encoding)\n        assert guess_json_utf(data) == expected\n\n\nUSER = PASSWORD = \"\"%!*'();:@&=+$,/?#[] \"\"\nENCODED_USER = compat.quote(USER, \"\"\"\")\nENCODED_PASSWORD = compat.quote(PASSWORD, \"\"\"\")\n\n\n@pytest.mark.parametrize(\n    \"\"url, auth\"\",\n    (\n        (\n            f\"\"http://{ENCODED_USER}:{ENCODED_PASSWORD}@request.com/url.html#test\"\",\n            (USER, PASSWORD),\n        ),\n        (\"\"http://user:pass@complex.url.com/path?query=yes\"\", (\"\"user\"\", \"\"pass\"\")),\n        (\n            \"\"http://user:pass%20pass@complex.url.com/path?query=yes\"\",\n            (\"\"user\"\", \"\"pass pass\"\"),\n        ),\n        (\"\"http://user:pass pass@complex.url.com/path?query=yes\"\", (\"\"user\"\", \"\"pass pass\"\")),\n        (\n            \"\"http://user%25user:pass@complex.url.com/path?query=yes\"\",\n            (\"\"user%user\"\", \"\"pass\"\"),\n        ),\n        (\n            \"\"http://user:pass%23pass@complex.url.com/path?query=yes\"\",\n            (\"\"user\"\", \"\"pass#pass\"\"),\n        ),\n        (\"\"http://complex.url.com/path?query=yes\"\", (\"\"\"\", \"\"\"\")),\n    ),\n)\ndef test_get_auth_from_url(url, auth):\n    assert get_auth_from_url(url) == auth\n\n\n@pytest.mark.parametrize(\n    \"\"uri, expected\"\",\n    (\n        (\n            # Ensure requoting doesn't break expectations\n            \"\"http://example.com/fiz?buz=%25ppicture\"\",\n            \"\"http://example.com/fiz?buz=%25ppicture\"\",\n        ),\n        (\n            # Ensure we handle unquoted percent signs in redirects\n            \"\"http://example.com/fiz?buz=%ppicture\"\",\n            \"\"http://example.com/fiz?buz=%25ppicture\"\",\n        ),\n    ),\n)\ndef test_requote_uri_with_unquoted_percents(uri, expected):\n    \"\"\"\"\"\"See: https://github.com/psf/requests/issues/2356\"\"\"\"\"\"\n    assert requote_uri(uri) == expected\n\n\n@pytest.mark.parametrize(\n    \"\"uri, expected\"\",\n    (\n        (\n            # Illegal bytes\n            \"\"http://example.com/?a=%--\"\",\n            \"\"http://example.com/?a=%--\"\",\n        ),\n        (\n\"\n78|tests/test_lowlevel.py:L379-L428|\"            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /final-url/\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/path/to/thing/#view=edit&token=hunter2'\n        r = requests.get(url)\n\n        assert r.status_code == 200\n        assert len(r.history) == 2\n        assert r.history[0].request.url == url\n\n        # Verify we haven't overwritten the location with our previous fragment.\n        assert r.history[1].request.url == f'http://{host}:{port}/get#relevant-section'\n        # Verify previous fragment is used and not the original.\n        assert r.url == f'http://{host}:{port}/final-url/#relevant-section'\n\n        close_server.set()\n\n\ndef test_json_decode_compatibility_for_alt_utf_encodings():\n\n    def response_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n'\n            b'Content-Length: 18\\r\\n\\r\\n'\n            b'\\xff\\xfe{\\x00\"\"\\x00K0\"\"\\x00=\\x00\"\"\\x00\\xab0\"\"\\x00\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url)\n    r.encoding = None\n    with pytest.raises(requests.exceptions.JSONDecodeError) as excinfo:\n        r.json()\n    assert isinstance(excinfo.value, requests.exceptions.RequestException)\n    assert isinstance(excinfo.value, JSONDecodeError)\n    assert r.text not in str(excinfo.value)\n\"\n",
+  "final_tables": [
+    {
+      "name": "entities",
+      "columns": [
+        "id",
+        "entity",
+        "description",
+        "number of relationships"
+      ],
+      "rows": [
+        {
+          "id": "1532",
+          "entity": "TESTGUESSJSONUTF",
+          "description": "The visible class `TestGuessJSONUTF` groups tests for JSON UTF encoding detection, invalid UTF-like input, and BOM-based guessing.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "1061",
+          "entity": "TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS",
+          "description": "The test function `test_json_decode_compatibility_for_alt_utf_encodings` is defined here. It requests an HTTP response containing alternate-encoded JSON, clears `r.encoding`, calls `r.json()`, and asserts JSON decoding exception behavior.",
+          "number of relationships": "9"
+        },
+        {
+          "id": "652",
+          "entity": "GUESS_JSON_UTF",
+          "description": "`GUESS_JSON_UTF` refers to the `guess_json_utf` callable imported from `requests.utils` or the local `.utils` module. Its definition is not visible in the provided code chunks, but it is explicitly referenced by the JSON response-handling method, which calls `guess_json_utf(self.content)` to detect a JSON-compatible character encoding. Related tests verify its behavior with encoded JSON data, invalid zero-byte patterns, and content prefixed with a byte-order mark (BOM).",
+          "number of relationships": "15"
+        },
+        {
+          "id": "1232",
+          "entity": "TEST_RESPONSE_DECODE_UNICODE",
+          "description": "The test function `test_response_decode_unicode` is defined here. It asserts that `Response.iter_content(decode_unicode=True)` yields `str` chunks for both consumed in-memory content and streaming `io.BytesIO` content.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "1535",
+          "entity": "TESTGUESSJSONUTF.TEST_GUESS_BY_BOM",
+          "description": "The method `TestGuessJSONUTF.test_guess_by_bom` is parametrized with four endian-specific encodings and asserts that BOM-prefixed data is classified as `\"utf-16\"` or `\"utf-32\"`.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "1528",
+          "entity": "TESTCONTENTENCODINGDETECTION",
+          "description": "The visible class `TestContentEncodingDetection` groups tests for content-encoding detection, including empty content, pragma formats, and precedence.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "1533",
+          "entity": "TESTGUESSJSONUTF.TEST_ENCODED",
+          "description": "The method `TestGuessJSONUTF.test_encoded` is parametrized over eight UTF encoding spellings, encodes `\"{}\"` with each, and asserts `guess_json_utf(data) == encoding`.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "1407",
+          "entity": "TEST_JSON_DECODE_COMPATIBILITY",
+          "description": "The visible test function or method `test_json_decode_compatibility(self, httpbin)` gets `httpbin(\"bytes/20\")`, asserts `r.json()` raises `requests.exceptions.JSONDecodeError`, and asserts the exception is both `RequestException` and `JSONDecodeError`; its owning class is not visible.",
+          "number of relationships": "9"
+        },
+        {
+          "id": "1534",
+          "entity": "TESTGUESSJSONUTF.TEST_BAD_UTF_LIKE_ENCODING",
+          "description": "The method `TestGuessJSONUTF.test_bad_utf_like_encoding` asserts `guess_json_utf(b\"\\x00\\x00\\x00\\x00\") is None`.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "1530",
+          "entity": "TESTCONTENTENCODINGDETECTION.TEST_PRAGMAS",
+          "description": "The method `TestContentEncodingDetection.test_pragmas` is parametrized with HTML5, HTML4, XHTML, and XML declarations and asserts one detected encoding equal to `\"UTF-8\"`.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "962",
+          "entity": "CODECS.BOM_UTF16_LE",
+          "description": "`codecs.BOM_UTF16_LE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1390",
+          "entity": "TEST_JSON_ENCODES_AS_BYTES",
+          "description": "The test function `test_json_encodes_as_bytes` is defined here; it prepares a JSON request and asserts `p.body` is a `bytes` instance.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "961",
+          "entity": "CODECS.BOM_UTF8",
+          "description": "`codecs.BOM_UTF8` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "959",
+          "entity": "CODECS.BOM_UTF32_LE",
+          "description": "`codecs.BOM_UTF32_LE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "963",
+          "entity": "CODECS.BOM_UTF16_BE",
+          "description": "`codecs.BOM_UTF16_BE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1408",
+          "entity": "TEST_JSON_DECODE_PERSISTS_DOC_ATTR",
+          "description": "The visible test function or method `test_json_decode_persists_doc_attr(self, httpbin)` gets `httpbin(\"bytes/20\")`, asserts `r.json()` raises `requests.exceptions.JSONDecodeError`, and asserts `excinfo.value.doc == r.text`; its owning class is not visible.",
+          "number of relationships": "5"
+        },
+        {
+          "id": "1531",
+          "entity": "TESTCONTENTENCODINGDETECTION.TEST_PRECEDENCE",
+          "description": "The method `TestContentEncodingDetection.test_precedence` calls `get_encodings_from_content(content)` and asserts the ordered result is `[\"HTML5\", \"HTML4\", \"XML\"]`.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "960",
+          "entity": "CODECS.BOM_UTF32_BE",
+          "description": "`codecs.BOM_UTF32_BE` is explicitly referenced here as an external BOM constant used by `guess_json_utf`; its definition and import context are not visible.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "2",
+          "entity": "R.JSON",
+          "description": "R.JSON refers to the response method `r.json()`, which is used to decode an HTTP response body into parsed JSON data, including comments responses and authenticated comment responses. The method is also exercised in tests for valid JSON and for responses with absent content, such as HTTP 204 responses. When the response contains valid JSON, `r.json()` returns the decoded data, typically as a JSON object. When the content is invalid or absent, it raises `requests.exceptions.JSONDecodeError`. The available descriptions explicitly reference the callable but do not establish the concrete runtime class of the response receiver `r`, its owning class, or the method’s definition.",
+          "number of relationships": "11"
+        }
+      ]
+    },
+    {
+      "name": "relationships",
+      "columns": [
+        "id",
+        "source",
+        "target",
+        "description",
+        "weight",
+        "links"
+      ],
+      "rows": [
+        {
+          "id": "2736",
+          "source": "TESTGUESSJSONUTF",
+          "target": "TESTGUESSJSONUTF.TEST_ENCODED",
+          "description": "DEFINES, direction from class to method, the method is visibly indented within `class TestGuessJSONUTF`",
+          "weight": "10.0",
+          "links": "1"
+        },
+        {
+          "id": "2738",
+          "source": "TESTGUESSJSONUTF",
+          "target": "TESTGUESSJSONUTF.TEST_GUESS_BY_BOM",
+          "description": "DEFINES, direction from class to method, the method is visibly indented within `class TestGuessJSONUTF`",
+          "weight": "10.0",
+          "links": "1"
+        },
+        {
+          "id": "2737",
+          "source": "TESTGUESSJSONUTF",
+          "target": "TESTGUESSJSONUTF.TEST_BAD_UTF_LIKE_ENCODING",
+          "description": "DEFINES, direction from class to method, the method is visibly indented within `class TestGuessJSONUTF`",
+          "weight": "10.0",
+          "links": "1"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "columns": [
+        "id",
+        "source",
+        "text"
+      ],
+      "rows": [
+        {
+          "id": "107",
+          "text": "        result = guess_filename(obj)\n        assert result == value\n        assert isinstance(result, expected_type)\n\n\nclass TestExtractZippedPaths:\n    @pytest.mark.parametrize(\n        \"path\",\n        (\n            \"/\",\n            __file__,\n            pytest.__file__,\n            \"/etc/invalid/location\",\n        ),\n    )\n    def test_unzipped_paths_unchanged(self, path):\n        assert path == extract_zipped_paths(path)\n\n    def test_zipped_paths_extracted(self, tmpdir):\n        zipped_py = tmpdir.join(\"test.zip\")\n        with zipfile.ZipFile(zipped_py.strpath, \"w\") as f:\n            f.write(__file__)\n\n        _, name = os.path.splitdrive(__file__)\n        zipped_path = os.path.join(zipped_py.strpath, name.lstrip(r\"\\/\"))\n        extracted_path = extract_zipped_paths(zipped_path)\n\n        assert extracted_path != zipped_path\n        assert os.path.exists(extracted_path)\n        assert filecmp.cmp(extracted_path, __file__)\n\n    def test_invalid_unc_path(self):\n        path = r\"\\\\localhost\\invalid\\location\"\n        assert extract_zipped_paths(path) == path\n\n\nclass TestContentEncodingDetection:\n    def test_none(self):\n        encodings = get_encodings_from_content(\"\")\n        assert not len(encodings)\n\n    @pytest.mark.parametrize(\n        \"content\",\n        (\n            # HTML5 meta charset attribute\n            '<meta charset=\"UTF-8\">',\n            # HTML4 pragma directive\n            '<meta http-equiv=\"Content-type\" content=\"text/html;charset=UTF-8\">',\n            # XHTML 1.x served with text/html MIME type\n            '<meta http-equiv=\"Content-type\" content=\"text/html;charset=UTF-8\" />',\n            # XHTML 1.x served as XML\n            '<?xml version=\"1.0\" encoding=\"UTF-8\"?>',\n        ),\n    )\n    def test_pragmas(self, content):\n        encodings = get_encodings_from_content(content)\n        assert len(encodings) == 1\n        assert encodings[0] == \"UTF-8\"\n\n    def test_precedence(self):\n        content = \"\"\"\n        <?xml version=\"1.0\" encoding=\"XML\"?>\n        <meta charset=\"HTML5\">\n        <meta http-equiv=\"Content-type\" content=\"text/html;charset=HTML4\" />\n        \"\"\".strip()\n        assert get_encodings_from_content(content) == [\"HTML5\", \"HTML4\", \"XML\"]\n\n\nclass TestGuessJSONUTF:\n    @pytest.mark.parametrize(\n        \"encoding\",\n        (\n            \"utf-32\",\n            \"utf-8-sig\",\n            \"utf-16\",\n            \"utf-8\",\n            \"utf-16-be\",\n            \"utf-16-le\",\n            \"utf-32-be\",\n            \"utf-32-le\",\n        ),\n    )\n    def test_encoded(self, encoding):\n        data = \"{}\".encode(encoding)\n        assert guess_json_utf(data) == encoding\n\n    def test_bad_utf_like_encoding(self):\n        assert guess_json_utf(b\"\\x00\\x00\\x00\\x00\") is None\n\n    @pytest.mark.parametrize(\n        (\"encoding\", \"expected\"),\n        (\n            (\"utf-16-be\", \"utf-16\"),\n            (\"utf-16-le\", \"utf-16\"),\n            (\"utf-32-be\", \"utf-32\"),\n            (\"utf-32-le\", \"utf-32\"),\n        ),\n    )\n    def test_guess_by_bom(self, encoding, expected):\n        data = \"\\ufeff{}\".encode(encoding)\n        assert guess_json_utf(data) == expected\n\n\nUSER = PASSWORD = \"%!*'();:@&=+$,/?#[] \"\nENCODED_USER = compat.quote(USER, \"\")\nENCODED_PASSWORD = compat.quote(PASSWORD, \"\")\n\n\n@pytest.mark.parametrize(\n    \"url, auth\",\n    (\n        (\n            f\"http://{ENCODED_USER}:{ENCODED_PASSWORD}@request.com/url.html#test\",\n            (USER, PASSWORD),\n        ),\n        (\"http://user:pass@complex.url.com/path?query=yes\", (\"user\", \"pass\")),\n        (\n            \"http://user:pass%20pass@complex.url.com/path?query=yes\",\n            (\"user\", \"pass pass\"),\n        ),\n        (\"http://user:pass pass@complex.url.com/path?query=yes\", (\"user\", \"pass pass\")),\n        (\n            \"http://user%25user:pass@complex.url.com/path?query=yes\",\n            (\"user%user\", \"pass\"),\n        ),\n        (\n            \"http://user:pass%23pass@complex.url.com/path?query=yes\",\n            (\"user\", \"pass#pass\"),\n        ),\n        (\"http://complex.url.com/path?query=yes\", (\"\", \"\")),\n    ),\n)\ndef test_get_auth_from_url(url, auth):\n    assert get_auth_from_url(url) == auth\n\n\n@pytest.mark.parametrize(\n    \"uri, expected\",\n    (\n        (\n            # Ensure requoting doesn't break expectations\n            \"http://example.com/fiz?buz=%25ppicture\",\n            \"http://example.com/fiz?buz=%25ppicture\",\n        ),\n        (\n            # Ensure we handle unquoted percent signs in redirects\n            \"http://example.com/fiz?buz=%ppicture\",\n            \"http://example.com/fiz?buz=%25ppicture\",\n        ),\n    ),\n)\ndef test_requote_uri_with_unquoted_percents(uri, expected):\n    \"\"\"See: https://github.com/psf/requests/issues/2356\"\"\"\n    assert requote_uri(uri) == expected\n\n\n@pytest.mark.parametrize(\n    \"uri, expected\",\n    (\n        (\n            # Illegal bytes\n            \"http://example.com/?a=%--\",\n            \"http://example.com/?a=%--\",\n        ),\n        (\n",
+          "source": "tests/test_utils.py:L308-L472"
+        },
+        {
+          "id": "78",
+          "text": "            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /final-url/\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/path/to/thing/#view=edit&token=hunter2'\n        r = requests.get(url)\n\n        assert r.status_code == 200\n        assert len(r.history) == 2\n        assert r.history[0].request.url == url\n\n        # Verify we haven't overwritten the location with our previous fragment.\n        assert r.history[1].request.url == f'http://{host}:{port}/get#relevant-section'\n        # Verify previous fragment is used and not the original.\n        assert r.url == f'http://{host}:{port}/final-url/#relevant-section'\n\n        close_server.set()\n\n\ndef test_json_decode_compatibility_for_alt_utf_encodings():\n\n    def response_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n'\n            b'Content-Length: 18\\r\\n\\r\\n'\n            b'\\xff\\xfe{\\x00\"\\x00K0\"\\x00=\\x00\"\\x00\\xab0\"\\x00\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url)\n    r.encoding = None\n    with pytest.raises(requests.exceptions.JSONDecodeError) as excinfo:\n        r.json()\n    assert isinstance(excinfo.value, requests.exceptions.RequestException)\n    assert isinstance(excinfo.value, JSONDecodeError)\n    assert r.text not in str(excinfo.value)\n",
+          "source": "tests/test_lowlevel.py:L379-L428"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "short_id": "107",
+      "text_unit_id": "389dde3cd137709270c2c13a240d8018c44b01110888c0bd9c5337e38016b77fc557047f133187ddaa1c5d5573bd90a8862712ca2b4a0537a35e809db32a8179",
+      "id": "a508132f67cba7cedc589493a9a54cad81ca9b8568c3ab37a5b98ba09b9682e8",
+      "title": "tests/test_utils.py:L308-L472",
+      "path": "tests/test_utils.py",
+      "start_line": 308,
+      "end_line": 472,
+      "tokens": 1200,
+      "text_sha256": "2cdfba69a878cd4b62869f9e5829c27bd72ac6cf08a4888c31e386dbed2db6a2",
+      "ms_text_unit_id": "389dde3cd137709270c2c13a240d8018c44b01110888c0bd9c5337e38016b77fc557047f133187ddaa1c5d5573bd90a8862712ca2b4a0537a35e809db32a8179"
+    },
+    {
+      "short_id": "78",
+      "text_unit_id": "8d707a967d2ac3011d34f329f840b838b9b30e3dbd68ec99c6309f16d86711daa0c5bc66648a3b5f102056a27bfe3c266966a58a0e7f34ea18a86f401ea94eb0",
+      "id": "b0cdef55a2c5ce2dcc3e2fa72c0fd5cd5ece7a243c220abd27873f188aed20c4",
+      "title": "tests/test_lowlevel.py:L379-L428",
+      "path": "tests/test_lowlevel.py",
+      "start_line": 379,
+      "end_line": 428,
+      "tokens": 452,
+      "text_sha256": "21659c862b007521515fb5027d9d9461ea170a47bc715b5a8729fc475f7d401c",
+      "ms_text_unit_id": "8d707a967d2ac3011d34f329f840b838b9b30e3dbd68ec99c6309f16d86711daa0c5bc66648a3b5f102056a27bfe3c266966a58a0e7f34ea18a86f401ea94eb0"
+    }
+  ],
+  "raw_context_tokens": 3001,
+  "final_context_tokens": 3102,
+  "source_text_tokens": 1652,
+  "source_chunks": 2,
+  "retrieval_compute_seconds": 0.01173633337020874,
+  "adaptation_seconds": 0.003980875015258789,
+  "empty_reason": null,
+  "community_level": 2,
+  "dropped_tail_rows": 0
+}

@@ -1,0 +1,304 @@
+{
+  "variant": "code-prompt",
+  "question_id": "Q11",
+  "method": "ms_local_code_prompt",
+  "budget": 4000,
+  "query": "How does a transport response header set the text encoding used by a Response, and what is the fallback if it remains unset?",
+  "upstream_raw_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n726|RESPONSE.APPARENT_ENCODING|Property method `Response.apparent_encoding` is visibly defined here, but its body and return behavior are not included in the chunk.|1\n1611|TEXT.ENCODE|The unresolved callable `text.encode` is explicitly referenced with `\"utf-8\"` to convert the response text into bytes; `text` is a method argument.|1\n4|R.ENCODING|R.ENCODING is an attribute referenced through `r.encoding` and assigned with values such as `'ISO-8859-1'` or documented as `'utf-8'`. It controls the character encoding used when accessing `r.text`. However, the attribute’s receiver binding and runtime type are not defined or visible in the available context, so its implementation and default behavior cannot be confirmed.|1\n331|GET_ENCODING_FROM_HEADERS|`GET_ENCODING_FROM_HEADERS` is an externally imported utility callable, referenced in the code but not defined within the provided chunk. Its import source is described as `.utils` in one context and `requests.utils` in another, indicating that the exact provenance may vary by module or import configuration. The callable accepts HTTP response headers, particularly `Content-Type` values, and determines the appropriate response encoding. `build_response` invokes `get_encoding_from_headers` with constructed response headers to set the response encoding, while tests verify that it returns the expected encoding for different content-type headers.|5\n1234|TEST_RESPONSE_REASON_UNICODE_FALLBACK|The test function `test_response_reason_unicode_fallback` is defined here. It configures a status `500` response with a Latin-1 encoded reason, asserts `r.raise_for_status()` raises `requests.exceptions.HTTPError`, and checks the reason in the exception arguments.|3\n1232|TEST_RESPONSE_DECODE_UNICODE|The test function `test_response_decode_unicode` is defined here. It asserts that `Response.iter_content(decode_unicode=True)` yields `str` chunks for both consumed in-memory content and streaming `io.BytesIO` content.|4\n1531|TESTCONTENTENCODINGDETECTION.TEST_PRECEDENCE|The method `TestContentEncodingDetection.test_precedence` calls `get_encodings_from_content(content)` and asserts the ordered result is `[\"HTML5\", \"HTML4\", \"XML\"]`.|2\n652|GUESS_JSON_UTF|`GUESS_JSON_UTF` refers to the `guess_json_utf` callable imported from `requests.utils` or the local `.utils` module. Its definition is not visible in the provided code chunks, but it is explicitly referenced by the JSON response-handling method, which calls `guess_json_utf(self.content)` to detect a JSON-compatible character encoding. Related tests verify its behavior with encoded JSON data, invalid zero-byte patterns, and content prefixed with a byte-order mark (BOM).|15\n602|CHUNKEDENCODINGERROR|`ChunkedEncodingError` is defined here as a subclass of `RequestException`; it represents invalid content in a response declared as chunked encoding.|5\n1528|TESTCONTENTENCODINGDETECTION|The visible class `TestContentEncodingDetection` groups tests for content-encoding detection, including empty content, pragma formats, and precedence.|3\n1530|TESTCONTENTENCODINGDETECTION.TEST_PRAGMAS|The method `TestContentEncodingDetection.test_pragmas` is parametrized with HTML5, HTML4, XHTML, and XML declarations and asserts one detected encoding equal to `\"UTF-8\"`.|3\n76|CHARSET_NORMALIZER|`CHARSET_NORMALIZER` is a Python dependency specified as `charset_normalizer>=2,<4` in `requires-dist`. Requests may use the `charset_normalizer` library to infer a response’s character encoding when no explicit charset is provided. Its detailed definition and implementation are not visible in the available context.|2\n1061|TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS|The test function `test_json_decode_compatibility_for_alt_utf_encodings` is defined here. It requests an HTTP response containing alternate-encoded JSON, clears `r.encoding`, calls `r.json()`, and asserts JSON decoding exception behavior.|9\n1339|TEST_STREAM_WITH_AUTH_DOES_NOT_SET_TRANSFER_ENCODING_HEADER|`TEST_STREAM_WITH_AUTH_DOES_NOT_SET_TRANSFER_ENCODING_HEADER` refers to the test method `test_stream_with_auth_does_not_set_transfer_encoding_header`. The test prepares authenticated POST requests using an `io.BytesIO` stream and verifies how request body size affects HTTP headers: for a non-empty body containing `b\"test data\"`, `Transfer-Encoding` is absent and `Content-Length` is present; for a zero-byte body, `Transfer-Encoding` is present and `Content-Length` is absent. Thus, despite its name, the test covers distinct header behavior for non-empty and empty authenticated streams.|4\n920|GET_UNICODE_FROM_RESPONSE|Defines the module-level function `get_unicode_from_response(r)`. It emits a `DeprecationWarning`, obtains an encoding from `r.headers`, first tries `str(r.content, encoding)`, records `UnicodeError` failures, then falls back to replacement decoding and returns `r.content` when that fallback raises `TypeError`.|6\n19|RESPONSE.HEADERS|The value spelling `Response.headers` is explicitly referenced through `r.headers`; the example reads headers received from the server, and its concrete definition is not visible here.|5\n1555|TEST_GET_ENCODING_FROM_HEADERS|Defined test function `test_get_encoding_from_headers(value, expected)`. It asserts encoding results for `CaseInsensitiveDict` headers, including UTF-8 content types and the `\"ISO-8859-1\"` fallback.|3\n375|DECODE|DECODE refers to explicitly invoked or referenced `decode` methods used to convert byte-oriented values into text. It appears in `r.content.decode(\"ascii\")`, `req.url.decode(\"utf-8\")` within `build_response` when `req.url` is a `bytes` value, and `field.decode(\"utf-8\")`, although the concrete receiver types are not always visible. It is also called on the result of the external `idna.encode(host, uts46=True)` operation via `.decode(\"utf-8\")`. Additionally, `self.content.decode(encoding)` and `self.reason.decode(\"utf-8\")` or `self.reason.decode(\"iso-8859-1\")` are referenced. Overall, DECODE represents byte-to-string conversion calls with encodings including ASCII, UTF-8, ISO-8859-1, and a dynamically supplied encoding; the underlying method definitions and some receiver bindings remain unresolved.|6\n\n\n\n\n-----Sources-----\nid|text\n48|        hooks = hooks or []\n        for event in hooks:\n            self.register_hook(event, hooks[event])\n\n\nclass Response:\n    \"\"\"The :class:`Response <Response>` object, which contains a\n    server's response to an HTTP request.\n    \"\"\"\n\n    __attrs__ = [\n        \"_content\",\n        \"status_code\",\n        \"headers\",\n        \"url\",\n        \"history\",\n        \"encoding\",\n        \"reason\",\n        \"cookies\",\n        \"elapsed\",\n        \"request\",\n    ]\n\n    def __init__(self):\n        self._content = False\n        self._content_consumed = False\n        self._next = None\n\n        #: Integer Code of responded HTTP Status, e.g. 404 or 200.\n        self.status_code = None\n\n        #: Case-insensitive Dictionary of Response Headers.\n        #: For example, ``headers['content-encoding']`` will return the\n        #: value of a ``'Content-Encoding'`` response header.\n        self.headers = CaseInsensitiveDict()\n\n        #: File-like object representation of response (for advanced usage).\n        #: Use of ``raw`` requires that ``stream=True`` be set on the request.\n        #: This requirement does not apply for use internally to Requests.\n        self.raw = None\n\n        #: Final URL location of Response.\n        self.url = None\n\n        #: Encoding to decode with when accessing r.text.\n        self.encoding = None\n\n        #: A list of :class:`Response <Response>` objects from\n        #: the history of the Request. Any redirect responses will end\n        #: up here. The list is sorted from the oldest to the most recent request.\n        self.history = []\n\n        #: Textual reason of responded HTTP Status, e.g. \"Not Found\" or \"OK\".\n        self.reason = None\n\n        #: A CookieJar of Cookies the server sent back.\n        self.cookies = cookiejar_from_dict({})\n\n        #: The amount of time elapsed between sending the request\n        #: and the arrival of the response (as a timedelta).\n        #: This property specifically measures the time taken between sending\n        #: the first byte of the request and finishing parsing the headers. It\n        #: is therefore unaffected by consuming the response content or the\n        #: value of the ``stream`` keyword argument.\n        self.elapsed = datetime.timedelta(0)\n\n        #: The :class:`PreparedRequest <PreparedRequest>` object to which this\n        #: is a response.\n        self.request = None\n\n    def __enter__(self):\n        return self\n\n    def __exit__(self, *args):\n        self.close()\n\n    def __getstate__(self):\n        # Consume everything; accessing the content attribute makes\n        # sure the content has been fully read.\n        if not self._content_consumed:\n            self.content\n\n        return {attr: getattr(self, attr, None) for attr in self.__attrs__}\n\n    def __setstate__(self, state):\n        for name, value in state.items():\n            setattr(self, name, value)\n\n        # pickled objects do not have .raw\n        setattr(self, \"_content_consumed\", True)\n        setattr(self, \"raw\", None)\n\n    def __repr__(self):\n        return f\"<Response [{self.status_code}]>\"\n\n    def __bool__(self):\n        \"\"\"Returns True if :attr:`status_code` is less than 400.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code, is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\n        return self.ok\n\n    def __nonzero__(self):\n        \"\"\"Returns True if :attr:`status_code` is less than 400.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code, is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\n        return self.ok\n\n    def __iter__(self):\n        \"\"\"Allows you to use a response as an iterator.\"\"\"\n        return self.iter_content(128)\n\n    @property\n    def ok(self):\n        \"\"\"Returns True if :attr:`status_code` is less than 400, False if not.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\n        try:\n            self.raise_for_status()\n        except HTTPError:\n            return False\n        return True\n\n    @property\n    def is_redirect(self):\n        \"\"\"True if this Response is a well-formed HTTP redirect that could have\n        been processed automatically (by :meth:`Session.resolve_redirects`).\n        \"\"\"\n        return \"location\" in self.headers and self.status_code in REDIRECT_STATI\n\n    @property\n    def is_permanent_redirect(self):\n        \"\"\"True if this Response one of the permanent versions of redirect.\"\"\"\n        return \"location\" in self.headers and self.status_code in (\n            codes.moved_permanently,\n            codes.permanent_redirect,\n        )\n\n    @property\n    def next(self):\n        \"\"\"Returns a PreparedRequest for the next request in a redirect chain, if there is one.\"\"\"\n        return self._next\n\n    @property\n    def apparent_encoding(self):\n\n",
+  "upstream_raw_records": {
+    "entities": [
+      {
+        "id": "726",
+        "entity": "RESPONSE.APPARENT_ENCODING",
+        "description": "Property method `Response.apparent_encoding` is visibly defined here, but its body and return behavior are not included in the chunk.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1611",
+        "entity": "TEXT.ENCODE",
+        "description": "The unresolved callable `text.encode` is explicitly referenced with `\"utf-8\"` to convert the response text into bytes; `text` is a method argument.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "4",
+        "entity": "R.ENCODING",
+        "description": "R.ENCODING is an attribute referenced through `r.encoding` and assigned with values such as `'ISO-8859-1'` or documented as `'utf-8'`. It controls the character encoding used when accessing `r.text`. However, the attribute’s receiver binding and runtime type are not defined or visible in the available context, so its implementation and default behavior cannot be confirmed.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "331",
+        "entity": "GET_ENCODING_FROM_HEADERS",
+        "description": "`GET_ENCODING_FROM_HEADERS` is an externally imported utility callable, referenced in the code but not defined within the provided chunk. Its import source is described as `.utils` in one context and `requests.utils` in another, indicating that the exact provenance may vary by module or import configuration. The callable accepts HTTP response headers, particularly `Content-Type` values, and determines the appropriate response encoding. `build_response` invokes `get_encoding_from_headers` with constructed response headers to set the response encoding, while tests verify that it returns the expected encoding for different content-type headers.",
+        "number of relationships": "5",
+        "in_context": true
+      },
+      {
+        "id": "1234",
+        "entity": "TEST_RESPONSE_REASON_UNICODE_FALLBACK",
+        "description": "The test function `test_response_reason_unicode_fallback` is defined here. It configures a status `500` response with a Latin-1 encoded reason, asserts `r.raise_for_status()` raises `requests.exceptions.HTTPError`, and checks the reason in the exception arguments.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "1232",
+        "entity": "TEST_RESPONSE_DECODE_UNICODE",
+        "description": "The test function `test_response_decode_unicode` is defined here. It asserts that `Response.iter_content(decode_unicode=True)` yields `str` chunks for both consumed in-memory content and streaming `io.BytesIO` content.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "1531",
+        "entity": "TESTCONTENTENCODINGDETECTION.TEST_PRECEDENCE",
+        "description": "The method `TestContentEncodingDetection.test_precedence` calls `get_encodings_from_content(content)` and asserts the ordered result is `[\"HTML5\", \"HTML4\", \"XML\"]`.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "652",
+        "entity": "GUESS_JSON_UTF",
+        "description": "`GUESS_JSON_UTF` refers to the `guess_json_utf` callable imported from `requests.utils` or the local `.utils` module. Its definition is not visible in the provided code chunks, but it is explicitly referenced by the JSON response-handling method, which calls `guess_json_utf(self.content)` to detect a JSON-compatible character encoding. Related tests verify its behavior with encoded JSON data, invalid zero-byte patterns, and content prefixed with a byte-order mark (BOM).",
+        "number of relationships": "15",
+        "in_context": true
+      },
+      {
+        "id": "602",
+        "entity": "CHUNKEDENCODINGERROR",
+        "description": "`ChunkedEncodingError` is defined here as a subclass of `RequestException`; it represents invalid content in a response declared as chunked encoding.",
+        "number of relationships": "5",
+        "in_context": true
+      },
+      {
+        "id": "1528",
+        "entity": "TESTCONTENTENCODINGDETECTION",
+        "description": "The visible class `TestContentEncodingDetection` groups tests for content-encoding detection, including empty content, pragma formats, and precedence.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "1530",
+        "entity": "TESTCONTENTENCODINGDETECTION.TEST_PRAGMAS",
+        "description": "The method `TestContentEncodingDetection.test_pragmas` is parametrized with HTML5, HTML4, XHTML, and XML declarations and asserts one detected encoding equal to `\"UTF-8\"`.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "76",
+        "entity": "CHARSET_NORMALIZER",
+        "description": "`CHARSET_NORMALIZER` is a Python dependency specified as `charset_normalizer>=2,<4` in `requires-dist`. Requests may use the `charset_normalizer` library to infer a response’s character encoding when no explicit charset is provided. Its detailed definition and implementation are not visible in the available context.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "1061",
+        "entity": "TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS",
+        "description": "The test function `test_json_decode_compatibility_for_alt_utf_encodings` is defined here. It requests an HTTP response containing alternate-encoded JSON, clears `r.encoding`, calls `r.json()`, and asserts JSON decoding exception behavior.",
+        "number of relationships": "9",
+        "in_context": true
+      },
+      {
+        "id": "1339",
+        "entity": "TEST_STREAM_WITH_AUTH_DOES_NOT_SET_TRANSFER_ENCODING_HEADER",
+        "description": "`TEST_STREAM_WITH_AUTH_DOES_NOT_SET_TRANSFER_ENCODING_HEADER` refers to the test method `test_stream_with_auth_does_not_set_transfer_encoding_header`. The test prepares authenticated POST requests using an `io.BytesIO` stream and verifies how request body size affects HTTP headers: for a non-empty body containing `b\"test data\"`, `Transfer-Encoding` is absent and `Content-Length` is present; for a zero-byte body, `Transfer-Encoding` is present and `Content-Length` is absent. Thus, despite its name, the test covers distinct header behavior for non-empty and empty authenticated streams.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "920",
+        "entity": "GET_UNICODE_FROM_RESPONSE",
+        "description": "Defines the module-level function `get_unicode_from_response(r)`. It emits a `DeprecationWarning`, obtains an encoding from `r.headers`, first tries `str(r.content, encoding)`, records `UnicodeError` failures, then falls back to replacement decoding and returns `r.content` when that fallback raises `TypeError`.",
+        "number of relationships": "6",
+        "in_context": true
+      },
+      {
+        "id": "19",
+        "entity": "RESPONSE.HEADERS",
+        "description": "The value spelling `Response.headers` is explicitly referenced through `r.headers`; the example reads headers received from the server, and its concrete definition is not visible here.",
+        "number of relationships": "5",
+        "in_context": true
+      },
+      {
+        "id": "1555",
+        "entity": "TEST_GET_ENCODING_FROM_HEADERS",
+        "description": "Defined test function `test_get_encoding_from_headers(value, expected)`. It asserts encoding results for `CaseInsensitiveDict` headers, including UTF-8 content types and the `\"ISO-8859-1\"` fallback.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "375",
+        "entity": "DECODE",
+        "description": "DECODE refers to explicitly invoked or referenced `decode` methods used to convert byte-oriented values into text. It appears in `r.content.decode(\"ascii\")`, `req.url.decode(\"utf-8\")` within `build_response` when `req.url` is a `bytes` value, and `field.decode(\"utf-8\")`, although the concrete receiver types are not always visible. It is also called on the result of the external `idna.encode(host, uts46=True)` operation via `.decode(\"utf-8\")`. Additionally, `self.content.decode(encoding)` and `self.reason.decode(\"utf-8\")` or `self.reason.decode(\"iso-8859-1\")` are referenced. Overall, DECODE represents byte-to-string conversion calls with encodings including ASCII, UTF-8, ISO-8859-1, and a dynamically supplied encoding; the underlying method definitions and some receiver bindings remain unresolved.",
+        "number of relationships": "6",
+        "in_context": true
+      }
+    ],
+    "sources": [
+      {
+        "id": "48",
+        "text": "        hooks = hooks or []\n        for event in hooks:\n            self.register_hook(event, hooks[event])\n\n\nclass Response:\n    \"\"\"The :class:`Response <Response>` object, which contains a\n    server's response to an HTTP request.\n    \"\"\"\n\n    __attrs__ = [\n        \"_content\",\n        \"status_code\",\n        \"headers\",\n        \"url\",\n        \"history\",\n        \"encoding\",\n        \"reason\",\n        \"cookies\",\n        \"elapsed\",\n        \"request\",\n    ]\n\n    def __init__(self):\n        self._content = False\n        self._content_consumed = False\n        self._next = None\n\n        #: Integer Code of responded HTTP Status, e.g. 404 or 200.\n        self.status_code = None\n\n        #: Case-insensitive Dictionary of Response Headers.\n        #: For example, ``headers['content-encoding']`` will return the\n        #: value of a ``'Content-Encoding'`` response header.\n        self.headers = CaseInsensitiveDict()\n\n        #: File-like object representation of response (for advanced usage).\n        #: Use of ``raw`` requires that ``stream=True`` be set on the request.\n        #: This requirement does not apply for use internally to Requests.\n        self.raw = None\n\n        #: Final URL location of Response.\n        self.url = None\n\n        #: Encoding to decode with when accessing r.text.\n        self.encoding = None\n\n        #: A list of :class:`Response <Response>` objects from\n        #: the history of the Request. Any redirect responses will end\n        #: up here. The list is sorted from the oldest to the most recent request.\n        self.history = []\n\n        #: Textual reason of responded HTTP Status, e.g. \"Not Found\" or \"OK\".\n        self.reason = None\n\n        #: A CookieJar of Cookies the server sent back.\n        self.cookies = cookiejar_from_dict({})\n\n        #: The amount of time elapsed between sending the request\n        #: and the arrival of the response (as a timedelta).\n        #: This property specifically measures the time taken between sending\n        #: the first byte of the request and finishing parsing the headers. It\n        #: is therefore unaffected by consuming the response content or the\n        #: value of the ``stream`` keyword argument.\n        self.elapsed = datetime.timedelta(0)\n\n        #: The :class:`PreparedRequest <PreparedRequest>` object to which this\n        #: is a response.\n        self.request = None\n\n    def __enter__(self):\n        return self\n\n    def __exit__(self, *args):\n        self.close()\n\n    def __getstate__(self):\n        # Consume everything; accessing the content attribute makes\n        # sure the content has been fully read.\n        if not self._content_consumed:\n            self.content\n\n        return {attr: getattr(self, attr, None) for attr in self.__attrs__}\n\n    def __setstate__(self, state):\n        for name, value in state.items():\n            setattr(self, name, value)\n\n        # pickled objects do not have .raw\n        setattr(self, \"_content_consumed\", True)\n        setattr(self, \"raw\", None)\n\n    def __repr__(self):\n        return f\"<Response [{self.status_code}]>\"\n\n    def __bool__(self):\n        \"\"\"Returns True if :attr:`status_code` is less than 400.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code, is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\n        return self.ok\n\n    def __nonzero__(self):\n        \"\"\"Returns True if :attr:`status_code` is less than 400.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code, is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\n        return self.ok\n\n    def __iter__(self):\n        \"\"\"Allows you to use a response as an iterator.\"\"\"\n        return self.iter_content(128)\n\n    @property\n    def ok(self):\n        \"\"\"Returns True if :attr:`status_code` is less than 400, False if not.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\n        try:\n            self.raise_for_status()\n        except HTTPError:\n            return False\n        return True\n\n    @property\n    def is_redirect(self):\n        \"\"\"True if this Response is a well-formed HTTP redirect that could have\n        been processed automatically (by :meth:`Session.resolve_redirects`).\n        \"\"\"\n        return \"location\" in self.headers and self.status_code in REDIRECT_STATI\n\n    @property\n    def is_permanent_redirect(self):\n        \"\"\"True if this Response one of the permanent versions of redirect.\"\"\"\n        return \"location\" in self.headers and self.status_code in (\n            codes.moved_permanently,\n            codes.permanent_redirect,\n        )\n\n    @property\n    def next(self):\n        \"\"\"Returns a PreparedRequest for the next request in a redirect chain, if there is one.\"\"\"\n        return self._next\n\n    @property\n    def apparent_encoding(self):\n"
+      }
+    ]
+  },
+  "final_context": "-----Entities-----\nid|entity|description|number of relationships\n726|RESPONSE.APPARENT_ENCODING|Property method `Response.apparent_encoding` is visibly defined here, but its body and return behavior are not included in the chunk.|1\n1611|TEXT.ENCODE|\"The unresolved callable `text.encode` is explicitly referenced with `\"\"utf-8\"\"` to convert the response text into bytes; `text` is a method argument.\"|1\n4|R.ENCODING|R.ENCODING is an attribute referenced through `r.encoding` and assigned with values such as `'ISO-8859-1'` or documented as `'utf-8'`. It controls the character encoding used when accessing `r.text`. However, the attribute’s receiver binding and runtime type are not defined or visible in the available context, so its implementation and default behavior cannot be confirmed.|1\n331|GET_ENCODING_FROM_HEADERS|`GET_ENCODING_FROM_HEADERS` is an externally imported utility callable, referenced in the code but not defined within the provided chunk. Its import source is described as `.utils` in one context and `requests.utils` in another, indicating that the exact provenance may vary by module or import configuration. The callable accepts HTTP response headers, particularly `Content-Type` values, and determines the appropriate response encoding. `build_response` invokes `get_encoding_from_headers` with constructed response headers to set the response encoding, while tests verify that it returns the expected encoding for different content-type headers.|5\n1234|TEST_RESPONSE_REASON_UNICODE_FALLBACK|The test function `test_response_reason_unicode_fallback` is defined here. It configures a status `500` response with a Latin-1 encoded reason, asserts `r.raise_for_status()` raises `requests.exceptions.HTTPError`, and checks the reason in the exception arguments.|3\n1232|TEST_RESPONSE_DECODE_UNICODE|The test function `test_response_decode_unicode` is defined here. It asserts that `Response.iter_content(decode_unicode=True)` yields `str` chunks for both consumed in-memory content and streaming `io.BytesIO` content.|4\n1531|TESTCONTENTENCODINGDETECTION.TEST_PRECEDENCE|\"The method `TestContentEncodingDetection.test_precedence` calls `get_encodings_from_content(content)` and asserts the ordered result is `[\"\"HTML5\"\", \"\"HTML4\"\", \"\"XML\"\"]`.\"|2\n652|GUESS_JSON_UTF|`GUESS_JSON_UTF` refers to the `guess_json_utf` callable imported from `requests.utils` or the local `.utils` module. Its definition is not visible in the provided code chunks, but it is explicitly referenced by the JSON response-handling method, which calls `guess_json_utf(self.content)` to detect a JSON-compatible character encoding. Related tests verify its behavior with encoded JSON data, invalid zero-byte patterns, and content prefixed with a byte-order mark (BOM).|15\n602|CHUNKEDENCODINGERROR|`ChunkedEncodingError` is defined here as a subclass of `RequestException`; it represents invalid content in a response declared as chunked encoding.|5\n1528|TESTCONTENTENCODINGDETECTION|The visible class `TestContentEncodingDetection` groups tests for content-encoding detection, including empty content, pragma formats, and precedence.|3\n1530|TESTCONTENTENCODINGDETECTION.TEST_PRAGMAS|\"The method `TestContentEncodingDetection.test_pragmas` is parametrized with HTML5, HTML4, XHTML, and XML declarations and asserts one detected encoding equal to `\"\"UTF-8\"\"`.\"|3\n76|CHARSET_NORMALIZER|`CHARSET_NORMALIZER` is a Python dependency specified as `charset_normalizer>=2,<4` in `requires-dist`. Requests may use the `charset_normalizer` library to infer a response’s character encoding when no explicit charset is provided. Its detailed definition and implementation are not visible in the available context.|2\n1061|TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS|The test function `test_json_decode_compatibility_for_alt_utf_encodings` is defined here. It requests an HTTP response containing alternate-encoded JSON, clears `r.encoding`, calls `r.json()`, and asserts JSON decoding exception behavior.|9\n1339|TEST_STREAM_WITH_AUTH_DOES_NOT_SET_TRANSFER_ENCODING_HEADER|\"`TEST_STREAM_WITH_AUTH_DOES_NOT_SET_TRANSFER_ENCODING_HEADER` refers to the test method `test_stream_with_auth_does_not_set_transfer_encoding_header`. The test prepares authenticated POST requests using an `io.BytesIO` stream and verifies how request body size affects HTTP headers: for a non-empty body containing `b\"\"test data\"\"`, `Transfer-Encoding` is absent and `Content-Length` is present; for a zero-byte body, `Transfer-Encoding` is present and `Content-Length` is absent. Thus, despite its name, the test covers distinct header behavior for non-empty and empty authenticated streams.\"|4\n920|GET_UNICODE_FROM_RESPONSE|Defines the module-level function `get_unicode_from_response(r)`. It emits a `DeprecationWarning`, obtains an encoding from `r.headers`, first tries `str(r.content, encoding)`, records `UnicodeError` failures, then falls back to replacement decoding and returns `r.content` when that fallback raises `TypeError`.|6\n19|RESPONSE.HEADERS|The value spelling `Response.headers` is explicitly referenced through `r.headers`; the example reads headers received from the server, and its concrete definition is not visible here.|5\n1555|TEST_GET_ENCODING_FROM_HEADERS|\"Defined test function `test_get_encoding_from_headers(value, expected)`. It asserts encoding results for `CaseInsensitiveDict` headers, including UTF-8 content types and the `\"\"ISO-8859-1\"\"` fallback.\"|3\n375|DECODE|\"DECODE refers to explicitly invoked or referenced `decode` methods used to convert byte-oriented values into text. It appears in `r.content.decode(\"\"ascii\"\")`, `req.url.decode(\"\"utf-8\"\")` within `build_response` when `req.url` is a `bytes` value, and `field.decode(\"\"utf-8\"\")`, although the concrete receiver types are not always visible. It is also called on the result of the external `idna.encode(host, uts46=True)` operation via `.decode(\"\"utf-8\"\")`. Additionally, `self.content.decode(encoding)` and `self.reason.decode(\"\"utf-8\"\")` or `self.reason.decode(\"\"iso-8859-1\"\")` are referenced. Overall, DECODE represents byte-to-string conversion calls with encodings including ASCII, UTF-8, ISO-8859-1, and a dynamically supplied encoding; the underlying method definitions and some receiver bindings remain unresolved.\"|6\n\n-----Sources-----\nid|source|text\n48|src/requests/models.py:L635-L790|\"        hooks = hooks or []\n        for event in hooks:\n            self.register_hook(event, hooks[event])\n\n\nclass Response:\n    \"\"\"\"\"\"The :class:`Response <Response>` object, which contains a\n    server's response to an HTTP request.\n    \"\"\"\"\"\"\n\n    __attrs__ = [\n        \"\"_content\"\",\n        \"\"status_code\"\",\n        \"\"headers\"\",\n        \"\"url\"\",\n        \"\"history\"\",\n        \"\"encoding\"\",\n        \"\"reason\"\",\n        \"\"cookies\"\",\n        \"\"elapsed\"\",\n        \"\"request\"\",\n    ]\n\n    def __init__(self):\n        self._content = False\n        self._content_consumed = False\n        self._next = None\n\n        #: Integer Code of responded HTTP Status, e.g. 404 or 200.\n        self.status_code = None\n\n        #: Case-insensitive Dictionary of Response Headers.\n        #: For example, ``headers['content-encoding']`` will return the\n        #: value of a ``'Content-Encoding'`` response header.\n        self.headers = CaseInsensitiveDict()\n\n        #: File-like object representation of response (for advanced usage).\n        #: Use of ``raw`` requires that ``stream=True`` be set on the request.\n        #: This requirement does not apply for use internally to Requests.\n        self.raw = None\n\n        #: Final URL location of Response.\n        self.url = None\n\n        #: Encoding to decode with when accessing r.text.\n        self.encoding = None\n\n        #: A list of :class:`Response <Response>` objects from\n        #: the history of the Request. Any redirect responses will end\n        #: up here. The list is sorted from the oldest to the most recent request.\n        self.history = []\n\n        #: Textual reason of responded HTTP Status, e.g. \"\"Not Found\"\" or \"\"OK\"\".\n        self.reason = None\n\n        #: A CookieJar of Cookies the server sent back.\n        self.cookies = cookiejar_from_dict({})\n\n        #: The amount of time elapsed between sending the request\n        #: and the arrival of the response (as a timedelta).\n        #: This property specifically measures the time taken between sending\n        #: the first byte of the request and finishing parsing the headers. It\n        #: is therefore unaffected by consuming the response content or the\n        #: value of the ``stream`` keyword argument.\n        self.elapsed = datetime.timedelta(0)\n\n        #: The :class:`PreparedRequest <PreparedRequest>` object to which this\n        #: is a response.\n        self.request = None\n\n    def __enter__(self):\n        return self\n\n    def __exit__(self, *args):\n        self.close()\n\n    def __getstate__(self):\n        # Consume everything; accessing the content attribute makes\n        # sure the content has been fully read.\n        if not self._content_consumed:\n            self.content\n\n        return {attr: getattr(self, attr, None) for attr in self.__attrs__}\n\n    def __setstate__(self, state):\n        for name, value in state.items():\n            setattr(self, name, value)\n\n        # pickled objects do not have .raw\n        setattr(self, \"\"_content_consumed\"\", True)\n        setattr(self, \"\"raw\"\", None)\n\n    def __repr__(self):\n        return f\"\"<Response [{self.status_code}]>\"\"\n\n    def __bool__(self):\n        \"\"\"\"\"\"Returns True if :attr:`status_code` is less than 400.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code, is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\"\"\"\n        return self.ok\n\n    def __nonzero__(self):\n        \"\"\"\"\"\"Returns True if :attr:`status_code` is less than 400.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code, is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\"\"\"\n        return self.ok\n\n    def __iter__(self):\n        \"\"\"\"\"\"Allows you to use a response as an iterator.\"\"\"\"\"\"\n        return self.iter_content(128)\n\n    @property\n    def ok(self):\n        \"\"\"\"\"\"Returns True if :attr:`status_code` is less than 400, False if not.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\"\"\"\n        try:\n            self.raise_for_status()\n        except HTTPError:\n            return False\n        return True\n\n    @property\n    def is_redirect(self):\n        \"\"\"\"\"\"True if this Response is a well-formed HTTP redirect that could have\n        been processed automatically (by :meth:`Session.resolve_redirects`).\n        \"\"\"\"\"\"\n        return \"\"location\"\" in self.headers and self.status_code in REDIRECT_STATI\n\n    @property\n    def is_permanent_redirect(self):\n        \"\"\"\"\"\"True if this Response one of the permanent versions of redirect.\"\"\"\"\"\"\n        return \"\"location\"\" in self.headers and self.status_code in (\n            codes.moved_permanently,\n            codes.permanent_redirect,\n        )\n\n    @property\n    def next(self):\n        \"\"\"\"\"\"Returns a PreparedRequest for the next request in a redirect chain, if there is one.\"\"\"\"\"\"\n        return self._next\n\n    @property\n    def apparent_encoding(self):\n\"\n",
+  "final_tables": [
+    {
+      "name": "entities",
+      "columns": [
+        "id",
+        "entity",
+        "description",
+        "number of relationships"
+      ],
+      "rows": [
+        {
+          "id": "726",
+          "entity": "RESPONSE.APPARENT_ENCODING",
+          "description": "Property method `Response.apparent_encoding` is visibly defined here, but its body and return behavior are not included in the chunk.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1611",
+          "entity": "TEXT.ENCODE",
+          "description": "The unresolved callable `text.encode` is explicitly referenced with `\"utf-8\"` to convert the response text into bytes; `text` is a method argument.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "4",
+          "entity": "R.ENCODING",
+          "description": "R.ENCODING is an attribute referenced through `r.encoding` and assigned with values such as `'ISO-8859-1'` or documented as `'utf-8'`. It controls the character encoding used when accessing `r.text`. However, the attribute’s receiver binding and runtime type are not defined or visible in the available context, so its implementation and default behavior cannot be confirmed.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "331",
+          "entity": "GET_ENCODING_FROM_HEADERS",
+          "description": "`GET_ENCODING_FROM_HEADERS` is an externally imported utility callable, referenced in the code but not defined within the provided chunk. Its import source is described as `.utils` in one context and `requests.utils` in another, indicating that the exact provenance may vary by module or import configuration. The callable accepts HTTP response headers, particularly `Content-Type` values, and determines the appropriate response encoding. `build_response` invokes `get_encoding_from_headers` with constructed response headers to set the response encoding, while tests verify that it returns the expected encoding for different content-type headers.",
+          "number of relationships": "5"
+        },
+        {
+          "id": "1234",
+          "entity": "TEST_RESPONSE_REASON_UNICODE_FALLBACK",
+          "description": "The test function `test_response_reason_unicode_fallback` is defined here. It configures a status `500` response with a Latin-1 encoded reason, asserts `r.raise_for_status()` raises `requests.exceptions.HTTPError`, and checks the reason in the exception arguments.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "1232",
+          "entity": "TEST_RESPONSE_DECODE_UNICODE",
+          "description": "The test function `test_response_decode_unicode` is defined here. It asserts that `Response.iter_content(decode_unicode=True)` yields `str` chunks for both consumed in-memory content and streaming `io.BytesIO` content.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "1531",
+          "entity": "TESTCONTENTENCODINGDETECTION.TEST_PRECEDENCE",
+          "description": "The method `TestContentEncodingDetection.test_precedence` calls `get_encodings_from_content(content)` and asserts the ordered result is `[\"HTML5\", \"HTML4\", \"XML\"]`.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "652",
+          "entity": "GUESS_JSON_UTF",
+          "description": "`GUESS_JSON_UTF` refers to the `guess_json_utf` callable imported from `requests.utils` or the local `.utils` module. Its definition is not visible in the provided code chunks, but it is explicitly referenced by the JSON response-handling method, which calls `guess_json_utf(self.content)` to detect a JSON-compatible character encoding. Related tests verify its behavior with encoded JSON data, invalid zero-byte patterns, and content prefixed with a byte-order mark (BOM).",
+          "number of relationships": "15"
+        },
+        {
+          "id": "602",
+          "entity": "CHUNKEDENCODINGERROR",
+          "description": "`ChunkedEncodingError` is defined here as a subclass of `RequestException`; it represents invalid content in a response declared as chunked encoding.",
+          "number of relationships": "5"
+        },
+        {
+          "id": "1528",
+          "entity": "TESTCONTENTENCODINGDETECTION",
+          "description": "The visible class `TestContentEncodingDetection` groups tests for content-encoding detection, including empty content, pragma formats, and precedence.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "1530",
+          "entity": "TESTCONTENTENCODINGDETECTION.TEST_PRAGMAS",
+          "description": "The method `TestContentEncodingDetection.test_pragmas` is parametrized with HTML5, HTML4, XHTML, and XML declarations and asserts one detected encoding equal to `\"UTF-8\"`.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "76",
+          "entity": "CHARSET_NORMALIZER",
+          "description": "`CHARSET_NORMALIZER` is a Python dependency specified as `charset_normalizer>=2,<4` in `requires-dist`. Requests may use the `charset_normalizer` library to infer a response’s character encoding when no explicit charset is provided. Its detailed definition and implementation are not visible in the available context.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "1061",
+          "entity": "TEST_JSON_DECODE_COMPATIBILITY_FOR_ALT_UTF_ENCODINGS",
+          "description": "The test function `test_json_decode_compatibility_for_alt_utf_encodings` is defined here. It requests an HTTP response containing alternate-encoded JSON, clears `r.encoding`, calls `r.json()`, and asserts JSON decoding exception behavior.",
+          "number of relationships": "9"
+        },
+        {
+          "id": "1339",
+          "entity": "TEST_STREAM_WITH_AUTH_DOES_NOT_SET_TRANSFER_ENCODING_HEADER",
+          "description": "`TEST_STREAM_WITH_AUTH_DOES_NOT_SET_TRANSFER_ENCODING_HEADER` refers to the test method `test_stream_with_auth_does_not_set_transfer_encoding_header`. The test prepares authenticated POST requests using an `io.BytesIO` stream and verifies how request body size affects HTTP headers: for a non-empty body containing `b\"test data\"`, `Transfer-Encoding` is absent and `Content-Length` is present; for a zero-byte body, `Transfer-Encoding` is present and `Content-Length` is absent. Thus, despite its name, the test covers distinct header behavior for non-empty and empty authenticated streams.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "920",
+          "entity": "GET_UNICODE_FROM_RESPONSE",
+          "description": "Defines the module-level function `get_unicode_from_response(r)`. It emits a `DeprecationWarning`, obtains an encoding from `r.headers`, first tries `str(r.content, encoding)`, records `UnicodeError` failures, then falls back to replacement decoding and returns `r.content` when that fallback raises `TypeError`.",
+          "number of relationships": "6"
+        },
+        {
+          "id": "19",
+          "entity": "RESPONSE.HEADERS",
+          "description": "The value spelling `Response.headers` is explicitly referenced through `r.headers`; the example reads headers received from the server, and its concrete definition is not visible here.",
+          "number of relationships": "5"
+        },
+        {
+          "id": "1555",
+          "entity": "TEST_GET_ENCODING_FROM_HEADERS",
+          "description": "Defined test function `test_get_encoding_from_headers(value, expected)`. It asserts encoding results for `CaseInsensitiveDict` headers, including UTF-8 content types and the `\"ISO-8859-1\"` fallback.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "375",
+          "entity": "DECODE",
+          "description": "DECODE refers to explicitly invoked or referenced `decode` methods used to convert byte-oriented values into text. It appears in `r.content.decode(\"ascii\")`, `req.url.decode(\"utf-8\")` within `build_response` when `req.url` is a `bytes` value, and `field.decode(\"utf-8\")`, although the concrete receiver types are not always visible. It is also called on the result of the external `idna.encode(host, uts46=True)` operation via `.decode(\"utf-8\")`. Additionally, `self.content.decode(encoding)` and `self.reason.decode(\"utf-8\")` or `self.reason.decode(\"iso-8859-1\")` are referenced. Overall, DECODE represents byte-to-string conversion calls with encodings including ASCII, UTF-8, ISO-8859-1, and a dynamically supplied encoding; the underlying method definitions and some receiver bindings remain unresolved.",
+          "number of relationships": "6"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "columns": [
+        "id",
+        "source",
+        "text"
+      ],
+      "rows": [
+        {
+          "id": "48",
+          "text": "        hooks = hooks or []\n        for event in hooks:\n            self.register_hook(event, hooks[event])\n\n\nclass Response:\n    \"\"\"The :class:`Response <Response>` object, which contains a\n    server's response to an HTTP request.\n    \"\"\"\n\n    __attrs__ = [\n        \"_content\",\n        \"status_code\",\n        \"headers\",\n        \"url\",\n        \"history\",\n        \"encoding\",\n        \"reason\",\n        \"cookies\",\n        \"elapsed\",\n        \"request\",\n    ]\n\n    def __init__(self):\n        self._content = False\n        self._content_consumed = False\n        self._next = None\n\n        #: Integer Code of responded HTTP Status, e.g. 404 or 200.\n        self.status_code = None\n\n        #: Case-insensitive Dictionary of Response Headers.\n        #: For example, ``headers['content-encoding']`` will return the\n        #: value of a ``'Content-Encoding'`` response header.\n        self.headers = CaseInsensitiveDict()\n\n        #: File-like object representation of response (for advanced usage).\n        #: Use of ``raw`` requires that ``stream=True`` be set on the request.\n        #: This requirement does not apply for use internally to Requests.\n        self.raw = None\n\n        #: Final URL location of Response.\n        self.url = None\n\n        #: Encoding to decode with when accessing r.text.\n        self.encoding = None\n\n        #: A list of :class:`Response <Response>` objects from\n        #: the history of the Request. Any redirect responses will end\n        #: up here. The list is sorted from the oldest to the most recent request.\n        self.history = []\n\n        #: Textual reason of responded HTTP Status, e.g. \"Not Found\" or \"OK\".\n        self.reason = None\n\n        #: A CookieJar of Cookies the server sent back.\n        self.cookies = cookiejar_from_dict({})\n\n        #: The amount of time elapsed between sending the request\n        #: and the arrival of the response (as a timedelta).\n        #: This property specifically measures the time taken between sending\n        #: the first byte of the request and finishing parsing the headers. It\n        #: is therefore unaffected by consuming the response content or the\n        #: value of the ``stream`` keyword argument.\n        self.elapsed = datetime.timedelta(0)\n\n        #: The :class:`PreparedRequest <PreparedRequest>` object to which this\n        #: is a response.\n        self.request = None\n\n    def __enter__(self):\n        return self\n\n    def __exit__(self, *args):\n        self.close()\n\n    def __getstate__(self):\n        # Consume everything; accessing the content attribute makes\n        # sure the content has been fully read.\n        if not self._content_consumed:\n            self.content\n\n        return {attr: getattr(self, attr, None) for attr in self.__attrs__}\n\n    def __setstate__(self, state):\n        for name, value in state.items():\n            setattr(self, name, value)\n\n        # pickled objects do not have .raw\n        setattr(self, \"_content_consumed\", True)\n        setattr(self, \"raw\", None)\n\n    def __repr__(self):\n        return f\"<Response [{self.status_code}]>\"\n\n    def __bool__(self):\n        \"\"\"Returns True if :attr:`status_code` is less than 400.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code, is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\n        return self.ok\n\n    def __nonzero__(self):\n        \"\"\"Returns True if :attr:`status_code` is less than 400.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code, is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\n        return self.ok\n\n    def __iter__(self):\n        \"\"\"Allows you to use a response as an iterator.\"\"\"\n        return self.iter_content(128)\n\n    @property\n    def ok(self):\n        \"\"\"Returns True if :attr:`status_code` is less than 400, False if not.\n\n        This attribute checks if the status code of the response is between\n        400 and 600 to see if there was a client error or a server error. If\n        the status code is between 200 and 400, this will return True. This\n        is **not** a check to see if the response code is ``200 OK``.\n        \"\"\"\n        try:\n            self.raise_for_status()\n        except HTTPError:\n            return False\n        return True\n\n    @property\n    def is_redirect(self):\n        \"\"\"True if this Response is a well-formed HTTP redirect that could have\n        been processed automatically (by :meth:`Session.resolve_redirects`).\n        \"\"\"\n        return \"location\" in self.headers and self.status_code in REDIRECT_STATI\n\n    @property\n    def is_permanent_redirect(self):\n        \"\"\"True if this Response one of the permanent versions of redirect.\"\"\"\n        return \"location\" in self.headers and self.status_code in (\n            codes.moved_permanently,\n            codes.permanent_redirect,\n        )\n\n    @property\n    def next(self):\n        \"\"\"Returns a PreparedRequest for the next request in a redirect chain, if there is one.\"\"\"\n        return self._next\n\n    @property\n    def apparent_encoding(self):\n",
+          "source": "src/requests/models.py:L635-L790"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "short_id": "48",
+      "text_unit_id": "c2595a0671c939e229a84e1dcd2321cd3887b1ffe40c2ac840acc8dfb42c7714737e97f632be571e79735c34c1df7dbc3afdba1fc7237c316c18c49240a9e8d7",
+      "id": "af91d526981fde7ba83847cc4e6b45e887780b5d0f8afaba004468b77b9cfffa",
+      "title": "src/requests/models.py:L635-L790",
+      "path": "src/requests/models.py",
+      "start_line": 635,
+      "end_line": 790,
+      "tokens": 1194,
+      "text_sha256": "5c17533c8622760bb0698ad8433f5d83202f1c33b1cdc42a06910b6cc092c938",
+      "ms_text_unit_id": "c2595a0671c939e229a84e1dcd2321cd3887b1ffe40c2ac840acc8dfb42c7714737e97f632be571e79735c34c1df7dbc3afdba1fc7237c316c18c49240a9e8d7"
+    }
+  ],
+  "raw_context_tokens": 2590,
+  "final_context_tokens": 2647,
+  "source_text_tokens": 1194,
+  "source_chunks": 1,
+  "retrieval_compute_seconds": 0.010467334650456905,
+  "adaptation_seconds": 0.002930082380771637,
+  "empty_reason": null,
+  "community_level": 2,
+  "dropped_tail_rows": 0
+}

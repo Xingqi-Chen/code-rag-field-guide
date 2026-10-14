@@ -1,0 +1,425 @@
+{
+  "variant": "code-prompt",
+  "question_id": "Q08",
+  "method": "ms_local_code_prompt",
+  "budget": 4000,
+  "query": "Trace session-level and request-level headers into the prepared request and then to header validation.",
+  "upstream_raw_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n691|PREPARE_HEADERS|The method `prepare_headers(self, headers)` is defined here, initializes `self.headers` as `CaseInsensitiveDict`, validates each header with `check_header_validity`, converts header names with `to_native_string`, and stores the values. The owning class is not visible in this chunk.|5\n1272|TEST_HEADER_VALIDATION|The test `test_header_validation` is visibly defined here. Its documentation states that valid header contents must not be rejected; it calls `requests.get(httpbin(\"get\"), headers=valid_headers)` and asserts each input header value equals the corresponding request header value.|2\n803|PREPARE_REQUEST|The method `prepare_request` is defined in the visible class body, but the owning class is not shown; it converts request cookies, merges session and request settings, prepares a `PreparedRequest`, and returns it.|11\n23|SESSION.PREPARE_REQUEST|`Session.prepare_request()` is explicitly referenced as the session-aware preparation method that applies session-level state, including cookies, to a `Request`.|2\n650|CHECK_HEADER_VALIDITY|`CHECK_HEADER_VALIDITY` refers to the `check_header_validity` utility imported from `.utils`. It is explicitly called by `prepare_headers` for each header before the headers are stored, although its definition and implementation are not visible in the available code. No other uses of `check_header_validity` are visible in the provided code segment.|3\n1130|TEST_HEADERS_PRESERVE_ORDER|The test function `test_headers_preserve_order` is defined here. It uses `collections.OrderedDict` for session and request headers and asserts the prepared header items preserve the expected order and override `Second` with `\"222\"`.|6\n11|REQUEST.PREPARE|`REQUEST.PREPARE` refers to the `Request.prepare` method. The method constructs a `PreparedRequest` object, passes the request configuration and hooks to its `prepare(...)` method, and returns the prepared request. It is invoked through expressions such as `req.prepare()` and `r.prepare()`, although some references do not establish the receiver’s concrete class or runtime binding. In usage, the returned prepared request is assigned to `prepped`, after which its body and headers may be modified before it is sent.|6\n13|PREPAREDREQUEST|`PreparedRequest` is the prepared HTTP request object produced before transmission and used internally by API or session calls. Response objects expose the corresponding prepared request through their `request` attribute. The `PreparedRequest` class inherits from `RequestEncodingMixin` and `RequestHooksMixin`, and its constructor initializes the request method, URL, headers, cookies, and body state to `None` before those values are populated.|13\n17|SESSION.HEADERS|The class-scoped value spelling `Session.headers` is explicitly referenced through `s.headers.update({'x-test': 'true'})`; the example documents default session headers, but does not show a class definition.|2\n1129|TEST_HEADERS_ON_SESSION_WITH_NONE_ARE_NOT_SENT|The test function `test_headers_on_session_with_None_are_not_sent` is defined here. It assigns `None` to `ses.headers[\"Accept-Encoding\"]`, prepares a request, and asserts that header is absent from `prep.headers`.|4\n20|RESPONSE.REQUEST|The value spelling `Response.request` is explicitly referenced through `r.request` and `r.request.headers`; the documentation states that it contains the request associated with the response, while the prepared-request section identifies it as a `PreparedRequest` for API or Session calls.|1\n517|MOCKRESPONSE.__INIT__|Defined initializer exact `__init__(self, headers)`; stores the supplied headers object in `_headers`.|1\n508|MOCKREQUEST.HAS_HEADER|Defined method exact `has_header(self, name)`; checks whether `name` exists in the request headers or newly collected headers.|1\n1271|TEST_HEADER_KEYS_ARE_NATIVE|The test `test_header_keys_are_native` is visibly defined here. It prepares a `requests.Request` with string and bytes header keys and asserts `\"unicode\"` and `\"byte\"` are present in `p.headers.keys()`.|4\n341|_URLLIB3_REQUEST_CONTEXT|Module-level function taking a `PreparedRequest`, verification option, client certificate option, and `PoolManager`; it parses the request URL, selects SSL certificate requirements and pool keyword arguments, and returns `(host_params, pool_kwargs)`.|10\n512|MOCKREQUEST.GET_NEW_HEADERS|Defined method exact `get_new_headers(self)`; returns the `_new_headers` mapping.|2\n686|PREPARE|The method `prepare(self, method=None, url=None, headers=None, files=None, data=None, params=None, auth=None, cookies=None, hooks=None, json=None)` is defined here and coordinates request preparation by calling method, URL, header, cookie, body, authentication, and hook preparation methods. The owning class is not visible in this chunk.|19\n\n\n-----Relationships-----\nid|source|target|description|weight|links\n2068|TEST_HEADER_VALIDATION|HTTPBIN|CALLS, direction test_header_validation -> httpbin: the test visibly calls `httpbin(\"get\")` as the URL argument to `requests.get`.|9.0|1\n2067|TEST_HEADER_VALIDATION|REQUESTS.GET|TESTS, direction test_header_validation -> requests.get: the test calls `requests.get(httpbin(\"get\"), headers=valid_headers)` and checks copied request header values.|9.0|1\n914|PREPARE_HEADERS|CASEINSENSITIVEDICT|CALLS, `prepare_headers` constructs `CaseInsensitiveDict()` before processing headers; the class definition is not visible.|10.0|1\n894|PREPARE|PREPARE_HEADERS|CALLS, `prepare` calls `self.prepare_headers(headers)`; the receiver is syntactically `self` and runtime class binding is not independently proven.|10.0|1\n916|PREPARE_HEADERS|TO_NATIVE_STRING|CALLS, `prepare_headers` calls `to_native_string(name)` when storing each header name.|9.0|1\n915|PREPARE_HEADERS|CHECK_HEADER_VALIDITY|CALLS, `prepare_headers` calls `check_header_validity(header)` for each header before storing it; the callee definition is not visible.|10.0|1\n929|PREPARE_HEADERS|HEADERS.ITEMS|CALLS, `prepare_headers` calls `headers.items()` when supplied headers are truthy; the receiver's concrete mapping type is not established.|10.0|1\n\n\n-----Sources-----\nid|text\n46|        #: HTTP verb to send to the server.\n        self.method = None\n        #: HTTP URL to send the request to.\n        self.url = None\n        #: dictionary of HTTP headers.\n        self.headers = None\n        # The `CookieJar` used to create the Cookie header will be stored here\n        # after prepare_cookies is called\n        self._cookies = None\n        #: request body to send to the server.\n        self.body = None\n        #: dictionary of callback hooks, for internal usage.\n        self.hooks = default_hooks()\n        #: integer denoting starting position of a readable file-like body.\n        self._body_position = None\n\n    def prepare(\n        self,\n        method=None,\n        url=None,\n        headers=None,\n        files=None,\n        data=None,\n        params=None,\n        auth=None,\n        cookies=None,\n        hooks=None,\n        json=None,\n    ):\n        \"\"\"Prepares the entire request with the given parameters.\"\"\"\n\n        self.prepare_method(method)\n        self.prepare_url(url, params)\n        self.prepare_headers(headers)\n        self.prepare_cookies(cookies)\n        self.prepare_body(data, files, json)\n        self.prepare_auth(auth, url)\n\n        # Note that prepare_auth must be last to enable authentication schemes\n        # such as OAuth to work on a fully prepared request.\n\n        # This MUST go after prepare_auth. Authenticators could add a hook\n        self.prepare_hooks(hooks)\n\n    def __repr__(self):\n        return f\"<PreparedRequest [{self.method}]>\"\n\n    def copy(self):\n        p = PreparedRequest()\n        p.method = self.method\n        p.url = self.url\n        p.headers = self.headers.copy() if self.headers is not None else None\n        p._cookies = _copy_cookie_jar(self._cookies)\n        p.body = self.body\n        p.hooks = self.hooks\n        p._body_position = self._body_position\n        return p\n\n    def prepare_method(self, method):\n        \"\"\"Prepares the given HTTP method.\"\"\"\n        self.method = method\n        if self.method is not None:\n            self.method = to_native_string(self.method.upper())\n\n    @staticmethod\n    def _get_idna_encoded_host(host):\n        import idna\n\n        try:\n            host = idna.encode(host, uts46=True).decode(\"utf-8\")\n        except idna.IDNAError:\n            raise UnicodeError\n        return host\n\n    def prepare_url(self, url, params):\n        \"\"\"Prepares the given HTTP URL.\"\"\"\n        #: Accept objects that have string representations.\n        #: We're unable to blindly call unicode/str functions\n        #: as this will include the bytestring indicator (b'')\n        #: on python 3.x.\n        #: https://github.com/psf/requests/pull/2238\n        if isinstance(url, bytes):\n            url = url.decode(\"utf8\")\n        else:\n            url = str(url)\n\n        # Remove leading whitespaces from url\n        url = url.lstrip()\n\n        # Don't do any URL preparation for non-HTTP schemes like `mailto`,\n        # `data` etc to work around exceptions from `url_parse`, which\n        # handles RFC 3986 only.\n        if \":\" in url and not url.lower().startswith(\"http\"):\n            self.url = url\n            return\n\n        # Support for unicode domain names and paths.\n        try:\n            scheme, auth, host, port, path, query, fragment = parse_url(url)\n        except LocationParseError as e:\n            raise InvalidURL(*e.args)\n\n        if not scheme:\n            raise MissingSchema(\n                f\"Invalid URL {url!r}: No scheme supplied. \"\n                f\"Perhaps you meant https://{url}?\"\n            )\n\n        if not host:\n            raise InvalidURL(f\"Invalid URL {url!r}: No host supplied\")\n\n        # In general, we want to try IDNA encoding the hostname if the string contains\n        # non-ASCII characters. This allows users to automatically get the correct IDNA\n        # behaviour. For strings containing only ASCII characters, we need to also verify\n        # it doesn't start with a wildcard (*), before allowing the unencoded hostname.\n        if not unicode_is_ascii(host):\n            try:\n                host = self._get_idna_encoded_host(host)\n            except UnicodeError:\n                raise InvalidURL(\"URL has an invalid label.\")\n        elif host.startswith((\"*\", \".\")):\n            raise InvalidURL(\"URL has an invalid label.\")\n\n        # Carefully reconstruct the network location\n        netloc = auth or \"\"\n        if netloc:\n            netloc += \"@\"\n        netloc += host\n        if port:\n            netloc += f\":{port}\"\n\n        # Bare domains aren't valid URLs.\n        if not path:\n            path = \"/\"\n\n        if isinstance(params, (str, bytes)):\n            params = to_native_string(params)\n\n        enc_params = self._encode_params(params)\n        if enc_params:\n            if query:\n                query = f\"{query}&{enc_params}\"\n            else:\n                query = enc_params\n\n        url = requote_uri(urlunparse([scheme, netloc, path, None, query, fragment]))\n        self.url = url\n\n    def prepare_headers(self, headers):\n        \"\"\"Prepares the given HTTP headers.\"\"\"\n\n        self.headers = CaseInsensitiveDict()\n        if headers:\n            for header in headers.items():\n                # Raise exception on invalid header value.\n                check_header_validity(header)\n                name, value = header\n                self.headers[to_native_string(name)] = value\n\n    def prepare_body(self, data, files, json=None):\n        \"\"\"Prepares the given HTTP body data.\"\"\"\n\n        # Check if file, fo, generator, iterator.\n        # If not, run through normal process.\n\n        # Nottin' on you.\n        body = None\n\n",
+  "upstream_raw_records": {
+    "relationships": [
+      {
+        "id": "2068",
+        "source": "TEST_HEADER_VALIDATION",
+        "target": "HTTPBIN",
+        "description": "CALLS, direction test_header_validation -> httpbin: the test visibly calls `httpbin(\"get\")` as the URL argument to `requests.get`.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "2067",
+        "source": "TEST_HEADER_VALIDATION",
+        "target": "REQUESTS.GET",
+        "description": "TESTS, direction test_header_validation -> requests.get: the test calls `requests.get(httpbin(\"get\"), headers=valid_headers)` and checks copied request header values.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "914",
+        "source": "PREPARE_HEADERS",
+        "target": "CASEINSENSITIVEDICT",
+        "description": "CALLS, `prepare_headers` constructs `CaseInsensitiveDict()` before processing headers; the class definition is not visible.",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "894",
+        "source": "PREPARE",
+        "target": "PREPARE_HEADERS",
+        "description": "CALLS, `prepare` calls `self.prepare_headers(headers)`; the receiver is syntactically `self` and runtime class binding is not independently proven.",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "916",
+        "source": "PREPARE_HEADERS",
+        "target": "TO_NATIVE_STRING",
+        "description": "CALLS, `prepare_headers` calls `to_native_string(name)` when storing each header name.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "915",
+        "source": "PREPARE_HEADERS",
+        "target": "CHECK_HEADER_VALIDITY",
+        "description": "CALLS, `prepare_headers` calls `check_header_validity(header)` for each header before storing it; the callee definition is not visible.",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "929",
+        "source": "PREPARE_HEADERS",
+        "target": "HEADERS.ITEMS",
+        "description": "CALLS, `prepare_headers` calls `headers.items()` when supplied headers are truthy; the receiver's concrete mapping type is not established.",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      }
+    ],
+    "entities": [
+      {
+        "id": "691",
+        "entity": "PREPARE_HEADERS",
+        "description": "The method `prepare_headers(self, headers)` is defined here, initializes `self.headers` as `CaseInsensitiveDict`, validates each header with `check_header_validity`, converts header names with `to_native_string`, and stores the values. The owning class is not visible in this chunk.",
+        "number of relationships": "5",
+        "in_context": true
+      },
+      {
+        "id": "1272",
+        "entity": "TEST_HEADER_VALIDATION",
+        "description": "The test `test_header_validation` is visibly defined here. Its documentation states that valid header contents must not be rejected; it calls `requests.get(httpbin(\"get\"), headers=valid_headers)` and asserts each input header value equals the corresponding request header value.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "803",
+        "entity": "PREPARE_REQUEST",
+        "description": "The method `prepare_request` is defined in the visible class body, but the owning class is not shown; it converts request cookies, merges session and request settings, prepares a `PreparedRequest`, and returns it.",
+        "number of relationships": "11",
+        "in_context": true
+      },
+      {
+        "id": "23",
+        "entity": "SESSION.PREPARE_REQUEST",
+        "description": "`Session.prepare_request()` is explicitly referenced as the session-aware preparation method that applies session-level state, including cookies, to a `Request`.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "650",
+        "entity": "CHECK_HEADER_VALIDITY",
+        "description": "`CHECK_HEADER_VALIDITY` refers to the `check_header_validity` utility imported from `.utils`. It is explicitly called by `prepare_headers` for each header before the headers are stored, although its definition and implementation are not visible in the available code. No other uses of `check_header_validity` are visible in the provided code segment.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "1130",
+        "entity": "TEST_HEADERS_PRESERVE_ORDER",
+        "description": "The test function `test_headers_preserve_order` is defined here. It uses `collections.OrderedDict` for session and request headers and asserts the prepared header items preserve the expected order and override `Second` with `\"222\"`.",
+        "number of relationships": "6",
+        "in_context": true
+      },
+      {
+        "id": "11",
+        "entity": "REQUEST.PREPARE",
+        "description": "`REQUEST.PREPARE` refers to the `Request.prepare` method. The method constructs a `PreparedRequest` object, passes the request configuration and hooks to its `prepare(...)` method, and returns the prepared request. It is invoked through expressions such as `req.prepare()` and `r.prepare()`, although some references do not establish the receiver’s concrete class or runtime binding. In usage, the returned prepared request is assigned to `prepped`, after which its body and headers may be modified before it is sent.",
+        "number of relationships": "6",
+        "in_context": true
+      },
+      {
+        "id": "13",
+        "entity": "PREPAREDREQUEST",
+        "description": "`PreparedRequest` is the prepared HTTP request object produced before transmission and used internally by API or session calls. Response objects expose the corresponding prepared request through their `request` attribute. The `PreparedRequest` class inherits from `RequestEncodingMixin` and `RequestHooksMixin`, and its constructor initializes the request method, URL, headers, cookies, and body state to `None` before those values are populated.",
+        "number of relationships": "13",
+        "in_context": true
+      },
+      {
+        "id": "17",
+        "entity": "SESSION.HEADERS",
+        "description": "The class-scoped value spelling `Session.headers` is explicitly referenced through `s.headers.update({'x-test': 'true'})`; the example documents default session headers, but does not show a class definition.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "1129",
+        "entity": "TEST_HEADERS_ON_SESSION_WITH_NONE_ARE_NOT_SENT",
+        "description": "The test function `test_headers_on_session_with_None_are_not_sent` is defined here. It assigns `None` to `ses.headers[\"Accept-Encoding\"]`, prepares a request, and asserts that header is absent from `prep.headers`.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "20",
+        "entity": "RESPONSE.REQUEST",
+        "description": "The value spelling `Response.request` is explicitly referenced through `r.request` and `r.request.headers`; the documentation states that it contains the request associated with the response, while the prepared-request section identifies it as a `PreparedRequest` for API or Session calls.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "517",
+        "entity": "MOCKRESPONSE.__INIT__",
+        "description": "Defined initializer exact `__init__(self, headers)`; stores the supplied headers object in `_headers`.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "508",
+        "entity": "MOCKREQUEST.HAS_HEADER",
+        "description": "Defined method exact `has_header(self, name)`; checks whether `name` exists in the request headers or newly collected headers.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1271",
+        "entity": "TEST_HEADER_KEYS_ARE_NATIVE",
+        "description": "The test `test_header_keys_are_native` is visibly defined here. It prepares a `requests.Request` with string and bytes header keys and asserts `\"unicode\"` and `\"byte\"` are present in `p.headers.keys()`.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "341",
+        "entity": "_URLLIB3_REQUEST_CONTEXT",
+        "description": "Module-level function taking a `PreparedRequest`, verification option, client certificate option, and `PoolManager`; it parses the request URL, selects SSL certificate requirements and pool keyword arguments, and returns `(host_params, pool_kwargs)`.",
+        "number of relationships": "10",
+        "in_context": true
+      },
+      {
+        "id": "512",
+        "entity": "MOCKREQUEST.GET_NEW_HEADERS",
+        "description": "Defined method exact `get_new_headers(self)`; returns the `_new_headers` mapping.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "686",
+        "entity": "PREPARE",
+        "description": "The method `prepare(self, method=None, url=None, headers=None, files=None, data=None, params=None, auth=None, cookies=None, hooks=None, json=None)` is defined here and coordinates request preparation by calling method, URL, header, cookie, body, authentication, and hook preparation methods. The owning class is not visible in this chunk.",
+        "number of relationships": "19",
+        "in_context": true
+      }
+    ],
+    "sources": [
+      {
+        "id": "46",
+        "text": "        #: HTTP verb to send to the server.\n        self.method = None\n        #: HTTP URL to send the request to.\n        self.url = None\n        #: dictionary of HTTP headers.\n        self.headers = None\n        # The `CookieJar` used to create the Cookie header will be stored here\n        # after prepare_cookies is called\n        self._cookies = None\n        #: request body to send to the server.\n        self.body = None\n        #: dictionary of callback hooks, for internal usage.\n        self.hooks = default_hooks()\n        #: integer denoting starting position of a readable file-like body.\n        self._body_position = None\n\n    def prepare(\n        self,\n        method=None,\n        url=None,\n        headers=None,\n        files=None,\n        data=None,\n        params=None,\n        auth=None,\n        cookies=None,\n        hooks=None,\n        json=None,\n    ):\n        \"\"\"Prepares the entire request with the given parameters.\"\"\"\n\n        self.prepare_method(method)\n        self.prepare_url(url, params)\n        self.prepare_headers(headers)\n        self.prepare_cookies(cookies)\n        self.prepare_body(data, files, json)\n        self.prepare_auth(auth, url)\n\n        # Note that prepare_auth must be last to enable authentication schemes\n        # such as OAuth to work on a fully prepared request.\n\n        # This MUST go after prepare_auth. Authenticators could add a hook\n        self.prepare_hooks(hooks)\n\n    def __repr__(self):\n        return f\"<PreparedRequest [{self.method}]>\"\n\n    def copy(self):\n        p = PreparedRequest()\n        p.method = self.method\n        p.url = self.url\n        p.headers = self.headers.copy() if self.headers is not None else None\n        p._cookies = _copy_cookie_jar(self._cookies)\n        p.body = self.body\n        p.hooks = self.hooks\n        p._body_position = self._body_position\n        return p\n\n    def prepare_method(self, method):\n        \"\"\"Prepares the given HTTP method.\"\"\"\n        self.method = method\n        if self.method is not None:\n            self.method = to_native_string(self.method.upper())\n\n    @staticmethod\n    def _get_idna_encoded_host(host):\n        import idna\n\n        try:\n            host = idna.encode(host, uts46=True).decode(\"utf-8\")\n        except idna.IDNAError:\n            raise UnicodeError\n        return host\n\n    def prepare_url(self, url, params):\n        \"\"\"Prepares the given HTTP URL.\"\"\"\n        #: Accept objects that have string representations.\n        #: We're unable to blindly call unicode/str functions\n        #: as this will include the bytestring indicator (b'')\n        #: on python 3.x.\n        #: https://github.com/psf/requests/pull/2238\n        if isinstance(url, bytes):\n            url = url.decode(\"utf8\")\n        else:\n            url = str(url)\n\n        # Remove leading whitespaces from url\n        url = url.lstrip()\n\n        # Don't do any URL preparation for non-HTTP schemes like `mailto`,\n        # `data` etc to work around exceptions from `url_parse`, which\n        # handles RFC 3986 only.\n        if \":\" in url and not url.lower().startswith(\"http\"):\n            self.url = url\n            return\n\n        # Support for unicode domain names and paths.\n        try:\n            scheme, auth, host, port, path, query, fragment = parse_url(url)\n        except LocationParseError as e:\n            raise InvalidURL(*e.args)\n\n        if not scheme:\n            raise MissingSchema(\n                f\"Invalid URL {url!r}: No scheme supplied. \"\n                f\"Perhaps you meant https://{url}?\"\n            )\n\n        if not host:\n            raise InvalidURL(f\"Invalid URL {url!r}: No host supplied\")\n\n        # In general, we want to try IDNA encoding the hostname if the string contains\n        # non-ASCII characters. This allows users to automatically get the correct IDNA\n        # behaviour. For strings containing only ASCII characters, we need to also verify\n        # it doesn't start with a wildcard (*), before allowing the unencoded hostname.\n        if not unicode_is_ascii(host):\n            try:\n                host = self._get_idna_encoded_host(host)\n            except UnicodeError:\n                raise InvalidURL(\"URL has an invalid label.\")\n        elif host.startswith((\"*\", \".\")):\n            raise InvalidURL(\"URL has an invalid label.\")\n\n        # Carefully reconstruct the network location\n        netloc = auth or \"\"\n        if netloc:\n            netloc += \"@\"\n        netloc += host\n        if port:\n            netloc += f\":{port}\"\n\n        # Bare domains aren't valid URLs.\n        if not path:\n            path = \"/\"\n\n        if isinstance(params, (str, bytes)):\n            params = to_native_string(params)\n\n        enc_params = self._encode_params(params)\n        if enc_params:\n            if query:\n                query = f\"{query}&{enc_params}\"\n            else:\n                query = enc_params\n\n        url = requote_uri(urlunparse([scheme, netloc, path, None, query, fragment]))\n        self.url = url\n\n    def prepare_headers(self, headers):\n        \"\"\"Prepares the given HTTP headers.\"\"\"\n\n        self.headers = CaseInsensitiveDict()\n        if headers:\n            for header in headers.items():\n                # Raise exception on invalid header value.\n                check_header_validity(header)\n                name, value = header\n                self.headers[to_native_string(name)] = value\n\n    def prepare_body(self, data, files, json=None):\n        \"\"\"Prepares the given HTTP body data.\"\"\"\n\n        # Check if file, fo, generator, iterator.\n        # If not, run through normal process.\n\n        # Nottin' on you.\n        body = None\n"
+      }
+    ]
+  },
+  "final_context": "-----Entities-----\nid|entity|description|number of relationships\n691|PREPARE_HEADERS|The method `prepare_headers(self, headers)` is defined here, initializes `self.headers` as `CaseInsensitiveDict`, validates each header with `check_header_validity`, converts header names with `to_native_string`, and stores the values. The owning class is not visible in this chunk.|5\n1272|TEST_HEADER_VALIDATION|\"The test `test_header_validation` is visibly defined here. Its documentation states that valid header contents must not be rejected; it calls `requests.get(httpbin(\"\"get\"\"), headers=valid_headers)` and asserts each input header value equals the corresponding request header value.\"|2\n803|PREPARE_REQUEST|The method `prepare_request` is defined in the visible class body, but the owning class is not shown; it converts request cookies, merges session and request settings, prepares a `PreparedRequest`, and returns it.|11\n23|SESSION.PREPARE_REQUEST|`Session.prepare_request()` is explicitly referenced as the session-aware preparation method that applies session-level state, including cookies, to a `Request`.|2\n650|CHECK_HEADER_VALIDITY|`CHECK_HEADER_VALIDITY` refers to the `check_header_validity` utility imported from `.utils`. It is explicitly called by `prepare_headers` for each header before the headers are stored, although its definition and implementation are not visible in the available code. No other uses of `check_header_validity` are visible in the provided code segment.|3\n1130|TEST_HEADERS_PRESERVE_ORDER|\"The test function `test_headers_preserve_order` is defined here. It uses `collections.OrderedDict` for session and request headers and asserts the prepared header items preserve the expected order and override `Second` with `\"\"222\"\"`.\"|6\n11|REQUEST.PREPARE|`REQUEST.PREPARE` refers to the `Request.prepare` method. The method constructs a `PreparedRequest` object, passes the request configuration and hooks to its `prepare(...)` method, and returns the prepared request. It is invoked through expressions such as `req.prepare()` and `r.prepare()`, although some references do not establish the receiver’s concrete class or runtime binding. In usage, the returned prepared request is assigned to `prepped`, after which its body and headers may be modified before it is sent.|6\n13|PREPAREDREQUEST|`PreparedRequest` is the prepared HTTP request object produced before transmission and used internally by API or session calls. Response objects expose the corresponding prepared request through their `request` attribute. The `PreparedRequest` class inherits from `RequestEncodingMixin` and `RequestHooksMixin`, and its constructor initializes the request method, URL, headers, cookies, and body state to `None` before those values are populated.|13\n17|SESSION.HEADERS|The class-scoped value spelling `Session.headers` is explicitly referenced through `s.headers.update({'x-test': 'true'})`; the example documents default session headers, but does not show a class definition.|2\n1129|TEST_HEADERS_ON_SESSION_WITH_NONE_ARE_NOT_SENT|\"The test function `test_headers_on_session_with_None_are_not_sent` is defined here. It assigns `None` to `ses.headers[\"\"Accept-Encoding\"\"]`, prepares a request, and asserts that header is absent from `prep.headers`.\"|4\n20|RESPONSE.REQUEST|The value spelling `Response.request` is explicitly referenced through `r.request` and `r.request.headers`; the documentation states that it contains the request associated with the response, while the prepared-request section identifies it as a `PreparedRequest` for API or Session calls.|1\n517|MOCKRESPONSE.__INIT__|Defined initializer exact `__init__(self, headers)`; stores the supplied headers object in `_headers`.|1\n508|MOCKREQUEST.HAS_HEADER|Defined method exact `has_header(self, name)`; checks whether `name` exists in the request headers or newly collected headers.|1\n1271|TEST_HEADER_KEYS_ARE_NATIVE|\"The test `test_header_keys_are_native` is visibly defined here. It prepares a `requests.Request` with string and bytes header keys and asserts `\"\"unicode\"\"` and `\"\"byte\"\"` are present in `p.headers.keys()`.\"|4\n341|_URLLIB3_REQUEST_CONTEXT|Module-level function taking a `PreparedRequest`, verification option, client certificate option, and `PoolManager`; it parses the request URL, selects SSL certificate requirements and pool keyword arguments, and returns `(host_params, pool_kwargs)`.|10\n512|MOCKREQUEST.GET_NEW_HEADERS|Defined method exact `get_new_headers(self)`; returns the `_new_headers` mapping.|2\n686|PREPARE|The method `prepare(self, method=None, url=None, headers=None, files=None, data=None, params=None, auth=None, cookies=None, hooks=None, json=None)` is defined here and coordinates request preparation by calling method, URL, header, cookie, body, authentication, and hook preparation methods. The owning class is not visible in this chunk.|19\n\n-----Relationships-----\nid|source|target|description|weight|links\n2068|TEST_HEADER_VALIDATION|HTTPBIN|\"CALLS, direction test_header_validation -> httpbin: the test visibly calls `httpbin(\"\"get\"\")` as the URL argument to `requests.get`.\"|9.0|1\n2067|TEST_HEADER_VALIDATION|REQUESTS.GET|\"TESTS, direction test_header_validation -> requests.get: the test calls `requests.get(httpbin(\"\"get\"\"), headers=valid_headers)` and checks copied request header values.\"|9.0|1\n914|PREPARE_HEADERS|CASEINSENSITIVEDICT|CALLS, `prepare_headers` constructs `CaseInsensitiveDict()` before processing headers; the class definition is not visible.|10.0|1\n894|PREPARE|PREPARE_HEADERS|CALLS, `prepare` calls `self.prepare_headers(headers)`; the receiver is syntactically `self` and runtime class binding is not independently proven.|10.0|1\n916|PREPARE_HEADERS|TO_NATIVE_STRING|CALLS, `prepare_headers` calls `to_native_string(name)` when storing each header name.|9.0|1\n915|PREPARE_HEADERS|CHECK_HEADER_VALIDITY|CALLS, `prepare_headers` calls `check_header_validity(header)` for each header before storing it; the callee definition is not visible.|10.0|1\n929|PREPARE_HEADERS|HEADERS.ITEMS|CALLS, `prepare_headers` calls `headers.items()` when supplied headers are truthy; the receiver's concrete mapping type is not established.|10.0|1\n\n-----Sources-----\nid|source|text\n46|src/requests/models.py:L335-L501|\"        #: HTTP verb to send to the server.\n        self.method = None\n        #: HTTP URL to send the request to.\n        self.url = None\n        #: dictionary of HTTP headers.\n        self.headers = None\n        # The `CookieJar` used to create the Cookie header will be stored here\n        # after prepare_cookies is called\n        self._cookies = None\n        #: request body to send to the server.\n        self.body = None\n        #: dictionary of callback hooks, for internal usage.\n        self.hooks = default_hooks()\n        #: integer denoting starting position of a readable file-like body.\n        self._body_position = None\n\n    def prepare(\n        self,\n        method=None,\n        url=None,\n        headers=None,\n        files=None,\n        data=None,\n        params=None,\n        auth=None,\n        cookies=None,\n        hooks=None,\n        json=None,\n    ):\n        \"\"\"\"\"\"Prepares the entire request with the given parameters.\"\"\"\"\"\"\n\n        self.prepare_method(method)\n        self.prepare_url(url, params)\n        self.prepare_headers(headers)\n        self.prepare_cookies(cookies)\n        self.prepare_body(data, files, json)\n        self.prepare_auth(auth, url)\n\n        # Note that prepare_auth must be last to enable authentication schemes\n        # such as OAuth to work on a fully prepared request.\n\n        # This MUST go after prepare_auth. Authenticators could add a hook\n        self.prepare_hooks(hooks)\n\n    def __repr__(self):\n        return f\"\"<PreparedRequest [{self.method}]>\"\"\n\n    def copy(self):\n        p = PreparedRequest()\n        p.method = self.method\n        p.url = self.url\n        p.headers = self.headers.copy() if self.headers is not None else None\n        p._cookies = _copy_cookie_jar(self._cookies)\n        p.body = self.body\n        p.hooks = self.hooks\n        p._body_position = self._body_position\n        return p\n\n    def prepare_method(self, method):\n        \"\"\"\"\"\"Prepares the given HTTP method.\"\"\"\"\"\"\n        self.method = method\n        if self.method is not None:\n            self.method = to_native_string(self.method.upper())\n\n    @staticmethod\n    def _get_idna_encoded_host(host):\n        import idna\n\n        try:\n            host = idna.encode(host, uts46=True).decode(\"\"utf-8\"\")\n        except idna.IDNAError:\n            raise UnicodeError\n        return host\n\n    def prepare_url(self, url, params):\n        \"\"\"\"\"\"Prepares the given HTTP URL.\"\"\"\"\"\"\n        #: Accept objects that have string representations.\n        #: We're unable to blindly call unicode/str functions\n        #: as this will include the bytestring indicator (b'')\n        #: on python 3.x.\n        #: https://github.com/psf/requests/pull/2238\n        if isinstance(url, bytes):\n            url = url.decode(\"\"utf8\"\")\n        else:\n            url = str(url)\n\n        # Remove leading whitespaces from url\n        url = url.lstrip()\n\n        # Don't do any URL preparation for non-HTTP schemes like `mailto`,\n        # `data` etc to work around exceptions from `url_parse`, which\n        # handles RFC 3986 only.\n        if \"\":\"\" in url and not url.lower().startswith(\"\"http\"\"):\n            self.url = url\n            return\n\n        # Support for unicode domain names and paths.\n        try:\n            scheme, auth, host, port, path, query, fragment = parse_url(url)\n        except LocationParseError as e:\n            raise InvalidURL(*e.args)\n\n        if not scheme:\n            raise MissingSchema(\n                f\"\"Invalid URL {url!r}: No scheme supplied. \"\"\n                f\"\"Perhaps you meant https://{url}?\"\"\n            )\n\n        if not host:\n            raise InvalidURL(f\"\"Invalid URL {url!r}: No host supplied\"\")\n\n        # In general, we want to try IDNA encoding the hostname if the string contains\n        # non-ASCII characters. This allows users to automatically get the correct IDNA\n        # behaviour. For strings containing only ASCII characters, we need to also verify\n        # it doesn't start with a wildcard (*), before allowing the unencoded hostname.\n        if not unicode_is_ascii(host):\n            try:\n                host = self._get_idna_encoded_host(host)\n            except UnicodeError:\n                raise InvalidURL(\"\"URL has an invalid label.\"\")\n        elif host.startswith((\"\"*\"\", \"\".\"\")):\n            raise InvalidURL(\"\"URL has an invalid label.\"\")\n\n        # Carefully reconstruct the network location\n        netloc = auth or \"\"\"\"\n        if netloc:\n            netloc += \"\"@\"\"\n        netloc += host\n        if port:\n            netloc += f\"\":{port}\"\"\n\n        # Bare domains aren't valid URLs.\n        if not path:\n            path = \"\"/\"\"\n\n        if isinstance(params, (str, bytes)):\n            params = to_native_string(params)\n\n        enc_params = self._encode_params(params)\n        if enc_params:\n            if query:\n                query = f\"\"{query}&{enc_params}\"\"\n            else:\n                query = enc_params\n\n        url = requote_uri(urlunparse([scheme, netloc, path, None, query, fragment]))\n        self.url = url\n\n    def prepare_headers(self, headers):\n        \"\"\"\"\"\"Prepares the given HTTP headers.\"\"\"\"\"\"\n\n        self.headers = CaseInsensitiveDict()\n        if headers:\n            for header in headers.items():\n                # Raise exception on invalid header value.\n                check_header_validity(header)\n                name, value = header\n                self.headers[to_native_string(name)] = value\n\n    def prepare_body(self, data, files, json=None):\n        \"\"\"\"\"\"Prepares the given HTTP body data.\"\"\"\"\"\"\n\n        # Check if file, fo, generator, iterator.\n        # If not, run through normal process.\n\n        # Nottin' on you.\n        body = None\n\"\n",
+  "final_tables": [
+    {
+      "name": "entities",
+      "columns": [
+        "id",
+        "entity",
+        "description",
+        "number of relationships"
+      ],
+      "rows": [
+        {
+          "id": "691",
+          "entity": "PREPARE_HEADERS",
+          "description": "The method `prepare_headers(self, headers)` is defined here, initializes `self.headers` as `CaseInsensitiveDict`, validates each header with `check_header_validity`, converts header names with `to_native_string`, and stores the values. The owning class is not visible in this chunk.",
+          "number of relationships": "5"
+        },
+        {
+          "id": "1272",
+          "entity": "TEST_HEADER_VALIDATION",
+          "description": "The test `test_header_validation` is visibly defined here. Its documentation states that valid header contents must not be rejected; it calls `requests.get(httpbin(\"get\"), headers=valid_headers)` and asserts each input header value equals the corresponding request header value.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "803",
+          "entity": "PREPARE_REQUEST",
+          "description": "The method `prepare_request` is defined in the visible class body, but the owning class is not shown; it converts request cookies, merges session and request settings, prepares a `PreparedRequest`, and returns it.",
+          "number of relationships": "11"
+        },
+        {
+          "id": "23",
+          "entity": "SESSION.PREPARE_REQUEST",
+          "description": "`Session.prepare_request()` is explicitly referenced as the session-aware preparation method that applies session-level state, including cookies, to a `Request`.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "650",
+          "entity": "CHECK_HEADER_VALIDITY",
+          "description": "`CHECK_HEADER_VALIDITY` refers to the `check_header_validity` utility imported from `.utils`. It is explicitly called by `prepare_headers` for each header before the headers are stored, although its definition and implementation are not visible in the available code. No other uses of `check_header_validity` are visible in the provided code segment.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "1130",
+          "entity": "TEST_HEADERS_PRESERVE_ORDER",
+          "description": "The test function `test_headers_preserve_order` is defined here. It uses `collections.OrderedDict` for session and request headers and asserts the prepared header items preserve the expected order and override `Second` with `\"222\"`.",
+          "number of relationships": "6"
+        },
+        {
+          "id": "11",
+          "entity": "REQUEST.PREPARE",
+          "description": "`REQUEST.PREPARE` refers to the `Request.prepare` method. The method constructs a `PreparedRequest` object, passes the request configuration and hooks to its `prepare(...)` method, and returns the prepared request. It is invoked through expressions such as `req.prepare()` and `r.prepare()`, although some references do not establish the receiver’s concrete class or runtime binding. In usage, the returned prepared request is assigned to `prepped`, after which its body and headers may be modified before it is sent.",
+          "number of relationships": "6"
+        },
+        {
+          "id": "13",
+          "entity": "PREPAREDREQUEST",
+          "description": "`PreparedRequest` is the prepared HTTP request object produced before transmission and used internally by API or session calls. Response objects expose the corresponding prepared request through their `request` attribute. The `PreparedRequest` class inherits from `RequestEncodingMixin` and `RequestHooksMixin`, and its constructor initializes the request method, URL, headers, cookies, and body state to `None` before those values are populated.",
+          "number of relationships": "13"
+        },
+        {
+          "id": "17",
+          "entity": "SESSION.HEADERS",
+          "description": "The class-scoped value spelling `Session.headers` is explicitly referenced through `s.headers.update({'x-test': 'true'})`; the example documents default session headers, but does not show a class definition.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "1129",
+          "entity": "TEST_HEADERS_ON_SESSION_WITH_NONE_ARE_NOT_SENT",
+          "description": "The test function `test_headers_on_session_with_None_are_not_sent` is defined here. It assigns `None` to `ses.headers[\"Accept-Encoding\"]`, prepares a request, and asserts that header is absent from `prep.headers`.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "20",
+          "entity": "RESPONSE.REQUEST",
+          "description": "The value spelling `Response.request` is explicitly referenced through `r.request` and `r.request.headers`; the documentation states that it contains the request associated with the response, while the prepared-request section identifies it as a `PreparedRequest` for API or Session calls.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "517",
+          "entity": "MOCKRESPONSE.__INIT__",
+          "description": "Defined initializer exact `__init__(self, headers)`; stores the supplied headers object in `_headers`.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "508",
+          "entity": "MOCKREQUEST.HAS_HEADER",
+          "description": "Defined method exact `has_header(self, name)`; checks whether `name` exists in the request headers or newly collected headers.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1271",
+          "entity": "TEST_HEADER_KEYS_ARE_NATIVE",
+          "description": "The test `test_header_keys_are_native` is visibly defined here. It prepares a `requests.Request` with string and bytes header keys and asserts `\"unicode\"` and `\"byte\"` are present in `p.headers.keys()`.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "341",
+          "entity": "_URLLIB3_REQUEST_CONTEXT",
+          "description": "Module-level function taking a `PreparedRequest`, verification option, client certificate option, and `PoolManager`; it parses the request URL, selects SSL certificate requirements and pool keyword arguments, and returns `(host_params, pool_kwargs)`.",
+          "number of relationships": "10"
+        },
+        {
+          "id": "512",
+          "entity": "MOCKREQUEST.GET_NEW_HEADERS",
+          "description": "Defined method exact `get_new_headers(self)`; returns the `_new_headers` mapping.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "686",
+          "entity": "PREPARE",
+          "description": "The method `prepare(self, method=None, url=None, headers=None, files=None, data=None, params=None, auth=None, cookies=None, hooks=None, json=None)` is defined here and coordinates request preparation by calling method, URL, header, cookie, body, authentication, and hook preparation methods. The owning class is not visible in this chunk.",
+          "number of relationships": "19"
+        }
+      ]
+    },
+    {
+      "name": "relationships",
+      "columns": [
+        "id",
+        "source",
+        "target",
+        "description",
+        "weight",
+        "links"
+      ],
+      "rows": [
+        {
+          "id": "2068",
+          "source": "TEST_HEADER_VALIDATION",
+          "target": "HTTPBIN",
+          "description": "CALLS, direction test_header_validation -> httpbin: the test visibly calls `httpbin(\"get\")` as the URL argument to `requests.get`.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "2067",
+          "source": "TEST_HEADER_VALIDATION",
+          "target": "REQUESTS.GET",
+          "description": "TESTS, direction test_header_validation -> requests.get: the test calls `requests.get(httpbin(\"get\"), headers=valid_headers)` and checks copied request header values.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "914",
+          "source": "PREPARE_HEADERS",
+          "target": "CASEINSENSITIVEDICT",
+          "description": "CALLS, `prepare_headers` constructs `CaseInsensitiveDict()` before processing headers; the class definition is not visible.",
+          "weight": "10.0",
+          "links": "1"
+        },
+        {
+          "id": "894",
+          "source": "PREPARE",
+          "target": "PREPARE_HEADERS",
+          "description": "CALLS, `prepare` calls `self.prepare_headers(headers)`; the receiver is syntactically `self` and runtime class binding is not independently proven.",
+          "weight": "10.0",
+          "links": "1"
+        },
+        {
+          "id": "916",
+          "source": "PREPARE_HEADERS",
+          "target": "TO_NATIVE_STRING",
+          "description": "CALLS, `prepare_headers` calls `to_native_string(name)` when storing each header name.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "915",
+          "source": "PREPARE_HEADERS",
+          "target": "CHECK_HEADER_VALIDITY",
+          "description": "CALLS, `prepare_headers` calls `check_header_validity(header)` for each header before storing it; the callee definition is not visible.",
+          "weight": "10.0",
+          "links": "1"
+        },
+        {
+          "id": "929",
+          "source": "PREPARE_HEADERS",
+          "target": "HEADERS.ITEMS",
+          "description": "CALLS, `prepare_headers` calls `headers.items()` when supplied headers are truthy; the receiver's concrete mapping type is not established.",
+          "weight": "10.0",
+          "links": "1"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "columns": [
+        "id",
+        "source",
+        "text"
+      ],
+      "rows": [
+        {
+          "id": "46",
+          "text": "        #: HTTP verb to send to the server.\n        self.method = None\n        #: HTTP URL to send the request to.\n        self.url = None\n        #: dictionary of HTTP headers.\n        self.headers = None\n        # The `CookieJar` used to create the Cookie header will be stored here\n        # after prepare_cookies is called\n        self._cookies = None\n        #: request body to send to the server.\n        self.body = None\n        #: dictionary of callback hooks, for internal usage.\n        self.hooks = default_hooks()\n        #: integer denoting starting position of a readable file-like body.\n        self._body_position = None\n\n    def prepare(\n        self,\n        method=None,\n        url=None,\n        headers=None,\n        files=None,\n        data=None,\n        params=None,\n        auth=None,\n        cookies=None,\n        hooks=None,\n        json=None,\n    ):\n        \"\"\"Prepares the entire request with the given parameters.\"\"\"\n\n        self.prepare_method(method)\n        self.prepare_url(url, params)\n        self.prepare_headers(headers)\n        self.prepare_cookies(cookies)\n        self.prepare_body(data, files, json)\n        self.prepare_auth(auth, url)\n\n        # Note that prepare_auth must be last to enable authentication schemes\n        # such as OAuth to work on a fully prepared request.\n\n        # This MUST go after prepare_auth. Authenticators could add a hook\n        self.prepare_hooks(hooks)\n\n    def __repr__(self):\n        return f\"<PreparedRequest [{self.method}]>\"\n\n    def copy(self):\n        p = PreparedRequest()\n        p.method = self.method\n        p.url = self.url\n        p.headers = self.headers.copy() if self.headers is not None else None\n        p._cookies = _copy_cookie_jar(self._cookies)\n        p.body = self.body\n        p.hooks = self.hooks\n        p._body_position = self._body_position\n        return p\n\n    def prepare_method(self, method):\n        \"\"\"Prepares the given HTTP method.\"\"\"\n        self.method = method\n        if self.method is not None:\n            self.method = to_native_string(self.method.upper())\n\n    @staticmethod\n    def _get_idna_encoded_host(host):\n        import idna\n\n        try:\n            host = idna.encode(host, uts46=True).decode(\"utf-8\")\n        except idna.IDNAError:\n            raise UnicodeError\n        return host\n\n    def prepare_url(self, url, params):\n        \"\"\"Prepares the given HTTP URL.\"\"\"\n        #: Accept objects that have string representations.\n        #: We're unable to blindly call unicode/str functions\n        #: as this will include the bytestring indicator (b'')\n        #: on python 3.x.\n        #: https://github.com/psf/requests/pull/2238\n        if isinstance(url, bytes):\n            url = url.decode(\"utf8\")\n        else:\n            url = str(url)\n\n        # Remove leading whitespaces from url\n        url = url.lstrip()\n\n        # Don't do any URL preparation for non-HTTP schemes like `mailto`,\n        # `data` etc to work around exceptions from `url_parse`, which\n        # handles RFC 3986 only.\n        if \":\" in url and not url.lower().startswith(\"http\"):\n            self.url = url\n            return\n\n        # Support for unicode domain names and paths.\n        try:\n            scheme, auth, host, port, path, query, fragment = parse_url(url)\n        except LocationParseError as e:\n            raise InvalidURL(*e.args)\n\n        if not scheme:\n            raise MissingSchema(\n                f\"Invalid URL {url!r}: No scheme supplied. \"\n                f\"Perhaps you meant https://{url}?\"\n            )\n\n        if not host:\n            raise InvalidURL(f\"Invalid URL {url!r}: No host supplied\")\n\n        # In general, we want to try IDNA encoding the hostname if the string contains\n        # non-ASCII characters. This allows users to automatically get the correct IDNA\n        # behaviour. For strings containing only ASCII characters, we need to also verify\n        # it doesn't start with a wildcard (*), before allowing the unencoded hostname.\n        if not unicode_is_ascii(host):\n            try:\n                host = self._get_idna_encoded_host(host)\n            except UnicodeError:\n                raise InvalidURL(\"URL has an invalid label.\")\n        elif host.startswith((\"*\", \".\")):\n            raise InvalidURL(\"URL has an invalid label.\")\n\n        # Carefully reconstruct the network location\n        netloc = auth or \"\"\n        if netloc:\n            netloc += \"@\"\n        netloc += host\n        if port:\n            netloc += f\":{port}\"\n\n        # Bare domains aren't valid URLs.\n        if not path:\n            path = \"/\"\n\n        if isinstance(params, (str, bytes)):\n            params = to_native_string(params)\n\n        enc_params = self._encode_params(params)\n        if enc_params:\n            if query:\n                query = f\"{query}&{enc_params}\"\n            else:\n                query = enc_params\n\n        url = requote_uri(urlunparse([scheme, netloc, path, None, query, fragment]))\n        self.url = url\n\n    def prepare_headers(self, headers):\n        \"\"\"Prepares the given HTTP headers.\"\"\"\n\n        self.headers = CaseInsensitiveDict()\n        if headers:\n            for header in headers.items():\n                # Raise exception on invalid header value.\n                check_header_validity(header)\n                name, value = header\n                self.headers[to_native_string(name)] = value\n\n    def prepare_body(self, data, files, json=None):\n        \"\"\"Prepares the given HTTP body data.\"\"\"\n\n        # Check if file, fo, generator, iterator.\n        # If not, run through normal process.\n\n        # Nottin' on you.\n        body = None\n",
+          "source": "src/requests/models.py:L335-L501"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "short_id": "46",
+      "text_unit_id": "7946bfd6d0f78f50a99eec3d7f7693e032636f8ba0651347c847763366a134fbc999108c838facb30fcc80d2255bdd9f9baf66d6797b218ab3e3a9f7ab1e03d6",
+      "id": "8483ce3004905c2ccc798947121eaee34a9157b0dc301f668ad518b850746135",
+      "title": "src/requests/models.py:L335-L501",
+      "path": "src/requests/models.py",
+      "start_line": 335,
+      "end_line": 501,
+      "tokens": 1200,
+      "text_sha256": "08db53636a95623fa087d9bfdd2d9c66b90620e6a398890aabb7ebb039cf07e6",
+      "ms_text_unit_id": "7946bfd6d0f78f50a99eec3d7f7693e032636f8ba0651347c847763366a134fbc999108c838facb30fcc80d2255bdd9f9baf66d6797b218ab3e3a9f7ab1e03d6"
+    }
+  ],
+  "raw_context_tokens": 2596,
+  "final_context_tokens": 2654,
+  "source_text_tokens": 1200,
+  "source_chunks": 1,
+  "retrieval_compute_seconds": 0.011880999431014061,
+  "adaptation_seconds": 0.004147250205278397,
+  "empty_reason": null,
+  "community_level": 2,
+  "dropped_tail_rows": 0
+}

@@ -1,0 +1,330 @@
+{
+  "variant": "code-prompt",
+  "question_id": "Q13",
+  "method": "ms_local_code_prompt",
+  "budget": 4000,
+  "query": "If case-insensitive header key storage changes, identify the container operations, preparation consumer, and existing tests that must be inspected; do not claim they all require edits.",
+  "upstream_raw_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n1258|TEST_FIXES_1329|The visible test function `test_fixes_1329` updates session headers with uppercase and lowercase keys, performs a GET, and asserts case-insensitive access returns `application/json` for `accept`, `Accept`, and `ACCEPT`. Its owning class is not visible in this chunk.|4\n328|CASEINSENSITIVEDICT|CASEINSENSITIVEDICT refers to the externally defined `CaseInsensitiveDict` class imported from `requests.structures` or the package’s relative `.structures` module. Its implementation is not visible in the provided code, but it is used as a dictionary-like mapping for HTTP headers and related configuration.\n\nThe class is instantiated in several contexts, including `Response.__init__`, `build_response`, `prepare_headers`, `default_headers`, fixtures, and visible tests. These usages create empty or populated case-insensitive header mappings, such as `CaseInsensitiveDict()` and `CaseInsensitiveDict({...})`. It is also passed as `dict_class` to `merge_setting` to ensure merged headers preserve case-insensitive behavior.\n\nThe visible tests exercise CASEINSENSITIVEDICT’s membership checks, key lookup, updates, iteration, equality comparisons, default handling, lowercase views, copying behavior, and general mapping semantics. Some files import the class without visibly using it in the provided chunks, while other code relies on it to construct and store response or request headers. Overall, CASEINSENSITIVEDICT represents the external mapping implementation that provides case-insensitive header-key handling throughout the related request and response logic.|46\n1268|TEST_HEADER_REMOVE_IS_CASE_INSENSITIVE|The test `test_header_remove_is_case_insensitive` is visibly defined here. It sets `s.headers[\"foo\"]`, calls `s.get(httpbin(\"get\"), headers={\"FOO\": None})`, and asserts `\"foo\" not in r.request.headers`.|3\n1362|TEST_PRESERVE_KEY_CASE|The test method `test_preserve_key_case` is defined here, but its owning class is not visible. It asserts `items()`, `keys()`, and iteration preserve `\"Accept\"` and `\"user-Agent\"`.|3\n1363|TEST_PRESERVE_LAST_KEY_CASE|The test method `test_preserve_last_key_case` is defined here, but its owning class is not visible. It asserts later assignments preserve the latest spellings `\"ACCEPT\"` and `\"USER-AGENT\"`.|3\n1344|TESTCASEINSENSITIVEDICT|`TESTCASEINSENSITIVEDICT` is a test class for a case-insensitive dictionary or mapping. It defines fixture setup and parametrization constants, and verifies behavior across construction, item access, mutation, deletion, membership checks, and length reporting.|15\n1349|TESTCASEINSENSITIVEDICT.TEST_FIXES_649|The test method `TestCaseInsensitiveDict.test_fixes_649` is defined here. It assigns the same logical key with varied casing and asserts the final value is `\"blueval\"` and the retained key is `\"SPAM\"`.|3\n1346|TESTCASEINSENSITIVEDICT.TEST_DOCSTRING_EXAMPLE|The test method `TestCaseInsensitiveDict.test_docstring_example` is defined here. It assigns `\"application/json\"` under `Accept` and asserts case-insensitive lookup plus preservation of the original key spelling during iteration.|3\n1354|TEST_CONTAINS|The test method `test_contains` is defined here, but its owning class is not visible. It constructs `CaseInsensitiveDict`, assigns `\"Spam\"`, and asserts membership for multiple key casings and absence of `\"notspam\"`.|1\n1373|CASEINSENSITIVEDICT.KEYS|`CaseInsensitiveDict.keys` is referenced through `cid.keys()` in `test_preserve_key_case` and `test_preserve_last_key_case`; the tests inspect its preserved key spellings, but its definition is not visible here.|2\n1259|S.HEADERS.UPDATE|The unresolved receiver call `s.headers.update(...)` is referenced twice to update session headers; the concrete header mapping implementation is not visible here.|1\n1488|TESTUNQUOTEHEADERVALUE|`TESTUNQUOTEHEADERVALUE` refers to the visible test class `TestUnquoteHeaderValue`, which groups tests for the `unquote_header_value` behavior. The class includes a parameterized test setup, although the body of its test method is outside the supplied code segment.|2\n1356|TEST_UPDATE|The test method `test_update` is defined here, but its owning class is not visible. It asserts `CaseInsensitiveDict.update` merges case-insensitively, replaces values, and preserves two logical keys.|2\n1351|TESTCASEINSENSITIVEDICT.TEST_CONTAINS|The test method `TestCaseInsensitiveDict.test_contains` is defined here. It asserts that several case variants of `Spam` are members and that `notspam` is not a member.|2\n1220|REQUESTS.COOKIES.REQUESTSCOOKIEJAR.KEYS|The method `requests.cookies.RequestsCookieJar.keys` is referenced through `jar.keys()`; the test asserts repeatable iteration over its returned object, but the method definition is not visible here.|1\n1528|TESTCONTENTENCODINGDETECTION|The visible class `TestContentEncodingDetection` groups tests for content-encoding detection, including empty content, pragma formats, and precedence.|3\n1371|CASEINSENSITIVEDICT.UPDATE|`CaseInsensitiveDict.update` is referenced through `cid.update(...)` in `test_update` and `test_update_retains_unchanged`; its definition is not visible here.|2\n691|PREPARE_HEADERS|The method `prepare_headers(self, headers)` is defined here, initializes `self.headers` as `CaseInsensitiveDict`, validates each header with `check_header_validity`, converts header names with `to_native_string`, and stores the values. The owning class is not visible in this chunk.|5\n1374|CASEINSENSITIVEDICT.SETDEFAULT|`CaseInsensitiveDict.setdefault` is referenced through `cid.setdefault(...)` in `test_setdefault`; the test asserts existing and missing-key behavior, but the method definition is not visible here.|1\n1272|TEST_HEADER_VALIDATION|The test `test_header_validation` is visibly defined here. Its documentation states that valid header contents must not be rejected; it calls `requests.get(httpbin(\"get\"), headers=valid_headers)` and asserts each input header value equals the corresponding request header value.|2\n\n\n\n\n-----Sources-----\nid|text\n91|        pr = pickle.loads(pickle.dumps(r))\n        assert r.request.url == pr.request.url\n        assert r.request.headers == pr.request.headers\n\n    def test_prepared_request_is_pickleable(self, httpbin):\n        p = requests.Request(\"GET\", httpbin(\"get\")).prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_file_is_pickleable(self, httpbin):\n        with open(__file__, \"rb\") as f:\n            r = requests.Request(\"POST\", httpbin(\"post\"), files={\"file\": f})\n            p = r.prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_hook_is_pickleable(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"), hooks=default_hooks())\n        p = r.prepare()\n\n        # Verify PreparedRequest can be pickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n        assert r.hooks == p.hooks\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_cannot_send_unprepared_requests(self, httpbin):\n        r = requests.Request(url=httpbin())\n        with pytest.raises(ValueError):\n            requests.Session().send(r)\n\n    def test_http_error(self):\n        error = requests.exceptions.HTTPError()\n        assert not error.response\n        response = requests.Response()\n        error = requests.exceptions.HTTPError(response=response)\n        assert error.response == response\n        error = requests.exceptions.HTTPError(\"message\", response=response)\n        assert str(error) == \"message\"\n        assert error.response == response\n\n    def test_session_pickling(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"))\n        s = requests.Session()\n\n        s = pickle.loads(pickle.dumps(s))\n        s.proxies = getproxies()\n\n        r = s.send(r.prepare())\n        assert r.status_code == 200\n\n    def test_fixes_1329(self, httpbin):\n        \"\"\"Ensure that header updates are done case-insensitively.\"\"\"\n        s = requests.Session()\n        s.headers.update({\"ACCEPT\": \"BOGUS\"})\n        s.headers.update({\"accept\": \"application/json\"})\n        r = s.get(httpbin(\"get\"))\n        headers = r.request.headers\n        assert headers[\"accept\"] == \"application/json\"\n        assert headers[\"Accept\"] == \"application/json\"\n        assert headers[\"ACCEPT\"] == \"application/json\"\n\n    def test_uppercase_scheme_redirect(self, httpbin):\n        parts = urlparse(httpbin(\"html\"))\n        url = \"HTTP://\" + parts.netloc + parts.path\n        r = requests.get(httpbin(\"redirect-to\"), params={\"url\": url})\n        assert r.status_code == 200\n        assert r.url.lower() == url.lower()\n\n    def test_transport_adapter_ordering(self):\n        s = requests.Session()\n        order = [\"https://\", \"http://\"]\n        assert order == list(s.adapters)\n        s.mount(\"http://git\", HTTPAdapter())\n        s.mount(\"http://github\", HTTPAdapter())\n        s.mount(\"http://github.com\", HTTPAdapter())\n        s.mount(\"http://github.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://github.com\",\n            \"http://github\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s.mount(\"http://gittip\", HTTPAdapter())\n        s.mount(\"http://gittip.com\", HTTPAdapter())\n        s.mount(\"http://gittip.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://gittip.com/about/\",\n            \"http://github.com\",\n            \"http://gittip.com\",\n            \"http://github\",\n            \"http://gittip\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s2 = requests.Session()\n        s2.adapters = {\"http://\": HTTPAdapter()}\n        s2.mount(\"https://\", HTTPAdapter())\n        assert \"http://\" in s2.adapters\n        assert \"https://\" in s2.adapters\n\n    def test_session_get_adapter_prefix_matching(self):\n        prefix = \"https://example.com\"\n        more_specific_prefix = prefix + \"/some/path\"\n\n        url_matching_only_prefix = prefix + \"/another/path\"\n        url_matching_more_specific_prefix = more_specific_prefix + \"/longer/path\"\n        url_not_matching_prefix = \"https://another.example.com/\"\n\n        s = requests.Session()\n        prefix_adapter = HTTPAdapter()\n        more_specific_prefix_adapter = HTTPAdapter()\n        s.mount(prefix, prefix_adapter)\n        s.mount(more_specific_prefix, more_specific_prefix_adapter)\n\n        assert s.get_adapter(url_matching_only_prefix) is prefix_adapter\n        assert (\n\n",
+  "upstream_raw_records": {
+    "entities": [
+      {
+        "id": "1258",
+        "entity": "TEST_FIXES_1329",
+        "description": "The visible test function `test_fixes_1329` updates session headers with uppercase and lowercase keys, performs a GET, and asserts case-insensitive access returns `application/json` for `accept`, `Accept`, and `ACCEPT`. Its owning class is not visible in this chunk.",
+        "number of relationships": "4",
+        "in_context": true
+      },
+      {
+        "id": "328",
+        "entity": "CASEINSENSITIVEDICT",
+        "description": "CASEINSENSITIVEDICT refers to the externally defined `CaseInsensitiveDict` class imported from `requests.structures` or the package’s relative `.structures` module. Its implementation is not visible in the provided code, but it is used as a dictionary-like mapping for HTTP headers and related configuration.\n\nThe class is instantiated in several contexts, including `Response.__init__`, `build_response`, `prepare_headers`, `default_headers`, fixtures, and visible tests. These usages create empty or populated case-insensitive header mappings, such as `CaseInsensitiveDict()` and `CaseInsensitiveDict({...})`. It is also passed as `dict_class` to `merge_setting` to ensure merged headers preserve case-insensitive behavior.\n\nThe visible tests exercise CASEINSENSITIVEDICT’s membership checks, key lookup, updates, iteration, equality comparisons, default handling, lowercase views, copying behavior, and general mapping semantics. Some files import the class without visibly using it in the provided chunks, while other code relies on it to construct and store response or request headers. Overall, CASEINSENSITIVEDICT represents the external mapping implementation that provides case-insensitive header-key handling throughout the related request and response logic.",
+        "number of relationships": "46",
+        "in_context": true
+      },
+      {
+        "id": "1268",
+        "entity": "TEST_HEADER_REMOVE_IS_CASE_INSENSITIVE",
+        "description": "The test `test_header_remove_is_case_insensitive` is visibly defined here. It sets `s.headers[\"foo\"]`, calls `s.get(httpbin(\"get\"), headers={\"FOO\": None})`, and asserts `\"foo\" not in r.request.headers`.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "1362",
+        "entity": "TEST_PRESERVE_KEY_CASE",
+        "description": "The test method `test_preserve_key_case` is defined here, but its owning class is not visible. It asserts `items()`, `keys()`, and iteration preserve `\"Accept\"` and `\"user-Agent\"`.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "1363",
+        "entity": "TEST_PRESERVE_LAST_KEY_CASE",
+        "description": "The test method `test_preserve_last_key_case` is defined here, but its owning class is not visible. It asserts later assignments preserve the latest spellings `\"ACCEPT\"` and `\"USER-AGENT\"`.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "1344",
+        "entity": "TESTCASEINSENSITIVEDICT",
+        "description": "`TESTCASEINSENSITIVEDICT` is a test class for a case-insensitive dictionary or mapping. It defines fixture setup and parametrization constants, and verifies behavior across construction, item access, mutation, deletion, membership checks, and length reporting.",
+        "number of relationships": "15",
+        "in_context": true
+      },
+      {
+        "id": "1349",
+        "entity": "TESTCASEINSENSITIVEDICT.TEST_FIXES_649",
+        "description": "The test method `TestCaseInsensitiveDict.test_fixes_649` is defined here. It assigns the same logical key with varied casing and asserts the final value is `\"blueval\"` and the retained key is `\"SPAM\"`.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "1346",
+        "entity": "TESTCASEINSENSITIVEDICT.TEST_DOCSTRING_EXAMPLE",
+        "description": "The test method `TestCaseInsensitiveDict.test_docstring_example` is defined here. It assigns `\"application/json\"` under `Accept` and asserts case-insensitive lookup plus preservation of the original key spelling during iteration.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "1354",
+        "entity": "TEST_CONTAINS",
+        "description": "The test method `test_contains` is defined here, but its owning class is not visible. It constructs `CaseInsensitiveDict`, assigns `\"Spam\"`, and asserts membership for multiple key casings and absence of `\"notspam\"`.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1373",
+        "entity": "CASEINSENSITIVEDICT.KEYS",
+        "description": "`CaseInsensitiveDict.keys` is referenced through `cid.keys()` in `test_preserve_key_case` and `test_preserve_last_key_case`; the tests inspect its preserved key spellings, but its definition is not visible here.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "1259",
+        "entity": "S.HEADERS.UPDATE",
+        "description": "The unresolved receiver call `s.headers.update(...)` is referenced twice to update session headers; the concrete header mapping implementation is not visible here.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1488",
+        "entity": "TESTUNQUOTEHEADERVALUE",
+        "description": "`TESTUNQUOTEHEADERVALUE` refers to the visible test class `TestUnquoteHeaderValue`, which groups tests for the `unquote_header_value` behavior. The class includes a parameterized test setup, although the body of its test method is outside the supplied code segment.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "1356",
+        "entity": "TEST_UPDATE",
+        "description": "The test method `test_update` is defined here, but its owning class is not visible. It asserts `CaseInsensitiveDict.update` merges case-insensitively, replaces values, and preserves two logical keys.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "1351",
+        "entity": "TESTCASEINSENSITIVEDICT.TEST_CONTAINS",
+        "description": "The test method `TestCaseInsensitiveDict.test_contains` is defined here. It asserts that several case variants of `Spam` are members and that `notspam` is not a member.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "1220",
+        "entity": "REQUESTS.COOKIES.REQUESTSCOOKIEJAR.KEYS",
+        "description": "The method `requests.cookies.RequestsCookieJar.keys` is referenced through `jar.keys()`; the test asserts repeatable iteration over its returned object, but the method definition is not visible here.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1528",
+        "entity": "TESTCONTENTENCODINGDETECTION",
+        "description": "The visible class `TestContentEncodingDetection` groups tests for content-encoding detection, including empty content, pragma formats, and precedence.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "1371",
+        "entity": "CASEINSENSITIVEDICT.UPDATE",
+        "description": "`CaseInsensitiveDict.update` is referenced through `cid.update(...)` in `test_update` and `test_update_retains_unchanged`; its definition is not visible here.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "691",
+        "entity": "PREPARE_HEADERS",
+        "description": "The method `prepare_headers(self, headers)` is defined here, initializes `self.headers` as `CaseInsensitiveDict`, validates each header with `check_header_validity`, converts header names with `to_native_string`, and stores the values. The owning class is not visible in this chunk.",
+        "number of relationships": "5",
+        "in_context": true
+      },
+      {
+        "id": "1374",
+        "entity": "CASEINSENSITIVEDICT.SETDEFAULT",
+        "description": "`CaseInsensitiveDict.setdefault` is referenced through `cid.setdefault(...)` in `test_setdefault`; the test asserts existing and missing-key behavior, but the method definition is not visible here.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1272",
+        "entity": "TEST_HEADER_VALIDATION",
+        "description": "The test `test_header_validation` is visibly defined here. Its documentation states that valid header contents must not be rejected; it calls `requests.get(httpbin(\"get\"), headers=valid_headers)` and asserts each input header value equals the corresponding request header value.",
+        "number of relationships": "2",
+        "in_context": true
+      }
+    ],
+    "sources": [
+      {
+        "id": "91",
+        "text": "        pr = pickle.loads(pickle.dumps(r))\n        assert r.request.url == pr.request.url\n        assert r.request.headers == pr.request.headers\n\n    def test_prepared_request_is_pickleable(self, httpbin):\n        p = requests.Request(\"GET\", httpbin(\"get\")).prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_file_is_pickleable(self, httpbin):\n        with open(__file__, \"rb\") as f:\n            r = requests.Request(\"POST\", httpbin(\"post\"), files={\"file\": f})\n            p = r.prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_hook_is_pickleable(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"), hooks=default_hooks())\n        p = r.prepare()\n\n        # Verify PreparedRequest can be pickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n        assert r.hooks == p.hooks\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_cannot_send_unprepared_requests(self, httpbin):\n        r = requests.Request(url=httpbin())\n        with pytest.raises(ValueError):\n            requests.Session().send(r)\n\n    def test_http_error(self):\n        error = requests.exceptions.HTTPError()\n        assert not error.response\n        response = requests.Response()\n        error = requests.exceptions.HTTPError(response=response)\n        assert error.response == response\n        error = requests.exceptions.HTTPError(\"message\", response=response)\n        assert str(error) == \"message\"\n        assert error.response == response\n\n    def test_session_pickling(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"))\n        s = requests.Session()\n\n        s = pickle.loads(pickle.dumps(s))\n        s.proxies = getproxies()\n\n        r = s.send(r.prepare())\n        assert r.status_code == 200\n\n    def test_fixes_1329(self, httpbin):\n        \"\"\"Ensure that header updates are done case-insensitively.\"\"\"\n        s = requests.Session()\n        s.headers.update({\"ACCEPT\": \"BOGUS\"})\n        s.headers.update({\"accept\": \"application/json\"})\n        r = s.get(httpbin(\"get\"))\n        headers = r.request.headers\n        assert headers[\"accept\"] == \"application/json\"\n        assert headers[\"Accept\"] == \"application/json\"\n        assert headers[\"ACCEPT\"] == \"application/json\"\n\n    def test_uppercase_scheme_redirect(self, httpbin):\n        parts = urlparse(httpbin(\"html\"))\n        url = \"HTTP://\" + parts.netloc + parts.path\n        r = requests.get(httpbin(\"redirect-to\"), params={\"url\": url})\n        assert r.status_code == 200\n        assert r.url.lower() == url.lower()\n\n    def test_transport_adapter_ordering(self):\n        s = requests.Session()\n        order = [\"https://\", \"http://\"]\n        assert order == list(s.adapters)\n        s.mount(\"http://git\", HTTPAdapter())\n        s.mount(\"http://github\", HTTPAdapter())\n        s.mount(\"http://github.com\", HTTPAdapter())\n        s.mount(\"http://github.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://github.com\",\n            \"http://github\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s.mount(\"http://gittip\", HTTPAdapter())\n        s.mount(\"http://gittip.com\", HTTPAdapter())\n        s.mount(\"http://gittip.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://gittip.com/about/\",\n            \"http://github.com\",\n            \"http://gittip.com\",\n            \"http://github\",\n            \"http://gittip\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s2 = requests.Session()\n        s2.adapters = {\"http://\": HTTPAdapter()}\n        s2.mount(\"https://\", HTTPAdapter())\n        assert \"http://\" in s2.adapters\n        assert \"https://\" in s2.adapters\n\n    def test_session_get_adapter_prefix_matching(self):\n        prefix = \"https://example.com\"\n        more_specific_prefix = prefix + \"/some/path\"\n\n        url_matching_only_prefix = prefix + \"/another/path\"\n        url_matching_more_specific_prefix = more_specific_prefix + \"/longer/path\"\n        url_not_matching_prefix = \"https://another.example.com/\"\n\n        s = requests.Session()\n        prefix_adapter = HTTPAdapter()\n        more_specific_prefix_adapter = HTTPAdapter()\n        s.mount(prefix, prefix_adapter)\n        s.mount(more_specific_prefix, more_specific_prefix_adapter)\n\n        assert s.get_adapter(url_matching_only_prefix) is prefix_adapter\n        assert (\n"
+      }
+    ]
+  },
+  "final_context": "-----Entities-----\nid|entity|description|number of relationships\n1258|TEST_FIXES_1329|The visible test function `test_fixes_1329` updates session headers with uppercase and lowercase keys, performs a GET, and asserts case-insensitive access returns `application/json` for `accept`, `Accept`, and `ACCEPT`. Its owning class is not visible in this chunk.|4\n328|CASEINSENSITIVEDICT|\"CASEINSENSITIVEDICT refers to the externally defined `CaseInsensitiveDict` class imported from `requests.structures` or the package’s relative `.structures` module. Its implementation is not visible in the provided code, but it is used as a dictionary-like mapping for HTTP headers and related configuration.\n\nThe class is instantiated in several contexts, including `Response.__init__`, `build_response`, `prepare_headers`, `default_headers`, fixtures, and visible tests. These usages create empty or populated case-insensitive header mappings, such as `CaseInsensitiveDict()` and `CaseInsensitiveDict({...})`. It is also passed as `dict_class` to `merge_setting` to ensure merged headers preserve case-insensitive behavior.\n\nThe visible tests exercise CASEINSENSITIVEDICT’s membership checks, key lookup, updates, iteration, equality comparisons, default handling, lowercase views, copying behavior, and general mapping semantics. Some files import the class without visibly using it in the provided chunks, while other code relies on it to construct and store response or request headers. Overall, CASEINSENSITIVEDICT represents the external mapping implementation that provides case-insensitive header-key handling throughout the related request and response logic.\"|46\n1268|TEST_HEADER_REMOVE_IS_CASE_INSENSITIVE|\"The test `test_header_remove_is_case_insensitive` is visibly defined here. It sets `s.headers[\"\"foo\"\"]`, calls `s.get(httpbin(\"\"get\"\"), headers={\"\"FOO\"\": None})`, and asserts `\"\"foo\"\" not in r.request.headers`.\"|3\n1362|TEST_PRESERVE_KEY_CASE|\"The test method `test_preserve_key_case` is defined here, but its owning class is not visible. It asserts `items()`, `keys()`, and iteration preserve `\"\"Accept\"\"` and `\"\"user-Agent\"\"`.\"|3\n1363|TEST_PRESERVE_LAST_KEY_CASE|\"The test method `test_preserve_last_key_case` is defined here, but its owning class is not visible. It asserts later assignments preserve the latest spellings `\"\"ACCEPT\"\"` and `\"\"USER-AGENT\"\"`.\"|3\n1344|TESTCASEINSENSITIVEDICT|`TESTCASEINSENSITIVEDICT` is a test class for a case-insensitive dictionary or mapping. It defines fixture setup and parametrization constants, and verifies behavior across construction, item access, mutation, deletion, membership checks, and length reporting.|15\n1349|TESTCASEINSENSITIVEDICT.TEST_FIXES_649|\"The test method `TestCaseInsensitiveDict.test_fixes_649` is defined here. It assigns the same logical key with varied casing and asserts the final value is `\"\"blueval\"\"` and the retained key is `\"\"SPAM\"\"`.\"|3\n1346|TESTCASEINSENSITIVEDICT.TEST_DOCSTRING_EXAMPLE|\"The test method `TestCaseInsensitiveDict.test_docstring_example` is defined here. It assigns `\"\"application/json\"\"` under `Accept` and asserts case-insensitive lookup plus preservation of the original key spelling during iteration.\"|3\n1354|TEST_CONTAINS|\"The test method `test_contains` is defined here, but its owning class is not visible. It constructs `CaseInsensitiveDict`, assigns `\"\"Spam\"\"`, and asserts membership for multiple key casings and absence of `\"\"notspam\"\"`.\"|1\n1373|CASEINSENSITIVEDICT.KEYS|`CaseInsensitiveDict.keys` is referenced through `cid.keys()` in `test_preserve_key_case` and `test_preserve_last_key_case`; the tests inspect its preserved key spellings, but its definition is not visible here.|2\n1259|S.HEADERS.UPDATE|The unresolved receiver call `s.headers.update(...)` is referenced twice to update session headers; the concrete header mapping implementation is not visible here.|1\n1488|TESTUNQUOTEHEADERVALUE|`TESTUNQUOTEHEADERVALUE` refers to the visible test class `TestUnquoteHeaderValue`, which groups tests for the `unquote_header_value` behavior. The class includes a parameterized test setup, although the body of its test method is outside the supplied code segment.|2\n1356|TEST_UPDATE|The test method `test_update` is defined here, but its owning class is not visible. It asserts `CaseInsensitiveDict.update` merges case-insensitively, replaces values, and preserves two logical keys.|2\n1351|TESTCASEINSENSITIVEDICT.TEST_CONTAINS|The test method `TestCaseInsensitiveDict.test_contains` is defined here. It asserts that several case variants of `Spam` are members and that `notspam` is not a member.|2\n1220|REQUESTS.COOKIES.REQUESTSCOOKIEJAR.KEYS|The method `requests.cookies.RequestsCookieJar.keys` is referenced through `jar.keys()`; the test asserts repeatable iteration over its returned object, but the method definition is not visible here.|1\n1528|TESTCONTENTENCODINGDETECTION|The visible class `TestContentEncodingDetection` groups tests for content-encoding detection, including empty content, pragma formats, and precedence.|3\n1371|CASEINSENSITIVEDICT.UPDATE|`CaseInsensitiveDict.update` is referenced through `cid.update(...)` in `test_update` and `test_update_retains_unchanged`; its definition is not visible here.|2\n691|PREPARE_HEADERS|The method `prepare_headers(self, headers)` is defined here, initializes `self.headers` as `CaseInsensitiveDict`, validates each header with `check_header_validity`, converts header names with `to_native_string`, and stores the values. The owning class is not visible in this chunk.|5\n1374|CASEINSENSITIVEDICT.SETDEFAULT|`CaseInsensitiveDict.setdefault` is referenced through `cid.setdefault(...)` in `test_setdefault`; the test asserts existing and missing-key behavior, but the method definition is not visible here.|1\n1272|TEST_HEADER_VALIDATION|\"The test `test_header_validation` is visibly defined here. Its documentation states that valid header contents must not be rejected; it calls `requests.get(httpbin(\"\"get\"\"), headers=valid_headers)` and asserts each input header value equals the corresponding request header value.\"|2\n\n-----Sources-----\nid|source|text\n91|tests/test_requests.py:L1488-L1634|\"        pr = pickle.loads(pickle.dumps(r))\n        assert r.request.url == pr.request.url\n        assert r.request.headers == pr.request.headers\n\n    def test_prepared_request_is_pickleable(self, httpbin):\n        p = requests.Request(\"\"GET\"\", httpbin(\"\"get\"\")).prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_file_is_pickleable(self, httpbin):\n        with open(__file__, \"\"rb\"\") as f:\n            r = requests.Request(\"\"POST\"\", httpbin(\"\"post\"\"), files={\"\"file\"\": f})\n            p = r.prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_hook_is_pickleable(self, httpbin):\n        r = requests.Request(\"\"GET\"\", httpbin(\"\"get\"\"), hooks=default_hooks())\n        p = r.prepare()\n\n        # Verify PreparedRequest can be pickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n        assert r.hooks == p.hooks\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_cannot_send_unprepared_requests(self, httpbin):\n        r = requests.Request(url=httpbin())\n        with pytest.raises(ValueError):\n            requests.Session().send(r)\n\n    def test_http_error(self):\n        error = requests.exceptions.HTTPError()\n        assert not error.response\n        response = requests.Response()\n        error = requests.exceptions.HTTPError(response=response)\n        assert error.response == response\n        error = requests.exceptions.HTTPError(\"\"message\"\", response=response)\n        assert str(error) == \"\"message\"\"\n        assert error.response == response\n\n    def test_session_pickling(self, httpbin):\n        r = requests.Request(\"\"GET\"\", httpbin(\"\"get\"\"))\n        s = requests.Session()\n\n        s = pickle.loads(pickle.dumps(s))\n        s.proxies = getproxies()\n\n        r = s.send(r.prepare())\n        assert r.status_code == 200\n\n    def test_fixes_1329(self, httpbin):\n        \"\"\"\"\"\"Ensure that header updates are done case-insensitively.\"\"\"\"\"\"\n        s = requests.Session()\n        s.headers.update({\"\"ACCEPT\"\": \"\"BOGUS\"\"})\n        s.headers.update({\"\"accept\"\": \"\"application/json\"\"})\n        r = s.get(httpbin(\"\"get\"\"))\n        headers = r.request.headers\n        assert headers[\"\"accept\"\"] == \"\"application/json\"\"\n        assert headers[\"\"Accept\"\"] == \"\"application/json\"\"\n        assert headers[\"\"ACCEPT\"\"] == \"\"application/json\"\"\n\n    def test_uppercase_scheme_redirect(self, httpbin):\n        parts = urlparse(httpbin(\"\"html\"\"))\n        url = \"\"HTTP://\"\" + parts.netloc + parts.path\n        r = requests.get(httpbin(\"\"redirect-to\"\"), params={\"\"url\"\": url})\n        assert r.status_code == 200\n        assert r.url.lower() == url.lower()\n\n    def test_transport_adapter_ordering(self):\n        s = requests.Session()\n        order = [\"\"https://\"\", \"\"http://\"\"]\n        assert order == list(s.adapters)\n        s.mount(\"\"http://git\"\", HTTPAdapter())\n        s.mount(\"\"http://github\"\", HTTPAdapter())\n        s.mount(\"\"http://github.com\"\", HTTPAdapter())\n        s.mount(\"\"http://github.com/about/\"\", HTTPAdapter())\n        order = [\n            \"\"http://github.com/about/\"\",\n            \"\"http://github.com\"\",\n            \"\"http://github\"\",\n            \"\"http://git\"\",\n            \"\"https://\"\",\n            \"\"http://\"\",\n        ]\n        assert order == list(s.adapters)\n        s.mount(\"\"http://gittip\"\", HTTPAdapter())\n        s.mount(\"\"http://gittip.com\"\", HTTPAdapter())\n        s.mount(\"\"http://gittip.com/about/\"\", HTTPAdapter())\n        order = [\n            \"\"http://github.com/about/\"\",\n            \"\"http://gittip.com/about/\"\",\n            \"\"http://github.com\"\",\n            \"\"http://gittip.com\"\",\n            \"\"http://github\"\",\n            \"\"http://gittip\"\",\n            \"\"http://git\"\",\n            \"\"https://\"\",\n            \"\"http://\"\",\n        ]\n        assert order == list(s.adapters)\n        s2 = requests.Session()\n        s2.adapters = {\"\"http://\"\": HTTPAdapter()}\n        s2.mount(\"\"https://\"\", HTTPAdapter())\n        assert \"\"http://\"\" in s2.adapters\n        assert \"\"https://\"\" in s2.adapters\n\n    def test_session_get_adapter_prefix_matching(self):\n        prefix = \"\"https://example.com\"\"\n        more_specific_prefix = prefix + \"\"/some/path\"\"\n\n        url_matching_only_prefix = prefix + \"\"/another/path\"\"\n        url_matching_more_specific_prefix = more_specific_prefix + \"\"/longer/path\"\"\n        url_not_matching_prefix = \"\"https://another.example.com/\"\"\n\n        s = requests.Session()\n        prefix_adapter = HTTPAdapter()\n        more_specific_prefix_adapter = HTTPAdapter()\n        s.mount(prefix, prefix_adapter)\n        s.mount(more_specific_prefix, more_specific_prefix_adapter)\n\n        assert s.get_adapter(url_matching_only_prefix) is prefix_adapter\n        assert (\n\"\n",
+  "final_tables": [
+    {
+      "name": "entities",
+      "columns": [
+        "id",
+        "entity",
+        "description",
+        "number of relationships"
+      ],
+      "rows": [
+        {
+          "id": "1258",
+          "entity": "TEST_FIXES_1329",
+          "description": "The visible test function `test_fixes_1329` updates session headers with uppercase and lowercase keys, performs a GET, and asserts case-insensitive access returns `application/json` for `accept`, `Accept`, and `ACCEPT`. Its owning class is not visible in this chunk.",
+          "number of relationships": "4"
+        },
+        {
+          "id": "328",
+          "entity": "CASEINSENSITIVEDICT",
+          "description": "CASEINSENSITIVEDICT refers to the externally defined `CaseInsensitiveDict` class imported from `requests.structures` or the package’s relative `.structures` module. Its implementation is not visible in the provided code, but it is used as a dictionary-like mapping for HTTP headers and related configuration.\n\nThe class is instantiated in several contexts, including `Response.__init__`, `build_response`, `prepare_headers`, `default_headers`, fixtures, and visible tests. These usages create empty or populated case-insensitive header mappings, such as `CaseInsensitiveDict()` and `CaseInsensitiveDict({...})`. It is also passed as `dict_class` to `merge_setting` to ensure merged headers preserve case-insensitive behavior.\n\nThe visible tests exercise CASEINSENSITIVEDICT’s membership checks, key lookup, updates, iteration, equality comparisons, default handling, lowercase views, copying behavior, and general mapping semantics. Some files import the class without visibly using it in the provided chunks, while other code relies on it to construct and store response or request headers. Overall, CASEINSENSITIVEDICT represents the external mapping implementation that provides case-insensitive header-key handling throughout the related request and response logic.",
+          "number of relationships": "46"
+        },
+        {
+          "id": "1268",
+          "entity": "TEST_HEADER_REMOVE_IS_CASE_INSENSITIVE",
+          "description": "The test `test_header_remove_is_case_insensitive` is visibly defined here. It sets `s.headers[\"foo\"]`, calls `s.get(httpbin(\"get\"), headers={\"FOO\": None})`, and asserts `\"foo\" not in r.request.headers`.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "1362",
+          "entity": "TEST_PRESERVE_KEY_CASE",
+          "description": "The test method `test_preserve_key_case` is defined here, but its owning class is not visible. It asserts `items()`, `keys()`, and iteration preserve `\"Accept\"` and `\"user-Agent\"`.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "1363",
+          "entity": "TEST_PRESERVE_LAST_KEY_CASE",
+          "description": "The test method `test_preserve_last_key_case` is defined here, but its owning class is not visible. It asserts later assignments preserve the latest spellings `\"ACCEPT\"` and `\"USER-AGENT\"`.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "1344",
+          "entity": "TESTCASEINSENSITIVEDICT",
+          "description": "`TESTCASEINSENSITIVEDICT` is a test class for a case-insensitive dictionary or mapping. It defines fixture setup and parametrization constants, and verifies behavior across construction, item access, mutation, deletion, membership checks, and length reporting.",
+          "number of relationships": "15"
+        },
+        {
+          "id": "1349",
+          "entity": "TESTCASEINSENSITIVEDICT.TEST_FIXES_649",
+          "description": "The test method `TestCaseInsensitiveDict.test_fixes_649` is defined here. It assigns the same logical key with varied casing and asserts the final value is `\"blueval\"` and the retained key is `\"SPAM\"`.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "1346",
+          "entity": "TESTCASEINSENSITIVEDICT.TEST_DOCSTRING_EXAMPLE",
+          "description": "The test method `TestCaseInsensitiveDict.test_docstring_example` is defined here. It assigns `\"application/json\"` under `Accept` and asserts case-insensitive lookup plus preservation of the original key spelling during iteration.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "1354",
+          "entity": "TEST_CONTAINS",
+          "description": "The test method `test_contains` is defined here, but its owning class is not visible. It constructs `CaseInsensitiveDict`, assigns `\"Spam\"`, and asserts membership for multiple key casings and absence of `\"notspam\"`.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1373",
+          "entity": "CASEINSENSITIVEDICT.KEYS",
+          "description": "`CaseInsensitiveDict.keys` is referenced through `cid.keys()` in `test_preserve_key_case` and `test_preserve_last_key_case`; the tests inspect its preserved key spellings, but its definition is not visible here.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "1259",
+          "entity": "S.HEADERS.UPDATE",
+          "description": "The unresolved receiver call `s.headers.update(...)` is referenced twice to update session headers; the concrete header mapping implementation is not visible here.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1488",
+          "entity": "TESTUNQUOTEHEADERVALUE",
+          "description": "`TESTUNQUOTEHEADERVALUE` refers to the visible test class `TestUnquoteHeaderValue`, which groups tests for the `unquote_header_value` behavior. The class includes a parameterized test setup, although the body of its test method is outside the supplied code segment.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "1356",
+          "entity": "TEST_UPDATE",
+          "description": "The test method `test_update` is defined here, but its owning class is not visible. It asserts `CaseInsensitiveDict.update` merges case-insensitively, replaces values, and preserves two logical keys.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "1351",
+          "entity": "TESTCASEINSENSITIVEDICT.TEST_CONTAINS",
+          "description": "The test method `TestCaseInsensitiveDict.test_contains` is defined here. It asserts that several case variants of `Spam` are members and that `notspam` is not a member.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "1220",
+          "entity": "REQUESTS.COOKIES.REQUESTSCOOKIEJAR.KEYS",
+          "description": "The method `requests.cookies.RequestsCookieJar.keys` is referenced through `jar.keys()`; the test asserts repeatable iteration over its returned object, but the method definition is not visible here.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1528",
+          "entity": "TESTCONTENTENCODINGDETECTION",
+          "description": "The visible class `TestContentEncodingDetection` groups tests for content-encoding detection, including empty content, pragma formats, and precedence.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "1371",
+          "entity": "CASEINSENSITIVEDICT.UPDATE",
+          "description": "`CaseInsensitiveDict.update` is referenced through `cid.update(...)` in `test_update` and `test_update_retains_unchanged`; its definition is not visible here.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "691",
+          "entity": "PREPARE_HEADERS",
+          "description": "The method `prepare_headers(self, headers)` is defined here, initializes `self.headers` as `CaseInsensitiveDict`, validates each header with `check_header_validity`, converts header names with `to_native_string`, and stores the values. The owning class is not visible in this chunk.",
+          "number of relationships": "5"
+        },
+        {
+          "id": "1374",
+          "entity": "CASEINSENSITIVEDICT.SETDEFAULT",
+          "description": "`CaseInsensitiveDict.setdefault` is referenced through `cid.setdefault(...)` in `test_setdefault`; the test asserts existing and missing-key behavior, but the method definition is not visible here.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1272",
+          "entity": "TEST_HEADER_VALIDATION",
+          "description": "The test `test_header_validation` is visibly defined here. Its documentation states that valid header contents must not be rejected; it calls `requests.get(httpbin(\"get\"), headers=valid_headers)` and asserts each input header value equals the corresponding request header value.",
+          "number of relationships": "2"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "columns": [
+        "id",
+        "source",
+        "text"
+      ],
+      "rows": [
+        {
+          "id": "91",
+          "text": "        pr = pickle.loads(pickle.dumps(r))\n        assert r.request.url == pr.request.url\n        assert r.request.headers == pr.request.headers\n\n    def test_prepared_request_is_pickleable(self, httpbin):\n        p = requests.Request(\"GET\", httpbin(\"get\")).prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_file_is_pickleable(self, httpbin):\n        with open(__file__, \"rb\") as f:\n            r = requests.Request(\"POST\", httpbin(\"post\"), files={\"file\": f})\n            p = r.prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_hook_is_pickleable(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"), hooks=default_hooks())\n        p = r.prepare()\n\n        # Verify PreparedRequest can be pickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n        assert r.hooks == p.hooks\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_cannot_send_unprepared_requests(self, httpbin):\n        r = requests.Request(url=httpbin())\n        with pytest.raises(ValueError):\n            requests.Session().send(r)\n\n    def test_http_error(self):\n        error = requests.exceptions.HTTPError()\n        assert not error.response\n        response = requests.Response()\n        error = requests.exceptions.HTTPError(response=response)\n        assert error.response == response\n        error = requests.exceptions.HTTPError(\"message\", response=response)\n        assert str(error) == \"message\"\n        assert error.response == response\n\n    def test_session_pickling(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"))\n        s = requests.Session()\n\n        s = pickle.loads(pickle.dumps(s))\n        s.proxies = getproxies()\n\n        r = s.send(r.prepare())\n        assert r.status_code == 200\n\n    def test_fixes_1329(self, httpbin):\n        \"\"\"Ensure that header updates are done case-insensitively.\"\"\"\n        s = requests.Session()\n        s.headers.update({\"ACCEPT\": \"BOGUS\"})\n        s.headers.update({\"accept\": \"application/json\"})\n        r = s.get(httpbin(\"get\"))\n        headers = r.request.headers\n        assert headers[\"accept\"] == \"application/json\"\n        assert headers[\"Accept\"] == \"application/json\"\n        assert headers[\"ACCEPT\"] == \"application/json\"\n\n    def test_uppercase_scheme_redirect(self, httpbin):\n        parts = urlparse(httpbin(\"html\"))\n        url = \"HTTP://\" + parts.netloc + parts.path\n        r = requests.get(httpbin(\"redirect-to\"), params={\"url\": url})\n        assert r.status_code == 200\n        assert r.url.lower() == url.lower()\n\n    def test_transport_adapter_ordering(self):\n        s = requests.Session()\n        order = [\"https://\", \"http://\"]\n        assert order == list(s.adapters)\n        s.mount(\"http://git\", HTTPAdapter())\n        s.mount(\"http://github\", HTTPAdapter())\n        s.mount(\"http://github.com\", HTTPAdapter())\n        s.mount(\"http://github.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://github.com\",\n            \"http://github\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s.mount(\"http://gittip\", HTTPAdapter())\n        s.mount(\"http://gittip.com\", HTTPAdapter())\n        s.mount(\"http://gittip.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://gittip.com/about/\",\n            \"http://github.com\",\n            \"http://gittip.com\",\n            \"http://github\",\n            \"http://gittip\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s2 = requests.Session()\n        s2.adapters = {\"http://\": HTTPAdapter()}\n        s2.mount(\"https://\", HTTPAdapter())\n        assert \"http://\" in s2.adapters\n        assert \"https://\" in s2.adapters\n\n    def test_session_get_adapter_prefix_matching(self):\n        prefix = \"https://example.com\"\n        more_specific_prefix = prefix + \"/some/path\"\n\n        url_matching_only_prefix = prefix + \"/another/path\"\n        url_matching_more_specific_prefix = more_specific_prefix + \"/longer/path\"\n        url_not_matching_prefix = \"https://another.example.com/\"\n\n        s = requests.Session()\n        prefix_adapter = HTTPAdapter()\n        more_specific_prefix_adapter = HTTPAdapter()\n        s.mount(prefix, prefix_adapter)\n        s.mount(more_specific_prefix, more_specific_prefix_adapter)\n\n        assert s.get_adapter(url_matching_only_prefix) is prefix_adapter\n        assert (\n",
+          "source": "tests/test_requests.py:L1488-L1634"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "short_id": "91",
+      "text_unit_id": "b4fc31fa0398c423c77ca05d45d3311d21c64d32090eb4a80186e559ba11c7f9857fc547284a1b9e915fb677bf5dcdb6dbb8f2c2edb68f5d45dd5f1b87c1171d",
+      "id": "738fe173f86a3ea0fd04fd1badf08b7af0573474d3cadc7105cab638a4925afc",
+      "title": "tests/test_requests.py:L1488-L1634",
+      "path": "tests/test_requests.py",
+      "start_line": 1488,
+      "end_line": 1634,
+      "tokens": 1191,
+      "text_sha256": "ba556710077543acb07ee95b0ea7f2ca76e248ccaa9baaae1319722182791a75",
+      "ms_text_unit_id": "b4fc31fa0398c423c77ca05d45d3311d21c64d32090eb4a80186e559ba11c7f9857fc547284a1b9e915fb677bf5dcdb6dbb8f2c2edb68f5d45dd5f1b87c1171d"
+    }
+  ],
+  "raw_context_tokens": 2564,
+  "final_context_tokens": 2652,
+  "source_text_tokens": 1191,
+  "source_chunks": 1,
+  "retrieval_compute_seconds": 0.010230917483568192,
+  "adaptation_seconds": 0.0035592494532465935,
+  "empty_reason": null,
+  "community_level": 2,
+  "dropped_tail_rows": 0
+}

@@ -1,0 +1,1267 @@
+{
+  "reviewer": "independent_ai_agent",
+  "human_review": false,
+  "blind_review": false,
+  "created_at_utc": "2026-10-14T02:50:21.659263+00:00",
+  "graph": "code-prompt",
+  "methodology": {
+    "scope": "固定 code-prompt 图样本：20 个实体、20 条关系；逐条只按其 sources 指向的冻结 documents.jsonl 块判断主要陈述。未替换样本、未重抽样。",
+    "sample_seed": 20261012,
+    "sample_order": "sha256(\"20261012:{table}:{record.id}\") 升序，table 为 entities / relationships；验证所给 40 条哈希及顺序，不读取全图重新选样。",
+    "rubric": {
+      "supported": "Linked source supports identifiable symbol/concept and main statement; relation endpoints and stated relation supported.",
+      "partial_or_ambiguous": "Some support, but unresolved identity/binding or omitted condition prevents exact claim.",
+      "unsupported": "Main claim contradicts or lacks support in linked sources.",
+      "separate_flags": [
+        "exact_code_symbol",
+        "visible_direction_supported",
+        "dynamic_target_overclaim",
+        "source_link_missing",
+        "name_changed_or_ambiguous"
+      ]
+    },
+    "flag_interpretation": {
+      "exact_code_symbol": "仅忽略上游强制大写，实体或关系两端须可定位到关联来源的代码符号。允许由同块词法嵌套或显式构造/局部赋值定位类成员名；这仅识别代码符号，不证明唯一限定名或动态实现。任意接收者改写、缺失必要限定层级或额外转义不算精确。关系须两端都满足。",
+      "visible_direction_supported": "实体均为 null。关系的 source→target 与可见调用、读取、定义或导入方向一致为 true；调用方/关系方向错误为 false；仅非定向关联为 null。方向与端点身份分开判，不由 true 推出目标实现已解析。",
+      "dynamic_target_overclaim": "将动态接收者或选择推成已证明的具体运行目标才为 true。明确保留绑定未解析的陈述不自动算过度断言；名称改写另标。",
+      "source_link_missing": "sources 为空或 input_id/title 无法在冻结输入与 provenance 解析为 true；链接存在但证据不足不算缺失。",
+      "name_changed_or_ambiguous": "代码名被改写/错误限定，或短名在关联块中对应多个未由端点名区分的接收者时为 true。纯大写不自动算错误；此旗标不表示已经证明全图合并了不同节点。"
+    },
+    "judgment_boundary": "明确限定为可见接收者调用、并且没有断言具体实现归属的描述，可在该有限范围记 supported；若端点限定名本身不能对应来源，则即使描述承认绑定未解析也保留 partial_or_ambiguous。",
+    "independence": "独立 AI 代理逐项判断；知道样本属于 code-prompt 条件，故非盲评，也非人类评审。仅查看 quality-review-default.json 的 methodology 字段了解旧口径，未查看旧逐条标签或汇总来推断本组。",
+    "retrieval_results_viewed": false,
+    "scores_viewed": false,
+    "new_retrieval_performed": false,
+    "external_api_or_model_calls": false,
+    "credentials_read": false,
+    "graph_or_score_mutation": false,
+    "limits": [
+      "只给各表 20 条样本计数，不称全图精度、检索质量或端到端准确率；两个独立图样本并非匹配对。",
+      "引用、导入、定义和测试代码支持的是可见文本、行为结构或断言，不代表已运行测试或验证外部服务。",
+      "不使用其他条目关联的源码补足当前条目；未读取任何未关联源码来升级标签。",
+      "代码符号可定位、调用方向和运行时目标解析是不同判断；supported 不等同于经静态分析器验证的精确调用图。",
+      "相同 input_id 的重复链接按同一块证据处理。"
+    ]
+  },
+  "review_inputs": [
+    {
+      "path": "research/pilot/results/code-prompt/quality-sample.json",
+      "sha256": "c2455e4948444e45f16eefc7573b78a2655759dd7514ab92604999387b161ee3",
+      "usage": "review_input"
+    },
+    {
+      "path": ".cache/pilot/input/documents.jsonl",
+      "sha256": "5688b3cca77328965a48d7d7b835b7ad3826d79a4237203281e1ebde8956a6e7",
+      "usage": "review_input"
+    },
+    {
+      "path": "research/pilot/results/code-prompt/index/text-unit-provenance.json",
+      "sha256": "78d726bf38b5b66f3335e5410736f377f2449c99bf4bd63379425d56d7c1b4e3",
+      "usage": "review_input"
+    },
+    {
+      "path": "research/pilot/results/code-prompt/quality-review-default.json",
+      "sha256": "ec2bdfa580d66134646703712960b24c2db0e5c132ce2f1cb2473047ee94b01d",
+      "usage": "methodology_only"
+    }
+  ],
+  "entities": [
+    {
+      "id": "7d0ba107-d737-45c1-b370-7e12c0c1b31b",
+      "human_readable_id": 69,
+      "label": "PIP",
+      "sample_hash": "0023121802afcfbf7dff9750c93a4f47c68933976ed7c9d17dc339772b01e371",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "关联文档明示 SOCKS 为可选功能，随后以 python -m pip install requests[socks] 安装依赖；pip 的模块入口拼写与用途有直接文本依据。该判断限于文档说明。",
+      "evidence": [
+        {
+          "source_title": "docs/user/advanced.rst:L667-L791",
+          "input_id": "dead0055fc1342cb084a038a10548b7430af12326ec7474da6782c447f260afe",
+          "source_line_start": 676,
+          "snippet": "In addition to basic HTTP proxies, Requests also supports proxies using the\nSOCKS protocol. This is an optional feature that requires that additional\nthird-party libraries be installed before use.\n\nYou can get the dependencies for this feature from ``pip``:\n\n.. code-block:: bash\n\n    $ python -m pip install requests[socks]"
+        }
+      ]
+    },
+    {
+      "id": "aa56c633-76b7-4a12-b55f-9a968635d6f1",
+      "human_readable_id": 158,
+      "label": "REQUESTS.RESPONSE.HISTORY",
+      "sample_hash": "00461bcc79ed72a9fea8f45a95802332589d0ec9b5224d54f267651fac638c0e",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "文档原文同时给出 requests.Response.history 限定名、Response 对象列表及从旧到新的排序。描述没有声称该块展示属性实现，主要陈述受支持。",
+      "evidence": [
+        {
+          "source_title": "docs/user/quickstart.rst:L408-L565",
+          "input_id": "80641d4c60e18c79c8515a8b9abc319e2af91cae22460d7fe04a7c61097582de",
+          "source_line_start": 483,
+          "snippet": "We can use the ``history`` property of the Response object to track redirection.\n\nThe :attr:`Response.history <requests.Response.history>` list contains the\n:class:`Response <requests.Response>` objects that were created in order to\ncomplete the request. The list is sorted from the oldest to the most recent\nresponse."
+        }
+      ]
+    },
+    {
+      "id": "4e7077fb-0cdf-4c97-95c2-db092a272b5b",
+      "human_readable_id": 174,
+      "label": "MULTIPROCESSING",
+      "sample_hash": "005179753c33f87962f391892dcc4ed04eb998b44e0b6a7750a403fef3c267ee",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "PyTest 类的 initialize_options 方法在 try 中导入 multiprocessing.cpu_count，失败时使用后备参数；条件导入与所属方法均可见。",
+      "evidence": [
+        {
+          "source_title": "setup.py:L1-L132",
+          "input_id": "520c4dbc4cc69695bdd3facaed84e29e74367a2a8639d5635eb9657693dde645",
+          "source_line_start": 31,
+          "snippet": "class PyTest(TestCommand):\n    user_options = [(\"pytest-args=\", \"a\", \"Arguments to pass into py.test\")]\n\n    def initialize_options(self):\n        TestCommand.initialize_options(self)\n        try:\n            from multiprocessing import cpu_count\n\n            self.pytest_args = [\"-n\", str(cpu_count()), \"--boxed\"]\n        except (ImportError, NotImplementedError):\n            self.pytest_args = [\"-n\", \"1\", \"--boxed\"]"
+        }
+      ]
+    },
+    {
+      "id": "aec2b91c-3ea9-4ddd-844e-f5aede57ef8c",
+      "human_readable_id": 85,
+      "label": "REQUESTS.PATCH",
+      "sample_hash": "009a4352bde1d18f4826a7c52dc976648d081731670ac7bd9b59d58742bc0192",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "文档以 requests.patch 编辑评论并展示状态 200；测试中 requests.patch 只是裸引用，条目也明确限定该处为引用。两处证据分别支持调用示例与入口可见性，不表示本次执行了 HTTP 请求。",
+      "evidence": [
+        {
+          "source_title": "docs/user/advanced.rst:L781-L937",
+          "input_id": "1589215039e0ffd8ebd767682091e65c36779e8aece6605842f1d0c3ccd1c2b7",
+          "source_line_start": 878,
+          "snippet": "Brilliant. Oh, wait, no! I meant to add that it would take me a while, because\nI had to go feed my cat. If only I could edit this comment! Happily, GitHub\nallows us to use another HTTP verb, PATCH, to edit this comment. Let's do\nthat."
+        },
+        {
+          "source_title": "docs/user/advanced.rst:L781-L937",
+          "input_id": "1589215039e0ffd8ebd767682091e65c36779e8aece6605842f1d0c3ccd1c2b7",
+          "source_line_start": 891,
+          "snippet": "    >>> r = requests.patch(url=url, data=body, auth=auth)\n    >>> r.status_code\n    200"
+        },
+        {
+          "source_title": "tests/test_requests.py:L1-L170",
+          "input_id": "885e840a4a6627d5aa168b3a37ff7036842a7b0435f37c8a0047f91bb5c90c3c",
+          "source_line_start": 83,
+          "snippet": "    def test_entry_points(self):\n        requests.session\n        requests.session().get\n        requests.session().head\n        requests.get\n        requests.head\n        requests.put\n        requests.patch\n        requests.post\n        # Not really an entry point, but people rely on it.\n        from requests.packages.urllib3.poolmanager import PoolManager  # noqa:F401"
+        }
+      ]
+    },
+    {
+      "id": "776696c4-8d47-4929-aa1e-8ffca99318c3",
+      "human_readable_id": 860,
+      "label": "NETRC_FILES",
+      "sample_hash": "00c8f3d73006ee00dcd8028ba67f47019017335122c0b9ef32bd3e48dea3a797",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "模块顶层逐字定义 NETRC_FILES = (\".netrc\", \"_netrc\")，名称、值和所在层级均可核对。",
+      "evidence": [
+        {
+          "source_title": "src/requests/utils.py:L1-L182",
+          "input_id": "bb2001fb5c4d6c2e864cd2bd2cf31e11204dd36ca9ebc751a038800298cc36a3",
+          "source_line_start": 59,
+          "snippet": "from .structures import CaseInsensitiveDict\n\nNETRC_FILES = (\".netrc\", \"_netrc\")\n\nDEFAULT_CA_BUNDLE_PATH = certs.where()\n\nDEFAULT_PORTS = {\"http\": 80, \"https\": 443}"
+        }
+      ]
+    },
+    {
+      "id": "1fa80222-4742-4a06-9084-19f2459e5e81",
+      "human_readable_id": 209,
+      "label": "CHARDET_VERSION",
+      "sample_hash": "00dbcf5315da6a85e12897e0b6caf402f8f2485fdf6a852eed84a022651bb9a3",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "try/except 将 chardet.__version__ 以别名导入 chardet_version，ImportError 时赋 None，并传入兼容性检查。CONSTANT 是图中的类型标签；此处只确认可见模块变量及其用途，不证明变量不可变。",
+      "evidence": [
+        {
+          "source_title": "src/requests/__init__.py:L1-L174",
+          "input_id": "f5bd2923eeb1fbcd1d23698f0e5be214aa259fc35120e6d7a333cd46bfaf3364",
+          "source_line_start": 52,
+          "snippet": "try:\n    from chardet import __version__ as chardet_version\nexcept ImportError:\n    chardet_version = None\n\n\ndef check_compatibility(urllib3_version, chardet_version, charset_normalizer_version):"
+        },
+        {
+          "source_title": "src/requests/__init__.py:L1-L174",
+          "input_id": "f5bd2923eeb1fbcd1d23698f0e5be214aa259fc35120e6d7a333cd46bfaf3364",
+          "source_line_start": 75,
+          "snippet": "    if chardet_version:\n        major, minor, patch = chardet_version.split(\".\")[:3]\n        major, minor, patch = int(major), int(minor), int(patch)\n        # chardet_version >= 3.0.2, < 6.0.0\n        assert (3, 0, 2) <= (major, minor, patch) < (6, 0, 0)"
+        },
+        {
+          "source_title": "src/requests/__init__.py:L1-L174",
+          "input_id": "f5bd2923eeb1fbcd1d23698f0e5be214aa259fc35120e6d7a333cd46bfaf3364",
+          "source_line_start": 107,
+          "snippet": "# Check imported dependencies for compatibility.\ntry:\n    check_compatibility(\n        urllib3.__version__, chardet_version, charset_normalizer_version\n    )"
+        }
+      ]
+    },
+    {
+      "id": "00f5722c-11a7-4662-9de9-016ba7dd7c0b",
+      "human_readable_id": 1323,
+      "label": "TEST_UNCONSUMED_SESSION_RESPONSE_CLOSES_CONNECTION",
+      "sample_hash": "0106ff0f7b6270773a107755a69deba958eff96807850ba12d0df4609733524f",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "可见方法通过 contextlib.closing 包装 stream=True 的会话响应，退出后断言 _content_consumed 为 False、raw.closed 为真。支持的是测试代码意图和断言，未运行测试。",
+      "evidence": [
+        {
+          "source_title": "tests/test_requests.py:L2016-L2165",
+          "input_id": "bd1917605a30d62d0b147525d20ff7bf7d8f991a7e343ea4a08bd2b8a76ebf50",
+          "source_line_start": 2096,
+          "snippet": "    def test_unconsumed_session_response_closes_connection(self, httpbin):\n        s = requests.session()\n\n        with contextlib.closing(s.get(httpbin(\"stream/4\"), stream=True)) as response:\n            pass\n\n        assert response._content_consumed is False\n        assert response.raw.closed"
+        }
+      ]
+    },
+    {
+      "id": "314e5c75-170c-4445-98dd-cd0d2a8d60fb",
+      "human_readable_id": 743,
+      "label": "B\\\"\\\".JOIN",
+      "sample_hash": "010d427a8c38395ba4d99f64fa8795f4823d173b0c630ca23affb3a8aa98a49e",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": false,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": true
+      },
+      "rationale_zh": "content 中确实以 b\"\".join(self.iter_content(...)) 拼接字节块，主要行为和概念可识别。不过图标题及描述额外保留了反斜杠转义，不能只忽略大小写后得到源码的 b\"\".join，故精确符号为 false、名称失真为 true。",
+      "evidence": [
+        {
+          "source_title": "src/requests/models.py:L777-L942",
+          "input_id": "43af353e619da1a46933db2beb1bb0a5cc2e53eca7e2dd5e29bddd856768c293",
+          "source_line_start": 890,
+          "snippet": "    @property\n    def content(self):\n        \"\"\"Content of the response, in bytes.\"\"\"\n\n        if self._content is False:\n            # Read the contents.\n            if self._content_consumed:\n                raise RuntimeError(\"The content for this response was already consumed\")\n\n            if self.status_code == 0 or self.raw is None:\n                self._content = None\n            else:\n                self._content = b\"\".join(self.iter_content(CONTENT_CHUNK_SIZE)) or b\"\""
+        }
+      ]
+    },
+    {
+      "id": "5f4fcc49-af7a-45ac-a132-d15f02d2cdc2",
+      "human_readable_id": 1174,
+      "label": "TESTSTREAM.TELL",
+      "sample_hash": "0122a1eca43773004e03f2052316fd1ad5aa37388020272a12fd55e17d8188ac",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "关联块在 test_POSTBIN_SEEKED_OBJECT_WITH_NO_ITER 内定义 TestStream，tell 方法逐字返回 self.index。类与方法嵌套可定位；此处没有把该局部类宣称为全局唯一类。",
+      "evidence": [
+        {
+          "source_title": "tests/test_requests.py:L775-L929",
+          "input_id": "3b81f8f08bac76fc65e8bb96bbabe77868ebd0da365f43e9ff2d5a7ff4308c48",
+          "source_line_start": 799,
+          "snippet": "    def test_POSTBIN_SEEKED_OBJECT_WITH_NO_ITER(self, httpbin):\n        class TestStream:\n            def __init__(self, data):\n                self.data = data.encode()\n                self.length = len(self.data)\n                self.index = 0"
+        },
+        {
+          "source_title": "tests/test_requests.py:L775-L929",
+          "input_id": "3b81f8f08bac76fc65e8bb96bbabe77868ebd0da365f43e9ff2d5a7ff4308c48",
+          "source_line_start": 818,
+          "snippet": "            def tell(self):\n                return self.index"
+        }
+      ]
+    },
+    {
+      "id": "993570ae-77c7-433c-ab48-d43a6d4970c8",
+      "human_readable_id": 267,
+      "label": "URLREQUIRED",
+      "sample_hash": "012419284a7aa7d67630226b8110f6a77b552f10be6fe336c7d99e28923e2c6b",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "URLRequired 出现在 from .exceptions import 的列表中；该关联块没有其类定义。只按当前条目的关联来源判断，不借其他条目链接到的 exceptions.py 补充此处身份。",
+      "evidence": [
+        {
+          "source_title": "src/requests/__init__.py:L155-L184",
+          "input_id": "786110695dad7aa24c7b42bb5a97659e96566b413277aacefec8285c7cc7836e",
+          "source_line_start": 165,
+          "snippet": "from .exceptions import (\n    ConnectionError,\n    ConnectTimeout,\n    FileModeWarning,\n    HTTPError,\n    JSONDecodeError,\n    ReadTimeout,\n    RequestException,\n    Timeout,\n    TooManyRedirects,\n    URLRequired,\n)"
+        }
+      ]
+    },
+    {
+      "id": "5ad76020-2923-4284-99f4-4c84ec96b83d",
+      "human_readable_id": 931,
+      "label": "SOCKET.INET_ATON",
+      "sample_hash": "0135652a9ebb0354d45e5303c172d05123e7b140dcb4476a615e1ad00ca88062",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "address_in_network、is_ipv4_address、is_valid_cidr 三处均可见 socket.inet_aton 调用；前者将结果交给 struct.unpack，后两者用转换是否抛 OSError 做验证。该关联块未出现 socket 的 import，描述对此保留范围。",
+      "evidence": [
+        {
+          "source_title": "src/requests/utils.py:L618-L785",
+          "input_id": "cfe4ed637dfa148d95d086734b9f9271ebdcda77b1205095ee6f98e6323adc59",
+          "source_line_start": 682,
+          "snippet": "def address_in_network(ip, net):\n    \"\"\"This function allows you to check if an IP belongs to a network subnet\n\n    Example: returns True if ip = 192.168.1.1 and net = 192.168.1.0/24\n             returns False if ip = 192.168.1.1 and net = 192.168.100.0/24\n\n    :rtype: bool\n    \"\"\"\n    ipaddr = struct.unpack(\"=L\", socket.inet_aton(ip))[0]\n    netaddr, bits = net.split(\"/\")\n    netmask = struct.unpack(\"=L\", socket.inet_aton(dotted_netmask(int(bits))))[0]\n    network = struct.unpack(\"=L\", socket.inet_aton(netaddr))[0] & netmask\n    return (ipaddr & netmask) == (network & netmask)"
+        },
+        {
+          "source_title": "src/requests/utils.py:L618-L785",
+          "input_id": "cfe4ed637dfa148d95d086734b9f9271ebdcda77b1205095ee6f98e6323adc59",
+          "source_line_start": 708,
+          "snippet": "def is_ipv4_address(string_ip):\n    \"\"\"\n    :rtype: bool\n    \"\"\"\n    try:\n        socket.inet_aton(string_ip)\n    except OSError:\n        return False\n    return True"
+        },
+        {
+          "source_title": "src/requests/utils.py:L618-L785",
+          "input_id": "cfe4ed637dfa148d95d086734b9f9271ebdcda77b1205095ee6f98e6323adc59",
+          "source_line_start": 731,
+          "snippet": "        if mask < 1 or mask > 32:\n            return False\n\n        try:\n            socket.inet_aton(string_network.split(\"/\")[0])\n        except OSError:\n            return False"
+        }
+      ]
+    },
+    {
+      "id": "fbe2cdc6-6085-4f06-bb50-35a878b42e4e",
+      "human_readable_id": 813,
+      "label": "ADAPTER.SEND",
+      "sample_hash": "01c86442080eb6e53ca21e0157b126721fddd5ab704b789ccb776e1a21ac6941",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "send 方法先通过 self.get_adapter 取得局部 adapter，再调用 adapter.send。描述明确保留适配器类及运行时绑定未解析，没有将该接收者调用升级为特定类实现。",
+      "evidence": [
+        {
+          "source_title": "src/requests/sessions.py:L569-L717",
+          "input_id": "d7e626799389abc05c4760dab8b0116164b3c22fca658f7fe01bebd628df1934",
+          "source_line_start": 673,
+          "snippet": "    def send(self, request, **kwargs):\n        \"\"\"Send a given PreparedRequest.\n\n        :rtype: requests.Response"
+        },
+        {
+          "source_title": "src/requests/sessions.py:L569-L717",
+          "input_id": "d7e626799389abc05c4760dab8b0116164b3c22fca658f7fe01bebd628df1934",
+          "source_line_start": 696,
+          "snippet": "        # Get the appropriate adapter to use\n        adapter = self.get_adapter(url=request.url)\n\n        # Start time (approximately) of the request\n        start = preferred_clock()\n\n        # Send the request\n        r = adapter.send(request, **kwargs)"
+        }
+      ]
+    },
+    {
+      "id": "e9ea30af-f321-4691-9d23-e845f8a5ddf4",
+      "human_readable_id": 1151,
+      "label": "TEST_BASICAUTH_WITH_NETRC",
+      "sample_hash": "01dea3b575436a4c8b5043b7b2a96ae32eecc57b6d43431ba13e90e29e1964e5",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "可见方法保存并替换 requests.sessions.get_netrc_auth，分别断言默认认证为 200、显式错误认证为 401，并在 finally 恢复原函数。该块没有所属类头，条目已作此限定。",
+      "evidence": [
+        {
+          "source_title": "tests/test_requests.py:L640-L786",
+          "input_id": "a3b9a989f4d0f8d75c8cbc04cdfa21e95e3085097f3953feab609d7825707b28",
+          "source_line_start": 671,
+          "snippet": "    def test_basicauth_with_netrc(self, httpbin):\n        auth = (\"user\", \"pass\")\n        wrong_auth = (\"wronguser\", \"wrongpass\")\n        url = httpbin(\"basic-auth\", \"user\", \"pass\")\n\n        old_auth = requests.sessions.get_netrc_auth\n\n        try:\n\n            def get_netrc_auth_mock(url):\n                return auth\n\n            requests.sessions.get_netrc_auth = get_netrc_auth_mock\n\n            # Should use netrc and work.\n            r = requests.get(url)\n            assert r.status_code == 200"
+        },
+        {
+          "source_title": "tests/test_requests.py:L640-L786",
+          "input_id": "a3b9a989f4d0f8d75c8cbc04cdfa21e95e3085097f3953feab609d7825707b28",
+          "source_line_start": 689,
+          "snippet": "            # Given auth should override and fail.\n            r = requests.get(url, auth=wrong_auth)\n            assert r.status_code == 401\n\n            s = requests.session()\n\n            # Should use netrc and work.\n            r = s.get(url)\n            assert r.status_code == 200\n\n            # Given auth should override and fail.\n            s.auth = wrong_auth\n            r = s.get(url)\n            assert r.status_code == 401\n        finally:\n            requests.sessions.get_netrc_auth = old_auth"
+        }
+      ]
+    },
+    {
+      "id": "78b59c96-74de-487f-adb8-58cecd83f253",
+      "human_readable_id": 539,
+      "label": "REQUESTSCOOKIEJAR.VALUES",
+      "sample_hash": "01e786315d666f14c3335f01aae58066e530fe9fcdeb68a11ef82baa5d549ff2",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "RequestsCookieJar 类头与 values 方法均在关联块中；values 返回 list(self.itervalues())，itervalues 逐项产出 cookie.value。",
+      "evidence": [
+        {
+          "source_title": "src/requests/cookies.py:L167-L337",
+          "input_id": "c5586d4846b0f9f631697de87cef7aa824aa4faff0c15488db23ef57ba0edb1c",
+          "source_line_start": 176,
+          "snippet": "class RequestsCookieJar(cookielib.CookieJar, MutableMapping):\n    \"\"\"Compatibility class; is a http.cookiejar.CookieJar, but exposes a dict\n    interface."
+        },
+        {
+          "source_title": "src/requests/cookies.py:L167-L337",
+          "input_id": "c5586d4846b0f9f631697de87cef7aa824aa4faff0c15488db23ef57ba0edb1c",
+          "source_line_start": 242,
+          "snippet": "    def itervalues(self):\n        \"\"\"Dict-like itervalues() that returns an iterator of values of cookies\n        from the jar.\n\n        .. seealso:: iterkeys() and iteritems().\n        \"\"\"\n        for cookie in iter(self):\n            yield cookie.value\n\n    def values(self):\n        \"\"\"Dict-like values() that returns a list of values of cookies from the\n        jar.\n\n        .. seealso:: keys() and items().\n        \"\"\"\n        return list(self.itervalues())"
+        }
+      ]
+    },
+    {
+      "id": "98960d9e-2062-4bf4-8d2a-2c8ae83329c9",
+      "human_readable_id": 1539,
+      "label": "ENCODED_PASSWORD",
+      "sample_hash": "0210f992d4795aa2ee6e5d1e0fd5e2739df0f402c6b5e1d9f5129d86eb9be0df",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "模块顶层 ENCODED_PASSWORD 由 compat.quote(PASSWORD, \"\") 生成，并出现在 URL 认证参数化用例中。此处是固定测试字符串，不读取用户凭证。",
+      "evidence": [
+        {
+          "source_title": "tests/test_utils.py:L308-L472",
+          "input_id": "a508132f67cba7cedc589493a9a54cad81ca9b8568c3ab37a5b98ba09b9682e8",
+          "source_line_start": 411,
+          "snippet": "USER = PASSWORD = \"%!*'();:@&=+$,/?#[] \"\nENCODED_USER = compat.quote(USER, \"\")\nENCODED_PASSWORD = compat.quote(PASSWORD, \"\")\n\n\n@pytest.mark.parametrize(\n    \"url, auth\",\n    (\n        (\n            f\"http://{ENCODED_USER}:{ENCODED_PASSWORD}@request.com/url.html#test\",\n            (USER, PASSWORD),\n        ),"
+        },
+        {
+          "source_title": "tests/test_utils.py:L308-L472",
+          "input_id": "a508132f67cba7cedc589493a9a54cad81ca9b8568c3ab37a5b98ba09b9682e8",
+          "source_line_start": 440,
+          "snippet": "def test_get_auth_from_url(url, auth):\n    assert get_auth_from_url(url) == auth"
+        }
+      ]
+    },
+    {
+      "id": "f20a6eef-308c-41a5-8525-cae481b64f36",
+      "human_readable_id": 214,
+      "label": "WARNINGS.WARN",
+      "sample_hash": "024bbf2f2a65ac3ff25608031aa778d0902f61712395ec5fc32ab6e38f0a9333",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "六个链接块合起来支持 warnings.warn 的显式调用、模块导入、依赖兼容警告、非字符串认证值弃用、get_connection 弃用、两个编码辅助函数弃用与文本文件模式警告。实现属于外部模块；该描述没有将文本文件的 FileModeWarning 误写成该调用直接传入 DeprecationWarning。",
+      "evidence": [
+        {
+          "source_title": "src/requests/__init__.py:L1-L174",
+          "input_id": "f5bd2923eeb1fbcd1d23698f0e5be214aa259fc35120e6d7a333cd46bfaf3364",
+          "source_line_start": 41,
+          "snippet": "import warnings\n\nimport urllib3\n\nfrom .exceptions import RequestsDependencyWarning"
+        },
+        {
+          "source_title": "src/requests/__init__.py:L1-L174",
+          "input_id": "f5bd2923eeb1fbcd1d23698f0e5be214aa259fc35120e6d7a333cd46bfaf3364",
+          "source_line_start": 107,
+          "snippet": "# Check imported dependencies for compatibility.\ntry:\n    check_compatibility(\n        urllib3.__version__, chardet_version, charset_normalizer_version\n    )\nexcept (AssertionError, ValueError):\n    warnings.warn(\n        \"urllib3 ({}) or chardet ({})/charset_normalizer ({}) doesn't match a supported \"\n        \"version!\".format(\n            urllib3.__version__, chardet_version, charset_normalizer_version\n        ),\n        RequestsDependencyWarning,\n    )"
+        },
+        {
+          "source_title": "src/requests/adapters.py:L421-L560",
+          "input_id": "66a784fd0c494d60e8c156293f6b5cf215b60beb5c1aaa98663d031d98a66377",
+          "source_line_start": 495,
+          "snippet": "    def get_connection(self, url, proxies=None):\n        \"\"\"DEPRECATED: Users should move to `get_connection_with_tls_context`\n        for all subclasses of HTTPAdapter using Requests>=2.32.2.\n\n        Returns a urllib3 connection for the given URL. This should not be\n        called from user code, and is only exposed for use when subclassing the\n        :class:`HTTPAdapter <requests.adapters.HTTPAdapter>`.\n\n        :param url: The URL to connect to.\n        :param proxies: (optional) A Requests-style dictionary of proxies used on this request.\n        :rtype: urllib3.ConnectionPool\n        \"\"\"\n        warnings.warn(\n            (\n                \"`get_connection` has been deprecated in favor of \"\n                \"`get_connection_with_tls_context`. Custom HTTPAdapter subclasses \"\n                \"will need to migrate for Requests>=2.32.2. Please see \"\n                \"https://github.com/psf/requests/pull/6710 for more details.\"\n            ),\n            DeprecationWarning,\n        )"
+        },
+        {
+          "source_title": "src/requests/auth.py:L1-L175",
+          "input_id": "876941e572f89b2978f1968e1aefa113df765b654a1498f4118ebf40bbf6ae7d",
+          "source_line_start": 35,
+          "snippet": "    if not isinstance(username, basestring):\n        warnings.warn(\n            \"Non-string usernames will no longer be supported in Requests \"\n            \"3.0.0. Please convert the object you've passed in ({!r}) to \"\n            \"a string or bytes object in the near future to avoid \"\n            \"problems.\".format(username),\n            category=DeprecationWarning,\n        )\n        username = str(username)\n\n    if not isinstance(password, basestring):\n        warnings.warn(\n            \"Non-string passwords will no longer be supported in Requests \"\n            \"3.0.0. Please convert the object you've passed in ({!r}) to \"\n            \"a string or bytes object in the near future to avoid \"\n            \"problems.\".format(type(password)),\n            category=DeprecationWarning,\n        )"
+        },
+        {
+          "source_title": "src/requests/utils.py:L1-L182",
+          "input_id": "bb2001fb5c4d6c2e864cd2bd2cf31e11204dd36ca9ebc751a038800298cc36a3",
+          "source_line_start": 161,
+          "snippet": "            if \"b\" not in o.mode:\n                warnings.warn(\n                    (\n                        \"Requests has determined the content-length for this \"\n                        \"request using the binary size of the file: however, the \"\n                        \"file has been opened in text mode (i.e. without the 'b' \"\n                        \"flag in the mode). This may lead to an incorrect \"\n                        \"content-length. In Requests 3.0, support will be removed \"\n                        \"for files in text mode.\"\n                    ),\n                    FileModeWarning,\n                )"
+        },
+        {
+          "source_title": "src/requests/utils.py:L455-L636",
+          "input_id": "daa66f08266963b5d26a5a3feed085afd85080efed8219ddc8e7364605622a1e",
+          "source_line_start": 489,
+          "snippet": "def get_encodings_from_content(content):\n    \"\"\"Returns encodings from given content string.\n\n    :param content: bytestring to extract encodings from.\n    \"\"\"\n    warnings.warn(\n        (\n            \"In requests 3.0, get_encodings_from_content will be removed. For \"\n            \"more information, please see the discussion on issue #2266. (This\"\n            \" warning should only appear once.)\"\n        ),\n        DeprecationWarning,\n    )"
+        },
+        {
+          "source_title": "src/requests/utils.py:L455-L636",
+          "input_id": "daa66f08266963b5d26a5a3feed085afd85080efed8219ddc8e7364605622a1e",
+          "source_line_start": 591,
+          "snippet": "def get_unicode_from_response(r):\n    \"\"\"Returns the requested content back in unicode.\n\n    :param r: Response object to get unicode content from.\n\n    Tried:\n\n    1. charset from content-type\n    2. fall back and replace all unicode characters\n\n    :rtype: str\n    \"\"\"\n    warnings.warn(\n        (\n            \"In requests 3.0, get_unicode_from_response will be removed. For \"\n            \"more information, please see the discussion on issue #2266. (This\"\n            \" warning should only appear once.)\"\n        ),\n        DeprecationWarning,\n    )"
+        },
+        {
+          "source_title": "tests/compat.py:L1-L23",
+          "input_id": "7cb6eb9f50d96b511d61577f5a6811fe8884231cb7bd0baf3d7bb205357c04f9",
+          "source_line_start": 14,
+          "snippet": "def u(s):\n    warnings.warn(\n        (\n            \"This helper function is no longer relevant in Python 3. \"\n            \"Usage of this alias should be discontinued as it will be \"\n            \"removed in a future release of Requests.\"\n        ),\n        DeprecationWarning,\n    )\n    return s"
+        }
+      ]
+    },
+    {
+      "id": "cbf5dd5d-cf7a-4aad-be75-3f14e7e9e430",
+      "human_readable_id": 1578,
+      "label": "TEST_SHOULD_BYPASS_PROXIES_WIN_REGISTRY_BAD_VALUES.REGHANDLE.CLOSE",
+      "sample_hash": "02579a97bf1258c0511e4652977b1bd2f386a302bd72d7bb8e6bc8cf9ea91de4",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "测试函数、内部 RegHandle 类及 Close 方法的完整词法嵌套都可见，方法体仅 pass。限定名区分了同一块稍后另一个测试中的同名 RegHandle.Close。",
+      "evidence": [
+        {
+          "source_title": "tests/test_utils.py:L855-L958",
+          "input_id": "e503decfd7929db816a583aac617d9fb3b0ce82078b6b4369dc3d68da9c70698",
+          "source_line_start": 868,
+          "snippet": "@pytest.mark.skipif(os.name != \"nt\", reason=\"Test only on Windows\")\ndef test_should_bypass_proxies_win_registry_bad_values(monkeypatch):\n    \"\"\"Tests for function should_bypass_proxies to check if proxy\n    can be bypassed or not with Windows invalid registry settings.\n    \"\"\"\n    import winreg\n\n    class RegHandle:\n        def Close(self):\n            pass"
+        }
+      ]
+    },
+    {
+      "id": "20862ea6-17ad-4769-8111-aaa368a1888a",
+      "human_readable_id": 1080,
+      "label": "TESTREQUESTS.TEST_ENTRY_POINTS",
+      "sample_hash": "02617b61f9fc51c5cf728137760204c69fc20c53994454cd893005a16cbc1f42",
+      "judgment": "partial_or_ambiguous",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "TestRequests.test_entry_points 的身份和 PoolManager 导入都成立，但 requests.get/head/put/patch/post 是无括号的裸属性引用，只有 requests.session() 被调用。描述把所列公共入口合称为 references and calls，夸大了可见调用行为。",
+      "evidence": [
+        {
+          "source_title": "tests/test_requests.py:L1-L170",
+          "input_id": "885e840a4a6627d5aa168b3a37ff7036842a7b0435f37c8a0047f91bb5c90c3c",
+          "source_line_start": 80,
+          "snippet": "class TestRequests:\n    digest_auth_algo = (\"MD5\", \"SHA-256\", \"SHA-512\")\n\n    def test_entry_points(self):\n        requests.session\n        requests.session().get\n        requests.session().head\n        requests.get\n        requests.head\n        requests.put\n        requests.patch\n        requests.post\n        # Not really an entry point, but people rely on it.\n        from requests.packages.urllib3.poolmanager import PoolManager  # noqa:F401"
+        }
+      ]
+    },
+    {
+      "id": "5d42fe68-8da9-4d3c-9b74-73e563302576",
+      "human_readable_id": 1559,
+      "label": "TEST_TO_NATIVE_STRING",
+      "sample_hash": "0308cce1cca845a074fecd0b2f7652a37f3a61f7a0b57fc6ae712fa59c814ecd",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "参数表含字符串 T 与字节串 b\"T\"，可见 test_to_native_string 对 to_native_string(value) 与预期字符串 T 作相等断言。只确认这些参数化测试用例。",
+      "evidence": [
+        {
+          "source_title": "tests/test_utils.py:L600-L747",
+          "input_id": "cf896fef73ced537a0b6d790a3ad8ba364d36be3f347d5e595b9afa5ce7b592c",
+          "source_line_start": 685,
+          "snippet": "@pytest.mark.parametrize(\n    \"value, expected\",\n    (\n        (\"T\", \"T\"),\n        (b\"T\", \"T\"),\n        (\"T\", \"T\"),\n    ),\n)\ndef test_to_native_string(value, expected):\n    assert to_native_string(value) == expected"
+        }
+      ]
+    },
+    {
+      "id": "6dcabcc5-97ef-4321-8e5c-c0a0d5a65824",
+      "human_readable_id": 1442,
+      "label": "TESTTESTSERVER.TEST_BASIC_WAITING_SERVER",
+      "sample_hash": "031062280f87509c883d9d531f0961438a11c5602d3a85728009117167d487c8",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "TestTestServer 类中的该方法创建 threading.Event，sleep(2.5) 前后各发送一段数据，再调用 block_server.set；注释明确说释放 server block。",
+      "evidence": [
+        {
+          "source_title": "tests/test_testserver.py:L1-L165",
+          "input_id": "6457be5321898e4fd5e372104ec84bbc89ffae6b8d0cf8bf52d97f3a7792c64f",
+          "source_line_start": 11,
+          "snippet": "class TestTestServer:\n    def test_basic(self):"
+        },
+        {
+          "source_title": "tests/test_testserver.py:L1-L165",
+          "input_id": "6457be5321898e4fd5e372104ec84bbc89ffae6b8d0cf8bf52d97f3a7792c64f",
+          "source_line_start": 63,
+          "snippet": "    def test_basic_waiting_server(self):\n        \"\"\"the server waits for the block_server event to be set before closing\"\"\"\n        block_server = threading.Event()\n\n        with Server.basic_response_server(wait_to_close_event=block_server) as (\n            host,\n            port,\n        ):\n            sock = socket.socket()\n            sock.connect((host, port))\n            sock.sendall(b\"send something\")\n            time.sleep(2.5)\n            sock.sendall(b\"still alive\")\n            block_server.set()  # release server block"
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "e2c467cc-0dce-4472-ba9f-0b40e7ab7219",
+      "human_readable_id": 2024,
+      "label": "TEST_SESSION_PICKLING → REQUESTS.REQUEST",
+      "sample_hash": "0010322a31471d6013b23dba3636f3e6bfb7b80b581769709fe66b9bfcbabb80",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "test_session_pickling 方法体直接构造 requests.Request(\"GET\", httpbin(\"get\"))。两端代码符号可定位，调用方向由测试指向该显式构造表达式。",
+      "evidence": [
+        {
+          "source_title": "tests/test_requests.py:L1488-L1634",
+          "input_id": "738fe173f86a3ea0fd04fd1badf08b7af0573474d3cadc7105cab638a4925afc",
+          "source_line_start": 1553,
+          "snippet": "    def test_session_pickling(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"))\n        s = requests.Session()"
+        }
+      ]
+    },
+    {
+      "id": "0d0b1521-6872-4f56-ba73-f90816fccecb",
+      "human_readable_id": 2120,
+      "label": "TEST_CONTENT_LENGTH_FOR_STRING_DATA_COUNTS_BYTES → LEN",
+      "sample_hash": "0019a7c85f168571969544aac5603075d58874e2914f938f04763917ffea8daf",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "该测试中 length = str(len(data.encode(\"utf-8\"))) 直接出现；len 的参数是编码后的字节串，调用方向与描述一致。",
+      "evidence": [
+        {
+          "source_title": "tests/test_requests.py:L1746-L1882",
+          "input_id": "9d67c7ae84e8cc4a8868cccfdf3c0c63fe1961016bebbe6f7039b52d28749035",
+          "source_line_start": 1822,
+          "snippet": "    def test_content_length_for_string_data_counts_bytes(self, httpbin):\n        data = \"This is a string containing multi-byte UTF-8 ☃️\"\n        length = str(len(data.encode(\"utf-8\")))\n        req = requests.Request(\"POST\", httpbin(\"post\"), data=data)\n        p = req.prepare()\n\n        assert p.headers[\"Content-Length\"] == length"
+        }
+      ]
+    },
+    {
+      "id": "86503a04-7d01-410b-8615-1813df32ea4e",
+      "human_readable_id": 545,
+      "label": "MOCKREQUEST → MOCKREQUEST.GET_TYPE",
+      "sample_hash": "003096d414d2f0386b3829f20ef764f64ca7243a336b2e5c3b3c488a7dcbd063",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "MockRequest 类体内直接定义 get_type(self)，支持类到方法的 DEFINES 方向；完整限定名可由同块词法嵌套定位。",
+      "evidence": [
+        {
+          "source_title": "src/requests/cookies.py:L1-L179",
+          "input_id": "7f962a3b8f0c4b8e50bd9eed447b5f6c9ea56921e1f3d376d59634983dd4e514",
+          "source_line_start": 23,
+          "snippet": "class MockRequest:\n    \"\"\"Wraps a `requests.Request` to mimic a `urllib2.Request`."
+        },
+        {
+          "source_title": "src/requests/cookies.py:L1-L179",
+          "input_id": "7f962a3b8f0c4b8e50bd9eed447b5f6c9ea56921e1f3d376d59634983dd4e514",
+          "source_line_start": 35,
+          "snippet": "    def __init__(self, request):\n        self._r = request\n        self._new_headers = {}\n        self.type = urlparse(self._r.url).scheme\n\n    def get_type(self):\n        return self.type"
+        }
+      ]
+    },
+    {
+      "id": "33e73bd8-6194-4d6b-8f23-6941e0ac0149",
+      "human_readable_id": 851,
+      "label": "REQUESTS.MODELS → CHECK_HEADER_VALIDITY",
+      "sample_hash": "0033ab6fc01b1478446edadd2d62d219a406f9d20a9a5001c71030405e105027",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "来源模块头明确为 requests.models，from .utils import 列表含 check_header_validity，支持模块到导入符号的 IMPORTS 方向。",
+      "evidence": [
+        {
+          "source_title": "src/requests/models.py:L1-L185",
+          "input_id": "ce7864049adc0b732691fc982285b9c3c7ab256d3e2b7eb0a01e725c608ec2bb",
+          "source_line_start": 1,
+          "snippet": "\"\"\"\nrequests.models\n~~~~~~~~~~~~~~~\n\nThis module contains the primary objects that power Requests.\n\"\"\""
+        },
+        {
+          "source_title": "src/requests/models.py:L1-L185",
+          "input_id": "ce7864049adc0b732691fc982285b9c3c7ab256d3e2b7eb0a01e725c608ec2bb",
+          "source_line_start": 56,
+          "snippet": "from .utils import (\n    check_header_validity,\n    get_auth_from_url,\n    guess_filename,\n    guess_json_utf,\n    iter_slices,\n    parse_header_links,\n    requote_uri,\n    stream_decode_response_unicode,\n    super_len,\n    to_key_val_list,\n)"
+        }
+      ]
+    },
+    {
+      "id": "3920d85c-ae0e-439f-8c13-b4b6cedcbf4a",
+      "human_readable_id": 1636,
+      "label": "TESTREQUESTS.TEST_PARAMS_ARE_ADDED_BEFORE_FRAGMENT → REQUESTS.REQUEST.PREPARE",
+      "sample_hash": "004e4b3ea2bde2f56c82a7e74cd19c02b120fff97bf9103a86090293189d70a1",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "同块可见 TestRequests 类及该方法，方法内出现 requests.Request(...).prepare()。端点可按显式构造表达式及其成员名定位；描述将方法实现保留为 unresolved，因此只支持测试到该接收者调用的语法方向，不证明具体 prepare 定义或运行时绑定。",
+      "evidence": [
+        {
+          "source_title": "tests/test_requests.py:L1-L170",
+          "input_id": "885e840a4a6627d5aa168b3a37ff7036842a7b0435f37c8a0047f91bb5c90c3c",
+          "source_line_start": 80,
+          "snippet": "class TestRequests:\n    digest_auth_algo = (\"MD5\", \"SHA-256\", \"SHA-512\")\n\n    def test_entry_points(self):"
+        },
+        {
+          "source_title": "tests/test_requests.py:L1-L170",
+          "input_id": "885e840a4a6627d5aa168b3a37ff7036842a7b0435f37c8a0047f91bb5c90c3c",
+          "source_line_start": 159,
+          "snippet": "    def test_params_are_added_before_fragment(self, url, expected):\n        request = requests.Request(\"GET\", url, params={\"a\": \"b\"}).prepare()\n        assert request.url == expected"
+        }
+      ]
+    },
+    {
+      "id": "1df09c06-39fe-4a47-90ff-ad93a8767d2f",
+      "human_readable_id": 1443,
+      "label": "NOSAN_SERVER → SIMPLEHTTPREQUESTHANDLER",
+      "sample_hash": "00779846b652ae2410630e0438fb03bd96e8a288b9c9d0aededf3f1d4c6f1871",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "SimpleHTTPRequestHandler 在导入列表及 nosan_server 传给 HTTPServer 的参数位置均可见；这是从 fixture 到符号的读取/引用，描述也未声称调用 handler 方法。",
+      "evidence": [
+        {
+          "source_title": "tests/conftest.py:L1-L58",
+          "input_id": "3e39838d233a99214730f440ad51bfea12cf2b6966a7a1e9b6a1df8d27a1fb44",
+          "source_line_start": 1,
+          "snippet": "try:\n    from http.server import HTTPServer, SimpleHTTPRequestHandler\nexcept ImportError:\n    from BaseHTTPServer import HTTPServer\n    from SimpleHTTPServer import SimpleHTTPRequestHandler"
+        },
+        {
+          "source_title": "tests/conftest.py:L1-L58",
+          "input_id": "3e39838d233a99214730f440ad51bfea12cf2b6966a7a1e9b6a1df8d27a1fb44",
+          "source_line_start": 35,
+          "snippet": "@pytest.fixture\ndef nosan_server(tmp_path_factory):\n    # delay importing until the fixture in order to make it possible\n    # to deselect the test via command-line when trustme is not available\n    import trustme"
+        },
+        {
+          "source_title": "tests/conftest.py:L1-L58",
+          "input_id": "3e39838d233a99214730f440ad51bfea12cf2b6966a7a1e9b6a1df8d27a1fb44",
+          "source_line_start": 48,
+          "snippet": "    context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)\n    server_cert.configure_cert(context)\n    server = HTTPServer((\"localhost\", 0), SimpleHTTPRequestHandler)\n    server.socket = context.wrap_socket(server.socket, server_side=True)\n    server_thread = threading.Thread(target=server.serve_forever)"
+        }
+      ]
+    },
+    {
+      "id": "750f2bab-14f1-4c36-84d3-bedbc81d774d",
+      "human_readable_id": 1558,
+      "label": "TEST_USE_PROXY_FROM_ENVIRONMENT → REQUESTS.GET",
+      "sample_hash": "007d5c83a982695d9c57da91c95eed8520dd09fbcc28f6e0f421934a33356229",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "test_use_proxy_from_environment 在 override_environ 范围内和 pytest.raises(ConnectionError) 中调用 requests.get(url)，方向和条件均直接可见。",
+      "evidence": [
+        {
+          "source_title": "tests/test_lowlevel.py:L250-L390",
+          "input_id": "6824739b4a45389a356b3fa872c74b2125d794e3f050a4aa5adbf588a7072035",
+          "source_line_start": 289,
+          "snippet": "@pytest.mark.parametrize(\"var,scheme\", _proxy_combos)\ndef test_use_proxy_from_environment(httpbin, var, scheme):\n    url = f\"{scheme}://httpbin.org\"\n    fake_proxy = Server()  # do nothing with the requests; just close the socket\n    with fake_proxy as (host, port):\n        proxy_url = f\"socks5://{host}:{port}\"\n        kwargs = {var: proxy_url}\n        with override_environ(**kwargs):\n            # fake proxy's lack of response will cause a ConnectionError\n            with pytest.raises(requests.exceptions.ConnectionError):\n                requests.get(url)"
+        }
+      ]
+    },
+    {
+      "id": "40f78f55-6aa3-4f8c-8b12-3a6b28da7036",
+      "human_readable_id": 1643,
+      "label": "TEST_PARAMS_BYTES_ARE_ENCODED → REQUESTS.REQUEST",
+      "sample_hash": "008b1a8d83d10bb961c7e9d22d4b6d8384105be11ab061ed22f8c0f77aef8f7c",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "该方法直接调用 requests.Request，参数 GET、http://example.com 和 params=b\"test=foo\" 均相符；关联块不包含构造器实现，描述保留其未解析状态。",
+      "evidence": [
+        {
+          "source_title": "tests/test_requests.py:L161-L289",
+          "input_id": "b242f7122931670bf7bee8ddd426864026bcd6008840197bbdbec4e2e57a86f4",
+          "source_line_start": 174,
+          "snippet": "    def test_params_bytes_are_encoded(self):\n        request = requests.Request(\n            \"GET\", \"http://example.com\", params=b\"test=foo\"\n        ).prepare()\n        assert request.url == \"http://example.com/?test=foo\""
+        }
+      ]
+    },
+    {
+      "id": "3c4284fc-6cd8-4261-813a-8baf2394cbaa",
+      "human_readable_id": 1039,
+      "label": "SYS → SYS.MODULES",
+      "sample_hash": "00a9bc05e4ccefb1141a3f410d3d73a4add9fff7a6a87744d6bb165ec18bd4e5",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": null,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "import sys、list(sys.modules)、字典项读取和 requests.packages 别名写入均可见。主要陈述是模块与成员的关联及相关访问，没有指定单一调用/数据流方向，visible_direction_supported 记 null，不把 sys 当成执行这些语句的调用方。重复来源引用不增加独立证据数。",
+      "evidence": [
+        {
+          "source_title": "src/requests/packages.py:L1-L23",
+          "input_id": "35822cc415d89d0b42a0fb1fc32e9c8fc12289ac29c437f2058741b8fd7a420c",
+          "source_line_start": 1,
+          "snippet": "import sys\n\nfrom .compat import chardet"
+        },
+        {
+          "source_title": "src/requests/packages.py:L1-L23",
+          "input_id": "35822cc415d89d0b42a0fb1fc32e9c8fc12289ac29c437f2058741b8fd7a420c",
+          "source_line_start": 8,
+          "snippet": "for package in (\"urllib3\", \"idna\"):\n    locals()[package] = __import__(package)\n    # This traversal is apparently necessary such that the identities are\n    # preserved (requests.packages.urllib3.* is urllib3.*)\n    for mod in list(sys.modules):\n        if mod == package or mod.startswith(f\"{package}.\"):\n            sys.modules[f\"requests.packages.{mod}\"] = sys.modules[mod]\n\nif chardet is not None:\n    target = chardet.__name__\n    for mod in list(sys.modules):\n        if mod == target or mod.startswith(f\"{target}.\"):\n            imported_mod = sys.modules[mod]\n            sys.modules[f\"requests.packages.{mod}\"] = imported_mod\n            mod = mod.replace(target, \"chardet\")\n            sys.modules[f\"requests.packages.{mod}\"] = imported_mod"
+        }
+      ]
+    },
+    {
+      "id": "da411de8-d4e2-426b-b75c-4618fe70798d",
+      "human_readable_id": 1320,
+      "label": "STREAM_DECODE_RESPONSE_UNICODE → CODECS.GETINCREMENTALDECODER",
+      "sample_hash": "00c2d4fb3115d82d3df90a832da06fc1c7dceaa5646a55753466050736e08b28",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "r.encoding 为 None 时直接产出并 return，其后才调用 codecs.getincrementaldecoder(r.encoding)(errors=\"replace\")。描述含该条件并保留具体 decoder 类型未知，支持可见调用方向。",
+      "evidence": [
+        {
+          "source_title": "src/requests/utils.py:L455-L636",
+          "input_id": "daa66f08266963b5d26a5a3feed085afd85080efed8219ddc8e7364605622a1e",
+          "source_line_start": 564,
+          "snippet": "def stream_decode_response_unicode(iterator, r):\n    \"\"\"Stream decodes an iterator.\"\"\"\n\n    if r.encoding is None:\n        yield from iterator\n        return\n\n    decoder = codecs.getincrementaldecoder(r.encoding)(errors=\"replace\")\n    for chunk in iterator:\n        rv = decoder.decode(chunk)\n        if rv:\n            yield rv\n    rv = decoder.decode(b\"\", final=True)\n    if rv:"
+        }
+      ]
+    },
+    {
+      "id": "8d02bf46-d9f5-42bc-97ad-369382aafb3f",
+      "human_readable_id": 1064,
+      "label": "RESOLVE_REDIRECTS → PREPARE_COOKIES",
+      "sample_hash": "00cb0b0e4817e2d1840777356231ea6b35d07e76b4d0006d5cea57d496aa1bda",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "resolve_redirects 在提取并合并 cookies 后调用 prepared_request.prepare_cookies。prepare_cookies 是可定位的成员标识符；描述仅陈述这处接收者调用且说明定义不在块内，不据此证明它绑定某个类的实现。",
+      "evidence": [
+        {
+          "source_title": "src/requests/sessions.py:L149-L305",
+          "input_id": "e6c556ff05b4fed115c5d5a430280c6f4b87ef64048c77a455e7c3f5a77d4f19",
+          "source_line_start": 159,
+          "snippet": "    def resolve_redirects(\n        self,\n        resp,\n        req,\n        stream=False,\n        timeout=None,\n        verify=True,\n        cert=None,\n        proxies=None,\n        yield_requests=False,\n        **adapter_kwargs,\n    ):"
+        },
+        {
+          "source_title": "src/requests/sessions.py:L149-L305",
+          "input_id": "e6c556ff05b4fed115c5d5a430280c6f4b87ef64048c77a455e7c3f5a77d4f19",
+          "source_line_start": 177,
+          "snippet": "        while url:\n            prepared_request = req.copy()"
+        },
+        {
+          "source_title": "src/requests/sessions.py:L149-L305",
+          "input_id": "e6c556ff05b4fed115c5d5a430280c6f4b87ef64048c77a455e7c3f5a77d4f19",
+          "source_line_start": 237,
+          "snippet": "            # Extract any cookies sent on the response to the cookiejar\n            # in the new request. Because we've mutated our copied prepared\n            # request, use the old one that we haven't yet touched.\n            extract_cookies_to_jar(prepared_request._cookies, req, resp.raw)\n            merge_cookies(prepared_request._cookies, self.cookies)\n            prepared_request.prepare_cookies(prepared_request._cookies)"
+        }
+      ]
+    },
+    {
+      "id": "19995314-d89d-4600-95c1-0320610c4ff0",
+      "human_readable_id": 1417,
+      "label": "WARNINGS → WARNINGS.SIMPLEFILTER",
+      "sample_hash": "00dd6bc3294a20faaa94fad9caef974cd029bde7075eed6fb72ff2ba80ad9ff9",
+      "judgment": "unsupported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": false,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "warnings 与 warnings.simplefilter 都是准确可见的代码符号，但调用语句位于 tests/__init__.py 的初始化代码中；warnings 是被访问的导入模块，不是调用方。所声称 warnings → warnings.simplefilter 的 CALLS 方向缺乏支持。",
+      "evidence": [
+        {
+          "source_title": "tests/__init__.py:L1-L14",
+          "input_id": "57b01c32c9deee8e72e86f3237b27e754f9986f9eb6aed13db90d32faa84161c",
+          "source_line_start": 1,
+          "snippet": "\"\"\"Requests test package initialisation.\"\"\"\n\nimport warnings\n\ntry:\n    from urllib3.exceptions import SNIMissingWarning\n\n    # urllib3 1.x sets SNIMissingWarning to only go off once,\n    # while this test suite requires it to always fire\n    # so that it occurs during test_requests.test_https_warnings\n    warnings.simplefilter(\"always\", SNIMissingWarning)\nexcept ImportError:\n    # urllib3 2.0 removed that warning and errors out instead\n    SNIMissingWarning = None"
+        }
+      ]
+    },
+    {
+      "id": "9542110d-ae7a-4465-a0a7-4bf142c9f714",
+      "human_readable_id": 2259,
+      "label": "TEST_CUSTOM_REDIRECT_MIXIN → GET",
+      "sample_hash": "0145d8ee928e47732bb617bea658a4fee3bcfc14a1a03345c97ee82d3ef080a3",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": true
+      },
+      "rationale_zh": "测试体创建 CustomRedirectSession 后调用 session.get，描述明确保留继承/运行时实现未解析，因此该局部调用陈述受支持。但端点只命名 GET，而同块还有 resp.headers.get；短名本身未保留接收者区分，名称歧义单独标 true，不据此假定全图一定发生了错误合并。",
+      "evidence": [
+        {
+          "source_title": "tests/test_requests.py:L2157-L2294",
+          "input_id": "fd90685c9e724b676907132ffaad000d0fb0e55cc718e046928dbb37f66687bd",
+          "source_line_start": 2191,
+          "snippet": "    def test_custom_redirect_mixin(self, httpbin):\n        \"\"\"Tests a custom mixin to overwrite ``get_redirect_target``.\n\n        Ensures a subclassed ``requests.Session`` can handle a certain type of\n        malformed redirect responses."
+        },
+        {
+          "source_title": "tests/test_requests.py:L2157-L2294",
+          "input_id": "fd90685c9e724b676907132ffaad000d0fb0e55cc718e046928dbb37f66687bd",
+          "source_line_start": 2214,
+          "snippet": "        class CustomRedirectSession(requests.Session):\n            def get_redirect_target(self, resp):\n                # default behavior\n                if resp.is_redirect:\n                    return resp.headers[\"location\"]\n                # edge case - check to see if 'location' is in headers anyways\n                location = resp.headers.get(\"location\")\n                if location and (location != resp.url):\n                    return location\n                return None\n\n        session = CustomRedirectSession()\n        r = session.get(urls_test[0])"
+        }
+      ]
+    },
+    {
+      "id": "b4b7926b-0e74-47c0-ab60-47f4dd16203a",
+      "human_readable_id": 2584,
+      "label": "TESTTESTSERVER.TEST_REQUEST_RECOVERY → SOCKET.SENDALL",
+      "sample_hash": "018562bd04c2afc46dfdac038f6a2da999bdf5d999d5acc1c74635d5b55ea248",
+      "judgment": "partial_or_ambiguous",
+      "flags": {
+        "exact_code_symbol": false,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": true
+      },
+      "rationale_zh": "test_request_recovery 到 sock1.sendall/sock2.sendall 的可见调用方向成立，sock1/sock2 来自 socket.socket()。但关联块没有 socket.sendall，端点 SOCKET.SENDALL 省掉了类/接收者层级，无法按该限定名定位。描述明确说绑定未解析，故标身份/名称歧义而不标已证明动态目标的过度断言。该测试还带 skip，未在此执行。",
+      "evidence": [
+        {
+          "source_title": "tests/test_testserver.py:L1-L165",
+          "input_id": "6457be5321898e4fd5e372104ec84bbc89ffae6b8d0cf8bf52d97f3a7792c64f",
+          "source_line_start": 1,
+          "snippet": "import socket\nimport threading\nimport time\n\nimport pytest\nfrom tests.testserver.server import Server"
+        },
+        {
+          "source_title": "tests/test_testserver.py:L1-L165",
+          "input_id": "6457be5321898e4fd5e372104ec84bbc89ffae6b8d0cf8bf52d97f3a7792c64f",
+          "source_line_start": 94,
+          "snippet": "    @pytest.mark.skip(reason=\"this fails non-deterministically under pytest-xdist\")\n    def test_request_recovery(self):\n        \"\"\"can check the requests content\"\"\"\n        # TODO: figure out why this sometimes fails when using pytest-xdist.\n        server = Server.basic_response_server(requests_to_handle=2)\n        first_request = b\"put your hands up in the air\"\n        second_request = b\"put your hand down in the floor\"\n\n        with server as address:\n            sock1 = socket.socket()\n            sock2 = socket.socket()\n\n            sock1.connect(address)\n            sock1.sendall(first_request)\n            sock1.close()\n\n            sock2.connect(address)\n            sock2.sendall(second_request)"
+        }
+      ]
+    },
+    {
+      "id": "4df05ec0-c8b0-4bd4-b1d8-5a5fa96511d4",
+      "human_readable_id": 999,
+      "label": "GENERATE → CONTENTDECODINGERROR",
+      "sample_hash": "01a18aeb99af9c5409e3584e0b836b72720e2e6238d0ff387ea6b1dac2904d45",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "iter_content 内的 generate 函数在 except DecodeError as e 分支中 raise ContentDecodingError(e)，支持局部函数到异常构造表达式的调用方向。不借其他来源补充异常类定义。",
+      "evidence": [
+        {
+          "source_title": "src/requests/models.py:L777-L942",
+          "input_id": "43af353e619da1a46933db2beb1bb0a5cc2e53eca7e2dd5e29bddd856768c293",
+          "source_line_start": 799,
+          "snippet": "    def iter_content(self, chunk_size=1, decode_unicode=False):\n        \"\"\"Iterates over the response data.  When stream=True is set on the"
+        },
+        {
+          "source_title": "src/requests/models.py:L777-L942",
+          "input_id": "43af353e619da1a46933db2beb1bb0a5cc2e53eca7e2dd5e29bddd856768c293",
+          "source_line_start": 816,
+          "snippet": "        def generate():\n            # Special case for urllib3.\n            if hasattr(self.raw, \"stream\"):\n                try:\n                    yield from self.raw.stream(chunk_size, decode_content=True)\n                except ProtocolError as e:\n                    raise ChunkedEncodingError(e)\n                except DecodeError as e:\n                    raise ContentDecodingError(e)"
+        }
+      ]
+    },
+    {
+      "id": "745a85f4-5696-4786-9ca6-1eed2cfc49b1",
+      "human_readable_id": 1916,
+      "label": "TEST_ENV_CERT_BUNDLES → SESSION.MERGE_ENVIRONMENT_SETTINGS",
+      "sample_hash": "01aeefaf6a3a16667366b75720e2445c512e911859497309d884a711f66f52d5",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "test_env_cert_bundles 中先有 s = requests.Session()，随后有 s.merge_environment_settings(...)；Session 与成员名可通过同一段显式构造和接收者赋值定位。描述仅声称 syntactically referenced 方法并保留具体绑定未证明，支持这层有限调用陈述。",
+      "evidence": [
+        {
+          "source_title": "tests/test_requests.py:L919-L1069",
+          "input_id": "d62e2a771164b167bb4b3823a37d8a244819d3c478fdd6c0a08ded7b6ff4550b",
+          "source_line_start": 978,
+          "snippet": "    def test_env_cert_bundles(self, httpbin, env, expected):\n        s = requests.Session()\n        with mock.patch(\"os.environ\", env):\n            settings = s.merge_environment_settings(\n                url=httpbin(\"get\"), proxies={}, stream=False, verify=True, cert=None\n            )\n        assert settings[\"verify\"] == expected"
+        }
+      ]
+    },
+    {
+      "id": "516e1fc6-6964-4a2b-881f-1eacc0b93a97",
+      "human_readable_id": 2552,
+      "label": "TESTTESTSERVER.TEST_BASIC → SOCKET.SENDALL",
+      "sample_hash": "01d0073fbd268f354135921a41e3e8885594e1f597837b75ace153e018180c73",
+      "judgment": "partial_or_ambiguous",
+      "flags": {
+        "exact_code_symbol": false,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": true
+      },
+      "rationale_zh": "TestTestServer.test_basic 内的 sock.sendall(question) 调用成立，sock 来自 socket.socket()；端点 SOCKET.SENDALL 不对应源码的模块属性或原接收者表达式，具体限定名不准确。方向可以独立确认为测试到该成员调用，描述没有宣称运行时实现已解析，dynamic_target_overclaim 记 false。两条来源引用实际是同一个输入块。",
+      "evidence": [
+        {
+          "source_title": "tests/test_testserver.py:L1-L165",
+          "input_id": "6457be5321898e4fd5e372104ec84bbc89ffae6b8d0cf8bf52d97f3a7792c64f",
+          "source_line_start": 1,
+          "snippet": "import socket\nimport threading\nimport time\n\nimport pytest\nfrom tests.testserver.server import Server\n\nimport requests"
+        },
+        {
+          "source_title": "tests/test_testserver.py:L1-L165",
+          "input_id": "6457be5321898e4fd5e372104ec84bbc89ffae6b8d0cf8bf52d97f3a7792c64f",
+          "source_line_start": 11,
+          "snippet": "class TestTestServer:\n    def test_basic(self):\n        \"\"\"messages are sent and received properly\"\"\"\n        question = b\"success?\"\n        answer = b\"yeah, success\"\n\n        def handler(sock):\n            text = sock.recv(1000)\n            assert text == question\n            sock.sendall(answer)\n\n        with Server(handler) as (host, port):\n            sock = socket.socket()\n            sock.connect((host, port))\n            sock.sendall(question)\n            text = sock.recv(1000)\n            assert text == answer"
+        }
+      ]
+    },
+    {
+      "id": "b0e7f776-633d-49ff-9626-380941f6ecde",
+      "human_readable_id": 678,
+      "label": "REQUESTS.EXCEPTIONS → JSONDECODEERROR",
+      "sample_hash": "02293c08c3d95ad8fa954f4e13dce7607f830e7eb33a0ab1b529d275523d67a2",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "模块头 requests.exceptions 与 class JSONDecodeError(...) 声明同在关联来源，支持模块到类的 DEFINES 方向。",
+      "evidence": [
+        {
+          "source_title": "src/requests/exceptions.py:L1-L151",
+          "input_id": "fff32b627b220955a2eb4501d87f9063c151572338d4567ebd02a5e2b336d8a6",
+          "source_line_start": 1,
+          "snippet": "\"\"\"\nrequests.exceptions\n~~~~~~~~~~~~~~~~~~~\n\nThis module contains the set of Requests' exceptions.\n\"\"\"\nfrom urllib3.exceptions import HTTPError as BaseHTTPError\n\nfrom .compat import JSONDecodeError as CompatJSONDecodeError"
+        },
+        {
+          "source_title": "src/requests/exceptions.py:L1-L151",
+          "input_id": "fff32b627b220955a2eb4501d87f9063c151572338d4567ebd02a5e2b336d8a6",
+          "source_line_start": 27,
+          "snippet": "class InvalidJSONError(RequestException):\n    \"\"\"A JSON error occurred.\"\"\"\n\n\nclass JSONDecodeError(InvalidJSONError, CompatJSONDecodeError):\n    \"\"\"Couldn't decode the text into json\"\"\""
+        }
+      ]
+    },
+    {
+      "id": "5fd11da9-1382-4c02-8d91-77043631c26a",
+      "human_readable_id": 1239,
+      "label": "SUPER_LEN → O.ENCODE",
+      "sample_hash": "0255c16de0cdc15af172066e1915a7b7b53eaa243dfa16efd41309c94e4a6c4d",
+      "judgment": "supported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": true,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "super_len 在 isinstance(o, str) 条件内执行 o = o.encode(\"utf-8\")。两端是可见代码标识符，条件、调用方向和赋值行为均吻合；描述未把具体动态实现断言为已解析。重复链接只按同一证据看待。",
+      "evidence": [
+        {
+          "source_title": "src/requests/utils.py:L1-L182",
+          "input_id": "bb2001fb5c4d6c2e864cd2bd2cf31e11204dd36ca9ebc751a038800298cc36a3",
+          "source_line_start": 135,
+          "snippet": "def super_len(o):\n    total_length = None\n    current_position = 0\n\n    if isinstance(o, str):\n        o = o.encode(\"utf-8\")"
+        }
+      ]
+    },
+    {
+      "id": "3d50f843-aac8-44bd-9514-ad3c7298637e",
+      "human_readable_id": 2069,
+      "label": "TEST_HEADER_VALUE_NOT_STR → PYTEST.MARK.PARAMETRIZE",
+      "sample_hash": "025aca5150ffc639d54cec13f565df676fea1973134fdc8ea36069ea6fa533fb",
+      "judgment": "unsupported",
+      "flags": {
+        "exact_code_symbol": true,
+        "visible_direction_supported": false,
+        "dynamic_target_overclaim": false,
+        "source_link_missing": false,
+        "name_changed_or_ambiguous": false
+      },
+      "rationale_zh": "test_header_value_not_str 与 pytest.mark.parametrize 两端均可定位，但该测试使用参数化装饰器，实际断言无效请求头导致 InvalidHeader。被装饰不支持 test → decorator 的 TESTS 关系；无效 key 本身也不是此用例的主要验证对象。",
+      "evidence": [
+        {
+          "source_title": "tests/test_requests.py:L1624-L1760",
+          "input_id": "2b223db0ce3998330ac5bf060e661b1495b64a7610c9e5a5172cac9c6c07fb18",
+          "source_line_start": 1709,
+          "snippet": "    @pytest.mark.parametrize(\n        \"invalid_header, key\",\n        (\n            ({\"foo\": 3}, \"foo\"),\n            ({\"bar\": {\"foo\": \"bar\"}}, \"bar\"),\n            ({\"baz\": [\"foo\", \"bar\"]}, \"baz\"),\n        ),\n    )\n    def test_header_value_not_str(self, httpbin, invalid_header, key):\n        \"\"\"Ensure the header value is of type string or bytes as\n        per discussion in GH issue #3386\n        \"\"\"\n        with pytest.raises(InvalidHeader) as excinfo:\n            requests.get(httpbin(\"get\"), headers=invalid_header)\n        assert key in str(excinfo.value)"
+        }
+      ]
+    }
+  ],
+  "validation": {
+    "sample_hashes_checked": 40,
+    "sample_order_preserved": true,
+    "linked_source_references_checked": 49,
+    "distinct_linked_input_ids": 37,
+    "all_linked_titles_text_hashes_and_text_unit_ids_match": true,
+    "all_evidence_snippets_verified_verbatim": true,
+    "unlinked_evidence_used": false,
+    "only_written_artifact": "research/pilot/results/code-prompt/quality-review-code-prompt.json"
+  },
+  "summary": {
+    "entities": {
+      "sample_size": 20,
+      "judgments": {
+        "supported": 19,
+        "partial_or_ambiguous": 1,
+        "unsupported": 0
+      },
+      "flags": {
+        "exact_code_symbol": {
+          "true": 19,
+          "false": 1,
+          "null": 0
+        },
+        "visible_direction_supported": {
+          "true": 0,
+          "false": 0,
+          "null": 20
+        },
+        "dynamic_target_overclaim": {
+          "true": 0,
+          "false": 20,
+          "null": 0
+        },
+        "source_link_missing": {
+          "true": 0,
+          "false": 20,
+          "null": 0
+        },
+        "name_changed_or_ambiguous": {
+          "true": 1,
+          "false": 19,
+          "null": 0
+        }
+      }
+    },
+    "relationships": {
+      "sample_size": 20,
+      "judgments": {
+        "supported": 16,
+        "partial_or_ambiguous": 2,
+        "unsupported": 2
+      },
+      "flags": {
+        "exact_code_symbol": {
+          "true": 18,
+          "false": 2,
+          "null": 0
+        },
+        "visible_direction_supported": {
+          "true": 17,
+          "false": 2,
+          "null": 1
+        },
+        "dynamic_target_overclaim": {
+          "true": 0,
+          "false": 20,
+          "null": 0
+        },
+        "source_link_missing": {
+          "true": 0,
+          "false": 20,
+          "null": 0
+        },
+        "name_changed_or_ambiguous": {
+          "true": 3,
+          "false": 17,
+          "null": 0
+        }
+      }
+    },
+    "interpretation_zh": "仅描述这 40 条固定样本：实体的主要陈述大多可回到关联来源，但存在将入口引用写成调用；关系样本中另有错误调用方、将装饰关系写成 TESTS，以及两条 SOCKET.SENDALL 的端点限定名问题。不能据此推出全图精度或检索效果。"
+  }
+}

@@ -1,0 +1,391 @@
+{
+  "variant": "code-prompt",
+  "question_id": "Q19",
+  "method": "ms_local_code_prompt",
+  "budget": 4000,
+  "query": "Find the implementation of a class named AsyncSession in this indexed snapshot. If there is none, say it was not found rather than substitute a synchronous Session.",
+  "upstream_raw_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n394|SESSIONS.SESSION|Explicitly referenced as `sessions.Session()` in `request`; the class definition is not visible in this chunk.|1\n16|SESSION.AUTH|The class-scoped value spelling `Session.auth` is explicitly referenced through the assignment `s.auth = ('user', 'pass')`; the example documents session-level authentication data, but does not show a class definition.|1\n9|SESSION.GET|The method spelling `Session.get` is explicitly referenced through calls such as `s.get('https://httpbin.org/cookies')`; the receiver is the local example variable `s`, initialized from `Session`, and the method definition is not visible here.|1\n1120|SES.PREPARE_REQUEST|The attribute call `ses.prepare_request(req)` is explicitly referenced on a locally created session; the receiver's concrete runtime class is not proven by this chunk.|2\n269|.SESSIONS|The relative module `.sessions` is explicitly imported by the visible grouped import statement.|1\n32|REQUESTS.SESSION|`REQUESTS.SESSION` refers to the externally defined Requests library session APIs, primarily the `requests.Session` class/constructor and the `requests.session()` callable. Their implementations are not visible in the available source or documentation context.\n\nThe `requests.Session()` constructor is used throughout the tests and examples to create persistent HTTP session objects. These sessions are configured with default headers, cookies, proxies, redirect limits, response hooks, TLS-related settings, and mounted HTTP adapters. They are also used for sending authenticated and general requests, rebuilding proxies, testing redirect behavior, pickling, adapter lookup, connection cleanup, and other session-level behavior. In some tests, a constructed session is assigned to a variable such as `s` and then used through the local session object.\n\n`requests.Session` is also referenced as the superclass of `CustomRedirectSession`, indicating that custom session implementations can extend the Requests session class. Documentation examples show `requests.Session()` being used to configure default headers, although those examples do not establish production execution.\n\nThe related `requests.session()` callable is explicitly invoked in multiple authentication and redirect tests, including `test_HTTP_302_TOO_MANY_REDIRECTS_WITH_PARAMS`, `test_unconsumed_session_response_closes_connection`, and `TestRequests.test_entry_points`, to create session objects. Although the class constructor and lowercase callable are distinct spellings, both represent externally provided Requests mechanisms for creating HTTP sessions.|55\n15|SESSION.CLOSE|The method concept `Session.close` is explicitly referenced by the statement that a session is closed when a context-manager block exits; no direct `close()` expression or method definition is visible, so the owning implementation and exact invocation are not shown here.|2\n1161|SESSION.REBUILD_PROXIES|Explicitly referenced method call `session.rebuild_proxies(prep, proxies)`; the receiver is a locally created session, but the concrete implementation is not visible.|1\n8|SESSION|`SESSION` refers to the `requests.Session` class, defined as `Session(SessionRedirectMixin)` and instantiated as `Session()` or `requests.Session()`. It provides persistent session-level behavior across HTTP requests, including cookie and parameter persistence, connection pooling, and request configuration. Session state, such as cookies, is applied when requests are prepared, allowing subsequent requests to reuse shared settings and connection resources.|15\n393|SESSIONS|Imported with `from . import sessions`; the imported module is used to construct a session.|1\n1310|SESSION.GET_ADAPTER|`SESSION.GET_ADAPTER` refers to the exact attribute call `session.get_adapter(url=url)`, which is used inside `_patch_adapter_gzipped_redirect`. The receiver is the parameter named `session`, but the available context does not establish its concrete runtime class.|1\n1262|S2.MOUNT|The unresolved receiver call `s2.mount(...)` is referenced to add an HTTPS adapter after assigning `s2.adapters`; the receiver's concrete class is not proven beyond session construction in the test.|1\n111|REQUESTS-FUTURES|The exact external project name `requests-futures` is referenced as an example of a project combining Requests with an asynchronicity framework; no implementation is visible.|1\n1113|REQUESTS.SESSION.SEND|References the unresolved method `send` on a session receiver, used as `s.send(r.prepare())`; the receiver is syntactically assigned from `requests.Session()` but the method definition is not visible.|2\n1264|S.GET_ADAPTER|The unresolved receiver call `s.get_adapter(...)` is referenced three times to select adapters for URLs matching only the general prefix, matching the more-specific prefix, and not matching the configured prefix; the receiver's concrete class is not proven beyond session construction in the test.|1\n797|SESSION.__ENTER__|The method `Session.__enter__(self)` is defined here and returns the session instance via `return self`.|1\n48|SESSION.CERT|The unresolved session attribute `Session.cert` is explicitly written through `s.cert = '/path/client.cert'`; the receiver is created by `requests.Session()`, but the owning implementation is not visible here.|1\n\n\n-----Relationships-----\nid|source|target|description|weight|links\n10|SESSION.GET|RESPONSE|RETURNS, direction from method `Session.get` to class `Response`, supported by the statement that a Response is generated from a Session call and by the visible `r = s.get(...)` examples; the receiver `s` is documented as a Session instance in those examples.|7.0|1\n375|REQUEST|SESSIONS.SESSION|CALLS, direction request -> sessions.Session, visible expression `with sessions.Session() as session`; the target class is referenced but its definition is not visible.|9.0|1\n17|SESSION|SESSION.AUTH|WRITES, direction from class `Session` to value `Session.auth`, visible in `s.auth = ('user', 'pass')`; the example writes session-level authentication data through a Session instance.|9.0|1\n1733|TEST_HEADERS_PRESERVE_ORDER|SES.PREPARE_REQUEST|CALLS, from `test_headers_preserve_order` to the syntactically referenced `ses.prepare_request`, via `ses.prepare_request(req)`; runtime receiver binding is not proven.|8.0|1\n1728|TEST_HEADERS_ON_SESSION_WITH_NONE_ARE_NOT_SENT|SES.PREPARE_REQUEST|CALLS, from `test_headers_on_session_with_None_are_not_sent` to the syntactically referenced `ses.prepare_request`, via `ses.prepare_request(req)`; runtime receiver binding is not proven.|8.0|1\n\n\n-----Sources-----\nid|text\n30|\"\"\"\nrequests.api\n~~~~~~~~~~~~\n\nThis module implements the Requests API.\n\n:copyright: (c) 2012 by Kenneth Reitz.\n:license: Apache2, see LICENSE for more details.\n\"\"\"\n\nfrom . import sessions\n\n\ndef request(method, url, **kwargs):\n    \"\"\"Constructs and sends a :class:`Request <Request>`.\n\n    :param method: method for the new :class:`Request` object: ``GET``, ``OPTIONS``, ``HEAD``, ``POST``, ``PUT``, ``PATCH``, or ``DELETE``.\n    :param url: URL for the new :class:`Request` object.\n    :param params: (optional) Dictionary, list of tuples or bytes to send\n        in the query string for the :class:`Request`.\n    :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n        object to send in the body of the :class:`Request`.\n    :param json: (optional) A JSON serializable Python object to send in the body of the :class:`Request`.\n    :param headers: (optional) Dictionary of HTTP Headers to send with the :class:`Request`.\n    :param cookies: (optional) Dict or CookieJar object to send with the :class:`Request`.\n    :param files: (optional) Dictionary of ``'name': file-like-objects`` (or ``{'name': file-tuple}``) for multipart encoding upload.\n        ``file-tuple`` can be a 2-tuple ``('filename', fileobj)``, 3-tuple ``('filename', fileobj, 'content_type')``\n        or a 4-tuple ``('filename', fileobj, 'content_type', custom_headers)``, where ``'content_type'`` is a string\n        defining the content type of the given file and ``custom_headers`` a dict-like object containing additional headers\n        to add for the file.\n    :param auth: (optional) Auth tuple to enable Basic/Digest/Custom HTTP Auth.\n    :param timeout: (optional) How many seconds to wait for the server to send data\n        before giving up, as a float, or a :ref:`(connect timeout, read\n        timeout) <timeouts>` tuple.\n    :type timeout: float or tuple\n    :param allow_redirects: (optional) Boolean. Enable/disable GET/OPTIONS/POST/PUT/PATCH/DELETE/HEAD redirection. Defaults to ``True``.\n    :type allow_redirects: bool\n    :param proxies: (optional) Dictionary mapping protocol to the URL of the proxy.\n    :param verify: (optional) Either a boolean, in which case it controls whether we verify\n            the server's TLS certificate, or a string, in which case it must be a path\n            to a CA bundle to use. Defaults to ``True``.\n    :param stream: (optional) if ``False``, the response content will be immediately downloaded.\n    :param cert: (optional) if String, path to ssl client cert file (.pem). If Tuple, ('cert', 'key') pair.\n    :return: :class:`Response <Response>` object\n    :rtype: requests.Response\n\n    Usage::\n\n      >>> import requests\n      >>> req = requests.request('GET', 'https://httpbin.org/get')\n      >>> req\n      <Response [200]>\n    \"\"\"\n\n    # By using the 'with' statement we are sure the session is closed, thus we\n    # avoid leaving sockets open which can trigger a ResourceWarning in some\n    # cases, and look like a memory leak in others.\n    with sessions.Session() as session:\n        return session.request(method=method, url=url, **kwargs)\n\n\ndef get(url, params=None, **kwargs):\n    r\"\"\"Sends a GET request.\n\n    :param url: URL for the new :class:`Request` object.\n    :param params: (optional) Dictionary, list of tuples or bytes to send\n        in the query string for the :class:`Request`.\n    :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n    :return: :class:`Response <Response>` object\n    :rtype: requests.Response\n    \"\"\"\n\n    return request(\"get\", url, params=params, **kwargs)\n\n\ndef options(url, **kwargs):\n    r\"\"\"Sends an OPTIONS request.\n\n    :param url: URL for the new :class:`Request` object.\n    :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n    :return: :class:`Response <Response>` object\n    :rtype: requests.Response\n    \"\"\"\n\n    return request(\"options\", url, **kwargs)\n\n\ndef head(url, **kwargs):\n    r\"\"\"Sends a HEAD request.\n\n    :param url: URL for the new :class:`Request` object.\n    :param \\*\\*kwargs: Optional arguments that ``request`` takes. If\n        `allow_redirects` is not provided, it will be set to `False` (as\n        opposed to the default :meth:`request` behavior).\n    :return: :class:`Response <Response>` object\n    :rtype: requests.Response\n    \"\"\"\n\n    kwargs.setdefault(\"allow_redirects\", False)\n    return request(\"head\", url, **kwargs)\n\n\ndef post(url, data=None, json=None, **kwargs):\n    r\"\"\"Sends a POST request.\n\n    :param url: URL for the new :class:`Request` object.\n    :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n        object to send in the body of the :class:`Request`.\n    :param json: (optional) A JSON serializable Python object to send in the body of the :class:`Request`.\n\n",
+  "upstream_raw_records": {
+    "relationships": [
+      {
+        "id": "10",
+        "source": "SESSION.GET",
+        "target": "RESPONSE",
+        "description": "RETURNS, direction from method `Session.get` to class `Response`, supported by the statement that a Response is generated from a Session call and by the visible `r = s.get(...)` examples; the receiver `s` is documented as a Session instance in those examples.",
+        "weight": "7.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "375",
+        "source": "REQUEST",
+        "target": "SESSIONS.SESSION",
+        "description": "CALLS, direction request -> sessions.Session, visible expression `with sessions.Session() as session`; the target class is referenced but its definition is not visible.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "17",
+        "source": "SESSION",
+        "target": "SESSION.AUTH",
+        "description": "WRITES, direction from class `Session` to value `Session.auth`, visible in `s.auth = ('user', 'pass')`; the example writes session-level authentication data through a Session instance.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "1733",
+        "source": "TEST_HEADERS_PRESERVE_ORDER",
+        "target": "SES.PREPARE_REQUEST",
+        "description": "CALLS, from `test_headers_preserve_order` to the syntactically referenced `ses.prepare_request`, via `ses.prepare_request(req)`; runtime receiver binding is not proven.",
+        "weight": "8.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "1728",
+        "source": "TEST_HEADERS_ON_SESSION_WITH_NONE_ARE_NOT_SENT",
+        "target": "SES.PREPARE_REQUEST",
+        "description": "CALLS, from `test_headers_on_session_with_None_are_not_sent` to the syntactically referenced `ses.prepare_request`, via `ses.prepare_request(req)`; runtime receiver binding is not proven.",
+        "weight": "8.0",
+        "links": "1",
+        "in_context": true
+      }
+    ],
+    "entities": [
+      {
+        "id": "394",
+        "entity": "SESSIONS.SESSION",
+        "description": "Explicitly referenced as `sessions.Session()` in `request`; the class definition is not visible in this chunk.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "16",
+        "entity": "SESSION.AUTH",
+        "description": "The class-scoped value spelling `Session.auth` is explicitly referenced through the assignment `s.auth = ('user', 'pass')`; the example documents session-level authentication data, but does not show a class definition.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "9",
+        "entity": "SESSION.GET",
+        "description": "The method spelling `Session.get` is explicitly referenced through calls such as `s.get('https://httpbin.org/cookies')`; the receiver is the local example variable `s`, initialized from `Session`, and the method definition is not visible here.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1120",
+        "entity": "SES.PREPARE_REQUEST",
+        "description": "The attribute call `ses.prepare_request(req)` is explicitly referenced on a locally created session; the receiver's concrete runtime class is not proven by this chunk.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "269",
+        "entity": ".SESSIONS",
+        "description": "The relative module `.sessions` is explicitly imported by the visible grouped import statement.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "32",
+        "entity": "REQUESTS.SESSION",
+        "description": "`REQUESTS.SESSION` refers to the externally defined Requests library session APIs, primarily the `requests.Session` class/constructor and the `requests.session()` callable. Their implementations are not visible in the available source or documentation context.\n\nThe `requests.Session()` constructor is used throughout the tests and examples to create persistent HTTP session objects. These sessions are configured with default headers, cookies, proxies, redirect limits, response hooks, TLS-related settings, and mounted HTTP adapters. They are also used for sending authenticated and general requests, rebuilding proxies, testing redirect behavior, pickling, adapter lookup, connection cleanup, and other session-level behavior. In some tests, a constructed session is assigned to a variable such as `s` and then used through the local session object.\n\n`requests.Session` is also referenced as the superclass of `CustomRedirectSession`, indicating that custom session implementations can extend the Requests session class. Documentation examples show `requests.Session()` being used to configure default headers, although those examples do not establish production execution.\n\nThe related `requests.session()` callable is explicitly invoked in multiple authentication and redirect tests, including `test_HTTP_302_TOO_MANY_REDIRECTS_WITH_PARAMS`, `test_unconsumed_session_response_closes_connection`, and `TestRequests.test_entry_points`, to create session objects. Although the class constructor and lowercase callable are distinct spellings, both represent externally provided Requests mechanisms for creating HTTP sessions.",
+        "number of relationships": "55",
+        "in_context": true
+      },
+      {
+        "id": "15",
+        "entity": "SESSION.CLOSE",
+        "description": "The method concept `Session.close` is explicitly referenced by the statement that a session is closed when a context-manager block exits; no direct `close()` expression or method definition is visible, so the owning implementation and exact invocation are not shown here.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "1161",
+        "entity": "SESSION.REBUILD_PROXIES",
+        "description": "Explicitly referenced method call `session.rebuild_proxies(prep, proxies)`; the receiver is a locally created session, but the concrete implementation is not visible.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "8",
+        "entity": "SESSION",
+        "description": "`SESSION` refers to the `requests.Session` class, defined as `Session(SessionRedirectMixin)` and instantiated as `Session()` or `requests.Session()`. It provides persistent session-level behavior across HTTP requests, including cookie and parameter persistence, connection pooling, and request configuration. Session state, such as cookies, is applied when requests are prepared, allowing subsequent requests to reuse shared settings and connection resources.",
+        "number of relationships": "15",
+        "in_context": true
+      },
+      {
+        "id": "393",
+        "entity": "SESSIONS",
+        "description": "Imported with `from . import sessions`; the imported module is used to construct a session.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1310",
+        "entity": "SESSION.GET_ADAPTER",
+        "description": "`SESSION.GET_ADAPTER` refers to the exact attribute call `session.get_adapter(url=url)`, which is used inside `_patch_adapter_gzipped_redirect`. The receiver is the parameter named `session`, but the available context does not establish its concrete runtime class.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1262",
+        "entity": "S2.MOUNT",
+        "description": "The unresolved receiver call `s2.mount(...)` is referenced to add an HTTPS adapter after assigning `s2.adapters`; the receiver's concrete class is not proven beyond session construction in the test.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "111",
+        "entity": "REQUESTS-FUTURES",
+        "description": "The exact external project name `requests-futures` is referenced as an example of a project combining Requests with an asynchronicity framework; no implementation is visible.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1113",
+        "entity": "REQUESTS.SESSION.SEND",
+        "description": "References the unresolved method `send` on a session receiver, used as `s.send(r.prepare())`; the receiver is syntactically assigned from `requests.Session()` but the method definition is not visible.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "1264",
+        "entity": "S.GET_ADAPTER",
+        "description": "The unresolved receiver call `s.get_adapter(...)` is referenced three times to select adapters for URLs matching only the general prefix, matching the more-specific prefix, and not matching the configured prefix; the receiver's concrete class is not proven beyond session construction in the test.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "797",
+        "entity": "SESSION.__ENTER__",
+        "description": "The method `Session.__enter__(self)` is defined here and returns the session instance via `return self`.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "48",
+        "entity": "SESSION.CERT",
+        "description": "The unresolved session attribute `Session.cert` is explicitly written through `s.cert = '/path/client.cert'`; the receiver is created by `requests.Session()`, but the owning implementation is not visible here.",
+        "number of relationships": "1",
+        "in_context": true
+      }
+    ],
+    "sources": [
+      {
+        "id": "30",
+        "text": "\"\"\"\nrequests.api\n~~~~~~~~~~~~\n\nThis module implements the Requests API.\n\n:copyright: (c) 2012 by Kenneth Reitz.\n:license: Apache2, see LICENSE for more details.\n\"\"\"\n\nfrom . import sessions\n\n\ndef request(method, url, **kwargs):\n    \"\"\"Constructs and sends a :class:`Request <Request>`.\n\n    :param method: method for the new :class:`Request` object: ``GET``, ``OPTIONS``, ``HEAD``, ``POST``, ``PUT``, ``PATCH``, or ``DELETE``.\n    :param url: URL for the new :class:`Request` object.\n    :param params: (optional) Dictionary, list of tuples or bytes to send\n        in the query string for the :class:`Request`.\n    :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n        object to send in the body of the :class:`Request`.\n    :param json: (optional) A JSON serializable Python object to send in the body of the :class:`Request`.\n    :param headers: (optional) Dictionary of HTTP Headers to send with the :class:`Request`.\n    :param cookies: (optional) Dict or CookieJar object to send with the :class:`Request`.\n    :param files: (optional) Dictionary of ``'name': file-like-objects`` (or ``{'name': file-tuple}``) for multipart encoding upload.\n        ``file-tuple`` can be a 2-tuple ``('filename', fileobj)``, 3-tuple ``('filename', fileobj, 'content_type')``\n        or a 4-tuple ``('filename', fileobj, 'content_type', custom_headers)``, where ``'content_type'`` is a string\n        defining the content type of the given file and ``custom_headers`` a dict-like object containing additional headers\n        to add for the file.\n    :param auth: (optional) Auth tuple to enable Basic/Digest/Custom HTTP Auth.\n    :param timeout: (optional) How many seconds to wait for the server to send data\n        before giving up, as a float, or a :ref:`(connect timeout, read\n        timeout) <timeouts>` tuple.\n    :type timeout: float or tuple\n    :param allow_redirects: (optional) Boolean. Enable/disable GET/OPTIONS/POST/PUT/PATCH/DELETE/HEAD redirection. Defaults to ``True``.\n    :type allow_redirects: bool\n    :param proxies: (optional) Dictionary mapping protocol to the URL of the proxy.\n    :param verify: (optional) Either a boolean, in which case it controls whether we verify\n            the server's TLS certificate, or a string, in which case it must be a path\n            to a CA bundle to use. Defaults to ``True``.\n    :param stream: (optional) if ``False``, the response content will be immediately downloaded.\n    :param cert: (optional) if String, path to ssl client cert file (.pem). If Tuple, ('cert', 'key') pair.\n    :return: :class:`Response <Response>` object\n    :rtype: requests.Response\n\n    Usage::\n\n      >>> import requests\n      >>> req = requests.request('GET', 'https://httpbin.org/get')\n      >>> req\n      <Response [200]>\n    \"\"\"\n\n    # By using the 'with' statement we are sure the session is closed, thus we\n    # avoid leaving sockets open which can trigger a ResourceWarning in some\n    # cases, and look like a memory leak in others.\n    with sessions.Session() as session:\n        return session.request(method=method, url=url, **kwargs)\n\n\ndef get(url, params=None, **kwargs):\n    r\"\"\"Sends a GET request.\n\n    :param url: URL for the new :class:`Request` object.\n    :param params: (optional) Dictionary, list of tuples or bytes to send\n        in the query string for the :class:`Request`.\n    :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n    :return: :class:`Response <Response>` object\n    :rtype: requests.Response\n    \"\"\"\n\n    return request(\"get\", url, params=params, **kwargs)\n\n\ndef options(url, **kwargs):\n    r\"\"\"Sends an OPTIONS request.\n\n    :param url: URL for the new :class:`Request` object.\n    :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n    :return: :class:`Response <Response>` object\n    :rtype: requests.Response\n    \"\"\"\n\n    return request(\"options\", url, **kwargs)\n\n\ndef head(url, **kwargs):\n    r\"\"\"Sends a HEAD request.\n\n    :param url: URL for the new :class:`Request` object.\n    :param \\*\\*kwargs: Optional arguments that ``request`` takes. If\n        `allow_redirects` is not provided, it will be set to `False` (as\n        opposed to the default :meth:`request` behavior).\n    :return: :class:`Response <Response>` object\n    :rtype: requests.Response\n    \"\"\"\n\n    kwargs.setdefault(\"allow_redirects\", False)\n    return request(\"head\", url, **kwargs)\n\n\ndef post(url, data=None, json=None, **kwargs):\n    r\"\"\"Sends a POST request.\n\n    :param url: URL for the new :class:`Request` object.\n    :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n        object to send in the body of the :class:`Request`.\n    :param json: (optional) A JSON serializable Python object to send in the body of the :class:`Request`.\n"
+      }
+    ]
+  },
+  "final_context": "-----Entities-----\nid|entity|description|number of relationships\n394|SESSIONS.SESSION|Explicitly referenced as `sessions.Session()` in `request`; the class definition is not visible in this chunk.|1\n16|SESSION.AUTH|The class-scoped value spelling `Session.auth` is explicitly referenced through the assignment `s.auth = ('user', 'pass')`; the example documents session-level authentication data, but does not show a class definition.|1\n9|SESSION.GET|The method spelling `Session.get` is explicitly referenced through calls such as `s.get('https://httpbin.org/cookies')`; the receiver is the local example variable `s`, initialized from `Session`, and the method definition is not visible here.|1\n1120|SES.PREPARE_REQUEST|The attribute call `ses.prepare_request(req)` is explicitly referenced on a locally created session; the receiver's concrete runtime class is not proven by this chunk.|2\n269|.SESSIONS|The relative module `.sessions` is explicitly imported by the visible grouped import statement.|1\n32|REQUESTS.SESSION|\"`REQUESTS.SESSION` refers to the externally defined Requests library session APIs, primarily the `requests.Session` class/constructor and the `requests.session()` callable. Their implementations are not visible in the available source or documentation context.\n\nThe `requests.Session()` constructor is used throughout the tests and examples to create persistent HTTP session objects. These sessions are configured with default headers, cookies, proxies, redirect limits, response hooks, TLS-related settings, and mounted HTTP adapters. They are also used for sending authenticated and general requests, rebuilding proxies, testing redirect behavior, pickling, adapter lookup, connection cleanup, and other session-level behavior. In some tests, a constructed session is assigned to a variable such as `s` and then used through the local session object.\n\n`requests.Session` is also referenced as the superclass of `CustomRedirectSession`, indicating that custom session implementations can extend the Requests session class. Documentation examples show `requests.Session()` being used to configure default headers, although those examples do not establish production execution.\n\nThe related `requests.session()` callable is explicitly invoked in multiple authentication and redirect tests, including `test_HTTP_302_TOO_MANY_REDIRECTS_WITH_PARAMS`, `test_unconsumed_session_response_closes_connection`, and `TestRequests.test_entry_points`, to create session objects. Although the class constructor and lowercase callable are distinct spellings, both represent externally provided Requests mechanisms for creating HTTP sessions.\"|55\n15|SESSION.CLOSE|The method concept `Session.close` is explicitly referenced by the statement that a session is closed when a context-manager block exits; no direct `close()` expression or method definition is visible, so the owning implementation and exact invocation are not shown here.|2\n1161|SESSION.REBUILD_PROXIES|Explicitly referenced method call `session.rebuild_proxies(prep, proxies)`; the receiver is a locally created session, but the concrete implementation is not visible.|1\n8|SESSION|`SESSION` refers to the `requests.Session` class, defined as `Session(SessionRedirectMixin)` and instantiated as `Session()` or `requests.Session()`. It provides persistent session-level behavior across HTTP requests, including cookie and parameter persistence, connection pooling, and request configuration. Session state, such as cookies, is applied when requests are prepared, allowing subsequent requests to reuse shared settings and connection resources.|15\n393|SESSIONS|Imported with `from . import sessions`; the imported module is used to construct a session.|1\n1310|SESSION.GET_ADAPTER|`SESSION.GET_ADAPTER` refers to the exact attribute call `session.get_adapter(url=url)`, which is used inside `_patch_adapter_gzipped_redirect`. The receiver is the parameter named `session`, but the available context does not establish its concrete runtime class.|1\n1262|S2.MOUNT|The unresolved receiver call `s2.mount(...)` is referenced to add an HTTPS adapter after assigning `s2.adapters`; the receiver's concrete class is not proven beyond session construction in the test.|1\n111|REQUESTS-FUTURES|The exact external project name `requests-futures` is referenced as an example of a project combining Requests with an asynchronicity framework; no implementation is visible.|1\n1113|REQUESTS.SESSION.SEND|References the unresolved method `send` on a session receiver, used as `s.send(r.prepare())`; the receiver is syntactically assigned from `requests.Session()` but the method definition is not visible.|2\n1264|S.GET_ADAPTER|The unresolved receiver call `s.get_adapter(...)` is referenced three times to select adapters for URLs matching only the general prefix, matching the more-specific prefix, and not matching the configured prefix; the receiver's concrete class is not proven beyond session construction in the test.|1\n797|SESSION.__ENTER__|The method `Session.__enter__(self)` is defined here and returns the session instance via `return self`.|1\n48|SESSION.CERT|The unresolved session attribute `Session.cert` is explicitly written through `s.cert = '/path/client.cert'`; the receiver is created by `requests.Session()`, but the owning implementation is not visible here.|1\n\n-----Relationships-----\nid|source|target|description|weight|links\n10|SESSION.GET|RESPONSE|RETURNS, direction from method `Session.get` to class `Response`, supported by the statement that a Response is generated from a Session call and by the visible `r = s.get(...)` examples; the receiver `s` is documented as a Session instance in those examples.|7.0|1\n375|REQUEST|SESSIONS.SESSION|CALLS, direction request -> sessions.Session, visible expression `with sessions.Session() as session`; the target class is referenced but its definition is not visible.|9.0|1\n17|SESSION|SESSION.AUTH|WRITES, direction from class `Session` to value `Session.auth`, visible in `s.auth = ('user', 'pass')`; the example writes session-level authentication data through a Session instance.|9.0|1\n1733|TEST_HEADERS_PRESERVE_ORDER|SES.PREPARE_REQUEST|CALLS, from `test_headers_preserve_order` to the syntactically referenced `ses.prepare_request`, via `ses.prepare_request(req)`; runtime receiver binding is not proven.|8.0|1\n1728|TEST_HEADERS_ON_SESSION_WITH_NONE_ARE_NOT_SENT|SES.PREPARE_REQUEST|CALLS, from `test_headers_on_session_with_None_are_not_sent` to the syntactically referenced `ses.prepare_request`, via `ses.prepare_request(req)`; runtime receiver binding is not proven.|8.0|1\n\n-----Sources-----\nid|source|text\n30|src/requests/api.py:L1-L109|\"\"\"\"\"\"\"\nrequests.api\n~~~~~~~~~~~~\n\nThis module implements the Requests API.\n\n:copyright: (c) 2012 by Kenneth Reitz.\n:license: Apache2, see LICENSE for more details.\n\"\"\"\"\"\"\n\nfrom . import sessions\n\n\ndef request(method, url, **kwargs):\n    \"\"\"\"\"\"Constructs and sends a :class:`Request <Request>`.\n\n    :param method: method for the new :class:`Request` object: ``GET``, ``OPTIONS``, ``HEAD``, ``POST``, ``PUT``, ``PATCH``, or ``DELETE``.\n    :param url: URL for the new :class:`Request` object.\n    :param params: (optional) Dictionary, list of tuples or bytes to send\n        in the query string for the :class:`Request`.\n    :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n        object to send in the body of the :class:`Request`.\n    :param json: (optional) A JSON serializable Python object to send in the body of the :class:`Request`.\n    :param headers: (optional) Dictionary of HTTP Headers to send with the :class:`Request`.\n    :param cookies: (optional) Dict or CookieJar object to send with the :class:`Request`.\n    :param files: (optional) Dictionary of ``'name': file-like-objects`` (or ``{'name': file-tuple}``) for multipart encoding upload.\n        ``file-tuple`` can be a 2-tuple ``('filename', fileobj)``, 3-tuple ``('filename', fileobj, 'content_type')``\n        or a 4-tuple ``('filename', fileobj, 'content_type', custom_headers)``, where ``'content_type'`` is a string\n        defining the content type of the given file and ``custom_headers`` a dict-like object containing additional headers\n        to add for the file.\n    :param auth: (optional) Auth tuple to enable Basic/Digest/Custom HTTP Auth.\n    :param timeout: (optional) How many seconds to wait for the server to send data\n        before giving up, as a float, or a :ref:`(connect timeout, read\n        timeout) <timeouts>` tuple.\n    :type timeout: float or tuple\n    :param allow_redirects: (optional) Boolean. Enable/disable GET/OPTIONS/POST/PUT/PATCH/DELETE/HEAD redirection. Defaults to ``True``.\n    :type allow_redirects: bool\n    :param proxies: (optional) Dictionary mapping protocol to the URL of the proxy.\n    :param verify: (optional) Either a boolean, in which case it controls whether we verify\n            the server's TLS certificate, or a string, in which case it must be a path\n            to a CA bundle to use. Defaults to ``True``.\n    :param stream: (optional) if ``False``, the response content will be immediately downloaded.\n    :param cert: (optional) if String, path to ssl client cert file (.pem). If Tuple, ('cert', 'key') pair.\n    :return: :class:`Response <Response>` object\n    :rtype: requests.Response\n\n    Usage::\n\n      >>> import requests\n      >>> req = requests.request('GET', 'https://httpbin.org/get')\n      >>> req\n      <Response [200]>\n    \"\"\"\"\"\"\n\n    # By using the 'with' statement we are sure the session is closed, thus we\n    # avoid leaving sockets open which can trigger a ResourceWarning in some\n    # cases, and look like a memory leak in others.\n    with sessions.Session() as session:\n        return session.request(method=method, url=url, **kwargs)\n\n\ndef get(url, params=None, **kwargs):\n    r\"\"\"\"\"\"Sends a GET request.\n\n    :param url: URL for the new :class:`Request` object.\n    :param params: (optional) Dictionary, list of tuples or bytes to send\n        in the query string for the :class:`Request`.\n    :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n    :return: :class:`Response <Response>` object\n    :rtype: requests.Response\n    \"\"\"\"\"\"\n\n    return request(\"\"get\"\", url, params=params, **kwargs)\n\n\ndef options(url, **kwargs):\n    r\"\"\"\"\"\"Sends an OPTIONS request.\n\n    :param url: URL for the new :class:`Request` object.\n    :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n    :return: :class:`Response <Response>` object\n    :rtype: requests.Response\n    \"\"\"\"\"\"\n\n    return request(\"\"options\"\", url, **kwargs)\n\n\ndef head(url, **kwargs):\n    r\"\"\"\"\"\"Sends a HEAD request.\n\n    :param url: URL for the new :class:`Request` object.\n    :param \\*\\*kwargs: Optional arguments that ``request`` takes. If\n        `allow_redirects` is not provided, it will be set to `False` (as\n        opposed to the default :meth:`request` behavior).\n    :return: :class:`Response <Response>` object\n    :rtype: requests.Response\n    \"\"\"\"\"\"\n\n    kwargs.setdefault(\"\"allow_redirects\"\", False)\n    return request(\"\"head\"\", url, **kwargs)\n\n\ndef post(url, data=None, json=None, **kwargs):\n    r\"\"\"\"\"\"Sends a POST request.\n\n    :param url: URL for the new :class:`Request` object.\n    :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n        object to send in the body of the :class:`Request`.\n    :param json: (optional) A JSON serializable Python object to send in the body of the :class:`Request`.\n\"\n",
+  "final_tables": [
+    {
+      "name": "entities",
+      "columns": [
+        "id",
+        "entity",
+        "description",
+        "number of relationships"
+      ],
+      "rows": [
+        {
+          "id": "394",
+          "entity": "SESSIONS.SESSION",
+          "description": "Explicitly referenced as `sessions.Session()` in `request`; the class definition is not visible in this chunk.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "16",
+          "entity": "SESSION.AUTH",
+          "description": "The class-scoped value spelling `Session.auth` is explicitly referenced through the assignment `s.auth = ('user', 'pass')`; the example documents session-level authentication data, but does not show a class definition.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "9",
+          "entity": "SESSION.GET",
+          "description": "The method spelling `Session.get` is explicitly referenced through calls such as `s.get('https://httpbin.org/cookies')`; the receiver is the local example variable `s`, initialized from `Session`, and the method definition is not visible here.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1120",
+          "entity": "SES.PREPARE_REQUEST",
+          "description": "The attribute call `ses.prepare_request(req)` is explicitly referenced on a locally created session; the receiver's concrete runtime class is not proven by this chunk.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "269",
+          "entity": ".SESSIONS",
+          "description": "The relative module `.sessions` is explicitly imported by the visible grouped import statement.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "32",
+          "entity": "REQUESTS.SESSION",
+          "description": "`REQUESTS.SESSION` refers to the externally defined Requests library session APIs, primarily the `requests.Session` class/constructor and the `requests.session()` callable. Their implementations are not visible in the available source or documentation context.\n\nThe `requests.Session()` constructor is used throughout the tests and examples to create persistent HTTP session objects. These sessions are configured with default headers, cookies, proxies, redirect limits, response hooks, TLS-related settings, and mounted HTTP adapters. They are also used for sending authenticated and general requests, rebuilding proxies, testing redirect behavior, pickling, adapter lookup, connection cleanup, and other session-level behavior. In some tests, a constructed session is assigned to a variable such as `s` and then used through the local session object.\n\n`requests.Session` is also referenced as the superclass of `CustomRedirectSession`, indicating that custom session implementations can extend the Requests session class. Documentation examples show `requests.Session()` being used to configure default headers, although those examples do not establish production execution.\n\nThe related `requests.session()` callable is explicitly invoked in multiple authentication and redirect tests, including `test_HTTP_302_TOO_MANY_REDIRECTS_WITH_PARAMS`, `test_unconsumed_session_response_closes_connection`, and `TestRequests.test_entry_points`, to create session objects. Although the class constructor and lowercase callable are distinct spellings, both represent externally provided Requests mechanisms for creating HTTP sessions.",
+          "number of relationships": "55"
+        },
+        {
+          "id": "15",
+          "entity": "SESSION.CLOSE",
+          "description": "The method concept `Session.close` is explicitly referenced by the statement that a session is closed when a context-manager block exits; no direct `close()` expression or method definition is visible, so the owning implementation and exact invocation are not shown here.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "1161",
+          "entity": "SESSION.REBUILD_PROXIES",
+          "description": "Explicitly referenced method call `session.rebuild_proxies(prep, proxies)`; the receiver is a locally created session, but the concrete implementation is not visible.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "8",
+          "entity": "SESSION",
+          "description": "`SESSION` refers to the `requests.Session` class, defined as `Session(SessionRedirectMixin)` and instantiated as `Session()` or `requests.Session()`. It provides persistent session-level behavior across HTTP requests, including cookie and parameter persistence, connection pooling, and request configuration. Session state, such as cookies, is applied when requests are prepared, allowing subsequent requests to reuse shared settings and connection resources.",
+          "number of relationships": "15"
+        },
+        {
+          "id": "393",
+          "entity": "SESSIONS",
+          "description": "Imported with `from . import sessions`; the imported module is used to construct a session.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1310",
+          "entity": "SESSION.GET_ADAPTER",
+          "description": "`SESSION.GET_ADAPTER` refers to the exact attribute call `session.get_adapter(url=url)`, which is used inside `_patch_adapter_gzipped_redirect`. The receiver is the parameter named `session`, but the available context does not establish its concrete runtime class.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1262",
+          "entity": "S2.MOUNT",
+          "description": "The unresolved receiver call `s2.mount(...)` is referenced to add an HTTPS adapter after assigning `s2.adapters`; the receiver's concrete class is not proven beyond session construction in the test.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "111",
+          "entity": "REQUESTS-FUTURES",
+          "description": "The exact external project name `requests-futures` is referenced as an example of a project combining Requests with an asynchronicity framework; no implementation is visible.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1113",
+          "entity": "REQUESTS.SESSION.SEND",
+          "description": "References the unresolved method `send` on a session receiver, used as `s.send(r.prepare())`; the receiver is syntactically assigned from `requests.Session()` but the method definition is not visible.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "1264",
+          "entity": "S.GET_ADAPTER",
+          "description": "The unresolved receiver call `s.get_adapter(...)` is referenced three times to select adapters for URLs matching only the general prefix, matching the more-specific prefix, and not matching the configured prefix; the receiver's concrete class is not proven beyond session construction in the test.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "797",
+          "entity": "SESSION.__ENTER__",
+          "description": "The method `Session.__enter__(self)` is defined here and returns the session instance via `return self`.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "48",
+          "entity": "SESSION.CERT",
+          "description": "The unresolved session attribute `Session.cert` is explicitly written through `s.cert = '/path/client.cert'`; the receiver is created by `requests.Session()`, but the owning implementation is not visible here.",
+          "number of relationships": "1"
+        }
+      ]
+    },
+    {
+      "name": "relationships",
+      "columns": [
+        "id",
+        "source",
+        "target",
+        "description",
+        "weight",
+        "links"
+      ],
+      "rows": [
+        {
+          "id": "10",
+          "source": "SESSION.GET",
+          "target": "RESPONSE",
+          "description": "RETURNS, direction from method `Session.get` to class `Response`, supported by the statement that a Response is generated from a Session call and by the visible `r = s.get(...)` examples; the receiver `s` is documented as a Session instance in those examples.",
+          "weight": "7.0",
+          "links": "1"
+        },
+        {
+          "id": "375",
+          "source": "REQUEST",
+          "target": "SESSIONS.SESSION",
+          "description": "CALLS, direction request -> sessions.Session, visible expression `with sessions.Session() as session`; the target class is referenced but its definition is not visible.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "17",
+          "source": "SESSION",
+          "target": "SESSION.AUTH",
+          "description": "WRITES, direction from class `Session` to value `Session.auth`, visible in `s.auth = ('user', 'pass')`; the example writes session-level authentication data through a Session instance.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "1733",
+          "source": "TEST_HEADERS_PRESERVE_ORDER",
+          "target": "SES.PREPARE_REQUEST",
+          "description": "CALLS, from `test_headers_preserve_order` to the syntactically referenced `ses.prepare_request`, via `ses.prepare_request(req)`; runtime receiver binding is not proven.",
+          "weight": "8.0",
+          "links": "1"
+        },
+        {
+          "id": "1728",
+          "source": "TEST_HEADERS_ON_SESSION_WITH_NONE_ARE_NOT_SENT",
+          "target": "SES.PREPARE_REQUEST",
+          "description": "CALLS, from `test_headers_on_session_with_None_are_not_sent` to the syntactically referenced `ses.prepare_request`, via `ses.prepare_request(req)`; runtime receiver binding is not proven.",
+          "weight": "8.0",
+          "links": "1"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "columns": [
+        "id",
+        "source",
+        "text"
+      ],
+      "rows": [
+        {
+          "id": "30",
+          "text": "\"\"\"\nrequests.api\n~~~~~~~~~~~~\n\nThis module implements the Requests API.\n\n:copyright: (c) 2012 by Kenneth Reitz.\n:license: Apache2, see LICENSE for more details.\n\"\"\"\n\nfrom . import sessions\n\n\ndef request(method, url, **kwargs):\n    \"\"\"Constructs and sends a :class:`Request <Request>`.\n\n    :param method: method for the new :class:`Request` object: ``GET``, ``OPTIONS``, ``HEAD``, ``POST``, ``PUT``, ``PATCH``, or ``DELETE``.\n    :param url: URL for the new :class:`Request` object.\n    :param params: (optional) Dictionary, list of tuples or bytes to send\n        in the query string for the :class:`Request`.\n    :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n        object to send in the body of the :class:`Request`.\n    :param json: (optional) A JSON serializable Python object to send in the body of the :class:`Request`.\n    :param headers: (optional) Dictionary of HTTP Headers to send with the :class:`Request`.\n    :param cookies: (optional) Dict or CookieJar object to send with the :class:`Request`.\n    :param files: (optional) Dictionary of ``'name': file-like-objects`` (or ``{'name': file-tuple}``) for multipart encoding upload.\n        ``file-tuple`` can be a 2-tuple ``('filename', fileobj)``, 3-tuple ``('filename', fileobj, 'content_type')``\n        or a 4-tuple ``('filename', fileobj, 'content_type', custom_headers)``, where ``'content_type'`` is a string\n        defining the content type of the given file and ``custom_headers`` a dict-like object containing additional headers\n        to add for the file.\n    :param auth: (optional) Auth tuple to enable Basic/Digest/Custom HTTP Auth.\n    :param timeout: (optional) How many seconds to wait for the server to send data\n        before giving up, as a float, or a :ref:`(connect timeout, read\n        timeout) <timeouts>` tuple.\n    :type timeout: float or tuple\n    :param allow_redirects: (optional) Boolean. Enable/disable GET/OPTIONS/POST/PUT/PATCH/DELETE/HEAD redirection. Defaults to ``True``.\n    :type allow_redirects: bool\n    :param proxies: (optional) Dictionary mapping protocol to the URL of the proxy.\n    :param verify: (optional) Either a boolean, in which case it controls whether we verify\n            the server's TLS certificate, or a string, in which case it must be a path\n            to a CA bundle to use. Defaults to ``True``.\n    :param stream: (optional) if ``False``, the response content will be immediately downloaded.\n    :param cert: (optional) if String, path to ssl client cert file (.pem). If Tuple, ('cert', 'key') pair.\n    :return: :class:`Response <Response>` object\n    :rtype: requests.Response\n\n    Usage::\n\n      >>> import requests\n      >>> req = requests.request('GET', 'https://httpbin.org/get')\n      >>> req\n      <Response [200]>\n    \"\"\"\n\n    # By using the 'with' statement we are sure the session is closed, thus we\n    # avoid leaving sockets open which can trigger a ResourceWarning in some\n    # cases, and look like a memory leak in others.\n    with sessions.Session() as session:\n        return session.request(method=method, url=url, **kwargs)\n\n\ndef get(url, params=None, **kwargs):\n    r\"\"\"Sends a GET request.\n\n    :param url: URL for the new :class:`Request` object.\n    :param params: (optional) Dictionary, list of tuples or bytes to send\n        in the query string for the :class:`Request`.\n    :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n    :return: :class:`Response <Response>` object\n    :rtype: requests.Response\n    \"\"\"\n\n    return request(\"get\", url, params=params, **kwargs)\n\n\ndef options(url, **kwargs):\n    r\"\"\"Sends an OPTIONS request.\n\n    :param url: URL for the new :class:`Request` object.\n    :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n    :return: :class:`Response <Response>` object\n    :rtype: requests.Response\n    \"\"\"\n\n    return request(\"options\", url, **kwargs)\n\n\ndef head(url, **kwargs):\n    r\"\"\"Sends a HEAD request.\n\n    :param url: URL for the new :class:`Request` object.\n    :param \\*\\*kwargs: Optional arguments that ``request`` takes. If\n        `allow_redirects` is not provided, it will be set to `False` (as\n        opposed to the default :meth:`request` behavior).\n    :return: :class:`Response <Response>` object\n    :rtype: requests.Response\n    \"\"\"\n\n    kwargs.setdefault(\"allow_redirects\", False)\n    return request(\"head\", url, **kwargs)\n\n\ndef post(url, data=None, json=None, **kwargs):\n    r\"\"\"Sends a POST request.\n\n    :param url: URL for the new :class:`Request` object.\n    :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n        object to send in the body of the :class:`Request`.\n    :param json: (optional) A JSON serializable Python object to send in the body of the :class:`Request`.\n",
+          "source": "src/requests/api.py:L1-L109"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "short_id": "30",
+      "text_unit_id": "7e0253862e73230a88a6603a444912c13871e2e1d6c32e0b2aa30e1cfec5ce5537ed82ca06c589359cee8b2a6a7c6333e1eeb8960096da5680361c141c1b50ae",
+      "id": "727fd8a11b53abdc4e1f8091297c70a3544f85376d697a6b728454bf486dd77a",
+      "title": "src/requests/api.py:L1-L109",
+      "path": "src/requests/api.py",
+      "start_line": 1,
+      "end_line": 109,
+      "tokens": 1196,
+      "text_sha256": "41151fee6348bc4e82cd4e849e8016004951361258a3f58b9b1d9087438817f2",
+      "ms_text_unit_id": "7e0253862e73230a88a6603a444912c13871e2e1d6c32e0b2aa30e1cfec5ce5537ed82ca06c589359cee8b2a6a7c6333e1eeb8960096da5680361c141c1b50ae"
+    }
+  ],
+  "raw_context_tokens": 2594,
+  "final_context_tokens": 2623,
+  "source_text_tokens": 1196,
+  "source_chunks": 1,
+  "retrieval_compute_seconds": 0.011729334481060505,
+  "adaptation_seconds": 0.003490290604531765,
+  "empty_reason": null,
+  "community_level": 2,
+  "dropped_tail_rows": 0
+}

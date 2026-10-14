@@ -9,6 +9,7 @@ from verify_code_prompt import no_network  # Installs the network-denying audit 
 from index_artifacts import read_table, rows_sha
 from code_prompt_json_syntax import candidate as tail_comma_candidate
 from code_prompt_format_repair import candidate as format_candidate
+from check_report_format import validate_report
 
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[1]
@@ -97,7 +98,7 @@ def main():
         try:json.loads(original)
         except json.JSONDecodeError:pass
         else:raise AssertionError('Valid JSON must not pass through the repair path')
-        assert isinstance(json.loads(fixed),dict) and record['original_schema_validated']
+        assert isinstance(validate_report(fixed),dict) and record['original_schema_validated']
         event=events[record['original_event']-1]
         assert event['usage']==record['original_usage'] and record['provider_calls_for_repair']==0
         assert event['request_body_sha256']==record['request_body_sha256']
@@ -115,6 +116,7 @@ def main():
         path=OUT/repair['evidence_file'];assert sha(path)==repair['evidence_sha256']
         record=read(path);original=record['original_content'];fixed,edits,spans=format_candidate(original)
         assert fixed==record['candidate_content'] and edits==record['exact_edits'] and spans==record['inline_code_spans']
+        validate_report(fixed)
         assert hashlib.sha256(original.encode()).hexdigest()==record['original_content_sha256']
         assert hashlib.sha256(fixed.encode()).hexdigest()==record['candidate_content_sha256']
         assert record['original_schema_validated'] and record['each_edit_necessary_for_json_validity']
@@ -139,6 +141,40 @@ def main():
             ordered=sorted(rows,key=lambda r:hashlib.sha256(f"20261012:{kind}:{r['id']}".encode()).hexdigest())
             assert [r['record'] for r in sample['samples']['code-prompt'][kind]]==ordered[:20]
     assert dict(Counter(r['type'] for r in read_table(OUT/'index/entities.json')))==index['entity_type_counts']
+    report_audit=read(OUT/'report-format-audit.json')
+    reports={r['id']:r for r in read_table(OUT/'index/community_reports.json')}
+    assert [a['event_sequence'] for a in report_audit['anomalies']]==[1062,1117,1253,1292]
+    for item in report_audit['anomalies']:
+        raw=item['original_content']
+        assert hashlib.sha256(raw.encode()).hexdigest()==item['original_content_sha256']
+        event=events[item['event_sequence']-1]
+        assert event['request_body_sha256']==item['request_body_sha256'] and event['usage']==item['usage']
+        assert item['official_parser_accepted'] and not item['explicit_format_repair_applied']
+        try:validate_report(raw)
+        except (AssertionError,ValueError):pass
+        else:raise AssertionError('Published format anomaly unexpectedly passed strict schema')
+        row=reports[item['final_graph']['id']]
+        for field in ['full_content','full_content_json']:
+            assert hashlib.sha256(row[field].encode()).hexdigest()==item['final_graph'][field+'_sha256']
+        decoded=json.loads(raw)  # Standard JSON decoding keeps the last duplicate value.
+        decoded['findings']=[{k:v for k,v in finding.items() if k in {'summary','explanation'}} for finding in decoded['findings']]
+        assert decoded==json.loads(row['full_content_json'])
+    review=read(OUT/'quality-review-code-prompt.json')
+    assert review['human_review'] is False and review['blind_review'] is False
+    assert review['methodology']['scores_viewed'] is False
+    for kind in ['entities','relationships']:
+        items=review[kind];selected=sample['samples']['code-prompt'][kind]
+        assert len(items)==len(selected)==20
+        for item,chosen in zip(items,selected):
+            assert item['id']==chosen['record']['id'] and item['sample_hash']==chosen['sample_hash']
+            assert item['human_readable_id']==chosen['record']['human_readable_id']
+            assert item['evidence'] and item['rationale_zh']
+            assert all(e['input_id'] in {v['input_id'] for v in chosen['sources']} for e in item['evidence'])
+        counts=Counter(item['judgment'] for item in items)
+        assert all(counts[k]==v for k,v in review['summary'][kind]['judgments'].items())
+        for flag,expected in review['summary'][kind]['flags'].items():
+            actual=Counter(json.dumps(item['flags'][flag]) for item in items)
+            assert all(actual[k]==v for k,v in expected.items())
     parser=read(OUT/'concatenation-diagnostics.json')
     assert parser['new_model_calls']==0
     for run in parser['runs'].values():
@@ -150,7 +186,9 @@ def main():
         include_features=False,methods=['ms_local_code_prompt'])
     assert len(retrieval['records'])==80 and retrieval['external_calls']==0
     assert retrieval['query_vector_sha256']==read(HERE/'results/budget-supplement/retrieval.json')['query_vector_sha256']
-    print('Verified completed ledger, cumulative budgets, unknown usage/timing, graph counts, fixed sample and80 offline contexts. No model calls.')
+    from complete_code_prompt_evaluation import calculate
+    assert calculate()==read(OUT/'evaluation-completion.json')
+    print('Verified completed ledger, cumulative budgets, unknown usage/timing, graph counts, fixed sample/review and80 offline contexts. No model calls.')
 
 
 if __name__=='__main__':main()

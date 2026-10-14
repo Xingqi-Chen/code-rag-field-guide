@@ -1,5 +1,7 @@
 # 完整评测的执行与复算说明
 
+前面的执行、成本及历史边界记录默认配置；2026-10-14完成的代码配置追加实验见文末及[完成结果](results/code-prompt/README.md)。
+
 这是主报告的技术附录；结论与汇总只在[主报告](../../docs/report.md)维护。题集、证据和评分协议见[冻结协议](protocol.md)，本轮授权与运行界限见[运行计划](full-run-plan.json)。
 
 **完整索引、首轮168份上下文（含8份功能材料）和8次单轮功能生成已完成；后续离线新增160份检索上下文。** 结果与来源通过离线验证；8份补丁均在原样应用检查中损坏，功能验收和回归未执行，不把未测当测试0分。效果解释统一见[主报告](../../docs/report.md)，逐题见[分数](results/scores.json)、[检索材料](results/contexts)、[功能记录](results/features)；[离线补测结果](results/budget-supplement)与[轻量独立复核](results/budget-supplement/review.json)另存。实际索引见[执行账本](results/execution.json)与[规模记录](results/index-summary.json)，发布前[独立数值与公平性复核](results/evaluation-review.json)未发现阻断问题。
@@ -89,7 +91,7 @@ PYTHONHASHSEED=20261012 .cache/graphrag-venv/bin/python research/pilot/full_feat
 
 ## 解释边界
 
-只有一个较小Python项目，题目由AI研究助手拟定并经独立审阅代理核对，可能与训练材料重合；没有跨仓库泛化证据。默认文档实体图不是AST／符号调用图；本轮没有定制代码实体类型、reranker、agentic搜索、动态调用验证、更新删除实验，也没有“去图但其余相同”的因果消融。4000／8000／12000／16000预算比较可以约束“是否只多给了上下文”，不能将所有差异归因于图本身。未标成gold的材料是未判定，不一概算噪声。源码证据覆盖不是答案准确率。
+只有一个较小Python项目，题目由AI研究助手拟定并经独立审阅代理核对，可能与训练材料重合；没有跨仓库泛化证据。默认文档实体图不是AST／符号调用图；默认配置的首轮实验没有定制代码实体类型、reranker、agentic搜索、动态调用验证、更新删除实验，也没有“去图但其余相同”的因果消融。4000／8000／12000／16000预算比较可以约束“是否只多给了上下文”，不能将所有差异归因于图本身。未标成gold的材料是未判定，不一概算噪声。源码证据覆盖不是答案准确率。
 
 ## 定性证据复核的预定范围
 
@@ -261,3 +263,12 @@ Global共616,316输入／39,412输出，BM25共78,396输入／10,374输出。Glo
 四道精确／规划题按题平均，Global为52.5%，BM25为81.25%；两道全局认证题为45%与65%。逐题分数和错误分别见[精确／规划审阅](results/global/review-precise.json)、[全局审阅](results/global/review-global.json)，算术见[scores.json](results/global/scores.json)。题目要点数量不同，因此组平均是每题归一化后平均，不用总得分直接除总要点代替。额外错误与支持不足不会被覆盖率这一数值自动扣除；必须同时阅读审阅列项，不能把它称为完整回答准确率。
 
 Global在F02计划中的要求覆盖较完整，但很多要求来自题目本身；不能归因于图或声称新功能已正确实现。全局两题都围绕认证，本轮只比较一次回答；两位审阅者分别负责两组题，每题一位审阅者、两个方法，没有每题双评或评阅者一致性统计。未新增生成模型裁判调用。审阅静态源码支持检查，不运行被回答提及的HTTP测试。
+
+
+## 代码提示词＋实体类型追加实验（2026-10-14完成）
+
+完整执行、恢复、成本和评分入口汇总在[追加结果说明](results/code-prompt/README.md)。新索引1628实体／2891关系／372报告；20题×4档产生80份新Local上下文，合并旧320份共400行。旧gold、原文、向量和基线结果未改。新配置没有Global、回答生成或功能任务，因此不能外推答案准确率。
+
+实际离线执行顺序：`evaluate_code_prompt.py export` → `diagnose_code_prompt.py sample`／`witnesses`／`parse` → `evaluate_code_prompt.py retrieve` → `score --tokens` → `check --tokens` → `analyze_code_prompt.py`及`--check` → `verify_code_prompt_completed.py`。导出／检索使用既有私有缓存与固定运行环境；公开评分复算不需要缓存、凭据或模型。完成状态另存`evaluation-completion.json`，不改写付费索引账本。
+
+独立复核覆盖400行评分、实际token、向量hash、固定Q01／Q07／Q13来源链、20实体＋20关系和全部372份报告格式；相关JSON均在结果目录。追加配置已知失败后设计、非人类盲测，执行条件和格式处理与默认不同，未做等实际源码量或随机邻居消融。严格原请求schema检查还发现官方解析器宽松接受的额外字段／重复字段，记录但不修补本轮结果。

@@ -1,0 +1,386 @@
+{
+  "variant": "code-prompt",
+  "question_id": "Q04",
+  "method": "ms_local_code_prompt",
+  "budget": 4000,
+  "query": "Locate the method that removes a registered response callback and tells the caller whether it existed.",
+  "upstream_raw_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n458|REGISTER_HOOK|`REGISTER_HOOK` refers to a callable method explicitly invoked in multiple contexts. It is called as `r.register_hook(\"response\", ...)` in a preceding body fragment and as `self.register_hook(event, hooks[event])` within `prepare_hooks`. The available descriptions do not reveal the receiver types, owning class or definition, or the implementation details of the method.|1\n449|R.REGISTER_HOOK|References the unresolved receiver operation `r.register_hook(\"response\", ...)` in `__call__`; its definition is not visible.|1\n678|REQUESTHOOKSMIXIN.DEREGISTER_HOOK|The exact method `RequestHooksMixin.deregister_hook` is defined here; it removes `hook` from `self.hooks[event]`, returns `True` when removal succeeds, and returns `False` when `ValueError` is raised.|2\n684|REMOVE|The exact callable name `remove` is referenced through `self.hooks[event].remove(hook)`; the receiver is a hook collection and the owning implementation is not visible.|1\n728|RESPONSE.CLOSE|Unresolved callable reference `Response.close` is used by `Response.__exit__` as `self.close()`; the method definition is not visible in this chunk.|1\n1060|RESPONSE_HANDLER|`RESPONSE_HANDLER` is defined as the nested function `response_handler(sock)`. It processes incoming socket content by calling `consume_socket_content(sock, timeout=0.5)`, consumes three requests, and sends HTTP responses in sequence. It first sends two `302` redirects with `Location` headers set to `/get#relevant-section` and `/final-url/`, followed by a final raw HTTP `200` response containing alternate-encoded bytes.|9\n725|RESPONSE.NEXT|Property method `Response.next` is defined here and returns the stored `_next` value, documented as a possible prepared request in a redirect chain.|1\n1335|RESP.CLOSE|The exact response method reference `resp.close()` is used to close a raw object without `release_conn`; the concrete runtime class of `resp` is not otherwise resolved here.|1\n1015|HOOKS.DISPATCH_HOOK|The external callable `hooks.dispatch_hook` is explicitly referenced in `test_hooks` as `hooks.dispatch_hook(\"response\", {\"response\": hooks_list}, \"Data\")`; its definition and runtime receiver binding are not visible here.|1\n632|HOOKS|`HOOKS` is defined here as the module-level list `[\"response\"]`, identifying the available `\"response\"` hook.|3\n37|REQUESTS.RESPONSE.CLOSE|The unresolved method reference `requests.Response.close`, also written as `Response.close()`, is documented for closing a streamed response so its connection can be released; its owning class implementation is not visible here.|1\n722|RESPONSE.OK|Property method `Response.ok` is defined here. It calls `self.raise_for_status()`, returns `False` when `HTTPError` is caught, and otherwise returns `True`; its documentation states that status codes below 400 are considered successful.|5\n715|RESPONSE.__EXIT__|Method `Response.__exit__` is defined here. It accepts `*args` and closes the response through `self.close()`.|2\n724|RESPONSE.IS_PERMANENT_REDIRECT|Property method `Response.is_permanent_redirect` is defined here. It checks for `\"location\"` in `self.headers` and compares `self.status_code` with `codes.moved_permanently` and `codes.permanent_redirect`.|5\n729|RESPONSE.RAISE_FOR_STATUS|Unresolved callable reference `Response.raise_for_status` is used by `Response.ok` as `self.raise_for_status()`; its definition is not visible in this chunk.|1\n\n\n-----Relationships-----\nid|source|target|description|weight|links\n888|REQUESTHOOKSMIXIN.DEREGISTER_HOOK|REMOVE|CALLS, `deregister_hook` invokes `self.hooks[event].remove(hook)` inside the `try` block; the collection receiver's concrete type is not visible.|9.0|1\n885|REQUESTHOOKSMIXIN.DEREGISTER_HOOK|VALUEERROR|READS, `deregister_hook` catches `ValueError` from `self.hooks[event].remove(hook)` and returns `False`; this is exception handling, not a direct call to `ValueError`.|7.0|1\n480|__CALL__|R.REGISTER_HOOK|CALLS, `__call__` registers `handle_401` and `handle_redirect` as `\"response\"` hooks using `r.register_hook(...)`; the request object's definition is not visible|10.0|1\n941|PREPARE_HOOKS|REGISTER_HOOK|CALLS, `prepare_hooks` calls `self.register_hook(event, hooks[event])` for each event; the receiver and owning definition are not visible|8.0|1\n970|RESPONSE.__EXIT__|RESPONSE.CLOSE|CALLS, `Response.__exit__` calls `self.close()`; the receiver is the current `Response`, but `close` is not defined in this chunk|8.0|1\n\n\n-----Sources-----\nid|text\n47|            for header in headers.items():\n                # Raise exception on invalid header value.\n                check_header_validity(header)\n                name, value = header\n                self.headers[to_native_string(name)] = value\n\n    def prepare_body(self, data, files, json=None):\n        \"\"\"Prepares the given HTTP body data.\"\"\"\n\n        # Check if file, fo, generator, iterator.\n        # If not, run through normal process.\n\n        # Nottin' on you.\n        body = None\n        content_type = None\n\n        if not data and json is not None:\n            # urllib3 requires a bytes-like body. Python 2's json.dumps\n            # provides this natively, but Python 3 gives a Unicode string.\n            content_type = \"application/json\"\n\n            try:\n                body = complexjson.dumps(json, allow_nan=False)\n            except ValueError as ve:\n                raise InvalidJSONError(ve, request=self)\n\n            if not isinstance(body, bytes):\n                body = body.encode(\"utf-8\")\n\n        is_stream = all(\n            [\n                hasattr(data, \"__iter__\"),\n                not isinstance(data, (basestring, list, tuple, Mapping)),\n            ]\n        )\n\n        if is_stream:\n            try:\n                length = super_len(data)\n            except (TypeError, AttributeError, UnsupportedOperation):\n                length = None\n\n            body = data\n\n            if getattr(body, \"tell\", None) is not None:\n                # Record the current file position before reading.\n                # This will allow us to rewind a file in the event\n                # of a redirect.\n                try:\n                    self._body_position = body.tell()\n                except OSError:\n                    # This differentiates from None, allowing us to catch\n                    # a failed `tell()` later when trying to rewind the body\n                    self._body_position = object()\n\n            if files:\n                raise NotImplementedError(\n                    \"Streamed bodies and files are mutually exclusive.\"\n                )\n\n            if length:\n                self.headers[\"Content-Length\"] = builtin_str(length)\n            else:\n                self.headers[\"Transfer-Encoding\"] = \"chunked\"\n        else:\n            # Multi-part file uploads.\n            if files:\n                (body, content_type) = self._encode_files(files, data)\n            else:\n                if data:\n                    body = self._encode_params(data)\n                    if isinstance(data, basestring) or hasattr(data, \"read\"):\n                        content_type = None\n                    else:\n                        content_type = \"application/x-www-form-urlencoded\"\n\n            self.prepare_content_length(body)\n\n            # Add content-type if it wasn't explicitly provided.\n            if content_type and (\"content-type\" not in self.headers):\n                self.headers[\"Content-Type\"] = content_type\n\n        self.body = body\n\n    def prepare_content_length(self, body):\n        \"\"\"Prepare Content-Length header based on request method and body\"\"\"\n        if body is not None:\n            length = super_len(body)\n            if length:\n                # If length exists, set it. Otherwise, we fallback\n                # to Transfer-Encoding: chunked.\n                self.headers[\"Content-Length\"] = builtin_str(length)\n        elif (\n            self.method not in (\"GET\", \"HEAD\")\n            and self.headers.get(\"Content-Length\") is None\n        ):\n            # Set Content-Length to 0 for methods that can have a body\n            # but don't provide one. (i.e. not GET or HEAD)\n            self.headers[\"Content-Length\"] = \"0\"\n\n    def prepare_auth(self, auth, url=\"\"):\n        \"\"\"Prepares the given HTTP auth data.\"\"\"\n\n        # If no Auth is explicitly provided, extract it from the URL first.\n        if auth is None:\n            url_auth = get_auth_from_url(self.url)\n            auth = url_auth if any(url_auth) else None\n\n        if auth:\n            if isinstance(auth, tuple) and len(auth) == 2:\n                # special-case basic HTTP auth\n                auth = HTTPBasicAuth(*auth)\n\n            # Allow auth to make its changes.\n            r = auth(self)\n\n            # Update self to reflect the auth changes.\n            self.__dict__.update(r.__dict__)\n\n            # Recompute Content-Length\n            self.prepare_content_length(self.body)\n\n    def prepare_cookies(self, cookies):\n        \"\"\"Prepares the given HTTP cookie data.\n\n        This function eventually generates a ``Cookie`` header from the\n        given cookies using cookielib. Due to cookielib's design, the header\n        will not be regenerated if it already exists, meaning this function\n        can only be called once for the life of the\n        :class:`PreparedRequest <PreparedRequest>` object. Any subsequent calls\n        to ``prepare_cookies`` will have no actual effect, unless the \"Cookie\"\n        header is removed beforehand.\n        \"\"\"\n        if isinstance(cookies, cookielib.CookieJar):\n            self._cookies = cookies\n        else:\n            self._cookies = cookiejar_from_dict(cookies)\n\n        cookie_header = get_cookie_header(self._cookies, self)\n        if cookie_header is not None:\n            self.headers[\"Cookie\"] = cookie_header\n\n    def prepare_hooks(self, hooks):\n        \"\"\"Prepares the given hooks.\"\"\"\n        # hooks can be passed as None to the prepare method and to this\n        # method. To prevent iterating over None, simply use an empty list\n        # if hooks is False-y\n        hooks = hooks or []\n        for event in hooks:\n            self.register_hook(event, hooks[event])\n\n\nclass Response:\n    \"\"\"The :class:`Response <Response>` object, which contains a\n    server's response to an HTTP request.\n    \"\"\"\n\n    __attrs__ = [\n        \"_content\",\n        \"status_code\",\n        \"headers\",\n        \"url\",\n        \"history\",\n        \"encoding\",\n        \"reason\",\n        \"cookies\",\n        \"elapsed\",\n        \"request\",\n\n34|        try:\n            self._thread_local.pos = r.body.tell()\n        except AttributeError:\n            # In the case of HTTPDigestAuth being reused and the body of\n            # the previous request was a file-like object, pos has the\n            # file position of the previous body. Ensure it's set to\n            # None.\n            self._thread_local.pos = None\n        r.register_hook(\"response\", self.handle_401)\n        r.register_hook(\"response\", self.handle_redirect)\n        self._thread_local.num_401_calls = 1\n\n        return r\n\n    def __eq__(self, other):\n        return all(\n            [\n                self.username == getattr(other, \"username\", None),\n                self.password == getattr(other, \"password\", None),\n            ]\n        )\n\n    def __ne__(self, other):\n        return not self == other\n\n",
+  "upstream_raw_records": {
+    "relationships": [
+      {
+        "id": "888",
+        "source": "REQUESTHOOKSMIXIN.DEREGISTER_HOOK",
+        "target": "REMOVE",
+        "description": "CALLS, `deregister_hook` invokes `self.hooks[event].remove(hook)` inside the `try` block; the collection receiver's concrete type is not visible.",
+        "weight": "9.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "885",
+        "source": "REQUESTHOOKSMIXIN.DEREGISTER_HOOK",
+        "target": "VALUEERROR",
+        "description": "READS, `deregister_hook` catches `ValueError` from `self.hooks[event].remove(hook)` and returns `False`; this is exception handling, not a direct call to `ValueError`.",
+        "weight": "7.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "480",
+        "source": "__CALL__",
+        "target": "R.REGISTER_HOOK",
+        "description": "CALLS, `__call__` registers `handle_401` and `handle_redirect` as `\"response\"` hooks using `r.register_hook(...)`; the request object's definition is not visible",
+        "weight": "10.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "941",
+        "source": "PREPARE_HOOKS",
+        "target": "REGISTER_HOOK",
+        "description": "CALLS, `prepare_hooks` calls `self.register_hook(event, hooks[event])` for each event; the receiver and owning definition are not visible",
+        "weight": "8.0",
+        "links": "1",
+        "in_context": true
+      },
+      {
+        "id": "970",
+        "source": "RESPONSE.__EXIT__",
+        "target": "RESPONSE.CLOSE",
+        "description": "CALLS, `Response.__exit__` calls `self.close()`; the receiver is the current `Response`, but `close` is not defined in this chunk",
+        "weight": "8.0",
+        "links": "1",
+        "in_context": true
+      }
+    ],
+    "entities": [
+      {
+        "id": "458",
+        "entity": "REGISTER_HOOK",
+        "description": "`REGISTER_HOOK` refers to a callable method explicitly invoked in multiple contexts. It is called as `r.register_hook(\"response\", ...)` in a preceding body fragment and as `self.register_hook(event, hooks[event])` within `prepare_hooks`. The available descriptions do not reveal the receiver types, owning class or definition, or the implementation details of the method.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "449",
+        "entity": "R.REGISTER_HOOK",
+        "description": "References the unresolved receiver operation `r.register_hook(\"response\", ...)` in `__call__`; its definition is not visible.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "678",
+        "entity": "REQUESTHOOKSMIXIN.DEREGISTER_HOOK",
+        "description": "The exact method `RequestHooksMixin.deregister_hook` is defined here; it removes `hook` from `self.hooks[event]`, returns `True` when removal succeeds, and returns `False` when `ValueError` is raised.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "684",
+        "entity": "REMOVE",
+        "description": "The exact callable name `remove` is referenced through `self.hooks[event].remove(hook)`; the receiver is a hook collection and the owning implementation is not visible.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "728",
+        "entity": "RESPONSE.CLOSE",
+        "description": "Unresolved callable reference `Response.close` is used by `Response.__exit__` as `self.close()`; the method definition is not visible in this chunk.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1060",
+        "entity": "RESPONSE_HANDLER",
+        "description": "`RESPONSE_HANDLER` is defined as the nested function `response_handler(sock)`. It processes incoming socket content by calling `consume_socket_content(sock, timeout=0.5)`, consumes three requests, and sends HTTP responses in sequence. It first sends two `302` redirects with `Location` headers set to `/get#relevant-section` and `/final-url/`, followed by a final raw HTTP `200` response containing alternate-encoded bytes.",
+        "number of relationships": "9",
+        "in_context": true
+      },
+      {
+        "id": "725",
+        "entity": "RESPONSE.NEXT",
+        "description": "Property method `Response.next` is defined here and returns the stored `_next` value, documented as a possible prepared request in a redirect chain.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1335",
+        "entity": "RESP.CLOSE",
+        "description": "The exact response method reference `resp.close()` is used to close a raw object without `release_conn`; the concrete runtime class of `resp` is not otherwise resolved here.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "1015",
+        "entity": "HOOKS.DISPATCH_HOOK",
+        "description": "The external callable `hooks.dispatch_hook` is explicitly referenced in `test_hooks` as `hooks.dispatch_hook(\"response\", {\"response\": hooks_list}, \"Data\")`; its definition and runtime receiver binding are not visible here.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "632",
+        "entity": "HOOKS",
+        "description": "`HOOKS` is defined here as the module-level list `[\"response\"]`, identifying the available `\"response\"` hook.",
+        "number of relationships": "3",
+        "in_context": true
+      },
+      {
+        "id": "37",
+        "entity": "REQUESTS.RESPONSE.CLOSE",
+        "description": "The unresolved method reference `requests.Response.close`, also written as `Response.close()`, is documented for closing a streamed response so its connection can be released; its owning class implementation is not visible here.",
+        "number of relationships": "1",
+        "in_context": true
+      },
+      {
+        "id": "722",
+        "entity": "RESPONSE.OK",
+        "description": "Property method `Response.ok` is defined here. It calls `self.raise_for_status()`, returns `False` when `HTTPError` is caught, and otherwise returns `True`; its documentation states that status codes below 400 are considered successful.",
+        "number of relationships": "5",
+        "in_context": true
+      },
+      {
+        "id": "715",
+        "entity": "RESPONSE.__EXIT__",
+        "description": "Method `Response.__exit__` is defined here. It accepts `*args` and closes the response through `self.close()`.",
+        "number of relationships": "2",
+        "in_context": true
+      },
+      {
+        "id": "724",
+        "entity": "RESPONSE.IS_PERMANENT_REDIRECT",
+        "description": "Property method `Response.is_permanent_redirect` is defined here. It checks for `\"location\"` in `self.headers` and compares `self.status_code` with `codes.moved_permanently` and `codes.permanent_redirect`.",
+        "number of relationships": "5",
+        "in_context": true
+      },
+      {
+        "id": "729",
+        "entity": "RESPONSE.RAISE_FOR_STATUS",
+        "description": "Unresolved callable reference `Response.raise_for_status` is used by `Response.ok` as `self.raise_for_status()`; its definition is not visible in this chunk.",
+        "number of relationships": "1",
+        "in_context": true
+      }
+    ],
+    "sources": [
+      {
+        "id": "47",
+        "text": "            for header in headers.items():\n                # Raise exception on invalid header value.\n                check_header_validity(header)\n                name, value = header\n                self.headers[to_native_string(name)] = value\n\n    def prepare_body(self, data, files, json=None):\n        \"\"\"Prepares the given HTTP body data.\"\"\"\n\n        # Check if file, fo, generator, iterator.\n        # If not, run through normal process.\n\n        # Nottin' on you.\n        body = None\n        content_type = None\n\n        if not data and json is not None:\n            # urllib3 requires a bytes-like body. Python 2's json.dumps\n            # provides this natively, but Python 3 gives a Unicode string.\n            content_type = \"application/json\"\n\n            try:\n                body = complexjson.dumps(json, allow_nan=False)\n            except ValueError as ve:\n                raise InvalidJSONError(ve, request=self)\n\n            if not isinstance(body, bytes):\n                body = body.encode(\"utf-8\")\n\n        is_stream = all(\n            [\n                hasattr(data, \"__iter__\"),\n                not isinstance(data, (basestring, list, tuple, Mapping)),\n            ]\n        )\n\n        if is_stream:\n            try:\n                length = super_len(data)\n            except (TypeError, AttributeError, UnsupportedOperation):\n                length = None\n\n            body = data\n\n            if getattr(body, \"tell\", None) is not None:\n                # Record the current file position before reading.\n                # This will allow us to rewind a file in the event\n                # of a redirect.\n                try:\n                    self._body_position = body.tell()\n                except OSError:\n                    # This differentiates from None, allowing us to catch\n                    # a failed `tell()` later when trying to rewind the body\n                    self._body_position = object()\n\n            if files:\n                raise NotImplementedError(\n                    \"Streamed bodies and files are mutually exclusive.\"\n                )\n\n            if length:\n                self.headers[\"Content-Length\"] = builtin_str(length)\n            else:\n                self.headers[\"Transfer-Encoding\"] = \"chunked\"\n        else:\n            # Multi-part file uploads.\n            if files:\n                (body, content_type) = self._encode_files(files, data)\n            else:\n                if data:\n                    body = self._encode_params(data)\n                    if isinstance(data, basestring) or hasattr(data, \"read\"):\n                        content_type = None\n                    else:\n                        content_type = \"application/x-www-form-urlencoded\"\n\n            self.prepare_content_length(body)\n\n            # Add content-type if it wasn't explicitly provided.\n            if content_type and (\"content-type\" not in self.headers):\n                self.headers[\"Content-Type\"] = content_type\n\n        self.body = body\n\n    def prepare_content_length(self, body):\n        \"\"\"Prepare Content-Length header based on request method and body\"\"\"\n        if body is not None:\n            length = super_len(body)\n            if length:\n                # If length exists, set it. Otherwise, we fallback\n                # to Transfer-Encoding: chunked.\n                self.headers[\"Content-Length\"] = builtin_str(length)\n        elif (\n            self.method not in (\"GET\", \"HEAD\")\n            and self.headers.get(\"Content-Length\") is None\n        ):\n            # Set Content-Length to 0 for methods that can have a body\n            # but don't provide one. (i.e. not GET or HEAD)\n            self.headers[\"Content-Length\"] = \"0\"\n\n    def prepare_auth(self, auth, url=\"\"):\n        \"\"\"Prepares the given HTTP auth data.\"\"\"\n\n        # If no Auth is explicitly provided, extract it from the URL first.\n        if auth is None:\n            url_auth = get_auth_from_url(self.url)\n            auth = url_auth if any(url_auth) else None\n\n        if auth:\n            if isinstance(auth, tuple) and len(auth) == 2:\n                # special-case basic HTTP auth\n                auth = HTTPBasicAuth(*auth)\n\n            # Allow auth to make its changes.\n            r = auth(self)\n\n            # Update self to reflect the auth changes.\n            self.__dict__.update(r.__dict__)\n\n            # Recompute Content-Length\n            self.prepare_content_length(self.body)\n\n    def prepare_cookies(self, cookies):\n        \"\"\"Prepares the given HTTP cookie data.\n\n        This function eventually generates a ``Cookie`` header from the\n        given cookies using cookielib. Due to cookielib's design, the header\n        will not be regenerated if it already exists, meaning this function\n        can only be called once for the life of the\n        :class:`PreparedRequest <PreparedRequest>` object. Any subsequent calls\n        to ``prepare_cookies`` will have no actual effect, unless the \"Cookie\"\n        header is removed beforehand.\n        \"\"\"\n        if isinstance(cookies, cookielib.CookieJar):\n            self._cookies = cookies\n        else:\n            self._cookies = cookiejar_from_dict(cookies)\n\n        cookie_header = get_cookie_header(self._cookies, self)\n        if cookie_header is not None:\n            self.headers[\"Cookie\"] = cookie_header\n\n    def prepare_hooks(self, hooks):\n        \"\"\"Prepares the given hooks.\"\"\"\n        # hooks can be passed as None to the prepare method and to this\n        # method. To prevent iterating over None, simply use an empty list\n        # if hooks is False-y\n        hooks = hooks or []\n        for event in hooks:\n            self.register_hook(event, hooks[event])\n\n\nclass Response:\n    \"\"\"The :class:`Response <Response>` object, which contains a\n    server's response to an HTTP request.\n    \"\"\"\n\n    __attrs__ = [\n        \"_content\",\n        \"status_code\",\n        \"headers\",\n        \"url\",\n        \"history\",\n        \"encoding\",\n        \"reason\",\n        \"cookies\",\n        \"elapsed\",\n        \"request\",\n"
+      },
+      {
+        "id": "34",
+        "text": "        try:\n            self._thread_local.pos = r.body.tell()\n        except AttributeError:\n            # In the case of HTTPDigestAuth being reused and the body of\n            # the previous request was a file-like object, pos has the\n            # file position of the previous body. Ensure it's set to\n            # None.\n            self._thread_local.pos = None\n        r.register_hook(\"response\", self.handle_401)\n        r.register_hook(\"response\", self.handle_redirect)\n        self._thread_local.num_401_calls = 1\n\n        return r\n\n    def __eq__(self, other):\n        return all(\n            [\n                self.username == getattr(other, \"username\", None),\n                self.password == getattr(other, \"password\", None),\n            ]\n        )\n\n    def __ne__(self, other):\n        return not self == other\n"
+      }
+    ]
+  },
+  "final_context": "-----Entities-----\nid|entity|description|number of relationships\n458|REGISTER_HOOK|\"`REGISTER_HOOK` refers to a callable method explicitly invoked in multiple contexts. It is called as `r.register_hook(\"\"response\"\", ...)` in a preceding body fragment and as `self.register_hook(event, hooks[event])` within `prepare_hooks`. The available descriptions do not reveal the receiver types, owning class or definition, or the implementation details of the method.\"|1\n449|R.REGISTER_HOOK|\"References the unresolved receiver operation `r.register_hook(\"\"response\"\", ...)` in `__call__`; its definition is not visible.\"|1\n678|REQUESTHOOKSMIXIN.DEREGISTER_HOOK|The exact method `RequestHooksMixin.deregister_hook` is defined here; it removes `hook` from `self.hooks[event]`, returns `True` when removal succeeds, and returns `False` when `ValueError` is raised.|2\n684|REMOVE|The exact callable name `remove` is referenced through `self.hooks[event].remove(hook)`; the receiver is a hook collection and the owning implementation is not visible.|1\n728|RESPONSE.CLOSE|Unresolved callable reference `Response.close` is used by `Response.__exit__` as `self.close()`; the method definition is not visible in this chunk.|1\n1060|RESPONSE_HANDLER|`RESPONSE_HANDLER` is defined as the nested function `response_handler(sock)`. It processes incoming socket content by calling `consume_socket_content(sock, timeout=0.5)`, consumes three requests, and sends HTTP responses in sequence. It first sends two `302` redirects with `Location` headers set to `/get#relevant-section` and `/final-url/`, followed by a final raw HTTP `200` response containing alternate-encoded bytes.|9\n725|RESPONSE.NEXT|Property method `Response.next` is defined here and returns the stored `_next` value, documented as a possible prepared request in a redirect chain.|1\n1335|RESP.CLOSE|The exact response method reference `resp.close()` is used to close a raw object without `release_conn`; the concrete runtime class of `resp` is not otherwise resolved here.|1\n1015|HOOKS.DISPATCH_HOOK|\"The external callable `hooks.dispatch_hook` is explicitly referenced in `test_hooks` as `hooks.dispatch_hook(\"\"response\"\", {\"\"response\"\": hooks_list}, \"\"Data\"\")`; its definition and runtime receiver binding are not visible here.\"|1\n632|HOOKS|\"`HOOKS` is defined here as the module-level list `[\"\"response\"\"]`, identifying the available `\"\"response\"\"` hook.\"|3\n37|REQUESTS.RESPONSE.CLOSE|The unresolved method reference `requests.Response.close`, also written as `Response.close()`, is documented for closing a streamed response so its connection can be released; its owning class implementation is not visible here.|1\n722|RESPONSE.OK|Property method `Response.ok` is defined here. It calls `self.raise_for_status()`, returns `False` when `HTTPError` is caught, and otherwise returns `True`; its documentation states that status codes below 400 are considered successful.|5\n715|RESPONSE.__EXIT__|Method `Response.__exit__` is defined here. It accepts `*args` and closes the response through `self.close()`.|2\n724|RESPONSE.IS_PERMANENT_REDIRECT|\"Property method `Response.is_permanent_redirect` is defined here. It checks for `\"\"location\"\"` in `self.headers` and compares `self.status_code` with `codes.moved_permanently` and `codes.permanent_redirect`.\"|5\n729|RESPONSE.RAISE_FOR_STATUS|Unresolved callable reference `Response.raise_for_status` is used by `Response.ok` as `self.raise_for_status()`; its definition is not visible in this chunk.|1\n\n-----Relationships-----\nid|source|target|description|weight|links\n888|REQUESTHOOKSMIXIN.DEREGISTER_HOOK|REMOVE|CALLS, `deregister_hook` invokes `self.hooks[event].remove(hook)` inside the `try` block; the collection receiver's concrete type is not visible.|9.0|1\n885|REQUESTHOOKSMIXIN.DEREGISTER_HOOK|VALUEERROR|READS, `deregister_hook` catches `ValueError` from `self.hooks[event].remove(hook)` and returns `False`; this is exception handling, not a direct call to `ValueError`.|7.0|1\n480|__CALL__|R.REGISTER_HOOK|\"CALLS, `__call__` registers `handle_401` and `handle_redirect` as `\"\"response\"\"` hooks using `r.register_hook(...)`; the request object's definition is not visible\"|10.0|1\n941|PREPARE_HOOKS|REGISTER_HOOK|CALLS, `prepare_hooks` calls `self.register_hook(event, hooks[event])` for each event; the receiver and owning definition are not visible|8.0|1\n970|RESPONSE.__EXIT__|RESPONSE.CLOSE|CALLS, `Response.__exit__` calls `self.close()`; the receiver is the current `Response`, but `close` is not defined in this chunk|8.0|1\n\n-----Sources-----\nid|source|text\n47|src/requests/models.py:L488-L655|\"            for header in headers.items():\n                # Raise exception on invalid header value.\n                check_header_validity(header)\n                name, value = header\n                self.headers[to_native_string(name)] = value\n\n    def prepare_body(self, data, files, json=None):\n        \"\"\"\"\"\"Prepares the given HTTP body data.\"\"\"\"\"\"\n\n        # Check if file, fo, generator, iterator.\n        # If not, run through normal process.\n\n        # Nottin' on you.\n        body = None\n        content_type = None\n\n        if not data and json is not None:\n            # urllib3 requires a bytes-like body. Python 2's json.dumps\n            # provides this natively, but Python 3 gives a Unicode string.\n            content_type = \"\"application/json\"\"\n\n            try:\n                body = complexjson.dumps(json, allow_nan=False)\n            except ValueError as ve:\n                raise InvalidJSONError(ve, request=self)\n\n            if not isinstance(body, bytes):\n                body = body.encode(\"\"utf-8\"\")\n\n        is_stream = all(\n            [\n                hasattr(data, \"\"__iter__\"\"),\n                not isinstance(data, (basestring, list, tuple, Mapping)),\n            ]\n        )\n\n        if is_stream:\n            try:\n                length = super_len(data)\n            except (TypeError, AttributeError, UnsupportedOperation):\n                length = None\n\n            body = data\n\n            if getattr(body, \"\"tell\"\", None) is not None:\n                # Record the current file position before reading.\n                # This will allow us to rewind a file in the event\n                # of a redirect.\n                try:\n                    self._body_position = body.tell()\n                except OSError:\n                    # This differentiates from None, allowing us to catch\n                    # a failed `tell()` later when trying to rewind the body\n                    self._body_position = object()\n\n            if files:\n                raise NotImplementedError(\n                    \"\"Streamed bodies and files are mutually exclusive.\"\"\n                )\n\n            if length:\n                self.headers[\"\"Content-Length\"\"] = builtin_str(length)\n            else:\n                self.headers[\"\"Transfer-Encoding\"\"] = \"\"chunked\"\"\n        else:\n            # Multi-part file uploads.\n            if files:\n                (body, content_type) = self._encode_files(files, data)\n            else:\n                if data:\n                    body = self._encode_params(data)\n                    if isinstance(data, basestring) or hasattr(data, \"\"read\"\"):\n                        content_type = None\n                    else:\n                        content_type = \"\"application/x-www-form-urlencoded\"\"\n\n            self.prepare_content_length(body)\n\n            # Add content-type if it wasn't explicitly provided.\n            if content_type and (\"\"content-type\"\" not in self.headers):\n                self.headers[\"\"Content-Type\"\"] = content_type\n\n        self.body = body\n\n    def prepare_content_length(self, body):\n        \"\"\"\"\"\"Prepare Content-Length header based on request method and body\"\"\"\"\"\"\n        if body is not None:\n            length = super_len(body)\n            if length:\n                # If length exists, set it. Otherwise, we fallback\n                # to Transfer-Encoding: chunked.\n                self.headers[\"\"Content-Length\"\"] = builtin_str(length)\n        elif (\n            self.method not in (\"\"GET\"\", \"\"HEAD\"\")\n            and self.headers.get(\"\"Content-Length\"\") is None\n        ):\n            # Set Content-Length to 0 for methods that can have a body\n            # but don't provide one. (i.e. not GET or HEAD)\n            self.headers[\"\"Content-Length\"\"] = \"\"0\"\"\n\n    def prepare_auth(self, auth, url=\"\"\"\"):\n        \"\"\"\"\"\"Prepares the given HTTP auth data.\"\"\"\"\"\"\n\n        # If no Auth is explicitly provided, extract it from the URL first.\n        if auth is None:\n            url_auth = get_auth_from_url(self.url)\n            auth = url_auth if any(url_auth) else None\n\n        if auth:\n            if isinstance(auth, tuple) and len(auth) == 2:\n                # special-case basic HTTP auth\n                auth = HTTPBasicAuth(*auth)\n\n            # Allow auth to make its changes.\n            r = auth(self)\n\n            # Update self to reflect the auth changes.\n            self.__dict__.update(r.__dict__)\n\n            # Recompute Content-Length\n            self.prepare_content_length(self.body)\n\n    def prepare_cookies(self, cookies):\n        \"\"\"\"\"\"Prepares the given HTTP cookie data.\n\n        This function eventually generates a ``Cookie`` header from the\n        given cookies using cookielib. Due to cookielib's design, the header\n        will not be regenerated if it already exists, meaning this function\n        can only be called once for the life of the\n        :class:`PreparedRequest <PreparedRequest>` object. Any subsequent calls\n        to ``prepare_cookies`` will have no actual effect, unless the \"\"Cookie\"\"\n        header is removed beforehand.\n        \"\"\"\"\"\"\n        if isinstance(cookies, cookielib.CookieJar):\n            self._cookies = cookies\n        else:\n            self._cookies = cookiejar_from_dict(cookies)\n\n        cookie_header = get_cookie_header(self._cookies, self)\n        if cookie_header is not None:\n            self.headers[\"\"Cookie\"\"] = cookie_header\n\n    def prepare_hooks(self, hooks):\n        \"\"\"\"\"\"Prepares the given hooks.\"\"\"\"\"\"\n        # hooks can be passed as None to the prepare method and to this\n        # method. To prevent iterating over None, simply use an empty list\n        # if hooks is False-y\n        hooks = hooks or []\n        for event in hooks:\n            self.register_hook(event, hooks[event])\n\n\nclass Response:\n    \"\"\"\"\"\"The :class:`Response <Response>` object, which contains a\n    server's response to an HTTP request.\n    \"\"\"\"\"\"\n\n    __attrs__ = [\n        \"\"_content\"\",\n        \"\"status_code\"\",\n        \"\"headers\"\",\n        \"\"url\"\",\n        \"\"history\"\",\n        \"\"encoding\"\",\n        \"\"reason\"\",\n        \"\"cookies\"\",\n        \"\"elapsed\"\",\n        \"\"request\"\",\n\"\n34|src/requests/auth.py:L291-L314|\"        try:\n            self._thread_local.pos = r.body.tell()\n        except AttributeError:\n            # In the case of HTTPDigestAuth being reused and the body of\n            # the previous request was a file-like object, pos has the\n            # file position of the previous body. Ensure it's set to\n            # None.\n            self._thread_local.pos = None\n        r.register_hook(\"\"response\"\", self.handle_401)\n        r.register_hook(\"\"response\"\", self.handle_redirect)\n        self._thread_local.num_401_calls = 1\n\n        return r\n\n    def __eq__(self, other):\n        return all(\n            [\n                self.username == getattr(other, \"\"username\"\", None),\n                self.password == getattr(other, \"\"password\"\", None),\n            ]\n        )\n\n    def __ne__(self, other):\n        return not self == other\n\"\n",
+  "final_tables": [
+    {
+      "name": "entities",
+      "columns": [
+        "id",
+        "entity",
+        "description",
+        "number of relationships"
+      ],
+      "rows": [
+        {
+          "id": "458",
+          "entity": "REGISTER_HOOK",
+          "description": "`REGISTER_HOOK` refers to a callable method explicitly invoked in multiple contexts. It is called as `r.register_hook(\"response\", ...)` in a preceding body fragment and as `self.register_hook(event, hooks[event])` within `prepare_hooks`. The available descriptions do not reveal the receiver types, owning class or definition, or the implementation details of the method.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "449",
+          "entity": "R.REGISTER_HOOK",
+          "description": "References the unresolved receiver operation `r.register_hook(\"response\", ...)` in `__call__`; its definition is not visible.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "678",
+          "entity": "REQUESTHOOKSMIXIN.DEREGISTER_HOOK",
+          "description": "The exact method `RequestHooksMixin.deregister_hook` is defined here; it removes `hook` from `self.hooks[event]`, returns `True` when removal succeeds, and returns `False` when `ValueError` is raised.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "684",
+          "entity": "REMOVE",
+          "description": "The exact callable name `remove` is referenced through `self.hooks[event].remove(hook)`; the receiver is a hook collection and the owning implementation is not visible.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "728",
+          "entity": "RESPONSE.CLOSE",
+          "description": "Unresolved callable reference `Response.close` is used by `Response.__exit__` as `self.close()`; the method definition is not visible in this chunk.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1060",
+          "entity": "RESPONSE_HANDLER",
+          "description": "`RESPONSE_HANDLER` is defined as the nested function `response_handler(sock)`. It processes incoming socket content by calling `consume_socket_content(sock, timeout=0.5)`, consumes three requests, and sends HTTP responses in sequence. It first sends two `302` redirects with `Location` headers set to `/get#relevant-section` and `/final-url/`, followed by a final raw HTTP `200` response containing alternate-encoded bytes.",
+          "number of relationships": "9"
+        },
+        {
+          "id": "725",
+          "entity": "RESPONSE.NEXT",
+          "description": "Property method `Response.next` is defined here and returns the stored `_next` value, documented as a possible prepared request in a redirect chain.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1335",
+          "entity": "RESP.CLOSE",
+          "description": "The exact response method reference `resp.close()` is used to close a raw object without `release_conn`; the concrete runtime class of `resp` is not otherwise resolved here.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "1015",
+          "entity": "HOOKS.DISPATCH_HOOK",
+          "description": "The external callable `hooks.dispatch_hook` is explicitly referenced in `test_hooks` as `hooks.dispatch_hook(\"response\", {\"response\": hooks_list}, \"Data\")`; its definition and runtime receiver binding are not visible here.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "632",
+          "entity": "HOOKS",
+          "description": "`HOOKS` is defined here as the module-level list `[\"response\"]`, identifying the available `\"response\"` hook.",
+          "number of relationships": "3"
+        },
+        {
+          "id": "37",
+          "entity": "REQUESTS.RESPONSE.CLOSE",
+          "description": "The unresolved method reference `requests.Response.close`, also written as `Response.close()`, is documented for closing a streamed response so its connection can be released; its owning class implementation is not visible here.",
+          "number of relationships": "1"
+        },
+        {
+          "id": "722",
+          "entity": "RESPONSE.OK",
+          "description": "Property method `Response.ok` is defined here. It calls `self.raise_for_status()`, returns `False` when `HTTPError` is caught, and otherwise returns `True`; its documentation states that status codes below 400 are considered successful.",
+          "number of relationships": "5"
+        },
+        {
+          "id": "715",
+          "entity": "RESPONSE.__EXIT__",
+          "description": "Method `Response.__exit__` is defined here. It accepts `*args` and closes the response through `self.close()`.",
+          "number of relationships": "2"
+        },
+        {
+          "id": "724",
+          "entity": "RESPONSE.IS_PERMANENT_REDIRECT",
+          "description": "Property method `Response.is_permanent_redirect` is defined here. It checks for `\"location\"` in `self.headers` and compares `self.status_code` with `codes.moved_permanently` and `codes.permanent_redirect`.",
+          "number of relationships": "5"
+        },
+        {
+          "id": "729",
+          "entity": "RESPONSE.RAISE_FOR_STATUS",
+          "description": "Unresolved callable reference `Response.raise_for_status` is used by `Response.ok` as `self.raise_for_status()`; its definition is not visible in this chunk.",
+          "number of relationships": "1"
+        }
+      ]
+    },
+    {
+      "name": "relationships",
+      "columns": [
+        "id",
+        "source",
+        "target",
+        "description",
+        "weight",
+        "links"
+      ],
+      "rows": [
+        {
+          "id": "888",
+          "source": "REQUESTHOOKSMIXIN.DEREGISTER_HOOK",
+          "target": "REMOVE",
+          "description": "CALLS, `deregister_hook` invokes `self.hooks[event].remove(hook)` inside the `try` block; the collection receiver's concrete type is not visible.",
+          "weight": "9.0",
+          "links": "1"
+        },
+        {
+          "id": "885",
+          "source": "REQUESTHOOKSMIXIN.DEREGISTER_HOOK",
+          "target": "VALUEERROR",
+          "description": "READS, `deregister_hook` catches `ValueError` from `self.hooks[event].remove(hook)` and returns `False`; this is exception handling, not a direct call to `ValueError`.",
+          "weight": "7.0",
+          "links": "1"
+        },
+        {
+          "id": "480",
+          "source": "__CALL__",
+          "target": "R.REGISTER_HOOK",
+          "description": "CALLS, `__call__` registers `handle_401` and `handle_redirect` as `\"response\"` hooks using `r.register_hook(...)`; the request object's definition is not visible",
+          "weight": "10.0",
+          "links": "1"
+        },
+        {
+          "id": "941",
+          "source": "PREPARE_HOOKS",
+          "target": "REGISTER_HOOK",
+          "description": "CALLS, `prepare_hooks` calls `self.register_hook(event, hooks[event])` for each event; the receiver and owning definition are not visible",
+          "weight": "8.0",
+          "links": "1"
+        },
+        {
+          "id": "970",
+          "source": "RESPONSE.__EXIT__",
+          "target": "RESPONSE.CLOSE",
+          "description": "CALLS, `Response.__exit__` calls `self.close()`; the receiver is the current `Response`, but `close` is not defined in this chunk",
+          "weight": "8.0",
+          "links": "1"
+        }
+      ]
+    },
+    {
+      "name": "sources",
+      "columns": [
+        "id",
+        "source",
+        "text"
+      ],
+      "rows": [
+        {
+          "id": "47",
+          "text": "            for header in headers.items():\n                # Raise exception on invalid header value.\n                check_header_validity(header)\n                name, value = header\n                self.headers[to_native_string(name)] = value\n\n    def prepare_body(self, data, files, json=None):\n        \"\"\"Prepares the given HTTP body data.\"\"\"\n\n        # Check if file, fo, generator, iterator.\n        # If not, run through normal process.\n\n        # Nottin' on you.\n        body = None\n        content_type = None\n\n        if not data and json is not None:\n            # urllib3 requires a bytes-like body. Python 2's json.dumps\n            # provides this natively, but Python 3 gives a Unicode string.\n            content_type = \"application/json\"\n\n            try:\n                body = complexjson.dumps(json, allow_nan=False)\n            except ValueError as ve:\n                raise InvalidJSONError(ve, request=self)\n\n            if not isinstance(body, bytes):\n                body = body.encode(\"utf-8\")\n\n        is_stream = all(\n            [\n                hasattr(data, \"__iter__\"),\n                not isinstance(data, (basestring, list, tuple, Mapping)),\n            ]\n        )\n\n        if is_stream:\n            try:\n                length = super_len(data)\n            except (TypeError, AttributeError, UnsupportedOperation):\n                length = None\n\n            body = data\n\n            if getattr(body, \"tell\", None) is not None:\n                # Record the current file position before reading.\n                # This will allow us to rewind a file in the event\n                # of a redirect.\n                try:\n                    self._body_position = body.tell()\n                except OSError:\n                    # This differentiates from None, allowing us to catch\n                    # a failed `tell()` later when trying to rewind the body\n                    self._body_position = object()\n\n            if files:\n                raise NotImplementedError(\n                    \"Streamed bodies and files are mutually exclusive.\"\n                )\n\n            if length:\n                self.headers[\"Content-Length\"] = builtin_str(length)\n            else:\n                self.headers[\"Transfer-Encoding\"] = \"chunked\"\n        else:\n            # Multi-part file uploads.\n            if files:\n                (body, content_type) = self._encode_files(files, data)\n            else:\n                if data:\n                    body = self._encode_params(data)\n                    if isinstance(data, basestring) or hasattr(data, \"read\"):\n                        content_type = None\n                    else:\n                        content_type = \"application/x-www-form-urlencoded\"\n\n            self.prepare_content_length(body)\n\n            # Add content-type if it wasn't explicitly provided.\n            if content_type and (\"content-type\" not in self.headers):\n                self.headers[\"Content-Type\"] = content_type\n\n        self.body = body\n\n    def prepare_content_length(self, body):\n        \"\"\"Prepare Content-Length header based on request method and body\"\"\"\n        if body is not None:\n            length = super_len(body)\n            if length:\n                # If length exists, set it. Otherwise, we fallback\n                # to Transfer-Encoding: chunked.\n                self.headers[\"Content-Length\"] = builtin_str(length)\n        elif (\n            self.method not in (\"GET\", \"HEAD\")\n            and self.headers.get(\"Content-Length\") is None\n        ):\n            # Set Content-Length to 0 for methods that can have a body\n            # but don't provide one. (i.e. not GET or HEAD)\n            self.headers[\"Content-Length\"] = \"0\"\n\n    def prepare_auth(self, auth, url=\"\"):\n        \"\"\"Prepares the given HTTP auth data.\"\"\"\n\n        # If no Auth is explicitly provided, extract it from the URL first.\n        if auth is None:\n            url_auth = get_auth_from_url(self.url)\n            auth = url_auth if any(url_auth) else None\n\n        if auth:\n            if isinstance(auth, tuple) and len(auth) == 2:\n                # special-case basic HTTP auth\n                auth = HTTPBasicAuth(*auth)\n\n            # Allow auth to make its changes.\n            r = auth(self)\n\n            # Update self to reflect the auth changes.\n            self.__dict__.update(r.__dict__)\n\n            # Recompute Content-Length\n            self.prepare_content_length(self.body)\n\n    def prepare_cookies(self, cookies):\n        \"\"\"Prepares the given HTTP cookie data.\n\n        This function eventually generates a ``Cookie`` header from the\n        given cookies using cookielib. Due to cookielib's design, the header\n        will not be regenerated if it already exists, meaning this function\n        can only be called once for the life of the\n        :class:`PreparedRequest <PreparedRequest>` object. Any subsequent calls\n        to ``prepare_cookies`` will have no actual effect, unless the \"Cookie\"\n        header is removed beforehand.\n        \"\"\"\n        if isinstance(cookies, cookielib.CookieJar):\n            self._cookies = cookies\n        else:\n            self._cookies = cookiejar_from_dict(cookies)\n\n        cookie_header = get_cookie_header(self._cookies, self)\n        if cookie_header is not None:\n            self.headers[\"Cookie\"] = cookie_header\n\n    def prepare_hooks(self, hooks):\n        \"\"\"Prepares the given hooks.\"\"\"\n        # hooks can be passed as None to the prepare method and to this\n        # method. To prevent iterating over None, simply use an empty list\n        # if hooks is False-y\n        hooks = hooks or []\n        for event in hooks:\n            self.register_hook(event, hooks[event])\n\n\nclass Response:\n    \"\"\"The :class:`Response <Response>` object, which contains a\n    server's response to an HTTP request.\n    \"\"\"\n\n    __attrs__ = [\n        \"_content\",\n        \"status_code\",\n        \"headers\",\n        \"url\",\n        \"history\",\n        \"encoding\",\n        \"reason\",\n        \"cookies\",\n        \"elapsed\",\n        \"request\",\n",
+          "source": "src/requests/models.py:L488-L655"
+        },
+        {
+          "id": "34",
+          "text": "        try:\n            self._thread_local.pos = r.body.tell()\n        except AttributeError:\n            # In the case of HTTPDigestAuth being reused and the body of\n            # the previous request was a file-like object, pos has the\n            # file position of the previous body. Ensure it's set to\n            # None.\n            self._thread_local.pos = None\n        r.register_hook(\"response\", self.handle_401)\n        r.register_hook(\"response\", self.handle_redirect)\n        self._thread_local.num_401_calls = 1\n\n        return r\n\n    def __eq__(self, other):\n        return all(\n            [\n                self.username == getattr(other, \"username\", None),\n                self.password == getattr(other, \"password\", None),\n            ]\n        )\n\n    def __ne__(self, other):\n        return not self == other\n",
+          "source": "src/requests/auth.py:L291-L314"
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "short_id": "47",
+      "text_unit_id": "34995c5073613c04f31d67909c49131012857c71c3e4a76a36df57a3343ec094d4ded2b8f14eb40a3b4e248d41c056f9269c1c38d66e88f0454f9aeca620ea7b",
+      "id": "d7d5f2a33a8ae67a3f1a9015d9967cb38d7b4b1b993994e85569706ad14b9c22",
+      "title": "src/requests/models.py:L488-L655",
+      "path": "src/requests/models.py",
+      "start_line": 488,
+      "end_line": 655,
+      "tokens": 1199,
+      "text_sha256": "b532b8381ff6d97796dd4c7d2fa730553727946a78e848e3a713263aa1a58e2a",
+      "ms_text_unit_id": "34995c5073613c04f31d67909c49131012857c71c3e4a76a36df57a3343ec094d4ded2b8f14eb40a3b4e248d41c056f9269c1c38d66e88f0454f9aeca620ea7b"
+    },
+    {
+      "short_id": "34",
+      "text_unit_id": "2dfd60e28bb67a3634e082f0348ed051b77d3199deaddc022711edc32722d32a6d2583e849da3dd0a7addb849cf260ce5a364598845a3d64ec6c40a9597edff2",
+      "id": "c4d64fe5d766cb236bfb3d5b9a84755187aa4cb368f55ecc1acfd1af03ead0a0",
+      "title": "src/requests/auth.py:L291-L314",
+      "path": "src/requests/auth.py",
+      "start_line": 291,
+      "end_line": 314,
+      "tokens": 176,
+      "text_sha256": "4e83d6f16e60afd57a7b50ca80bc4f67b209fb81437dfc9c49009c27115554c7",
+      "ms_text_unit_id": "2dfd60e28bb67a3634e082f0348ed051b77d3199deaddc022711edc32722d32a6d2583e849da3dd0a7addb849cf260ce5a364598845a3d64ec6c40a9597edff2"
+    }
+  ],
+  "raw_context_tokens": 2491,
+  "final_context_tokens": 2571,
+  "source_text_tokens": 1375,
+  "source_chunks": 2,
+  "retrieval_compute_seconds": 0.010599708184599876,
+  "adaptation_seconds": 0.003226291388273239,
+  "empty_reason": null,
+  "community_level": 2,
+  "dropped_tail_rows": 0
+}
