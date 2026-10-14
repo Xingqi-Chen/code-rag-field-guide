@@ -203,6 +203,9 @@ class Runtime:
         if self.state.get('manual_recovery'):
             from manual_recovery import verify_state
             verify_state(self)
+        if self.state.get('eof_recovery'):
+            from eof_recovery import verify_state as verify_eof_state
+            verify_eof_state(self)
         expected=copy.deepcopy(self.carry);per_cell={key:self.inherited['cells'][key]['generation_input_tokens'] for key in self.state['cells']};by_key={}
         for seq,event in enumerate(self.state['events'],1):
             key=event['key'];record=self.state['requests'][key];body=record['body'];service=record['service']
@@ -273,6 +276,8 @@ class Runtime:
             if key not in c['requests']:
                 from manual_recovery import guard_new_reservation
                 guard_new_reservation(self,cell,service,key)
+                from eof_recovery import guard as guard_eof
+                guard_eof(self,cell,service,key)
                 if service=='generation':
                     used=sum(x['stage']==stage and x['service']==service for x in c['requests'].values())
                     if used>=STAGES[c['route']].get(stage,0):self.fail(cell,'logical_stage_limit')
@@ -292,7 +297,7 @@ class Runtime:
                     except Halt as error:self.fail(cell,str(error))
                     c['uses'].append({'key':key,'stage':stage,'cache':True,'origin_event':record['events'][-1]})
                     self.persist();return value,usage,key
-                manual_retry=False
+                manual_retry=False;eof_retry=False
                 attempts=[self.state['events'][seq-1] for seq in record['events']]
                 if attempts:
                     last=attempts[-1]
@@ -317,7 +322,10 @@ class Runtime:
                     else:
                         from manual_recovery import eligible
                         manual_retry=eligible(self,last,record)
-                        delay=0 if manual_retry else retry_delay(last,len(attempts)+record.get('prior_attempts',0))
+                        from eof_recovery import eligible as eligible_eof
+                        eof_retry=eligible_eof(self,last,record)
+                        effective={**last,'error_category':'transient_connection_error'} if eof_retry else last
+                        delay=0 if manual_retry else retry_delay(effective,len(attempts)+record.get('prior_attempts',0))
                     if delay is None:self.fail(cell,last.get('error_category','request_not_retryable'))
                     # Hold dispatch lock for wait, reservation and request. Runtime
                     # work is serial; sleep is split for signal responsiveness.
@@ -325,6 +333,8 @@ class Runtime:
                         step=min(30,delay);self.wait(step);delay-=step
                 from manual_recovery import guard_new_reservation
                 guard_new_reservation(self,cell,service,key)
+                from eof_recovery import guard as guard_eof
+                guard_eof(self,cell,service,key)
                 if len(record['events'])+record.get('prior_attempts',0)>=self.limits['attempts_per_request']:self.fail(cell,'request_attempt_limit')
                 new=copy.deepcopy(self.state['counts'])
                 if not self.synthetic:
@@ -348,6 +358,9 @@ class Runtime:
                 if manual_retry:
                     if seq!=13:self.fail(cell,'manual_resume_sequence_changed',fatal=True)
                     event['manual_retry_of']=12;self.state['manual_recovery']['consumed_by']=seq
+                if eof_retry:
+                    if seq!=16:self.fail(cell,'eof_resume_sequence_changed',fatal=True)
+                    event['reviewed_eof_retry_of']=15;self.state['eof_recovery']['consumed_by']=seq
                 self.state['events'].append(event);record['events'].append(seq)
                 request=self.directory/f'request-{seq:02}.json';response_path=self.directory/f'response-{seq:02}.json'
                 save(request,{'service':service,'body':body});self.persist()

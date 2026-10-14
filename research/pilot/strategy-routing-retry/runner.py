@@ -26,6 +26,10 @@ async def execute():
     try:
         from manual_recovery import prefetch
         prefetch(runtime)
+        from eof_recovery import prefetch as prefetch_eof
+        try:prefetch_eof(runtime)
+        except Halt as error:
+            if error.fatal:raise
         for q in queries:
             if q['id'] not in QIDS:continue
             if q['route']['method']!='drift':raise Halt('retry_route_changed',fatal=True)

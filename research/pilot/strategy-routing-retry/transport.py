@@ -20,7 +20,7 @@ sys.path.insert(0,str(PILOT))
 from bounded import Halt, read, save, file_sha, LIMITS, CARRY, inheritance
 from responses_decoder import decode_generation, DecodeError
 RUN=ROOT/'.cache/pilot/strategy-routing-retry-20261014'
-REQUIRED={'bounded.py','transport.py','runner.py','responses_decoder.py','authorization.json','inherited-manifest.json','manual_recovery.py','manual-resume-review.json','transport-stop.json'}
+REQUIRED={'bounded.py','transport.py','runner.py','responses_decoder.py','authorization.json','inherited-manifest.json','manual_recovery.py','manual-resume-review.json','transport-stop.json','eof_recovery.py','eof-review.json','eof-stop.json'}
 
 def legacy_transport():
     spec=importlib.util.spec_from_file_location('retry_legacy_transport',LEGACY/'transport.py')
@@ -137,9 +137,12 @@ def worker(request,response):
             data=error.read(65537);result=retain_raw(response,data,key,error.headers.get('Content-Type',''),error.code,65536)
             result.update(guarded_error_summary(data,probe.error_summary))
             result.update(retry_after(error.headers.get('Retry-After'),datetime.now(timezone.utc)))
-        except (urllib.error.URLError,ConnectionError,TimeoutError) as error:
-            result.update(error_category=connection_category(error) or 'transport_error')
+        except (urllib.error.URLError,ConnectionError,TimeoutError,ssl.SSLError) as error:
             cause=error.reason if isinstance(error,urllib.error.URLError) else error
+            # Abrupt closure is retried on a fresh verified connection only.
+            # Certificate verification and every other SSL error remain fatal.
+            category='transient_connection_error' if isinstance(cause,ssl.SSLEOFError) else connection_category(error)
+            result.update(error_category=category or 'transport_error')
             reason=getattr(cause,'reason',None)
             # Fixed symbols only, never arbitrary exception messages or URLs.
             result['transport_error_detail']={'class':type(cause).__name__ if type(cause).__name__ in {'SSLError','SSLEOFError','SSLCertVerificationError','SSLZeroReturnError','TimeoutError','ConnectionResetError','ConnectionRefusedError'} else 'other',

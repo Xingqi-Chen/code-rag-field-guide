@@ -1,0 +1,120 @@
+{
+  "status": "independent_review_passed",
+  "reviewer": {
+    "type": "independent AI agent",
+    "human": false,
+    "blinded": false
+  },
+  "reviewed_utc": "2026-10-14T07:14:49.650487+00:00",
+  "stopped_summary_sha256": "3028727f2eb161101f371a3f471bca4c2b367e4bf5e1350611e6dc6b42793659",
+  "implementation_sha256": {
+    "eof_recovery.py": "744edb264a0e98ade70c927132f64fbe2aac7bccae260500a9aeb465c794e28c",
+    "eof-stop.json": "240e2f3abbb9856aae2ad603316064ee2efc9fb65625b117556964c5f90d06f5",
+    "bounded.py": "45dfe8d1dbec621e7845bc4d076abf6b9eea1d132c81f300c5f7cddd3c1130a2",
+    "runner.py": "5a2d599a9d0438b7836124c4297f9bce5b9140c1fee34f12eb36d340f7b9fd34",
+    "transport.py": "743764c916b4c890cf9eab4200f2697ea14d3d47d9b3e1b0d5c0b58643efbe04",
+    "responses_decoder.py": "bd4f9684094336e5076bae6a4deb8e853cb3cc699363010b3c031a496fb2ab15",
+    "manual_recovery.py": "84b005238f5be656d1f04e742f95af4ec7b29406809e339c26c23fa76ca2ff1a",
+    "authorization.json": "f2f075ee86cf28b1080a0f1c2f63b872f296a9989412063d52870ac0299c02aa",
+    "inherited-manifest.json": "7def30cdc512fd531f3a56a19544109122156e0c951996155b83146c382c0d8f"
+  },
+  "evidence_sha256": {
+    "test_eof_recovery.py": "4f9766a64565f32b8a64dbf934e69343daae2a28c1c111635b6ffcc653085fb3",
+    "test_manual_recovery.py": "8a4fd4419190b6b25cc0ab94292e56d9369fae2d229615771ebe9e6050d341aa",
+    "test_retry_transport.py": "29689008a47e8660a17b613f33cc18aaf6c230b4feb991675391c40c2d11601a",
+    "manual-resume-review.json": "bfa8d22e7699f33a04641a7f7fd4e2728691eafecd23f6ff18e5c818f7e86134",
+    "transport-stop.json": "9900fd5ba6d151735c5e2b8ddc74ded3ac5815ed2ec1b07d2141cd82ef209e3c"
+  },
+  "unchanged_legacy_transport_sha256": "5d7ab414ee5eb2f280c71834ccdf3824555d00b90aba050ce12f326b08e55e5d",
+  "unresolved_blocking_findings": [],
+  "scope": "Local retry-worker SSLEOFError classification fix and exact event15 recovery; no original algorithm, query, prompt, graph, budget, prior score or old failure changes.",
+  "test_run": {
+    "command": "PYTHONHASHSEED=20261012 PYTHONDONTWRITEBYTECODE=1 .cache/graphrag-venv/bin/python research/pilot/strategy-routing-retry/test_eof_recovery.py -v",
+    "passed": 14,
+    "failures": 0,
+    "elapsed_seconds": 5.247,
+    "temporary_ledger_clones_only": true,
+    "network_and_credential_audit_guards": true,
+    "real_api_calls": 0,
+    "actual_credentials_read": false,
+    "original_run_files_unchanged": true
+  },
+  "classification_review": {
+    "confirmed_original_detail": {
+      "class": "SSLEOFError",
+      "ssl_reason": "UNEXPECTED_EOF_WHILE_READING",
+      "verify_code": null
+    },
+    "original_response_sha256": "d8d8419ed4d68cc3e785577574eccce383f06b7048b5742d62de244c272f3755",
+    "local_python_type_check": "SSLEOFError reports abrupt TLS connection termination and is not an SSLCertVerificationError subclass.",
+    "tests": [
+      "Direct SSLEOFError at opener.open maps to transient_connection_error.",
+      "URLError wrapping SSLEOFError maps to transient_connection_error.",
+      "SSLEOFError during reply.read maps to transient_connection_error without inventing reply or provider usage.",
+      "SSLCertVerificationError, ordinary SSLError and SSLZeroReturnError, direct or wrapped and with the same EOF reason text, remain transport_security_error and fatal.",
+      "Separate worker invocations create separate SSLContext instances with check_hostname true and CERT_REQUIRED; each worker attempts HTTP once."
+    ],
+    "implementation_boundary": "Only the new retry transport changes classification. Frozen code_prompt_transport.py hash still matches original live-readiness.",
+    "limitation": "An abrupt EOF does not identify the remote cause or establish whether the provider processed or billed the request."
+  },
+  "recovery_controls_verified": [
+    "Authorization requires exact stopped summary/snapshot, unchanged state, independent review hashes and the bound original reply with exact SSLEOFError metadata.",
+    "All first fifteen event objects, canonical event15 bytes, original response-15 bytes, original unknown usage and earlier manual_recovery record remain unchanged.",
+    "Only the exact Q10 generation/local request key and body are prefetched into sequence16; pending unrelated requests are rejected before metadata, counters or dispatch change, with resume integrity preserved.",
+    "Recovery consumption and reviewed_eof_retry_of=15 persist with the new reservation before transport. Unknown crash after that reservation stops and cannot silently replay.",
+    "The original failed attempt counts as attempt one. Remaining attempts use 5 then 15 seconds of backoff and stop at three total, including mixed EOF/timeout/HTTP transient failures.",
+    "Certificate/security and authentication failures still stop the entire run. Exhausted ordinary transient retries leave the cell failed without making the whole run fatal; the runner explicitly catches only nonfatal prefetch Halt and continues other cells.",
+    "Successful prefetch enters the exact ordinary response cache, is consumed by the official Local path, and is not sent again on replay or resume.",
+    "Q08 complete state and all original cumulative caps/carry are unchanged; prior event12 manual permission is not reused."
+  ],
+  "real_official_Q10_offline_replay": {
+    "data": "Actual fixed graph, tokenizers, original successful responses and stopped ledger copied to a temporary directory; production Data/execute_cell and eof_recovery.prefetch; fake transport for every new reply.",
+    "first_new_event": 16,
+    "first_new_request_key": "c2a0be40623ef5fd335511564cc21fafaaa5d58c5e83c1736d876c4393cd654f",
+    "first_new_request_body_sha256": "88f1bb529e10cc6f31a5b06de2ba9275d270029f0a1307bb8fb4357c17ca71a2",
+    "request15_and_request16_file_bytes_equal": true,
+    "observed_cache_origins": [
+      62,
+      63,
+      11,
+      13,
+      14,
+      16
+    ],
+    "new_synthetic_generation_dispatches": 5,
+    "new_synthetic_local_generations": 4,
+    "new_synthetic_reduce_generations": 1,
+    "new_synthetic_embedding_dispatches": 2,
+    "fake_dispatches_total": 7,
+    "Q10_completed_in_mock": true,
+    "Q08_not_rerun": true,
+    "ledger_recomputed_and_reopened": true,
+    "limitation": "Synthetic new replies/vectors establish software execution and cache identity only, not answer quality or expected live success."
+  },
+  "cumulative_accounting": {
+    "stopped": {
+      "generation_reservations": 1506,
+      "generation_input_tokens": 3119016,
+      "embedding_tokens": 666657,
+      "embedding_attempts": 154
+    },
+    "event15_input_tokens_still_reserved": 3248,
+    "after_event16_reservation": {
+      "generation_reservations": 1507,
+      "generation_input_tokens": 3122264,
+      "embedding_tokens": 666657,
+      "embedding_attempts": 154
+    },
+    "after_a_permitted_event17_retry": {
+      "generation_reservations": 1508,
+      "generation_input_tokens": 3125512,
+      "embedding_tokens": 666657,
+      "embedding_attempts": 154
+    },
+    "caps_unchanged": true,
+    "old_provider_usage_remains_unknown": true
+  },
+  "authorization_assessment": "Confirmed premature-connection EOF is within the already authorized finite connection-interruption retry policy. This fixes a broad SSL superclass classification without bypassing certificate checks or obtaining a higher budget.",
+  "execution_boundary": "No production authorization or recovery was executed by this audit. Original stopped summary still has the bound SHA; no live-readiness was changed; no API/model calls or actual credential reads occurred.",
+  "research_boundary": "Preserve the original scores and failed attempts. New retry results are separate conditional outcomes; old failures without raw replies cannot be attributed retroactively to this EOF subtype or to multi-message decoding."
+}
