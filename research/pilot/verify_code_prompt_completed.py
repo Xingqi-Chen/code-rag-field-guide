@@ -8,6 +8,7 @@ from pathlib import Path
 from verify_code_prompt import no_network  # Installs the network-denying audit hook.
 from index_artifacts import read_table, rows_sha
 from code_prompt_json_syntax import candidate as tail_comma_candidate
+from code_prompt_format_repair import candidate as format_candidate
 
 HERE=Path(__file__).resolve().parent
 ROOT=HERE.parents[1]
@@ -104,6 +105,29 @@ def main():
         matching=[e for e in events if e['request_body_sha256']==record['request_body_sha256']]
         assert sum(e['status']=='validated' for e in matching)==1
         assert max(e['sequence'] for e in matching)==record['original_event']  # Never resend after complete reply.
+    format_policy=read(OUT/'json-format-amendment.json')
+    assert s['json_format_policy']==format_policy and format_policy['human_approval_utc']=='2026-10-14T01:51:30+00:00'
+    assert format_policy['limits_before']==format_policy['limits_after']==s['limits']
+    assert format_policy['transient_retry_policy_unchanged'] and not format_policy['total_deadline_reintroduced']
+    formats=s['json_format_repairs'];assert any(r['original_event']==1147 for r in formats)
+    assert len({r['original_event'] for r in formats})==len(formats)
+    for repair in formats:
+        path=OUT/repair['evidence_file'];assert sha(path)==repair['evidence_sha256']
+        record=read(path);original=record['original_content'];fixed,edits,spans=format_candidate(original)
+        assert fixed==record['candidate_content'] and edits==record['exact_edits'] and spans==record['inline_code_spans']
+        assert hashlib.sha256(original.encode()).hexdigest()==record['original_content_sha256']
+        assert hashlib.sha256(fixed.encode()).hexdigest()==record['candidate_content_sha256']
+        assert record['original_schema_validated'] and record['each_edit_necessary_for_json_validity']
+        event=events[record['original_event']-1]
+        assert event['usage']==record['original_usage'] and record['provider_calls_for_repair']==0
+        assert event['request_body_sha256']==record['request_body_sha256']
+        assert event['schema_syntax_exception']['evidence_file']==repair['evidence_file']
+        matching=[e for e in events if e['request_body_sha256']==record['request_body_sha256']]
+        assert sum(e['status']=='validated' for e in matching)==1
+        assert max(e['sequence'] for e in matching)==record['original_event']
+        if record['original_event']==1147:
+            diagnosis=read(OUT/'schema-1147-diagnosis.json')
+            assert fixed==diagnosis['candidate_content'] and all(e['delete']=='' and e['insert']=='\\' for e in edits)
     index=read(OUT/'index-summary.json');sample=read(OUT/'quality-sample.json')
     fixed_review=read(OUT/'fixed-graph-review.json')
     for kind in ['entities','relationships','communities','community_reports']:

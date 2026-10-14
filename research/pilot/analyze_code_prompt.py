@@ -56,6 +56,8 @@ def run_summary(base):
         'schema_format_exceptions':execution.get('schema_format_exceptions',[]),
         'json_tail_comma_policy':execution.get('json_tail_comma_policy'),
         'json_syntax_repairs':execution.get('json_syntax_repairs',[]),
+        'json_format_policy':execution.get('json_format_policy'),
+        'json_format_repairs':execution.get('json_format_repairs',[]),
         **({'host_interruption_timing':execution['host_interruption_timing']} if 'host_interruption_timing' in execution else {})}
 
 
@@ -86,6 +88,7 @@ def calculate():
             'Old baselines are preserved; new graph built after inspecting their failures.',
             'Mixed60/120-second timeouts, unified bounded transient retries, removed total deadline and authorized generation cap1200→1600 are disclosed execution changes.',
             'Cached report1027 has a single approved syntax exception; from1091, a separately approved run-scoped policy may remove only trailing JSON commas outside strings after original-schema validation. Per-reply originals/differences/usage retained. This is not an entirely unmodified official output path.',
+            'From1147, separately approved deterministic minimal JSON syntax repairs also permit unescaped quotes in explicit inline-code spans to be escaped without correcting the original doubled-quote code text. Ambiguous content, missing fields, type and semantic edits remain excluded.',
             'No equal-actual-source-token or randomized graph control was added in this variant.',
             'Missing provider usage remains unknown; no generation invoice or measured memory figure.']}
 

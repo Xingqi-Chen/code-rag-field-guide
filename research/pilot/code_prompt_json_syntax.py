@@ -40,8 +40,14 @@ def validated_candidate(original,response_format,schema):
     if not positions:return None
     from graphrag_llm.utils import structure_completion_response
     import jsonschema
+    def unique_fields(pairs):
+        value={}
+        for key,item in pairs:
+            if key in value:raise ValueError('Duplicate fields make a format repair ambiguous')
+            value[key]=item
+        return value
     try:
-        parsed=json.loads(fixed)
+        parsed=json.loads(fixed,object_pairs_hook=unique_fields)
         jsonschema.validate(parsed,schema)
         structure_completion_response(fixed,response_format)
     except (json.JSONDecodeError,jsonschema.ValidationError,ValueError,TypeError):return None

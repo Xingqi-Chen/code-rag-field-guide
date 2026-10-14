@@ -55,6 +55,9 @@ class CodeRuntime(OriginalRuntime):
         if response_format is not None and (RUN/'json-tail-comma-amendment.json').exists():
             import code_prompt_json_syntax
             reply=code_prompt_json_syntax.apply(self,messages,response_format,reply)
+        if response_format is not None and (RUN/'json-format-amendment.json').exists():
+            import code_prompt_format_repair
+            reply=code_prompt_format_repair.apply(self,messages,response_format,reply)
         return reply
 
     def remaining_seconds(self):

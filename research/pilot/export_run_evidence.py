@@ -40,7 +40,8 @@ def main(initial_prompts=None):
         'retrieval_finished_utc','generation_finished_utc','stopped_utc','stop_reason',
         'window_started_utc','window_deadline_utc','execution_windows','evaluation_authorization','host_interruption_timing',
         'schema_format_exceptions','schema_exception_applications',
-        'json_tail_comma_policy','json_syntax_repairs','json_syntax_repair_applications']
+        'json_tail_comma_policy','json_syntax_repairs','json_syntax_repair_applications',
+        'json_format_policy','json_format_repairs','json_format_repair_applications']
     public={k:state[k] for k in public_keys if k in state}
     event_keys=['sequence','service','phase','workflow','input_tokens','items','status',
         'request_body_sha256','started_utc','source_commit','supervisor_reason','worker_exit',
@@ -103,6 +104,14 @@ def main(initial_prompts=None):
                 'candidate_content_sha256':syntax['candidate_content_sha256'],
                 'authorization_utc':syntax['human_approval_utc'],'evidence_file':syntax['evidence_file'],
                 'note':'Run-authorized trailing commas only; original reply/cache/usage retained and original schema checked. No model resend.'}
+        format_repair=next((r for r in state.get('json_format_repairs',[]) if r['original_event']==seq),None)
+        if format_repair:
+            assert 'schema_syntax_exception' not in event
+            event['schema_syntax_exception']={
+                'original_content_sha256':format_repair['original_content_sha256'],
+                'candidate_content_sha256':format_repair['candidate_content_sha256'],
+                'authorization_utc':format_repair['human_approval_utc'],'evidence_file':format_repair['evidence_file'],
+                'note':'Run-authorized deterministic minimal JSON syntax edits; original reply/cache/usage and code text retained. Original schema checked; no model resend.'}
     public['operation_counts']=dict(classifications)
     if any(e.get('request_dispatched') is False for e in public['events']):
         public['provider_dispatch_attempts']=dict(Counter(e['service'] for e in public['events'] if e.get('request_dispatched') is not False))
