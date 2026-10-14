@@ -44,7 +44,8 @@ def main(initial_prompts=None):
         'elapsed_seconds','http_status','error_category','response_format','validation_reason',
         'usage','visible_output_common_tokens','requested_output_limit_exceeded',
         'worker_source_sha256','response_byte_limit','response_bytes','request_dispatched','policy_checkpoint','code_prompt_source_sha256',
-        'validation_stage','validated_utc','original_ledger_status']
+        'validation_stage','validated_utc','original_ledger_status',
+        'retry_after_seconds','retry_not_before_utc','retry_after_invalid']
     public['events']=[{k:e[k] for k in event_keys if k in e} for e in state['events']]
     classifications=Counter()
     if initial_prompts is None:

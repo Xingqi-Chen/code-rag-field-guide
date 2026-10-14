@@ -195,10 +195,16 @@ def worker(request, response):
                     for module in [transport,probe]},
                 'code_prompt_source_sha256':sha(Path(__file__))})
             return
-    transport.worker(request, response)
+    if (RUN/'transient-retry-amendment.json').exists():
+        import code_prompt_transport
+        code_prompt_transport.run(transport,probe,request,response)
+    else:
+        transport.worker(request, response)
     if response.exists():
         result = read(response)
         result.setdefault('worker_source_sha256', {})['code_prompt_experiment.py'] = sha(Path(__file__))
+        if (RUN/'transient-retry-amendment.json').exists():
+            result['worker_source_sha256']['code_prompt_transport.py']=sha(HERE/'code_prompt_transport.py')
         write(response, result)
 
 

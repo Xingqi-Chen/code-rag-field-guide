@@ -110,7 +110,8 @@ def prepare_recovery():
             return False
         successes = verify_successful_cache(runtime)
         print(json.dumps({'event': 'authorized_timeout_backoff', 'sequence': event['sequence'], 'seconds': delay, 'retry_number': decision['retry_number'], 'successful_generation_cache_entries': successes}), flush=True)
-        time.sleep(delay)
+        wait_until=time.monotonic()+delay
+        while time.monotonic()<wait_until:time.sleep(max(0,min(30,wait_until-time.monotonic())))
         if runtime.remaining_seconds() <= cap+2:
             return False
         number = len(state.get('recoveries', []))+1
@@ -122,11 +123,12 @@ def prepare_recovery():
         state.setdefault('recoveries', []).append({
             'time_utc': variant.transport.now(), 'event': event['sequence'],
             'service': service,
-            'reason': ('authorized_policy_checkpoint_before_dispatch' if event.get('request_dispatched') is False else f"http{event['http_status']}_without_complete_model_response" if event.get('http_status') in {520,503} else 'timeout_without_complete_response'),
+            'reason': decision.get('reason',('authorized_policy_checkpoint_before_dispatch' if event.get('request_dispatched') is False else f"http{event['http_status']}_without_complete_model_response" if event.get('http_status') in {520,503} else 'timeout_without_complete_response')),
             'explicit_one_time_retry_authorized': True,
             'authorization_scope': POLICY['scope'],
-            'authorization_utc': (state[f"http{event['http_status']}_human_approval_utc"] if event.get('http_status') in {520,503} else POLICY['user_authorized_utc']),
-            **({'approval_recorded_utc':state[f"http{event['http_status']}_approval_recorded_utc"]} if event.get('http_status') in {520,503} else {}),
+            'authorization_utc': (state['transient_human_approval_utc'] if POLICY.get('unified_transient_retries') else state[f"http{event['http_status']}_human_approval_utc"] if event.get('http_status') in {520,503} else POLICY['user_authorized_utc']),
+            **({'approval_recorded_utc':state['transient_approval_recorded_utc']} if POLICY.get('unified_transient_retries') else {'approval_recorded_utc':state[f"http{event['http_status']}_approval_recorded_utc"]} if event.get('http_status') in {520,503} else {}),
+            **({'retry_not_before_utc':event['retry_not_before_utc']} if 'retry_not_before_utc' in event else {}),
             'remote_completion_and_cost_unknown': event.get('request_dispatched') is not False,
             'successful_responses_reused': successes,
             'snapshot': snapshot.name,
