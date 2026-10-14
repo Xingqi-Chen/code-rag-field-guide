@@ -19,7 +19,7 @@ from bounded import Halt,read,file_sha,LIMITS,CARRY,generation_body
 
 REQUIRED_IMPLEMENTATION={
     'research/pilot/strategy-routing/runtime/'+name for name in
-    ('bounded.py','official.py','transport.py','runner.py','authorization.json','input-manifest.json')
+    ('bounded.py','official.py','transport.py','runner.py','recovery.py','supervisor-incident.json','authorization.json','input-manifest.json')
 }|{'research/pilot/'+name for name in
     ('probe_runtime.py','code_prompt_transport.py','full_retrieve.py','baselines.py',
      'code_prompt_experiment.py','full_index.py','full_runtime.py')}

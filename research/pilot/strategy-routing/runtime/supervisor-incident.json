@@ -1,0 +1,38 @@
+{
+  "incident": "legacy supervisor replaced during read-only graph initialization",
+  "occurred_utc": "2026-10-14T04:25:42+00:00",
+  "source_commit": "0ce19ba85b3d46e34c81bf35c2f1b187aabe8301",
+  "summary_before_sha256": "24eb2429caa1d4970c507be848ddf6b3be56401367211e4e633e5a72abfc816d",
+  "request_sha256": "0202c381a65780aabb8a145c8df32c3eb45492eeab50688e79904e7d15e9b246",
+  "log_sha256": "327079c2e31f2fc42f7073a6f5fbed12e23476c7f0924fc98e0305ef775839e9",
+  "request_key": "bfe221a0100b7a8883254059cb5ef3cf06a00e34f00d18e961470dad37e308f1",
+  "counts_retained": {
+    "generation_reservations": 1350,
+    "generation_input_tokens": 1988129,
+    "embedding_tokens": 658211,
+    "embedding_attempts": 103
+  },
+  "actual_http_requests": 0,
+  "proof": [
+    "Traceback ends at supervise_variant argv assertion before original_supervise/Popen.",
+    "Only summary.json, request-01.json and active.lock exist; no response or dispatch marker.",
+    "New controller request differs from the legacy argv contract, reproducing deterministic AssertionError before subprocess launch."
+  ],
+  "recovery": "Preserve original event, request, snapshot and counters. Permit exact same request in a fresh reservation; event 1 still consumes one of its three attempts. No change to 1883/8000000/$1 caps.",
+  "remaining_generation_reservations": 533,
+  "maximum_physical_attempts_for_first_request_after_recovery": 2,
+  "methodology_unchanged": [
+    "questions",
+    "gold",
+    "routing",
+    "graph",
+    "prompts",
+    "context",
+    "scores"
+  ],
+  "authorization_confirmation": {
+    "human_reply_utc": "2026-10-14T04:24:49+00:00",
+    "scope": "Explicit paid generation and embedding calls with public Requests source, questions and required retrieval context. HTTPS endpoints one.fullstar.tech/v1/responses and api.openai.com/v1/embeddings; cumulative caps 1883 generation reservations, 8000000 input tokens, $1 embedding.",
+    "automatic_launch_review": "allowed; failure was local software before dispatch"
+  }
+}

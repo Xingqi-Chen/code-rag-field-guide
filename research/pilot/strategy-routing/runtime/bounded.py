@@ -131,7 +131,7 @@ def retry_delay(event,attempts,clock=time.time):
     return max(0,delay)
 
 class Runtime:
-    def __init__(self,directory,transport,enc,eenc,*,create=False,limits=None,carry=None,synthetic=False,wait=time.sleep):
+    def __init__(self,directory,transport,enc,eenc,*,create=False,limits=None,carry=None,synthetic=False,wait=time.sleep,adopt_controller=True):
         self.directory=Path(directory);self.transport=transport;self.enc=enc;self.eenc=eenc
         self.limits=copy.deepcopy(limits or LIMITS);self.carry=copy.deepcopy(carry or CARRY)
         self.lock=threading.RLock();self.wait=wait;self.synthetic=synthetic
@@ -157,7 +157,8 @@ class Runtime:
             except Halt:self.close();raise
             except Exception:
                 self.close();raise Halt('resume_ledger_invalid',fatal=True) from None
-            self.state['supervisor_pid']=os.getpid();self.persist()
+            if adopt_controller:
+                self.state['supervisor_pid']=os.getpid();self.persist()
     def close(self):self.fd.close()
     def persist(self):save(self.directory/'summary.json',self.state)
     def verify_ledger(self):
@@ -241,7 +242,11 @@ class Runtime:
                             last['visible_output_common_tokens']=len(self.enc.encode(value))
                             last['requested_output_limit_exceeded']=last['visible_output_common_tokens']>2048 or usage is not None and usage['completion_tokens']>2048
                         self.persist();continue
-                    delay=retry_delay(last,len(attempts))
+                    if last['status']=='reviewed_non_dispatch':
+                        from recovery import verify_resume_slot
+                        verify_resume_slot(self,last,record)
+                        delay=0
+                    else:delay=retry_delay(last,len(attempts))
                     if delay is None:self.fail(cell,last.get('error_category','request_not_retryable'))
                     # Hold dispatch lock for wait, reservation and request. Runtime
                     # work is serial; sleep is split for signal responsiveness.

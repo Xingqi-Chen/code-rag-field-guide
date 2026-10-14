@@ -9,10 +9,17 @@ read=lambda p:json.loads(p.read_text())
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
 
 def main():
-    ready=read(HERE/'live-readiness.json');review=read(HERE/'independent-review.json')
+    ready=read(HERE/'live-readiness.json');review_file=ready.get('independent_review_file','independent-review.json')
+    assert review_file in {'independent-review.json','supervisor-fix-review.json'}
+    review=read(HERE/review_file)
     assert ready['status']==review['status']=='independent_review_passed'
-    assert ready['independent_review_sha256']==sha(HERE/'independent-review.json')
+    assert ready['independent_review_sha256']==sha(HERE/review_file)
     assert not review['unresolved_blocking_findings']
+    if review_file=='supervisor-fix-review.json':
+        fixed=read(HERE/'supervisor-fix-offline.json')
+        assert fixed['status']=='offline_integration_passed' and fixed['boundary_tests_passed']==25
+        assert fixed['supervisor_checks']['real_controller_dispatch']
+        assert fixed['supervisor_checks']['real_api_calls']==0
     assert ready['implementation_sha256']==review['implementation_sha256']
     for name,value in ready['implementation_sha256'].items():assert sha(ROOT/name)==value,name
     for name,value in read(HERE.parent/'freeze.json')['sha256'].items():assert sha(ROOT/name)==value,name

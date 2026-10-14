@@ -43,7 +43,8 @@ class Synthetic:
 async def main():
     queries=verify_protocol();pre=read(HERE.parent/'preflight.json')
     old=ROOT/'.cache/pilot/code-prompt-20261013/summary.json';before=file_sha(old)
-    data=Data();checks=[]
+    from offline_supervisor import check_supervisor
+    data,supervisor_checks=check_supervisor(Data);checks=['real Data initialization preserves supervisor; actual dispatch reaches synthetic child']
     from offline_worker import check_worker
     worker_checks=check_worker();checks.append('real worker with fake HTTP opener, exact schema and embedding payload, duplicate dispatch rejected')
     # All cached main contexts resolve without embedding or generation.
@@ -101,7 +102,7 @@ async def main():
     assert before==file_sha(old)==pre['paid_ledger_sha256_unchanged']
     assert not FORBIDDEN
     print(json.dumps({'status':'offline_integration_passed','new_model_api_calls':0,'new_embedding_api_calls':0,'credentials_read':False,
-        'old_paid_ledger_unchanged':True,'worker_checks':worker_checks,'synthetic_observations':observations,'checks':checks,
+        'old_paid_ledger_unchanged':True,'supervisor_checks':supervisor_checks,'worker_checks':worker_checks,'synthetic_observations':observations,'checks':checks,
         'limitations':['Synthetic generations and dynamic embeddings are not answer-quality or retrieval-effectiveness evidence.','Existing source graph and exact official query engines are real.','No actual service transport compatibility is asserted before authorized execution.']},indent=2))
 
 if __name__=='__main__':asyncio_complete=asyncio.run(main())

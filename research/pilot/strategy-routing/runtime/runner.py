@@ -37,12 +37,17 @@ class Data:
     """Read-only old graph and vectors; never constructs an indexing pipeline."""
     def __init__(self):
         import probe_runtime as probe
-        import code_prompt_experiment as variant
+        import full_index
         import pandas as pd
         from graphrag.query.indexer_adapters import (read_indexer_text_units,read_indexer_entities,read_indexer_reports,read_indexer_relationships,read_indexer_report_embeddings)
         from graphrag.utils.api import get_embedding_store
         from graphrag.tokenizer.get_tokenizer import get_tokenizer
-        probe.tokenizers();variant.configure();config=variant.make_config();self.index=variant.RUN
+        # Querying needs only vector-store settings. The indexing variant's
+        # configure() also replaces the process supervisor, so never invoke it
+        # while opening an existing graph for this independent controller.
+        probe.tokenizers();config=full_index.make_config()
+        self.index=ROOT/'.cache/pilot/code-prompt-20261013'
+        config.vector_store.db_uri=str(self.index/'output/lancedb')
         self.probe=probe;self.enc,self.eenc=probe.tokenizers();self.tok=get_tokenizer(encoding_model='o200k_base')
         self.count=lambda s:len(self.tok.encode(s))
         df={name:pd.read_parquet(self.index/'output'/f'{name}.parquet') for name in ('entities','communities','community_reports','relationships','text_units')}
