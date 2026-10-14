@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "reviewer": {
+    "type": "independent_ai_agent",
+    "human_review": false
+  },
+  "reviewed_utc": "2026-10-14T00:30:00.865284+00:00",
+  "status": "passed_no_remaining_startup_blocker",
+  "human_authorization_utc": "2026-10-14T00:24:02+00:00",
+  "source_sha256": {
+    "code_prompt_transport.py": "5d7ab414ee5eb2f280c71834ccdf3824555d00b90aba050ce12f326b08e55e5d",
+    "resume_code_prompt_transient.py": "d2cc99b05115c3e6863cd061c91dcbba7a302485356892df9db28ae65cb6965f",
+    "resume_code_prompt_bounded.py": "569ed332c754cc80f07dfee7d1b0ea3d0f41499ba6d7caf2d5f68c0a1a9a4e1d",
+    "code_prompt_experiment.py": "dbe02314cb8c61bcbc0e2a048528bef87fe23af798bd271e7af4acee58d0222b"
+  },
+  "checks": {
+    "generation_caches_verified": 615,
+    "imported_vectors_verified": 134,
+    "exact_frozen_inputs_verified": true,
+    "repeated_policy_install_nonrecursive": true,
+    "timeouts_connections_http429_5xx_share_three_total_physical_attempts": true,
+    "local_backoff_seconds": [
+      5,
+      15
+    ],
+    "successful_hash_replay_rejected": true,
+    "confirmed_nondispatch_excluded_from_physical_attempt_count": true,
+    "retry_after_seconds_and_http_date_respected": true,
+    "past_retry_after_keeps_local_backoff": true,
+    "invalid_retry_after_stops": true,
+    "authentication_permission_billing_safety_tls_and_budget_failures_stop": true,
+    "transport_wrappers_restore_original_functions": true,
+    "retry_after_does_not_override_safety_rejection": true,
+    "no_endpoint_payload_model_parser_or_budget_changes": true,
+    "single_request_timeout120_and_no_total_deadline_preserved": true,
+    "cli_actions_and_human_authorization_lineage_checked": true
+  },
+  "resolved_findings": [
+    {
+      "issue": "Underscore-delimited content policy and account-state error codes were initially not denied.",
+      "resolution": "Error text now normalizes underscores/hyphens; content_policy_violation, content_policy_error, content_filter, account_deactivated, account-suspended, invalid_api_key and insufficient_quota independently verified to stop."
+    }
+  ],
+  "limitations": [
+    "Classification uses the available fixed transport error metadata; it does not prove a provider backend cause.",
+    "Unknown prior usage stays unknown; retries can incur repeated remote cost.",
+    "No result or retrieval-quality conclusion is made."
+  ],
+  "audit_execution": {
+    "real_api_calls": 0,
+    "real_ledger_mutations": 0,
+    "actual_controller_or_worker_started": false,
+    "only_written_artifact": "transient-retry-review.json"
+  },
+  "blocking_findings": []
+}

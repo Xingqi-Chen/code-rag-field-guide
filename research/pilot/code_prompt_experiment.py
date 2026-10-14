@@ -131,6 +131,11 @@ def configure():
         generation_request_seconds=request_seconds)
     if (RUN/'summary.json').exists() and read(RUN/'summary.json').get('wall_deadline_removed') is True:
         transport.LIMITS['wall_seconds']=None
+    if (RUN/'generation-cap-amendment.json').exists():
+        amendment=read(RUN/'generation-cap-amendment.json')
+        assert amendment['previous_generation_cap']==1200 and amendment['generation_cap']==1600
+        assert amendment['human_approval_utc']=='2026-10-14T00:31:24+00:00'
+        transport.LIMITS['generation_index_attempts']=1600
     probe.supervise = supervise_variant
     full_index.make_config = make_config
 
@@ -178,6 +183,20 @@ def check_frozen():
 
 
 def worker(request, response):
+    if (RUN/'generation-cap-request.json').exists():
+        state=read(RUN/'summary.json')
+        if state['limits']['generation_index_attempts']==1200:
+            seq=len(state['events'])
+            assert request.parent.resolve()==response.parent.resolve()==RUN.resolve()
+            assert request.name==f'request-{seq:02}.json' and response.name==f'response-{seq:02}.json'
+            assert state['status']=='running' and state['supervisor_pid']==os.getppid()
+            assert state['events'][-1]['status']=='reserved_before_dispatch'
+            assert sha_body(read(request)['body'])==state['events'][-1]['request_body_sha256']
+            write(response,{'error_category':'authorized_generation_cap_checkpoint',
+                'request_dispatched':False,'policy_checkpoint':True,
+                'worker_source_sha256':{Path(module.__file__).name:sha(Path(module.__file__)) for module in [transport,probe]},
+                'code_prompt_source_sha256':sha(Path(__file__))})
+            return
     # An existing controller cannot retroactively disarm its installed timer.
     # Finish its current request, then pause the next reservation BEFORE sending.
     if (RUN/'deadline-removal-request.json').exists():
