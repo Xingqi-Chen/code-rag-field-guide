@@ -1,0 +1,1722 @@
+{
+  "schema": "strategy-routing-evidence-review-v1",
+  "reviewer": "answer_review_b",
+  "manifest_sha256": "be893c5295ff00e12983b019e29912869319ea4ff1904cb4340148ffa8bdee24",
+  "content_review_sha256": "75b8f05686ab99bcf84340a362cb8f68e0a2a5d44482fb17bfd0f8714fc4b205",
+  "rubric_sha256": "d1bdca1bf597530a0f90081220b5370893bc04742b080fe3dbd492dd7b3de225",
+  "scope": {
+    "batch": "evidence-batch2",
+    "question_ids": [
+      "Q04",
+      "Q05",
+      "Q06"
+    ],
+    "answer_count": 12,
+    "content_scores_modified": false,
+    "body_checks": [
+      {
+        "anonymous_id": "A053",
+        "case_sha256": "45bdd39272eb46407bb55772f4284ca5a811896e3c43f942b7dbd4e41016e5e6",
+        "http200_calls": 1,
+        "raw_source_rows_verified_exactly": 10
+      },
+      {
+        "anonymous_id": "A072",
+        "case_sha256": "f3d5de2ecde807e95c77f15821f18f89465a476d8f118507fef0b1f422a3847c",
+        "http200_calls": 1,
+        "raw_source_rows_verified_exactly": 10
+      },
+      {
+        "anonymous_id": "A045",
+        "case_sha256": "aa11dab57ee609d00351bb6e826b8486244529dfacf9dd7e1ef594b5ba0e1e26",
+        "http200_calls": 1,
+        "raw_source_rows_verified_exactly": 5
+      },
+      {
+        "anonymous_id": "A020",
+        "case_sha256": "4136d208abfd9199b132d57a4574116fc1c7a05527a95c394ead14d932ecb428",
+        "http200_calls": 1,
+        "raw_source_rows_verified_exactly": 11
+      },
+      {
+        "anonymous_id": "A004",
+        "case_sha256": "488be5f208863dcfbba6b98964b1684fe41404a700289de6f52be5f9ff4a5a4f",
+        "http200_calls": 1,
+        "raw_source_rows_verified_exactly": 12
+      },
+      {
+        "anonymous_id": "A081",
+        "case_sha256": "17a7754e4a8e6672f2835eee0fe922b5befa3aeaef9ac1fc561004210f794949",
+        "http200_calls": 1,
+        "raw_source_rows_verified_exactly": 9
+      },
+      {
+        "anonymous_id": "A003",
+        "case_sha256": "b6800b482cbc479e248bd57386b279da537cb347254e48f32be6fb7c4c64ddc8",
+        "http200_calls": 1,
+        "raw_source_rows_verified_exactly": 6
+      },
+      {
+        "anonymous_id": "A070",
+        "case_sha256": "58fbbd24cb188a9f444bb6e29552a8735ade627401c8f192b7bd1a94f8bb29cc",
+        "http200_calls": 1,
+        "raw_source_rows_verified_exactly": 7
+      },
+      {
+        "anonymous_id": "A008",
+        "case_sha256": "c7454b3a837b8a8940976fd3fce3d39f183f5a3b33768defc3a01e3f9e4ba473",
+        "http200_calls": 1,
+        "raw_source_rows_verified_exactly": 10
+      },
+      {
+        "anonymous_id": "A017",
+        "case_sha256": "3c24b2bb329dc5c392b6be6049e3639e7f16828e503a7242f23ae917afa0c9c6",
+        "http200_calls": 1,
+        "raw_source_rows_verified_exactly": 10
+      },
+      {
+        "anonymous_id": "A015",
+        "case_sha256": "e78ecaa77fa13e4eba0146b94eefafb9a95950477de10ecdab462a732832c75f",
+        "http200_calls": 1,
+        "raw_source_rows_verified_exactly": 9
+      },
+      {
+        "anonymous_id": "A023",
+        "case_sha256": "b790a795e12a39f2789d7dd10e9cbe3e99bf790ee7ce2f8198e83c8ffd631ff7",
+        "http200_calls": 1,
+        "raw_source_rows_verified_exactly": 9
+      }
+    ],
+    "provenance_reads": [
+      "research/pilot/results/code-prompt/index/entities.json",
+      "research/pilot/results/code-prompt/index/relationships.json",
+      "research/pilot/results/code-prompt/index/text-unit-provenance.json"
+    ],
+    "no_method_map_or_api_or_credentials_used": true
+  },
+  "rows": [
+    {
+      "anonymous_id": "A053",
+      "question_id": "Q05",
+      "answer_sha256": "02b55b75bfe11bb7c7edff4a667cee2c3d34bb832928e68c8c926320cf1f56b2",
+      "criteria": [
+        {
+          "id": "Q05-C1",
+          "evidence_score": 1,
+          "rationale": "实际 Source 50 含 json 方法名、文件位置、RequestsJSONDecodeError 目标；不需要未提供的别名行才可确认该评分点。",
+          "supplied_reference": [
+            {
+              "case": "A053.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "50"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q05-E1",
+              "path": "src/requests/models.py",
+              "start_line": 970,
+              "end_line": 971
+            },
+            {
+              "id": "Q05-E2",
+              "path": "src/requests/models.py",
+              "start_line": 975,
+              "end_line": 978
+            }
+          ]
+        },
+        {
+          "id": "Q05-C2",
+          "evidence_score": 1,
+          "rationale": "实际 Source 50 的编码探测分支与 self.text 回退分支都包含 JSONDecodeError 捕获；UnicodeDecodeError 分支也可见。",
+          "supplied_reference": [
+            {
+              "case": "A053.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "50"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q05-E1",
+              "path": "src/requests/models.py",
+              "start_line": 970,
+              "end_line": 971
+            },
+            {
+              "id": "Q05-E2",
+              "path": "src/requests/models.py",
+              "start_line": 975,
+              "end_line": 978
+            }
+          ]
+        },
+        {
+          "id": "Q05-C3",
+          "evidence_score": 1,
+          "rationale": "实际 Source 50 在两条路径明确保留 e.msg/e.doc/e.pos。",
+          "supplied_reference": [
+            {
+              "case": "A053.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "50"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q05-E1",
+              "path": "src/requests/models.py",
+              "start_line": 970,
+              "end_line": 971
+            },
+            {
+              "id": "Q05-E2",
+              "path": "src/requests/models.py",
+              "start_line": 975,
+              "end_line": 978
+            }
+          ]
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "JSON decoding errors are converted in `Response.json()` in `src/requests/models.py:L930-L1037`.",
+          "citation": [
+            "src/requests/models.py:L930-L1037"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际 call 1 Sources 50 精确包含该文件范围、json 方法及两次 catch/raise；该开头定位也支撑随后的双路径与参数说明。"
+        },
+        {
+          "answer_quote": "The target exception is defined as `requests.exceptions.JSONDecodeError` in `src/requests/exceptions.py:L25-L46`. It inherits from both `InvalidJSONError`/`RequestException` and the compatibility JSON decoder error.",
+          "citation": [
+            "src/requests/exceptions.py:L25-L46"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "call 1 Source 41 包含 L27 InvalidJSONError(RequestException)、L31 JSONDecodeError 多继承及初始化。"
+        },
+        {
+          "answer_quote": "The tests confirm this behavior in `tests/test_lowlevel.py:L401-L428` and verify serialization in `tests/test_requests.py:L2965-L2976`.",
+          "citation": [
+            "tests/test_lowlevel.py:L401-L428",
+            "tests/test_requests.py:L2965-L2976"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "联合引用：实际 Source 78 的 L407-L428 验证另种 UTF 编码异常，Source 102 的 L2969-L2976 验证序列化，分别支持句内两部分。"
+        }
+      ],
+      "missing_citation_claims": [],
+      "scope_claim_checks": [
+        {
+          "claim": "实际提供片段未含 RequestsJSONDecodeError 的导入别名声明。",
+          "supported": true,
+          "basis": "逐一检查 call 1 全部 Sources 原文，确无 models.py:L49；未用完整索引或评审可见源码代替模型输入。"
+        }
+      ],
+      "additional_errors": [],
+      "evidence_mean": 1.0
+    },
+    {
+      "anonymous_id": "A072",
+      "question_id": "Q04",
+      "answer_sha256": "98ad2a3963a9ac4ed3a0779f1d3846cf54ca8615eeb42e526b0d4e4d420fb38a",
+      "criteria": [
+        {
+          "id": "Q04-C1",
+          "evidence_score": 0,
+          "rationale": "实际 call 1 仅有 register_hook 调用和 dispatch_hook 等邻近主题，没有目标方法的类/移除/返回分支材料；不能把评审可见 Q04-E1 或全图索引自动视为模型已获证据。",
+          "supplied_reference": [
+            {
+              "case": "A072.json",
+              "call_id": 1,
+              "source_ids": [
+                "33",
+                "34",
+                "43",
+                "48",
+                "52",
+                "53",
+                "74",
+                "77",
+                "78",
+                "94"
+              ],
+              "note": "未包含该 criterion 所需目标实现"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q04-E1",
+              "path": "src/requests/models.py",
+              "start_line": 218,
+              "end_line": 227
+            }
+          ]
+        },
+        {
+          "id": "Q04-C2",
+          "evidence_score": 0,
+          "rationale": "实际 call 1 仅有 register_hook 调用和 dispatch_hook 等邻近主题，没有目标方法的类/移除/返回分支材料；不能把评审可见 Q04-E1 或全图索引自动视为模型已获证据。",
+          "supplied_reference": [
+            {
+              "case": "A072.json",
+              "call_id": 1,
+              "source_ids": [
+                "33",
+                "34",
+                "43",
+                "48",
+                "52",
+                "53",
+                "74",
+                "77",
+                "78",
+                "94"
+              ],
+              "note": "未包含该 criterion 所需目标实现"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q04-E1",
+              "path": "src/requests/models.py",
+              "start_line": 218,
+              "end_line": 227
+            }
+          ]
+        },
+        {
+          "id": "Q04-C3",
+          "evidence_score": 0,
+          "rationale": "实际 call 1 仅有 register_hook 调用和 dispatch_hook 等邻近主题，没有目标方法的类/移除/返回分支材料；不能把评审可见 Q04-E1 或全图索引自动视为模型已获证据。",
+          "supplied_reference": [
+            {
+              "case": "A072.json",
+              "call_id": 1,
+              "source_ids": [
+                "33",
+                "34",
+                "43",
+                "48",
+                "52",
+                "53",
+                "74",
+                "77",
+                "78",
+                "94"
+              ],
+              "note": "未包含该 criterion 所需目标实现"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q04-E1",
+              "path": "src/requests/models.py",
+              "start_line": 218,
+              "end_line": 227
+            }
+          ]
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "`src/requests/hooks.py`, `dispatch_hook`: dispatches callbacks and updates the hook data; it does not remove callbacks or return an existence flag. [Source 43]",
+          "citation": [
+            "Source 43; src/requests/hooks.py dispatch_hook"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "call 1 Source 43 的 dispatch_hook 迭代执行并返回 hook_data，不作移除或返回存在标志。"
+        },
+        {
+          "answer_quote": "`src/requests/models.py`, `RequestHooksMixin` area: the supplied excerpt shows hook registration, but no removal method. [Source 48]",
+          "citation": [
+            "Source 48; src/requests/models.py RequestHooksMixin area"
+          ],
+          "location_match": false,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Source48 实际可解析，包含 register_hook 调用且无移除方法，完整支持这条关于“给定片段所示行为”的断言。答案把片段称为 RequestHooksMixin 区域则不符，实际是 PreparedRequest.prepare_hooks 尾部及 Response；该类/区域名称错配单列 location_match=false 与新增错误，不重复压低行为支持度。"
+        },
+        {
+          "answer_quote": "`tests/test_hooks.py`: tests dispatch behavior and default hooks, with no removal behavior covered. [Source 74]",
+          "citation": [
+            "Source 74; tests/test_hooks.py"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际 Source 74 为完整 L1-L22，只有 dispatch/default_hooks 两项测试。"
+        }
+      ],
+      "missing_citation_claims": [],
+      "scope_claim_checks": [
+        {
+          "claim": "给定材料无法定位移除注册回调并返回是否存在的方法。",
+          "supported": true,
+          "basis": "call 1 Sources 中无 deregister_hook、RequestHooksMixin、remove(hook) 目标实现；这是材料内拒答，不等同于整个仓库无该方法。"
+        }
+      ],
+      "additional_errors": [
+        {
+          "anonymous_id": "A072",
+          "question_id": "Q04",
+          "method": null,
+          "answer_quote": "`src/requests/models.py`, `RequestHooksMixin` area",
+          "claim": "Source 48 对应 RequestHooksMixin 区域。",
+          "category": "citation_mismatch",
+          "source_or_query_anchor": "actual call 1 Source 48 src/requests/models.py:L635-L790; frozen models.py:L206-L227 / L631-L641",
+          "rationale": "Source 48 是 PreparedRequest.prepare_hooks 尾部及 Response 的区域，虽含 register_hook 调用，却不是 RequestHooksMixin。此对象错配不改变已冻结的缺失要点内容分。",
+          "affected_criterion_ids": [
+            "Q04-C1"
+          ]
+        }
+      ],
+      "evidence_mean": 0.0
+    },
+    {
+      "anonymous_id": "A045",
+      "question_id": "Q06",
+      "answer_sha256": "00e83ea68ef6b0f1472fe77240a26ca4ebedf9e4a0360aa8ae892cc5e69ad9ac",
+      "criteria": [
+        {
+          "id": "Q06-C1",
+          "evidence_score": 1,
+          "rationale": "实际 Source 49 给出 iter_lines、iter_content、pending 的拼接次序。",
+          "supplied_reference": [
+            {
+              "case": "A045.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "49"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q06-E1",
+              "path": "src/requests/models.py",
+              "start_line": 867,
+              "end_line": 888
+            }
+          ]
+        },
+        {
+          "id": "Q06-C2",
+          "evidence_score": 1,
+          "rationale": "实际 Source 49 给出 if delimiter: split(delimiter)，else: splitlines()，包括 truthy 条件。",
+          "supplied_reference": [
+            {
+              "case": "A045.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "49"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q06-E1",
+              "path": "src/requests/models.py",
+              "start_line": 867,
+              "end_line": 888
+            }
+          ]
+        },
+        {
+          "id": "Q06-C3",
+          "evidence_score": 1,
+          "rationale": "实际 Source 49 明确末尾非空未终止判断、lines.pop 到 pending 以及 yield from lines。",
+          "supplied_reference": [
+            {
+              "case": "A045.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "49"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q06-E1",
+              "path": "src/requests/models.py",
+              "start_line": 867,
+              "end_line": 888
+            }
+          ]
+        },
+        {
+          "id": "Q06-C4",
+          "evidence_score": 1,
+          "rationale": "实际 Source 49 在流结束后 if pending is not None: yield pending，支持剩余尾段输出。",
+          "supplied_reference": [
+            {
+              "case": "A045.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "49"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q06-E1",
+              "path": "src/requests/models.py",
+              "start_line": 867,
+              "end_line": 888
+            }
+          ]
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "`src/requests/models.py`, `Response.iter_lines` in source `49` (`src/requests/models.py:L777-L942`).",
+          "citation": [
+            "Source 49; src/requests/models.py:L777-L942"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "call 1 Source 49 的 L857-L888 确含所述方法；其源码还直接支持答案各步骤及收尾。"
+        },
+        {
+          "answer_quote": "The method initializes `pending = None`, then iterates over `self.iter_content(...)` (`ITER_LINES -> ITER_CONTENT`, relationship `1007`).",
+          "citation": [
+            "Source 49",
+            "Relationship 1007: ITER_LINES -> ITER_CONTENT"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "联合支持：Sources 49 给出 pending 初始化，实际 Relationships 1007 给出 iter_content 调用；其 text_unit_ids 沿公开 provenance 回到同一已提供 Source 49。"
+        },
+        {
+          "answer_quote": "`chunk.split(delimiter)` when a custom `delimiter` is supplied (`ITER_LINES -> CHUNK.SPLIT`, relationship `1019`)",
+          "citation": [
+            "Relationship 1019: ITER_LINES -> CHUNK.SPLIT"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "该关系逐字出现在 call 1，说明 truthy delimiter 时 split；公开 text_unit_ids 追溯已提供 Source 49 的 L875-L876。"
+        },
+        {
+          "answer_quote": "`chunk.splitlines()` otherwise (`ITER_LINES -> CHUNK.SPLITLINES`, relationship `1020`)",
+          "citation": [
+            "Relationship 1020: ITER_LINES -> CHUNK.SPLITLINES"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "该关系实际提供且说明 falsy delimiter 分支；provenance 回到 Source 49 L877-L878。"
+        },
+        {
+          "answer_quote": "it removes the final element with `lines.pop()` and stores it in `pending` (`ITER_LINES -> LINES.POP`, relationship `1021`)",
+          "citation": [
+            "Source 49",
+            "Relationship 1021: ITER_LINES -> LINES.POP"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际关系及 Sources 49 联合支持 pop 与 pending 赋值，provenance 回到 L880-L881。"
+        }
+      ],
+      "missing_citation_claims": [],
+      "scope_claim_checks": [
+        {
+          "claim": "实际提供材料未包含专门覆盖 custom delimiter 未完成尾段的测试。",
+          "supported": true,
+          "basis": "检查 call 1 全部给定 tests 片段；未出现 delimiter 测试。A045/A015 有普通 iter_lines 测试，但不是自定义 delimiter 测试。"
+        }
+      ],
+      "additional_errors": [],
+      "evidence_mean": 1.0
+    },
+    {
+      "anonymous_id": "A020",
+      "question_id": "Q04",
+      "answer_sha256": "929e43b82daf13e568e1f4a58b0d3eceec942821f07766582429ab94d310ad18",
+      "criteria": [
+        {
+          "id": "Q04-C1",
+          "evidence_score": 1,
+          "rationale": "实际 Source 45 含类声明与 deregister_hook 定义，精确类/模块可辨识。",
+          "supplied_reference": [
+            {
+              "case": "A020.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "45"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q04-E1",
+              "path": "src/requests/models.py",
+              "start_line": 218,
+              "end_line": 227
+            }
+          ]
+        },
+        {
+          "id": "Q04-C2",
+          "evidence_score": 1,
+          "rationale": "实际 Source 45 L223-L225 直接给出 self.hooks[event].remove(hook) 与成功 True。",
+          "supplied_reference": [
+            {
+              "case": "A020.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "45"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q04-E1",
+              "path": "src/requests/models.py",
+              "start_line": 218,
+              "end_line": 227
+            }
+          ]
+        },
+        {
+          "id": "Q04-C3",
+          "evidence_score": 1,
+          "rationale": "实际 Source 45 L226-L227 直接给出 ValueError 转换为 False。",
+          "supplied_reference": [
+            {
+              "case": "A020.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "45"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q04-E1",
+              "path": "src/requests/models.py",
+              "start_line": 218,
+              "end_line": 227
+            }
+          ]
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "It returns `True` if removal succeeds and `False` if a `ValueError` indicates the callback was not registered. [Source 45, `src/requests/models.py` — `RequestHooksMixin.deregister_hook`]",
+          "citation": [
+            "Source 45; src/requests/models.py RequestHooksMixin.deregister_hook"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "call 1 Source 45 L206-L227 含精确类/方法及 remove、True、ValueError、False；尾部引用覆盖短答案的定位与行为。"
+        }
+      ],
+      "missing_citation_claims": [],
+      "scope_claim_checks": [],
+      "additional_errors": [],
+      "evidence_mean": 1.0
+    },
+    {
+      "anonymous_id": "A004",
+      "question_id": "Q05",
+      "answer_sha256": "c24c4024bd770274d9673dc460ad4393df4563a6ab036f5e31d4ab270c3c5ce8",
+      "criteria": [
+        {
+          "id": "Q05-C1",
+          "evidence_score": 1,
+          "rationale": "实际 Source 50 含 json 方法名、文件位置、RequestsJSONDecodeError 目标；不需要未提供的别名行才可确认该评分点。",
+          "supplied_reference": [
+            {
+              "case": "A004.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "50"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q05-E1",
+              "path": "src/requests/models.py",
+              "start_line": 970,
+              "end_line": 971
+            },
+            {
+              "id": "Q05-E2",
+              "path": "src/requests/models.py",
+              "start_line": 975,
+              "end_line": 978
+            }
+          ]
+        },
+        {
+          "id": "Q05-C2",
+          "evidence_score": 1,
+          "rationale": "实际 Source 50 的编码探测分支与 self.text 回退分支都包含 JSONDecodeError 捕获；UnicodeDecodeError 分支也可见。",
+          "supplied_reference": [
+            {
+              "case": "A004.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "50"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q05-E1",
+              "path": "src/requests/models.py",
+              "start_line": 970,
+              "end_line": 971
+            },
+            {
+              "id": "Q05-E2",
+              "path": "src/requests/models.py",
+              "start_line": 975,
+              "end_line": 978
+            }
+          ]
+        },
+        {
+          "id": "Q05-C3",
+          "evidence_score": 1,
+          "rationale": "实际 Source 50 在两条路径明确保留 e.msg/e.doc/e.pos。",
+          "supplied_reference": [
+            {
+              "case": "A004.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "50"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q05-E1",
+              "path": "src/requests/models.py",
+              "start_line": 970,
+              "end_line": 971
+            },
+            {
+              "id": "Q05-E2",
+              "path": "src/requests/models.py",
+              "start_line": 975,
+              "end_line": 978
+            }
+          ]
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "JSON decoding errors from `Response.json()` are converted in `src/requests/models.py`, inside `Response.json()` (the supplied excerpt covers `src/requests/models.py:L930-L1037`).",
+          "citation": [
+            "src/requests/models.py:L930-L1037"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "call 1 Source 50 精确包含双分支 catch/raise 以及 e.msg/e.doc/e.pos；定位及后续过程有直接源码支持。"
+        },
+        {
+          "answer_quote": "It inherits from both `InvalidJSONError`/`RequestException` and the compatibility JSON decoder error, preserving compatibility across JSON implementations (Source 41, `src/requests/exceptions.py:L1-L151`; Source 12, `docs/user/quickstart.rst:L133-L263`).",
+          "citation": [
+            "Source 41; src/requests/exceptions.py:L1-L151",
+            "Source 12; docs/user/quickstart.rst:L133-L263"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "联合引用：实际 Source 41 给出多继承，Source 12 L154-L158 解释不同 JSON 实现的兼容包装；整句得到支持。"
+        },
+        {
+          "answer_quote": "the tests confirm that the exception raised by `r.json()` is both a `requests.exceptions.JSONDecodeError` and a `RequestException` (Source 78, `tests/test_lowlevel.py:L379-L428`).",
+          "citation": [
+            "Source 78; tests/test_lowlevel.py:L379-L428"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际 Source 78 L424-L427 对这两类身份有断言。"
+        }
+      ],
+      "missing_citation_claims": [],
+      "scope_claim_checks": [
+        {
+          "claim": "实际提供片段未含 RequestsJSONDecodeError 的导入别名声明。",
+          "supported": true,
+          "basis": "逐一检查 call 1 全部 Sources 原文，确无 models.py:L49；未用完整索引或评审可见源码代替模型输入。"
+        }
+      ],
+      "additional_errors": [],
+      "evidence_mean": 1.0
+    },
+    {
+      "anonymous_id": "A081",
+      "question_id": "Q06",
+      "answer_sha256": "7f365fb31085bd17b4fc8291b253c0818f5238410f9ae8d21349cab651694121",
+      "criteria": [
+        {
+          "id": "Q06-C1",
+          "evidence_score": 1,
+          "rationale": "实际 Source 49 给出 iter_lines、iter_content、pending 的拼接次序。",
+          "supplied_reference": [
+            {
+              "case": "A081.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "49"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q06-E1",
+              "path": "src/requests/models.py",
+              "start_line": 867,
+              "end_line": 888
+            }
+          ]
+        },
+        {
+          "id": "Q06-C2",
+          "evidence_score": 1,
+          "rationale": "实际 Source 49 给出 if delimiter: split(delimiter)，else: splitlines()，包括 truthy 条件。",
+          "supplied_reference": [
+            {
+              "case": "A081.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "49"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q06-E1",
+              "path": "src/requests/models.py",
+              "start_line": 867,
+              "end_line": 888
+            }
+          ]
+        },
+        {
+          "id": "Q06-C3",
+          "evidence_score": 1,
+          "rationale": "实际 Source 49 明确末尾非空未终止判断、lines.pop 到 pending 以及 yield from lines。 内容答案遗漏完成行输出不等于证据未提供；保留内容 .5，但证据为 1。",
+          "supplied_reference": [
+            {
+              "case": "A081.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "49"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q06-E1",
+              "path": "src/requests/models.py",
+              "start_line": 867,
+              "end_line": 888
+            }
+          ]
+        },
+        {
+          "id": "Q06-C4",
+          "evidence_score": 1,
+          "rationale": "实际 Source 49 在流结束后 if pending is not None: yield pending，支持剩余尾段输出。",
+          "supplied_reference": [
+            {
+              "case": "A081.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "49"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q06-E1",
+              "path": "src/requests/models.py",
+              "start_line": 867,
+              "end_line": 888
+            }
+          ]
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "`src/requests/models.py`, `Response.iter_lines()` (`src/requests/models.py:L777-L942`, source 49).",
+          "citation": [
+            "Source 49; src/requests/models.py:L777-L942"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "actual call 1 Source 49 含完整 pending/拆分/yield 代码，可支撑算法描述；即使答案遗漏完成行 yield，输入里该行仍存在。"
+        },
+        {
+          "answer_quote": "The tests shown only verify general `iter_content` behavior and exception wrapping in `tests/test_requests.py` (`tests/test_requests.py:L1345-L1498`, source 90).",
+          "citation": [
+            "Source 90; tests/test_requests.py:L1345-L1498"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": false,
+          "support_score": 0.5,
+          "rationale": "Source 90 正确解析且含 L1402-L1419、L1442-L1478 的 iter_content 测试，但同一提供片段还含 cookie、elapsed、Response.reason、pickle 等测试，“only”对整个片段的限定过强。支持列举的两类测试，不支持排他限定；部分支持。"
+        }
+      ],
+      "missing_citation_claims": [],
+      "scope_claim_checks": [
+        {
+          "claim": "实际提供材料未包含专门覆盖 custom delimiter 未完成尾段的测试。",
+          "supported": true,
+          "basis": "检查 call 1 全部给定 tests 片段；未出现 delimiter 测试。A045/A015 有普通 iter_lines 测试，但不是自定义 delimiter 测试。"
+        }
+      ],
+      "additional_errors": [
+        {
+          "anonymous_id": "A081",
+          "question_id": "Q06",
+          "method": null,
+          "answer_quote": "The tests shown only verify general `iter_content` behavior and exception wrapping",
+          "claim": "实际展示的 tests/test_requests.py:L1345-L1498 测试只覆盖 iter_content 及异常包装。",
+          "category": "contradicted_by_frozen_source",
+          "source_or_query_anchor": "actual call 1 Source 90 tests/test_requests.py:L1345-L1498",
+          "rationale": "该实际片段除 iter_content 测试外，还含 cookie 冲突/策略、elapsed、Response.reason 和 pickle 测试；“only”限定过强。其“没有 custom delimiter 专项测试”则成立。这是必要要点之外的额外错误，不从内容均值追加扣分。",
+          "affected_criterion_ids": []
+        }
+      ],
+      "evidence_mean": 1.0
+    },
+    {
+      "anonymous_id": "A003",
+      "question_id": "Q04",
+      "answer_sha256": "66c8fc5561d4a36c4719fd0db9ce130734669902d3e9464068c3c46a520023c6",
+      "criteria": [
+        {
+          "id": "Q04-C1",
+          "evidence_score": 1,
+          "rationale": "实际 Source 45 含类声明与 deregister_hook 定义，精确类/模块可辨识。",
+          "supplied_reference": [
+            {
+              "case": "A003.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "45"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q04-E1",
+              "path": "src/requests/models.py",
+              "start_line": 218,
+              "end_line": 227
+            }
+          ]
+        },
+        {
+          "id": "Q04-C2",
+          "evidence_score": 1,
+          "rationale": "实际 Source 45 L223-L225 直接给出 self.hooks[event].remove(hook) 与成功 True。",
+          "supplied_reference": [
+            {
+              "case": "A003.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "45"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q04-E1",
+              "path": "src/requests/models.py",
+              "start_line": 218,
+              "end_line": 227
+            }
+          ]
+        },
+        {
+          "id": "Q04-C3",
+          "evidence_score": 1,
+          "rationale": "实际 Source 45 L226-L227 直接给出 ValueError 转换为 False。",
+          "supplied_reference": [
+            {
+              "case": "A003.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "45"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q04-E1",
+              "path": "src/requests/models.py",
+              "start_line": 218,
+              "end_line": 227
+            }
+          ]
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "The method is `RequestHooksMixin.deregister_hook` in `src/requests/models.py` (`Source 45`, named location `RequestHooksMixin.deregister_hook`, within L170-L345).",
+          "citation": [
+            "Source 45; src/requests/models.py:L170-L345"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "call 1 Source 45 含 L206 类和 L218 方法声明，范围与符号匹配。"
+        },
+        {
+          "answer_quote": "It removes the callback with `self.hooks[event].remove(hook)`, returns `True` if removal succeeds, and returns `False` when the callback is not present and `ValueError` is raised. [Source 45; Entity `REQUESTHOOKSMIXIN.DEREGISTER_HOOK`; Relationship 888]",
+          "citation": [
+            "Source 45",
+            "Entity REQUESTHOOKSMIXIN.DEREGISTER_HOOK (678)",
+            "Relationship 888"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "作为一组核查：三者均实际提供；Source 45 与 entity 678 说明完整返回/异常行为，关系 888 说明 remove 调用。实体及关系的 text_unit_ids 均追溯 Source 45 的公开 provenance；不要求单一关系独自承担整句全部语义。"
+        }
+      ],
+      "missing_citation_claims": [],
+      "scope_claim_checks": [],
+      "additional_errors": [],
+      "evidence_mean": 1.0
+    },
+    {
+      "anonymous_id": "A070",
+      "question_id": "Q05",
+      "answer_sha256": "8ba67dd6d53dba8a4a8e520c23c05b44e615ccda1bd53aaa90967e69ba1f7ea4",
+      "criteria": [
+        {
+          "id": "Q05-C1",
+          "evidence_score": 1,
+          "rationale": "实际 Source 50 含 json 方法名、文件位置、RequestsJSONDecodeError 目标；不需要未提供的别名行才可确认该评分点。",
+          "supplied_reference": [
+            {
+              "case": "A070.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "50"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q05-E1",
+              "path": "src/requests/models.py",
+              "start_line": 970,
+              "end_line": 971
+            },
+            {
+              "id": "Q05-E2",
+              "path": "src/requests/models.py",
+              "start_line": 975,
+              "end_line": 978
+            }
+          ]
+        },
+        {
+          "id": "Q05-C2",
+          "evidence_score": 1,
+          "rationale": "实际 Source 50 的编码探测分支与 self.text 回退分支都包含 JSONDecodeError 捕获；UnicodeDecodeError 分支也可见。",
+          "supplied_reference": [
+            {
+              "case": "A070.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "50"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q05-E1",
+              "path": "src/requests/models.py",
+              "start_line": 970,
+              "end_line": 971
+            },
+            {
+              "id": "Q05-E2",
+              "path": "src/requests/models.py",
+              "start_line": 975,
+              "end_line": 978
+            }
+          ]
+        },
+        {
+          "id": "Q05-C3",
+          "evidence_score": 1,
+          "rationale": "实际 Source 50 在两条路径明确保留 e.msg/e.doc/e.pos。",
+          "supplied_reference": [
+            {
+              "case": "A070.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "50"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q05-E1",
+              "path": "src/requests/models.py",
+              "start_line": 970,
+              "end_line": 971
+            },
+            {
+              "id": "Q05-E2",
+              "path": "src/requests/models.py",
+              "start_line": 975,
+              "end_line": 978
+            }
+          ]
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "JSON decoding errors are converted in `src/requests/models.py`, inside the `Response.json()` method (`src/requests/models.py:L930-L1037`, Source 50).",
+          "citation": [
+            "Source 50; src/requests/models.py:L930-L1037"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际 Source 50 支持定位及之后双分支转换说明。"
+        },
+        {
+          "answer_quote": "from .exceptions import JSONDecodeError as RequestsJSONDecodeError",
+          "citation": [
+            "Source 44; src/requests/models.py imports"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "该导入完整出现于实际 Source 44 的 L49；引用在代码块后一段标明。"
+        },
+        {
+          "answer_quote": "The caught `JSONDecodeError` comes from `requests.compat`, which selects either `simplejson.JSONDecodeError` or the standard-library `json.JSONDecodeError` (Source 36, `src/requests/compat.py:L1-L94`).",
+          "citation": [
+            "Source 44",
+            "Source 36; src/requests/compat.py:L1-L94"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "前文 Source 44 的 L29-L37 给出从 compat 导入，当前 Source 36 L45-L57 给出库选择；两段实际材料联合支持。"
+        },
+        {
+          "answer_quote": "The raised wrapper is `requests.exceptions.JSONDecodeError`, which is also exported from the package namespace in `src/requests/__init__.py` (Source 21, `src/requests/__init__.py:L155-L184`).",
+          "citation": [
+            "Source 44",
+            "Source 21; src/requests/__init__.py:L155-L184"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Source 44 绑定别名到 exceptions，Source 21 L165-L176 导出 JSONDecodeError；实际提供的两个导入共同支持。"
+        },
+        {
+          "answer_quote": "The tests confirm this behavior in `tests/test_requests.py` through `test_json_decode_compatibility` and `test_json_decode_persists_doc_attr` (Source 100, `tests/test_requests.py:L2690-L2835`), and for alternate UTF encodings in `tests/test_lowlevel.py` (Source 78, `tests/test_lowlevel.py:L379-L428`).",
+          "citation": [
+            "Source 100; tests/test_requests.py:L2690-L2835",
+            "Source 78; tests/test_lowlevel.py:L379-L428"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "联合引用各自支持对应测试；实际 Source 100 L2804-L2816 和 Source 78 L407-L428 均存在。"
+        }
+      ],
+      "missing_citation_claims": [],
+      "scope_claim_checks": [],
+      "additional_errors": [],
+      "evidence_mean": 1.0
+    },
+    {
+      "anonymous_id": "A008",
+      "question_id": "Q05",
+      "answer_sha256": "586715ccb026343ffafa84f249d0444aa67ded5efaa0eff2ed466203a88863c6",
+      "criteria": [
+        {
+          "id": "Q05-C1",
+          "evidence_score": 1,
+          "rationale": "实际 Source 50 含 json 方法名、文件位置、RequestsJSONDecodeError 目标；不需要未提供的别名行才可确认该评分点。",
+          "supplied_reference": [
+            {
+              "case": "A008.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "50"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q05-E1",
+              "path": "src/requests/models.py",
+              "start_line": 970,
+              "end_line": 971
+            },
+            {
+              "id": "Q05-E2",
+              "path": "src/requests/models.py",
+              "start_line": 975,
+              "end_line": 978
+            }
+          ]
+        },
+        {
+          "id": "Q05-C2",
+          "evidence_score": 1,
+          "rationale": "实际 Source 50 的编码探测分支与 self.text 回退分支都包含 JSONDecodeError 捕获；UnicodeDecodeError 分支也可见。",
+          "supplied_reference": [
+            {
+              "case": "A008.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "50"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q05-E1",
+              "path": "src/requests/models.py",
+              "start_line": 970,
+              "end_line": 971
+            },
+            {
+              "id": "Q05-E2",
+              "path": "src/requests/models.py",
+              "start_line": 975,
+              "end_line": 978
+            }
+          ]
+        },
+        {
+          "id": "Q05-C3",
+          "evidence_score": 1,
+          "rationale": "实际 Source 50 在两条路径明确保留 e.msg/e.doc/e.pos。",
+          "supplied_reference": [
+            {
+              "case": "A008.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "50"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q05-E1",
+              "path": "src/requests/models.py",
+              "start_line": 970,
+              "end_line": 971
+            },
+            {
+              "id": "Q05-E2",
+              "path": "src/requests/models.py",
+              "start_line": 975,
+              "end_line": 978
+            }
+          ]
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "It catches the underlying `JSONDecodeError` and raises `RequestsJSONDecodeError(e.msg, e.doc, e.pos)` in both decoding paths: the detected-encoding path and the fallback `self.text` path. [Source 50]",
+          "citation": [
+            "Source 50; src/requests/models.py:L930-L1037"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际 Source 50 完整支持地点、双路径及参数传递。"
+        },
+        {
+          "answer_quote": "It subclasses `InvalidJSONError` and the compatibility JSON decoder error, preserving compatibility across JSON libraries and Python versions. [Source 41]",
+          "citation": [
+            "Source 41; src/requests/exceptions.py JSONDecodeError",
+            "Source 12; docs/user/quickstart.rst:L133-L263"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Source 41 的继承和兼容错误初始化支持异常结构；紧接着同一异常说明引用的 Source 12 明确不同 Python/JSON 库兼容性，实际两者均提供。"
+        },
+        {
+          "answer_quote": "The documentation confirms that invalid JSON from `r.json()` raises `requests.exceptions.JSONDecodeError` (`docs/user/quickstart.rst:L133-L263`). [Source 12]",
+          "citation": [
+            "Source 12; docs/user/quickstart.rst:L133-L263"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际 Source 12 L154-L158 明确支持。"
+        }
+      ],
+      "missing_citation_claims": [],
+      "scope_claim_checks": [
+        {
+          "claim": "实际提供片段未含 RequestsJSONDecodeError 的导入别名声明。",
+          "supported": true,
+          "basis": "逐一检查 call 1 全部 Sources 原文，确无 models.py:L49；未用完整索引或评审可见源码代替模型输入。"
+        }
+      ],
+      "additional_errors": [],
+      "evidence_mean": 1.0
+    },
+    {
+      "anonymous_id": "A017",
+      "question_id": "Q06",
+      "answer_sha256": "639283b19b089d8da8809016e8ffd22a4d4989afc8929592a8f731b2ac2ef4fc",
+      "criteria": [
+        {
+          "id": "Q06-C1",
+          "evidence_score": 1,
+          "rationale": "实际 Source 49 给出 iter_lines、iter_content、pending 的拼接次序。",
+          "supplied_reference": [
+            {
+              "case": "A017.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "49"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q06-E1",
+              "path": "src/requests/models.py",
+              "start_line": 867,
+              "end_line": 888
+            }
+          ]
+        },
+        {
+          "id": "Q06-C2",
+          "evidence_score": 1,
+          "rationale": "实际 Source 49 给出 if delimiter: split(delimiter)，else: splitlines()，包括 truthy 条件。",
+          "supplied_reference": [
+            {
+              "case": "A017.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "49"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q06-E1",
+              "path": "src/requests/models.py",
+              "start_line": 867,
+              "end_line": 888
+            }
+          ]
+        },
+        {
+          "id": "Q06-C3",
+          "evidence_score": 1,
+          "rationale": "实际 Source 49 明确末尾非空未终止判断、lines.pop 到 pending 以及 yield from lines。",
+          "supplied_reference": [
+            {
+              "case": "A017.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "49"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q06-E1",
+              "path": "src/requests/models.py",
+              "start_line": 867,
+              "end_line": 888
+            }
+          ]
+        },
+        {
+          "id": "Q06-C4",
+          "evidence_score": 1,
+          "rationale": "实际 Source 49 在流结束后 if pending is not None: yield pending，支持剩余尾段输出。",
+          "supplied_reference": [
+            {
+              "case": "A017.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "49"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q06-E1",
+              "path": "src/requests/models.py",
+              "start_line": 867,
+              "end_line": 888
+            }
+          ]
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "Streamed line handling is implemented in `src/requests/models.py`, `Response.iter_lines()` (`src/requests/models.py:L777-L942`, Source 49).",
+          "citation": [
+            "Source 49; src/requests/models.py:L777-L942"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际 Source 49 的实现与所引代码段完全相同，支持全部 pending/分隔及收尾描述。"
+        },
+        {
+          "answer_quote": "The public documentation describes `iter_lines()` as suitable for streaming APIs and warns that it is not reentrant-safe (`docs/user/advanced.rst:L530-L685`, Source 5).",
+          "citation": [
+            "Source 5; docs/user/advanced.rst:L530-L685"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际 Source 5 L530-L544 流式示例，L560-L565 非重入警告，联合支持整句。"
+        }
+      ],
+      "missing_citation_claims": [],
+      "scope_claim_checks": [
+        {
+          "claim": "实际提供材料未包含专门覆盖 custom delimiter 未完成尾段的测试。",
+          "supported": true,
+          "basis": "检查 call 1 全部给定 tests 片段；未出现 delimiter 测试。A045/A015 有普通 iter_lines 测试，但不是自定义 delimiter 测试。"
+        }
+      ],
+      "additional_errors": [],
+      "evidence_mean": 1.0
+    },
+    {
+      "anonymous_id": "A015",
+      "question_id": "Q06",
+      "answer_sha256": "aacbf22b668a6b9ec85c436fc8663fc74a038206db6213625c2caec882b823b1",
+      "criteria": [
+        {
+          "id": "Q06-C1",
+          "evidence_score": 1,
+          "rationale": "实际 Source 49 给出 iter_lines、iter_content、pending 的拼接次序。",
+          "supplied_reference": [
+            {
+              "case": "A015.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "49"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q06-E1",
+              "path": "src/requests/models.py",
+              "start_line": 867,
+              "end_line": 888
+            }
+          ]
+        },
+        {
+          "id": "Q06-C2",
+          "evidence_score": 1,
+          "rationale": "实际 Source 49 给出 if delimiter: split(delimiter)，else: splitlines()，包括 truthy 条件。",
+          "supplied_reference": [
+            {
+              "case": "A015.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "49"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q06-E1",
+              "path": "src/requests/models.py",
+              "start_line": 867,
+              "end_line": 888
+            }
+          ]
+        },
+        {
+          "id": "Q06-C3",
+          "evidence_score": 1,
+          "rationale": "实际 Source 49 明确末尾非空未终止判断、lines.pop 到 pending 以及 yield from lines。",
+          "supplied_reference": [
+            {
+              "case": "A015.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "49"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q06-E1",
+              "path": "src/requests/models.py",
+              "start_line": 867,
+              "end_line": 888
+            }
+          ]
+        },
+        {
+          "id": "Q06-C4",
+          "evidence_score": 1,
+          "rationale": "实际 Source 49 在流结束后 if pending is not None: yield pending，支持剩余尾段输出。",
+          "supplied_reference": [
+            {
+              "case": "A015.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "49"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q06-E1",
+              "path": "src/requests/models.py",
+              "start_line": 867,
+              "end_line": 888
+            }
+          ]
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "`src/requests/models.py`, `Response.iter_lines()` at `src/requests/models.py:L777-L942` (Source `49`).",
+          "citation": [
+            "Source 49; src/requests/models.py:L777-L942"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际 Source 49 给出完整实现，支撑定位和所有 pending 步骤。"
+        },
+        {
+          "answer_quote": "With a custom `delimiter`, the same `pending` mechanism applies; only the splitting operation changes from `splitlines()` to `chunk.split(delimiter)` (Source `49`).",
+          "citation": [
+            "Source 49"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "actual Source 49 的 if delimiter 只改变拆分，其后 pending 逻辑共用，支持该断言。"
+        },
+        {
+          "answer_quote": "The documentation also warns that `Response.iter_lines()` is not reentrant-safe and that calling it multiple times can lose received data, in `docs/user/advanced.rst:L530-L685` (Source `5`).",
+          "citation": [
+            "Source 5; docs/user/advanced.rst:L530-L685"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际 Source 5 L560-L565 明确非重入及多次调用丢数据。"
+        }
+      ],
+      "missing_citation_claims": [],
+      "scope_claim_checks": [
+        {
+          "claim": "实际提供材料未包含专门覆盖 custom delimiter 未完成尾段的测试。",
+          "supported": true,
+          "basis": "检查 call 1 全部给定 tests 片段；未出现 delimiter 测试。A045/A015 有普通 iter_lines 测试，但不是自定义 delimiter 测试。"
+        }
+      ],
+      "additional_errors": [],
+      "evidence_mean": 1.0
+    },
+    {
+      "anonymous_id": "A023",
+      "question_id": "Q04",
+      "answer_sha256": "b3b6d843ea4a2e8eb9ee6d98e039fa1e1806f9cb532dee6f9b2109c9de213cc5",
+      "criteria": [
+        {
+          "id": "Q04-C1",
+          "evidence_score": 1,
+          "rationale": "实际 Source 45 含类声明与 deregister_hook 定义，精确类/模块可辨识。 答案近似行号错配另审，已提供的正确命名 Source 45 仍完整支撑定位。",
+          "supplied_reference": [
+            {
+              "case": "A023.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "45"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q04-E1",
+              "path": "src/requests/models.py",
+              "start_line": 218,
+              "end_line": 227
+            }
+          ]
+        },
+        {
+          "id": "Q04-C2",
+          "evidence_score": 1,
+          "rationale": "实际 Source 45 L223-L225 直接给出 self.hooks[event].remove(hook) 与成功 True。",
+          "supplied_reference": [
+            {
+              "case": "A023.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "45"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q04-E1",
+              "path": "src/requests/models.py",
+              "start_line": 218,
+              "end_line": 227
+            }
+          ]
+        },
+        {
+          "id": "Q04-C3",
+          "evidence_score": 1,
+          "rationale": "实际 Source 45 L226-L227 直接给出 ValueError 转换为 False。",
+          "supplied_reference": [
+            {
+              "case": "A023.json",
+              "call_id": 1,
+              "table": "Sources",
+              "source_id": "45"
+            }
+          ],
+          "source_anchor": [
+            {
+              "id": "Q04-E1",
+              "path": "src/requests/models.py",
+              "start_line": 218,
+              "end_line": 227
+            }
+          ]
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "The method is `RequestHooksMixin.deregister_hook` in `src/requests/models.py` (around `L200-L215`, in Source 45).",
+          "citation": [
+            "Source 45; src/requests/models.py; around L200-L215"
+          ],
+          "location_match": false,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Source45 实际存在且完整 L170-L345 支持正确方法与全部行为；L200-L215 是错误的附加细行位置。按统一三维口径，位置错误单列，整个被引 Source45 的断言支持保持充分。"
+        },
+        {
+          "answer_quote": "Source: **45**, `src/requests/models.py`, `RequestHooksMixin.deregister_hook`.",
+          "citation": [
+            "Source 45; src/requests/models.py RequestHooksMixin.deregister_hook"
+          ],
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "结尾命名引用精确解析，实际 L218-L227 支持正文 remove、True、ValueError/False 行为。"
+        }
+      ],
+      "missing_citation_claims": [],
+      "scope_claim_checks": [],
+      "additional_errors": [],
+      "evidence_mean": 1.0
+    }
+  ],
+  "summary": {
+    "criteria_total": 40,
+    "evidence_score_counts": {
+      "0": 3,
+      "0.5": 0,
+      "1": 37
+    },
+    "answer_evidence_means": {
+      "A053": 1.0,
+      "A072": 0.0,
+      "A045": 1.0,
+      "A020": 1.0,
+      "A004": 1.0,
+      "A081": 1.0,
+      "A003": 1.0,
+      "A070": 1.0,
+      "A008": 1.0,
+      "A017": 1.0,
+      "A015": 1.0,
+      "A023": 1.0
+    },
+    "citation_claim_groups": 34,
+    "resolves_true": 34,
+    "location_match_true": 32,
+    "supports_fully_true": 33,
+    "partial_support_groups": 1,
+    "missing_citation_claim_count": 0,
+    "additional_error_count": 2,
+    "existing_error_not_recounted": "A023 approximate line interval mismatch already recorded in content-batch2.json.",
+    "counting_definition": "逐 claim-citation 组为单位；共同支持同一断言的引用合组。resolves 检查实际引用 ID/位置能否解析，location_match 独立检查文件/符号/细行是否匹配，supports/support_score 检查整个实际被引单元是否支持代码断言。有正确 Source ID 时引用单元是完整 chunk；细行偏移仅记位置错误，不能因此压低完整支持。只有裸精细 path:line、未指定或辨识完整 record 时按该窄范围，不借其他已提供位置修补。组内一个坏编号可使 resolves=false，但其他正确引用仍可充分支持整句。supports=true 仅 score=1，部分支持 false/.5，无支持 false/0，无法判定 null。缺引用单列，不进已有引用分母。criterion evidence 可用全部实际提供材料和可追源图记录，与引用质量、内容分分别报告。"
+  },
+  "limitations": [
+    "方法标签匿名，但来源表样式可能透露策略，不声称完整双盲。",
+    "本批每个匿名案例只有一个实际 HTTP200 回答调用，未将未发送或仅准备的上下文计为证据。",
+    "raw overlap 仅用作定位提示；评分另逐段核对实际请求文本和冻结源码。108 个实际 Sources 行全部逐字匹配对应冻结源码范围。",
+    "图索引只用于追溯实际已提供且被引用的 entity 678、relationships 888/1007/1019/1020/1021；没有给未提供的全索引内容加分。",
+    "缺少专门测试的限定均仅适用于当前提供材料，不外推整个仓库。",
+    "criterion evidence 分反映必要点是否有材料支持，与答案完成度分开；本批 A081-C3 内容遗漏但材料完整就是一例。",
+    "未修改冻结内容分；新增错误属于引用对象或额外断言，不追加扣分。"
+  ],
+  "calibration_note": {
+    "reason": "主代理在批次合并前要求统一 citation 三维口径；将引用位置错误与实际被引完整单元的行为支持分开。",
+    "previous_file_sha256": "4309effb946ee7bdcbf677a1e270edf958743aab129fd44b96d85ac0706e542b",
+    "changes": [
+      {
+        "anonymous_id": "A072",
+        "citation_group_index_1_based": 2,
+        "support_score_before": 0.5,
+        "support_score_after": 1,
+        "location_match_after": false
+      },
+      {
+        "anonymous_id": "A023",
+        "citation_group_index_1_based": 1,
+        "support_score_before": 0.5,
+        "support_score_after": 1,
+        "location_match_after": false
+      }
+    ],
+    "content_scores_changed": false,
+    "criterion_evidence_scores_changed": false,
+    "additional_error_records_removed": 0,
+    "existing_factual_errors_not_recounted": true
+  }
+}

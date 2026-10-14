@@ -1,0 +1,122 @@
+{
+  "status": "independent_export_review_passed",
+  "reviewed_utc": "2026-10-14T04:46:09.464464+00:00",
+  "reviewer": {
+    "identity": "independent AI audit agent",
+    "human": false,
+    "blind": false
+  },
+  "scope": "Static export review and offline temporary-directory fixtures, including a copied partial live ledger. The running controller, runtime/readiness files and real ledger were not modified. No full92-cell or answer-quality review is claimed.",
+  "script": {
+    "file": "research/pilot/strategy-routing/export_results.py",
+    "sha256": "b03893862a01eadc11b9838ebafbfbf534b266a17824f77784fa1f1290be2955"
+  },
+  "new_model_api_calls": 0,
+  "new_embedding_api_calls": 0,
+  "credential_reads": 0,
+  "real_runtime_or_ledger_modified": false,
+  "resolved_findings": [
+    {
+      "id": "snapshot-hash-race",
+      "issue": "The original exporter read summary state and later hashed the changing summary file, allowing partial output to claim the hash of a different state.",
+      "fix": "Read summary bytes once; parse and hash those same bytes. Pending-event responses that arrive later are excluded.",
+      "independently_retested": true
+    },
+    {
+      "id": "recovered-response-exposure",
+      "issue": "A validated reply recovered after controller interruption may lack event.http_status even though its saved envelope isHTTP200; filtering only the event omitted exposure and counts.",
+      "fix": "The shared HTTP200 helper accepts an envelope backed by the recovered completed-response name and SHA, as well as normal matching event/envelope HTTP200. Exposure and service counters use the same helper.",
+      "independently_retested": true
+    },
+    {
+      "id": "redaction-invalidates-visible-hash",
+      "issue": "Replacing private paths in serialized JSON after computing answer/context hashes changed the published text without changing its identity hash.",
+      "fix": "Known repository/home private paths now stop export for review. Text is no longer silently rewritten.",
+      "independently_retested": true
+    },
+    {
+      "id": "reservation-provider-usage-separation",
+      "issue": "Common-token reservations and provider-reported input/output are different measurements and were not separately summarized per cell.",
+      "fix": "Reserved common input, known provider input/output, known-usage event count, possible-dispatch unknown-usage count, non-dispatch reservations and cache uses are separately exported.",
+      "independently_retested": true
+    }
+  ],
+  "tests": [
+    {
+      "type": "Actual live-ledger snapshot copied into temporary directories",
+      "snapshot_events": 61,
+      "exported_terminal_cells": 35,
+      "embedding_responses_with_vectors_removed": 11,
+      "export_state": "partial",
+      "checks": [
+        "Captured summary SHA exactly matches the published snapshot identity.",
+        "Q01 assembled-before-failure evidence is credited only to event2; event1 is excluded.",
+        "Pending responses are not mixed into the snapshot.",
+        "Embedding vector data are replaced with shape/count and complete-private-response hash.",
+        "Provider and reservation aggregates reproduce the recorded Q01 events."
+      ],
+      "result": "passed"
+    },
+    {
+      "type": "Synthetic completed-response recovery and cache replay",
+      "checks": [
+        "EnvelopeHTTP200 plus exact completed-response SHA recovers exposure despite missing event.http_status.",
+        "Cache use does not duplicate the physical HTTP200 count or provider usage.",
+        "An assembled-only context receives no HTTP200 event sequences.",
+        "A failed answer remains failed even when an earlier subcall received its context."
+      ],
+      "result": "passed"
+    },
+    {
+      "type": "Simulated concurrent summary replacement",
+      "checks": [
+        "Replacing the temporary summary immediately after read_bytes does not change the exported snapshot hash."
+      ],
+      "result": "passed"
+    },
+    {
+      "type": "Private-path/hash integrity",
+      "checks": [
+        "Repository and home path fixtures both raise before the output file is written.",
+        "No post-hash visible-text redaction remains."
+      ],
+      "result": "passed"
+    }
+  ],
+  "independent_q01_accounting_example": {
+    "generation_reservations": 2,
+    "common_tokens_each_reservation": 10993,
+    "common_input_tokens_reserved": 21986,
+    "reviewed_non_dispatch_reservations": 1,
+    "confirmed_http200_generation_events": 1,
+    "provider_input_tokens": 12631,
+    "provider_output_tokens": 454,
+    "provider_usage_known_events": 1,
+    "provider_usage_unknown_possible_dispatch_events": 0,
+    "interpretation": "The first software-failure reservation still consumes authorized count/input budget but no provider fee is inferred. The successful physical request common-input count10993 differs from provider input12631."
+  },
+  "visible_data_review": {
+    "request_credentials": "The request files contain service and model body; Authorization headers are created only in the worker and not persisted. This reviewer did not read credential files.",
+    "generation_reply": "The upstream transport retains normalized visible assistant output/model/usage; it discards reasoning items and headers. Public replies are normalized visible responses, not byte-for-byte raw SSE.",
+    "embedding_reply": "The exporter removes response.data vectors and retains count/dimensions and the complete private response hash. Embedding input text remains public evidence.",
+    "inspected_live_request_response_events": 40,
+    "private_path_or_api_key_shape_matches": 0,
+    "authorization_word_matches": 4,
+    "authorization_word_match_interpretation": "Matches occur in generation request source text, not persisted authorization-header objects.",
+    "future_output_limitation": "This scan covers the inspected partial evidence only. Final public files still require a complete privacy/hash scan after execution."
+  },
+  "unresolved_blocking_findings": [],
+  "limits_and_final_followup": [
+    "The online run was still active. Full92-cell completeness, final question/cohort denominators and final scientific scores remain unreviewed.",
+    "HTTP200 context exposure means the saved request containing that context returned a visible reply; it does not prove the model attended to or correctly used every source. An unknown transport outcome is not credited as confirmed exposure.",
+    "raw_sources_in_http200_contexts is a deduplicated source-exposure union. Failed cells may have nonempty exposure while their final-answer result remains failed; do not convert exposure into answer accuracy.",
+    "Structured evidence records cover Local/source and Global/map contexts. HyDE, primer and reduce material are inspectable in saved request bodies; do not call the structured evidence array the complete model-input footprint.",
+    "Known provider token sums are not total known-plus-unknown usage or a provider invoice. Keep unknown possible dispatches and non-dispatch reservations separately visible. Cache use counters record reuse without another physical event charge.",
+    "Execution elapsed_seconds is the sum of recorded execution segments. Consult interrupted_segments_with_unknown_duration before treating it as complete end-to-end wall time.",
+    "The grading pack masks method labels with a deterministic published scheme; answer formatting and available mapping code can reveal methods. Describe it as method-masked AI review, not a human blind study.",
+    "Final publishing should verify the export manifest and all final wire/cell files together, including any retained partial-export files, and verify exactly the frozen92 expected cells."
+  ],
+  "write_scope": [
+    "research/pilot/strategy-routing/reviews/export-review.json"
+  ]
+}

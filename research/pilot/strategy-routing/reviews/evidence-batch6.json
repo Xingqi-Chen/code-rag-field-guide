@@ -1,0 +1,1413 @@
+{
+  "rubric_sha256": "d1bdca1bf597530a0f90081220b5370893bc04742b080fe3dbd492dd7b3de225",
+  "blind_evidence_manifest_sha256": "b88c2c853f90e92192fd8aae58ffaf51eec3b0217a8d85557905eaa2260720e5",
+  "frozen_content_review_sha256": "2435826cf212dd54bebe64ee2935bf46f7cb20bb0de530c6a0b0662dcc577243",
+  "blind_content_pack_sha256": "2a781b298ea4e16a4ec018ca3abb72aae16e8aba8da248bf6e39d06c12d63ccf",
+  "reviewer": "answer_review_d",
+  "scope": "第二阶段：仅审匿名实际 HTTP200 输入/可见输出、raw source 记录和已授权图来源追溯；未读方法映射、其他评分或运行汇总。内容分文件保持逐字不变。",
+  "audit_conventions": [
+    "criterion evidence_score 衡量实际材料对冻结必要点的支持，独立于答案是否完成该点。",
+    "supports=true 仅代表所列 claim-citation 组完整支持；部分支持为 false 且 support_score=.5，未能判定则 null；resolves 与 location_match 独立。",
+    "Source/Entity/Relationship/Report 单元可辨时按整个实际单元和可靠来源链判断支持，细行号错误另记；裸窄行号不能自动替换成某个宽 Source。",
+    "重复检查计划沿用已审同一事实/引用组，不因复述增加独立支持计数；新事实另外审。",
+    "Q19 有界未找到不要求不存在符号的正向源码行；评审自己的 AST 检查未当作模型证据。Q20 缺应用运行时信息由题目给定。",
+    "graph index 仅用于追溯实际引用或实际可见摘要，不能拿其中未暴露陈述补答案材料。",
+    "A030 仅有无关 HyDE 完成调用，最终失败空答，答题证据各点为0。"
+  ],
+  "rows": [
+    {
+      "anonymous_id": "A047",
+      "question_id": "Q17",
+      "answer_sha256": "94721a1b7e9934697ca3248699d05184dad3d102bf0ccd5f1fe3b6d8134572d6",
+      "criteria": [
+        {
+          "id": "Q17-C1",
+          "evidence_score": 1,
+          "rationale": "测试原文提供登记后降序顺序，Entity 107 的 OrderedDict 描述可追溯初始化源码；支持登记映射和顺序。",
+          "supplied_reference": "call 3/5 Source 91; Entity 107 → sessions.py:L298-L453",
+          "source_anchor": [
+            "Q17-E1"
+          ]
+        },
+        {
+          "id": "Q17-C2",
+          "evidence_score": 0.5,
+          "rationale": "实际材料支持大小写无关与更具体前缀优先的测试行为，但未给循环及首匹配返回；没有把完整索引里未暴露的 get_adapter 实现当已读材料。",
+          "supplied_reference": "call 2 中间答；call 3–6 Entities 1263/1266/1267/1276/1277 → test_requests.py:L1488-L1760",
+          "source_anchor": [
+            "Q17-E2"
+          ]
+        },
+        {
+          "id": "Q17-C3",
+          "evidence_score": 1,
+          "rationale": "实际 Local 输入含 get_adapter(request.url) 与 adapter.send；中间答传入最终回答，来源可追溯。",
+          "supplied_reference": "call 4/6 Source 56; Relationship 1105 → sessions.py:L569-L717",
+          "source_anchor": [
+            "Q17-E3"
+          ]
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "Mounted prefixes are stored as keys in the session’s `adapters` mapping, initialized as an `OrderedDict`",
+          "citation": "Sources (91); Entities (107, 1261); Relationships (2035, 2039)",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Source 91 测试 + Entity 107 的初始化陈述可沿 text_unit_ids 追到 sessions.py:L298-L453；不把追源文件当额外已读原文。"
+        },
+        {
+          "answer_quote": "more-specific prefixes precede less-specific prefixes, followed by `\"https://\"` and `\"http://\"`",
+          "citation": "Sources (91); Entities (1266, 1267, 1277); Relationship (2082)",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Source 91 直接给排序与 s2.adapters 普通字典保留成员测试；case 测试摘要可追 tests/test_requests.py:L1624-L1760。"
+        },
+        {
+          "answer_quote": "which covers general, more-specific, and nonmatching prefixes",
+          "citation": "Entity (1263); Entities (1266, 1267, 1276); Relationships (2042, 2056, 2058, 2081)",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "call 2 中间答的引用及 call 3–6 实体可追现有测试；不同大小写/general/more-specific 三类行为都可核实。"
+        },
+        {
+          "answer_quote": "it does not show the implementation of the loop",
+          "citation": "Entities (1261-1267, 1276-1277); Relationships (2035, 2039, 2042, 2056, 2058, 2081-2082)",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "这组实际中间摘要/实体仅描述测试与外部方法，没有 get_adapter 循环。索引来源链可解析，但不声称所有范围 ID 均作为原始表暴露。"
+        },
+        {
+          "answer_quote": "`Session.send` then calls `self.get_adapter(url=request.url)` and sends through the selected adapter with `adapter.send(request, **kwargs)`",
+          "citation": "Sources (56); Entities (812, 24); Relationships (1105)",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Source 56 原始文本直接支持；调用阶段 4/6 回答把该链传给最终 reduce。"
+        },
+        {
+          "answer_quote": "Direct `Session.send` calls do not bypass this lookup in the standard implementation shown",
+          "citation": "Sources (56); Entities (24, 1113, 1117, 389); Relationships (1105)",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "明确限制标准实现，Source 56 可核实查找始终在所示 send 内；未据 unresolved 变量断定所有子类。"
+        }
+      ],
+      "missing_citation_claims": [],
+      "additional_errors": [],
+      "evidence_mean": 0.8333333333333334
+    },
+    {
+      "anonymous_id": "A078",
+      "question_id": "Q20",
+      "answer_sha256": "98b0df0be19087f4db109fa13d787bc3eadc31b195bb6cb290f583a5c0b28132",
+      "criteria": [
+        {
+          "id": "Q20-C1",
+          "evidence_score": 1,
+          "rationale": "题目不提供应用对象/前缀；文档证明可传自定义实例，不足以定具体运行时类，未知结论有支持。",
+          "supplied_reference": "query + call 1 Sources 8/24/28",
+          "source_anchor": [
+            "Q20-E1",
+            "Q20-E2",
+            "Q20-E3"
+          ]
+        },
+        {
+          "id": "Q20-C2",
+          "evidence_score": 1,
+          "rationale": "文档给 prefix-instance 登记及最长匹配；实际测试给 mount 后 s.adapters 的降序顺序。",
+          "supplied_reference": "call 1 Sources 8/91",
+          "source_anchor": [
+            "Q20-E1",
+            "A-Q20-mount-order"
+          ]
+        },
+        {
+          "id": "Q20-C3",
+          "evidence_score": 0.5,
+          "rationale": "有最长匹配和大小写测试，缺 get_adapter 顺序首匹配实现。",
+          "supplied_reference": "call 1 Sources 8/92",
+          "source_anchor": [
+            "Q20-E2"
+          ]
+        },
+        {
+          "id": "Q20-C4",
+          "evidence_score": 0.5,
+          "rationale": "自定义实例、接口和 transport 实现支持动态目标边界，但未提供 Session.send 调用选择结果的链。",
+          "supplied_reference": "query + call 1 Sources 8/24/28",
+          "source_anchor": [
+            "Q20-E3",
+            "Q20-E1",
+            "Q20-E2"
+          ]
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "`Session.mount()` registers an adapter instance for a URL prefix",
+          "citation": "docs/user/advanced.rst:L929-L1057, Source 8",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "`BaseAdapter.send()` is only an abstract placeholder that raises `NotImplementedError`",
+          "citation": "src/requests/adapters.py:L1-L169, Source 24",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "The built-in implementation is `requests.adapters.HTTPAdapter.send()`",
+          "citation": "src/requests/adapters.py:L551-L702, Source 28",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Source 28 包含 send 定义；所属 HTTPAdapter 可由实际 Source 25 中类定义和连续源码/文档追认。未知应用类的限制来自题目。"
+        }
+      ],
+      "missing_citation_claims": [],
+      "additional_errors": [],
+      "evidence_mean": 0.75
+    },
+    {
+      "anonymous_id": "A033",
+      "question_id": "Q18",
+      "answer_sha256": "1e76ade2fe73027c4b9f12ea7731115c4cf5b4b02466489b6a790360294cb9ab",
+      "criteria": [
+        {
+          "id": "Q18-C1",
+          "evidence_score": 1,
+          "rationale": "现有 [hook, None-return, hook] 从 Data 得到 ta 的测试直接支持 None 保留规则，非 None hook 确有替换效果。",
+          "supplied_reference": "call 1 Source 74 tests/test_hooks.py:L1-L22",
+          "source_anchor": [
+            "Q18-E1"
+          ]
+        },
+        {
+          "id": "Q18-C2",
+          "evidence_score": 0.5,
+          "rationale": "cookie 测试支持后续 session cookie 行为，但没有 dispatch 后 r.history/r.raw 的消费源码。",
+          "supplied_reference": "call 1 Sources 82/83",
+          "source_anchor": [
+            "Q18-E2"
+          ]
+        },
+        {
+          "id": "Q18-C3",
+          "evidence_score": 1,
+          "rationale": "实际完整测试与既有 None-return 用例均已提供。",
+          "supplied_reference": "call 1 Source 74",
+          "source_anchor": [
+            "Q18-E3"
+          ]
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "`[hook, lambda x: None, hook]` transforms `\"Data\"` to `\"ta\"`",
+          "citation": "Source 74, tests/test_hooks.py:L1-L22",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "including `test_set_cookie_on_301` and `test_cookie_sent_on_redirect`",
+          "citation": "Source 82, tests/test_requests.py:L281-L405",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "specifically the case `([hook, lambda x: None, hook], \"ta\")`",
+          "citation": "Source 74, tests/test_hooks.py:L7-L17",
+          "location_match": false,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "整个 Source 74 给完整预期及 assert；细范围 L7–17 未包含实际断言 L18，定位边界偏少一行但单元充分支持。"
+        }
+      ],
+      "missing_citation_claims": [],
+      "additional_errors": [],
+      "evidence_mean": 0.8333333333333334
+    },
+    {
+      "anonymous_id": "A039",
+      "question_id": "Q17",
+      "answer_sha256": "295f9810a3c88bf1de17e8f7f1eed0e52bf5643361dc87ea276848534d1e38ec",
+      "criteria": [
+        {
+          "id": "Q17-C1",
+          "evidence_score": 1,
+          "rationale": "实际原文包含 mount 的赋值和较短前缀后移。",
+          "supplied_reference": "call 1 Source 57",
+          "source_anchor": [
+            "Q17-E1"
+          ]
+        },
+        {
+          "id": "Q17-C2",
+          "evidence_score": 1,
+          "rationale": "实际原文含 for、双边 lower、startswith 和 return adapter；即使答案遗漏首返回，材料本身充分。",
+          "supplied_reference": "call 1 Source 57",
+          "source_anchor": [
+            "Q17-E2"
+          ]
+        },
+        {
+          "id": "Q17-C3",
+          "evidence_score": 0.5,
+          "rationale": "提供 redirect self.send、测试发送和抽象 send 接口，但缺 Session.send 中 get_adapter→adapter.send 连接。",
+          "supplied_reference": "call 1 Sources 53/91/24/8",
+          "source_anchor": [
+            "Q17-E3"
+          ]
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "It stores `self.adapters[prefix] = adapter`, then moves existing shorter prefixes behind the new prefix.",
+          "citation": "src/requests/sessions.py:L704-L831",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "Its loop iterates `self.adapters.items()` and currently matches with `url.lower().startswith(prefix.lower())`",
+          "citation": "src/requests/sessions.py:L704-L831, Source 57",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "default and custom registration order, including overlapping prefixes",
+          "citation": "tests/test_requests.py:L1488-L1634, Source 91",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "longest-prefix selection in `test_session_get_adapter_prefix_matching`",
+          "citation": "tests/test_requests.py:L1624-L1760, Source 92",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "mixed-case prefixes and case-insensitive matching",
+          "citation": "tests/test_requests.py:L1624-L1760, Source 92",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "selection uses the longest-prefix match",
+          "citation": "docs/user/advanced.rst:L929-L1057, Source 8",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "`Session.resolve_redirects()`, which invokes `self.send(req, ..., allow_redirects=False, ...)`",
+          "citation": "src/requests/sessions.py:L149-L305, Source 53",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "because they exercise `Session.send()` directly or indirectly",
+          "citation": "tests/test_requests.py:L1488-L1634",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "该范围含多处 s.send 和相关 pickle tests；继承方法名称是正常简称，未说必须修改全部调用者。"
+        }
+      ],
+      "missing_citation_claims": [],
+      "additional_errors": [],
+      "evidence_mean": 0.8333333333333334
+    },
+    {
+      "anonymous_id": "A077",
+      "question_id": "Q20",
+      "answer_sha256": "c670cef1058676c41592f42825e244aef3bc8458be297852e75fef6fe846b626",
+      "criteria": [
+        {
+          "id": "Q20-C1",
+          "evidence_score": 1,
+          "rationale": "题目缺应用对象/URL 配置，材料有动态选择与调用，无法定类。",
+          "supplied_reference": "query + call 1 Sources 8/56",
+          "source_anchor": [
+            "Q20-E1",
+            "Q20-E2",
+            "Q20-E3"
+          ]
+        },
+        {
+          "id": "Q20-C2",
+          "evidence_score": 0.5,
+          "rationale": "文档证明 prefix-instance 登记与最长选择，但没有 mount 的映射长度排序实现或排序测试。",
+          "supplied_reference": "call 1 Source 8",
+          "source_anchor": [
+            "Q20-E1",
+            "A-Q20-mount-order"
+          ]
+        },
+        {
+          "id": "Q20-C3",
+          "evidence_score": 0.5,
+          "rationale": "URL 前缀及 get_adapter 调用可见，大小写和首匹配控制流不可见。",
+          "supplied_reference": "call 1 Sources 8/56",
+          "source_anchor": [
+            "Q20-E2"
+          ]
+        },
+        {
+          "id": "Q20-C4",
+          "evidence_score": 1,
+          "rationale": "真正 Session.send→get_adapter→adapter.send 原文在 Source 56；答案引用编号错配另外记录。",
+          "supplied_reference": "query + call 1 Source 56",
+          "source_anchor": [
+            "Q20-E3",
+            "Q20-E1",
+            "Q20-E2"
+          ]
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "if multiple prefixes match, Requests uses the longest prefix",
+          "citation": "docs/user/advanced.rst:L929-L1057, source 8",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "`Session.send()` obtains the adapter with `self.get_adapter(url=request.url)` and then invokes `adapter.send(request, **kwargs)`",
+          "citation": "src/requests/sessions.py:L569-L717, source 53",
+          "location_match": false,
+          "resolves": true,
+          "supports": false,
+          "support_score": 0,
+          "rationale": "编号 53 实际是 sessions.py:L149-L305 的 resolve_redirects，不含 get_adapter 或 adapter.send 链；文本所写范围对应另一个已提供 Source 56。不能用未被本组引用的正确编号修复该引用。"
+        },
+        {
+          "answer_quote": "The built-in adapter class is `requests.adapters.HTTPAdapter`, while custom adapters are expected to implement the `BaseAdapter.send()` interface",
+          "citation": "src/requests/adapters.py:L1-L169, source 24",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        }
+      ],
+      "missing_citation_claims": [],
+      "additional_errors": [
+        {
+          "question_id": "Q20",
+          "method": null,
+          "answer_quote": "source `53`",
+          "claim": "把 Session.send 查找/发送链标为 Source 53",
+          "category": "citation_mismatch",
+          "source_or_query_anchor": [
+            "actual Source 53: sessions.py:L149-L305",
+            "actual Source 56: sessions.py:L569-L717"
+          ],
+          "rationale": "Source ID 与所述 path/range 对不上；事实在另一实际材料中正确，故不改内容分。",
+          "affected_criterion_ids": [
+            "Q20-C4"
+          ]
+        }
+      ],
+      "evidence_mean": 0.75
+    },
+    {
+      "anonymous_id": "A057",
+      "question_id": "Q20",
+      "answer_sha256": "99dff107a89071b564ce1965bfc5a090013cab8433d2faf7ffd37232fbd99754",
+      "criteria": [
+        {
+          "id": "Q20-C1",
+          "evidence_score": 1,
+          "rationale": "题目缺运行时类信息，材料明确接收对象动态，不得认定 HTTPAdapter。",
+          "supplied_reference": "query + call 1 Source 56; Entity 813",
+          "source_anchor": [
+            "Q20-E1",
+            "Q20-E2",
+            "Q20-E3"
+          ]
+        },
+        {
+          "id": "Q20-C2",
+          "evidence_score": 1,
+          "rationale": "测试显示挂载后的顺序，关系 1123 描述移动较短前缀并可追原文，足以支撑排序行为。",
+          "supplied_reference": "call 1 Source 91; Relationship 1123 → sessions.py:L704-L831",
+          "source_anchor": [
+            "Q20-E1",
+            "A-Q20-mount-order"
+          ]
+        },
+        {
+          "id": "Q20-C3",
+          "evidence_score": 0.5,
+          "rationale": "实际关系摘要给双边 lower/startswith，Source 56 有调用；未给首匹配立即返回。不借追源补入摘要没有表达且答案未引用的完整控制流。",
+          "supplied_reference": "call 1 Relationships 1119/1120 → sessions.py:L704-L831; Source 56",
+          "source_anchor": [
+            "Q20-E2"
+          ]
+        },
+        {
+          "id": "Q20-C4",
+          "evidence_score": 1,
+          "rationale": "选择对象后 send 的实际原文可见，且运行时类未确定。",
+          "supplied_reference": "call 1 Source 56; Relationship 1105",
+          "source_anchor": [
+            "Q20-E3",
+            "Q20-E1",
+            "Q20-E2"
+          ]
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "`Session.send` selects the adapter with `self.get_adapter(url=request.url)` and then invokes `adapter.send(request, **kwargs)`",
+          "citation": "Source 56, src/requests/sessions.py:L569-L717",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "`Session.__init__` mounts default `HTTPAdapter` instances for `https://` and `http://`",
+          "citation": "Source 54, src/requests/sessions.py:L298-L453",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "the tests verify that more-specific prefixes take precedence",
+          "citation": "Source 91, tests/test_requests.py:L1488-L1634",
+          "location_match": true,
+          "resolves": true,
+          "supports": false,
+          "support_score": 0.5,
+          "rationale": "Source 91 的 ordering 测试完整支持更具体前缀排前；prefix-matching 测试在该 chunk 尾部截到 assert(，直接的选择结果在下一 chunk 92，故本组对“选择优先”只部分支持。"
+        },
+        {
+          "answer_quote": "The entity `ADAPTER.SEND` is explicitly described as unresolved, and `HTTPADAPTER`’s implementation is also not visible",
+          "citation": "Entities 813, 97; Relationships 1105, 267",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际 Entity 813/97 的摘要明确此限制；Source 56 是 sessions 源码，实际没有 HTTPAdapter 定义正文。摘要关于接收对象未知可追 1105 到同一源块。"
+        }
+      ],
+      "missing_citation_claims": [],
+      "additional_errors": [],
+      "evidence_mean": 0.875
+    },
+    {
+      "anonymous_id": "A056",
+      "question_id": "Q17",
+      "answer_sha256": "dfb5362c16e147ea8b984542ab7b29a38d93dbbf26aa3eb5741eb14e6be8e1a5",
+      "criteria": [
+        {
+          "id": "Q17-C1",
+          "evidence_score": 1,
+          "rationale": "挂载与 s.adapters 排序测试的完整相关部分，加最长前缀文档支持登记和排序行为。",
+          "supplied_reference": "call 1 Source 91; Source 8",
+          "source_anchor": [
+            "Q17-E1"
+          ]
+        },
+        {
+          "id": "Q17-C2",
+          "evidence_score": 0.5,
+          "rationale": "有大小写无关及最长匹配测试/文档，没有实现循环首匹配的控制流。",
+          "supplied_reference": "call 1 Sources 92/8",
+          "source_anchor": [
+            "Q17-E2"
+          ]
+        },
+        {
+          "id": "Q17-C3",
+          "evidence_score": 0.5,
+          "rationale": "有 BaseAdapter.send 接口、s.send 测试和 adapter 匹配文档，缺 Session.send 查找后调用所选对象的实现链。",
+          "supplied_reference": "call 1 Sources 24/91/8",
+          "source_anchor": [
+            "Q17-E3"
+          ]
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "adapter selection uses the “longest prefix match”",
+          "citation": "docs/user/advanced.rst:L929-L1057, Source 8",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "Registration-order behavior is exercised by `TestCase.test_transport_adapter_ordering`",
+          "citation": "tests/test_requests.py:L1488-L1623, Source 91",
+          "location_match": false,
+          "resolves": true,
+          "supports": false,
+          "support_score": 0.5,
+          "rationale": "Source 91 支持方法与排序行为；TestCase 所属类错误，实际 owning class 是 TestRequests，原 chunk 未显式给类定义。"
+        },
+        {
+          "answer_quote": "`test_session_get_adapter_prefix_matching`",
+          "citation": "tests/test_requests.py:L1624-L1760, Source 92",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "`test_session_get_adapter_prefix_matching_mixed_case`",
+          "citation": "Source 92 (inherited list citation)",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "`test_session_get_adapter_prefix_matching_is_case_insensitive`",
+          "citation": "Source 92 (inherited list citation)",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "The adapter send interface is defined by `BaseAdapter.send`",
+          "citation": "Source 24",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "also call `s.send(...)` while testing prepared requests and session pickling",
+          "citation": "tests/test_requests.py:L1488-L1634",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        }
+      ],
+      "missing_citation_claims": [],
+      "additional_errors": [
+        {
+          "question_id": "Q17",
+          "method": null,
+          "answer_quote": "`TestCase.test_transport_adapter_ordering`",
+          "claim": "test_transport_adapter_ordering 所属类为 TestCase",
+          "category": "invented_symbol_path_or_call",
+          "source_or_query_anchor": [
+            "tests/test_requests.py:80",
+            "tests/test_requests.py:1581"
+          ],
+          "rationale": "固定源码实际为 TestRequests.test_transport_adapter_ordering；实际检索块没有类头，不能补造类名。内容分已冻结，记录额外错误不再次扣分。",
+          "affected_criterion_ids": []
+        }
+      ],
+      "evidence_mean": 0.6666666666666666
+    },
+    {
+      "anonymous_id": "A075",
+      "question_id": "Q18",
+      "answer_sha256": "7def0629c5518c9a4b469cceea3d95e284a9a8ad5211e9c35cde5fdbf67c09df",
+      "criteria": [
+        {
+          "id": "Q18-C1",
+          "evidence_score": 0,
+          "rationale": "只提供 import/merge_hooks 等其他内容；没有 response callback 返回值处理规则。",
+          "supplied_reference": "call 1 Source 52 only imports dispatch_hook",
+          "source_anchor": [
+            "Q18-E1"
+          ]
+        },
+        {
+          "id": "Q18-C2",
+          "evidence_score": 0.5,
+          "rationale": "可见 redirect resp.raw cookie 消费，但不是冻结标准的 Session.send 中 dispatch 后两个消费者。",
+          "supplied_reference": "call 1 Source 53",
+          "source_anchor": [
+            "Q18-E2"
+          ]
+        },
+        {
+          "id": "Q18-C3",
+          "evidence_score": 0,
+          "rationale": "没有实际 None-return hook 测试，普通 server 测试不支持该点。",
+          "supplied_reference": "call 1 Source 104 tests/test_testserver.py",
+          "source_anchor": [
+            "Q18-E3"
+          ]
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "It only shows that `dispatch_hook` is imported",
+          "citation": "Source 52, src/requests/sessions.py:L1-L166",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "`extract_cookies_to_jar(prepared_request._cookies, req, resp.raw)`",
+          "citation": "Source 53, src/requests/sessions.py:L149-L305",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "`extract_cookies_to_jar(self.cookies, prepared_request, resp.raw)`",
+          "citation": "Source 53, src/requests/sessions.py:L149-L305",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "its shown tests cover server behavior and basic requests, not response callbacks or redirect cookies",
+          "citation": "Source 104, tests/test_testserver.py:L1-L165",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        }
+      ],
+      "missing_citation_claims": [],
+      "additional_errors": [],
+      "evidence_mean": 0.16666666666666666
+    },
+    {
+      "anonymous_id": "A071",
+      "question_id": "Q19",
+      "answer_sha256": "f0895e323a07f0af0e3c66c6610bed735b809d8213f221318f9843d8312ba978",
+      "criteria": [
+        {
+          "id": "Q19-C1",
+          "evidence_score": 1,
+          "rationale": "仅对给定材料未发现 AsyncSession 的有限结论与实际材料一致；不声称全库穷尽，也不使用评审 AST 作为已供证据。",
+          "supplied_reference": "query + all supplied messages/raw records",
+          "source_anchor": [
+            "A-Q19-negative"
+          ]
+        },
+        {
+          "id": "Q19-C2",
+          "evidence_score": 1,
+          "rationale": "限定当前给定/索引材料即可；负例不要求不存在实现的源码行。",
+          "supplied_reference": "query + supplied-snapshot boundary",
+          "source_anchor": [
+            "A-Q19-negative"
+          ]
+        },
+        {
+          "id": "Q19-C3",
+          "evidence_score": 1,
+          "rationale": "实际材料中的 Session/外部异步例子与被问 AsyncSession 保持区分；没有冒充实现。",
+          "supplied_reference": "query + supplied synchronous examples",
+          "source_anchor": [
+            "A-Q19-negative"
+          ]
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "defined at `Session` (around `src/requests/sessions.py:L329`, based on the supplied excerpt)",
+          "citation": "src/requests/sessions.py:L329",
+          "location_match": false,
+          "resolves": true,
+          "supports": false,
+          "support_score": 0,
+          "rationale": "实际 L329 是 Proxy-Authorization 赋值，类定义在 L356；裸单行定位错，不能借 Source 54 整段给这个窄引用满分。"
+        },
+        {
+          "answer_quote": "It provides synchronous methods such as `request`, `prepare_request`, `get_adapter`, and `close`",
+          "citation": "src/requests/sessions.py:L441-L588, src/requests/sessions.py:L704-L831",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "The documentation likewise refers to `requests.Session()` and synchronous transport adapters",
+          "citation": "docs/user/advanced.rst:L1-L75, docs/user/advanced.rst:L976-L1057",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        }
+      ],
+      "missing_citation_claims": [],
+      "additional_errors": [
+        {
+          "question_id": "Q19",
+          "method": null,
+          "answer_quote": "around `src/requests/sessions.py:L329`",
+          "claim": "Session 定义约在 sessions.py L329",
+          "category": "citation_mismatch",
+          "source_or_query_anchor": [
+            "src/requests/sessions.py:356"
+          ],
+          "rationale": "实际 L329 是代理授权 header 赋值；Session 类从 L356 开始。负例结论仍有界正确，不改内容分。",
+          "affected_criterion_ids": []
+        }
+      ],
+      "evidence_mean": 1.0
+    },
+    {
+      "anonymous_id": "A030",
+      "question_id": "Q18",
+      "answer_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "criteria": [
+        {
+          "id": "Q18-C1",
+          "evidence_score": 0,
+          "rationale": "仅完成不相关 HyDE 模板调用，没有最终答题材料或可追溯回答链。",
+          "supplied_reference": "call 1 hypothetical template only; no final answer",
+          "source_anchor": [
+            "Q18-E1"
+          ]
+        },
+        {
+          "id": "Q18-C2",
+          "evidence_score": 0,
+          "rationale": "仅完成不相关 HyDE 模板调用，没有最终答题材料或可追溯回答链。",
+          "supplied_reference": "call 1 hypothetical template only; no final answer",
+          "source_anchor": [
+            "Q18-E2"
+          ]
+        },
+        {
+          "id": "Q18-C3",
+          "evidence_score": 0,
+          "rationale": "仅完成不相关 HyDE 模板调用，没有最终答题材料或可追溯回答链。",
+          "supplied_reference": "call 1 hypothetical template only; no final answer",
+          "source_anchor": [
+            "Q18-E3"
+          ]
+        }
+      ],
+      "citations": [],
+      "missing_citation_claims": [],
+      "additional_errors": [],
+      "evidence_mean": 0.0
+    },
+    {
+      "anonymous_id": "A042",
+      "question_id": "Q19",
+      "answer_sha256": "c154fde98dbc06bf5816931974696c4ded2dcfab0a957a3b0b27ba275d300263",
+      "criteria": [
+        {
+          "id": "Q19-C1",
+          "evidence_score": 1,
+          "rationale": "仅对给定材料未发现 AsyncSession 的有限结论与实际材料一致；不声称全库穷尽，也不使用评审 AST 作为已供证据。",
+          "supplied_reference": "query + all supplied messages/raw records",
+          "source_anchor": [
+            "A-Q19-negative"
+          ]
+        },
+        {
+          "id": "Q19-C2",
+          "evidence_score": 1,
+          "rationale": "限定当前给定/索引材料即可；负例不要求不存在实现的源码行。",
+          "supplied_reference": "query + supplied-snapshot boundary",
+          "source_anchor": [
+            "A-Q19-negative"
+          ]
+        },
+        {
+          "id": "Q19-C3",
+          "evidence_score": 1,
+          "rationale": "实际材料中的 Session/外部异步例子与被问 AsyncSession 保持区分；没有冒充实现。",
+          "supplied_reference": "query + supplied synchronous examples",
+          "source_anchor": [
+            "A-Q19-negative"
+          ]
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "including `class Session(SessionRedirectMixin)`",
+          "citation": "Sources 54 and 57, src/requests/sessions.py:L343-L453 and L704-L831",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Source 54 包含实际类头356，Source 57 提供后续 adapter 方法。"
+        },
+        {
+          "answer_quote": "Requests does not provide non-blocking I/O by default and instead points to external projects for asynchronous use",
+          "citation": "Source 9, docs/user/advanced.rst:L1058-L1080",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        }
+      ],
+      "missing_citation_claims": [],
+      "additional_errors": [],
+      "evidence_mean": 1.0
+    },
+    {
+      "anonymous_id": "A001",
+      "question_id": "Q19",
+      "answer_sha256": "c3c3954821fdc2a808a86010f94f7214d4af97c6e372440160dcfff50c428313",
+      "criteria": [
+        {
+          "id": "Q19-C1",
+          "evidence_score": 1,
+          "rationale": "仅对给定材料未发现 AsyncSession 的有限结论与实际材料一致；不声称全库穷尽，也不使用评审 AST 作为已供证据。",
+          "supplied_reference": "query + all supplied messages/raw records",
+          "source_anchor": [
+            "A-Q19-negative"
+          ]
+        },
+        {
+          "id": "Q19-C2",
+          "evidence_score": 1,
+          "rationale": "限定当前给定/索引材料即可；负例不要求不存在实现的源码行。",
+          "supplied_reference": "query + supplied-snapshot boundary",
+          "source_anchor": [
+            "A-Q19-negative"
+          ]
+        },
+        {
+          "id": "Q19-C3",
+          "evidence_score": 1,
+          "rationale": "实际材料中的 Session/外部异步例子与被问 AsyncSession 保持区分；没有冒充实现。",
+          "supplied_reference": "query + supplied synchronous examples",
+          "source_anchor": [
+            "A-Q19-negative"
+          ]
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "imports `Session` and `session` from `.sessions`; no `AsyncSession` is shown",
+          "citation": "Source 21, src/requests/__init__.py:L155-L184",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "creates `sessions.Session()` in `request()`",
+          "citation": "Source 30, src/requests/api.py:L1-L109",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "documents `requests.Session()` and synchronous session methods",
+          "citation": "Source 1, docs/user/advanced.rst:L1-L136",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "only as external asynchronous-integration examples, not as an `AsyncSession` implementation in Requests",
+          "citation": "Report 5",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Report 5 实际输入包含该段；其 Entities 109–112 / Relationships 87–90 可追到 docs/user/advanced.rst:L1049-L1141，源码1072–1079支持“外部例子”。不把完整索引视为已暴露。"
+        }
+      ],
+      "missing_citation_claims": [],
+      "additional_errors": [],
+      "evidence_mean": 1.0
+    },
+    {
+      "anonymous_id": "A028",
+      "question_id": "Q19",
+      "answer_sha256": "38036d3f5360baf47e2425a06fe9d8dc0719a37fca8b208575003f9f63ead77c",
+      "criteria": [
+        {
+          "id": "Q19-C1",
+          "evidence_score": 1,
+          "rationale": "仅对给定材料未发现 AsyncSession 的有限结论与实际材料一致；不声称全库穷尽，也不使用评审 AST 作为已供证据。",
+          "supplied_reference": "query + all supplied messages/raw records",
+          "source_anchor": [
+            "A-Q19-negative"
+          ]
+        },
+        {
+          "id": "Q19-C2",
+          "evidence_score": 1,
+          "rationale": "限定当前给定/索引材料即可；负例不要求不存在实现的源码行。",
+          "supplied_reference": "query + supplied-snapshot boundary",
+          "source_anchor": [
+            "A-Q19-negative"
+          ]
+        },
+        {
+          "id": "Q19-C3",
+          "evidence_score": 1,
+          "rationale": "实际材料中的 Session/外部异步例子与被问 AsyncSession 保持区分；没有冒充实现。",
+          "supplied_reference": "query + supplied synchronous examples",
+          "source_anchor": [
+            "A-Q19-negative"
+          ]
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "including `SessionRedirectMixin` and its `resolve_redirects` method",
+          "citation": "Source 52, src/requests/sessions.py:L1-L166",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Source 52 包含 mixin 和 resolve_redirects 开头，不声称该块定义 AsyncSession。"
+        }
+      ],
+      "missing_citation_claims": [],
+      "additional_errors": [],
+      "evidence_mean": 1.0
+    },
+    {
+      "anonymous_id": "A002",
+      "question_id": "Q20",
+      "answer_sha256": "e144d8a9eb01e912a0aafdb739ff0e79d70a3e3451a44003b61e683c484a51ca",
+      "criteria": [
+        {
+          "id": "Q20-C1",
+          "evidence_score": 1,
+          "rationale": "题目缺应用对象/URL，mount 可登记外来实例的代码与文档支持未知结论。",
+          "supplied_reference": "query + call 1 Sources 57/8",
+          "source_anchor": [
+            "Q20-E1",
+            "Q20-E2",
+            "Q20-E3"
+          ]
+        },
+        {
+          "id": "Q20-C2",
+          "evidence_score": 1,
+          "rationale": "mount 的赋值与长度降序实现实际可见；材料比分答中陈述更完整。",
+          "supplied_reference": "call 1 Source 57",
+          "source_anchor": [
+            "Q20-E1",
+            "A-Q20-mount-order"
+          ]
+        },
+        {
+          "id": "Q20-C3",
+          "evidence_score": 1,
+          "rationale": "完整双边 lower/startswith/首匹配 return 在实际输入。",
+          "supplied_reference": "call 1 Source 57",
+          "source_anchor": [
+            "Q20-E2"
+          ]
+        },
+        {
+          "id": "Q20-C4",
+          "evidence_score": 0.5,
+          "rationale": "选择与 mount 实现、adapter 文档可见，但不含 Session.send→adapter.send 实现连接。",
+          "supplied_reference": "query + call 1 Sources 57/8",
+          "source_anchor": [
+            "Q20-E3",
+            "Q20-E1",
+            "Q20-E2"
+          ]
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "`Session.mount(prefix, adapter)` stores the supplied adapter instance and orders adapters by prefix length",
+          "citation": "Source 57",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "`Session.get_adapter(url)` selects the first adapter whose prefix matches the URL",
+          "citation": "Source 57",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "the documentation describes custom adapters as implementations based on `BaseAdapter`",
+          "citation": "docs/user/advanced.rst, Transport Adapters, Source 8",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        }
+      ],
+      "missing_citation_claims": [],
+      "additional_errors": [],
+      "evidence_mean": 0.875
+    },
+    {
+      "anonymous_id": "A086",
+      "question_id": "Q17",
+      "answer_sha256": "acc9f7b21c4fdbab5dd02f801786aba692ac8e6b15520909fe927990b065414d",
+      "criteria": [
+        {
+          "id": "Q17-C1",
+          "evidence_score": 1,
+          "rationale": "完整 mount 源码在实际输入；细行号误差另评。",
+          "supplied_reference": "call 1 Source 57",
+          "source_anchor": [
+            "Q17-E1"
+          ]
+        },
+        {
+          "id": "Q17-C2",
+          "evidence_score": 1,
+          "rationale": "完整 get_adapter 比较与立即 return 在实际输入。",
+          "supplied_reference": "call 1 Source 57",
+          "source_anchor": [
+            "Q17-E2"
+          ]
+        },
+        {
+          "id": "Q17-C3",
+          "evidence_score": 0.5,
+          "rationale": "有 redirect self.send 和接口/测试；Session.send 的选择与调用在 697–703，实际 Source 57 从 704 开始，不能据此补出缺少的链。",
+          "supplied_reference": "call 1 Sources 53/24/91; Source 57 starts at 704",
+          "source_anchor": [
+            "Q17-E3"
+          ]
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "This implements descending prefix-length ordering",
+          "citation": "L805-L816 in Source 57",
+          "location_match": false,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "整个 Source 57 包含 mount；所报窄范围从 805 起遗漏 mount 定义799、docstring802 与赋值804；定位不完整，单元支持不降。"
+        },
+        {
+          "answer_quote": "`url.lower().startswith(prefix.lower())`",
+          "citation": "L789-L803, Source 57",
+          "location_match": false,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "完整 Source 57 支持；实际比较在 L788，被所报窄范围排除。"
+        },
+        {
+          "answer_quote": "especially where the request URL is mapped to an adapter",
+          "citation": "L704-L831 section, Source 57",
+          "location_match": true,
+          "resolves": true,
+          "supports": false,
+          "support_score": 0.5,
+          "rationale": "Source 57 确有 get_adapter/mount 实现和 send 后段，但所需 send 中映射调用是697，不在该段；支持检查方向而非具体 send 调用链。"
+        },
+        {
+          "answer_quote": "because redirects call `self.send(...)` again after rewriting `prepared_request.url`",
+          "citation": "src/requests/sessions.py:L149-L305, Source 53",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "Inspect `HTTPAdapter` in `src/requests/adapters.py`",
+          "citation": "L124-L169, Source 24",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Source 24 包含 HTTPAdapter 类头及 BaseAdapter 界面，支持检查目标；不会把提议检查当“必改”事实。"
+        },
+        {
+          "answer_quote": "verifies that mounting prefixes produces descending prefix-length order",
+          "citation": "L1540-L1590, Source 91",
+          "location_match": false,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Source 91 整体含顺序断言；所报窄范围结束1590而断言在1597/1612，不能准确定位完整验证。"
+        },
+        {
+          "answer_quote": "verifies longest-prefix selection",
+          "citation": "L1624-L1647, Source 92",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "define the current case-insensitive behavior",
+          "citation": "L1649-L1680, Source 92",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际可辨来源单元支持该断言，定位与内容相符。"
+        },
+        {
+          "answer_quote": "documents longest-prefix matching and warns that matching is based on URL prefixes",
+          "citation": "L983-L997, Source 8",
+          "location_match": false,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "Source 8 整体含最长匹配及警告；实际最长匹配/警告在999–1001，被细范围排除。"
+        }
+      ],
+      "missing_citation_claims": [],
+      "additional_errors": [
+        {
+          "question_id": "Q17",
+          "method": null,
+          "answer_quote": "`L805-L816`",
+          "claim": "细行号没有覆盖所声称的完整逻辑",
+          "category": "citation_mismatch",
+          "source_or_query_anchor": [
+            "sessions.py:799-808"
+          ],
+          "rationale": "遗漏函数定义/登记赋值，引用单元仍完整。",
+          "affected_criterion_ids": []
+        },
+        {
+          "question_id": "Q17",
+          "method": null,
+          "answer_quote": "`L789-L803`",
+          "claim": "细行号没有覆盖所声称的完整逻辑",
+          "category": "citation_mismatch",
+          "source_or_query_anchor": [
+            "sessions.py:781-792"
+          ],
+          "rationale": "lower/startswith 在788，所报范围从789开始。",
+          "affected_criterion_ids": []
+        },
+        {
+          "question_id": "Q17",
+          "method": null,
+          "answer_quote": "`L1540-L1590`",
+          "claim": "细行号没有覆盖所声称的完整逻辑",
+          "category": "citation_mismatch",
+          "source_or_query_anchor": [
+            "tests/test_requests.py:1581-1617"
+          ],
+          "rationale": "排序 assert 在1597/1612，所报范围提前结束。",
+          "affected_criterion_ids": []
+        },
+        {
+          "question_id": "Q17",
+          "method": null,
+          "answer_quote": "`L983-L997`",
+          "claim": "细行号没有覆盖所声称的完整逻辑",
+          "category": "citation_mismatch",
+          "source_or_query_anchor": [
+            "docs/user/advanced.rst:995-1001"
+          ],
+          "rationale": "最长前缀/边界警告实际在999–1001。",
+          "affected_criterion_ids": []
+        }
+      ],
+      "evidence_mean": 0.8333333333333334
+    },
+    {
+      "anonymous_id": "A087",
+      "question_id": "Q18",
+      "answer_sha256": "05e61d13613161b3c0fc23ab2275138c62026cabdccb94b29ad9b8e8507d565b",
+      "criteria": [
+        {
+          "id": "Q18-C1",
+          "evidence_score": 0,
+          "rationale": "逐实际输入检索确认没有 hooks.dispatch_hook 实现或 None-return 回调测试；答案给出正确规则但材料不支持。",
+          "supplied_reference": "call 1 Source 52 only imports dispatch_hook",
+          "source_anchor": [
+            "Q18-E1"
+          ]
+        },
+        {
+          "id": "Q18-C2",
+          "evidence_score": 0.5,
+          "rationale": "实际材料有 cookie 提取和 redirect 调用，但缺 Session.send 中 dispatch 后 r.history/r.raw 消费。",
+          "supplied_reference": "call 1 Sources 37/53/82/83",
+          "source_anchor": [
+            "Q18-E2"
+          ]
+        },
+        {
+          "id": "Q18-C3",
+          "evidence_score": 0,
+          "rationale": "所给 cookie 测试没有 None callback，不支持冻结必要点；test_hooks 未提供。",
+          "supplied_reference": "call 1 Source 83",
+          "source_anchor": [
+            "Q18-E3"
+          ]
+        }
+      ],
+      "citations": [
+        {
+          "answer_quote": "`dispatch_hook` is imported by `src/requests/sessions.py` at `L25`",
+          "citation": "src/requests/sessions.py:L25",
+          "location_match": false,
+          "resolves": true,
+          "supports": false,
+          "support_score": 0,
+          "rationale": "裸 L25 实际为 ChunkedEncodingError；dispatch_hook import 在 L30。没有 Source ID 允许扩展为整个块作引用支持。"
+        },
+        {
+          "answer_quote": "`extract_cookies_to_jar`, defined in `src/requests/cookies.py` at `L109-L126`",
+          "citation": "src/requests/cookies.py:L109-L126",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "裸范围实际包含 L124 的函数定义，足以定位函数；不据它推断未覆盖的后续实现。"
+        },
+        {
+          "answer_quote": "Redirect processing calls it in `SessionRedirectMixin.resolve_redirects` at `src/requests/sessions.py` `L53-L166`",
+          "citation": "src/requests/sessions.py:L53-L166",
+          "location_match": false,
+          "resolves": true,
+          "supports": false,
+          "support_score": 0,
+          "rationale": "裸范围没有两个 cookie 调用，真实调用在 L240/L276；虽然实际 Source 53 包含它们，答案未给该 Source ID 且所写窄范围错误，不自动替换引用。"
+        },
+        {
+          "answer_quote": "It expects a request-level cookie to remain available through a redirect and asserts that `\"foo\"` appears",
+          "citation": "tests/test_requests.py:L397-L519",
+          "location_match": true,
+          "resolves": true,
+          "supports": true,
+          "support_score": 1,
+          "rationale": "实际窄范围含 L399–403 测试及两个 foo 断言；支持测试现有行为，但不支持 None 回调变更会触发本测试的额外推断。"
+        }
+      ],
+      "missing_citation_claims": [
+        {
+          "answer_quote": "a response callback may replace the current response only when its return value is non-`None`",
+          "rationale": "此正确规则没有实际支持来源/引用；import 的行号不能支持返回值处理规则。"
+        }
+      ],
+      "additional_errors": [
+        {
+          "question_id": "Q18",
+          "method": null,
+          "answer_quote": "returning `None` preserves the existing response",
+          "claim": "现有 None 保留规则在回答材料中可确证",
+          "category": "unsupported_by_supplied_evidence",
+          "source_or_query_anchor": [
+            "actual call 1 Source 52 import only"
+          ],
+          "rationale": "实际输入无 hooks 实现或 None-return 测试；规则内容恰好正确，不改变内容得分。",
+          "affected_criterion_ids": [
+            "Q18-C1"
+          ]
+        },
+        {
+          "question_id": "Q18",
+          "method": null,
+          "answer_quote": "at `L25`",
+          "claim": "dispatch_hook 在 sessions.py 第 25 行 import",
+          "category": "citation_mismatch",
+          "source_or_query_anchor": [
+            "src/requests/sessions.py:30"
+          ],
+          "rationale": "实际 L25 为异常名，import 在 L30；源单元实际包含 import，但裸引用本身不匹配。",
+          "affected_criterion_ids": []
+        },
+        {
+          "question_id": "Q18",
+          "method": null,
+          "answer_quote": "`src/requests/sessions.py` `L53-L166`",
+          "claim": "两个 redirect cookie 调用位于 L53–166",
+          "category": "citation_mismatch",
+          "source_or_query_anchor": [
+            "src/requests/sessions.py:240",
+            "src/requests/sessions.py:276"
+          ],
+          "rationale": "此范围只到 resolve_redirects 开头，没有这两个调用。",
+          "affected_criterion_ids": [
+            "Q18-C2"
+          ]
+        }
+      ],
+      "evidence_mean": 0.16666666666666666
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "rubric_sha256": "d1bdca1bf597530a0f90081220b5370893bc04742b080fe3dbd492dd7b3de225",
+  "rows": [
+    {
+      "anonymous_id": "A053",
+      "question_id": "Q05",
+      "query": "Where are JSON decoding errors converted into the library-specific exception for response.json()?",
+      "answer": "JSON decoding errors are converted in `Response.json()` in `src/requests/models.py:L930-L1037`.\n\nSpecifically, both decoding paths catch the underlying `JSONDecodeError` and raise Requests’ library-specific exception:\n\n- UTF-encoded response path: `except JSONDecodeError as e:` raises `RequestsJSONDecodeError(e.msg, e.doc, e.pos)`.\n- Fallback `self.text` path: the same conversion occurs after `complexjson.loads(self.text, **kwargs)`.\n\nThe target exception is defined as `requests.exceptions.JSONDecodeError` in `src/requests/exceptions.py:L25-L46`. It inherits from both `InvalidJSONError`/`RequestException` and the compatibility JSON decoder error. The tests confirm this behavior in `tests/test_lowlevel.py:L401-L428` and verify serialization in `tests/test_requests.py:L2965-L2976`.\n\nThe supplied snapshot does not show the import/alias declaration for `RequestsJSONDecodeError` in `models.py`, so its exact import line cannot be cited from the available evidence.",
+      "answer_sha256": "02b55b75bfe11bb7c7edff4a667cee2c3d34bb832928e68c8c926320cf1f56b2",
+      "status": "completed"
+    },
+    {
+      "anonymous_id": "A072",
+      "question_id": "Q04",
+      "query": "Locate the method that removes a registered response callback and tells the caller whether it existed.",
+      "answer": "The supplied snapshot does not contain a method that removes a registered response callback and reports whether it existed.\n\nRelevant evidence:\n\n- `src/requests/hooks.py`, `dispatch_hook`: dispatches callbacks and updates the hook data; it does not remove callbacks or return an existence flag. [Source 43]\n- `src/requests/models.py`, `RequestHooksMixin` area: the supplied excerpt shows hook registration, but no removal method. [Source 48]\n- `tests/test_hooks.py`: tests dispatch behavior and default hooks, with no removal behavior covered. [Source 74]\n\nTherefore, the exact method location cannot be identified from the supplied evidence.",
+      "answer_sha256": "98ad2a3963a9ac4ed3a0779f1d3846cf54ca8615eeb42e526b0d4e4d420fb38a",
+      "status": "completed"
+    },
+    {
+      "anonymous_id": "A045",
+      "question_id": "Q06",
+      "query": "Locate how streamed lines carry an unfinished last line across chunks, including a custom delimiter.",
+      "answer": "**Location**\n\n- `src/requests/models.py`, `Response.iter_lines` in source `49` (`src/requests/models.py:L777-L942`).\n- The method initializes `pending = None`, then iterates over `self.iter_content(...)` (`ITER_LINES -> ITER_CONTENT`, relationship `1007`).\n\n**How unfinished lines are carried**\n\n1. Each received chunk is prefixed with the previous unfinished fragment when present:\n   ```python\n   if pending is not None:\n       chunk = pending + chunk\n   ```\n2. It splits the combined chunk using either:\n   - `chunk.split(delimiter)` when a custom `delimiter` is supplied (`ITER_LINES -> CHUNK.SPLIT`, relationship `1019`), or\n   - `chunk.splitlines()` otherwise (`ITER_LINES -> CHUNK.SPLITLINES`, relationship `1020`).\n3. It treats the final split element as unfinished when:\n   ```python\n   lines and lines[-1] and chunk and lines[-1][-1] == chunk[-1]\n   ```\n   In that case, it removes the final element with `lines.pop()` and stores it in `pending` (`ITER_LINES -> LINES.POP`, relationship `1021`).\n4. Completed lines are yielded immediately with `yield from lines`.\n5. After all chunks are exhausted, any remaining `pending` fragment is yielded:\n   ```python\n   if pending is not None:\n       yield pending\n   ```\n\nWith a custom delimiter, the same mechanism applies: `chunk.split(delimiter)` produces the pieces, and the final piece is carried forward if it reaches the end of the current chunk without a delimiter. The supplied evidence identifies the implementation and call relationships, but does not include a test specifically exercising `iter_lines(delimiter=...)` or a runtime example with chunks split in the middle of a custom-delimited line.",
+      "answer_sha256": "00e83ea68ef6b0f1472fe77240a26ca4ebedf9e4a0360aa8ae892cc5e69ad9ac",
+      "status": "completed"
+    },
+    {
+      "anonymous_id": "A020",
+      "question_id": "Q04",
+      "query": "Locate the method that removes a registered response callback and tells the caller whether it existed.",
+      "answer": "The method is `RequestHooksMixin.deregister_hook` in `src/requests/models.py`.\n\n- It removes the callback with `self.hooks[event].remove(hook)`.\n- It returns `True` if removal succeeds and `False` if a `ValueError` indicates the callback was not registered. [Source 45, `src/requests/models.py` — `RequestHooksMixin.deregister_hook`]\n",
+      "answer_sha256": "929e43b82daf13e568e1f4a58b0d3eceec942821f07766582429ab94d310ad18",
+      "status": "completed"
+    },
+    {
+      "anonymous_id": "A004",
+      "question_id": "Q05",
+      "query": "Where are JSON decoding errors converted into the library-specific exception for response.json()?",
+      "answer": "JSON decoding errors from `Response.json()` are converted in `src/requests/models.py`, inside `Response.json()` (the supplied excerpt covers `src/requests/models.py:L930-L1037`).\n\nThere are two conversion paths:\n\n- When `guess_json_utf(self.content)` identifies an encoding, `complexjson.loads(...)` is called and its `JSONDecodeError` is caught. Requests then raises `RequestsJSONDecodeError(e.msg, e.doc, e.pos)`.\n- In the fallback path, `complexjson.loads(self.text, **kwargs)` is called and its `JSONDecodeError` is likewise caught and converted to `RequestsJSONDecodeError`.\n\nThe resulting library-specific exception is defined as `requests.exceptions.JSONDecodeError` in `src/requests/exceptions.py`. It inherits from both `InvalidJSONError`/`RequestException` and the compatibility JSON decoder error, preserving compatibility across JSON implementations (Source 41, `src/requests/exceptions.py:L1-L151`; Source 12, `docs/user/quickstart.rst:L133-L263`).\n\nThe supplied excerpts do not show the exact import or alias definition for `RequestsJSONDecodeError`, but the tests confirm that the exception raised by `r.json()` is both a `requests.exceptions.JSONDecodeError` and a `RequestException` (Source 78, `tests/test_lowlevel.py:L379-L428`).",
+      "answer_sha256": "c24c4024bd770274d9673dc460ad4393df4563a6ab036f5e31d4ab270c3c5ce8",
+      "status": "completed"
+    },
+    {
+      "anonymous_id": "A081",
+      "question_id": "Q06",
+      "query": "Locate how streamed lines carry an unfinished last line across chunks, including a custom delimiter.",
+      "answer": "**Location**\n\n- `src/requests/models.py`, `Response.iter_lines()` (`src/requests/models.py:L777-L942`, source 49).\n- The method stores an unfinished fragment in `pending`, initially `None`.\n- For each chunk from `self.iter_content(...)`, it prepends the previous `pending` fragment before splitting:\n  - With `delimiter` provided: `chunk.split(delimiter)`\n  - Otherwise: `chunk.splitlines()`\n- It identifies an unfinished final fragment when the last split item is non-empty and ends at the end of the current chunk:\n  `lines and lines[-1] and chunk and lines[-1][-1] == chunk[-1]`\n- That fragment is removed from `lines` and saved back to `pending`; otherwise, `pending` is cleared.\n- After all chunks are consumed, any remaining `pending` fragment is yielded.\n\nThus, custom delimiters use the same carry-over mechanism: a fragment after the last delimiter is held until the next chunk, prepended to that chunk, and split again. The supplied source does not include a separate test specifically covering unfinished lines with a custom delimiter. The tests shown only verify general `iter_content` behavior and exception wrapping in `tests/test_requests.py` (`tests/test_requests.py:L1345-L1498`, source 90).",
+      "answer_sha256": "7f365fb31085bd17b4fc8291b253c0818f5238410f9ae8d21349cab651694121",
+      "status": "completed"
+    },
+    {
+      "anonymous_id": "A003",
+      "question_id": "Q04",
+      "query": "Locate the method that removes a registered response callback and tells the caller whether it existed.",
+      "answer": "The method is `RequestHooksMixin.deregister_hook` in `src/requests/models.py` (`Source 45`, named location `RequestHooksMixin.deregister_hook`, within L170-L345).\n\nIt removes the callback with `self.hooks[event].remove(hook)`, returns `True` if removal succeeds, and returns `False` when the callback is not present and `ValueError` is raised. [Source 45; Entity `REQUESTHOOKSMIXIN.DEREGISTER_HOOK`; Relationship 888]",
+      "answer_sha256": "66c8fc5561d4a36c4719fd0db9ce130734669902d3e9464068c3c46a520023c6",
+      "status": "completed"
+    },
+    {
+      "anonymous_id": "A070",
+      "question_id": "Q05",
+      "query": "Where are JSON decoding errors converted into the library-specific exception for response.json()?",
+      "answer": "JSON decoding errors are converted in `src/requests/models.py`, inside the `Response.json()` method (`src/requests/models.py:L930-L1037`, Source 50).\n\nThere are two conversion points:\n\n- When JSON encoding is detected from the response bytes, `Response.json()` catches `JSONDecodeError` and raises `RequestsJSONDecodeError(e.msg, e.doc, e.pos)`.\n- In the fallback path using `self.text`, it catches `JSONDecodeError` and raises the same library-specific exception.\n\n`RequestsJSONDecodeError` is imported in `src/requests/models.py` as:\n\n```python\nfrom .exceptions import JSONDecodeError as RequestsJSONDecodeError\n```\n\n(Source 44, `src/requests/models.py` imports.)\n\nThe caught `JSONDecodeError` comes from `requests.compat`, which selects either `simplejson.JSONDecodeError` or the standard-library `json.JSONDecodeError` (Source 36, `src/requests/compat.py:L1-L94`). The raised wrapper is `requests.exceptions.JSONDecodeError`, which is also exported from the package namespace in `src/requests/__init__.py` (Source 21, `src/requests/__init__.py:L155-L184`).\n\nThe tests confirm this behavior in `tests/test_requests.py` through `test_json_decode_compatibility` and `test_json_decode_persists_doc_attr` (Source 100, `tests/test_requests.py:L2690-L2835`), and for alternate UTF encodings in `tests/test_lowlevel.py` (Source 78, `tests/test_lowlevel.py:L379-L428`).",
+      "answer_sha256": "8ba67dd6d53dba8a4a8e520c23c05b44e615ccda1bd53aaa90967e69ba1f7ea4",
+      "status": "completed"
+    },
+    {
+      "anonymous_id": "A008",
+      "question_id": "Q05",
+      "query": "Where are JSON decoding errors converted into the library-specific exception for response.json()?",
+      "answer": "JSON decoding errors from `response.json()` are converted in:\n\n- `src/requests/models.py`, `Response.json()` (`src/requests/models.py:L930-L1037`). It catches the underlying `JSONDecodeError` and raises `RequestsJSONDecodeError(e.msg, e.doc, e.pos)` in both decoding paths: the detected-encoding path and the fallback `self.text` path. [Source 50]\n- The library-specific exception is defined as `requests.exceptions.JSONDecodeError` in `src/requests/exceptions.py` (`JSONDecodeError` class). It subclasses `InvalidJSONError` and the compatibility JSON decoder error, preserving compatibility across JSON libraries and Python versions. [Source 41]\n- The documentation confirms that invalid JSON from `r.json()` raises `requests.exceptions.JSONDecodeError` (`docs/user/quickstart.rst:L133-L263`). [Source 12]\n\nThe supplied snapshot does not show the import/alias declaration for `RequestsJSONDecodeError`, so its exact import statement is not established by the provided evidence.",
+      "answer_sha256": "586715ccb026343ffafa84f249d0444aa67ded5efaa0eff2ed466203a88863c6",
+      "status": "completed"
+    },
+    {
+      "anonymous_id": "A017",
+      "question_id": "Q06",
+      "query": "Locate how streamed lines carry an unfinished last line across chunks, including a custom delimiter.",
+      "answer": "**Fact**\n\n- Streamed line handling is implemented in `src/requests/models.py`, `Response.iter_lines()` (`src/requests/models.py:L777-L942`, Source 49).\n- It carries an unfinished line in the local variable `pending`:\n  - For each chunk from `self.iter_content(...)`, it prepends any prior `pending` value.\n  - With a custom `delimiter`, it splits using `chunk.split(delimiter)`; otherwise it uses `chunk.splitlines()`.\n  - If the final split element is nonempty and the chunk ends with that element, it removes that element from `lines` and stores it in `pending`.\n  - After all chunks are consumed, any remaining `pending` value is yielded.\n- The relevant logic is:\n\n```python\npending = None\n\nfor chunk in self.iter_content(\n    chunk_size=chunk_size, decode_unicode=decode_unicode\n):\n    if pending is not None:\n        chunk = pending + chunk\n\n    if delimiter:\n        lines = chunk.split(delimiter)\n    else:\n        lines = chunk.splitlines()\n\n    if lines and lines[-1] and chunk and lines[-1][-1] == chunk[-1]:\n        pending = lines.pop()\n    else:\n        pending = None\n\n    yield from lines\n\nif pending is not None:\n    yield pending\n```\n\n- The public documentation describes `iter_lines()` as suitable for streaming APIs and warns that it is not reentrant-safe (`docs/user/advanced.rst:L530-L685`, Source 5).\n\n**Custom delimiter detail**\n\n- A truthy `delimiter` selects `chunk.split(delimiter)`.\n- The same `pending` mechanism applies regardless of whether the default line splitting or a custom delimiter is used.\n\n**Uncertainty**\n\n- The supplied snapshot does not include a dedicated test specifically exercising an unfinished line with a custom delimiter.",
+      "answer_sha256": "639283b19b089d8da8809016e8ffd22a4d4989afc8929592a8f731b2ac2ef4fc",
+      "status": "completed"
+    },
+    {
+      "anonymous_id": "A015",
+      "question_id": "Q06",
+      "query": "Locate how streamed lines carry an unfinished last line across chunks, including a custom delimiter.",
+      "answer": "**Location**\n\n- `src/requests/models.py`, `Response.iter_lines()` at `src/requests/models.py:L777-L942` (Source `49`).\n- The method stores an unfinished line in the local variable `pending`, initially `None`.\n- For each chunk from `self.iter_content(...)`, it prepends the prior unfinished fragment:\n  ```python\n  if pending is not None:\n      chunk = pending + chunk\n  ```\n- It then splits using the custom delimiter when supplied:\n  ```python\n  if delimiter:\n      lines = chunk.split(delimiter)\n  else:\n      lines = chunk.splitlines()\n  ```\n- The final split result is carried into the next chunk when it is nonempty and ends at the current chunk boundary:\n  ```python\n  if lines and lines[-1] and chunk and lines[-1][-1] == chunk[-1]:\n      pending = lines.pop()\n  else:\n      pending = None\n  ```\n  Earlier complete lines are yielded immediately with `yield from lines`.\n- After all chunks are consumed, any remaining unfinished line is emitted:\n  ```python\n  if pending is not None:\n      yield pending\n  ```\n\nWith a custom `delimiter`, the same `pending` mechanism applies; only the splitting operation changes from `splitlines()` to `chunk.split(delimiter)` (Source `49`).\n\nThe documentation also warns that `Response.iter_lines()` is not reentrant-safe and that calling it multiple times can lose received data, in `docs/user/advanced.rst:L530-L685` (Source `5`). The supplied snapshot does not show a dedicated test for unfinished lines with a custom delimiter.",
+      "answer_sha256": "aacbf22b668a6b9ec85c436fc8663fc74a038206db6213625c2caec882b823b1",
+      "status": "completed"
+    },
+    {
+      "anonymous_id": "A023",
+      "question_id": "Q04",
+      "query": "Locate the method that removes a registered response callback and tells the caller whether it existed.",
+      "answer": "The method is `RequestHooksMixin.deregister_hook` in `src/requests/models.py` (around `L200-L215`, in Source 45).\n\nIt removes the supplied callback with `self.hooks[event].remove(hook)` and returns:\n\n- `True` if the callback existed and was removed.\n- `False` if removal raised `ValueError`, meaning it was not present.\n\nSource: **45**, `src/requests/models.py`, `RequestHooksMixin.deregister_hook`.",
+      "answer_sha256": "b3b6d843ea4a2e8eb9ee6d98e039fa1e1806f9cb532dee6f9b2109c9de213cc5",
+      "status": "completed"
+    }
+  ]
+}

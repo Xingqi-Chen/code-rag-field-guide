@@ -1,0 +1,841 @@
+{
+  "schema": "blind-answer-content-review-v1",
+  "batch": "batch1",
+  "review_date_utc": "2026-10-14",
+  "rubric_sha256": "d1bdca1bf597530a0f90081220b5370893bc04742b080fe3dbd492dd7b3de225",
+  "blind_pack_sha256": "a9ccd5fea86e1fa91a4596414d95a0bd536ddbe23982ede8a25433aac2c77b51",
+  "blind_pack_file": ".cache/pilot/strategy-routing-20261014/blind-content-batch1.json",
+  "scope": "仅匿名内容与可核实事实错误；12条Q01/Q02/Q03回答，40个criterion判断。本批不评实际证据充分度，不给引用分。",
+  "blinding": {
+    "method_identifiers_hidden": true,
+    "method_map_read": false,
+    "execution_summary_read": false,
+    "results_cells_read": false,
+    "export_script_read": false,
+    "method_inference_attempted": false,
+    "limitation": "答案引用格式可能暗示路线；审阅者此前看过实验历史，不能声称完整双盲。此次只使用匿名包、冻结rubric及获授权的冻结源码。",
+    "method_field": "错误账本method暂null，评分冻结后由主代理外部解盲填入；本审阅者不读映射。"
+  },
+  "read_only_source_verification": {
+    "source_files_sha256": {
+      "src/requests/structures.py": "f886e6855cf4e92fb968f499b94b6167afba0fd5ce8d1b935c739a6d8d38d573",
+      "src/requests/models.py": "938daba17cc2f2efce6a000f422f54e0c91f3bb8b8af615d6aabccaacb4f7a17",
+      "src/requests/utils.py": "1e2402e8dabf0dade4b5a32217342487e7429378901c7284b184b990373ef02c",
+      "src/requests/_internal_utils.py": "9cc4329abe21b37d93a95a3901b0ab99c24486f3d487bc57965bb2ab0b252e24",
+      "tests/test_structures.py": "f7b80e00888105ae80312203279e0cf9256726740bcaa15c6cee7c2c07d33d60",
+      "tests/test_requests.py": "8e553d75084306fd04a2b3fd8ec3f7f7578ae1c44c48d96790e56046cbdf5fbf",
+      "docs/user/quickstart.rst": "e2be6bd4a434b69e0c23c4ca5bcc12a2c7785ffd3b9eadd747ca98caea666bfd"
+    },
+    "scope_extension": "主代理明确授权只读完整冻结源码核实额外断言，包括锚点外相邻实现；未改gold。"
+  },
+  "interpretation_rules": [
+    "各题按冻结0/.5/1口径，不因引用行号错误自动扣正确内容分。",
+    "已给出定位/规则但缺关键实现连接可按冻结半分；纯材料不足声明和问题重述不给定位分。",
+    "全限定Python模块加类/方法可作为唯一文件定位的等价表达；不机械要求src字面前缀。",
+    "将supplied snapshot理解为实际提供上下文，不凭全仓库另有该符号就判其材料声明为假。",
+    "Q03提及文档的less-than-400概括且正确说明HTTPError与4xx/5xx，不因没有讨论HTTP标准范围以外的自造状态码而降分；严格实现边界仍以400–599为准。",
+    "额外可核实错误单列，不再从内容均值扣分；缺引用或未知实际材料的支持度尚未评分。"
+  ],
+  "rows": [
+    {
+      "anonymous_id": "A051",
+      "question_id": "Q01",
+      "answer_sha256": "b1820b73ff37610df5fe3ccf1e2e524aa43f27789b4e356559eb90f08d894540",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q01-C1",
+          "score": 1,
+          "answer_quote": "implemented in `src/requests/structures.py`, in `CaseInsensitiveDict`",
+          "answer_span": {
+            "start_character_zero_based": 38,
+            "end_character_exclusive": 107
+          },
+          "rationale": "文件与类明确且可唯一定位。",
+          "gold_anchor_ids": [
+            "A-Q01-class"
+          ]
+        },
+        {
+          "id": "Q01-C2",
+          "score": 1,
+          "answer_quote": "`__setitem__` stores entries under `key.lower()` while retaining the original spelling in `(key, value)`.",
+          "answer_span": {
+            "start_character_zero_based": 112,
+            "end_character_exclusive": 217
+          },
+          "rationale": "说明小写查找键与原拼写/值元组；末段又明确设置不同大小写后保留latest spelling，满足最后拼写语义。",
+          "gold_anchor_ids": [
+            "Q01-E1"
+          ]
+        },
+        {
+          "id": "Q01-C3",
+          "score": 1,
+          "answer_quote": "`__getitem__` performs lookup using `key.lower()`.",
+          "answer_span": {
+            "start_character_zero_based": 220,
+            "end_character_exclusive": 270
+          },
+          "rationale": "明确getter小写化查找。",
+          "gold_anchor_ids": [
+            "Q01-E2"
+          ]
+        },
+        {
+          "id": "Q01-C4",
+          "score": 1,
+          "answer_quote": "`__iter__` yields the retained, case-sensitive key spelling.",
+          "answer_span": {
+            "start_character_zero_based": 273,
+            "end_character_exclusive": 333
+          },
+          "rationale": "明确迭代返回保留拼写。",
+          "gold_anchor_ids": [
+            "Q01-E3"
+          ]
+        }
+      ],
+      "content_mean": 1.0,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "not_assessed_pending_anonymous_context_pack",
+      "deferred_evidence_checks": [
+        "结构实现总述指向structures.py:L12-L47，但getter及迭代锚点实际在L51-L58；行范围支持程度待引用阶段。"
+      ]
+    },
+    {
+      "anonymous_id": "A024",
+      "question_id": "Q03",
+      "answer_sha256": "3ba0d2c088b930e02f36bf07cc2ff3a2066b8009a7e1fab69a23852a305236c6",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q03-C1",
+          "score": 1,
+          "answer_quote": "`Response.__bool__` returns `self.ok`",
+          "answer_span": {
+            "start_character_zero_based": 179,
+            "end_character_exclusive": 216
+          },
+          "rationale": "明确布尔方法到ok的委托。",
+          "gold_anchor_ids": [
+            "Q03-E1"
+          ]
+        },
+        {
+          "id": "Q03-C2",
+          "score": 1,
+          "answer_quote": "The `Response.ok` property calls `raise_for_status()` and returns `False` when that raises `HTTPError`; otherwise it returns `True`",
+          "answer_span": {
+            "start_character_zero_based": 255,
+            "end_character_exclusive": 386
+          },
+          "rationale": "完整给出ok/raise_for_status/HTTPError逻辑，并明确4xx或5xx为收到但False的例子。未要求逐字枚举区间边界。",
+          "gold_anchor_ids": [
+            "Q03-E2",
+            "Q03-E3"
+          ]
+        },
+        {
+          "id": "Q03-C3",
+          "score": 1,
+          "answer_quote": "A received response with a `4xx` or `5xx` status is still a valid `Response` object, but it evaluates as false",
+          "answer_span": {
+            "start_character_zero_based": 656,
+            "end_character_exclusive": 766
+          },
+          "rationale": "明确区分对象存在与HTTP错误，并给出is not None判断。",
+          "gold_anchor_ids": [
+            "Q03-E1",
+            "Q03-E2",
+            "Q03-E3"
+          ]
+        }
+      ],
+      "content_mean": 1.0,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "not_assessed_pending_anonymous_context_pack",
+      "deferred_evidence_checks": [
+        "__bool__/ok引用models.py:L635-L655与冻结实现L730-L767不一致；仅记录待核验。"
+      ]
+    },
+    {
+      "anonymous_id": "A031",
+      "question_id": "Q02",
+      "answer_sha256": "7ff7aefdf79a4698a42e7353639d7c9fddce00fb1f5aaf8bc4e5004fbd240cd2",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q02-C1",
+          "score": 1,
+          "answer_quote": "Outgoing header names and values are validated in `PreparedRequest.prepare_headers()` in `src/requests/models.py`",
+          "answer_span": {
+            "start_character_zero_based": 10,
+            "end_character_exclusive": 123
+          },
+          "rationale": "类、方法和文件齐全。",
+          "gold_anchor_ids": [
+            "Q02-E1"
+          ]
+        },
+        {
+          "id": "Q02-C2",
+          "score": 1,
+          "answer_quote": "immediately before the name and value are added to `self.headers`",
+          "answer_span": {
+            "start_character_zero_based": 463,
+            "end_character_exclusive": 528
+          },
+          "rationale": "代码与说明都显示check_header_validity先于headers写入，逐项遍历也明确。",
+          "gold_anchor_ids": [
+            "Q02-E1"
+          ]
+        },
+        {
+          "id": "Q02-C3",
+          "score": 0.5,
+          "answer_quote": "The validation occurs at `check_header_validity(header)`",
+          "answer_span": {
+            "start_character_zero_based": 405,
+            "end_character_exclusive": 461
+          },
+          "rationale": "已识别header校验辅助函数及格式校验方向，但明确表示不能定位其定义；未给出utils或名称/值分别进入_validate_header_part的两分支。按“检查header格式但未区分名称和值”的半分口径。",
+          "gold_anchor_ids": [
+            "Q02-E2"
+          ]
+        }
+      ],
+      "content_mean": 0.8333333333333334,
+      "errors": [
+        {
+          "id": "A031-E01",
+          "question_id": "Q02",
+          "method": null,
+          "anonymous_id": "A031",
+          "answer_quote": "Tests confirm non-string header values raise `InvalidHeader`",
+          "claim": "把所有非str header值概括为触发InvalidHeader，未保留bytes也可接受的例外。",
+          "category": [
+            "contradicted_by_frozen_source"
+          ],
+          "source_or_query_anchor": [
+            {
+              "path": "src/requests/utils.py",
+              "start_line": 1045,
+              "end_line": 1054,
+              "quote": "def _validate_header_part(header, header_part, header_validator_index):\n    if isinstance(header_part, str):\n        validator = _HEADER_VALIDATORS_STR[header_validator_index]\n    elif isinstance(header_part, bytes):\n        validator = _HEADER_VALIDATORS_BYTE[header_validator_index]\n    else:\n        raise InvalidHeader(\n            f\"Header part ({header_part!r}) from {header} \"\n            f\"must be of type str or bytes, not {type(header_part)}\"\n        )\n",
+              "span_sha256": "9628fae7646a48805061b90cf0f1b4b05c633e697be13c8c16a2b3f1d1e6aa09"
+            },
+            {
+              "path": "tests/test_requests.py",
+              "start_line": 1697,
+              "end_line": 1707,
+              "quote": "    def test_header_validation(self, httpbin):\n        \"\"\"Ensure prepare_headers regex isn't flagging valid header contents.\"\"\"\n        valid_headers = {\n            \"foo\": \"bar baz qux\",\n            \"bar\": b\"fbbq\",\n            \"baz\": \"\",\n            \"qux\": \"1\",\n        }\n        r = requests.get(httpbin(\"get\"), headers=valid_headers)\n        for key in valid_headers.keys():\n            assert valid_headers[key] == r.request.headers[key]\n",
+              "span_sha256": "5864314f2dd7df4402d8dcff3ee1cc23bed6e7f7234fbdf55e7ebad6deb7054e"
+            },
+            {
+              "path": "tests/test_requests.py",
+              "start_line": 1717,
+              "end_line": 1723,
+              "quote": "    def test_header_value_not_str(self, httpbin, invalid_header, key):\n        \"\"\"Ensure the header value is of type string or bytes as\n        per discussion in GH issue #3386\n        \"\"\"\n        with pytest.raises(InvalidHeader) as excinfo:\n            requests.get(httpbin(\"get\"), headers=invalid_header)\n        assert key in str(excinfo.value)\n",
+              "span_sha256": "c6d6ffcb1385444bb0b054ea1b07c9918158a22fc875b334e5806a4001d7239b"
+            }
+          ],
+          "rationale": "Python str与bytes为不同类型，冻结实现明确接受二者，且测试保留b\"fbbq\"。原测试仅用int/dict/list等无效值，不支持笼统non-string均无效。按宽泛措辞中的类型概括错误单列；不把缺少实际上下文证据与此事实反例混淆。",
+          "affected_criterion_ids": [],
+          "content_score_effect": "无额外扣分；C3已有半分来自未给出名称/值两分支，而非本额外类型断言。"
+        }
+      ],
+      "citation_audit": [],
+      "evidence_review_status": "not_assessed_pending_anonymous_context_pack",
+      "deferred_evidence_checks": [
+        "“supplied snapshot不含check_header_validity定义”涉及实际生成材料，暂不以全仓库有定义反判此上下文声明。"
+      ]
+    },
+    {
+      "anonymous_id": "A054",
+      "question_id": "Q02",
+      "answer_sha256": "7095ef081febb63b6047d3e0fcc7c403ab2b3ecb6858d7b1828c7b79807e5633",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q02-C1",
+          "score": 1,
+          "answer_quote": "`src/requests/models.py`, `PreparedRequest.prepare_headers(self, headers)`",
+          "answer_span": {
+            "start_character_zero_based": 51,
+            "end_character_exclusive": 125
+          },
+          "rationale": "准确定位实现。",
+          "gold_anchor_ids": [
+            "Q02-E1"
+          ]
+        },
+        {
+          "id": "Q02-C2",
+          "score": 1,
+          "answer_quote": "iterates over `headers.items()`, and calls `check_header_validity(header)` before assigning the header name and value to `self.headers`",
+          "answer_span": {
+            "start_character_zero_based": 208,
+            "end_character_exclusive": 343
+          },
+          "rationale": "逐项调用和先校验后存储均明确。",
+          "gold_anchor_ids": [
+            "Q02-E1"
+          ]
+        },
+        {
+          "id": "Q02-C3",
+          "score": 1,
+          "answer_quote": "`src/requests/utils.py`, `check_header_validity(header)`",
+          "answer_span": {
+            "start_character_zero_based": 347,
+            "end_character_exclusive": 403
+          },
+          "rationale": "后文明确unpacks (name,value)且validates both parts by calling _validate_header_part，覆盖模块、函数及分别校验。",
+          "gold_anchor_ids": [
+            "Q02-E2"
+          ]
+        }
+      ],
+      "content_mean": 1.0,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "not_assessed_pending_anonymous_context_pack",
+      "deferred_evidence_checks": [
+        "header leading-space用例执行体跨L1760边界；实际材料范围和引用支持度待上下文包。"
+      ]
+    },
+    {
+      "anonymous_id": "A088",
+      "question_id": "Q02",
+      "answer_sha256": "17de1d0944444e7de4cc636df61118cd78f9f9c6e125c1c4ca48e467a3ec2038",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q02-C1",
+          "score": 0,
+          "answer_quote": "The supplied evidence is insufficient to identify where outgoing header names and values are validated",
+          "answer_span": {
+            "start_character_zero_based": 0,
+            "end_character_exclusive": 102
+          },
+          "rationale": "未定位PreparedRequest.prepare_headers或models.py；重复题中的PreparedRequest对象及泛称需要准备函数，不构成定位部分完成。",
+          "gold_anchor_ids": [
+            "Q02-E1"
+          ]
+        },
+        {
+          "id": "Q02-C2",
+          "score": 0,
+          "answer_quote": "does not show header validation or insertion into a prepared request",
+          "answer_span": {
+            "start_character_zero_based": 460,
+            "end_character_exclusive": 528
+          },
+          "rationale": "未给check_header_validity或校验先于写入的实际顺序。",
+          "gold_anchor_ids": [
+            "Q02-E1"
+          ]
+        },
+        {
+          "id": "Q02-C3",
+          "score": 0,
+          "answer_quote": "The relevant implementation would need to be located in the module/function that prepares a `Request` into a `PreparedRequest`",
+          "answer_span": {
+            "start_character_zero_based": 712,
+            "end_character_exclusive": 838
+          },
+          "rationale": "没有定位utils.check_header_validity或名称/值两分支，只提出还需寻找实现。可回答题的材料不足声明不替代内容完成。",
+          "gold_anchor_ids": [
+            "Q02-E2"
+          ]
+        }
+      ],
+      "content_mean": 0.0,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "not_assessed_pending_anonymous_context_pack",
+      "deferred_evidence_checks": [
+        "全部关于supplied snapshot中缺失实现的陈述待实际上下文核验；本阶段仅按必要内容缺失评分。"
+      ]
+    },
+    {
+      "anonymous_id": "A076",
+      "question_id": "Q03",
+      "answer_sha256": "ec1bc2c583535e4d81cef0531bdd2ffc6863022a10c700fe41cd602a1444c5ba",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q03-C1",
+          "score": 0.5,
+          "answer_quote": "In Requests, response truthiness is tied to whether the response is considered successful, not merely whether a response object exists.",
+          "answer_span": {
+            "start_character_zero_based": 146,
+            "end_character_exclusive": 281
+          },
+          "rationale": "掌握自定义真假值的正确核心方向，但未说明__bool__返回ok的委托链。仅在缺失实现声明中列方法名不算给出链条。",
+          "gold_anchor_ids": [
+            "Q03-E1"
+          ]
+        },
+        {
+          "id": "Q03-C2",
+          "score": 0.5,
+          "answer_quote": "The supplied documentation states that `Response.raise_for_status()` raises `HTTPError` for unsuccessful status codes, while a `200` response does not raise an error",
+          "answer_span": {
+            "start_character_zero_based": 282,
+            "end_character_exclusive": 447
+          },
+          "rationale": "知道HTTPError/错误状态规则，开头也举404/500，但未串起ok调用、捕获HTTPError后False的逻辑。",
+          "gold_anchor_ids": [
+            "Q03-E2",
+            "Q03-E3"
+          ]
+        },
+        {
+          "id": "Q03-C3",
+          "score": 1,
+          "answer_quote": "An HTTP response can be received successfully at the network level while still representing an unsuccessful HTTP result, such as `404` or `500`.",
+          "answer_span": {
+            "start_character_zero_based": 0,
+            "end_character_exclusive": 144
+          },
+          "rationale": "明确已收到响应仍可因HTTP失败为False，对象存在与状态成功已分开。",
+          "gold_anchor_ids": [
+            "Q03-E1",
+            "Q03-E2",
+            "Q03-E3"
+          ]
+        }
+      ],
+      "content_mean": 0.6666666666666666,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "not_assessed_pending_anonymous_context_pack",
+      "deferred_evidence_checks": [
+        "关于supplied snapshot不含__bool__/ok/raise_for_status实现的声明待上下文包核验。"
+      ]
+    },
+    {
+      "anonymous_id": "A090",
+      "question_id": "Q02",
+      "answer_sha256": "be3f6d9860ed11c95d3574b6ade31bd581b50b1ee868d6bc0f8801036700a06e",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q02-C1",
+          "score": 1,
+          "answer_quote": "They are invoked before headers are added to the prepared request in `PreparedRequest.prepare_headers()`",
+          "answer_span": {
+            "start_character_zero_based": 551,
+            "end_character_exclusive": 655
+          },
+          "rationale": "随后定位src/requests/models.py，类/方法/文件可唯一识别；精确行号另待引用核验。",
+          "gold_anchor_ids": [
+            "Q02-E1"
+          ]
+        },
+        {
+          "id": "Q02-C2",
+          "score": 1,
+          "answer_quote": "iterates over `headers.items()`, calls `check_header_validity(header)`, then assigns the validated name and value to `self.headers`",
+          "answer_span": {
+            "start_character_zero_based": 731,
+            "end_character_exclusive": 862
+          },
+          "rationale": "完整给出逐项校验与赋值次序。",
+          "gold_anchor_ids": [
+            "Q02-E1"
+          ]
+        },
+        {
+          "id": "Q02-C3",
+          "score": 1,
+          "answer_quote": "`check_header_validity(header)` (`src/requests/utils.py:L1012-L1019`): unpacks the `(name, value)` pair and validates both parts by calling `_validate_header_part`.",
+          "answer_span": {
+            "start_character_zero_based": 93,
+            "end_character_exclusive": 257
+          },
+          "rationale": "模块与辅助函数正确，并明确分别校验名称和值；不因引用行号偏移扣内容分。",
+          "gold_anchor_ids": [
+            "Q02-E2"
+          ]
+        }
+      ],
+      "content_mean": 1.0,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "not_assessed_pending_anonymous_context_pack",
+      "deferred_evidence_checks": [
+        "utils.py:L1012-L1019/L1022-L1038与冻结两个函数L1034-L1061不一致，models.py定位范围也偏移；待引用阶段。"
+      ]
+    },
+    {
+      "anonymous_id": "A025",
+      "question_id": "Q01",
+      "answer_sha256": "9dd4da6b41bf4b675f6884b1101c043b04812b2dd793d2955258ff0a9d78c033",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q01-C1",
+          "score": 1,
+          "answer_quote": "implemented in `requests.structures.CaseInsensitiveDict`",
+          "answer_span": {
+            "start_character_zero_based": 38,
+            "end_character_exclusive": 94
+          },
+          "rationale": "全限定模块/类及下一项src/requests/structures.py完整定位。",
+          "gold_anchor_ids": [
+            "A-Q01-class"
+          ]
+        },
+        {
+          "id": "Q01-C2",
+          "score": 1,
+          "answer_quote": "setting `\"Accept\"` and later `\"ACCEPT\"` replaces the value and updates the retained spelling to `\"ACCEPT\"`",
+          "answer_span": {
+            "start_character_zero_based": 575,
+            "end_character_exclusive": 681
+          },
+          "rationale": "小写键/元组存储与最后拼写覆盖均明确。",
+          "gold_anchor_ids": [
+            "Q01-E1"
+          ]
+        },
+        {
+          "id": "Q01-C3",
+          "score": 1,
+          "answer_quote": "`CaseInsensitiveDict.__getitem__`: performs lookup using `key.lower()`",
+          "answer_span": {
+            "start_character_zero_based": 319,
+            "end_character_exclusive": 389
+          },
+          "rationale": "精确描述小写化查找。",
+          "gold_anchor_ids": [
+            "Q01-E2"
+          ]
+        },
+        {
+          "id": "Q01-C4",
+          "score": 1,
+          "answer_quote": "`CaseInsensitiveDict.__iter__`: returns the retained, case-sensitive key from each stored tuple",
+          "answer_span": {
+            "start_character_zero_based": 432,
+            "end_character_exclusive": 527
+          },
+          "rationale": "精确描述迭代返回保留拼写。",
+          "gold_anchor_ids": [
+            "Q01-E3"
+          ]
+        }
+      ],
+      "content_mean": 1.0,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "not_assessed_pending_anonymous_context_pack",
+      "deferred_evidence_checks": [
+        "set/get/iter细行号及test_preserve_last_key_case行范围与冻结文件不一致；不扣已正确的内容点，待引用阶段。"
+      ]
+    },
+    {
+      "anonymous_id": "A069",
+      "question_id": "Q03",
+      "answer_sha256": "8bcb77af3a902f76ec01c3d3ea4af21a6f4f8cb31d6fc0a4f3f05aba4db7aa82",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q03-C1",
+          "score": 1,
+          "answer_quote": "`Response.__bool__()` returns `self.ok`",
+          "answer_span": {
+            "start_character_zero_based": 166,
+            "end_character_exclusive": 205
+          },
+          "rationale": "明确委托链。",
+          "gold_anchor_ids": [
+            "Q03-E1"
+          ]
+        },
+        {
+          "id": "Q03-C2",
+          "score": 1,
+          "answer_quote": "The `ok` property calls `raise_for_status()` and returns `False` when that raises `HTTPError`; otherwise it returns `True`",
+          "answer_span": {
+            "start_character_zero_based": 246,
+            "end_character_exclusive": 368
+          },
+          "rationale": "HTTPError判定完整，后文指出client/server errors及404/500；少引用实现原文不降低内容分。",
+          "gold_anchor_ids": [
+            "Q03-E2",
+            "Q03-E3"
+          ]
+        },
+        {
+          "id": "Q03-C3",
+          "score": 1,
+          "answer_quote": "A response with status `404` or `500` was received, but evaluates as false because Requests considers it unsuccessful.",
+          "answer_span": {
+            "start_character_zero_based": 971,
+            "end_character_exclusive": 1089
+          },
+          "rationale": "明确收到响应与HTTP失败不同，不把False等同对象缺失。",
+          "gold_anchor_ids": [
+            "Q03-E1",
+            "Q03-E2",
+            "Q03-E3"
+          ]
+        }
+      ],
+      "content_mean": 1.0,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "not_assessed_pending_anonymous_context_pack",
+      "deferred_evidence_checks": [
+        "__bool__/ok给出的models.py精确范围偏移；关于未提供raise_for_status实现的上下文声明另待核验。"
+      ]
+    },
+    {
+      "anonymous_id": "A085",
+      "question_id": "Q03",
+      "answer_sha256": "6f2e621d961cb5f8d996176f93394b50e431182a365f767e72f29db58cf65000",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q03-C1",
+          "score": 1,
+          "answer_quote": "`Response.__bool__` returns `self.ok`",
+          "answer_span": {
+            "start_character_zero_based": 167,
+            "end_character_exclusive": 204
+          },
+          "rationale": "明确布尔委托。",
+          "gold_anchor_ids": [
+            "Q03-E1"
+          ]
+        },
+        {
+          "id": "Q03-C2",
+          "score": 1,
+          "answer_quote": "If that raises `HTTPError`, `ok` catches it and returns `False`; otherwise it returns `True`",
+          "answer_span": {
+            "start_character_zero_based": 305,
+            "end_character_exclusive": 397
+          },
+          "rationale": "前文明确调用raise_for_status，后文给client/server-error及404/500，满足核心规则。",
+          "gold_anchor_ids": [
+            "Q03-E2",
+            "Q03-E3"
+          ]
+        },
+        {
+          "id": "Q03-C3",
+          "score": 1,
+          "answer_quote": "is still a valid `Response` object but evaluates as false",
+          "answer_span": {
+            "start_character_zero_based": 543,
+            "end_character_exclusive": 600
+          },
+          "rationale": "明确对象存在仍可能False。",
+          "gold_anchor_ids": [
+            "Q03-E1",
+            "Q03-E2",
+            "Q03-E3"
+          ]
+        }
+      ],
+      "content_mean": 1.0,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "not_assessed_pending_anonymous_context_pack",
+      "deferred_evidence_checks": [
+        "具体图关系/Source id能否解析须待匿名上下文映射；当前未评引用。"
+      ]
+    },
+    {
+      "anonymous_id": "A091",
+      "question_id": "Q01",
+      "answer_sha256": "976cef1ce4b4f429ff179fe33b07e94d8792a960a70ec972bf5a34f3bce70a1b",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q01-C1",
+          "score": 1,
+          "answer_quote": "implemented by `CaseInsensitiveDict` in `src/requests/structures.py`",
+          "answer_span": {
+            "start_character_zero_based": 38,
+            "end_character_exclusive": 106
+          },
+          "rationale": "文件和类完整。",
+          "gold_anchor_ids": [
+            "A-Q01-class"
+          ]
+        },
+        {
+          "id": "Q01-C2",
+          "score": 1,
+          "answer_quote": "the most recently assigned spelling is the one returned during iteration",
+          "answer_span": {
+            "start_character_zero_based": 544,
+            "end_character_exclusive": 616
+          },
+          "rationale": "前文说明_store[key.lower()]保存(key,value)，此处明确赋值覆盖元组并保留最后拼写。",
+          "gold_anchor_ids": [
+            "Q01-E1"
+          ]
+        },
+        {
+          "id": "Q01-C3",
+          "score": 1,
+          "answer_quote": "`__getitem__` performs lookup using `key.lower()`",
+          "answer_span": {
+            "start_character_zero_based": 280,
+            "end_character_exclusive": 329
+          },
+          "rationale": "getter查找规则准确。",
+          "gold_anchor_ids": [
+            "Q01-E2"
+          ]
+        },
+        {
+          "id": "Q01-C4",
+          "score": 1,
+          "answer_quote": "`__iter__` yields the retained, case-sensitive spelling",
+          "answer_span": {
+            "start_character_zero_based": 372,
+            "end_character_exclusive": 427
+          },
+          "rationale": "迭代规则准确。",
+          "gold_anchor_ids": [
+            "Q01-E3"
+          ]
+        }
+      ],
+      "content_mean": 1.0,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "not_assessed_pending_anonymous_context_pack",
+      "deferred_evidence_checks": [
+        "set/get/iter行号偏移，test_preserve_last_key_case所引L1690-L1709实际是header准备/验证段；另待引用阶段。"
+      ]
+    },
+    {
+      "anonymous_id": "A089",
+      "question_id": "Q01",
+      "answer_sha256": "5e25b986f2faef47b390739081aecc669f9ece1af08acb0b31d8a8344423e285",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q01-C1",
+          "score": 1,
+          "answer_quote": "implemented in `requests.structures.CaseInsensitiveDict`",
+          "answer_span": {
+            "start_character_zero_based": 38,
+            "end_character_exclusive": 94
+          },
+          "rationale": "全限定模块/类已足以唯一定位该实现；未提供src前缀的文件行号不降低等价定位的内容分。",
+          "gold_anchor_ids": [
+            "A-Q01-class"
+          ]
+        },
+        {
+          "id": "Q01-C2",
+          "score": 1,
+          "answer_quote": "Reassigning the same logical key overwrites that tuple, so the latest spelling is retained.",
+          "answer_span": {
+            "start_character_zero_based": 223,
+            "end_character_exclusive": 314
+          },
+          "rationale": "前文小写索引/原键值元组与后文最后拼写更新完整。",
+          "gold_anchor_ids": [
+            "Q01-E1"
+          ]
+        },
+        {
+          "id": "Q01-C3",
+          "score": 1,
+          "answer_quote": "`CaseInsensitiveDict.__getitem__` looks up `_store[key.lower()]`, making retrieval case-insensitive.",
+          "answer_span": {
+            "start_character_zero_based": 383,
+            "end_character_exclusive": 483
+          },
+          "rationale": "准确说明小写键查找；未声称返回整个元组。",
+          "gold_anchor_ids": [
+            "Q01-E2"
+          ]
+        },
+        {
+          "id": "Q01-C4",
+          "score": 1,
+          "answer_quote": "`__iter__` returns the retained original spellings.",
+          "answer_span": {
+            "start_character_zero_based": 621,
+            "end_character_exclusive": 672
+          },
+          "rationale": "迭代行为正确；另一个lower_items断言错误单列，它不否定这一迭代陈述，也不改变set/get/iter必要点。",
+          "gold_anchor_ids": [
+            "Q01-E3"
+          ]
+        }
+      ],
+      "content_mean": 1.0,
+      "errors": [
+        {
+          "id": "A089-E01",
+          "question_id": "Q01",
+          "method": null,
+          "anonymous_id": "A089",
+          "answer_quote": "plus preservation of `\"Accept\"` in iteration and `lower_items()`.",
+          "claim": "lower_items()与迭代一样保留Accept的原大小写。",
+          "category": [
+            "contradicted_by_frozen_source"
+          ],
+          "source_or_query_anchor": [
+            {
+              "path": "src/requests/structures.py",
+              "start_line": 63,
+              "end_line": 65,
+              "quote": "    def lower_items(self):\n        \"\"\"Like iteritems(), but with all lowercase keys.\"\"\"\n        return ((lowerkey, keyval[1]) for (lowerkey, keyval) in self._store.items())\n",
+              "span_sha256": "22c8da7dfc06c1d9ffeb9068abe7a24e01b1560583cf97c3b4adb0361177e127"
+            },
+            {
+              "path": "tests/test_structures.py",
+              "start_line": 29,
+              "end_line": 32,
+              "quote": "    def test_lower_items(self):\n        assert list(self.case_insensitive_dict.lower_items()) == [\n            (\"accept\", \"application/json\")\n        ]\n",
+              "span_sha256": "e5d3648ecf4f6e03240717e07c1b5c0957759ef4cc3c46260449074747c120a7"
+            }
+          ],
+          "rationale": "lower_items明确返回小写键，测试期望(\"accept\",\"application/json\")；原大小写Accept只应归于迭代等接口。属于额外行为混淆。",
+          "affected_criterion_ids": [],
+          "content_score_effect": "无额外扣分；Q01必要点是set/get/iter，此错误另计。"
+        }
+      ],
+      "citation_audit": [],
+      "evidence_review_status": "not_assessed_pending_anonymous_context_pack",
+      "deferred_evidence_checks": [
+        "tests/test_requests.py:L2157-L2294可含fixes_649，但不包含后面的preserve_key_case/preserve_last_key_case；引用覆盖另待核验。",
+        "实际未提供structures.py源码的声明以及图实体/关系/报告引用支持度均待匿名上下文包。"
+      ]
+    }
+  ],
+  "validation": {
+    "rows": 12,
+    "unique_anonymous_ids": 12,
+    "per_question_counts": {
+      "Q01": 4,
+      "Q02": 4,
+      "Q03": 4
+    },
+    "criterion_judgments": 40,
+    "answer_hashes_match": true,
+    "all_quotes_exact_substrings": true,
+    "rubric_unchanged": true,
+    "network_api_calls": 0,
+    "verified_fact_error_count": 2,
+    "no_method_aggregates_before_unblinding": true
+  },
+  "grouping_note": "Q01/Q02为main test，Q03为dev；本批不按混合组给方法均值。补充组Q01将复用本条答案及评分。",
+  "pending": "等待匿名上下文包核验引用与实际证据支持；本文件不替代该阶段。"
+}

@@ -1,0 +1,1048 @@
+{
+  "rubric_sha256": "d1bdca1bf597530a0f90081220b5370893bc04742b080fe3dbd492dd7b3de225",
+  "blind_pack_sha256": "83ec35f83368c1bc2d72b6f6c7005d9ead26cd1c50e71080ad9d0d495b11ced3",
+  "reviewer": "answer_review_c",
+  "scope": {
+    "batch": 7,
+    "question_ids": [
+      "F02-plan",
+      "G01",
+      "G02"
+    ],
+    "row_count": 12,
+    "mode": "method-identity-blinded content review; citation syntax may imply method, not double blind",
+    "source": "Frozen Requests 2.32.3; all 32 gold anchor spans hash-verified; relevant source/test/documentation inspected statically",
+    "constraints": "No method mapping, actual supplied materials, run summary, results/cells, other scores, exporter, API or credentials read. Existing scores and rubric unchanged.",
+    "strict_rubric_notes": [
+      "F02-plan is a proposed feature; the frozen question, not existing source, defines required new behavior.",
+      "G02 evaluates new authentication-scheme extension, not the earlier unrelated dunder diagnostic.",
+      "G01-C2 can receive partial credit for correct callable/tuple preparation semantics even if the direct prepare_auth owner is not identified.",
+      "G02-C5 requires the named regression groups including documentation verification; suggesting only a documentation update leaves that group incomplete.",
+      "Citation location mismatches do not subtract content points; supplied-material audit is pending."
+    ]
+  },
+  "rows": [
+    {
+      "anonymous_id": "A009",
+      "question_id": "F02-plan",
+      "answer_sha256": "9eae9f5dc3340b865517fdf4cb3c29f5f56bdbedfcc8af0f54c32040b2638b0f",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "F02-plan-C1",
+          "score": 0.5,
+          "answer_quote": "Add `self.default_timeout = None` in `Session.__init__`",
+          "rationale": "给出实例初始None及后续可变/隔离方案，但未明确保留构造器参数这一冻结限制。",
+          "gold_anchor_ids": [
+            "F02-E1"
+          ]
+        },
+        {
+          "id": "F02-plan-C2",
+          "score": 1,
+          "answer_quote": "using a sentinel only in higher-level request wrappers",
+          "rationale": "建议请求层区分遗漏与显式None，并提出sentinel机制；明确显式None不能被覆盖。",
+          "gold_anchor_ids": [
+            "F02-E2"
+          ]
+        },
+        {
+          "id": "F02-plan-C3",
+          "score": 1,
+          "answer_quote": "Do not make `Session.send` infer or inject `default_timeout`",
+          "rationale": "结合全部Session wrappers传播遗漏状态的计划，完整保留direct send契约。",
+          "gold_anchor_ids": [
+            "F02-E4",
+            "F02-E5",
+            "F02-E7"
+          ]
+        },
+        {
+          "id": "F02-plan-C4",
+          "score": 1,
+          "answer_quote": "Ensure the effective timeout selected for the initial request is retained when redirects are followed.",
+          "rationale": "先解析再沿发送/重定向传递有效值，并明确不新增类型/形状校验。",
+          "gold_anchor_ids": [
+            "F02-E3",
+            "F02-E6",
+            "F02-E8"
+          ]
+        },
+        {
+          "id": "F02-plan-C5",
+          "score": 1,
+          "answer_quote": "Changing `default_timeout` on one Session must not affect another Session",
+          "rationale": "方案/边界/测试合计覆盖实例赋值隔离、遗漏/显式None、float/tuple、wrapper、redirect、direct send，并有文档区分。",
+          "gold_anchor_ids": [
+            "F02-E1",
+            "F02-E2",
+            "F02-E3",
+            "F02-E4",
+            "F02-E5",
+            "F02-E6",
+            "F02-E7",
+            "F02-E8"
+          ]
+        }
+      ],
+      "content_mean": 0.9,
+      "errors": [],
+      "citation_audit": [
+        {
+          "answer_quote": "(`src/requests/api.py:L30-L34`, Source 30)",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "src/requests/api.py:58-59",
+          "rationale": "临时Session的创建实际58–59，30–34为参数文档。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        },
+        {
+          "answer_quote": "including invalid timeout behavior, read timeout, connect timeout, and `None`.",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "tests/test_requests.py:2442-2503",
+          "rationale": "引用的2429–2472包含invalid/None和stream timeout，但专门read/connect测试在其后2474–2503。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        },
+        {
+          "answer_quote": "including `timeout: None` (`tests/test_requests.py:L2488-L2570`, Source 98)",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "tests/test_requests.py:2561-2572",
+          "rationale": "范围包含expected字典，但真正逐redirect比较send kwargs的断言在2571–2572，越出指定范围。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        }
+      ],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A022",
+      "question_id": "G01",
+      "answer_sha256": "f446197bdaa45852c8ad1dc57c8c2ef7d2b9c63e4c716eaa5f93ad3c86f032d4",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "G01-C1",
+          "score": 0.5,
+          "answer_quote": "It also includes HTTP Digest Authentication through `HTTPDigestAuth`",
+          "rationale": "识别Basic、Digest、AuthBase callable及auth.py，但未识别内置HTTPProxyAuth handler。",
+          "gold_anchor_ids": [
+            "G01-E1",
+            "G01-E2"
+          ]
+        },
+        {
+          "id": "G01-C2",
+          "score": 0.5,
+          "answer_quote": "an attached authentication handler is called during request setup",
+          "rationale": "解释callable及tuple的准备期职责，但未定位models.PreparedRequest.prepare_auth这一直接消费者。",
+          "gold_anchor_ids": [
+            "G01-E3",
+            "G01-E4"
+          ]
+        },
+        {
+          "id": "G01-C3",
+          "score": 1,
+          "answer_quote": "If `trust_env` is enabled and neither request-level nor session-level authentication is set",
+          "rationale": "完整给出prepare_request选择request/session/netrc及条件。",
+          "gold_anchor_ids": [
+            "G01-E7"
+          ]
+        },
+        {
+          "id": "G01-C4",
+          "score": 0.5,
+          "answer_quote": "`SessionRedirectMixin.should_strip_auth()` decides whether an `Authorization` header should be removed",
+          "rationale": "说明strip及独立proxy职责，但没有redirect期间rebuild_auth重新查netrc/prepare_auth的流程。",
+          "gold_anchor_ids": [
+            "G01-E5",
+            "G01-E6",
+            "G01-E1"
+          ]
+        },
+        {
+          "id": "G01-C5",
+          "score": 0.5,
+          "answer_quote": "OAuth 1 and OAuth 2/OpenID Connect are documented through `requests-oauthlib`",
+          "rationale": "文档及内外部边界明确，但未识别具体auth测试；泛泛cookie/redirect测试不替代这一部分。",
+          "gold_anchor_ids": [
+            "G01-E8",
+            "G01-E9",
+            "G01-E10",
+            "G01-E11",
+            "G01-E12"
+          ]
+        }
+      ],
+      "content_mean": 0.6,
+      "errors": [],
+      "citation_audit": [
+        {
+          "answer_quote": "(`docs/user/authentication.rst:L34-L43`, Source 10)",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "docs/user/authentication.rst:48-57",
+          "rationale": "Digest文档实际48–57；所引34–43是netrc部分。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        },
+        {
+          "answer_quote": "(`src/requests/sessions.py:L350-L421`, Source 54)",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "src/requests/sessions.py:398,438",
+          "rationale": "auth初值在范围中，trust_env=True在438，超出所引范围。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        },
+        {
+          "answer_quote": "(`src/requests/sessions.py:L475-L478`, Source 55)",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "src/requests/sessions.py:479-481",
+          "rationale": "实际auth选择及trust_env条件在479–481，指定范围只到注释。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        },
+        {
+          "answer_quote": "(`src/requests/sessions.py:L729-L758`, Source 57)",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "src/requests/sessions.py:750-779",
+          "rationale": "范围不覆盖环境proxy/CA-bundle设置与四个合并表达式。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        },
+        {
+          "answer_quote": "(`src/requests/sessions.py:L318-L322`, Source 54)",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "src/requests/sessions.py:325-329",
+          "rationale": "urllib3/TLS解释及HTTPS防追加条件实际325–329。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        }
+      ],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A026",
+      "question_id": "G02",
+      "answer_sha256": "8279110f2e47930e340b2617bc9868cb4a3c5112f34739774b4fbfdc7c39f739",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "G02-C1",
+          "score": 0.5,
+          "answer_quote": "implements `__call__(self, r)`, modifies the request, and returns it.",
+          "rationale": "AuthBase接口与返回request正确，也保留外部扩展可能；但未明确传入/返回的是PreparedRequest，且自称收到何种request需再查。",
+          "gold_anchor_ids": [
+            "G02-E1",
+            "G02-E9"
+          ]
+        },
+        {
+          "id": "G02-C2",
+          "score": 0,
+          "answer_quote": "it is insufficient to name the exact implementation location",
+          "rationale": "没有定位PreparedRequest.prepare_auth或Session.prepare_request的集成链；泛指session/request setup不满足直接位置要求。",
+          "gold_anchor_ids": [
+            "G02-E3",
+            "G02-E4",
+            "G02-E7"
+          ]
+        },
+        {
+          "id": "G02-C3",
+          "score": 1,
+          "answer_quote": "Some schemes need behavior after a response challenge.",
+          "rationale": "Digest作为可选challenge/hook模式示例，区别Basic/Proxy的request-only模式，未强制所有scheme挑战。",
+          "gold_anchor_ids": [
+            "G02-E2"
+          ]
+        },
+        {
+          "id": "G02-C4",
+          "score": 0.5,
+          "answer_quote": "**Proxy separation:** proxy authentication uses `Proxy-Authorization`",
+          "rationale": "覆盖origin/proxy区分、redirect隔离及初次netrc优先关系，但未识别redirect后的netrc重新应用。",
+          "gold_anchor_ids": [
+            "G02-E5",
+            "G02-E6",
+            "G02-E1"
+          ]
+        },
+        {
+          "id": "G02-C5",
+          "score": 0.5,
+          "answer_quote": "**Credential precedence:** explicit `auth` overrides `.netrc`",
+          "rationale": "有集成/优先关系/redirect/challenge回归且区分必改范围，但文档只有更新建议，未提出文档示例或说明的验证测试。",
+          "gold_anchor_ids": [
+            "G02-E9",
+            "G02-E10",
+            "G02-E11",
+            "G02-E12"
+          ]
+        }
+      ],
+      "content_mean": 0.5,
+      "errors": [],
+      "citation_audit": [
+        {
+          "answer_quote": "[Source 10, `docs/user/authentication.rst:L108-L132`; Source 32, `src/requests/auth.py:L75-L84`]",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "src/requests/auth.py:69-73",
+          "rationale": "auth.py的75–84属于HTTPBasicAuth开头，不是AuthBase.__call__；另一docs引用支持接口。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        },
+        {
+          "answer_quote": "`docs/user/authentication.rst:L133-L140`",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "docs/user/authentication.rst:127-131",
+          "rationale": "request setup及可加hooks的语句在127–131，133以后为进一步参考。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        },
+        {
+          "answer_quote": "`docs/user/authentication.rst:L25-L35`",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "docs/user/authentication.rst:36-45",
+          "rationale": "netrc条件和覆盖headers语句在36–45；25–35为Basic tuple shorthand。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        }
+      ],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A036",
+      "question_id": "F02-plan",
+      "answer_sha256": "af8b130396c5b9cf8eb4f8f842c04b5d48b0702220f473dcc5d9b4e71837058a",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "F02-plan-C1",
+          "score": 1,
+          "answer_quote": "Keep it per-instance and assignable after construction.",
+          "rationale": "明确实例初始None、可变、构造器参数不变及无global default。",
+          "gold_anchor_ids": [
+            "F02-E1"
+          ]
+        },
+        {
+          "id": "F02-plan-C2",
+          "score": 1,
+          "answer_quote": "The request path needs an internal sentinel representing “timeout was omitted.”",
+          "rationale": "可行sentinel方案区分遗漏与显式None。",
+          "gold_anchor_ids": [
+            "F02-E2"
+          ]
+        },
+        {
+          "id": "F02-plan-C3",
+          "score": 1,
+          "answer_quote": "Do not make `Session.send` independently consult `default_timeout`.",
+          "rationale": "所有Session wrapper传播到request且direct send不增加默认注入。",
+          "gold_anchor_ids": [
+            "F02-E4",
+            "F02-E5",
+            "F02-E7"
+          ]
+        },
+        {
+          "id": "F02-plan-C4",
+          "score": 1,
+          "answer_quote": "The effective timeout selected for the initial request must be passed into redirect processing and reused for subsequent requests.",
+          "rationale": "有效值沿send/redirect传递，明确不新增验证，重定向不重读可变默认。",
+          "gold_anchor_ids": [
+            "F02-E3",
+            "F02-E6",
+            "F02-E8"
+          ]
+        },
+        {
+          "id": "F02-plan-C5",
+          "score": 1,
+          "answer_quote": "Mutating `session.default_timeout` during or after initial request setup does not change the active redirect chain",
+          "rationale": "全部必需测试边界与遗漏/显式None文档计划齐全。",
+          "gold_anchor_ids": [
+            "F02-E1",
+            "F02-E2",
+            "F02-E3",
+            "F02-E4",
+            "F02-E5",
+            "F02-E6",
+            "F02-E7",
+            "F02-E8"
+          ]
+        }
+      ],
+      "content_mean": 1.0,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A049",
+      "question_id": "G02",
+      "answer_sha256": "9eb73b9b25791eb19daf6412a7359799e04562041503857719943785d6f06b5b",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "G02-C1",
+          "score": 0.5,
+          "answer_quote": "A new scheme can subclass `AuthBase`, modify the request in `__call__`, and return the request.",
+          "rationale": "识别接口及可独立模块实现，但未明确AuthBase接收/返回PreparedRequest。",
+          "gold_anchor_ids": [
+            "G02-E1",
+            "G02-E9"
+          ]
+        },
+        {
+          "id": "G02-C2",
+          "score": 0,
+          "answer_quote": "Inspect the session request-preparation path in the rest of `src/requests/sessions.py`.",
+          "rationale": "只泛指准备路径；未定位PreparedRequest.prepare_auth/Session.prepare_request的集成及认证优先关系。",
+          "gold_anchor_ids": [
+            "G02-E3",
+            "G02-E4",
+            "G02-E7"
+          ]
+        },
+        {
+          "id": "G02-C3",
+          "score": 1,
+          "answer_quote": "Digest authentication demonstrates an optional challenge/response flow.",
+          "rationale": "准确用Digest说明可选挑战、重复挑战终止和非4xx不触发的已有测试方向。",
+          "gold_anchor_ids": [
+            "G02-E2"
+          ]
+        },
+        {
+          "id": "G02-C4",
+          "score": 0.5,
+          "answer_quote": "Redirect handling can remove authorization.",
+          "rationale": "说明redirect strip政策，但没有netrc重应用和origin/proxy分离的完整检查链。",
+          "gold_anchor_ids": [
+            "G02-E5",
+            "G02-E6",
+            "G02-E1"
+          ]
+        },
+        {
+          "id": "G02-C5",
+          "score": 0.5,
+          "answer_quote": "Repeated challenges terminate according to the scheme’s retry policy",
+          "rationale": "有实质集成、redirect、challenge回归并区分必改，但遗漏request/session/netrc认证优先关系测试及文档示例验证。",
+          "gold_anchor_ids": [
+            "G02-E9",
+            "G02-E10",
+            "G02-E11",
+            "G02-E12"
+          ]
+        }
+      ],
+      "content_mean": 0.5,
+      "errors": [
+        {
+          "question_id": "G02",
+          "method": null,
+          "answer_quote": "a redirect to another host does not carry the header",
+          "claim": "所引Digest低层测试执行跨主机重定向。",
+          "category": "contradicted_by_frozen_source",
+          "source_or_query_anchor": "tests/test_lowlevel.py:127-189 (Location: / and one Server)",
+          "rationale": "该测试只有单一Server/host/port且Location为相对/，并未转到另一host。注释称redirected host不等于跨host测试。跨host strip需另看should_strip_auth_host_change。",
+          "affected_criterion_ids": [
+            "G02-C4"
+          ]
+        }
+      ],
+      "citation_audit": [
+        {
+          "answer_quote": "(Source 32, `src/requests/auth.py:L56-L61`)",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "src/requests/auth.py:69-73",
+          "rationale": "56–61是Basic字符串编码，AuthBase定义69–73。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        },
+        {
+          "answer_quote": "(Source 30, `src/requests/api.py:L50-L52`)",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "src/requests/api.py:58-59",
+          "rationale": "临时Session转发在58–59，50–52是request文档尾部。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        },
+        {
+          "answer_quote": "(Source 52, `src/requests/sessions.py:L17-L18`)",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "src/requests/sessions.py:30",
+          "rationale": "所引17–18未包含hooks import；实际在30。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        }
+      ],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A050",
+      "question_id": "G02",
+      "answer_sha256": "19d60448662e753f48ab332a677fbc3678dd735cdf977afb4c41a8520a3b83cc",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "G02-C1",
+          "score": 0.5,
+          "answer_quote": "The new scheme might be implementable as an external `AuthBase` subclass",
+          "rationale": "明确外部扩展可避免core修改，但未解释__call__返回PreparedRequest的具体契约。",
+          "gold_anchor_ids": [
+            "G02-E1",
+            "G02-E9"
+          ]
+        },
+        {
+          "id": "G02-C2",
+          "score": 0.5,
+          "answer_quote": "`PREPARE_AUTH` runs during preparation before request hooks.",
+          "rationale": "解释prepare_auth/Session.prepare_request及tuple转换等集成，未定位所有权且未说明request/session认证优先关系。",
+          "gold_anchor_ids": [
+            "G02-E3",
+            "G02-E4",
+            "G02-E7"
+          ]
+        },
+        {
+          "id": "G02-C3",
+          "score": 1,
+          "answer_quote": "If the scheme permits an initial unauthenticated request followed by a server challenge",
+          "rationale": "具体Digest hook/401/retry流程明确可选，不强制每种scheme使用。",
+          "gold_anchor_ids": [
+            "G02-E2"
+          ]
+        },
+        {
+          "id": "G02-C4",
+          "score": 0.5,
+          "answer_quote": "stripping credentials on HTTPS-to-HTTP downgrade or host/port changes",
+          "rationale": "strip及独立proxy测试方向明确，但没有netrc/redirect认证重应用。",
+          "gold_anchor_ids": [
+            "G02-E5",
+            "G02-E6",
+            "G02-E1"
+          ]
+        },
+        {
+          "id": "G02-C5",
+          "score": 0.5,
+          "answer_quote": "Authentication sequencing during preparation, content-length calculation",
+          "rationale": "有具体功能回归和非必改界限，缺认证优先关系及文档验证测试。",
+          "gold_anchor_ids": [
+            "G02-E9",
+            "G02-E10",
+            "G02-E11",
+            "G02-E12"
+          ]
+        }
+      ],
+      "content_mean": 0.6,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A055",
+      "question_id": "F02-plan",
+      "answer_sha256": "700c0d5571fdd115daeba0dbbb854185db2715a8ee27e62152b13e9c2251924b",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "F02-plan-C1",
+          "score": 1,
+          "answer_quote": "add a mutable, per-instance `Session.default_timeout`, initialized to `None`, without changing constructor arguments, adding a global setting",
+          "rationale": "完整满足题目给出的实例/构造器/全局边界，不因缺实现材料而扣计划内容分。",
+          "gold_anchor_ids": [
+            "F02-E1"
+          ]
+        },
+        {
+          "id": "F02-plan-C2",
+          "score": 1,
+          "answer_quote": "A private sentinel or equivalent omission marker is a suitable implementation approach",
+          "rationale": "给出可行遗漏判别机制并保留显式None。",
+          "gold_anchor_ids": [
+            "F02-E2"
+          ]
+        },
+        {
+          "id": "F02-plan-C3",
+          "score": 1,
+          "answer_quote": "not silently to direct `send` calls",
+          "rationale": "request及全部wrapper应用规则，direct send保持。",
+          "gold_anchor_ids": [
+            "F02-E4",
+            "F02-E5",
+            "F02-E7"
+          ]
+        },
+        {
+          "id": "F02-plan-C4",
+          "score": 1,
+          "answer_quote": "Redirect handling must retain the effective timeout on every redirected send.",
+          "rationale": "有效值保留至每次redirect send，float/tuple和既有校验规则保持。",
+          "gold_anchor_ids": [
+            "F02-E3",
+            "F02-E6",
+            "F02-E8"
+          ]
+        },
+        {
+          "id": "F02-plan-C5",
+          "score": 1,
+          "answer_quote": "Changing `session.default_timeout` after construction and before a call; resolution should occur at call time.",
+          "rationale": "测试边界覆盖全部要求，另有清晰遗漏/None文档说明。",
+          "gold_anchor_ids": [
+            "F02-E1",
+            "F02-E2",
+            "F02-E3",
+            "F02-E4",
+            "F02-E5",
+            "F02-E6",
+            "F02-E7",
+            "F02-E8"
+          ]
+        }
+      ],
+      "content_mean": 1.0,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A060",
+      "question_id": "G01",
+      "answer_sha256": "b9a90f7cac5e2a7f3829ed617dc34ce38231c70347531331b12617aafd6e853c",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "G01-C1",
+          "score": 1,
+          "answer_quote": "`AuthBase` defines the callable authentication interface, while `HTTPBasicAuth` and `HTTPProxyAuth`",
+          "rationale": "auth.py、Basic/Proxy/Digest与callable接口均识别。",
+          "gold_anchor_ids": [
+            "G01-E1",
+            "G01-E2"
+          ]
+        },
+        {
+          "id": "G01-C2",
+          "score": 0.5,
+          "answer_quote": "The documented forms are `HTTPBasicAuth('user', 'pass')` and the shorthand tuple",
+          "rationale": "准备期调用及tuple用法正确，但未定位PreparedRequest.prepare_auth直接转换/应用点。",
+          "gold_anchor_ids": [
+            "G01-E3",
+            "G01-E4"
+          ]
+        },
+        {
+          "id": "G01-C3",
+          "score": 0.5,
+          "answer_quote": "method-level values overriding session-level values",
+          "rationale": "request/session合并和netrc主题正确，但缺prepare_request中trust_env及双方无auth的完整条件。",
+          "gold_anchor_ids": [
+            "G01-E7"
+          ]
+        },
+        {
+          "id": "G01-C4",
+          "score": 0.5,
+          "answer_quote": "`should_strip_auth(old_url, new_url)` decides whether the `Authorization` header must be removed.",
+          "rationale": "strip与proxy头职责分开，但遗漏redirect后的netrc重应用。",
+          "gold_anchor_ids": [
+            "G01-E5",
+            "G01-E6",
+            "G01-E1"
+          ]
+        },
+        {
+          "id": "G01-C5",
+          "score": 0.5,
+          "answer_quote": "OAuth 1 and OAuth 2/OpenID Connect are explicitly delegated to the third-party `requests-oauthlib` library",
+          "rationale": "文档/外部扩展区分明确；只列测试imports，没有具体认证行为测试定位。",
+          "gold_anchor_ids": [
+            "G01-E8",
+            "G01-E9",
+            "G01-E10",
+            "G01-E11",
+            "G01-E12"
+          ]
+        }
+      ],
+      "content_mean": 0.6,
+      "errors": [],
+      "citation_audit": [
+        {
+          "answer_quote": "(Source 32, `src/requests/auth.py:L61-L99`)",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "src/requests/auth.py:94-104",
+          "rationale": "范围包含Basic调用和Proxy类定义，但不含Proxy的__call__头赋值102–104。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        },
+        {
+          "answer_quote": "(Source 32, `src/requests/auth.py:L89-L99`)",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "src/requests/auth.py:102-104",
+          "rationale": "此范围不含HTTPProxyAuth.__call__实际写头位置。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        }
+      ],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A061",
+      "question_id": "F02-plan",
+      "answer_sha256": "eed312777c3f7b4f9702c133cdbc14739107c831369c8b67d1b5cb25c6d0972e",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "F02-plan-C1",
+          "score": 0.5,
+          "answer_quote": "`Session.default_timeout = 5` followed by `session.get(url)` should use `5`.",
+          "rationale": "主体正确提出实例self.default_timeout=None、可变、构造器不变，但该示例改成类属性赋值，与实例初始化覆盖相冲突；本点不能满分，主体实例设计并非完全错误。",
+          "gold_anchor_ids": [
+            "F02-E1"
+          ]
+        },
+        {
+          "id": "F02-plan-C2",
+          "score": 1,
+          "answer_quote": "an internal sentinel as the request-layer default rather than `None`",
+          "rationale": "机制可行，显式None保持。",
+          "gold_anchor_ids": [
+            "F02-E2"
+          ]
+        },
+        {
+          "id": "F02-plan-C3",
+          "score": 1,
+          "answer_quote": "Ensure a wrapper that receives `timeout=None` forwards explicit `None`.",
+          "rationale": "全部wrapper透传遗漏/None并明确direct send不读取default_timeout。",
+          "gold_anchor_ids": [
+            "F02-E4",
+            "F02-E5",
+            "F02-E7"
+          ]
+        },
+        {
+          "id": "F02-plan-C4",
+          "score": 1,
+          "answer_quote": "The effective timeout must be retained in redirect calls",
+          "rationale": "在send_kwargs之前解析，send/redirect保持有效值且不新增形状校验。",
+          "gold_anchor_ids": [
+            "F02-E3",
+            "F02-E6",
+            "F02-E8"
+          ]
+        },
+        {
+          "id": "F02-plan-C5",
+          "score": 1,
+          "answer_quote": "Changing `default_timeout` between calls should affect later omitted-timeout calls",
+          "rationale": "覆盖实例变化、遗漏/None/形状/wrapper/redirect/direct send及文档区分；类属性示例错误计入C1不重复扣此点。",
+          "gold_anchor_ids": [
+            "F02-E1",
+            "F02-E2",
+            "F02-E3",
+            "F02-E4",
+            "F02-E5",
+            "F02-E6",
+            "F02-E7",
+            "F02-E8"
+          ]
+        }
+      ],
+      "content_mean": 0.9,
+      "errors": [
+        {
+          "question_id": "F02-plan",
+          "method": null,
+          "answer_quote": "`Session.default_timeout = 5` followed by `session.get(url)` should use `5`.",
+          "claim": "给Session类属性赋5即可让带初始实例None的session省略timeout使用5。",
+          "category": "query_constraint_violation",
+          "source_or_query_anchor": "F02-plan query per-instance initialization constraint; src/requests/sessions.py:390",
+          "rationale": "方案同时要求每个实例在__init__中self.default_timeout=None；类属性赋值不会覆盖该实例属性。应写session.default_timeout=5。C1已降半分，不额外扣均值。",
+          "affected_criterion_ids": [
+            "F02-plan-C1"
+          ]
+        }
+      ],
+      "citation_audit": [
+        {
+          "answer_quote": "`src/requests/sessions.py:L476-L493`",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "src/requests/sessions.py:500-519",
+          "rationale": "Session.request签名实际500–519，所引是prepare_request尾部。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        },
+        {
+          "answer_quote": "`src/requests/adapters.py:L600-L660`",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "src/requests/adapters.py:661-679",
+          "rationale": "指定范围有标量/tuple文档与tuple转换，但TimeoutSauce对象处理及urlopen timeout传递位于661以后。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        },
+        {
+          "answer_quote": "in `tests/test_requests.py:L2470-L2570`",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "tests/test_requests.py:2571-2572",
+          "rationale": "范围含expected timeout=None字典但缺实际比较断言2571–2572。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        }
+      ],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A065",
+      "question_id": "G01",
+      "answer_sha256": "36cff6b592dfae0c26dfddece7cb93a9bb66d59780bba34a4e20c6bfdf2add27",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "G01-C1",
+          "score": 0.5,
+          "answer_quote": "built-in handlers including `HTTPBasicAuth`, `HTTPDigestAuth`, and `HTTPProxyAuth`",
+          "rationale": "三handler识别，但未定位auth.py或说明AuthBase的callable/__call__契约。",
+          "gold_anchor_ids": [
+            "G01-E1",
+            "G01-E2"
+          ]
+        },
+        {
+          "id": "G01-C2",
+          "score": 0.5,
+          "answer_quote": "A two-item credential tuple is converted into an `HTTPBasicAuth` object",
+          "rationale": "正确解释tuple转换/应用/recompute职责，但未定位models.PreparedRequest.prepare_auth。",
+          "gold_anchor_ids": [
+            "G01-E3",
+            "G01-E4"
+          ]
+        },
+        {
+          "id": "G01-C3",
+          "score": 0.5,
+          "answer_quote": "when `trust_env` is enabled, it consults environment proxy discovery and netrc-based authentication.",
+          "rationale": "说明session合并及trust_env/netrc，但遗漏仅request/session auth均缺失时选择netrc的条件，并保留来源优先级未知。",
+          "gold_anchor_ids": [
+            "G01-E7"
+          ]
+        },
+        {
+          "id": "G01-C4",
+          "score": 0.5,
+          "answer_quote": "redirects may retain, remove, or recompute credentials",
+          "rationale": "strip及独立proxy职责方向正确，但未说明rebuild_auth重新查询netrc并应用的具体链条。",
+          "gold_anchor_ids": [
+            "G01-E5",
+            "G01-E6",
+            "G01-E1"
+          ]
+        },
+        {
+          "id": "G01-C5",
+          "score": 0,
+          "answer_quote": "it does not identify a separate external authentication provider or library.",
+          "rationale": "未识别外部OAuth边界，也未给具体认证文档/测试文件或函数定位；泛称有focused tests不足以满足该点。",
+          "gold_anchor_ids": [
+            "G01-E8",
+            "G01-E9",
+            "G01-E10",
+            "G01-E11",
+            "G01-E12"
+          ]
+        }
+      ],
+      "content_mean": 0.4,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A079",
+      "question_id": "G01",
+      "answer_sha256": "13c54ef77052d1b3e45424ce49ccd5397897f9faf63ecfb2224b02a65b5cdbbf",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "G01-C1",
+          "score": 1,
+          "answer_quote": "`src/requests/auth.py` defines the `AuthBase` interface and built-in handlers.",
+          "rationale": "Basic/Proxy/Digest与callable AuthBase、模块职责完整。",
+          "gold_anchor_ids": [
+            "G01-E1",
+            "G01-E2"
+          ]
+        },
+        {
+          "id": "G01-C2",
+          "score": 0.5,
+          "answer_quote": "Authentication handlers are invoked during request setup.",
+          "rationale": "callable/tuple准备职责正确，但未定位直接PreparedRequest.prepare_auth消费者。",
+          "gold_anchor_ids": [
+            "G01-E3",
+            "G01-E4"
+          ]
+        },
+        {
+          "id": "G01-C3",
+          "score": 0.5,
+          "answer_quote": "explicitly supplied credentials override it",
+          "rationale": "说明session/request优先和netrc，但未给prepare_request中trust_env与双方无auth条件。",
+          "gold_anchor_ids": [
+            "G01-E7"
+          ]
+        },
+        {
+          "id": "G01-C4",
+          "score": 0.5,
+          "answer_quote": "cannot establish exactly when credentials are reapplied after a redirect",
+          "rationale": "说明strip与proxy独立职责，明确缺少redirect后认证恢复。",
+          "gold_anchor_ids": [
+            "G01-E5",
+            "G01-E6",
+            "G01-E1"
+          ]
+        },
+        {
+          "id": "G01-C5",
+          "score": 1,
+          "answer_quote": "OAuth 1 and OAuth 2/OpenID Connect are explicitly delegated to `requests-oauthlib`",
+          "rationale": "具体auth docs/netrc/Digest/proxy/redirect测试定位与外部扩展区分完整。",
+          "gold_anchor_ids": [
+            "G01-E8",
+            "G01-E9",
+            "G01-E10",
+            "G01-E11",
+            "G01-E12"
+          ]
+        }
+      ],
+      "content_mean": 0.7,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A082",
+      "question_id": "G02",
+      "answer_sha256": "d7fb08ded9b1589690f65f9928dd85e7f82a5aae770372378992bd89014f8b4e",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "G02-C1",
+          "score": 0.5,
+          "answer_quote": "`AuthBase.__call__()`",
+          "rationale": "明确返回request、后文说明PreparedRequest，但未说明可由外部扩展避免core代码修改；只提出auth.py可能新增。",
+          "gold_anchor_ids": [
+            "G02-E1",
+            "G02-E9"
+          ]
+        },
+        {
+          "id": "G02-C2",
+          "score": 1,
+          "answer_quote": "inspect `PreparedRequest.prepare()` and `prepare_auth()`",
+          "rationale": "结合Session.prepare_request的request/session/netrc优先条件，定位完整集成检查目标。",
+          "gold_anchor_ids": [
+            "G02-E3",
+            "G02-E4",
+            "G02-E7"
+          ]
+        },
+        {
+          "id": "G02-C3",
+          "score": 0.5,
+          "answer_quote": "If the scheme needs a server challenge",
+          "rationale": "明确hook/challenge可选，但未用现有Digest实现作为具体例子。",
+          "gold_anchor_ids": [
+            "G02-E2"
+          ]
+        },
+        {
+          "id": "G02-C4",
+          "score": 0.5,
+          "answer_quote": "Proxy credentials remain distinct from origin authentication",
+          "rationale": "包含proxy区分、strip政策及初次netrc选择，但未说明redirect后的netrc重应用；predicate/action作用域错另记。",
+          "gold_anchor_ids": [
+            "G02-E5",
+            "G02-E6",
+            "G02-E1"
+          ]
+        },
+        {
+          "id": "G02-C5",
+          "score": 0.5,
+          "answer_quote": "Response challenges, if supported, exercise:",
+          "rationale": "有集成、优先、redirect及可选challenge/retry测试；有文档更新建议但无文档示例/说明验证测试。",
+          "gold_anchor_ids": [
+            "G02-E9",
+            "G02-E10",
+            "G02-E11",
+            "G02-E12"
+          ]
+        }
+      ],
+      "content_mean": 0.6,
+      "errors": [
+        {
+          "question_id": "G02",
+          "method": null,
+          "answer_quote": "`SessionRedirectMixin.should_strip_auth()` removes authorization",
+          "claim": "should_strip_auth函数直接删除Authorization头。",
+          "category": "contradicted_by_frozen_source",
+          "source_or_query_anchor": "src/requests/sessions.py:127-157;282-300",
+          "rationale": "should_strip_auth只返回布尔判断，实际删除和netrc重应用在rebuild_auth。高层安全政策部分正确，具体动作所有权错误；C4已是部分分，不重复扣分。",
+          "affected_criterion_ids": [
+            "G02-C4"
+          ]
+        }
+      ],
+      "citation_audit": [
+        {
+          "answer_quote": "(`docs/user/authentication.rst:L95-L124`, Source 10)",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "docs/user/authentication.rst:127-131",
+          "rationale": "范围覆盖AuthBase示例，但关于request setup和额外hooks的说明在127–131。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        },
+        {
+          "answer_quote": "(`docs/user/advanced.rst:L421-L474`, Source 4)",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "docs/user/advanced.rst:482-483",
+          "rationale": "hook顺序说明在482–483；其他hook合同位于所引范围。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        },
+        {
+          "answer_quote": "(`src/requests/adapters.py:L570-L598`, Source 28; `src/requests/sessions.py:L298-L325`, Source 54)",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "src/requests/adapters.py:605-611;src/requests/sessions.py:327-329",
+          "rationale": "范围只到proxy_headers文档及rebuild_proxies注释，缺实际Proxy-Authorization生成/HTTPS guard。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        },
+        {
+          "answer_quote": "(`docs/user/authentication.rst:L28-L35`, Source 10)",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "docs/user/authentication.rst:39-42",
+          "rationale": "netrc覆盖原始headers的语句在39–42，不在28–35。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        }
+      ],
+      "evidence_review_status": "pending"
+    }
+  ]
+}

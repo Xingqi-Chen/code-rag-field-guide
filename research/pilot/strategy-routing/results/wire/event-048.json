@@ -1,0 +1,53 @@
+{
+  "event": {
+    "sequence": 48,
+    "cell": "Q09:routed_graphrag",
+    "service": "embedding",
+    "stage": "query_embedding",
+    "status": "validated",
+    "request_body_sha256": "eb9e039e581b9bfdab49a08ecb9a631662968ae83fec12a49aaf2593ff0e3223",
+    "key": "49cf757e0672b355b0f781cd074468bb1b8f96d5fbf44b84298446757a4f7c60",
+    "input_tokens": 431,
+    "started_utc": "2026-10-14T04:44:01.319472+00:00",
+    "usage": {
+      "prompt_tokens": 431,
+      "total_tokens": 431
+    },
+    "synthetic": false,
+    "elapsed_seconds": 1.279181499965489,
+    "finished_utc": "2026-10-14T04:44:02.615099+00:00",
+    "http_status": 200,
+    "response_bytes": 60608,
+    "response_byte_limit": 4194304,
+    "request_dispatched": true
+  },
+  "request": {
+    "service": "embedding",
+    "body": {
+      "model": "text-embedding-3-large",
+      "input": [
+        "# Cross-Host Redirect Authorization Handling\n\nThis community concerns the handling of an `Authorization` header during a cross-host redirect and the condition under which authentication is replaced from the environment. The supplied evidence contains only the query and does not identify a module, function, source line, relationship, or evidence citation. Any implementation-level trace is therefore hypothetical rather than established.\n\n## A cross-host redirect is the decision point for removing Authorization\n\nHypothetically, redirect processing reaches a branch that compares the destination host with the host associated with the original request. If the redirect crosses hosts, that branch removes the `Authorization` header before the redirected request is prepared.\n\nThe supplied evidence does not confirm that this comparison exists, identify the function that performs it, or show whether the header is removed unconditionally or only for particular host changes. No exact module or function location can be provided. [Evidence: not supplied]\n\n## Authorization removal precedes redirected-request authentication\n\nIn the hypothetical flow, removing `Authorization` prevents credentials selected for the original host from being sent to the new host. The redirected request can then proceed without carrying the original header unless a later authentication step supplies replacement credentials.\n\nThis ordering is not demonstrated by the supplied evidence. It is a proposed interpretation of the requested trace, not a confirmed runtime behavior. [Evidence: not supplied]\n\n## Environment authentication replaces the removed header only under a condition\n\nThe condition for replacing authentication from the environment cannot be determined from the supplied snapshot. A source-backed answer would need to show the branch that reads environment-provided authentication and the predicate controlling whether that value is applied after the cross-host redirect.\n\nIt is therefore not established whether replacement occurs when environment authentication is enabled, when no explicit authentication remains, when the redirected request lacks an `Authorization` header, or under some combination of those conditions. [Evidence: not supplied]\n\n## Exact implementation locations are unavailable\n\nNo module or function locations, source lines, tests, or runtime observations are included in the supplied evidence. Consequently, the decision to remove `Authorization` and the condition for replacing authentication from the environment cannot be traced with the requested source-level precision. [Evidence: not supplied]"
+      ],
+      "dimensions": 3072,
+      "encoding_format": "float"
+    }
+  },
+  "response_envelope": {
+    "http_status": 200,
+    "response": {
+      "model": "text-embedding-3-large",
+      "usage": {
+        "prompt_tokens": 431,
+        "total_tokens": 431
+      },
+      "vectors_omitted": true,
+      "vector_count": 1,
+      "dimensions": [
+        3072
+      ]
+    },
+    "response_byte_limit": 4194304,
+    "response_bytes": 60608,
+    "private_complete_response_sha256": "1dcdef008994be745e5e3492a0335c3afebf360f799f79e1487f1b381ec8b03f"
+  }
+}

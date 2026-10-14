@@ -1,0 +1,175 @@
+{
+  "reviewer": "answer_review_d",
+  "created_utc": "2026-10-14T05:18:03.257386+00:00",
+  "status": "scoped_checks_passed_full_publication_check_pending",
+  "scope": "Independent review of newly authored offline publication verifier and execution summarizer. Reviewer was subsequently authorized to fix only these two scripts; no runtime, grading or result artifacts were edited. Fixes were self-checked with independent in-memory negative mutations and public pack rebuilding.",
+  "script_sha256": {
+    "verify_results.py": "2c8039c487a2a01c15d9ba90aee7e13d9bdab1c04275b50931562c0d55972b2d",
+    "summarize_execution.py": "3c1b4bfa56cc11201d61558d0e5b52f22249c261023e3a006eb9346412f80021"
+  },
+  "inputs_bound": {
+    "execution_json_sha256": "c82c0f8587054f7b2ad79e69f9571d6d94d166a4d6245eb60e5102bbe3d84521",
+    "runtime_literal_configuration_sha256": "97c2c195834ef3806766aee8f5980b585e454682a062d266851cef3872b6dcd3",
+    "frozen_queries_sha256": "fd94cba5f5c49797863df3f60c236fed533d282b29c77fb13825191988b3e34d",
+    "evidence_manifest_sha256": {
+      "batch1": "f7dd7c2c84104ed0ba8fc490eb234381e90a45c9c439e12aaa341810888586ba",
+      "batch2": "be893c5295ff00e12983b019e29912869319ea4ff1904cb4340148ffa8bdee24",
+      "batch3": "69e048bdd2cc071f8d97dd0c9ffaeb7e4209e231ca97cf313184ac1f1ec13223",
+      "batch4": "a9afcd14caac93604b5d7fd44d9b89e7e46bbe7bc1224c10ab4726f06460fe63",
+      "batch5": "65020691b1c6a9b080c33211f31edd3920aed40234b9056a180801b9c55b5a33",
+      "batch6": "b88c2c853f90e92192fd8aae58ffaf51eec3b0217a8d85557905eaa2260720e5",
+      "batch7": "dc28fce09bd6280f8631b1ea434cde1539c323e188d25b7f53daf808c7eedea1"
+    }
+  },
+  "findings_and_repairs": [
+    {
+      "issue": "Embedding cumulative attempt/cost caps and frozen carry/limits were not checked.",
+      "repair": "Parse only literal CARRY/LIMITS/STAGES assignments using stdlib ast; require equality, reconstruct deltas, enforce generation and embedding caps and per-cell budget."
+    },
+    {
+      "issue": "Retry grouping trusted event.key without recomputing service/body digest.",
+      "repair": "Recompute sorted-key canonical request digest plus existing insertion-order body digest before retry/cache checks."
+    },
+    {
+      "issue": "Event ownership, non-cache uses, cell counters and anonymized map linkage could disagree.",
+      "repair": "Bind all event owners to the grid, requests/stages/uses to canonical keys and origins, per-cell metadata to owned events, and maps/packs to exact qid/method cells."
+    },
+    {
+      "issue": "Rebuilding evidence packs copied exported source metadata without independently checking context exposure.",
+      "repair": "Reconstruct exposure from actual HTTP200 wire request text and the cell context, then recompute deduplicated exposed source union; all seven pack hashes still reproduce."
+    },
+    {
+      "issue": "Partial usage dictionaries could be summed as known zero; provider totals derived indirectly from method groups.",
+      "repair": "Reject incomplete usage and unknown event ownership; derive known totals directly from generation ledger and preserve null unknowns. Explain dispatch marker meaning and derive unknown-count limitation dynamically."
+    },
+    {
+      "issue": "JSON inventory equality alone did not constrain which output categories were expected.",
+      "repair": "Require exact final public data set: 92 cell files, 193 wire files, 7 masked content packs, 7 evidence manifests and 5 root data JSON artifacts, excluding export-manifest itself. README.md is the only permitted non-JSON result file."
+    }
+  ],
+  "checks": [
+    {
+      "name": "valid_published_structure",
+      "result": "passed",
+      "detail": "Original 92 cells / 193 events passed all request, ownership, budget, use and actual exposure checks."
+    },
+    {
+      "name": "request_body_changed",
+      "result": "rejected_before_and_after",
+      "detail": "Edited body without digest update rejected."
+    },
+    {
+      "name": "request_key_changed",
+      "result": "fixed_and_rejected",
+      "detail": "Previously reached aggregation boundary; now service/body canonical digest recomputed."
+    },
+    {
+      "name": "unknown_event_owner",
+      "result": "fixed_and_rejected",
+      "detail": "Previously reached aggregation boundary; now every event belongs to a real grid cell."
+    },
+    {
+      "name": "embedding_cap_and_carry_change",
+      "result": "fixed_and_rejected",
+      "detail": "Previously summarize accepted cumulative USD 1.12665189; now frozen carry binding rejects the change and explicit embedding cap is enforced."
+    },
+    {
+      "name": "authorized_limit_changed",
+      "result": "fixed_and_rejected",
+      "detail": "Previously adjustable from execution JSON; now exact literal frozen LIMITS equality required."
+    },
+    {
+      "name": "partial_usage_empty_dict",
+      "result": "rejected",
+      "detail": "Incomplete provider usage cannot silently become known zero tokens."
+    },
+    {
+      "name": "cell_counter_drift",
+      "result": "rejected",
+      "detail": "Cell token count is recomputed from owned generation reservations."
+    },
+    {
+      "name": "foreign_context_exposure",
+      "result": "rejected",
+      "detail": "Foreign HTTP200 sequence is not credited as this cell material; exposure reconstructed from actual matching request text."
+    },
+    {
+      "name": "wrong_use_origin",
+      "result": "rejected",
+      "detail": "Origin event key and non-cache ownership are validated."
+    },
+    {
+      "name": "duplicate_grid_cell",
+      "result": "rejected",
+      "detail": "92-item grid requires every frozen question/method pair once."
+    },
+    {
+      "name": "wire_response_status_changed",
+      "result": "rejected",
+      "detail": "Response envelope status/metadata must agree with event."
+    },
+    {
+      "name": "wire_service_changed",
+      "result": "rejected",
+      "detail": "Request service must agree with event and canonical cache key."
+    },
+    {
+      "name": "wrong_grading_map_cell_file",
+      "result": "rejected",
+      "detail": "Anonymous mapping points to exact expected qid/method cell file."
+    },
+    {
+      "name": "public_review_pack_rebuild",
+      "result": "passed",
+      "detail": "All 7 manifests exactly rebuilt from published wires, cells, masked packs and frozen content reviews; no private cache reads."
+    },
+    {
+      "name": "execution_numbers_unchanged",
+      "result": "passed",
+      "detail": "Recalculated execution-statistics differs from previous file only in limitations prose, not numerical values."
+    }
+  ],
+  "verified_accounting": {
+    "carry_generation_reservations": 1349,
+    "new_generation_reservations": 149,
+    "cumulative_generation_reservations": 1498,
+    "new_generation_dispatch_start_markers": 148,
+    "generation_http200": 142,
+    "administrative_non_dispatch_events": [
+      1
+    ],
+    "unknown_generation_usage_events": [
+      43,
+      64,
+      70,
+      106,
+      127,
+      148
+    ],
+    "new_common_generation_input_tokens": 1117894,
+    "cumulative_common_generation_input_tokens": 3095030,
+    "known_provider_input_tokens": 1324984,
+    "known_provider_output_tokens": 108019,
+    "new_embedding_attempts": 44,
+    "cumulative_embedding_attempts": 147,
+    "new_embedding_tokens": 8342,
+    "cumulative_embedding_tokens": 666553,
+    "new_embedding_usd_estimate": "0.00108446",
+    "cumulative_embedding_usd_estimate": "0.08665189"
+  },
+  "final_checks_pending": [
+    "At review time evidence-scores.json was not yet published; do not claim the unmodified full verify_results.main end-to-end passed.",
+    "Regenerate execution-statistics.json for the revised limitations prose, then refresh export-manifest.json and run the full verifier after all evidence review batches are finalized.",
+    "One extended structural test stubbed only the three aggregate calculate comparisons to their expected reads, so map checks and the seven real public pack rebuilds could run while evidence aggregation was pending. This is explicitly not a substitute for the final aggregate verification."
+  ],
+  "limitations": [
+    "Stdlib-only verifier reconstructs counts from recorded common-token reservations but does not independently tokenize all messages with tiktoken. Exact request digests and frozen runtime hash checks remain separate safeguards.",
+    "Physical attempts mean local dispatch-start markers, not independently confirmed provider receipt or charges. Six possible billed generation failures retain null usage; known provider totals are incomplete.",
+    "Embedding currency values use frozen USD 0.13 per million tokens, not an invoice. Generation dollar cost remains unmeasured.",
+    "The export manifest is a reproducibility/inventory integrity check, not an external signature of provider execution. Runtime frozen-hash verification should continue to run alongside this publication verifier."
+  ],
+  "api_calls": 0,
+  "credential_reads": 0,
+  "scores_changed": false,
+  "runtime_changed": false
+}

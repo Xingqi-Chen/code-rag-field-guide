@@ -1,6 +1,8 @@
-# 统一路由运行器：执行前离线验证
+# 统一路由运行器：离线验证与执行记录
 
-**当前状态：明确付费授权后的启动已获准，但在发送请求前因旧调度器冲突停止，新增实际模型／embedding调用均为0。** [首次拦截](execution-blocked.json)与[同命令一次重试拦截](execution-retry-blocked.json)保留此前的授权上下文验证问题；[本次软件故障](supervisor-incident.json)是随后不同的一次启动。
+**当前状态：92个单元已全部执行，86份有最终回答、6份失败；新增真实生成派发148次、embedding44次。** [最终账本](../results/execution.json)与[结果及复算入口](../results/README.md)记录本轮成绩。以下启动故障和离线审查是实际发生的历史过程。
+
+[首次拦截](execution-blocked.json)与[一次重试拦截](execution-retry-blocked.json)发生在用户明确补充付费执行授权之前。用户于2026-10-14 04:24:49 UTC明确授权两个服务、公开代码材料发送与既有限额后，启动获准；随后发生的是另一件[软件故障](supervisor-incident.json)。
 
 故障发生在旧调度器的参数断言，尚未创建worker进程。第1次生成预留仍计入累计1350次、输入1988129 token；不回退账本。修复让读取图索引只构造向量库配置，避免旧实验的全局配置副作用。[回归测试](offline_supervisor.py)在真实Data初始化后进入真实Transport.dispatch和supervisor，只有子进程为无网络的合成程序。[恢复代码](recovery.py)保留故障前快照，精确绑定该请求，下一次使用新预留；同请求合计仍最多三次，因此只剩两次实际派发机会。1883次总上限不变。
 

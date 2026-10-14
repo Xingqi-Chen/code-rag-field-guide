@@ -1,0 +1,53 @@
+{
+  "event": {
+    "sequence": 132,
+    "cell": "Q17:routed_graphrag",
+    "service": "embedding",
+    "stage": "query_embedding",
+    "status": "validated",
+    "request_body_sha256": "0646d5d75f8b3112d97fa267f049dc29024aa42db67590416c0736c46285a83a",
+    "key": "3c61eeff95e5dc6c96834ab65d5d16dfa8d4ee97e9cd91a5d995f209ac531884",
+    "input_tokens": 768,
+    "started_utc": "2026-10-14T04:52:25.005975+00:00",
+    "usage": {
+      "prompt_tokens": 768,
+      "total_tokens": 768
+    },
+    "synthetic": false,
+    "elapsed_seconds": 0.8734297920018435,
+    "finished_utc": "2026-10-14T04:52:25.915950+00:00",
+    "http_status": 200,
+    "response_bytes": 60706,
+    "response_byte_limit": 4194304,
+    "request_dispatched": true
+  },
+  "request": {
+    "service": "embedding",
+    "body": {
+      "model": "text-embedding-3-large",
+      "input": [
+        "# Adapter Matching Registration Order, Selection Loop and Send Call Sites\n\nThis community concerns the code paths that could be affected if adapter matching changes to case-sensitive or shortest-prefix-first behavior. The supplied evidence identifies the areas to inspect conceptually—registration order, the adapter-selection loop, and send call sites—but does not provide source files, module names, function names, or line references. The exact implementation locations therefore remain unresolved.\n\n## Adapter registration order is the first area to inspect\n\nAll adapter-registration call sites should be inspected to determine whether the current behavior depends on insertion order. In particular, the review should identify where adapters are registered, the order in which registrations occur, and whether later registrations replace, shadow, or coexist with earlier ones.\n\nIf matching becomes shortest-prefix-first, registration order may no longer determine which adapter is selected. If matching becomes case-sensitive, registration inputs should also be checked for casing differences that could cause previously equivalent registrations to remain distinct. These are proposed inspection targets, not established behaviors in the supplied evidence.\n\nThe snapshot does not identify the module, function, or registration statements involved. No exact source location can therefore be provided.\n\n## The adapter-selection loop is the central behavioral location\n\nThe adapter-selection loop should be inspected for the comparison and ordering logic used to choose an adapter. The relevant questions are whether matching is currently case-sensitive, whether prefixes are compared by length, whether the first matching entry wins, and whether the loop depends on the order of the registration collection.\n\nA shortest-prefix-first change would require verifying the ordering criterion before selection. A case-sensitive change would require verifying how candidate prefixes and the requested value are compared. Any proposed change should also clarify how ties and no-match cases are handled.\n\nThe supplied evidence does not identify the selection function or provide its implementation. Consequently, no exact module/function location or runtime conclusion is supported.\n\n## Send call sites should be checked for selection assumptions\n\nEvery send call site that obtains or uses an adapter should be inspected to determine whether it assumes a particular adapter-selection result. The review should establish whether send operations select an adapter directly, delegate selection to another function, or reuse an adapter selected earlier.\n\nCall sites should also be checked for inputs whose casing or prefix length could change the selected adapter under the proposed rules. This is a search plan for evaluating impact, not evidence that any send call site currently depends on registration order or case-insensitive matching.\n\nThe snapshot contains no named send function, module, or call-site location. Exact locations and affected callers therefore remain unknown.\n\n## The proposed matching changes require cross-checking all three areas\n\nThe minimum inspection should connect adapter registration, the selection loop, and send call sites. Registration determines the available candidates, the selection loop determines the matching and ordering semantics, and send call sites reveal whether callers rely on the selected result.\n\nA case-sensitive change should be traced through registration normalization, candidate comparison, and send inputs. A shortest-prefix-first change should be traced through candidate ordering, selection-loop control flow, and any send behavior that depends on the chosen adapter. These relationships are proposed areas of analysis rather than established source relationships.\n\nNo supplied evidence demonstrates the current matching algorithm, registration order, selection behavior, or send-time dependencies. The implementation impact cannot be determined without the relevant source snapshot.\n\n## Exact locations and regression coverage remain unresolved\n\nThe supplied evidence is insufficient to name the modules or functions that must be inspected, identify exact registration statements, or list specific send call sites. It also does not establish whether tests cover case variation, overlapping prefixes, registration order, ties, or no-match behavior.\n\nA complete review would need the source records for adapter registration, adapter selection, and send dispatch, together with any tests covering those paths. Until those records are available, the answer can identify inspection categories but cannot support exact locations, confirmed regressions, or runtime conclusions."
+      ],
+      "dimensions": 3072,
+      "encoding_format": "float"
+    }
+  },
+  "response_envelope": {
+    "http_status": 200,
+    "response": {
+      "model": "text-embedding-3-large",
+      "usage": {
+        "prompt_tokens": 768,
+        "total_tokens": 768
+      },
+      "vectors_omitted": true,
+      "vector_count": 1,
+      "dimensions": [
+        3072
+      ]
+    },
+    "response_byte_limit": 4194304,
+    "response_bytes": 60706,
+    "private_complete_response_sha256": "2dde27145b3d12ded22ee0ce1a4a0dbc3bfb5e092045a8999a63ac4e694b7c77"
+  }
+}

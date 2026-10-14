@@ -1,45 +1,38 @@
-# Microsoft GraphRAG 适合做开发助手的代码索引吗？
+# Graph RAG 对代码有价值吗？
 
-把代码仓库想成图书馆：关键词搜索查原文，向量检索按意思找段落，Microsoft GraphRAG 先制作“事物卡片”和关系导读。导读能提供线索；真正改代码，还要找到**具体哪一页、哪个版本、哪些调用者和测试**。文档实体图与程序的符号／调用图是两种东西，不能因为都有“图”，就认定能解决相同问题。
+把代码仓库想成图书馆：关键词搜索查原文，向量检索按意思找段落，Microsoft GraphRAG 先制作“事物卡片”和关系导读。导读能帮助理解；真正改代码，还要找到**具体哪一页、哪个版本、哪些调用者和测试**。文档实体图与程序的符号／调用图是两种东西，不能因为都有“图”，就认定能解决相同问题。
 
-**[阅读中文主报告](docs/report.md)** · [通俗原理与架构图](docs/graphrag-explained.md) · [实验方法与复算](research/pilot/full-run.md) · [一手来源导航](research/README.md)
+**[阅读中文主报告](docs/report.md)** · [本轮失败原因案例](docs/report.md#本轮为什么表现不够好) · [通俗原理与架构图](docs/graphrag-explained.md) · [本轮回答、评分与复算](research/pilot/strategy-routing/results/README.md) · [一手来源导航](research/README.md)
 
-固定 **Microsoft GraphRAG v3.3.0**；文献检索截止 **2026-10-12**，实验完成于 **2026-10-14**。本次重点验证微软实现；旧自制代码结构图实验保留在[Git历史](research/legacy.md)，不混入下表。
+文献检索截止 **2026-10-12**；实验完成于 **2026-10-14**。固定 **Microsoft GraphRAG v3.3.0** 和 **Requests 2.32.3**。本轮重点验证微软实现；早期自制代码结构图实验保留在[Git历史](research/legacy.md)，不混入下表。
 
-**代码提示词＋实体类型配置的 Local 在本次覆盖更高，但整体证据覆盖仍落后于 hybrid。** 同一 Requests 快照、冻结问题和评分规则下，结果如下。各列是整个上下文的 token 上限，百分比是必要源码证据覆盖率，**不是回答正确率**。
+**本次结果支持把图作为可验证的补充，还不足以替换基础检索。** 我们复用面向代码配置的图，在回答前仅按问题文字选择Local、Global或DRIFT，组成**一个统一GraphRAG方法**；没有每题试遍三种再挑最好。与三个基线共执行92个单元，86份有最终回答，6份失败保留计分。
 
-| 方法 | 4000 | 8000 | 12000 | 16000 |
-| --- | ---: | ---: | ---: | ---: |
-| BM25关键词 | 35.3% | 43.7% | 64.3% | 69.3% |
-| 关键词＋真实向量hybrid | **42.9%** | **56.3%** | **71.0%** | **77.9%** |
-| Microsoft Basic向量 | 35.8% | 55.8% | 57.4% | 57.4% |
-| Local：默认抽取 | 5.6% | 21.0% | 21.0% | 23.2% |
-| Local：代码提示词＋实体类型 | 19.0% | 42.2% | 53.8% | 55.4% |
+| 方法 | 主测试16题：必要要点完成分 | 有最终回答 |
+| --- | ---: | ---: |
+| BM25关键词 | 70.4% | 16/16 |
+| Microsoft Basic真实向量 | **79.1%** | 16/16 |
+| 关键词＋真实向量hybrid | 78.1% | 16/16 |
+| 统一GraphRAG：预定路由 | 55.4% | 11/16 |
 
-主分母是15道可评分测试题；另1道无实现负例不计召回，4道开发题单列。实际取回的原文须覆盖一段预标证据至少80%的行才算命中，再按题平均；严格100%行口径结果相同。[400份上下文的合并分数](research/pilot/results/code-prompt/scores.json)与[复算汇总](research/pilot/results/code-prompt/analysis.json)公开。
+这里的分数是预先规定的必要要点完成程度，**不是整篇回答完全正确率**。遗漏、额外错误、材料支持度和引用位置另有逐条审计。补充6题单列：GraphRAG为71.25%，BM25／Basic均77.5%，hybrid78.3%；其中3题复用主组答案，不算新独立样本。[全部分数与配对结果](research/pilot/strategy-routing/results/scores.json)
 
-**找全与排前有不同结果。** 16000档，代码配置的 Local 首条相关源码排序更好：MRR为0.619、前5块证据召回为53.8%，均高于hybrid的0.528、48.4%；但完整上下文只覆盖55.4%，hybrid为77.9%。相同上限也不等于相同实际源码量：两者按16道test平均的源码量约7398与14666 token。图有补充线索的价值，尚不足以证明可以替换基础检索。
+**不能把失败全归给图。** 六次失败均在DRIFT产生初答与追问的primer阶段被服务适配器报告为`responses_empty_or_multiple_messages`；原始事件流未留存，无法判定究竟是空消息、多消息还是适配问题，更不能据此证明算法无效。只看GraphRAG成功的11道主测试题，分数为80.5%，但这是筛掉失败后的子集，不能替代主表或与基线全16题比较。
 
-**改善与失败同时存在。** Q07调用链的覆盖从默认Local的0升至60%，命中Session中段，仍缺公开API入口；Q01虽然有更精确的方法卡片，四档仍没交回字典实现，覆盖为0。[固定案例追踪](research/pilot/results/code-prompt/fixed-local-review.json)把“抽到了”“进了图”“进了检索材料”分开核对。
+**也不能只看答案说得像不像。** 先前400份同预算检索上下文显示：12k上限下，hybrid必要源码覆盖71.0%，代码配置Local为53.8%；16k时Local首条相关源码排序较好，但总覆盖仍落后。新的Q01答案拿到全部必要要点，仍错误解释了`lower_items()`；Q07的GraphRAG回答只完成40%的调用链要点。图中的名字和导读，不能自动代替可核对的源码。[分阶段结果与案例](docs/report.md)
 
-**成本不小，结论范围也有限。** 新配置有1628实体、2891关系和372份报告；1347次实际生成尝试、103批新embedding，索引输出31.65 MB。已记录请求耗时合计约206.4分钟，另有一次缺失耗时；跨中断的全程约13.49小时，不能当作纯计算时间。生成费用未知，内存峰值未测。默认版与新配置的超时、恢复规则也不同，且新配置是在看过旧失败之后设计；这是探索性比较，不能把全部改善归因于提示词。[完整成本、恢复及边界](research/pilot/results/code-prompt/README.md)
+**成本与范围决定是否值得尝试。** 本轮只查询既有图，新增148次实际生成尝试和44次embedding；生成美元费用未知。此前建图另需1347次实际生成尝试，索引输出31.65 MB，已记录请求耗时约206.4分钟。本轮DRIFT／Global允许多次阅读，三个基线只回答一次，总预算不等；没有等实际源码量或随机邻居消融，不能据此隔离“图本身”的收益。
 
-**适合尝试的场景：**需要理解分散概念、寻找额外测试线索，且允许按commit低频生成并核对导读。**不能仅靠它的场景：**唯一符号定位、完整调用者集合、运行时动态目标、频繁改删同步。建议先做好关键词＋真实向量基线、来源位置和版本，再让图证明能补到遗漏；外接AST／符号图应另行评测。
+适合试验：分散概念、设计讨论、寻找额外测试线索，且能核对来源并按commit更新索引。不能仅靠它：唯一符号定位、完整调用者集合、运行时动态目标、频繁改删同步。先做好关键词＋真实向量、源码位置和版本，再检验图是否持续补到遗漏。
 
-默认图另做了6题Global真实回答对照：能整理职责和测试主题，也有错误方法名和无效引用；输入量是BM25的7.86倍，并非等预算。两个功能任务共8份单轮补丁均因diff损坏无法应用，未进入测试。新代码配置**未重跑Global、生成回答或功能修改**，不宣称端到端准确率。[Global原始回答](research/pilot/results/global) · [功能尝试与限制](research/pilot/full-run.md)
+实验由用户指定Mac mini编排，使用获授权的远端模型，**不是本地权重推理**。本轮只测一个较小Python仓库，题目与独立复核均由AI完成，没有独立人类评分；旧问题已知，因此是探索性比较。没有完成新的功能补丁或回归验证，也不宣称开发任务成功率。
 
-实验由用户指定Mac mini编排，模型来自获授权的远端服务，**不是本地权重推理**。主要局限是一个较小Python仓库、AI拟题和AI复核、没有独立人类评分；没有等实际源码量／随机邻居消融，不能概括整个行业。运行时JSON格式修复、未知用量和中断均保留，不以索引成功或图更大作为效果证据。
-
-发布快检不需要网络、凭据或模型：
+不联网、不用凭据即可复算本轮结果：
 
 ```bash
-python3 -m unittest discover -s tests
-python3 -m unittest discover -s research/pilot/tests
-python3 research/pilot/verify_code_prompt_completed.py
-python3 research/pilot/evaluate_code_prompt.py check
-python3 research/pilot/analyze_code_prompt.py --check
-python3 research/pilot/complete_code_prompt_evaluation.py --check
+python3 research/pilot/strategy-routing/verify.py
+python3 research/pilot/strategy-routing/verify_results.py
 python3 scripts/validate.py
 ```
 
-完整检查见[CI](.github/workflows/verify.yml)。原创内容适用[MIT](LICENSE)，第三方片段见[许可与归因](NOTICE.md)。[四张图与小店示例](docs/figures/README.md)是教学材料，不是微软输出。[研究过程](research/process.md)保留真实提交、原始结果和独立复核。
+[完整轻量CI](.github/workflows/verify.yml)检查冻结材料、原始结果、评分与链接，不跑在线模型。[研究过程](research/process.md)保留真实提交与审查记录。原创内容适用[MIT](LICENSE)，第三方片段与官方提示词见[许可与归因](NOTICE.md)。[四张教学图](docs/figures/README.md)不是微软输出。

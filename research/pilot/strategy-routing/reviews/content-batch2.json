@@ -1,0 +1,853 @@
+{
+  "rubric_sha256": "d1bdca1bf597530a0f90081220b5370893bc04742b080fe3dbd492dd7b3de225",
+  "blind_pack_sha256": "5ac8177b5926beb0ca3e2e1ba49196b024cd55030be9953309d5bfd5b4f003b6",
+  "reviewer": "answer_review_b",
+  "scope": {
+    "batch": "content-batch2",
+    "question_ids": [
+      "Q04",
+      "Q05",
+      "Q06"
+    ],
+    "answer_count": 12,
+    "review_type": "method-anonymous content review against frozen rubric and Requests source; actual supplied evidence not yet reviewed",
+    "blinding_limit": "仅隐藏方法标识；答案引用样式可能泄露策略，不声称完整双盲。",
+    "files_read": [
+      ".cache/pilot/strategy-routing-20261014/blind-content-batch2.json",
+      "research/pilot/strategy-routing/answer-gold.json",
+      "frozen Requests source files under .cache/pilot/source"
+    ],
+    "source_anchor_hashes_verified": [
+      "Q04-E1",
+      "Q05-E1",
+      "Q05-E2",
+      "Q06-E1"
+    ],
+    "no_api_or_credentials_used": true,
+    "scoring_note": "缺失引用不扣内容分；源码已知为真的内容不自动证明实际回答材料支持。行范围错误单列，不二次扣分。"
+  },
+  "rows": [
+    {
+      "anonymous_id": "A053",
+      "question_id": "Q05",
+      "answer_sha256": "02b55b75bfe11bb7c7edff4a667cee2c3d34bb832928e68c8c926320cf1f56b2",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q05-C1",
+          "score": 1,
+          "answer_quote": "JSON decoding errors are converted in `Response.json()` in `src/requests/models.py:L930-L1037`.",
+          "rationale": "准确定位 models.Response.json，并给出目标 RequestsJSONDecodeError；不要求额外说明导入别名。",
+          "gold_anchor_ids": [
+            "Q05-E1",
+            "Q05-E2"
+          ]
+        },
+        {
+          "id": "Q05-C2",
+          "score": 1,
+          "answer_quote": "both decoding paths catch the underlying `JSONDecodeError` and raise Requests’ library-specific exception",
+          "rationale": "答案分别覆盖编码探测后的字节解码路径与 self.text 回退路径，两者均捕获 JSONDecodeError，没有与 UnicodeDecodeError 混淆。",
+          "gold_anchor_ids": [
+            "Q05-E1",
+            "Q05-E2"
+          ]
+        },
+        {
+          "id": "Q05-C3",
+          "score": 1,
+          "answer_quote": "RequestsJSONDecodeError(e.msg, e.doc, e.pos)",
+          "rationale": "给出的构造调用明确传递 e.msg、e.doc、e.pos，满足保留原错误信息要求。",
+          "gold_anchor_ids": [
+            "Q05-E1",
+            "Q05-E2"
+          ]
+        }
+      ],
+      "content_mean": 1.0,
+      "errors": [],
+      "citation_audit": [
+        {
+          "citation": "src/requests/models.py:L930-L1037",
+          "source_anchor": "src/requests/models.py:L947-L978",
+          "status": "source_location_checked_actual_exposure_pending",
+          "rationale": "范围包含 Response.json 及两次异常转换。",
+          "actual_supplied_material_check": "pending"
+        },
+        {
+          "citation": "src/requests/exceptions.py:L25-L46",
+          "source_anchor": "src/requests/exceptions.py:L27-L42",
+          "status": "source_location_checked_actual_exposure_pending",
+          "rationale": "包含库异常的继承及构造函数；RequestException 基类声明在 L12。",
+          "actual_supplied_material_check": "pending"
+        },
+        {
+          "citation": "tests/test_lowlevel.py:L401-L428",
+          "source_anchor": "tests/test_lowlevel.py:L407-L428",
+          "status": "source_location_checked_actual_exposure_pending",
+          "rationale": "包含另一 UTF 编码的 JSON 异常兼容性测试。",
+          "actual_supplied_material_check": "pending"
+        },
+        {
+          "citation": "tests/test_requests.py:L2965-L2976",
+          "source_anchor": "tests/test_requests.py:L2969-L2976",
+          "status": "source_location_checked_actual_exposure_pending",
+          "rationale": "包含 JSONDecodeError 序列化/反序列化测试。",
+          "actual_supplied_material_check": "pending"
+        },
+        {
+          "citation": "supplied snapshot does not show the import/alias declaration",
+          "source_anchor": "src/requests/models.py:L49",
+          "status": "supplied_scope_claim_pending",
+          "rationale": "完整冻结源码有别名导入；是否提供给生成器须等实际匿名证据包，不能凭评审所见源码判定该限定句错误。",
+          "actual_supplied_material_check": "pending"
+        }
+      ],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A072",
+      "question_id": "Q04",
+      "answer_sha256": "98ad2a3963a9ac4ed3a0779f1d3846cf54ca8615eeb42e526b0d4e4d420fb38a",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q04-C1",
+          "score": 0,
+          "answer_quote": "The supplied snapshot does not contain a method that removes a registered response callback and reports whether it existed.",
+          "rationale": "可回答题没有指出 deregister_hook；仅称给定材料不足不能替代该内容要点。未据此把其材料限定的拒答认定为事实捏造。",
+          "gold_anchor_ids": [
+            "Q04-E1"
+          ]
+        },
+        {
+          "id": "Q04-C2",
+          "score": 0,
+          "answer_quote": "it does not remove callbacks or return an existence flag.",
+          "rationale": "没有给出 self.hooks[event].remove(hook) 及成功 True 的目标行为；dispatch_hook 的排除说明不是该必要点。",
+          "gold_anchor_ids": [
+            "Q04-E1"
+          ]
+        },
+        {
+          "id": "Q04-C3",
+          "score": 0,
+          "answer_quote": "Therefore, the exact method location cannot be identified from the supplied evidence.",
+          "rationale": "没有给出缺失项 ValueError 转换为 False 的行为。",
+          "gold_anchor_ids": [
+            "Q04-E1"
+          ]
+        }
+      ],
+      "content_mean": 0.0,
+      "errors": [],
+      "citation_audit": [
+        {
+          "citation": "Source 43; src/requests/hooks.py dispatch_hook",
+          "source_anchor": "src/requests/hooks.py:L22-L33",
+          "status": "source_location_checked_actual_exposure_pending",
+          "rationale": "描述的 dispatch 行为与源码一致；数字来源映射待查。",
+          "actual_supplied_material_check": "pending"
+        },
+        {
+          "citation": "Source 48; RequestHooksMixin area",
+          "source_anchor": "src/requests/models.py:L206-L227",
+          "status": "supplied_scope_claim_pending",
+          "rationale": "完整冻结源码存在 deregister_hook；所给 excerpt 是否缺少它待查，不提前判定引用虚构。",
+          "actual_supplied_material_check": "pending"
+        },
+        {
+          "citation": "Source 74; tests/test_hooks.py",
+          "source_anchor": "tests/test_hooks.py:L10-L22",
+          "status": "source_location_checked_actual_exposure_pending",
+          "rationale": "文件确为 dispatch/default_hooks 测试；实际引用编号待查。",
+          "actual_supplied_material_check": "pending"
+        }
+      ],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A045",
+      "question_id": "Q06",
+      "answer_sha256": "00e83ea68ef6b0f1472fe77240a26ca4ebedf9e4a0360aa8ae892cc5e69ad9ac",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q06-C1",
+          "score": 1,
+          "answer_quote": "Each received chunk is prefixed with the previous unfinished fragment when present:",
+          "rationale": "明确 Response.iter_lines 从 iter_content 取块，并将 pending 前缀拼接到下一块。",
+          "gold_anchor_ids": [
+            "Q06-E1"
+          ]
+        },
+        {
+          "id": "Q06-C2",
+          "score": 1,
+          "answer_quote": "`chunk.split(delimiter)` when a custom `delimiter` is supplied",
+          "rationale": "说明 split(delimiter) 与 splitlines() 两条路径；未声称空 delimiter 必然进入自定义路径。",
+          "gold_anchor_ids": [
+            "Q06-E1"
+          ]
+        },
+        {
+          "id": "Q06-C3",
+          "score": 1,
+          "answer_quote": "Completed lines are yielded immediately with `yield from lines`.",
+          "rationale": "区分未终止尾项与完成行；尾项 pop 后暂存 pending，其余 lines 立即 yield。",
+          "gold_anchor_ids": [
+            "Q06-E1"
+          ]
+        },
+        {
+          "id": "Q06-C4",
+          "score": 1,
+          "answer_quote": "After all chunks are exhausted, any remaining `pending` fragment is yielded:",
+          "rationale": "明确流结束仍 yield 剩余 pending，覆盖末尾无终止符的内容。",
+          "gold_anchor_ids": [
+            "Q06-E1"
+          ]
+        }
+      ],
+      "content_mean": 1.0,
+      "errors": [],
+      "citation_audit": [
+        {
+          "citation": "Source 49; src/requests/models.py:L777-L942",
+          "source_anchor": "src/requests/models.py:L857-L888",
+          "status": "source_location_checked_actual_exposure_pending",
+          "rationale": "范围包含 iter_lines 所述实现。",
+          "actual_supplied_material_check": "pending"
+        },
+        {
+          "citation": "relationships 1007, 1019, 1020, 1021",
+          "source_anchor": "src/requests/models.py:L869-L881",
+          "status": "graph_reference_resolution_pending",
+          "rationale": "对应的 iter_content、split、splitlines、pop 调用确存在；关系记录编号与追溯链本阶段不核验。",
+          "actual_supplied_material_check": "pending"
+        },
+        {
+          "citation": "no test specifically exercising iter_lines(delimiter=...) in supplied evidence",
+          "source_anchor": null,
+          "status": "supplied_scope_claim_pending",
+          "rationale": "限定实际给定材料的缺失声明，等待匿名证据包。",
+          "actual_supplied_material_check": "pending"
+        }
+      ],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A020",
+      "question_id": "Q04",
+      "answer_sha256": "929e43b82daf13e568e1f4a58b0d3eceec942821f07766582429ab94d310ad18",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q04-C1",
+          "score": 1,
+          "answer_quote": "The method is `RequestHooksMixin.deregister_hook` in `src/requests/models.py`.",
+          "rationale": "准确给出 models.py 中 RequestHooksMixin.deregister_hook；定位满足必要内容，引用行号另审。",
+          "gold_anchor_ids": [
+            "Q04-E1"
+          ]
+        },
+        {
+          "id": "Q04-C2",
+          "score": 1,
+          "answer_quote": "It removes the callback with `self.hooks[event].remove(hook)`.",
+          "rationale": "给出事件对应列表的 remove(hook) 操作及成功 True，未声称删除所有重复项。",
+          "gold_anchor_ids": [
+            "Q04-E1"
+          ]
+        },
+        {
+          "id": "Q04-C3",
+          "score": 1,
+          "answer_quote": "It returns `True` if removal succeeds and `False` if a `ValueError` indicates the callback was not registered.",
+          "rationale": "明确缺失回调引发 ValueError 并转换为 False，未泛化为捕获全部异常。",
+          "gold_anchor_ids": [
+            "Q04-E1"
+          ]
+        }
+      ],
+      "content_mean": 1.0,
+      "errors": [],
+      "citation_audit": [
+        {
+          "citation": "Source 45; src/requests/models.py — RequestHooksMixin.deregister_hook",
+          "source_anchor": "src/requests/models.py:L218-L227",
+          "status": "source_location_checked_actual_exposure_pending",
+          "rationale": "命名位置和行为与冻结源码一致；实际 Source 编号映射待查。",
+          "actual_supplied_material_check": "pending"
+        }
+      ],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A004",
+      "question_id": "Q05",
+      "answer_sha256": "c24c4024bd770274d9673dc460ad4393df4563a6ab036f5e31d4ab270c3c5ce8",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q05-C1",
+          "score": 1,
+          "answer_quote": "JSON decoding errors from `Response.json()` are converted in `src/requests/models.py`, inside `Response.json()`",
+          "rationale": "准确定位 models.Response.json，并给出目标 RequestsJSONDecodeError；不要求额外说明导入别名。",
+          "gold_anchor_ids": [
+            "Q05-E1",
+            "Q05-E2"
+          ]
+        },
+        {
+          "id": "Q05-C2",
+          "score": 1,
+          "answer_quote": "In the fallback path, `complexjson.loads(self.text, **kwargs)` is called and its `JSONDecodeError` is likewise caught and converted to `RequestsJSONDecodeError`.",
+          "rationale": "答案分别覆盖编码探测后的字节解码路径与 self.text 回退路径，两者均捕获 JSONDecodeError，没有与 UnicodeDecodeError 混淆。",
+          "gold_anchor_ids": [
+            "Q05-E1",
+            "Q05-E2"
+          ]
+        },
+        {
+          "id": "Q05-C3",
+          "score": 1,
+          "answer_quote": "RequestsJSONDecodeError(e.msg, e.doc, e.pos)",
+          "rationale": "给出的构造调用明确传递 e.msg、e.doc、e.pos，满足保留原错误信息要求。",
+          "gold_anchor_ids": [
+            "Q05-E1",
+            "Q05-E2"
+          ]
+        }
+      ],
+      "content_mean": 1.0,
+      "errors": [],
+      "citation_audit": [
+        {
+          "citation": "src/requests/models.py:L930-L1037",
+          "source_anchor": "src/requests/models.py:L947-L978",
+          "status": "source_location_checked_actual_exposure_pending",
+          "rationale": "覆盖两条 JSON 异常转换路径。",
+          "actual_supplied_material_check": "pending"
+        },
+        {
+          "citation": "Source 41; src/requests/exceptions.py:L1-L151",
+          "source_anchor": "src/requests/exceptions.py:L27-L42",
+          "status": "source_location_checked_actual_exposure_pending",
+          "rationale": "包含异常继承与初始化；数字编号待查。",
+          "actual_supplied_material_check": "pending"
+        },
+        {
+          "citation": "Source 12; docs/user/quickstart.rst:L133-L263",
+          "source_anchor": "docs/user/quickstart.rst:L154-L158",
+          "status": "source_location_checked_actual_exposure_pending",
+          "rationale": "文档确说明 JSONDecodeError 的兼容封装。",
+          "actual_supplied_material_check": "pending"
+        },
+        {
+          "citation": "Source 78; tests/test_lowlevel.py:L379-L428",
+          "source_anchor": "tests/test_lowlevel.py:L407-L428",
+          "status": "source_location_checked_actual_exposure_pending",
+          "rationale": "范围包含异常双重兼容性检查。",
+          "actual_supplied_material_check": "pending"
+        },
+        {
+          "citation": "supplied excerpts do not show exact import or alias definition",
+          "source_anchor": "src/requests/models.py:L49",
+          "status": "supplied_scope_claim_pending",
+          "rationale": "完整源码有导入，但不能据此认定实际提供材料包括它。",
+          "actual_supplied_material_check": "pending"
+        }
+      ],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A081",
+      "question_id": "Q06",
+      "answer_sha256": "7f365fb31085bd17b4fc8291b253c0818f5238410f9ae8d21349cab651694121",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q06-C1",
+          "score": 1,
+          "answer_quote": "For each chunk from `self.iter_content(...)`, it prepends the previous `pending` fragment before splitting:",
+          "rationale": "明确 Response.iter_lines 从 iter_content 取块，并将 pending 前缀拼接到下一块。",
+          "gold_anchor_ids": [
+            "Q06-E1"
+          ]
+        },
+        {
+          "id": "Q06-C2",
+          "score": 1,
+          "answer_quote": "With `delimiter` provided: `chunk.split(delimiter)`\n  - Otherwise: `chunk.splitlines()`",
+          "rationale": "说明 split(delimiter) 与 splitlines() 两条路径；未声称空 delimiter 必然进入自定义路径。",
+          "gold_anchor_ids": [
+            "Q06-E1"
+          ]
+        },
+        {
+          "id": "Q06-C3",
+          "score": 0.5,
+          "answer_quote": "That fragment is removed from `lines` and saved back to `pending`; otherwise, `pending` is cleared.",
+          "rationale": "正确识别非空未终止尾段并从 lines 移到 pending，但未说明其余完成 lines 会在每轮 yield。冻结满分口径包含这一输出环节，因此记实质遗漏的半分；不额外记事实错误。",
+          "gold_anchor_ids": [
+            "Q06-E1"
+          ]
+        },
+        {
+          "id": "Q06-C4",
+          "score": 1,
+          "answer_quote": "After all chunks are consumed, any remaining `pending` fragment is yielded.",
+          "rationale": "明确流结束仍 yield 剩余 pending，覆盖末尾无终止符的内容。",
+          "gold_anchor_ids": [
+            "Q06-E1"
+          ]
+        }
+      ],
+      "content_mean": 0.875,
+      "errors": [],
+      "citation_audit": [
+        {
+          "citation": "Source 49; src/requests/models.py:L777-L942",
+          "source_anchor": "src/requests/models.py:L857-L888",
+          "status": "source_location_checked_actual_exposure_pending",
+          "rationale": "包含 iter_lines 全部实现。",
+          "actual_supplied_material_check": "pending"
+        },
+        {
+          "citation": "Source 90; tests/test_requests.py:L1345-L1498",
+          "source_anchor": "tests/test_requests.py:L1402-L1478",
+          "status": "source_location_checked_actual_exposure_pending",
+          "rationale": "范围含 iter_content Unicode、chunk_size、异常包装测试；也含其他测试，因此对 tests shown only 的范围限定待实际材料核验。",
+          "actual_supplied_material_check": "pending"
+        },
+        {
+          "citation": "no separate test specifically covering unfinished lines with a custom delimiter in supplied source",
+          "source_anchor": null,
+          "status": "supplied_scope_claim_pending",
+          "rationale": "仅针对实际给定材料，不扩展为全库无测试。",
+          "actual_supplied_material_check": "pending"
+        }
+      ],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A003",
+      "question_id": "Q04",
+      "answer_sha256": "66c8fc5561d4a36c4719fd0db9ce130734669902d3e9464068c3c46a520023c6",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q04-C1",
+          "score": 1,
+          "answer_quote": "The method is `RequestHooksMixin.deregister_hook` in `src/requests/models.py`",
+          "rationale": "准确给出 models.py 中 RequestHooksMixin.deregister_hook；定位满足必要内容，引用行号另审。",
+          "gold_anchor_ids": [
+            "Q04-E1"
+          ]
+        },
+        {
+          "id": "Q04-C2",
+          "score": 1,
+          "answer_quote": "It removes the callback with `self.hooks[event].remove(hook)`, returns `True` if removal succeeds",
+          "rationale": "给出事件对应列表的 remove(hook) 操作及成功 True，未声称删除所有重复项。",
+          "gold_anchor_ids": [
+            "Q04-E1"
+          ]
+        },
+        {
+          "id": "Q04-C3",
+          "score": 1,
+          "answer_quote": "returns `False` when the callback is not present and `ValueError` is raised.",
+          "rationale": "明确缺失回调引发 ValueError 并转换为 False，未泛化为捕获全部异常。",
+          "gold_anchor_ids": [
+            "Q04-E1"
+          ]
+        }
+      ],
+      "content_mean": 1.0,
+      "errors": [],
+      "citation_audit": [
+        {
+          "citation": "Source 45; src/requests/models.py within L170-L345",
+          "source_anchor": "src/requests/models.py:L218-L227",
+          "status": "source_location_checked_actual_exposure_pending",
+          "rationale": "范围包含正确方法。",
+          "actual_supplied_material_check": "pending"
+        },
+        {
+          "citation": "Entity REQUESTHOOKSMIXIN.DEREGISTER_HOOK; Relationship 888",
+          "source_anchor": "src/requests/models.py:L218-L227",
+          "status": "graph_reference_resolution_pending",
+          "rationale": "命名实体对应真实方法；图记录及关系编号待匿名证据核验。",
+          "actual_supplied_material_check": "pending"
+        }
+      ],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A070",
+      "question_id": "Q05",
+      "answer_sha256": "8ba67dd6d53dba8a4a8e520c23c05b44e615ccda1bd53aaa90967e69ba1f7ea4",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q05-C1",
+          "score": 1,
+          "answer_quote": "JSON decoding errors are converted in `src/requests/models.py`, inside the `Response.json()` method",
+          "rationale": "准确定位 models.Response.json，并给出目标 RequestsJSONDecodeError；不要求额外说明导入别名。",
+          "gold_anchor_ids": [
+            "Q05-E1",
+            "Q05-E2"
+          ]
+        },
+        {
+          "id": "Q05-C2",
+          "score": 1,
+          "answer_quote": "In the fallback path using `self.text`, it catches `JSONDecodeError` and raises the same library-specific exception.",
+          "rationale": "答案分别覆盖编码探测后的字节解码路径与 self.text 回退路径，两者均捕获 JSONDecodeError，没有与 UnicodeDecodeError 混淆。",
+          "gold_anchor_ids": [
+            "Q05-E1",
+            "Q05-E2"
+          ]
+        },
+        {
+          "id": "Q05-C3",
+          "score": 1,
+          "answer_quote": "RequestsJSONDecodeError(e.msg, e.doc, e.pos)",
+          "rationale": "给出的构造调用明确传递 e.msg、e.doc、e.pos，满足保留原错误信息要求。",
+          "gold_anchor_ids": [
+            "Q05-E1",
+            "Q05-E2"
+          ]
+        }
+      ],
+      "content_mean": 1.0,
+      "errors": [],
+      "citation_audit": [
+        {
+          "citation": "Source 50; src/requests/models.py:L930-L1037",
+          "source_anchor": "src/requests/models.py:L947-L978",
+          "status": "source_location_checked_actual_exposure_pending",
+          "rationale": "包含双路径异常转换。",
+          "actual_supplied_material_check": "pending"
+        },
+        {
+          "citation": "Source 44; src/requests/models.py imports",
+          "source_anchor": "src/requests/models.py:L29-L49",
+          "status": "source_location_checked_actual_exposure_pending",
+          "rationale": "给出的别名导入逐字存在；捕获类型来自 compat。",
+          "actual_supplied_material_check": "pending"
+        },
+        {
+          "citation": "Source 36; src/requests/compat.py:L1-L94",
+          "source_anchor": "src/requests/compat.py:L45-L57",
+          "status": "source_location_checked_actual_exposure_pending",
+          "rationale": "确按 simplejson 是否可用选择 JSONDecodeError。",
+          "actual_supplied_material_check": "pending"
+        },
+        {
+          "citation": "Source 21; src/requests/__init__.py:L155-L184",
+          "source_anchor": "src/requests/__init__.py:L165-L176",
+          "status": "source_location_checked_actual_exposure_pending",
+          "rationale": "包命名空间确导出 JSONDecodeError。",
+          "actual_supplied_material_check": "pending"
+        },
+        {
+          "citation": "Source 100; tests/test_requests.py:L2690-L2835",
+          "source_anchor": "tests/test_requests.py:L2804-L2816",
+          "status": "source_location_checked_actual_exposure_pending",
+          "rationale": "两项具名 JSON 测试均在该范围。",
+          "actual_supplied_material_check": "pending"
+        },
+        {
+          "citation": "Source 78; tests/test_lowlevel.py:L379-L428",
+          "source_anchor": "tests/test_lowlevel.py:L407-L428",
+          "status": "source_location_checked_actual_exposure_pending",
+          "rationale": "包含另种 UTF 编码的兼容性测试。",
+          "actual_supplied_material_check": "pending"
+        }
+      ],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A008",
+      "question_id": "Q05",
+      "answer_sha256": "586715ccb026343ffafa84f249d0444aa67ded5efaa0eff2ed466203a88863c6",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q05-C1",
+          "score": 1,
+          "answer_quote": "`src/requests/models.py`, `Response.json()`",
+          "rationale": "准确定位 models.Response.json，并给出目标 RequestsJSONDecodeError；不要求额外说明导入别名。",
+          "gold_anchor_ids": [
+            "Q05-E1",
+            "Q05-E2"
+          ]
+        },
+        {
+          "id": "Q05-C2",
+          "score": 1,
+          "answer_quote": "in both decoding paths: the detected-encoding path and the fallback `self.text` path.",
+          "rationale": "答案分别覆盖编码探测后的字节解码路径与 self.text 回退路径，两者均捕获 JSONDecodeError，没有与 UnicodeDecodeError 混淆。",
+          "gold_anchor_ids": [
+            "Q05-E1",
+            "Q05-E2"
+          ]
+        },
+        {
+          "id": "Q05-C3",
+          "score": 1,
+          "answer_quote": "RequestsJSONDecodeError(e.msg, e.doc, e.pos)",
+          "rationale": "给出的构造调用明确传递 e.msg、e.doc、e.pos，满足保留原错误信息要求。",
+          "gold_anchor_ids": [
+            "Q05-E1",
+            "Q05-E2"
+          ]
+        }
+      ],
+      "content_mean": 1.0,
+      "errors": [],
+      "citation_audit": [
+        {
+          "citation": "Source 50; src/requests/models.py:L930-L1037",
+          "source_anchor": "src/requests/models.py:L947-L978",
+          "status": "source_location_checked_actual_exposure_pending",
+          "rationale": "包含所述两次转换。",
+          "actual_supplied_material_check": "pending"
+        },
+        {
+          "citation": "Source 41; src/requests/exceptions.py JSONDecodeError",
+          "source_anchor": "src/requests/exceptions.py:L27-L42",
+          "status": "source_location_checked_actual_exposure_pending",
+          "rationale": "继承关系与源码一致。",
+          "actual_supplied_material_check": "pending"
+        },
+        {
+          "citation": "Source 12; docs/user/quickstart.rst:L133-L263",
+          "source_anchor": "docs/user/quickstart.rst:L154-L158",
+          "status": "source_location_checked_actual_exposure_pending",
+          "rationale": "文档支持无效 JSON 抛出库异常的断言。",
+          "actual_supplied_material_check": "pending"
+        },
+        {
+          "citation": "supplied snapshot does not show import/alias declaration",
+          "source_anchor": "src/requests/models.py:L49",
+          "status": "supplied_scope_claim_pending",
+          "rationale": "是否已提供给生成器留到证据阶段，未以完整源码替代实际上下文。",
+          "actual_supplied_material_check": "pending"
+        }
+      ],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A017",
+      "question_id": "Q06",
+      "answer_sha256": "639283b19b089d8da8809016e8ffd22a4d4989afc8929592a8f731b2ac2ef4fc",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q06-C1",
+          "score": 1,
+          "answer_quote": "For each chunk from `self.iter_content(...)`, it prepends any prior `pending` value.",
+          "rationale": "明确 Response.iter_lines 从 iter_content 取块，并将 pending 前缀拼接到下一块。",
+          "gold_anchor_ids": [
+            "Q06-E1"
+          ]
+        },
+        {
+          "id": "Q06-C2",
+          "score": 1,
+          "answer_quote": "With a custom `delimiter`, it splits using `chunk.split(delimiter)`; otherwise it uses `chunk.splitlines()`.",
+          "rationale": "说明 split(delimiter) 与 splitlines() 两条路径；未声称空 delimiter 必然进入自定义路径。",
+          "gold_anchor_ids": [
+            "Q06-E1"
+          ]
+        },
+        {
+          "id": "Q06-C3",
+          "score": 1,
+          "answer_quote": "pending = lines.pop()\n    else:\n        pending = None\n\n    yield from lines",
+          "rationale": "区分未终止尾项与完成行；尾项 pop 后暂存 pending，其余 lines 立即 yield。",
+          "gold_anchor_ids": [
+            "Q06-E1"
+          ]
+        },
+        {
+          "id": "Q06-C4",
+          "score": 1,
+          "answer_quote": "After all chunks are consumed, any remaining `pending` value is yielded.",
+          "rationale": "明确流结束仍 yield 剩余 pending，覆盖末尾无终止符的内容。",
+          "gold_anchor_ids": [
+            "Q06-E1"
+          ]
+        }
+      ],
+      "content_mean": 1.0,
+      "errors": [],
+      "citation_audit": [
+        {
+          "citation": "Source 49; src/requests/models.py:L777-L942",
+          "source_anchor": "src/requests/models.py:L857-L888",
+          "status": "source_location_checked_actual_exposure_pending",
+          "rationale": "代码片段逐段对应冻结实现。",
+          "actual_supplied_material_check": "pending"
+        },
+        {
+          "citation": "Source 5; docs/user/advanced.rst:L530-L685",
+          "source_anchor": "docs/user/advanced.rst:L530-L565",
+          "status": "source_location_checked_actual_exposure_pending",
+          "rationale": "文档支持 streaming 用途和非重入警告。",
+          "actual_supplied_material_check": "pending"
+        },
+        {
+          "citation": "supplied snapshot does not include dedicated custom-delimiter test",
+          "source_anchor": null,
+          "status": "supplied_scope_claim_pending",
+          "rationale": "给定材料的缺失声明待匿名证据核验。",
+          "actual_supplied_material_check": "pending"
+        }
+      ],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A015",
+      "question_id": "Q06",
+      "answer_sha256": "aacbf22b668a6b9ec85c436fc8663fc74a038206db6213625c2caec882b823b1",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q06-C1",
+          "score": 1,
+          "answer_quote": "For each chunk from `self.iter_content(...)`, it prepends the prior unfinished fragment:",
+          "rationale": "明确 Response.iter_lines 从 iter_content 取块，并将 pending 前缀拼接到下一块。",
+          "gold_anchor_ids": [
+            "Q06-E1"
+          ]
+        },
+        {
+          "id": "Q06-C2",
+          "score": 1,
+          "answer_quote": "if delimiter:\n      lines = chunk.split(delimiter)\n  else:\n      lines = chunk.splitlines()",
+          "rationale": "说明 split(delimiter) 与 splitlines() 两条路径；未声称空 delimiter 必然进入自定义路径。",
+          "gold_anchor_ids": [
+            "Q06-E1"
+          ]
+        },
+        {
+          "id": "Q06-C3",
+          "score": 1,
+          "answer_quote": "Earlier complete lines are yielded immediately with `yield from lines`.",
+          "rationale": "区分未终止尾项与完成行；尾项 pop 后暂存 pending，其余 lines 立即 yield。",
+          "gold_anchor_ids": [
+            "Q06-E1"
+          ]
+        },
+        {
+          "id": "Q06-C4",
+          "score": 1,
+          "answer_quote": "After all chunks are consumed, any remaining unfinished line is emitted:",
+          "rationale": "明确流结束仍 yield 剩余 pending，覆盖末尾无终止符的内容。",
+          "gold_anchor_ids": [
+            "Q06-E1"
+          ]
+        }
+      ],
+      "content_mean": 1.0,
+      "errors": [],
+      "citation_audit": [
+        {
+          "citation": "Source 49; src/requests/models.py:L777-L942",
+          "source_anchor": "src/requests/models.py:L857-L888",
+          "status": "source_location_checked_actual_exposure_pending",
+          "rationale": "包含全部描述的 pending 与分隔路径。",
+          "actual_supplied_material_check": "pending"
+        },
+        {
+          "citation": "Source 5; docs/user/advanced.rst:L530-L685",
+          "source_anchor": "docs/user/advanced.rst:L560-L565",
+          "status": "source_location_checked_actual_exposure_pending",
+          "rationale": "非重入及重复调用丢数据警告与文档一致。",
+          "actual_supplied_material_check": "pending"
+        },
+        {
+          "citation": "supplied snapshot does not show dedicated custom-delimiter test",
+          "source_anchor": null,
+          "status": "supplied_scope_claim_pending",
+          "rationale": "给定材料的缺失声明待匿名证据核验。",
+          "actual_supplied_material_check": "pending"
+        }
+      ],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A023",
+      "question_id": "Q04",
+      "answer_sha256": "b3b6d843ea4a2e8eb9ee6d98e039fa1e1806f9cb532dee6f9b2109c9de213cc5",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q04-C1",
+          "score": 1,
+          "answer_quote": "The method is `RequestHooksMixin.deregister_hook` in `src/requests/models.py`",
+          "rationale": "准确给出 models.py 中 RequestHooksMixin.deregister_hook；定位满足必要内容，引用行号另审。",
+          "gold_anchor_ids": [
+            "Q04-E1"
+          ]
+        },
+        {
+          "id": "Q04-C2",
+          "score": 1,
+          "answer_quote": "It removes the supplied callback with `self.hooks[event].remove(hook)`",
+          "rationale": "给出事件对应列表的 remove(hook) 操作及成功 True，未声称删除所有重复项。",
+          "gold_anchor_ids": [
+            "Q04-E1"
+          ]
+        },
+        {
+          "id": "Q04-C3",
+          "score": 1,
+          "answer_quote": "`False` if removal raised `ValueError`, meaning it was not present.",
+          "rationale": "明确缺失回调引发 ValueError 并转换为 False，未泛化为捕获全部异常。",
+          "gold_anchor_ids": [
+            "Q04-E1"
+          ]
+        }
+      ],
+      "content_mean": 1.0,
+      "errors": [
+        {
+          "anonymous_id": "A023",
+          "question_id": "Q04",
+          "method": null,
+          "answer_quote": "around `L200-L215`",
+          "claim": "deregister_hook 位于 models.py 约 L200-L215。",
+          "category": "citation_mismatch",
+          "source_or_query_anchor": "Q04-E1; src/requests/models.py:L218-L227",
+          "rationale": "该范围实际包括上一方法结尾和 register_hook 的开头，不含 L218 起的 deregister_hook。因答案写 around 且方法/模块准确，视为近似行号不精确；只记引用问题，不再扣正确的 C1 内容分。",
+          "affected_criterion_ids": [
+            "Q04-C1"
+          ]
+        }
+      ],
+      "citation_audit": [
+        {
+          "citation": "around L200-L215; src/requests/models.py",
+          "source_anchor": "src/requests/models.py:L218-L227",
+          "status": "line_range_inexact",
+          "rationale": "所写范围不含 deregister_hook；实际方法始于 L218。around 为近似限定，仍记录不精确的行范围，不扣正确定位内容分。",
+          "actual_supplied_material_check": "pending"
+        },
+        {
+          "citation": "Source 45; RequestHooksMixin.deregister_hook",
+          "source_anchor": "src/requests/models.py:L218-L227",
+          "status": "source_location_checked_actual_exposure_pending",
+          "rationale": "符号和文件准确，Source 45 实际解析留待证据包。",
+          "actual_supplied_material_check": "pending"
+        }
+      ],
+      "evidence_review_status": "pending"
+    }
+  ]
+}

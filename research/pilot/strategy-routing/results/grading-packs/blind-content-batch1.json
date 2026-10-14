@@ -1,0 +1,101 @@
+{
+  "rubric_sha256": "d1bdca1bf597530a0f90081220b5370893bc04742b080fe3dbd492dd7b3de225",
+  "rows": [
+    {
+      "anonymous_id": "A051",
+      "question_id": "Q01",
+      "query": "Where is case-insensitive header-key lookup implemented while retaining the last spelling of a key?",
+      "answer": "Case-insensitive header-key lookup is implemented in `src/requests/structures.py`, in `CaseInsensitiveDict`:\n\n- `__setitem__` stores entries under `key.lower()` while retaining the original spelling in `(key, value)`.\n- `__getitem__` performs lookup using `key.lower()`.\n- `__iter__` yields the retained, case-sensitive key spelling.\n\nThis behavior is documented in the `CaseInsensitiveDict` docstring and implemented at `src/requests/structures.py:L12-L47` (Source 60). The tests confirm that different casings retrieve the same value and that setting a differently cased key leaves only the latest spelling, at `tests/test_structures.py:L1-L78` and `tests/test_requests.py:L2157-L2294` (Sources 103 and 96).",
+      "answer_sha256": "b1820b73ff37610df5fe3ccf1e2e524aa43f27789b4e356559eb90f08d894540",
+      "status": "completed"
+    },
+    {
+      "anonymous_id": "A024",
+      "question_id": "Q03",
+      "query": "Why can an HTTP response object be false in an if statement even though a response was received?",
+      "answer": "An HTTP response object can be false because Requests defines its truth value based on the HTTP status code, not on whether a response was received.\n\nIn `src/requests/models.py`, `Response.__bool__` returns `self.ok` (`src/requests/models.py:L635-L655`). The `Response.ok` property calls `raise_for_status()` and returns `False` when that raises `HTTPError`; otherwise it returns `True` (`src/requests/models.py:L635-L655`, with `raise_for_status()` shown at `src/requests/models.py:L984-L1037`).\n\nTherefore:\n\n```python\nresponse = requests.get(url)\n\nif response:\n    # Status code is below 400\n    ...\nelse:\n    # Status code is 400 or higher\n    ...\n```\n\nA received response with a `4xx` or `5xx` status is still a valid `Response` object, but it evaluates as false because Requests treats it as an unsuccessful HTTP response. The documentation describes `raise_for_status()` as raising `HTTPError` for unsuccessful status codes (`docs/user/quickstart.rst:L554-L570`).\n\nIf you want to check whether an object exists independently of HTTP success, use:\n\n```python\nif response is not None:\n    ...\n```\n\nIf you want to check HTTP success explicitly, use `response.status_code` or call `response.raise_for_status()`. The supplied evidence does not establish the exact behavior for every individual status code beyond the implementation's documented “less than 400” rule.",
+      "answer_sha256": "3ba0d2c088b930e02f36bf07cc2ff3a2066b8009a7e1fab69a23852a305236c6",
+      "status": "completed"
+    },
+    {
+      "anonymous_id": "A031",
+      "question_id": "Q02",
+      "query": "Find where outgoing header names and values are validated before they are added to a prepared request.",
+      "answer": "**Fact**\n\nOutgoing header names and values are validated in `PreparedRequest.prepare_headers()` in `src/requests/models.py`:\n\n```python\ndef prepare_headers(self, headers):\n    self.headers = CaseInsensitiveDict()\n    if headers:\n        for header in headers.items():\n            check_header_validity(header)\n            name, value = header\n            self.headers[to_native_string(name)] = value\n```\n\nThe validation occurs at `check_header_validity(header)`, immediately before the name and value are added to `self.headers` [Source 46, `src/requests/models.py`, `PreparedRequest.prepare_headers()`].\n\nThe supplied snapshot does not include the definition or module location of `check_header_validity`, so its internal validation rules cannot be located precisely from this evidence.\n\n**Related evidence**\n\n- Tests confirm non-string header values raise `InvalidHeader` [Source 92, `tests/test_requests.py`, `test_header_value_not_str()`].\n- Tests confirm carriage returns, newlines, and leading whitespace in names or values raise `InvalidHeader` [Source 92, `tests/test_requests.py`, `test_header_no_return_chars()` and `test_header_no_leading_space()`].",
+      "answer_sha256": "7ff7aefdf79a4698a42e7353639d7c9fddce00fb1f5aaf8bc4e5004fbd240cd2",
+      "status": "completed"
+    },
+    {
+      "anonymous_id": "A054",
+      "question_id": "Q02",
+      "query": "Find where outgoing header names and values are validated before they are added to a prepared request.",
+      "answer": "Outgoing header validation occurs in this flow:\n\n- `src/requests/models.py`, `PreparedRequest.prepare_headers(self, headers)` (`Source 46`, `src/requests/models.py:L335-L501`): creates `CaseInsensitiveDict`, iterates over `headers.items()`, and calls `check_header_validity(header)` before assigning the header name and value to `self.headers`.\n- `src/requests/utils.py`, `check_header_validity(header)` (`Source 67`, `src/requests/utils.py:L942-L1092`): unpacks the `(name, value)` pair and validates both parts by calling `_validate_header_part(...)`.\n- `src/requests/utils.py`, `_validate_header_part(...)` (`Source 67`, `src/requests/utils.py:L942-L1092`): selects the validator based on whether the part is `str` or `bytes`; unsupported types or failed matches raise `InvalidHeader`.\n- `src/requests/_internal_utils.py` (`Source 23`, `src/requests/_internal_utils.py:L1-L50`): defines the regular expressions:\n  - Header names: `^[^:\\s][^:\\r\\n]*$`\n  - Header values: `^\\S[^\\r\\n]*$|^$`\n\nThus, validation happens before `self.headers[to_native_string(name)] = value` stores the header in the prepared request. The supplied evidence also shows tests covering valid headers, non-string/non-bytes values, leading whitespace, reserved characters, and carriage-return/line-feed characters (`Source 92`, `tests/test_requests.py:L1624-L1760`).",
+      "answer_sha256": "7095ef081febb63b6047d3e0fcc7c403ab2b3ecb6858d7b1828c7b79807e5633",
+      "status": "completed"
+    },
+    {
+      "anonymous_id": "A088",
+      "question_id": "Q02",
+      "query": "Find where outgoing header names and values are validated before they are added to a prepared request.",
+      "answer": "The supplied evidence is insufficient to identify where outgoing header names and values are validated before being added to a `PreparedRequest`.\n\nWhat is supported by the snapshot:\n\n- `docs/user/advanced.rst:L101-L136` identifies the outgoing object as a `PreparedRequest` and says callers may modify its body or headers before sending it.\n- `src/requests/sessions.py:L298-L453` shows session-level headers being carried through session request handling, but does not show header validation or insertion into a prepared request.\n- `src/requests/adapters.py:L298-L429` operates on an already prepared request and uses `req.url` and `req.headers`; the supplied section does not validate or add outgoing headers.\n\nThe relevant implementation would need to be located in the module/function that prepares a `Request` into a `PreparedRequest`, but that source location is not included in the supplied snapshot.",
+      "answer_sha256": "17de1d0944444e7de4cc636df61118cd78f9f9c6e125c1c4ca48e467a3ec2038",
+      "status": "completed"
+    },
+    {
+      "anonymous_id": "A076",
+      "question_id": "Q03",
+      "query": "Why can an HTTP response object be false in an if statement even though a response was received?",
+      "answer": "An HTTP response can be received successfully at the network level while still representing an unsuccessful HTTP result, such as `404` or `500`.\n\nIn Requests, response truthiness is tied to whether the response is considered successful, not merely whether a response object exists. The supplied documentation states that `Response.raise_for_status()` raises `HTTPError` for unsuccessful status codes, while a `200` response does not raise an error (`docs/user/quickstart.rst:L256-L417`, source `13`).\n\nFor example:\n\n```python\nresponse = requests.get(url)\n\nif response:\n    print(\"successful HTTP response\")\nelse:\n    print(\"response was received, but its status was unsuccessful\")\n```\n\nA more explicit and clearer check is:\n\n```python\nresponse = requests.get(url)\n\nif response.status_code == 404:\n    print(\"received a 404 response\")\n\nresponse.raise_for_status()\n```\n\nThe supplied snapshot does not include the `Response.__bool__`, `Response.ok`, or `Response.raise_for_status` implementations, so it is insufficient to cite the exact boolean method or its precise status-code condition. It does show that response status codes and `raise_for_status()` distinguish successful from unsuccessful HTTP responses (`src/requests/models.py:L777-L942`, source `49`; `docs/user/quickstart.rst:L256-L417`, source `13`).",
+      "answer_sha256": "ec1bc2c583535e4d81cef0531bdd2ffc6863022a10c700fe41cd602a1444c5ba",
+      "status": "completed"
+    },
+    {
+      "anonymous_id": "A090",
+      "question_id": "Q02",
+      "query": "Find where outgoing header names and values are validated before they are added to a prepared request.",
+      "answer": "**Facts**\n\nOutgoing header names and values are validated in `src/requests/utils.py`, in:\n\n- `check_header_validity(header)` (`src/requests/utils.py:L1012-L1019`): unpacks the `(name, value)` pair and validates both parts by calling `_validate_header_part`.\n- `_validate_header_part(header, header_part, header_validator_index)` (`src/requests/utils.py:L1022-L1038`): accepts only `str` or `bytes`, selects the corresponding validator, and raises `InvalidHeader` for invalid leading whitespace, reserved characters, or return characters. [Source 67]\n\nThey are invoked before headers are added to the prepared request in `PreparedRequest.prepare_headers()`:\n\n- `src/requests/models.py:L477-L486`: creates the `CaseInsensitiveDict`, iterates over `headers.items()`, calls `check_header_validity(header)`, then assigns the validated name and value to `self.headers`. [Source 46]\n\nThus, the validation path is:\n\n`PreparedRequest.prepare_headers()` → `check_header_validity()` → `_validate_header_part()` → add to `self.headers`.",
+      "answer_sha256": "be3f6d9860ed11c95d3574b6ade31bd581b50b1ee868d6bc0f8801036700a06e",
+      "status": "completed"
+    },
+    {
+      "anonymous_id": "A025",
+      "question_id": "Q01",
+      "query": "Where is case-insensitive header-key lookup implemented while retaining the last spelling of a key?",
+      "answer": "Case-insensitive header-key lookup is implemented in `requests.structures.CaseInsensitiveDict`:\n\n- `src/requests/structures.py`, `CaseInsensitiveDict.__setitem__`: stores entries under `key.lower()` while retaining the original spelling and value as `(key, value)` in `_store`【60†src/requests/structures.py:L35-L38】.\n- `CaseInsensitiveDict.__getitem__`: performs lookup using `key.lower()`【60†src/requests/structures.py:L40-L41】.\n- `CaseInsensitiveDict.__iter__`: returns the retained, case-sensitive key from each stored tuple【60†src/requests/structures.py:L46-L47】.\n\nThus, setting `\"Accept\"` and later `\"ACCEPT\"` replaces the value and updates the retained spelling to `\"ACCEPT\"`. The tests explicitly verify this behavior in `tests/test_requests.py`, `TestCaseInsensitiveDict.test_preserve_last_key_case`【97†tests/test_requests.py:L2376-L2393】. This structure is used for request/response headers via `CaseInsensitiveDict` imports in `src/requests/models.py`【44†src/requests/models.py:L50-L51】.",
+      "answer_sha256": "9dd4da6b41bf4b675f6884b1101c043b04812b2dd793d2955258ff0a9d78c033",
+      "status": "completed"
+    },
+    {
+      "anonymous_id": "A069",
+      "question_id": "Q03",
+      "query": "Why can an HTTP response object be false in an if statement even though a response was received?",
+      "answer": "An HTTP response can be false because `Response` defines truth testing in `src/requests/models.py`, rather than using “was a response received?” as the condition.\n\n- `Response.__bool__()` returns `self.ok` (`src/requests/models.py:L704-L716`).\n- The `ok` property calls `raise_for_status()` and returns `False` when that raises `HTTPError`; otherwise it returns `True` (`src/requests/models.py:L730-L743`).\n- Requests documents `ok` as true for status codes below 400 and false for client or server errors (`src/requests/models.py:L730-L738`).\n- The quickstart explains that `raise_for_status()` raises `HTTPError` for an unsuccessful response, while the response object still exists and exposes its status code (`docs/user/quickstart.rst:L532-L558`, source ID 14).\n\nTherefore, this is expected:\n\n```python\nresponse = requests.get(url)\n\nif response:\n    print(\"status indicates success\")\nelse:\n    print(\"a response was received, but its status indicates an error\")\n```\n\nA response with status `404` or `500` was received, but evaluates as false because Requests considers it unsuccessful. To distinguish receipt from success, inspect `response` directly or check `response.status_code`; use `response.raise_for_status()` when you want an exception for unsuccessful statuses. The supplied snapshot does not include the implementation of `raise_for_status()`, so the exact status-range logic beyond the documented “below 400” behavior is not independently shown here.",
+      "answer_sha256": "8bcb77af3a902f76ec01c3d3ea4af21a6f4f8cb31d6fc0a4f3f05aba4db7aa82",
+      "status": "completed"
+    },
+    {
+      "anonymous_id": "A085",
+      "question_id": "Q03",
+      "query": "Why can an HTTP response object be false in an if statement even though a response was received?",
+      "answer": "An HTTP response object can be false because Requests defines its truth value by HTTP status, not by whether a response object exists.\n\n- In `src/requests/models.py`, `Response.__bool__` returns `self.ok` (`Source 48`, `src/requests/models.py:L635-L790`).\n- `Response.ok` calls `self.raise_for_status()`. If that raises `HTTPError`, `ok` catches it and returns `False`; otherwise it returns `True` (`Source 48`, `src/requests/models.py:L635-L790`).\n- Therefore, a received response with a client- or server-error status—such as `404` or `500`—is still a valid `Response` object but evaluates as false:\n\n```python\nresponse = requests.get(url)\n\nif response:\n    print(\"success status\")\nelse:\n    print(\"response received, but status indicates an error\")\n```\n\nThis behavior is explicitly documented as “status code less than 400,” and not as “status code is 200” (`Source 48`, `src/requests/models.py:L635-L790`). The tests also assert `not r.ok` for error responses, including a response with status `404` (`Source 90`, `tests/test_requests.py:L1345-L1498`; `Source 14`, relationship `TEST_REQUEST_OK_SET -> OK`).",
+      "answer_sha256": "6f2e621d961cb5f8d996176f93394b50e431182a365f767e72f29db58cf65000",
+      "status": "completed"
+    },
+    {
+      "anonymous_id": "A091",
+      "question_id": "Q01",
+      "query": "Where is case-insensitive header-key lookup implemented while retaining the last spelling of a key?",
+      "answer": "Case-insensitive header-key lookup is implemented by `CaseInsensitiveDict` in `src/requests/structures.py`:\n\n- `__setitem__` stores entries under `key.lower()` while retaining the original spelling and value as `(key, value)` in `_store` (`src/requests/structures.py:L43-L46`).\n- `__getitem__` performs lookup using `key.lower()` (`src/requests/structures.py:L48-L49`).\n- `__iter__` yields the retained, case-sensitive spelling (`src/requests/structures.py:L54-L55`).\n\nBecause assigning a key replaces the tuple stored under the lowercase key, the most recently assigned spelling is the one returned during iteration and by `keys()`/`items()` through the mapping implementation. The tests explicitly verify this in `test_preserve_last_key_case` (`tests/test_requests.py:L1690-L1709`).",
+      "answer_sha256": "976cef1ce4b4f429ff179fe33b07e94d8792a960a70ec972bf5a34f3bce70a1b",
+      "status": "completed"
+    },
+    {
+      "anonymous_id": "A089",
+      "question_id": "Q01",
+      "query": "Where is case-insensitive header-key lookup implemented while retaining the last spelling of a key?",
+      "answer": "Case-insensitive header-key lookup is implemented in `requests.structures.CaseInsensitiveDict`:\n\n- `CaseInsensitiveDict.__setitem__` stores entries under `key.lower()` while retaining the original key and value as a tuple. Reassigning the same logical key overwrites that tuple, so the latest spelling is retained. [Entity `CASEINSENSITIVEDICT.__SETITEM__` 839; Relationship 1155]\n- `CaseInsensitiveDict.__getitem__` looks up `_store[key.lower()]`, making retrieval case-insensitive. [Entity `CASEINSENSITIVEDICT.__GETITEM__` 840; Relationship 1156]\n- `__delitem__` and membership behavior likewise normalize keys, while `__iter__` returns the retained original spellings. [Relationships 1157–1159; Report 6]\n- The behavior is verified in `tests/test_structures.py:L1-L78`, including lookups using `accept`, `ACCEPT`, `aCcEpT`, and `Accept`, plus preservation of `\"Accept\"` in iteration and `lower_items()`.\n- Last-spelling retention is also tested in `tests/test_requests.py:L2157-L2294`, especially `TestCaseInsensitiveDict.test_fixes_649`, `test_preserve_key_case`, and `test_preserve_last_key_case`. [Sources 103 and 96]\n\nThe supplied snapshot identifies the module and method behavior, but does not include the actual `requests/structures.py` source lines.",
+      "answer_sha256": "5e25b986f2faef47b390739081aecc669f9ece1af08acb0b31d8a8344423e285",
+      "status": "completed"
+    }
+  ]
+}

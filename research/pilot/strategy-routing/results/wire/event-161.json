@@ -1,0 +1,53 @@
+{
+  "event": {
+    "sequence": 161,
+    "cell": "F02-plan:routed_graphrag",
+    "service": "embedding",
+    "stage": "query_embedding",
+    "status": "validated",
+    "request_body_sha256": "721cffafbedfb1150c3936c66cae21c27042eaf67c05d202d3abde5a80274e85",
+    "key": "683fc487960663658e0ac50b16f6d800c3d957eeb209c3359137028543b8b2ab",
+    "input_tokens": 1622,
+    "started_utc": "2026-10-14T04:55:19.995248+00:00",
+    "usage": {
+      "prompt_tokens": 1622,
+      "total_tokens": 1622
+    },
+    "synthetic": false,
+    "elapsed_seconds": 1.0888665420934558,
+    "finished_utc": "2026-10-14T04:55:21.128237+00:00",
+    "http_status": 200,
+    "response_bytes": 60751,
+    "response_byte_limit": 4194304,
+    "request_dispatched": true
+  },
+  "request": {
+    "service": "embedding",
+    "body": {
+      "model": "text-embedding-3-large",
+      "input": [
+        "# Session Default Timeout Community\n\nThis feature centers on `Session` request dispatch, the existing `request`, `get`, `post`, and other method wrappers, timeout propagation through redirects, and the direct `Session.send` contract. The requested behavior is per-instance and mutable: each `Session` receives a `default_timeout` attribute initialized to `None`, while an explicitly supplied timeout—including explicit `None`—must take precedence. The supplied evidence defines the intended behavior but does not identify exact source paths, function line numbers, or existing test names.\n\n## `Session.default_timeout` is the central state change\n\nEach `Session` instance should expose a mutable `default_timeout` attribute whose initial value is `None`. This must be instance state rather than a global default, so changing one session does not affect another.\n\nThe implementation responsibility is to initialize the attribute without changing `Session` constructor arguments. Existing callers must continue to construct `Session` objects exactly as before. The design should also avoid introducing a module-level or process-wide timeout setting [Evidence: supplied query].\n\nThe supplied evidence does not establish the current `Session` implementation location or initialization mechanism, so the exact insertion point must be confirmed by inspecting the source.\n\n## Wrapper calls must distinguish omission from explicit `None`\n\nCalls through `Session.request`, `Session.get`, `Session.post`, and the other existing method wrappers should use `Session.default_timeout` only when the caller omits the `timeout` argument.\n\nThe implementation must preserve a distinction between these two cases:\n\n- `timeout` omitted: use the current value of `self.default_timeout`.\n- `timeout=None` explicitly supplied: use `None`, even when `self.default_timeout` has another value.\n- Any explicitly supplied float or `(connect, read)` value: use that value unchanged.\n\nThis likely requires an internal omission sentinel or equivalent mechanism at the wrapper boundary. A normal default of `None` cannot distinguish omitted timeout from explicit `None`; however, the specific mechanism should be selected after inspecting the existing signatures and compatibility constraints. No new timeout validation rules should be introduced [Evidence: supplied query].\n\n## Existing timeout shapes must remain unchanged\n\nThe effective timeout may continue to be a float or a `(connect, read)` pair. The feature should select between the explicit argument and `Session.default_timeout`, then pass the selected value through the existing request path without changing its interpretation.\n\nThe implementation should not add validation, coercion, range checks, or new accepted shapes. Existing behavior for invalid or otherwise unsupported values should remain governed by the current implementation. The supplied evidence is insufficient to identify where timeout values are currently consumed, so that path must be inspected before implementation.\n\n## The direct `Session.send` contract must remain separate\n\n`Session.send` must retain its current direct-call behavior. The requested defaulting rule applies to calls through `Session.request`, `Session.get`, `Session.post`, and other existing wrappers that omit `timeout`; it does not authorize changing the direct `Session.send` contract.\n\nImplementation review should verify whether wrappers currently call `send` with a timeout value and whether that value is represented as omitted or explicitly set. Any adaptation should occur at the wrapper or existing request-preparation boundary without making `send` consult global state or silently changing its public semantics [Evidence: supplied query].\n\nThe exact current `send` contract is not included in the supplied evidence, so its existing behavior must be inspected and treated as the compatibility boundary.\n\n## Redirects must retain the effective timeout\n\nOnce a wrapper resolves the timeout, redirects must continue using that same effective timeout. A timeout selected from `Session.default_timeout` should not disappear during redirect handling, and an explicitly supplied timeout—including explicit `None`—must remain authoritative across the redirect chain.\n\nTests should cover both the defaulted and explicitly supplied cases, including multiple redirects if existing redirect tests support them. The implementation should reuse the current redirect flow rather than introduce a separate redirect-specific timeout policy. The supplied evidence confirms the required behavior but does not identify the redirect implementation or existing redirect test coverage [Evidence: supplied query].\n\n## Mutable session state creates lifecycle edge cases\n\nBecause `default_timeout` is mutable, behavior should be defined for changes made between calls. A later request should observe the session's current value when its timeout is omitted. An explicit timeout should still override the current attribute for that call.\n\nThe plan should inspect and test at least these cases:\n\n- A newly created `Session` has `default_timeout is None`.\n- Changing `session.default_timeout` affects later wrapper calls.\n- Two `Session` instances can hold different defaults.\n- An explicit float overrides a non-`None` session default.\n- An explicit `(connect, read)` value overrides a non-`None` session default.\n- Explicit `None` disables the session default for that call.\n- A session default of `None` preserves existing no-timeout behavior.\n\nThe query does not specify thread-safety or behavior when the attribute is mutated concurrently. Unless existing `Session` guarantees address that situation, the feature plan should not add a new concurrency contract.\n\n## Existing wrapper coverage should be audited\n\nThe implementation should enumerate every existing method wrapper that forwards request options, not only `request`, `get`, and `post`. Each wrapper must preserve the omission-versus-explicit-`None` distinction consistently.\n\nThe audit should verify:\n\n- Wrapper signatures and their current timeout defaults.\n- Whether wrappers delegate directly to `request` or use another path.\n- Whether any wrapper currently supplies `timeout=None` internally.\n- Whether the effective timeout is forwarded unchanged to the existing dispatch path.\n- Whether redirects are initiated from the same path.\n\nThe supplied evidence names the primary wrappers but does not list all other existing wrappers, so the complete set cannot be identified without source inspection.\n\n## Documentation must explain the two `None` meanings\n\nDocumentation should describe that `Session.default_timeout` starts as `None` and is consulted only when a wrapper call omits `timeout`. It should explicitly explain that passing `timeout=None` is different: it overrides any session default for that call.\n\nThe documentation should also state that supported timeout shapes remain the existing float and `(connect, read)` forms, and that the direct `Session.send` contract is unchanged. The exact documentation location is not supplied and should be selected by inspecting the current `Session` API documentation and request-option reference.\n\n## Tests should verify precedence and propagation\n\nTests to add or inspect should focus on observable behavior rather than implementation details. The highest-value coverage includes:\n\n- Default initialization on a new `Session`.\n- Omitted timeout using `session.default_timeout`.\n- Explicit `None` overriding a non-`None` `default_timeout`.\n- Explicit float overriding the session default.\n- Explicit `(connect, read)` timeout overriding the session default.\n- Preservation of the existing behavior when `default_timeout` remains `None`.\n- Independent defaults across multiple `Session` instances.\n- Runtime mutation of `default_timeout` between calls.\n- Propagation of the selected timeout through redirects.\n- Preservation of the direct `Session.send` contract.\n- Coverage for every existing wrapper that accepts or forwards `timeout`.\n\nTests should inspect the timeout received by the existing dispatch behavior using the repository's established test mechanisms. The supplied evidence does not identify fixtures, mocks, helper functions, or test modules, so no specific test location can be asserted.\n\n## Compatibility and uncertainty boundaries\n\nThe proposed change is intentionally limited to per-instance wrapper defaulting. It should not alter constructor arguments, add global defaults, add timeout validation, broaden timeout shapes, or redefine direct `Session.send` behavior.\n\nThe supplied evidence is insufficient to determine:\n\n- The exact module and line locations for `Session`, its wrappers, and redirect handling.\n- The complete list of existing wrapper methods.\n- The current `Session.send` timeout contract.\n- The available test files and request-dispatch test helpers.\n- The current documentation structure.\n\nThose points should be resolved through source and test inspection before implementation. No runtime behavior, test result, or existing coverage can be established from the supplied query alone."
+      ],
+      "dimensions": 3072,
+      "encoding_format": "float"
+    }
+  },
+  "response_envelope": {
+    "http_status": 200,
+    "response": {
+      "model": "text-embedding-3-large",
+      "usage": {
+        "prompt_tokens": 1622,
+        "total_tokens": 1622
+      },
+      "vectors_omitted": true,
+      "vector_count": 1,
+      "dimensions": [
+        3072
+      ]
+    },
+    "response_byte_limit": 4194304,
+    "response_bytes": 60751,
+    "private_complete_response_sha256": "e990ae90c823e5cee9c97b089f2f40046e68df98cb651926fe76295f2fc3ee6b"
+  }
+}

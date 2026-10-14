@@ -1,0 +1,150 @@
+{
+  "schema": "strategy-routing-publication-text-review-v1",
+  "reviewer": "independent AI publication_text_review agent",
+  "review_date_utc": "2026-10-14",
+  "status": "passed_after_required_correction",
+  "scope": {
+    "reviewed": [
+      "README.md",
+      "docs/report.md"
+    ],
+    "focus": "Unified routing answer experiment: reported numbers, cohort denominators, failures, interpretation, historical-stage consistency and Chinese readability.",
+    "exclusions": [
+      "No model or external API calls, credentials, browser use, score edits or gold edits.",
+      "No independent rescoring of all answers or re-audit of all historical experiments.",
+      "Evidence/citation aggregation was still under separate review; its temporary absence is not treated as a failure in this text review.",
+      "This record binds the reviewed text snapshot, not any later edited text."
+    ]
+  },
+  "reviewed_sha256": {
+    "README.md": "48cd1bbf842b469e62801988823d23ab74eb80b4f67d4b56e2c1c26337a53cf1",
+    "docs/report.md": "3616a33b074da9e9510cb1efbe345642730cc86084e8cd17e1c4b43ef163c664",
+    "research/pilot/strategy-routing/results/scores.json": "88c2b1b74a8ee95706a0735cc28f7ac69f3d3794dafe5afba85db85bee5c76c0",
+    "research/pilot/strategy-routing/results/execution-statistics.json": "c66a6482995e5833b5998bbfb1868687c97d0ffce8fc0bef4e2d558f107dd43f",
+    "research/pilot/strategy-routing/results/execution.json": "c82c0f8587054f7b2ad79e69f9571d6d94d166a4d6245eb60e5102bbe3d84521",
+    "research/pilot/strategy-routing/plan.json": "1fc188992fb03c0dcaeeaed0d8f6105aad57174d1a0e128b6258817893b9e109"
+  },
+  "checks_passed": [
+    {
+      "check": "Main test, dev and supplemental scores",
+      "evidence": "Independently recomputed all 92 per-answer means from 348 criterion values in seven content reviews, then recomputed 12 cohort-method means from frozen queries.json membership. All matched scores.json and displayed rounding.",
+      "main_test16_percent": {
+        "routed_graphrag": 55.36458333333334,
+        "bm25": 70.36458333333333,
+        "ms_basic": 79.11458333333333,
+        "hybrid": 78.07291666666667
+      },
+      "main_dev4_percent": {
+        "routed_graphrag": 75.0,
+        "bm25": 80.20833333333333,
+        "ms_basic": 62.5,
+        "hybrid": 95.83333333333334
+      },
+      "supplement6_percent": {
+        "routed_graphrag": 71.25,
+        "bm25": 77.5,
+        "ms_basic": 77.5,
+        "hybrid": 78.33333333333333
+      }
+    },
+    {
+      "check": "Cohorts and no oracle strategy selection",
+      "evidence": "Frozen queries contain 23 unique questions, routes 8 Local / 13 DRIFT / 2 Global, main split test16/dev4. Supplemental Q01/Q07/Q13 reuse answers, with F02-plan/G01/G02 added. Text reports one predetermined routed method and does not average the overlapping groups as 26 independent questions."
+    },
+    {
+      "check": "Failures and conditional denominator",
+      "evidence": "All six failed rows have zero content score. Q11 is dev; Q08/Q10/Q14/Q16/Q18 are test. Main routed completion is 11/16, and the reported 80.5% conditional mean is 80.53030303030303% over only those 11. Text explicitly prevents substituting that selected subset for the primary denominator."
+    },
+    {
+      "check": "Failure-stage attribution",
+      "evidence": "Execution events 43/64/70/106/127/148 are routed DRIFT primer failures with responses_empty_or_multiple_messages. Text does not infer exact remote message structure without raw SSE, or attribute all failures to the graph algorithm. Event 1 is separately retained as reviewed_non_dispatch."
+    },
+    {
+      "check": "Paired results and uncertainty",
+      "evidence": "Reported main-test wins/ties/losses 4/3/9, 2/6/8 and 3/4/9, and interval rounding -35.4 to +7.0, -42.2 to -6.4 and -38.6 to -7.6 percentage points match scores.json. Text labels bootstrap intervals descriptive and limits them to the chosen questions."
+    },
+    {
+      "check": "Answer content versus source coverage",
+      "evidence": "Primary metric is necessary-point completion, not full-answer correctness. Separate error and citation review is explicit. Main-test raw-source coverage 31.2/64.3/57.4/71.0 matches the 15 scorable retrieval questions and is identified as cross-call source-union diagnosis, not previous single-retrieval MRR. Q01 and Q07 examples agree with their published answers."
+    },
+    {
+      "check": "Execution and budget values",
+      "evidence": "92 cells, 86 final answers, 6 failures, 149 new generation reservations, 148 physical generation attempts, 44 new embedding attempts, 8342 new embedding tokens, cumulative 1498 reservations and 3095030 common input tokens match execution/statistics. Cost table method sums are common input 1117894, known provider input 1324984 and output 108019. Six unknown provider-usage events remain unknown. Embedding estimates and 21.2-minute incremental time round correctly."
+    },
+    {
+      "check": "Non-equivalent budgets, caching and experiment boundaries",
+      "evidence": "Text discloses reduced DRIFT settings, unequal actual total contexts/calls, cached one-shot contexts versus dynamic DRIFT, no equal-source/random-neighbor causal control, one repository, AI-authored/reviewed questions, prior-known questions, remote rather than local-weight inference, backend identity uncertainty, and no new implemented feature outcome."
+    }
+  ],
+  "required_corrections": [
+    {
+      "id": "PT-01",
+      "severity": "medium",
+      "file": "docs/report.md",
+      "line": 376,
+      "text": "没有换提示词或外接AST后的对照，不能量化它造成多少差距",
+      "issue": "This unqualified historical sentence now contradicts the completed code-prompt/entity-type comparison described earlier in the same report. The absence of isolated causal attribution is correct, but the absence of any changed-prompt comparison is no longer correct.",
+      "suggested_replacement": "后续代码提示词＋实体类型配置已观察到改善，但没有分别隔离提示词、实体类型、独立建图和服务条件的影响；外接AST仍未实测，因此不能量化单一因素造成多少差距。",
+      "basis": [
+        "docs/report.md:90",
+        "docs/report.md:94",
+        "docs/report.md:114"
+      ],
+      "resolution": "Resolved by parent in the report; post-review sentence verified."
+    }
+  ],
+  "optional_readability_suggestions": [
+    {
+      "id": "PT-R01",
+      "file": "docs/report.md",
+      "line": 68,
+      "suggestion": "Replace 主组15道可评分检索题 with 主测试组16题中的15道可评分检索题 to eliminate ambiguity with the 20-question main cohort. The underlying denominator is already correct.",
+      "resolution": "Applied in final text and verified."
+    },
+    {
+      "id": "PT-R02",
+      "file": "docs/report.md",
+      "line": 29,
+      "suggestion": "At the first dev/test/gold references, use 4道调试题（dev）、16道测试题（test） and 评分依据（gold）. The library analogy is accessible, but these English labels are introduced before being explained.",
+      "resolution": "Applied in final text and verified."
+    },
+    {
+      "id": "PT-R03",
+      "file": "README.md",
+      "line": 20,
+      "suggestion": "For nontechnical readers, label primer once as DRIFT的初始分析阶段（primer）; retain the exact error code as supporting detail rather than the only stage explanation.",
+      "resolution": "Applied in final text and verified."
+    },
+    {
+      "id": "PT-R04",
+      "file": "docs/report.md",
+      "line": 306,
+      "suggestion": "Rename this heading to 默认图Global补充实测：概览与源码定位要分开. Nearby text already states the stage distinction, but the explicit heading reduces confusion with the new code-config Global results at the top.",
+      "resolution": "Applied in final text and verified."
+    }
+  ],
+  "release_condition": "No remaining required text correction within this review scope. Final evidence/citation results and final updated document hashes remain subject to the parent task’s separate completion checks.",
+  "correction_verification": {
+    "docs/report.md_sha256": "ff88fff54f332e3d647a88cb4e343ff630e812786350842281f25e544b65af07",
+    "scope": "Verified PT-01 replacement and removal of the stale unqualified sentence. Original full-review snapshot hashes remain above.",
+    "remaining_required_corrections": 0
+  },
+  "final_text_followup": {
+    "scope": "Reviewed final glossary/primer/cohort/old-Global heading edits plus the full new results README and updated runtime README. No body, gold or scoring edits were made by this reviewer.",
+    "sha256": {
+      "README.md": "5c2823777a25b14fc81b2a88286adcdc9984fc30c15ecf3324c47950b1b12825",
+      "docs/report.md": "99af41152611ca822244a94e24f1d5d971f998f835602f471310487846dadf45",
+      "research/pilot/strategy-routing/results/README.md": "dce7beff3c8f1a7956487a2e5bbb2f2514286306012a05750f0bc3e7367a5592",
+      "research/pilot/strategy-routing/runtime/README.md": "14797fa0dd6f442051815211472e167d28c7aec62560ca89c29576e8351cef4a"
+    },
+    "checks_passed": [
+      "README and report still report correct primary scores and 86/92 final answers; primer is explained in Chinese.",
+      "First dev/test/gold references are explained, and the old Global section heading identifies the default graph.",
+      "Results README describes the actual finalized execution, paid versus free commands, fixed execution commit, actual versus reserved calls, known versus unknown usage and reproducibility limits consistently with execution/statistics.",
+      "Runtime README correctly leads with completed execution and identifies prior approval blocks, pre-dispatch supervisor incident, conservative reservation recovery and offline tests as historical steps.",
+      "New results README references required pending evidence aggregation as a final publication dependency; its temporary absence does not block this scoped review."
+    ],
+    "cohort_wording_clear": true,
+    "remaining_note": null
+  }
+}

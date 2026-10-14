@@ -1,0 +1,1381 @@
+{
+  "schema": "blind-answer-content-review-v1",
+  "batch": "batch3",
+  "review_date_utc": "2026-10-14",
+  "rubric_sha256": "d1bdca1bf597530a0f90081220b5370893bc04742b080fe3dbd492dd7b3de225",
+  "blind_pack_sha256": "7870acc7896d052b98e75b5eff9e8763c257d58f986ec7d2a01f7f16d74b0df0",
+  "blind_pack_file": ".cache/pilot/strategy-routing-20261014/blind-content-batch3.json",
+  "scope": "只评冻结标准的内容要点、可由冻结源码验证的事实错误和明确问题范围违例；不评本次实际材料支持度。",
+  "blinding": {
+    "method_identifiers_hidden": true,
+    "method_map_read": false,
+    "execution_summary_read": false,
+    "results_cells_read": false,
+    "export_script_read": false,
+    "actual_contexts_read": false,
+    "method_inference_attempted": false,
+    "limitation": "人工智能评审曾参与前期实验；本轮隐藏方法标识，但答案引用样式可能暗示路线，不能声称完全双盲或独立于既往研究历史。未主动猜测路线。",
+    "method_field": "错误账本 method 暂为 null；由主代理解盲时依据匿名标识关联，不由评分者猜测。"
+  },
+  "read_only_source_verification": {
+    "source_files_sha256": {
+      "src/requests/api.py": "fd96fd39aeedcd5222cd32b016b3e30c463d7a3b66fce9d2444467003c46b10b",
+      "src/requests/sessions.py": "ca44c8f145864a5b4e7c7d3b1caa25947ee44c11b0e168620556901a67244f0e",
+      "src/requests/models.py": "938daba17cc2f2efce6a000f422f54e0c91f3bb8b8af615d6aabccaacb4f7a17",
+      "src/requests/cookies.py": "6cd8be8aa123e0d3d9d34fa86feac7bf392f39bccdde5129830de0ea9692dd7c",
+      "src/requests/utils.py": "1e2402e8dabf0dade4b5a32217342487e7429378901c7284b184b990373ef02c",
+      "src/requests/adapters.py": "28871e72c72a6a6eab78e097465e03c0fe235fc25c97cb1de7b7edd7b291d9c4",
+      "src/requests/_internal_utils.py": "9cc4329abe21b37d93a95a3901b0ab99c24486f3d487bc57965bb2ab0b252e24",
+      "tests/test_requests.py": "8e553d75084306fd04a2b3fd8ec3f7f7578ae1c44c48d96790e56046cbdf5fbf"
+    },
+    "scope_extension": "父代理明确授权只读完整冻结源码及相邻实现核实附加断言；本轮没有运行模型、网络/API、HTTP 测试或 Requests 代码。"
+  },
+  "interpretation_rules": [
+    "逐要点使用冻结 0/.5/1；正确但实质遗漏为半分，核心错误或缺失为零，不奖励长度。",
+    "Q07 的 C5 同时要求正确选择/调用与停止边界。正确连接 get_adapter→adapter.send、却额外进入内置实现的回答按核心正确但限制未满足计 .5，另记 query_constraint_violation，不再从均值扣分。",
+    "Q07 中带 built-in 限定的 HTTPAdapter 说明不自动视为固定运行时子类；只依据文字可确认的超范围或次序错误登记。",
+    "Q08-C2 要求 merged headers→PreparedRequest.prepare→prepare_headers；只有 PreparedRequest.headers 属性或泛称准备，不等于指出任一具体传递调用。",
+    "Q10-C3 对 helper 内部描述完整但缺 prepare_cookies 调用边的回答保留 .5；Q10-C4 仅知道 header 构造、未说明写回 prepared headers，不给“写 Cookie header”的半分。",
+    "额外事实错误只在错误账本记录；已影响核心 criterion 的错误不重复扣分。显式默认条件遗漏与核心调用要点分开。",
+    "空回答/failed 的每个 criterion 为 0，保留在主分母；不推断原因。",
+    "不把源码真实存在等同生成器实际拿到证据；无引用、引用偏移和上下文不足另待证据阶段。"
+  ],
+  "rows": [
+    {
+      "anonymous_id": "A012",
+      "question_id": "Q07",
+      "answer_sha256": "9d080e04a4ca1b0d62b8bef505fe03e90ef0d6396cadf51dc1b9e813c1d54c2e",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q07-C1",
+          "score": 0.5,
+          "answer_quote": "The public `requests.get(url)` call is identified by the invalid-URL test",
+          "answer_span": {
+            "start_character_zero_based": 10,
+            "end_character_exclusive": 83
+          },
+          "rationale": "识别公开 get 入口，但没有 api.get → api.request 的委托关系；适用冻结半分口径。",
+          "gold_anchor_ids": [
+            "Q07-E1"
+          ]
+        },
+        {
+          "id": "Q07-C2",
+          "score": 0.5,
+          "answer_quote": "The request proceeds through session request processing and preparation.",
+          "answer_span": {
+            "start_character_zero_based": 335,
+            "end_character_exclusive": 407
+          },
+          "rationale": "知道 Session 处理参与，但没有 api.request 创建/使用 Session 后调用 Session.request 的连接。",
+          "gold_anchor_ids": [
+            "Q07-E2"
+          ]
+        },
+        {
+          "id": "Q07-C3",
+          "score": 0,
+          "answer_quote": "`prepare` coordinates the method, URL, headers, cookies, body, authentication, and hooks",
+          "answer_span": {
+            "start_character_zero_based": 408,
+            "end_character_exclusive": 496
+          },
+          "rationale": "只列通用 prepare 的子步骤；未说明 Session.request 构造 Request 或调用 prepare_request。",
+          "gold_anchor_ids": [
+            "A-Q07-build-request",
+            "Q07-E3"
+          ]
+        },
+        {
+          "id": "Q07-C4",
+          "score": 0.5,
+          "answer_quote": "The resulting object must be a `PreparedRequest`; attempting to send an unprepared `Request` raises `ValueError`",
+          "answer_span": {
+            "start_character_zero_based": 1120,
+            "end_character_exclusive": 1232
+          },
+          "rationale": "识别准备对象与发送阶段，但没有明确 Session.request 调用 self.send(prep, ...) 的调用边。",
+          "gold_anchor_ids": [
+            "Q07-E4"
+          ]
+        },
+        {
+          "id": "Q07-C5",
+          "score": 0.5,
+          "answer_quote": "The selected adapter is then invoked at the stopping point: `adapter.send(request, **kwargs)`",
+          "answer_span": {
+            "start_character_zero_based": 1812,
+            "end_character_exclusive": 1905
+          },
+          "rationale": "已给 Session.send 的 get_adapter(request.url) 与选中 adapter.send，但继续越过停止点，并把 adapter 内部动作称为调用前；核心调用边正确，范围/次序限定不完整。",
+          "gold_anchor_ids": [
+            "Q07-E5"
+          ]
+        }
+      ],
+      "content_mean": 0.4,
+      "errors": [
+        {
+          "id": "A012-E01",
+          "question_id": "Q07",
+          "method": null,
+          "anonymous_id": "A012",
+          "answer_quote": "Before that invocation, the evidence indicates proxy selection via `select_proxy`, connection and pool setup, timeout conversion through `TIMEOUTSAUCE`, and TLS-related handling through the adapter’s `cert_verify` interface.",
+          "claim": "把 adapter 的连接准备、证书处理、timeout 转换放在 Session 调用 adapter.send 之前。",
+          "category": [
+            "contradicted_by_frozen_source",
+            "query_constraint_violation"
+          ],
+          "source_or_query_anchor": [
+            {
+              "path": "src/requests/sessions.py",
+              "start_line": 696,
+              "end_line": 703,
+              "quote": "        # Get the appropriate adapter to use\n        adapter = self.get_adapter(url=request.url)\n\n        # Start time (approximately) of the request\n        start = preferred_clock()\n\n        # Send the request\n        r = adapter.send(request, **kwargs)\n",
+              "span_sha256": "dc0709a95e49c34b16050e4869ca64092e980f647294189ea8c32bec8fcbfefd"
+            },
+            {
+              "path": "src/requests/adapters.py",
+              "start_line": 613,
+              "end_line": 616,
+              "quote": "    def send(\n        self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None\n    ):\n        \"\"\"Sends PreparedRequest object. Returns Response object.\n",
+              "span_sha256": "641069f7b8651989468a3630cb3911228134c4c25405cd57a07b8c34992b2696"
+            },
+            {
+              "path": "src/requests/adapters.py",
+              "start_line": 632,
+              "end_line": 664,
+              "quote": "        try:\n            conn = self.get_connection_with_tls_context(\n                request, verify, proxies=proxies, cert=cert\n            )\n        except LocationValueError as e:\n            raise InvalidURL(e, request=request)\n\n        self.cert_verify(conn, request.url, verify, cert)\n        url = self.request_url(request, proxies)\n        self.add_headers(\n            request,\n            stream=stream,\n            timeout=timeout,\n            verify=verify,\n            cert=cert,\n            proxies=proxies,\n        )\n\n        chunked = not (request.body is None or \"Content-Length\" in request.headers)\n\n        if isinstance(timeout, tuple):\n            try:\n                connect, read = timeout\n                timeout = TimeoutSauce(connect=connect, read=read)\n            except ValueError:\n                raise ValueError(\n                    f\"Invalid timeout {timeout}. Pass a (connect, read) timeout tuple, \"\n                    f\"or a single float to set both timeouts to the same value.\"\n                )\n        elif isinstance(timeout, TimeoutSauce):\n            pass\n        else:\n            timeout = TimeoutSauce(connect=timeout, read=timeout)\n",
+              "span_sha256": "4510bf0cea86d4994d8b98d64c778c1c46aaf0c1a60aadec097a0055031cd96c"
+            },
+            {
+              "path": "research/pilot/strategy-routing/answer-gold.json",
+              "question_id": "Q07",
+              "quote": "Trace requests.get(url) from its public wrapper through preparation to the selected transport adapter; stop at adapter.send."
+            }
+          ],
+          "rationale": "这些动作位于内置 HTTPAdapter.send 方法体中，Session 先调用该方法才进入这些步骤。后一句说确切顺序不确定并未撤回“Before that invocation”，因此保留矛盾记录。既已影响 C5 半分，不额外扣均值。",
+          "affected_criterion_ids": [
+            "Q07-C5"
+          ],
+          "content_score_effect": "C5 已按未满足停止/次序限定计 .5；无额外扣分。"
+        }
+      ],
+      "citation_audit": [],
+      "evidence_review_status": "not_assessed_pending_anonymous_context_pack",
+      "deferred_evidence_checks": [
+        "尚未查看真实上下文；Source/Entities/Relationships 引用能否解析、是否蕴含断言、原文行号偏移及引用覆盖，均待匿名证据包核验。",
+        "答案关于“supplied snapshot 缺少某实现”的陈述仅视为对其材料范围的自述；本阶段未判真伪，也未把冻结源码当作生成时已获证据。"
+      ]
+    },
+    {
+      "anonymous_id": "A052",
+      "question_id": "Q10",
+      "answer_sha256": "3abc4b167b8d453398f0ae8f7f7fb87c79fb65dfe33f7e779cace6546fda87e2",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q10-C1",
+          "score": 1,
+          "answer_quote": "merged_cookies = merge_cookies(\n         merge_cookies(RequestsCookieJar(), self.cookies), cookies\n     )",
+          "answer_span": {
+            "start_character_zero_based": 547,
+            "end_character_exclusive": 652
+          },
+          "rationale": "准确列出新 RequestsCookieJar、session jar 和 request jar 的嵌套合并。",
+          "gold_anchor_ids": [
+            "Q10-E1"
+          ]
+        },
+        {
+          "id": "Q10-C2",
+          "score": 1,
+          "answer_quote": "The merged jar is passed into `PreparedRequest.prepare(..., cookies=merged_cookies)`",
+          "answer_span": {
+            "start_character_zero_based": 719,
+            "end_character_exclusive": 803
+          },
+          "rationale": "本句传参，加紧邻下一项 prepare 调用 prepare_cookies，完整给出两段链。",
+          "gold_anchor_ids": [
+            "Q10-E2",
+            "Q10-E3"
+          ]
+        },
+        {
+          "id": "Q10-C3",
+          "score": 0.5,
+          "answer_quote": "`get_cookie_header(jar, request)` wraps the request in `MockRequest`, calls `jar.add_cookie_header(r)`, and returns the generated `\"Cookie\"` value",
+          "answer_span": {
+            "start_character_zero_based": 1277,
+            "end_character_exclusive": 1423
+          },
+          "rationale": "辅助函数内部分工正确，但末尾明确未建立 prepare_cookies → get_cookie_header 的调用连接，因此必要链条仍缺一段。",
+          "gold_anchor_ids": [
+            "Q10-E4",
+            "Q10-E5"
+          ]
+        },
+        {
+          "id": "Q10-C4",
+          "score": 0,
+          "answer_quote": "details such as whether it directly calls `get_cookie_header()` and the precise handling of an already-existing `Cookie` header cannot be established",
+          "answer_span": {
+            "start_character_zero_based": 3361,
+            "end_character_exclusive": 3510
+          },
+          "rationale": "只说明 header 构造发生在准备阶段，未说明写入 self.headers[\"Cookie\"]，也未给非 None 条件；未达到冻结半分要求的“只说写 Cookie header”。",
+          "gold_anchor_ids": [
+            "Q10-E4"
+          ]
+        }
+      ],
+      "content_mean": 0.625,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "not_assessed_pending_anonymous_context_pack",
+      "deferred_evidence_checks": [
+        "尚未查看真实上下文；Source/Entities/Relationships 引用能否解析、是否蕴含断言、原文行号偏移及引用覆盖，均待匿名证据包核验。",
+        "答案关于“supplied snapshot 缺少某实现”的陈述仅视为对其材料范围的自述；本阶段未判真伪，也未把冻结源码当作生成时已获证据。"
+      ]
+    },
+    {
+      "anonymous_id": "A027",
+      "question_id": "Q09",
+      "answer_sha256": "2c9d5ce0a66804e107e1c36790bf7575f0457767802a93e0aa25a054784f135b",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q09-C1",
+          "score": 1,
+          "answer_quote": "`SessionRedirectMixin.resolve_redirects()` prepares the redirected request and calls `self.rebuild_auth(prepared_request, resp)`",
+          "answer_span": {
+            "start_character_zero_based": 53,
+            "end_character_exclusive": 181
+          },
+          "rationale": "明确 resolve_redirects 到 rebuild_auth 的对象和调用边。",
+          "gold_anchor_ids": [
+            "Q09-E1"
+          ]
+        },
+        {
+          "id": "Q09-C2",
+          "score": 1,
+          "answer_quote": "`should_strip_auth()` parses both URLs and immediately returns `True` when their hostnames differ",
+          "answer_span": {
+            "start_character_zero_based": 448,
+            "end_character_exclusive": 545
+          },
+          "rationale": "明确旧、新 hostname 比较以及跨主机 True。",
+          "gold_anchor_ids": [
+            "Q09-E3",
+            "Q09-E2"
+          ]
+        },
+        {
+          "id": "Q09-C3",
+          "score": 1,
+          "answer_quote": "`rebuild_auth()` checks whether the redirected request has an `Authorization` header and calls `should_strip_auth(response.request.url, url)`",
+          "answer_span": {
+            "start_character_zero_based": 260,
+            "end_character_exclusive": 401
+          },
+          "rationale": "存在性检查、should_strip_auth 条件和随后 del headers 的描述合起来完整。",
+          "gold_anchor_ids": [
+            "Q09-E2"
+          ]
+        },
+        {
+          "id": "Q09-C4",
+          "score": 1,
+          "answer_quote": "It replaces authentication only if `get_netrc_auth(url)` returns a non-`None` value, then calls `prepared_request.prepare_auth(new_auth)`",
+          "answer_span": {
+            "start_character_zero_based": 1147,
+            "end_character_exclusive": 1284
+          },
+          "rationale": "前一项明确 trust_env 才查询 netrc，本项明确非 None 才 prepare_auth；条件完整。",
+          "gold_anchor_ids": [
+            "Q09-E2"
+          ]
+        }
+      ],
+      "content_mean": 1.0,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "not_assessed_pending_anonymous_context_pack",
+      "deferred_evidence_checks": [
+        "尚未查看真实上下文；Source/Entities/Relationships 引用能否解析、是否蕴含断言、原文行号偏移及引用覆盖，均待匿名证据包核验。",
+        "答案关于“supplied snapshot 缺少某实现”的陈述仅视为对其材料范围的自述；本阶段未判真伪，也未把冻结源码当作生成时已获证据。"
+      ]
+    },
+    {
+      "anonymous_id": "A044",
+      "question_id": "Q10",
+      "answer_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "failed",
+      "criteria": [
+        {
+          "id": "Q10-C1",
+          "score": 0,
+          "answer_quote": "",
+          "answer_span": {
+            "start_character_zero_based": 0,
+            "end_character_exclusive": 0
+          },
+          "rationale": "匿名包中状态为 failed 且答案为空，没有完成该内容要点；按冻结规则保留零分，不推断失败原因。",
+          "gold_anchor_ids": [
+            "Q10-E1"
+          ]
+        },
+        {
+          "id": "Q10-C2",
+          "score": 0,
+          "answer_quote": "",
+          "answer_span": {
+            "start_character_zero_based": 0,
+            "end_character_exclusive": 0
+          },
+          "rationale": "匿名包中状态为 failed 且答案为空，没有完成该内容要点；按冻结规则保留零分，不推断失败原因。",
+          "gold_anchor_ids": [
+            "Q10-E2",
+            "Q10-E3"
+          ]
+        },
+        {
+          "id": "Q10-C3",
+          "score": 0,
+          "answer_quote": "",
+          "answer_span": {
+            "start_character_zero_based": 0,
+            "end_character_exclusive": 0
+          },
+          "rationale": "匿名包中状态为 failed 且答案为空，没有完成该内容要点；按冻结规则保留零分，不推断失败原因。",
+          "gold_anchor_ids": [
+            "Q10-E4",
+            "Q10-E5"
+          ]
+        },
+        {
+          "id": "Q10-C4",
+          "score": 0,
+          "answer_quote": "",
+          "answer_span": {
+            "start_character_zero_based": 0,
+            "end_character_exclusive": 0
+          },
+          "rationale": "匿名包中状态为 failed 且答案为空，没有完成该内容要点；按冻结规则保留零分，不推断失败原因。",
+          "gold_anchor_ids": [
+            "Q10-E4"
+          ]
+        }
+      ],
+      "content_mean": 0.0,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "not_assessed_pending_anonymous_context_pack",
+      "deferred_evidence_checks": []
+    },
+    {
+      "anonymous_id": "A064",
+      "question_id": "Q10",
+      "answer_sha256": "03a157ea14725aefaff757af9e90ab1eca1a1148f533b00a8793f278ce908e72",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q10-C1",
+          "score": 1,
+          "answer_quote": "`merge_cookies(merge_cookies(RequestsCookieJar(), self.cookies), cookies)`",
+          "answer_span": {
+            "start_character_zero_based": 440,
+            "end_character_exclusive": 514
+          },
+          "rationale": "新容器和两种来源的嵌套合并完整。",
+          "gold_anchor_ids": [
+            "Q10-E1"
+          ]
+        },
+        {
+          "id": "Q10-C2",
+          "score": 1,
+          "answer_quote": "`PreparedRequest.prepare()` runs `prepare_headers()` and then `prepare_cookies(cookies)`",
+          "answer_span": {
+            "start_character_zero_based": 756,
+            "end_character_exclusive": 844
+          },
+          "rationale": "前项明确 cookies=merged_cookies，本项明确 prepare → prepare_cookies，链条完整。",
+          "gold_anchor_ids": [
+            "Q10-E2",
+            "Q10-E3"
+          ]
+        },
+        {
+          "id": "Q10-C3",
+          "score": 0.5,
+          "answer_quote": "It then calls `get_cookie_header(self._cookies, self)`.",
+          "answer_span": {
+            "start_character_zero_based": 1138,
+            "end_character_exclusive": 1193
+          },
+          "rationale": "准确识别调用点，但没有 MockRequest 适配和 jar.add_cookie_header 的生成职责。",
+          "gold_anchor_ids": [
+            "Q10-E4",
+            "Q10-E5"
+          ]
+        },
+        {
+          "id": "Q10-C4",
+          "score": 1,
+          "answer_quote": "If that returns a header, the result is assigned to:\n   `self.headers[\"Cookie\"]`",
+          "answer_span": {
+            "start_character_zero_based": 1194,
+            "end_character_exclusive": 1274
+          },
+          "rationale": "条件赋值和后文准备阶段、发送前的界限明确；“returns a header”接受为返回非 None header 的等义描述。",
+          "gold_anchor_ids": [
+            "Q10-E4"
+          ]
+        }
+      ],
+      "content_mean": 0.875,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "not_assessed_pending_anonymous_context_pack",
+      "deferred_evidence_checks": [
+        "尚未查看真实上下文；Source/Entities/Relationships 引用能否解析、是否蕴含断言、原文行号偏移及引用覆盖，均待匿名证据包核验。",
+        "答案关于“supplied snapshot 缺少某实现”的陈述仅视为对其材料范围的自述；本阶段未判真伪，也未把冻结源码当作生成时已获证据。"
+      ]
+    },
+    {
+      "anonymous_id": "A037",
+      "question_id": "Q09",
+      "answer_sha256": "a6c11de60e2d51c45e4c974c1fed3c64479d8f52bf058fece1cabe1821f43ac1",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q09-C1",
+          "score": 0.5,
+          "answer_quote": "During redirect processing, `rebuild_auth` in `src/requests/sessions.py` compares the original and destination URLs",
+          "answer_span": {
+            "start_character_zero_based": 20,
+            "end_character_exclusive": 135
+          },
+          "rationale": "明确 redirect 会 rebuild_auth，但没有 resolve_redirects 调用该函数的具体连接。",
+          "gold_anchor_ids": [
+            "Q09-E1"
+          ]
+        },
+        {
+          "id": "Q09-C2",
+          "score": 1,
+          "answer_quote": "the change from `http://example.com/foo` to `http://another.example.com/` makes `should_strip_auth` return `True`",
+          "answer_span": {
+            "start_character_zero_based": 406,
+            "end_character_exclusive": 519
+          },
+          "rationale": "给出具体跨 hostname 例子与 should_strip_auth 的 True 结果，满足同义表述。",
+          "gold_anchor_ids": [
+            "Q09-E3",
+            "Q09-E2"
+          ]
+        },
+        {
+          "id": "Q09-C3",
+          "score": 1,
+          "answer_quote": "If that function returns `True`, `rebuild_auth` removes the existing `Authorization` header",
+          "answer_span": {
+            "start_character_zero_based": 168,
+            "end_character_exclusive": 259
+          },
+          "rationale": "删除对象限定为已有 Authorization，删除受 should_strip_auth=True 控制，不是所有重定向无条件清除。",
+          "gold_anchor_ids": [
+            "Q09-E2"
+          ]
+        },
+        {
+          "id": "Q09-C4",
+          "score": 1,
+          "answer_quote": "If it returns credentials (`new_auth is not None`), `rebuild_auth` reapplies authentication through `prepared_request.prepare_auth(new_auth)`",
+          "answer_span": {
+            "start_character_zero_based": 1111,
+            "end_character_exclusive": 1252
+          },
+          "rationale": "同段明确仅 trust_env truthy 才 get_netrc_auth，随后非 None 条件和应用调用完整。",
+          "gold_anchor_ids": [
+            "Q09-E2"
+          ]
+        }
+      ],
+      "content_mean": 0.875,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "not_assessed_pending_anonymous_context_pack",
+      "deferred_evidence_checks": [
+        "尚未查看真实上下文；Source/Entities/Relationships 引用能否解析、是否蕴含断言、原文行号偏移及引用覆盖，均待匿名证据包核验。",
+        "答案关于“supplied snapshot 缺少某实现”的陈述仅视为对其材料范围的自述；本阶段未判真伪，也未把冻结源码当作生成时已获证据。"
+      ]
+    },
+    {
+      "anonymous_id": "A019",
+      "question_id": "Q08",
+      "answer_sha256": "b482ad1d139e8cc0d756921747ee4ec124ad364affeae69e561579d0415728ae",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q08-C1",
+          "score": 0.5,
+          "answer_quote": "the relevant point at which session headers and request headers are combined before sending",
+          "answer_span": {
+            "start_character_zero_based": 1495,
+            "end_character_exclusive": 1586
+          },
+          "rationale": "识别两种 headers 合并及 Session.prepare_request，但缺 merge_setting 和 CaseInsensitiveDict 合并容器。",
+          "gold_anchor_ids": [
+            "Q08-E1"
+          ]
+        },
+        {
+          "id": "Q08-C2",
+          "score": 0.5,
+          "answer_quote": "`Request.prepare()` creates `PreparedRequest()` and calls `p.prepare(...)`, passing `headers=self.headers`",
+          "answer_span": {
+            "start_character_zero_based": 760,
+            "end_character_exclusive": 866
+          },
+          "rationale": "识别 headers 进入 PreparedRequest.prepare 的一段，并承认另需 session-aware 路径；未说明 merged headers → prepare_headers 的完整两级链。",
+          "gold_anchor_ids": [
+            "Q08-E1",
+            "Q08-E2"
+          ]
+        },
+        {
+          "id": "Q08-C3",
+          "score": 0.5,
+          "answer_quote": "The exact merge operation and the exact call site that invokes `check_header_validity()` are not present in the supplied excerpts.",
+          "answer_span": {
+            "start_character_zero_based": 3311,
+            "end_character_exclusive": 3441
+          },
+          "rationale": "知道 check_header_validity，但未给 prepare_headers 的逐项调用以及先验证后存储；流程图中的属性节点不替代赋值顺序。",
+          "gold_anchor_ids": [
+            "Q08-E3",
+            "Q02-E1"
+          ]
+        },
+        {
+          "id": "Q08-C4",
+          "score": 0.5,
+          "answer_quote": "selects a string or bytes validator based on the header name/value type;",
+          "answer_span": {
+            "start_character_zero_based": 2308,
+            "end_character_exclusive": 2380
+          },
+          "rationale": "说明 header 名称/值的格式和类型检查，但没有明确 check_header_validity 分别调用 _validate_header_part(name,0)/(value,1)。",
+          "gold_anchor_ids": [
+            "Q08-E4"
+          ]
+        }
+      ],
+      "content_mean": 0.5,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "not_assessed_pending_anonymous_context_pack",
+      "deferred_evidence_checks": [
+        "尚未查看真实上下文；Source/Entities/Relationships 引用能否解析、是否蕴含断言、原文行号偏移及引用覆盖，均待匿名证据包核验。",
+        "答案关于“supplied snapshot 缺少某实现”的陈述仅视为对其材料范围的自述；本阶段未判真伪，也未把冻结源码当作生成时已获证据。",
+        "流程图把 PreparedRequest.headers 属性列在 validation 前，但未明确声称元素写入发生在验证前；不按含糊图示追加事实错误，内容要点仍按缺少具体调用/顺序评分。"
+      ]
+    },
+    {
+      "anonymous_id": "A021",
+      "question_id": "Q07",
+      "answer_sha256": "6bf80c5a2403d056bdc6f8556b7a4ac6a71086564f5ff9a24ed748b6681574d0",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q07-C1",
+          "score": 0.5,
+          "answer_quote": "The supplied snapshot does not include the public `requests.get` wrapper",
+          "answer_span": {
+            "start_character_zero_based": 39,
+            "end_character_exclusive": 111
+          },
+          "rationale": "只识别公开 get，未给 api.get → api.request。",
+          "gold_anchor_ids": [
+            "Q07-E1"
+          ]
+        },
+        {
+          "id": "Q07-C2",
+          "score": 0.5,
+          "answer_quote": "`Session.get(url, **kwargs)`",
+          "answer_span": {
+            "start_character_zero_based": 223,
+            "end_character_exclusive": 251
+          },
+          "rationale": "知道 Session 层及其 request 方法，但没有 api.request → Session.request 的连接；Session.get 不能补上公开 api wrapper。",
+          "gold_anchor_ids": [
+            "Q07-E2"
+          ]
+        },
+        {
+          "id": "Q07-C3",
+          "score": 1,
+          "answer_quote": "- Builds a `Request` with the method, URL, request data, authentication, cookies, hooks, and related arguments.\n   - Calls `self.prepare_request(req)`.",
+          "answer_span": {
+            "start_character_zero_based": 539,
+            "end_character_exclusive": 690
+          },
+          "rationale": "准确给出 Session.request 中构造 Request 与 prepare_request。",
+          "gold_anchor_ids": [
+            "A-Q07-build-request",
+            "Q07-E3"
+          ]
+        },
+        {
+          "id": "Q07-C4",
+          "score": 1,
+          "answer_quote": "- Calls `self.send(prep, **send_kwargs)`.",
+          "answer_span": {
+            "start_character_zero_based": 957,
+            "end_character_exclusive": 998
+          },
+          "rationale": "明确发送前述 prepare_request 的 prep，调用边完整。",
+          "gold_anchor_ids": [
+            "Q07-E4"
+          ]
+        },
+        {
+          "id": "Q07-C5",
+          "score": 0.5,
+          "answer_quote": "`r = adapter.send(request, **kwargs)`",
+          "answer_span": {
+            "start_character_zero_based": 2270,
+            "end_character_exclusive": 2307
+          },
+          "rationale": "此前 get_adapter(request.url) 与该调用均正确，且内置适配器被限定为 built-in；但第 6 步继续追到 conn.urlopen，未遵守 stop at adapter.send。",
+          "gold_anchor_ids": [
+            "Q07-E5"
+          ]
+        }
+      ],
+      "content_mean": 0.7,
+      "errors": [
+        {
+          "id": "A021-E01",
+          "question_id": "Q07",
+          "method": null,
+          "anonymous_id": "A021",
+          "answer_quote": "Passing the prepared method, URL, body, headers, retry policy, timeout, and related options to `conn.urlopen(...)`.",
+          "claim": "在要求止于 adapter.send 的追踪中，另开第 6 步继续进入 HTTPAdapter.send 并追到 conn.urlopen。",
+          "category": [
+            "query_constraint_violation"
+          ],
+          "source_or_query_anchor": [
+            {
+              "path": "research/pilot/strategy-routing/answer-gold.json",
+              "question_id": "Q07",
+              "quote": "Trace requests.get(url) from its public wrapper through preparation to the selected transport adapter; stop at adapter.send."
+            },
+            {
+              "path": "src/requests/adapters.py",
+              "start_line": 632,
+              "end_line": 677,
+              "quote": "        try:\n            conn = self.get_connection_with_tls_context(\n                request, verify, proxies=proxies, cert=cert\n            )\n        except LocationValueError as e:\n            raise InvalidURL(e, request=request)\n\n        self.cert_verify(conn, request.url, verify, cert)\n        url = self.request_url(request, proxies)\n        self.add_headers(\n            request,\n            stream=stream,\n            timeout=timeout,\n            verify=verify,\n            cert=cert,\n            proxies=proxies,\n        )\n\n        chunked = not (request.body is None or \"Content-Length\" in request.headers)\n\n        if isinstance(timeout, tuple):\n            try:\n                connect, read = timeout\n                timeout = TimeoutSauce(connect=connect, read=read)\n            except ValueError:\n                raise ValueError(\n                    f\"Invalid timeout {timeout}. Pass a (connect, read) timeout tuple, \"\n                    f\"or a single float to set both timeouts to the same value.\"\n                )\n        elif isinstance(timeout, TimeoutSauce):\n            pass\n        else:\n            timeout = TimeoutSauce(connect=timeout, read=timeout)\n\n        try:\n            resp = conn.urlopen(\n                method=request.method,\n                url=url,\n                body=request.body,\n                headers=request.headers,\n                redirect=False,\n                assert_same_host=False,\n                preload_content=False,\n                decode_content=False,\n                retries=self.max_retries,\n                timeout=timeout,\n",
+              "span_sha256": "be00c5be8d2794e82425b78c7701e42f9829cdfddd1932fcdd4cc17df903559c"
+            }
+          ],
+          "rationale": "额外描述大体符合内置适配器实现，也以 built-in 限定；问题是超出冻结题目的明确停止边界，不是凭此断言传输内部实现为假或固定运行时子类。",
+          "affected_criterion_ids": [
+            "Q07-C5"
+          ],
+          "content_score_effect": "C5 已计 .5；不再次扣分。"
+        },
+        {
+          "id": "A021-E02",
+          "question_id": "Q07",
+          "method": null,
+          "anonymous_id": "A021",
+          "answer_quote": "Sets `allow_redirects` to `True`.",
+          "claim": "将 Session.get 对 allow_redirects 的操作写成设置 True，遗漏仅未提供该参数时设默认值。",
+          "category": [
+            "contradicted_by_frozen_source"
+          ],
+          "source_or_query_anchor": [
+            {
+              "path": "src/requests/sessions.py",
+              "start_line": 593,
+              "end_line": 602,
+              "quote": "    def get(self, url, **kwargs):\n        r\"\"\"Sends a GET request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        kwargs.setdefault(\"allow_redirects\", True)\n        return self.request(\"GET\", url, **kwargs)\n",
+              "span_sha256": "fd2ed9b3ea5632e8d5abb2835494f3bcfa2edad5f84577abdec425a367c622e5"
+            }
+          ],
+          "rationale": "源码使用 kwargs.setdefault(\"allow_redirects\", True)，显式 False 会保留；无条件“sets ... True”的文字不准确。此额外行为并非 Q07 核心要点，单列，不另外扣核心分。",
+          "affected_criterion_ids": [],
+          "content_score_effect": "额外断言错误；不改变核心 criteria 分数。"
+        }
+      ],
+      "citation_audit": [],
+      "evidence_review_status": "not_assessed_pending_anonymous_context_pack",
+      "deferred_evidence_checks": [
+        "尚未查看真实上下文；Source/Entities/Relationships 引用能否解析、是否蕴含断言、原文行号偏移及引用覆盖，均待匿名证据包核验。",
+        "答案关于“supplied snapshot 缺少某实现”的陈述仅视为对其材料范围的自述；本阶段未判真伪，也未把冻结源码当作生成时已获证据。"
+      ]
+    },
+    {
+      "anonymous_id": "A007",
+      "question_id": "Q10",
+      "answer_sha256": "a7f2c0d490831963fd41f0531a8159a527e515172085501f7fd087aaedd8111f",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q10-C1",
+          "score": 1,
+          "answer_quote": "merged_cookies = merge_cookies(\n       merge_cookies(RequestsCookieJar(), self.cookies), cookies\n   )",
+          "answer_span": {
+            "start_character_zero_based": 767,
+            "end_character_exclusive": 868
+          },
+          "rationale": "新 RequestsCookieJar 合并 session/request cookies 的嵌套关系准确。",
+          "gold_anchor_ids": [
+            "Q10-E1"
+          ]
+        },
+        {
+          "id": "Q10-C2",
+          "score": 0.5,
+          "answer_quote": "The resulting `merged_cookies` jar is passed into `PreparedRequest.prepare(...)` as the `cookies` argument",
+          "answer_span": {
+            "start_character_zero_based": 1373,
+            "end_character_exclusive": 1479
+          },
+          "rationale": "只说明 merged_cookies → prepare 的第一段；没有 prepare → prepare_cookies。",
+          "gold_anchor_ids": [
+            "Q10-E2",
+            "Q10-E3"
+          ]
+        },
+        {
+          "id": "Q10-C3",
+          "score": 0.5,
+          "answer_quote": "It wraps the prepared request in `MockRequest`, calls `jar.add_cookie_header(r)`, and returns the generated `Cookie` value",
+          "answer_span": {
+            "start_character_zero_based": 1727,
+            "end_character_exclusive": 1849
+          },
+          "rationale": "辅助函数内部职责正确，但没有 prepare_cookies 调用 get_cookie_header 的连接，末尾还明确缺失该调用点。",
+          "gold_anchor_ids": [
+            "Q10-E4",
+            "Q10-E5"
+          ]
+        },
+        {
+          "id": "Q10-C4",
+          "score": 0,
+          "answer_quote": "the exact internal point at which `PreparedRequest.prepare()` invokes header construction is not established by this snapshot",
+          "answer_span": {
+            "start_character_zero_based": 2738,
+            "end_character_exclusive": 2863
+          },
+          "rationale": "未说明生成结果写入 self.headers[\"Cookie\"] 或非 None 条件；仅知道 helper 返回 header 不等于说明最终写回。",
+          "gold_anchor_ids": [
+            "Q10-E4"
+          ]
+        }
+      ],
+      "content_mean": 0.5,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "not_assessed_pending_anonymous_context_pack",
+      "deferred_evidence_checks": [
+        "尚未查看真实上下文；Source/Entities/Relationships 引用能否解析、是否蕴含断言、原文行号偏移及引用覆盖，均待匿名证据包核验。",
+        "答案关于“supplied snapshot 缺少某实现”的陈述仅视为对其材料范围的自述；本阶段未判真伪，也未把冻结源码当作生成时已获证据。"
+      ]
+    },
+    {
+      "anonymous_id": "A014",
+      "question_id": "Q08",
+      "answer_sha256": "20175efbf08b71006024644de6d273f143923a869383c9300d80d2a8ef3af8a0",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q08-C1",
+          "score": 0.5,
+          "answer_quote": "The supplied snapshot does not include the `Session` implementation, so the exact merge function and call site cannot be identified",
+          "answer_span": {
+            "start_character_zero_based": 437,
+            "end_character_exclusive": 568
+          },
+          "rationale": "识别 request/session headers 的合并语义，但没有 merge_setting 的具体调用及其 CaseInsensitiveDict 容器；后文的准备容器不能替代合并容器。",
+          "gold_anchor_ids": [
+            "Q08-E1"
+          ]
+        },
+        {
+          "id": "Q08-C2",
+          "score": 1,
+          "answer_quote": "PreparedRequest.prepare(headers=merged_headers)\n        |\n        v\nPreparedRequest.prepare_headers(...)",
+          "answer_span": {
+            "start_character_zero_based": 2557,
+            "end_character_exclusive": 2661
+          },
+          "rationale": "明确 merged headers 传入 prepare，再到 prepare_headers。",
+          "gold_anchor_ids": [
+            "Q08-E1",
+            "Q08-E2"
+          ]
+        },
+        {
+          "id": "Q08-C3",
+          "score": 1,
+          "answer_quote": "check_header_validity(header)\n             name, value = header\n             self.headers[to_native_string(name)] = value",
+          "answer_span": {
+            "start_character_zero_based": 1789,
+            "end_character_exclusive": 1910
+          },
+          "rationale": "给出逐项循环且验证先于存储的准确代码。",
+          "gold_anchor_ids": [
+            "Q08-E3",
+            "Q02-E1"
+          ]
+        },
+        {
+          "id": "Q08-C4",
+          "score": 1,
+          "answer_quote": "It delegates name and value validation separately to `_validate_header_part(...)`.",
+          "answer_span": {
+            "start_character_zero_based": 2032,
+            "end_character_exclusive": 2114
+          },
+          "rationale": "名称和值分别进入校验函数，必要点完整。",
+          "gold_anchor_ids": [
+            "Q08-E4"
+          ]
+        }
+      ],
+      "content_mean": 0.875,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "not_assessed_pending_anonymous_context_pack",
+      "deferred_evidence_checks": [
+        "尚未查看真实上下文；Source/Entities/Relationships 引用能否解析、是否蕴含断言、原文行号偏移及引用覆盖，均待匿名证据包核验。",
+        "答案关于“supplied snapshot 缺少某实现”的陈述仅视为对其材料范围的自述；本阶段未判真伪，也未把冻结源码当作生成时已获证据。"
+      ]
+    },
+    {
+      "anonymous_id": "A080",
+      "question_id": "Q08",
+      "answer_sha256": "a02ab9554d7de6629db4dc6288fdcfeec2c843d2e8a88a5d8eb5fed695dafb2f",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q08-C1",
+          "score": 0.5,
+          "answer_quote": "`merge_setting()` in `src/requests/sessions.py:L45-L73` handles dictionary-valued settings",
+          "answer_span": {
+            "start_character_zero_based": 436,
+            "end_character_exclusive": 526
+          },
+          "rationale": "给出两种来源的合并和覆盖语义，但未定位 prepare_request 调用及 CaseInsensitiveDict 合并容器。",
+          "gold_anchor_ids": [
+            "Q08-E1"
+          ]
+        },
+        {
+          "id": "Q08-C2",
+          "score": 0,
+          "answer_quote": "The resulting `PreparedRequest` exposes the final request headers through `prepped.headers`.",
+          "answer_span": {
+            "start_character_zero_based": 1641,
+            "end_character_exclusive": 1733
+          },
+          "rationale": "只到 Session.prepare_request 和 PreparedRequest.headers 属性，未说明本点所要求的 PreparedRequest.prepare 或 prepare_headers 任一具体传递步骤。",
+          "gold_anchor_ids": [
+            "Q08-E1",
+            "Q08-E2"
+          ]
+        },
+        {
+          "id": "Q08-C3",
+          "score": 0,
+          "answer_quote": "The supplied snapshot does not contain the `PreparedRequest.prepare_headers()` implementation, so it cannot show the exact internal assignment or validation call.",
+          "answer_span": {
+            "start_character_zero_based": 2112,
+            "end_character_exclusive": 2274
+          },
+          "rationale": "没有 check_header_validity 调用或先验证后存储；仅说测试展示验证行为不足以满足调用链要点。",
+          "gold_anchor_ids": [
+            "Q08-E3",
+            "Q02-E1"
+          ]
+        },
+        {
+          "id": "Q08-C4",
+          "score": 0.5,
+          "answer_quote": "`test_header_no_return_chars` expects `InvalidHeader` for header names or values containing carriage-return/newline sequences.",
+          "answer_span": {
+            "start_character_zero_based": 2687,
+            "end_character_exclusive": 2813
+          },
+          "rationale": "知道 header 格式要验证，但没有 check_header_validity 对名称/值分别调用 _validate_header_part 的结构。",
+          "gold_anchor_ids": [
+            "Q08-E4"
+          ]
+        }
+      ],
+      "content_mean": 0.25,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "not_assessed_pending_anonymous_context_pack",
+      "deferred_evidence_checks": [
+        "尚未查看真实上下文；Source/Entities/Relationships 引用能否解析、是否蕴含断言、原文行号偏移及引用覆盖，均待匿名证据包核验。",
+        "答案关于“supplied snapshot 缺少某实现”的陈述仅视为对其材料范围的自述；本阶段未判真伪，也未把冻结源码当作生成时已获证据。",
+        "流程图把 PreparedRequest.headers 属性列在 validation 前，但未明确声称元素写入发生在验证前；不按含糊图示追加事实错误，内容要点仍按缺少具体调用/顺序评分。"
+      ]
+    },
+    {
+      "anonymous_id": "A084",
+      "question_id": "Q08",
+      "answer_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "failed",
+      "criteria": [
+        {
+          "id": "Q08-C1",
+          "score": 0,
+          "answer_quote": "",
+          "answer_span": {
+            "start_character_zero_based": 0,
+            "end_character_exclusive": 0
+          },
+          "rationale": "匿名包中状态为 failed 且答案为空，没有完成该内容要点；按冻结规则保留零分，不推断失败原因。",
+          "gold_anchor_ids": [
+            "Q08-E1"
+          ]
+        },
+        {
+          "id": "Q08-C2",
+          "score": 0,
+          "answer_quote": "",
+          "answer_span": {
+            "start_character_zero_based": 0,
+            "end_character_exclusive": 0
+          },
+          "rationale": "匿名包中状态为 failed 且答案为空，没有完成该内容要点；按冻结规则保留零分，不推断失败原因。",
+          "gold_anchor_ids": [
+            "Q08-E1",
+            "Q08-E2"
+          ]
+        },
+        {
+          "id": "Q08-C3",
+          "score": 0,
+          "answer_quote": "",
+          "answer_span": {
+            "start_character_zero_based": 0,
+            "end_character_exclusive": 0
+          },
+          "rationale": "匿名包中状态为 failed 且答案为空，没有完成该内容要点；按冻结规则保留零分，不推断失败原因。",
+          "gold_anchor_ids": [
+            "Q08-E3",
+            "Q02-E1"
+          ]
+        },
+        {
+          "id": "Q08-C4",
+          "score": 0,
+          "answer_quote": "",
+          "answer_span": {
+            "start_character_zero_based": 0,
+            "end_character_exclusive": 0
+          },
+          "rationale": "匿名包中状态为 failed 且答案为空，没有完成该内容要点；按冻结规则保留零分，不推断失败原因。",
+          "gold_anchor_ids": [
+            "Q08-E4"
+          ]
+        }
+      ],
+      "content_mean": 0.0,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "not_assessed_pending_anonymous_context_pack",
+      "deferred_evidence_checks": []
+    },
+    {
+      "anonymous_id": "A059",
+      "question_id": "Q07",
+      "answer_sha256": "eec0a9a600b3e9e4518475472c5750d4998ca62d25cd708c44921d5bd212a1d1",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q07-C1",
+          "score": 0.5,
+          "answer_quote": "The supplied snapshot shows `requests.get(...)` in the quickstart examples",
+          "answer_span": {
+            "start_character_zero_based": 42,
+            "end_character_exclusive": 116
+          },
+          "rationale": "只有公开 get 入口，没有 api.get → api.request 委托关系。",
+          "gold_anchor_ids": [
+            "Q07-E1"
+          ]
+        },
+        {
+          "id": "Q07-C2",
+          "score": 0.5,
+          "answer_quote": "Calls `self.request(\"GET\", url, **kwargs)`.",
+          "answer_span": {
+            "start_character_zero_based": 557,
+            "end_character_exclusive": 600
+          },
+          "rationale": "识别 Session.get/Session.request，但没有 api.request 创建/使用 Session 的连接。",
+          "gold_anchor_ids": [
+            "Q07-E2"
+          ]
+        },
+        {
+          "id": "Q07-C3",
+          "score": 1,
+          "answer_quote": "The same `Session.request` flow constructs a `Request`, then calls:\n     - `prep = self.prepare_request(req)`",
+          "answer_span": {
+            "start_character_zero_based": 655,
+            "end_character_exclusive": 764
+          },
+          "rationale": "构造和准备两步完整。",
+          "gold_anchor_ids": [
+            "A-Q07-build-request",
+            "Q07-E3"
+          ]
+        },
+        {
+          "id": "Q07-C4",
+          "score": 1,
+          "answer_quote": "`resp = self.send(prep, **send_kwargs)`",
+          "answer_span": {
+            "start_character_zero_based": 1021,
+            "end_character_exclusive": 1060
+          },
+          "rationale": "明确 Session.request 把准备后的 prep 交给 send。",
+          "gold_anchor_ids": [
+            "Q07-E4"
+          ]
+        },
+        {
+          "id": "Q07-C5",
+          "score": 1,
+          "answer_quote": "`adapter = self.get_adapter(url=request.url)`",
+          "answer_span": {
+            "start_character_zero_based": 2167,
+            "end_character_exclusive": 2212
+          },
+          "rationale": "同节明确随后 r = adapter.send(request, **kwargs)，以该点为终点；后文补充选择规则没有继续传输内部调用或强行固定运行时子类。",
+          "gold_anchor_ids": [
+            "Q07-E5"
+          ]
+        }
+      ],
+      "content_mean": 0.8,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "not_assessed_pending_anonymous_context_pack",
+      "deferred_evidence_checks": [
+        "尚未查看真实上下文；Source/Entities/Relationships 引用能否解析、是否蕴含断言、原文行号偏移及引用覆盖，均待匿名证据包核验。",
+        "答案关于“supplied snapshot 缺少某实现”的陈述仅视为对其材料范围的自述；本阶段未判真伪，也未把冻结源码当作生成时已获证据。"
+      ]
+    },
+    {
+      "anonymous_id": "A043",
+      "question_id": "Q09",
+      "answer_sha256": "befea08e0b6f5756ca67821919ac37f45a72a1adbb9e1180a2bb562249a24b31",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q09-C1",
+          "score": 1,
+          "answer_quote": "calls `self.rebuild_auth(prepared_request, resp)` after rebuilding proxy settings",
+          "answer_span": {
+            "start_character_zero_based": 181,
+            "end_character_exclusive": 262
+          },
+          "rationale": "同句定位 SessionRedirectMixin.resolve_redirects，明确调用对象和顺序。",
+          "gold_anchor_ids": [
+            "Q09-E1"
+          ]
+        },
+        {
+          "id": "Q09-C2",
+          "score": 1,
+          "answer_quote": "`if old_parsed.hostname != new_parsed.hostname: return True`",
+          "answer_span": {
+            "start_character_zero_based": 593,
+            "end_character_exclusive": 653
+          },
+          "rationale": "hostname 判断和跨主机 True 完整。",
+          "gold_anchor_ids": [
+            "Q09-E3",
+            "Q09-E2"
+          ]
+        },
+        {
+          "id": "Q09-C3",
+          "score": 1,
+          "answer_quote": "`rebuild_auth` (`src/requests/sessions.py:L278-L298`) checks the existing `Authorization` header by calling `should_strip_auth(response.request.url, prepared_request.url)`",
+          "answer_span": {
+            "start_character_zero_based": 278,
+            "end_character_exclusive": 449
+          },
+          "rationale": "结合后文 cross-host 删除已有 header 的条件说明，存在性及 should_strip_auth 条件完整；无需逐字复写 if。",
+          "gold_anchor_ids": [
+            "Q09-E2"
+          ]
+        },
+        {
+          "id": "Q09-C4",
+          "score": 1,
+          "answer_quote": "If `trust_env` is enabled and `get_netrc_auth` returns credentials, `prepared_request.prepare_auth(new_auth)` replaces authentication",
+          "answer_span": {
+            "start_character_zero_based": 923,
+            "end_character_exclusive": 1056
+          },
+          "rationale": "trust_env、返回凭证和 prepare_auth 的条件关系完整，且解释任一条件不满足就不替换。",
+          "gold_anchor_ids": [
+            "Q09-E2"
+          ]
+        }
+      ],
+      "content_mean": 1.0,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "not_assessed_pending_anonymous_context_pack",
+      "deferred_evidence_checks": [
+        "尚未查看真实上下文；Source/Entities/Relationships 引用能否解析、是否蕴含断言、原文行号偏移及引用覆盖，均待匿名证据包核验。",
+        "答案关于“supplied snapshot 缺少某实现”的陈述仅视为对其材料范围的自述；本阶段未判真伪，也未把冻结源码当作生成时已获证据。"
+      ]
+    },
+    {
+      "anonymous_id": "A067",
+      "question_id": "Q09",
+      "answer_sha256": "84207e749a1488e6d627943fa11fe0830df19cc1fac4a579853c1c9dcfda6bf1",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q09-C1",
+          "score": 1,
+          "answer_quote": "`SessionRedirectMixin.resolve_redirects()` prepares the redirected request and then calls `self.rebuild_auth(prepared_request, resp)`",
+          "answer_span": {
+            "start_character_zero_based": 41,
+            "end_character_exclusive": 174
+          },
+          "rationale": "明确 resolve_redirects → rebuild_auth。",
+          "gold_anchor_ids": [
+            "Q09-E1"
+          ]
+        },
+        {
+          "id": "Q09-C2",
+          "score": 1,
+          "answer_quote": "if old_parsed.hostname != new_parsed.hostname:\n      return True",
+          "answer_span": {
+            "start_character_zero_based": 758,
+            "end_character_exclusive": 822
+          },
+          "rationale": "明确 hostname 变化返回 True。",
+          "gold_anchor_ids": [
+            "Q09-E3",
+            "Q09-E2"
+          ]
+        },
+        {
+          "id": "Q09-C3",
+          "score": 1,
+          "answer_quote": "if \"Authorization\" in headers and self.should_strip_auth(\n      response.request.url, url\n  ):\n      del headers[\"Authorization\"]",
+          "answer_span": {
+            "start_character_zero_based": 455,
+            "end_character_exclusive": 584
+          },
+          "rationale": "存在性和条件删除的代码完整。",
+          "gold_anchor_ids": [
+            "Q09-E2"
+          ]
+        },
+        {
+          "id": "Q09-C4",
+          "score": 1,
+          "answer_quote": "new_auth = get_netrc_auth(url) if self.trust_env else None\n  if new_auth is not None:\n      prepared_request.prepare_auth(new_auth)",
+          "answer_span": {
+            "start_character_zero_based": 1162,
+            "end_character_exclusive": 1293
+          },
+          "rationale": "两个条件及应用调用完整。",
+          "gold_anchor_ids": [
+            "Q09-E2"
+          ]
+        }
+      ],
+      "content_mean": 1.0,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "not_assessed_pending_anonymous_context_pack",
+      "deferred_evidence_checks": [
+        "尚未查看真实上下文；Source/Entities/Relationships 引用能否解析、是否蕴含断言、原文行号偏移及引用覆盖，均待匿名证据包核验。",
+        "答案关于“supplied snapshot 缺少某实现”的陈述仅视为对其材料范围的自述；本阶段未判真伪，也未把冻结源码当作生成时已获证据。"
+      ]
+    },
+    {
+      "anonymous_id": "A041",
+      "question_id": "Q07",
+      "answer_sha256": "a3157c50488300a703c479cfea503447177b76c8241edfa097712bc02554164b",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q07-C1",
+          "score": 0.5,
+          "answer_quote": "The supplied snapshot does not include the module-level `requests.get` wrapper",
+          "answer_span": {
+            "start_character_zero_based": 0,
+            "end_character_exclusive": 78
+          },
+          "rationale": "只识别公开 get；未给 api.get → api.request。",
+          "gold_anchor_ids": [
+            "Q07-E1"
+          ]
+        },
+        {
+          "id": "Q07-C2",
+          "score": 0.5,
+          "answer_quote": "`Session.get(url, **kwargs)` is the convenience method shown in `src/requests/sessions.py`.",
+          "answer_span": {
+            "start_character_zero_based": 210,
+            "end_character_exclusive": 301
+          },
+          "rationale": "只到 Session.get/Session.request 层，没有 api.request 使用 Session 的调用边。",
+          "gold_anchor_ids": [
+            "Q07-E2"
+          ]
+        },
+        {
+          "id": "Q07-C3",
+          "score": 1,
+          "answer_quote": "`Session.request(...)` constructs a `Request` with the method, URL, parameters, authentication, cookies, and hooks, then calls `self.prepare_request(req)`",
+          "answer_span": {
+            "start_character_zero_based": 442,
+            "end_character_exclusive": 596
+          },
+          "rationale": "构造 Request 和 prepare_request 两步明确。",
+          "gold_anchor_ids": [
+            "A-Q07-build-request",
+            "Q07-E3"
+          ]
+        },
+        {
+          "id": "Q07-C4",
+          "score": 1,
+          "answer_quote": "resp = self.send(prep, **send_kwargs)",
+          "answer_span": {
+            "start_character_zero_based": 995,
+            "end_character_exclusive": 1032
+          },
+          "rationale": "前文将 prep 明确为准备后的 PreparedRequest；调用链完整。",
+          "gold_anchor_ids": [
+            "Q07-E4"
+          ]
+        },
+        {
+          "id": "Q07-C5",
+          "score": 0.5,
+          "answer_quote": "r = adapter.send(request, **kwargs)",
+          "answer_span": {
+            "start_character_zero_based": 1478,
+            "end_character_exclusive": 1513
+          },
+          "rationale": "选中 adapter 的调用已完整，但之后继续展开 HTTPAdapter.send 内部直至 conn.urlopen；不满足停止限制，且不把有条件的 built-in 描述误记为无条件固定子类。",
+          "gold_anchor_ids": [
+            "Q07-E5"
+          ]
+        }
+      ],
+      "content_mean": 0.7,
+      "errors": [
+        {
+          "id": "A041-E01",
+          "question_id": "Q07",
+          "method": null,
+          "anonymous_id": "A041",
+          "answer_quote": "At that point, `HTTPAdapter.send` begins transport-specific work: obtaining a TLS-aware connection, certificate verification, URL/header preparation, timeout conversion, and ultimately urllib3 dispatch via `conn.urlopen(...)`",
+          "claim": "在声明到达 adapter.send 后继续展开传输内部直至 conn.urlopen。",
+          "category": [
+            "query_constraint_violation"
+          ],
+          "source_or_query_anchor": [
+            {
+              "path": "research/pilot/strategy-routing/answer-gold.json",
+              "question_id": "Q07",
+              "quote": "Trace requests.get(url) from its public wrapper through preparation to the selected transport adapter; stop at adapter.send."
+            },
+            {
+              "path": "src/requests/adapters.py",
+              "start_line": 632,
+              "end_line": 677,
+              "quote": "        try:\n            conn = self.get_connection_with_tls_context(\n                request, verify, proxies=proxies, cert=cert\n            )\n        except LocationValueError as e:\n            raise InvalidURL(e, request=request)\n\n        self.cert_verify(conn, request.url, verify, cert)\n        url = self.request_url(request, proxies)\n        self.add_headers(\n            request,\n            stream=stream,\n            timeout=timeout,\n            verify=verify,\n            cert=cert,\n            proxies=proxies,\n        )\n\n        chunked = not (request.body is None or \"Content-Length\" in request.headers)\n\n        if isinstance(timeout, tuple):\n            try:\n                connect, read = timeout\n                timeout = TimeoutSauce(connect=connect, read=read)\n            except ValueError:\n                raise ValueError(\n                    f\"Invalid timeout {timeout}. Pass a (connect, read) timeout tuple, \"\n                    f\"or a single float to set both timeouts to the same value.\"\n                )\n        elif isinstance(timeout, TimeoutSauce):\n            pass\n        else:\n            timeout = TimeoutSauce(connect=timeout, read=timeout)\n\n        try:\n            resp = conn.urlopen(\n                method=request.method,\n                url=url,\n                body=request.body,\n                headers=request.headers,\n                redirect=False,\n                assert_same_host=False,\n                preload_content=False,\n                decode_content=False,\n                retries=self.max_retries,\n                timeout=timeout,\n",
+              "span_sha256": "be00c5be8d2794e82425b78c7701e42f9829cdfddd1932fcdd4cc17df903559c"
+            }
+          ],
+          "rationale": "题目明确 stop at adapter.send；内部步骤本身正确不抵消超出停止点。前文限定 built-in，不记无条件运行时目标伪造。",
+          "affected_criterion_ids": [
+            "Q07-C5"
+          ],
+          "content_score_effect": "C5 已计 .5；不再次扣分。"
+        },
+        {
+          "id": "A041-E02",
+          "question_id": "Q07",
+          "method": null,
+          "anonymous_id": "A041",
+          "answer_quote": "It sets `allow_redirects=True` and delegates to `self.request(\"GET\", url, **kwargs)`",
+          "claim": "将 Session.get 的 allow_redirects 默认设定写成直接设置 True。",
+          "category": [
+            "contradicted_by_frozen_source"
+          ],
+          "source_or_query_anchor": [
+            {
+              "path": "src/requests/sessions.py",
+              "start_line": 593,
+              "end_line": 602,
+              "quote": "    def get(self, url, **kwargs):\n        r\"\"\"Sends a GET request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        kwargs.setdefault(\"allow_redirects\", True)\n        return self.request(\"GET\", url, **kwargs)\n",
+              "span_sha256": "fd2ed9b3ea5632e8d5abb2835494f3bcfa2edad5f84577abdec425a367c622e5"
+            }
+          ],
+          "rationale": "实际是 setdefault，调用者显式 False 不会变 True。按原文字面记录默认条件遗漏，不因这条非核心附加描述再次扣要点分。",
+          "affected_criterion_ids": [],
+          "content_score_effect": "额外断言错误；不改变核心 criteria 分数。"
+        }
+      ],
+      "citation_audit": [],
+      "evidence_review_status": "not_assessed_pending_anonymous_context_pack",
+      "deferred_evidence_checks": [
+        "尚未查看真实上下文；Source/Entities/Relationships 引用能否解析、是否蕴含断言、原文行号偏移及引用覆盖，均待匿名证据包核验。",
+        "答案关于“supplied snapshot 缺少某实现”的陈述仅视为对其材料范围的自述；本阶段未判真伪，也未把冻结源码当作生成时已获证据。"
+      ]
+    }
+  ],
+  "validation": {
+    "rows": 16,
+    "unique_anonymous_ids": 16,
+    "per_question_counts": {
+      "Q07": 4,
+      "Q10": 4,
+      "Q09": 4,
+      "Q08": 4
+    },
+    "criterion_judgments": 68,
+    "failed_empty_rows": 2,
+    "answer_hashes_match": true,
+    "all_quotes_exact_substrings": true,
+    "rubric_unchanged": true,
+    "network_api_calls": 0,
+    "verified_fact_error_count": 3,
+    "query_constraint_violation_count": 3,
+    "error_ledger_distinct_assertions": 5,
+    "no_method_aggregates_before_unblinding": true
+  },
+  "grouping_note": "Q07–Q10 均属 main_test16。Q07 也属独立 supplement6，未来复用同一内容评分，不重复生成或挑选。不在本匿名批次汇总方法分。",
+  "pending": "等待主代理提供匿名实际上下文包后再评证据充分度与引用；当前内容评分不包含该维度。"
+}

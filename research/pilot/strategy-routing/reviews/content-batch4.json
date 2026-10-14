@@ -1,0 +1,644 @@
+{
+  "rubric_sha256": "d1bdca1bf597530a0f90081220b5370893bc04742b080fe3dbd492dd7b3de225",
+  "blind_pack_sha256": "fdaad085f1c008f5aac5522e675678f3e22eec7ae0d50c1e58e964967d090e74",
+  "reviewer": "answer_review_c",
+  "scope": {
+    "batch": 4,
+    "question_ids": [
+      "Q11",
+      "Q12",
+      "Q13"
+    ],
+    "row_count": 12,
+    "mode": "method-identity-blinded content review; citation syntax may imply method, not double blind",
+    "source": "Frozen Requests 2.32.3; all Q11–Q13 gold spans hash-verified; relevant full source/test files inspected statically",
+    "constraints": "No method mapping, run summary, results/cells, other scores, exporter, API or credentials read. Actual supplied evidence audit remains pending.",
+    "strict_rubric_notes": [
+      "Q12-C2 full credit requires the explicit single-callable wrapping step as well as ordered current-data passing.",
+      "Q12-C3 full credit requires final dispatch return semantics as well as None/non-None update rules.",
+      "Source-location citation mismatches are recorded separately and do not subtract content points."
+    ]
+  },
+  "rows": [
+    {
+      "anonymous_id": "A018",
+      "question_id": "Q13",
+      "answer_sha256": "79c90ca493a1992b52ae609adbfee7635e77c7e0eabdf7470e3243470c1dc349",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q13-C1",
+          "score": 1,
+          "answer_quote": "which stores entries under `key.lower()` while retaining the last-cased key and value.",
+          "rationale": "完整指出存储、set/get、迭代及保留拼写行为。",
+          "gold_anchor_ids": [
+            "Q13-E1",
+            "Q13-E2",
+            "A-Q13-iteration"
+          ]
+        },
+        {
+          "id": "Q13-C2",
+          "score": 1,
+          "answer_quote": "It initializes `self.headers` as a `CaseInsensitiveDict`, validates each header, converts the header name with `to_native_string`, and assigns it into the container",
+          "rationale": "准确定位 PreparedRequest.prepare_headers 及校验后写入容器。",
+          "gold_anchor_ids": [
+            "Q13-E3"
+          ]
+        },
+        {
+          "id": "Q13-C3",
+          "score": 1,
+          "answer_quote": "case-insensitive lookup and deletion: `test_getitem`, `test_delitem`",
+          "rationale": "定位 tests/test_structures.py 的专门测试并说明大小写不敏感查找。",
+          "gold_anchor_ids": [
+            "Q13-E4"
+          ]
+        },
+        {
+          "id": "Q13-C4",
+          "score": 1,
+          "answer_quote": "it does not establish that any of them require edits.",
+          "rationale": "明确区分检查目标与必改文件。",
+          "gold_anchor_ids": []
+        }
+      ],
+      "content_mean": 1.0,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A062",
+      "question_id": "Q12",
+      "answer_sha256": "f4600eee7f354a0630518144a5317884f795f9ef606ed918e06d51eba1166f50",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q12-C1",
+          "score": 0,
+          "answer_quote": "The supplied excerpts do not include the body of `Session.send`",
+          "rationale": "没有给出 Session.send 接收 dispatch_hook 返回值的赋值链；材料不足声明不替代内容。",
+          "gold_anchor_ids": [
+            "Q12-E1"
+          ]
+        },
+        {
+          "id": "Q12-C2",
+          "score": 1,
+          "answer_quote": "`dispatch_hook()` normalizes a callable into a list, invokes each hook with the current response as `hook_data`",
+          "rationale": "说明单 callable 包装、依次调用和当前数据传递。",
+          "gold_anchor_ids": [
+            "Q12-E2"
+          ]
+        },
+        {
+          "id": "Q12-C3",
+          "score": 0.5,
+          "answer_quote": "`None` means the existing response remains in use.",
+          "rationale": "None 保留、非 None 替换均正确，但未说明 dispatch_hook 最终返回当前 hook_data；按严格满分口径记部分完成。",
+          "gold_anchor_ids": [
+            "Q12-E2"
+          ]
+        },
+        {
+          "id": "Q12-C4",
+          "score": 1,
+          "answer_quote": "A non-`None` return value becomes the new `hook_data`, including potentially a different object.",
+          "rationale": "明确不同对象也可能替换，未把所有回调强制为返回 Response。",
+          "gold_anchor_ids": [
+            "Q12-E2"
+          ]
+        }
+      ],
+      "content_mean": 0.625,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A068",
+      "question_id": "Q11",
+      "answer_sha256": "b3daca6805fa6938d5feddea4709a8816d41d606409df68e4c8b76dc1145c62b",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q11-C1",
+          "score": 0.5,
+          "answer_quote": "A response’s `Content-Type` header determines `Response.encoding` through `requests.utils.get_encoding_from_headers()`",
+          "rationale": "知道头部到编码及 helper，但未定位 HTTPAdapter.build_response 的赋值。",
+          "gold_anchor_ids": [
+            "Q11-E1"
+          ]
+        },
+        {
+          "id": "Q11-C2",
+          "score": 1,
+          "answer_quote": "If no charset is present but the media type contains `text`, it falls back to `ISO-8859-1`",
+          "rationale": "charset 优先、text/JSON 默认及无结果分支均完整正确。",
+          "gold_anchor_ids": [
+            "Q11-E2"
+          ]
+        },
+        {
+          "id": "Q11-C3",
+          "score": 1,
+          "answer_quote": "When `Response.text` is accessed and `self.encoding` is still `None`, `Response.apparent_encoding` is used instead",
+          "rationale": "明确 encoding=None 时的解码回退，没有声称覆盖已指定编码。",
+          "gold_anchor_ids": [
+            "Q11-E3"
+          ]
+        }
+      ],
+      "content_mean": 0.8333333333333334,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A048",
+      "question_id": "Q12",
+      "answer_sha256": "3e790e727f085172bdcb511a67d69d9bce11645d1307340500c9d29c9825040b",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q12-C1",
+          "score": 0,
+          "answer_quote": "does not establish the exact `Session.send()` line where dispatch occurs",
+          "rationale": "没有给出 send 中把 dispatch 返回值赋回 r 的步骤。",
+          "gold_anchor_ids": [
+            "Q12-E1"
+          ]
+        },
+        {
+          "id": "Q12-C2",
+          "score": 0.5,
+          "answer_quote": "`dispatch_hook()` in `src/requests/hooks.py:L18-L33` invokes each response hook in order",
+          "rationale": "顺序和当前数据正确，但遗漏单 callable 包装为列表这一冻结要点。",
+          "gold_anchor_ids": [
+            "Q12-E2"
+          ]
+        },
+        {
+          "id": "Q12-C3",
+          "score": 0.5,
+          "answer_quote": "If it returns `None` (including an implicit return), the existing response remains in use.",
+          "rationale": "保持/替换规则正确，但未说明 dispatch_hook 最终返回 hook_data。",
+          "gold_anchor_ids": [
+            "Q12-E2"
+          ]
+        },
+        {
+          "id": "Q12-C4",
+          "score": 1,
+          "answer_quote": "A callback that returns another object can replace the response passed to subsequent hooks.",
+          "rationale": "明确允许其他对象替换；没有虚构固定回调或强制 Response 返回类型。",
+          "gold_anchor_ids": [
+            "Q12-E2"
+          ]
+        }
+      ],
+      "content_mean": 0.5,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A011",
+      "question_id": "Q11",
+      "answer_sha256": "f02704c7042d99c5ef499a8cbed7e99a54ece47e146688d9e6607cc81f2ce9ec",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q11-C1",
+          "score": 1,
+          "answer_quote": "then sets `Response.encoding` from those headers via `get_encoding_from_headers(response.headers)`",
+          "rationale": "完整定位 HTTPAdapter.build_response 的头部转换与编码赋值。",
+          "gold_anchor_ids": [
+            "Q11-E1"
+          ]
+        },
+        {
+          "id": "Q11-C2",
+          "score": 0,
+          "answer_quote": "does not establish the exact header precedence",
+          "rationale": "省略 charset/text/JSON/None 分支。",
+          "gold_anchor_ids": [
+            "Q11-E2"
+          ]
+        },
+        {
+          "id": "Q11-C3",
+          "score": 1,
+          "answer_quote": "When that header-derived value remains unset, `Response.text` falls back to `self.apparent_encoding`",
+          "rationale": "明确仅编码未设置时回退，正确描述正文解码。",
+          "gold_anchor_ids": [
+            "Q11-E3"
+          ]
+        }
+      ],
+      "content_mean": 0.6666666666666666,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A035",
+      "question_id": "Q12",
+      "answer_sha256": "adec926d14af97d3828782885d166633c523ddf87b1ba5cb1aa55ef811befcde",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q12-C1",
+          "score": 1,
+          "answer_quote": "`r = dispatch_hook(\"response\", hooks, r, **kwargs)`",
+          "rationale": "精确给出 send 的 response 事件调用及返回值供后续步骤使用。",
+          "gold_anchor_ids": [
+            "Q12-E1"
+          ]
+        },
+        {
+          "id": "Q12-C2",
+          "score": 0.5,
+          "answer_quote": "Multiple hooks are called in registration order",
+          "rationale": "说明顺序及前一替换传给后续，但未说明单 callable 列表包装。",
+          "gold_anchor_ids": [
+            "Q12-E2"
+          ]
+        },
+        {
+          "id": "Q12-C3",
+          "score": 1,
+          "answer_quote": "The value returned by dispatch is therefore what subsequent `Session.send` steps use.",
+          "rationale": "结合后文 None 保留、其他值替换，明确最终 dispatch 返回值继续使用。",
+          "gold_anchor_ids": [
+            "Q12-E2"
+          ]
+        },
+        {
+          "id": "Q12-C4",
+          "score": 1,
+          "answer_quote": "A hook that returns another value can replace what later steps receive.",
+          "rationale": "否定每个 hook 必须返回 Response，允许其他值替换；没有虚构绑定目标。",
+          "gold_anchor_ids": [
+            "Q12-E2"
+          ]
+        }
+      ],
+      "content_mean": 0.875,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A074",
+      "question_id": "Q11",
+      "answer_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "failed",
+      "criteria": [
+        {
+          "id": "Q11-C1",
+          "score": 0,
+          "answer_quote": "",
+          "rationale": "最终执行失败、空回答。",
+          "gold_anchor_ids": [
+            "Q11-E1"
+          ]
+        },
+        {
+          "id": "Q11-C2",
+          "score": 0,
+          "answer_quote": "",
+          "rationale": "最终执行失败、空回答。",
+          "gold_anchor_ids": [
+            "Q11-E2"
+          ]
+        },
+        {
+          "id": "Q11-C3",
+          "score": 0,
+          "answer_quote": "",
+          "rationale": "最终执行失败、空回答。",
+          "gold_anchor_ids": [
+            "Q11-E3"
+          ]
+        }
+      ],
+      "content_mean": 0.0,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A005",
+      "question_id": "Q13",
+      "answer_sha256": "74e94fd172f6db5d1e1cefdf89a92e6aaee52983969e281fefd7dc3a1b48241b",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q13-C1",
+          "score": 1,
+          "answer_quote": "retaining the casing of the last key set while performing lookup and containment case-insensitively",
+          "rationale": "准确说明 set/get、保留最后拼写及迭代检查。",
+          "gold_anchor_ids": [
+            "Q13-E1",
+            "Q13-E2",
+            "A-Q13-iteration"
+          ]
+        },
+        {
+          "id": "Q13-C2",
+          "score": 1,
+          "answer_quote": "It creates `CaseInsensitiveDict()`, validates each input header, converts the name with `to_native_string`",
+          "rationale": "正确定位 PreparedRequest.prepare_headers 及校验/写入行为。",
+          "gold_anchor_ids": [
+            "Q13-E3"
+          ]
+        },
+        {
+          "id": "Q13-C3",
+          "score": 0,
+          "answer_quote": "it is insufficient to identify the existing test names or exact test paths.",
+          "rationale": "只提出未来搜索范围，没有识别现有聚焦测试。",
+          "gold_anchor_ids": [
+            "Q13-E4"
+          ]
+        },
+        {
+          "id": "Q13-C4",
+          "score": 1,
+          "answer_quote": "These are inspection targets, not claims that each test requires edits.",
+          "rationale": "明确检查不等于必改。",
+          "gold_anchor_ids": []
+        }
+      ],
+      "content_mean": 0.75,
+      "errors": [],
+      "citation_audit": [
+        {
+          "answer_quote": "`prepare_body()` checks `\"content-type\"` and assigns `\"Content-Type\"` at `src/requests/models.py:L488-L560`",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "src/requests/models.py:566-568",
+          "rationale": "事实正确，但标注范围止于560，实际检查/赋值在567–568。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        },
+        {
+          "answer_quote": "`prepare_content_length()` reads and writes `\"Content-Length\"` at the same location",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "src/requests/models.py:572-586",
+          "rationale": "same location 承接488–560；函数实际位于572–586。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        },
+        {
+          "answer_quote": "`prepare_cookies()` assigns `\"Cookie\"` at `src/requests/models.py:L608-L627`",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "src/requests/models.py:626-628",
+          "rationale": "指定范围缺少实际赋值第628行；事实本身正确。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        },
+        {
+          "answer_quote": "`prepare_auth()` recomputes content length after authentication at `src/requests/models.py:L590-L607`",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "src/requests/models.py:607-608",
+          "rationale": "范围包含注释但遗漏实际重算调用第608行。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        },
+        {
+          "answer_quote": "`HTTPAdapter.build_response()` at `src/requests/adapters.py:L335-L360`",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "src/requests/adapters.py:359-378",
+          "rationale": "给出的范围不含第375行 CaseInsensitiveDict 构造。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        }
+      ],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A063",
+      "question_id": "Q12",
+      "answer_sha256": "a6f9ab36596cbea479b40857d0eed74d4c38050c9c04e3be82adefd58428f3e4",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q12-C1",
+          "score": 0.5,
+          "answer_quote": "the send flow dispatches response hooks",
+          "rationale": "只说明 send 执行 hooks，明确未能给出返回值赋回 r 及后续使用。",
+          "gold_anchor_ids": [
+            "Q12-E1"
+          ]
+        },
+        {
+          "id": "Q12-C2",
+          "score": 0.5,
+          "answer_quote": "`dispatch_hook` calls each hook with the current `hook_data`",
+          "rationale": "说明依次传递当前值，但没有单 callable 包装步骤。",
+          "gold_anchor_ids": [
+            "Q12-E2"
+          ]
+        },
+        {
+          "id": "Q12-C3",
+          "score": 0.5,
+          "answer_quote": "if it returns `None`, the existing data is retained and passed to subsequent hooks.",
+          "rationale": "None 保留及非 None 替换正确，但没有说明最终 return hook_data。",
+          "gold_anchor_ids": [
+            "Q12-E2"
+          ]
+        },
+        {
+          "id": "Q12-C4",
+          "score": 1,
+          "answer_quote": "a registered response-hook callable does not necessarily return the `Response` used by later processing.",
+          "rationale": "明确否定返回 Response 的普遍保证，并说明任意非 None 值可替换；对 send 后续要求保留不确定性，不虚构静态类型校验。",
+          "gold_anchor_ids": [
+            "Q12-E2"
+          ]
+        }
+      ],
+      "content_mean": 0.625,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A034",
+      "question_id": "Q11",
+      "answer_sha256": "de7a951b821fe80d99cbf974ddec1935971868a9126857891d41758a27dd5e64",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q11-C1",
+          "score": 0.5,
+          "answer_quote": "response text encoding is determined from HTTP headers",
+          "rationale": "识别头部到编码关系，但没有赋值链/helper 定位。",
+          "gold_anchor_ids": [
+            "Q11-E1"
+          ]
+        },
+        {
+          "id": "Q11-C2",
+          "score": 0,
+          "answer_quote": "nor the exact parsing rules used.",
+          "rationale": "未给出 charset 与默认编码分支。",
+          "gold_anchor_ids": [
+            "Q11-E2"
+          ]
+        },
+        {
+          "id": "Q11-C3",
+          "score": 1,
+          "answer_quote": "When `Response.encoding` remains unset, `Response.text` uses `self.apparent_encoding`",
+          "rationale": "正确给出 encoding 未设时回退。",
+          "gold_anchor_ids": [
+            "Q11-E3"
+          ]
+        }
+      ],
+      "content_mean": 0.5,
+      "errors": [],
+      "citation_audit": [
+        {
+          "answer_quote": "(Source 48, `src/requests/models.py:L777-L790`)",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "src/requests/models.py:790-797",
+          "rationale": "apparent_encoding 的检测/UTF-8分支实际在792–797，范围只到函数签名。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        }
+      ],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A038",
+      "question_id": "Q13",
+      "answer_sha256": "46a091704d115d89ba4a47c7f82bff88271f476e534eb16bd96584e9dde7d60b",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q13-C1",
+          "score": 1,
+          "answer_quote": "The item methods normalize keys with `key.lower()`, iteration preserves the original spelling",
+          "rationale": "明确 set/get、lowercase 查找和保留拼写的迭代行为。",
+          "gold_anchor_ids": [
+            "Q13-E1",
+            "Q13-E2",
+            "A-Q13-iteration"
+          ]
+        },
+        {
+          "id": "Q13-C2",
+          "score": 0.5,
+          "answer_quote": "The preparation consumer to inspect is `prepare_headers(self, headers)`",
+          "rationale": "函数行为和校验正确，但未识别 PreparedRequest 所属类/作用域，自称模块和完整实现未知。",
+          "gold_anchor_ids": [
+            "Q13-E3"
+          ]
+        },
+        {
+          "id": "Q13-C3",
+          "score": 1,
+          "answer_quote": "`TEST_CONTAINS`, `TEST_GET`, `TEST_ITER`, and `TEST_EQUALITY`",
+          "rationale": "在容器测试语境中识别现有聚焦测试及 casing variants/lookup；大写是引用的实体标签，按对应真实 test_get 等等价理解。",
+          "gold_anchor_ids": [
+            "Q13-E4"
+          ]
+        },
+        {
+          "id": "Q13-C4",
+          "score": 1,
+          "answer_quote": "not a mandatory edit list",
+          "rationale": "明确检查与修改边界。",
+          "gold_anchor_ids": []
+        }
+      ],
+      "content_mean": 0.875,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A083",
+      "question_id": "Q13",
+      "answer_sha256": "c5f0247af225f309849a63df69b539a646418d952022f563804639a462e89a0e",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q13-C1",
+          "score": 1,
+          "answer_quote": "Assignment and case-insensitive overwrite through `__setitem__`, including preservation of the most recently assigned spelling",
+          "rationale": "set/get、最后拼写与迭代要点完整；错误测试路径另记。",
+          "gold_anchor_ids": [
+            "Q13-E1",
+            "Q13-E2",
+            "A-Q13-iteration"
+          ]
+        },
+        {
+          "id": "Q13-C2",
+          "score": 0,
+          "answer_quote": "`Request.prepare()` is exercised in `test_header_keys_are_native`, `test_header_validation`, `test_header_value_not_str`, and the invalid-header tests",
+          "rationale": "未识别 PreparedRequest.prepare_headers；将部分经 Session.prepare_request/PreparedRequest.prepare 的测试归为 Request.prepare，属不同作用域准备入口混淆。",
+          "gold_anchor_ids": [
+            "Q13-E3"
+          ]
+        },
+        {
+          "id": "Q13-C3",
+          "score": 1,
+          "answer_quote": "Lookup, deletion, and membership with different key casing: `test_getitem`, `test_delitem`, and `test_contains`",
+          "rationale": "准确识别 tests/test_requests.py 的 TestCaseInsensitiveDict 查找变体测试；另外两个错误路径不抹去这一正确要点。",
+          "gold_anchor_ids": [
+            "Q13-E4"
+          ]
+        },
+        {
+          "id": "Q13-C4",
+          "score": 1,
+          "answer_quote": "It does not establish that all of these locations require changes.",
+          "rationale": "明确检查不等于必改。",
+          "gold_anchor_ids": []
+        }
+      ],
+      "content_mean": 0.75,
+      "errors": [
+        {
+          "question_id": "Q13",
+          "method": null,
+          "answer_quote": "`Request.prepare()` is exercised in `test_header_keys_are_native`, `test_header_validation`, `test_header_value_not_str`, and the invalid-header tests",
+          "claim": "所列 header_validation/value_not_str/invalid-header 测试经过 Request.prepare。",
+          "category": "contradicted_by_frozen_source",
+          "source_or_query_anchor": "tests/test_requests.py:1697-1762; src/requests/sessions.py:457-498; src/requests/api.py:58-73",
+          "rationale": "keys_are_native 确实显式调用 Request.prepare；其余所列测试调用 requests.get，Session.prepare_request 创建 PreparedRequest 并调用其 prepare，未调用 Request.prepare。把两种准备入口混为同一函数。Q13-C2 已据此为0，错误账本不再次扣分。",
+          "affected_criterion_ids": [
+            "Q13-C2"
+          ]
+        }
+      ],
+      "citation_audit": [
+        {
+          "answer_quote": "`test_docstring_example`, `test_list`, and `test_lower_items` in `tests/test_structures.py:L1-L78`",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "tests/test_requests.py:2250-2254; tests/test_structures.py:13-34",
+          "rationale": "test_list/lower_items 在所述文件，test_docstring_example 实际在 test_requests.py，路径混淆。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        },
+        {
+          "answer_quote": "`test_copy`, `test_instance_equality`, `test_repr`, and `test_len` in `tests/test_structures.py:L1-L78`",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "tests/test_requests.py:2256-2259; tests/test_structures.py:36-54",
+          "rationale": "前三个名字在所述文件，test_len 实际在 test_requests.py。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        }
+      ],
+      "evidence_review_status": "pending"
+    }
+  ]
+}

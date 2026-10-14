@@ -1,0 +1,1157 @@
+{
+  "qid": "Q15",
+  "method": "routed_graphrag",
+  "route": "drift",
+  "status": "complete",
+  "generation_input_tokens": 19628,
+  "requests": {
+    "f1451d27eedef2609c54410bb4d5fb8e36df696cd82e9bf8e7fe21a0df6ad784": {
+      "stage": "hyde",
+      "service": "generation"
+    },
+    "3eddb53b0a837cab508300f20297eac8d9b275440ba10be264294b3c21e12bff": {
+      "stage": "query_embedding",
+      "service": "embedding"
+    },
+    "16d8595c43a9b9a1618f5d4fbc63de03e0194893492a44867a2830d5bccbc576": {
+      "stage": "primer",
+      "service": "generation"
+    },
+    "4af0ddd9bca0a7195f0d97f643f558d7f964ec20be0b6421d623ae2b1fe7d6ad": {
+      "stage": "query_embedding",
+      "service": "embedding"
+    },
+    "e788b666bcf3b12675fb5889f5cb905add64f2b2a6f1f481feb383582f54cf8c": {
+      "stage": "local",
+      "service": "generation"
+    },
+    "b2cc6e7067cae54507f84ad2fca1e67dea904df88e71b183c4b928da5239a0a2": {
+      "stage": "query_embedding",
+      "service": "embedding"
+    },
+    "92394ddb23adbdaa04aa22a4963e1cd1a59124972f29c7059f0db69fa538c6f9": {
+      "stage": "local",
+      "service": "generation"
+    },
+    "5adaa9e0f9bbd2b38d30a8f64ea4ed660bfeb3e854d966fe3329a83a86316eed": {
+      "stage": "query_embedding",
+      "service": "embedding"
+    },
+    "3e5d8ab589f50a99cc8ef506befd1f4bdee4eca6043369563aabc052c9530c60": {
+      "stage": "local",
+      "service": "generation"
+    },
+    "826773bb3964ecb4a2827427f342191520d498595618975374c18474c47f75ce": {
+      "stage": "query_embedding",
+      "service": "embedding"
+    },
+    "3b2a8bc5fd4061004f43218a8d4d38871d70e9c0b44f58c9447d7205f7ac081e": {
+      "stage": "local",
+      "service": "generation"
+    },
+    "becd535d5493466941eb5b98e342a126f9579e9910414346386ff4014dabce1d": {
+      "stage": "reduce",
+      "service": "generation"
+    }
+  },
+  "uses": [
+    {
+      "key": "f1451d27eedef2609c54410bb4d5fb8e36df696cd82e9bf8e7fe21a0df6ad784",
+      "stage": "hyde",
+      "cache": false,
+      "origin_event": 110
+    },
+    {
+      "key": "3eddb53b0a837cab508300f20297eac8d9b275440ba10be264294b3c21e12bff",
+      "stage": "query_embedding",
+      "cache": false,
+      "origin_event": 111
+    },
+    {
+      "key": "16d8595c43a9b9a1618f5d4fbc63de03e0194893492a44867a2830d5bccbc576",
+      "stage": "primer",
+      "cache": false,
+      "origin_event": 112
+    },
+    {
+      "key": "4af0ddd9bca0a7195f0d97f643f558d7f964ec20be0b6421d623ae2b1fe7d6ad",
+      "stage": "query_embedding",
+      "cache": false,
+      "origin_event": 113
+    },
+    {
+      "key": "e788b666bcf3b12675fb5889f5cb905add64f2b2a6f1f481feb383582f54cf8c",
+      "stage": "local",
+      "cache": false,
+      "origin_event": 114
+    },
+    {
+      "key": "b2cc6e7067cae54507f84ad2fca1e67dea904df88e71b183c4b928da5239a0a2",
+      "stage": "query_embedding",
+      "cache": false,
+      "origin_event": 115
+    },
+    {
+      "key": "92394ddb23adbdaa04aa22a4963e1cd1a59124972f29c7059f0db69fa538c6f9",
+      "stage": "local",
+      "cache": false,
+      "origin_event": 116
+    },
+    {
+      "key": "5adaa9e0f9bbd2b38d30a8f64ea4ed660bfeb3e854d966fe3329a83a86316eed",
+      "stage": "query_embedding",
+      "cache": false,
+      "origin_event": 117
+    },
+    {
+      "key": "3e5d8ab589f50a99cc8ef506befd1f4bdee4eca6043369563aabc052c9530c60",
+      "stage": "local",
+      "cache": false,
+      "origin_event": 118
+    },
+    {
+      "key": "826773bb3964ecb4a2827427f342191520d498595618975374c18474c47f75ce",
+      "stage": "query_embedding",
+      "cache": false,
+      "origin_event": 119
+    },
+    {
+      "key": "3b2a8bc5fd4061004f43218a8d4d38871d70e9c0b44f58c9447d7205f7ac081e",
+      "stage": "local",
+      "cache": false,
+      "origin_event": 120
+    },
+    {
+      "key": "becd535d5493466941eb5b98e342a126f9579e9910414346386ff4014dabce1d",
+      "stage": "reduce",
+      "cache": false,
+      "origin_event": 121
+    }
+  ],
+  "evidence": [
+    {
+      "stage": "local",
+      "query": "How is `_body_position` assigned during request preparation?",
+      "context": "-----Entities-----\nid|entity|description|number of relationships\n1315|_BODY_POSITION|`_body_position` is explicitly read from prepared requests and asserted to be `None`, `0`, `4`, or not `None`; its definition is not visible.|6\n1314|BODY|`body` is explicitly read from prepared requests in expressions such as `prep.body.read()`; the prepared-request class and attribute definition are not visible.|2\n1297|TEST_PREPARE_BODY_POSITION_NON_STREAM|\"The visible test method `test_prepare_body_position_non_stream` prepares a non-stream request with `data=b\"\"the data\"\"` and asserts `prep._body_position is None`.\"|3\n442|R.BODY.SEEK|References the unresolved receiver operation `r.request.body.seek(self._thread_local.pos)` in `handle_401` when a saved body position exists; the runtime type of `r.body` is not established.|1\n969|SEEK|`seek` is explicitly retrieved from `prepared_request.body` and then called through `body_seek(...)` in `rewind_body`; the receiver's concrete implementation is not visible.|1\n692|PREPARE_BODY|`PREPARE_BODY` refers to the `prepare_body(self, data, files, json=None)` method responsible for preparing an HTTP request body. The method initializes the body state and supports multiple input types, including file-like objects, generators, and iterators used as streamed request bodies. When `json` is provided without regular data, it serializes the value to UTF-8 encoded JSON. It also handles multipart form data and parameter-based data, prepares the appropriate content length, conditionally assigns a `Content-Type` header, and stores the finalized body in `self.body`. Streamed bodies cannot be combined with uploaded files, and the method rejects that unsupported combination. The method is shown as incomplete in one description, with only the initial `body = None` setup visible, but its intended contract encompasses the complete body preparation workflow described above.|13\n1299|TEST_REWIND_PARTIALLY_READ_BODY|\"The visible test method `test_rewind_partially_read_body` reads four bytes before request preparation, asserts `_body_position == 4`, exhausts the remaining body, rewinds it with `requests.utils.rewind_body(prep)`, and asserts `b\"\"data\"\"` can be read again.\"|6\n1309|REQUESTS.UTILS.REWIND_BODY|`REQUESTS.UTILS.REWIND_BODY` refers to the external callable `requests.utils.rewind_body`, which is used with `prep` to rewind the body of a prepared request. The provided material shows only its invocation and does not include the callable’s definition or implementation details.|5\n1197|REQUEST.BODY|References the unresolved response request-body attribute chain `post.request.body` in byte-membership assertions; the request and response classes are not visible.|1\n1298|TEST_REWIND_BODY|The visible test method `test_rewind_body` prepares a request from `io.BytesIO`, asserts an initial body position of `0`, reads the body to exhaustion, calls `requests.utils.rewind_body(prep)`, and asserts the original bytes can be read again.|6\n11|REQUEST.PREPARE|`REQUEST.PREPARE` refers to the `Request.prepare` method. The method constructs a `PreparedRequest` object, passes the request configuration and hooks to its `prepare(...)` method, and returns the prepared request. It is invoked through expressions such as `req.prepare()` and `r.prepare()`, although some references do not establish the receiver’s concrete class or runtime binding. In usage, the returned prepared request is assigned to `prepped`, after which its body and headers may be modified before it is sent.|6\n803|PREPARE_REQUEST|The method `prepare_request` is defined in the visible class body, but the owning class is not shown; it converts request cookies, merges session and request settings, prepares a `PreparedRequest`, and returns it.|11\n1114|R.PREPARE|R.PREPARE refers to the unresolved method expression `r.prepare()` invoked on a locally created request object. The receiver `r` is assigned from `requests.Request`, but its concrete runtime binding and owning implementation are not independently established or visible in the available context. The method is called before the prepared request body is inspected, although the exact runtime class of `r` cannot otherwise be resolved.|6\n764|REWIND_BODY|`REWIND_BODY` refers to the `rewind_body` utility, which is imported from `.utils`. It is used to rewind a consumed file-like request body when the `rewindable` option is enabled. Its implementation is not visible in the provided code, and no direct usage appears in the referenced chunk beyond the import.|7\n13|PREPAREDREQUEST|`PreparedRequest` is the prepared HTTP request object produced before transmission and used internally by API or session calls. Response objects expose the corresponding prepared request through their `request` attribute. The `PreparedRequest` class inherits from `RequestEncodingMixin` and `RequestHooksMixin`, and its constructor initializes the request method, URL, headers, cookies, and body state to `None` before those values are populated.|13\n23|SESSION.PREPARE_REQUEST|`Session.prepare_request()` is explicitly referenced as the session-aware preparation method that applies session-level state, including cookies, to a `Request`.|2\n707|PREPARE_CONTENT_LENGTH|\"The method `prepare_content_length(self, body)` is defined here, but its owning class is not visible. It computes `super_len(body)` and writes `self.headers[\"\"Content-Length\"\"]` when a length exists; for non-GET and non-HEAD requests without a body or existing length, it writes `\"\"0\"\"`.\"|4\n20|RESPONSE.REQUEST|The value spelling `Response.request` is explicitly referenced through `r.request` and `r.request.headers`; the documentation states that it contains the request associated with the response, while the prepared-request section identifies it as a `PreparedRequest` for API or Session calls.|1\n605|UNREWINDABLEBODYERROR|`UnrewindableBodyError` is defined here as a subclass of `RequestException` and represents failure while rewinding a request body.|4\n\n-----Sources-----\nid|source|text\n94|tests/test_requests.py:L1872-L2028|\"        assert not s.should_strip_auth(\n            \"\"http://example.com/foo\"\", \"\"https://example.com/bar\"\"\n        )\n        assert not s.should_strip_auth(\n            \"\"http://example.com:80/foo\"\", \"\"https://example.com/bar\"\"\n        )\n        assert not s.should_strip_auth(\n            \"\"http://example.com/foo\"\", \"\"https://example.com:443/bar\"\"\n        )\n        # Non-standard ports should trigger stripping\n        assert s.should_strip_auth(\n            \"\"http://example.com:8080/foo\"\", \"\"https://example.com/bar\"\"\n        )\n        assert s.should_strip_auth(\n            \"\"http://example.com/foo\"\", \"\"https://example.com:8443/bar\"\"\n        )\n\n    def test_should_strip_auth_port_change(self):\n        s = requests.Session()\n        assert s.should_strip_auth(\n            \"\"http://example.com:1234/foo\"\", \"\"https://example.com:4321/bar\"\"\n        )\n\n    @pytest.mark.parametrize(\n        \"\"old_uri, new_uri\"\",\n        (\n            (\"\"https://example.com:443/foo\"\", \"\"https://example.com/bar\"\"),\n            (\"\"http://example.com:80/foo\"\", \"\"http://example.com/bar\"\"),\n            (\"\"https://example.com/foo\"\", \"\"https://example.com:443/bar\"\"),\n            (\"\"http://example.com/foo\"\", \"\"http://example.com:80/bar\"\"),\n        ),\n    )\n    def test_should_strip_auth_default_port(self, old_uri, new_uri):\n        s = requests.Session()\n        assert not s.should_strip_auth(old_uri, new_uri)\n\n    def test_manual_redirect_with_partial_body_read(self, httpbin):\n        s = requests.Session()\n        r1 = s.get(httpbin(\"\"redirect/2\"\"), allow_redirects=False, stream=True)\n        assert r1.is_redirect\n        rg = s.resolve_redirects(r1, r1.request, stream=True)\n\n        # read only the first eight bytes of the response body,\n        # then follow the redirect\n        r1.iter_content(8)\n        r2 = next(rg)\n        assert r2.is_redirect\n\n        # read all of the response via iter_content,\n        # then follow the redirect\n        for _ in r2.iter_content():\n            pass\n        r3 = next(rg)\n        assert not r3.is_redirect\n\n    def test_prepare_body_position_non_stream(self):\n        data = b\"\"the data\"\"\n        prep = requests.Request(\"\"GET\"\", \"\"http://example.com\"\", data=data).prepare()\n        assert prep._body_position is None\n\n    def test_rewind_body(self):\n        data = io.BytesIO(b\"\"the data\"\")\n        prep = requests.Request(\"\"GET\"\", \"\"http://example.com\"\", data=data).prepare()\n        assert prep._body_position == 0\n        assert prep.body.read() == b\"\"the data\"\"\n\n        # the data has all been read\n        assert prep.body.read() == b\"\"\"\"\n\n        # rewind it back\n        requests.utils.rewind_body(prep)\n        assert prep.body.read() == b\"\"the data\"\"\n\n    def test_rewind_partially_read_body(self):\n        data = io.BytesIO(b\"\"the data\"\")\n        data.read(4)  # read some data\n        prep = requests.Request(\"\"GET\"\", \"\"http://example.com\"\", data=data).prepare()\n        assert prep._body_position == 4\n        assert prep.body.read() == b\"\"data\"\"\n\n        # the data has all been read\n        assert prep.body.read() == b\"\"\"\"\n\n        # rewind it back\n        requests.utils.rewind_body(prep)\n        assert prep.body.read() == b\"\"data\"\"\n\n    def test_rewind_body_no_seek(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                return 0\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"\"the data\"\")\n        prep = requests.Request(\"\"GET\"\", \"\"http://example.com\"\", data=data).prepare()\n        assert prep._body_position == 0\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"\"Unable to rewind request body\"\" in str(e)\n\n    def test_rewind_body_failed_seek(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                return 0\n\n            def seek(self, pos, whence=0):\n                raise OSError()\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"\"the data\"\")\n        prep = requests.Request(\"\"GET\"\", \"\"http://example.com\"\", data=data).prepare()\n        assert prep._body_position == 0\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"\"error occurred when rewinding request body\"\" in str(e)\n\n    def test_rewind_body_failed_tell(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                raise OSError()\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"\"the data\"\")\n        prep = requests.Request(\"\"GET\"\", \"\"http://example.com\"\", data=data).prepare()\n        assert prep._body_position is not None\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"\"Unable to rewind request body\"\" in str(e)\n\n    def _patch_adapter_gzipped_redirect(self, session, url):\n        adapter = session.get_adapter(url=url)\n        org_build_response = adapter.build_response\n        self._patched_response = False\n\n        def build_response(*args, **kwargs):\n            resp = org_build_response(*args, **kwargs)\n\"\n",
+      "upstream_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n1315|_BODY_POSITION|`_body_position` is explicitly read from prepared requests and asserted to be `None`, `0`, `4`, or not `None`; its definition is not visible.|6\n1314|BODY|`body` is explicitly read from prepared requests in expressions such as `prep.body.read()`; the prepared-request class and attribute definition are not visible.|2\n1297|TEST_PREPARE_BODY_POSITION_NON_STREAM|The visible test method `test_prepare_body_position_non_stream` prepares a non-stream request with `data=b\"the data\"` and asserts `prep._body_position is None`.|3\n442|R.BODY.SEEK|References the unresolved receiver operation `r.request.body.seek(self._thread_local.pos)` in `handle_401` when a saved body position exists; the runtime type of `r.body` is not established.|1\n969|SEEK|`seek` is explicitly retrieved from `prepared_request.body` and then called through `body_seek(...)` in `rewind_body`; the receiver's concrete implementation is not visible.|1\n692|PREPARE_BODY|`PREPARE_BODY` refers to the `prepare_body(self, data, files, json=None)` method responsible for preparing an HTTP request body. The method initializes the body state and supports multiple input types, including file-like objects, generators, and iterators used as streamed request bodies. When `json` is provided without regular data, it serializes the value to UTF-8 encoded JSON. It also handles multipart form data and parameter-based data, prepares the appropriate content length, conditionally assigns a `Content-Type` header, and stores the finalized body in `self.body`. Streamed bodies cannot be combined with uploaded files, and the method rejects that unsupported combination. The method is shown as incomplete in one description, with only the initial `body = None` setup visible, but its intended contract encompasses the complete body preparation workflow described above.|13\n1299|TEST_REWIND_PARTIALLY_READ_BODY|The visible test method `test_rewind_partially_read_body` reads four bytes before request preparation, asserts `_body_position == 4`, exhausts the remaining body, rewinds it with `requests.utils.rewind_body(prep)`, and asserts `b\"data\"` can be read again.|6\n1309|REQUESTS.UTILS.REWIND_BODY|`REQUESTS.UTILS.REWIND_BODY` refers to the external callable `requests.utils.rewind_body`, which is used with `prep` to rewind the body of a prepared request. The provided material shows only its invocation and does not include the callable’s definition or implementation details.|5\n1197|REQUEST.BODY|References the unresolved response request-body attribute chain `post.request.body` in byte-membership assertions; the request and response classes are not visible.|1\n1298|TEST_REWIND_BODY|The visible test method `test_rewind_body` prepares a request from `io.BytesIO`, asserts an initial body position of `0`, reads the body to exhaustion, calls `requests.utils.rewind_body(prep)`, and asserts the original bytes can be read again.|6\n11|REQUEST.PREPARE|`REQUEST.PREPARE` refers to the `Request.prepare` method. The method constructs a `PreparedRequest` object, passes the request configuration and hooks to its `prepare(...)` method, and returns the prepared request. It is invoked through expressions such as `req.prepare()` and `r.prepare()`, although some references do not establish the receiver’s concrete class or runtime binding. In usage, the returned prepared request is assigned to `prepped`, after which its body and headers may be modified before it is sent.|6\n803|PREPARE_REQUEST|The method `prepare_request` is defined in the visible class body, but the owning class is not shown; it converts request cookies, merges session and request settings, prepares a `PreparedRequest`, and returns it.|11\n1114|R.PREPARE|R.PREPARE refers to the unresolved method expression `r.prepare()` invoked on a locally created request object. The receiver `r` is assigned from `requests.Request`, but its concrete runtime binding and owning implementation are not independently established or visible in the available context. The method is called before the prepared request body is inspected, although the exact runtime class of `r` cannot otherwise be resolved.|6\n764|REWIND_BODY|`REWIND_BODY` refers to the `rewind_body` utility, which is imported from `.utils`. It is used to rewind a consumed file-like request body when the `rewindable` option is enabled. Its implementation is not visible in the provided code, and no direct usage appears in the referenced chunk beyond the import.|7\n13|PREPAREDREQUEST|`PreparedRequest` is the prepared HTTP request object produced before transmission and used internally by API or session calls. Response objects expose the corresponding prepared request through their `request` attribute. The `PreparedRequest` class inherits from `RequestEncodingMixin` and `RequestHooksMixin`, and its constructor initializes the request method, URL, headers, cookies, and body state to `None` before those values are populated.|13\n23|SESSION.PREPARE_REQUEST|`Session.prepare_request()` is explicitly referenced as the session-aware preparation method that applies session-level state, including cookies, to a `Request`.|2\n707|PREPARE_CONTENT_LENGTH|The method `prepare_content_length(self, body)` is defined here, but its owning class is not visible. It computes `super_len(body)` and writes `self.headers[\"Content-Length\"]` when a length exists; for non-GET and non-HEAD requests without a body or existing length, it writes `\"0\"`.|4\n20|RESPONSE.REQUEST|The value spelling `Response.request` is explicitly referenced through `r.request` and `r.request.headers`; the documentation states that it contains the request associated with the response, while the prepared-request section identifies it as a `PreparedRequest` for API or Session calls.|1\n605|UNREWINDABLEBODYERROR|`UnrewindableBodyError` is defined here as a subclass of `RequestException` and represents failure while rewinding a request body.|4\n\n\n\n\n-----Sources-----\nid|text\n94|        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com:80/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com:443/bar\"\n        )\n        # Non-standard ports should trigger stripping\n        assert s.should_strip_auth(\n            \"http://example.com:8080/foo\", \"https://example.com/bar\"\n        )\n        assert s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com:8443/bar\"\n        )\n\n    def test_should_strip_auth_port_change(self):\n        s = requests.Session()\n        assert s.should_strip_auth(\n            \"http://example.com:1234/foo\", \"https://example.com:4321/bar\"\n        )\n\n    @pytest.mark.parametrize(\n        \"old_uri, new_uri\",\n        (\n            (\"https://example.com:443/foo\", \"https://example.com/bar\"),\n            (\"http://example.com:80/foo\", \"http://example.com/bar\"),\n            (\"https://example.com/foo\", \"https://example.com:443/bar\"),\n            (\"http://example.com/foo\", \"http://example.com:80/bar\"),\n        ),\n    )\n    def test_should_strip_auth_default_port(self, old_uri, new_uri):\n        s = requests.Session()\n        assert not s.should_strip_auth(old_uri, new_uri)\n\n    def test_manual_redirect_with_partial_body_read(self, httpbin):\n        s = requests.Session()\n        r1 = s.get(httpbin(\"redirect/2\"), allow_redirects=False, stream=True)\n        assert r1.is_redirect\n        rg = s.resolve_redirects(r1, r1.request, stream=True)\n\n        # read only the first eight bytes of the response body,\n        # then follow the redirect\n        r1.iter_content(8)\n        r2 = next(rg)\n        assert r2.is_redirect\n\n        # read all of the response via iter_content,\n        # then follow the redirect\n        for _ in r2.iter_content():\n            pass\n        r3 = next(rg)\n        assert not r3.is_redirect\n\n    def test_prepare_body_position_non_stream(self):\n        data = b\"the data\"\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position is None\n\n    def test_rewind_body(self):\n        data = io.BytesIO(b\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 0\n        assert prep.body.read() == b\"the data\"\n\n        # the data has all been read\n        assert prep.body.read() == b\"\"\n\n        # rewind it back\n        requests.utils.rewind_body(prep)\n        assert prep.body.read() == b\"the data\"\n\n    def test_rewind_partially_read_body(self):\n        data = io.BytesIO(b\"the data\")\n        data.read(4)  # read some data\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 4\n        assert prep.body.read() == b\"data\"\n\n        # the data has all been read\n        assert prep.body.read() == b\"\"\n\n        # rewind it back\n        requests.utils.rewind_body(prep)\n        assert prep.body.read() == b\"data\"\n\n    def test_rewind_body_no_seek(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                return 0\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 0\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"Unable to rewind request body\" in str(e)\n\n    def test_rewind_body_failed_seek(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                return 0\n\n            def seek(self, pos, whence=0):\n                raise OSError()\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 0\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"error occurred when rewinding request body\" in str(e)\n\n    def test_rewind_body_failed_tell(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                raise OSError()\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position is not None\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"Unable to rewind request body\" in str(e)\n\n    def _patch_adapter_gzipped_redirect(self, session, url):\n        adapter = session.get_adapter(url=url)\n        org_build_response = adapter.build_response\n        self._patched_response = False\n\n        def build_response(*args, **kwargs):\n            resp = org_build_response(*args, **kwargs)\n\n",
+      "records": {
+        "entities": [
+          {
+            "id": "1315",
+            "entity": "_BODY_POSITION",
+            "description": "`_body_position` is explicitly read from prepared requests and asserted to be `None`, `0`, `4`, or not `None`; its definition is not visible.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "1314",
+            "entity": "BODY",
+            "description": "`body` is explicitly read from prepared requests in expressions such as `prep.body.read()`; the prepared-request class and attribute definition are not visible.",
+            "number of relationships": "2",
+            "in_context": true
+          },
+          {
+            "id": "1297",
+            "entity": "TEST_PREPARE_BODY_POSITION_NON_STREAM",
+            "description": "The visible test method `test_prepare_body_position_non_stream` prepares a non-stream request with `data=b\"the data\"` and asserts `prep._body_position is None`.",
+            "number of relationships": "3",
+            "in_context": true
+          },
+          {
+            "id": "442",
+            "entity": "R.BODY.SEEK",
+            "description": "References the unresolved receiver operation `r.request.body.seek(self._thread_local.pos)` in `handle_401` when a saved body position exists; the runtime type of `r.body` is not established.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "969",
+            "entity": "SEEK",
+            "description": "`seek` is explicitly retrieved from `prepared_request.body` and then called through `body_seek(...)` in `rewind_body`; the receiver's concrete implementation is not visible.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "692",
+            "entity": "PREPARE_BODY",
+            "description": "`PREPARE_BODY` refers to the `prepare_body(self, data, files, json=None)` method responsible for preparing an HTTP request body. The method initializes the body state and supports multiple input types, including file-like objects, generators, and iterators used as streamed request bodies. When `json` is provided without regular data, it serializes the value to UTF-8 encoded JSON. It also handles multipart form data and parameter-based data, prepares the appropriate content length, conditionally assigns a `Content-Type` header, and stores the finalized body in `self.body`. Streamed bodies cannot be combined with uploaded files, and the method rejects that unsupported combination. The method is shown as incomplete in one description, with only the initial `body = None` setup visible, but its intended contract encompasses the complete body preparation workflow described above.",
+            "number of relationships": "13",
+            "in_context": true
+          },
+          {
+            "id": "1299",
+            "entity": "TEST_REWIND_PARTIALLY_READ_BODY",
+            "description": "The visible test method `test_rewind_partially_read_body` reads four bytes before request preparation, asserts `_body_position == 4`, exhausts the remaining body, rewinds it with `requests.utils.rewind_body(prep)`, and asserts `b\"data\"` can be read again.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "1309",
+            "entity": "REQUESTS.UTILS.REWIND_BODY",
+            "description": "`REQUESTS.UTILS.REWIND_BODY` refers to the external callable `requests.utils.rewind_body`, which is used with `prep` to rewind the body of a prepared request. The provided material shows only its invocation and does not include the callable’s definition or implementation details.",
+            "number of relationships": "5",
+            "in_context": true
+          },
+          {
+            "id": "1197",
+            "entity": "REQUEST.BODY",
+            "description": "References the unresolved response request-body attribute chain `post.request.body` in byte-membership assertions; the request and response classes are not visible.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "1298",
+            "entity": "TEST_REWIND_BODY",
+            "description": "The visible test method `test_rewind_body` prepares a request from `io.BytesIO`, asserts an initial body position of `0`, reads the body to exhaustion, calls `requests.utils.rewind_body(prep)`, and asserts the original bytes can be read again.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "11",
+            "entity": "REQUEST.PREPARE",
+            "description": "`REQUEST.PREPARE` refers to the `Request.prepare` method. The method constructs a `PreparedRequest` object, passes the request configuration and hooks to its `prepare(...)` method, and returns the prepared request. It is invoked through expressions such as `req.prepare()` and `r.prepare()`, although some references do not establish the receiver’s concrete class or runtime binding. In usage, the returned prepared request is assigned to `prepped`, after which its body and headers may be modified before it is sent.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "803",
+            "entity": "PREPARE_REQUEST",
+            "description": "The method `prepare_request` is defined in the visible class body, but the owning class is not shown; it converts request cookies, merges session and request settings, prepares a `PreparedRequest`, and returns it.",
+            "number of relationships": "11",
+            "in_context": true
+          },
+          {
+            "id": "1114",
+            "entity": "R.PREPARE",
+            "description": "R.PREPARE refers to the unresolved method expression `r.prepare()` invoked on a locally created request object. The receiver `r` is assigned from `requests.Request`, but its concrete runtime binding and owning implementation are not independently established or visible in the available context. The method is called before the prepared request body is inspected, although the exact runtime class of `r` cannot otherwise be resolved.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "764",
+            "entity": "REWIND_BODY",
+            "description": "`REWIND_BODY` refers to the `rewind_body` utility, which is imported from `.utils`. It is used to rewind a consumed file-like request body when the `rewindable` option is enabled. Its implementation is not visible in the provided code, and no direct usage appears in the referenced chunk beyond the import.",
+            "number of relationships": "7",
+            "in_context": true
+          },
+          {
+            "id": "13",
+            "entity": "PREPAREDREQUEST",
+            "description": "`PreparedRequest` is the prepared HTTP request object produced before transmission and used internally by API or session calls. Response objects expose the corresponding prepared request through their `request` attribute. The `PreparedRequest` class inherits from `RequestEncodingMixin` and `RequestHooksMixin`, and its constructor initializes the request method, URL, headers, cookies, and body state to `None` before those values are populated.",
+            "number of relationships": "13",
+            "in_context": true
+          },
+          {
+            "id": "23",
+            "entity": "SESSION.PREPARE_REQUEST",
+            "description": "`Session.prepare_request()` is explicitly referenced as the session-aware preparation method that applies session-level state, including cookies, to a `Request`.",
+            "number of relationships": "2",
+            "in_context": true
+          },
+          {
+            "id": "707",
+            "entity": "PREPARE_CONTENT_LENGTH",
+            "description": "The method `prepare_content_length(self, body)` is defined here, but its owning class is not visible. It computes `super_len(body)` and writes `self.headers[\"Content-Length\"]` when a length exists; for non-GET and non-HEAD requests without a body or existing length, it writes `\"0\"`.",
+            "number of relationships": "4",
+            "in_context": true
+          },
+          {
+            "id": "20",
+            "entity": "RESPONSE.REQUEST",
+            "description": "The value spelling `Response.request` is explicitly referenced through `r.request` and `r.request.headers`; the documentation states that it contains the request associated with the response, while the prepared-request section identifies it as a `PreparedRequest` for API or Session calls.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "605",
+            "entity": "UNREWINDABLEBODYERROR",
+            "description": "`UnrewindableBodyError` is defined here as a subclass of `RequestException` and represents failure while rewinding a request body.",
+            "number of relationships": "4",
+            "in_context": true
+          }
+        ],
+        "sources": [
+          {
+            "id": "94",
+            "text": "        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com:80/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com:443/bar\"\n        )\n        # Non-standard ports should trigger stripping\n        assert s.should_strip_auth(\n            \"http://example.com:8080/foo\", \"https://example.com/bar\"\n        )\n        assert s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com:8443/bar\"\n        )\n\n    def test_should_strip_auth_port_change(self):\n        s = requests.Session()\n        assert s.should_strip_auth(\n            \"http://example.com:1234/foo\", \"https://example.com:4321/bar\"\n        )\n\n    @pytest.mark.parametrize(\n        \"old_uri, new_uri\",\n        (\n            (\"https://example.com:443/foo\", \"https://example.com/bar\"),\n            (\"http://example.com:80/foo\", \"http://example.com/bar\"),\n            (\"https://example.com/foo\", \"https://example.com:443/bar\"),\n            (\"http://example.com/foo\", \"http://example.com:80/bar\"),\n        ),\n    )\n    def test_should_strip_auth_default_port(self, old_uri, new_uri):\n        s = requests.Session()\n        assert not s.should_strip_auth(old_uri, new_uri)\n\n    def test_manual_redirect_with_partial_body_read(self, httpbin):\n        s = requests.Session()\n        r1 = s.get(httpbin(\"redirect/2\"), allow_redirects=False, stream=True)\n        assert r1.is_redirect\n        rg = s.resolve_redirects(r1, r1.request, stream=True)\n\n        # read only the first eight bytes of the response body,\n        # then follow the redirect\n        r1.iter_content(8)\n        r2 = next(rg)\n        assert r2.is_redirect\n\n        # read all of the response via iter_content,\n        # then follow the redirect\n        for _ in r2.iter_content():\n            pass\n        r3 = next(rg)\n        assert not r3.is_redirect\n\n    def test_prepare_body_position_non_stream(self):\n        data = b\"the data\"\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position is None\n\n    def test_rewind_body(self):\n        data = io.BytesIO(b\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 0\n        assert prep.body.read() == b\"the data\"\n\n        # the data has all been read\n        assert prep.body.read() == b\"\"\n\n        # rewind it back\n        requests.utils.rewind_body(prep)\n        assert prep.body.read() == b\"the data\"\n\n    def test_rewind_partially_read_body(self):\n        data = io.BytesIO(b\"the data\")\n        data.read(4)  # read some data\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 4\n        assert prep.body.read() == b\"data\"\n\n        # the data has all been read\n        assert prep.body.read() == b\"\"\n\n        # rewind it back\n        requests.utils.rewind_body(prep)\n        assert prep.body.read() == b\"data\"\n\n    def test_rewind_body_no_seek(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                return 0\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 0\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"Unable to rewind request body\" in str(e)\n\n    def test_rewind_body_failed_seek(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                return 0\n\n            def seek(self, pos, whence=0):\n                raise OSError()\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 0\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"error occurred when rewinding request body\" in str(e)\n\n    def test_rewind_body_failed_tell(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                raise OSError()\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position is not None\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"Unable to rewind request body\" in str(e)\n\n    def _patch_adapter_gzipped_redirect(self, session, url):\n        adapter = session.get_adapter(url=url)\n        org_build_response = adapter.build_response\n        self._patched_response = False\n\n        def build_response(*args, **kwargs):\n            resp = org_build_response(*args, **kwargs)\n"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "short_id": "94",
+          "text_unit_id": "f58c14175330235d8fc1ab76a727a2ebbcb83a7b6f0c40a6b2565546b3e14b71fb34762b92dc723c1560082374706f31f3f79711e7a6a5ea3cc830eac1d00fcb",
+          "id": "8d5caeb573fe757b42490450a06e8776a7cf1fa7ee8ad98baa2a75b74f96a18c",
+          "title": "tests/test_requests.py:L1872-L2028",
+          "path": "tests/test_requests.py",
+          "start_line": 1872,
+          "end_line": 2028,
+          "tokens": 1197,
+          "text_sha256": "50e03c3cf032d66ef1d5707bc05dd5eacf88b79bb353c66a9126438eef568cfe",
+          "ms_text_unit_id": "f58c14175330235d8fc1ab76a727a2ebbcb83a7b6f0c40a6b2565546b3e14b71fb34762b92dc723c1560082374706f31f3f79711e7a6a5ea3cc830eac1d00fcb"
+        }
+      ],
+      "source_text_tokens": 1197,
+      "context_tokens": 2562,
+      "evidence_key": "a77d500623c757b2d3396ae22503f305f9bf6275c455b36337226ddb0b233277",
+      "read_occurrences": 1
+    },
+    {
+      "stage": "local",
+      "query": "What behavior is expected when `seek` raises `OSError` during redirect replay?",
+      "context": "-----Entities-----\nid|entity|description|number of relationships\n1308|BADFILEOBJ.SEEK|The visible `BadFileObj.seek(self, pos, whence=0)` method raises `OSError`, modeling a failed rewind operation.|2\n1301|TEST_REWIND_BODY_FAILED_SEEK|The visible test method `test_rewind_body_failed_seek` defines a file-like object whose `seek` raises `OSError`, then asserts that rewinding raises `UnrewindableBodyError` containing `error occurred when rewinding request body`.|6\n442|R.BODY.SEEK|References the unresolved receiver operation `r.request.body.seek(self._thread_local.pos)` in `handle_401` when a saved body position exists; the runtime type of `r.body` is not established.|1\n969|SEEK|`seek` is explicitly retrieved from `prepared_request.body` and then called through `body_seek(...)` in `rewind_body`; the receiver's concrete implementation is not visible.|1\n1102|TEST_HTTP_307_ALLOW_REDIRECT_POST_WITH_SEEKABLE|Defines the test method `test_HTTP_307_ALLOW_REDIRECT_POST_WITH_SEEKABLE`; posts an `io.BytesIO` body through a 307 redirect and asserts status 200, redirect history status 307, redirect state, and decoded response data.|5\n1392|INDEXERROR|The exception type `IndexError` is referenced in `except IndexError` when `RedirectSession.build_response` exhausts redirect statuses; its definition is not visible.|1\n1302|TEST_REWIND_BODY_FAILED_TELL|The visible test method `test_rewind_body_failed_tell` defines a file-like object whose `tell` raises `OSError`, asserts `_body_position is not None`, and asserts that rewinding raises `UnrewindableBodyError` containing `Unable to rewind request body`.|6\n1300|TEST_REWIND_BODY_NO_SEEK|The visible test method `test_rewind_body_no_seek` defines a file-like object without `seek`, prepares it as request data, and asserts that `requests.utils.rewind_body(prep)` raises `UnrewindableBodyError` containing `Unable to rewind request body`.|6\n370|OSERROR|OSERROR (also written as `OSError`) is an externally defined exception class used throughout the system for operating-system and I/O-related failures. It is referenced in parameterization and `raise error()` scenarios, although its definition is not visible in the provided context. The exception is caught when socket operations reject invalid input, including IPv4 and CIDR validation via `socket.inet_aton`, and during socket closing, connection acceptance, and connection-opening operations. It also handles failures involving file positioning and seeking, including `body_seek`, `body.tell()`, `tell` within `super_len`, `rewind_body`, netrc file processing, and the local `BadFileObj` implementations of `seek` and `tell`. Additionally, it is caught around calls to `platform.system()` and `platform.release()` in `info()`. In `cert_verify`, OSERROR is explicitly raised when configured CA, certificate, or private-key paths do not exist.|7\n1480|NOLENBOOMFILE|Nested visible class in `test_super_len_tell_ioerror`; defines `tell` to raise the parameterized error and `seek` as a no-op.|1\n1306|BADFILEOBJ.TELL|The visible `BadFileObj.tell(self)` methods return `0` in the no-seek and failed-seek fixtures, while the failed-tell fixture raises `OSError`; these are separate local class definitions sharing the spelling `BadFileObj.tell`.|3\n1175|TESTSTREAM.SEEK|Defines `TestStream.seek(self, offset, where=0)`. It sets or adjusts `self.index` for `where` values 0, 1, and 2; behavior for other values is not visible.|2\n1056|TEST_REDIRECT_RFC1808_TO_NON_ASCII_LOCATION|Defined here as `def test_redirect_rfc1808_to_non_ascii_location()`. It creates a redirect handler, follows a redirect, and asserts the final status, history, percent-encoded non-ASCII path, and second request line.|4\n1482|NOLENBOOMFILE.SEEK|Visible method accepting `offset` and `whence` and executing `pass`; no return behavior beyond the implicit `None` is shown.|1\n1304|BADFILEOBJ|A local class named `BadFileObj` is visibly defined in the rewind-failure tests, with instances exposing `data`, `tell`, and `__iter__`; separate local definitions with the same spelling are visible, and one additionally defines `seek`.|7\n1169|TEST_POSTBIN_SEEKED_OBJECT_WITH_NO_ITER|Defines the test method `test_POSTBIN_SEEKED_OBJECT_WITH_NO_ITER(self, httpbin)`. It posts two `TestStream` instances and asserts status 200 and decoded response data for the initial and seeked stream positions.|5\n1057|REDIRECT_RESP_HANDLER|Defined here as the nested `def redirect_resp_handler(sock)`. It consumes an initial request, sends a 301 response with a `Location` containing `path`, records a second request in `redirect_request`, and sends a 200 response.|3\n1296|TEST_MANUAL_REDIRECT_WITH_PARTIAL_BODY_READ|The visible test method `test_manual_redirect_with_partial_body_read` performs a streamed request, resolves redirects, partially and fully consumes response bodies with `iter_content`, and asserts redirect status transitions.|8\n1444|TESTTESTSERVER.TEST_REQUEST_RECOVERY|\"The skipped test method `TestTestServer.test_request_recovery`; marked with `@pytest.mark.skip(reason=\"\"this fails non-deterministically under pytest-xdist\"\")`, sends two distinct requests on separate sockets, and asserts both entries in `server.handler_results`.\"|8\n\n-----Relationships-----\nid|source|target|description|weight|links\n2186|BADFILEOBJ|BADFILEOBJ.SEEK|DEFINES, one visible local class definition contains `def seek(self, pos, whence=0):` and raises `OSError`.|10.0|1\n2188|TEST_REWIND_BODY_FAILED_SEEK|BADFILEOBJ.SEEK|CALLS, the test supplies a `BadFileObj` whose visible `seek(self, pos, whence=0)` raises `OSError`; the chunk does not show the external rewind implementation's direct call expression.|5.0|1\n\n-----Sources-----\nid|source|text\n94|tests/test_requests.py:L1872-L2028|\"        assert not s.should_strip_auth(\n            \"\"http://example.com/foo\"\", \"\"https://example.com/bar\"\"\n        )\n        assert not s.should_strip_auth(\n            \"\"http://example.com:80/foo\"\", \"\"https://example.com/bar\"\"\n        )\n        assert not s.should_strip_auth(\n            \"\"http://example.com/foo\"\", \"\"https://example.com:443/bar\"\"\n        )\n        # Non-standard ports should trigger stripping\n        assert s.should_strip_auth(\n            \"\"http://example.com:8080/foo\"\", \"\"https://example.com/bar\"\"\n        )\n        assert s.should_strip_auth(\n            \"\"http://example.com/foo\"\", \"\"https://example.com:8443/bar\"\"\n        )\n\n    def test_should_strip_auth_port_change(self):\n        s = requests.Session()\n        assert s.should_strip_auth(\n            \"\"http://example.com:1234/foo\"\", \"\"https://example.com:4321/bar\"\"\n        )\n\n    @pytest.mark.parametrize(\n        \"\"old_uri, new_uri\"\",\n        (\n            (\"\"https://example.com:443/foo\"\", \"\"https://example.com/bar\"\"),\n            (\"\"http://example.com:80/foo\"\", \"\"http://example.com/bar\"\"),\n            (\"\"https://example.com/foo\"\", \"\"https://example.com:443/bar\"\"),\n            (\"\"http://example.com/foo\"\", \"\"http://example.com:80/bar\"\"),\n        ),\n    )\n    def test_should_strip_auth_default_port(self, old_uri, new_uri):\n        s = requests.Session()\n        assert not s.should_strip_auth(old_uri, new_uri)\n\n    def test_manual_redirect_with_partial_body_read(self, httpbin):\n        s = requests.Session()\n        r1 = s.get(httpbin(\"\"redirect/2\"\"), allow_redirects=False, stream=True)\n        assert r1.is_redirect\n        rg = s.resolve_redirects(r1, r1.request, stream=True)\n\n        # read only the first eight bytes of the response body,\n        # then follow the redirect\n        r1.iter_content(8)\n        r2 = next(rg)\n        assert r2.is_redirect\n\n        # read all of the response via iter_content,\n        # then follow the redirect\n        for _ in r2.iter_content():\n            pass\n        r3 = next(rg)\n        assert not r3.is_redirect\n\n    def test_prepare_body_position_non_stream(self):\n        data = b\"\"the data\"\"\n        prep = requests.Request(\"\"GET\"\", \"\"http://example.com\"\", data=data).prepare()\n        assert prep._body_position is None\n\n    def test_rewind_body(self):\n        data = io.BytesIO(b\"\"the data\"\")\n        prep = requests.Request(\"\"GET\"\", \"\"http://example.com\"\", data=data).prepare()\n        assert prep._body_position == 0\n        assert prep.body.read() == b\"\"the data\"\"\n\n        # the data has all been read\n        assert prep.body.read() == b\"\"\"\"\n\n        # rewind it back\n        requests.utils.rewind_body(prep)\n        assert prep.body.read() == b\"\"the data\"\"\n\n    def test_rewind_partially_read_body(self):\n        data = io.BytesIO(b\"\"the data\"\")\n        data.read(4)  # read some data\n        prep = requests.Request(\"\"GET\"\", \"\"http://example.com\"\", data=data).prepare()\n        assert prep._body_position == 4\n        assert prep.body.read() == b\"\"data\"\"\n\n        # the data has all been read\n        assert prep.body.read() == b\"\"\"\"\n\n        # rewind it back\n        requests.utils.rewind_body(prep)\n        assert prep.body.read() == b\"\"data\"\"\n\n    def test_rewind_body_no_seek(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                return 0\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"\"the data\"\")\n        prep = requests.Request(\"\"GET\"\", \"\"http://example.com\"\", data=data).prepare()\n        assert prep._body_position == 0\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"\"Unable to rewind request body\"\" in str(e)\n\n    def test_rewind_body_failed_seek(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                return 0\n\n            def seek(self, pos, whence=0):\n                raise OSError()\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"\"the data\"\")\n        prep = requests.Request(\"\"GET\"\", \"\"http://example.com\"\", data=data).prepare()\n        assert prep._body_position == 0\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"\"error occurred when rewinding request body\"\" in str(e)\n\n    def test_rewind_body_failed_tell(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                raise OSError()\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"\"the data\"\")\n        prep = requests.Request(\"\"GET\"\", \"\"http://example.com\"\", data=data).prepare()\n        assert prep._body_position is not None\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"\"Unable to rewind request body\"\" in str(e)\n\n    def _patch_adapter_gzipped_redirect(self, session, url):\n        adapter = session.get_adapter(url=url)\n        org_build_response = adapter.build_response\n        self._patched_response = False\n\n        def build_response(*args, **kwargs):\n            resp = org_build_response(*args, **kwargs)\n\"\n",
+      "upstream_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n1308|BADFILEOBJ.SEEK|The visible `BadFileObj.seek(self, pos, whence=0)` method raises `OSError`, modeling a failed rewind operation.|2\n1301|TEST_REWIND_BODY_FAILED_SEEK|The visible test method `test_rewind_body_failed_seek` defines a file-like object whose `seek` raises `OSError`, then asserts that rewinding raises `UnrewindableBodyError` containing `error occurred when rewinding request body`.|6\n442|R.BODY.SEEK|References the unresolved receiver operation `r.request.body.seek(self._thread_local.pos)` in `handle_401` when a saved body position exists; the runtime type of `r.body` is not established.|1\n969|SEEK|`seek` is explicitly retrieved from `prepared_request.body` and then called through `body_seek(...)` in `rewind_body`; the receiver's concrete implementation is not visible.|1\n1102|TEST_HTTP_307_ALLOW_REDIRECT_POST_WITH_SEEKABLE|Defines the test method `test_HTTP_307_ALLOW_REDIRECT_POST_WITH_SEEKABLE`; posts an `io.BytesIO` body through a 307 redirect and asserts status 200, redirect history status 307, redirect state, and decoded response data.|5\n1392|INDEXERROR|The exception type `IndexError` is referenced in `except IndexError` when `RedirectSession.build_response` exhausts redirect statuses; its definition is not visible.|1\n1302|TEST_REWIND_BODY_FAILED_TELL|The visible test method `test_rewind_body_failed_tell` defines a file-like object whose `tell` raises `OSError`, asserts `_body_position is not None`, and asserts that rewinding raises `UnrewindableBodyError` containing `Unable to rewind request body`.|6\n1300|TEST_REWIND_BODY_NO_SEEK|The visible test method `test_rewind_body_no_seek` defines a file-like object without `seek`, prepares it as request data, and asserts that `requests.utils.rewind_body(prep)` raises `UnrewindableBodyError` containing `Unable to rewind request body`.|6\n370|OSERROR|OSERROR (also written as `OSError`) is an externally defined exception class used throughout the system for operating-system and I/O-related failures. It is referenced in parameterization and `raise error()` scenarios, although its definition is not visible in the provided context. The exception is caught when socket operations reject invalid input, including IPv4 and CIDR validation via `socket.inet_aton`, and during socket closing, connection acceptance, and connection-opening operations. It also handles failures involving file positioning and seeking, including `body_seek`, `body.tell()`, `tell` within `super_len`, `rewind_body`, netrc file processing, and the local `BadFileObj` implementations of `seek` and `tell`. Additionally, it is caught around calls to `platform.system()` and `platform.release()` in `info()`. In `cert_verify`, OSERROR is explicitly raised when configured CA, certificate, or private-key paths do not exist.|7\n1480|NOLENBOOMFILE|Nested visible class in `test_super_len_tell_ioerror`; defines `tell` to raise the parameterized error and `seek` as a no-op.|1\n1306|BADFILEOBJ.TELL|The visible `BadFileObj.tell(self)` methods return `0` in the no-seek and failed-seek fixtures, while the failed-tell fixture raises `OSError`; these are separate local class definitions sharing the spelling `BadFileObj.tell`.|3\n1175|TESTSTREAM.SEEK|Defines `TestStream.seek(self, offset, where=0)`. It sets or adjusts `self.index` for `where` values 0, 1, and 2; behavior for other values is not visible.|2\n1056|TEST_REDIRECT_RFC1808_TO_NON_ASCII_LOCATION|Defined here as `def test_redirect_rfc1808_to_non_ascii_location()`. It creates a redirect handler, follows a redirect, and asserts the final status, history, percent-encoded non-ASCII path, and second request line.|4\n1482|NOLENBOOMFILE.SEEK|Visible method accepting `offset` and `whence` and executing `pass`; no return behavior beyond the implicit `None` is shown.|1\n1304|BADFILEOBJ|A local class named `BadFileObj` is visibly defined in the rewind-failure tests, with instances exposing `data`, `tell`, and `__iter__`; separate local definitions with the same spelling are visible, and one additionally defines `seek`.|7\n1169|TEST_POSTBIN_SEEKED_OBJECT_WITH_NO_ITER|Defines the test method `test_POSTBIN_SEEKED_OBJECT_WITH_NO_ITER(self, httpbin)`. It posts two `TestStream` instances and asserts status 200 and decoded response data for the initial and seeked stream positions.|5\n1057|REDIRECT_RESP_HANDLER|Defined here as the nested `def redirect_resp_handler(sock)`. It consumes an initial request, sends a 301 response with a `Location` containing `path`, records a second request in `redirect_request`, and sends a 200 response.|3\n1296|TEST_MANUAL_REDIRECT_WITH_PARTIAL_BODY_READ|The visible test method `test_manual_redirect_with_partial_body_read` performs a streamed request, resolves redirects, partially and fully consumes response bodies with `iter_content`, and asserts redirect status transitions.|8\n1444|TESTTESTSERVER.TEST_REQUEST_RECOVERY|The skipped test method `TestTestServer.test_request_recovery`; marked with `@pytest.mark.skip(reason=\"this fails non-deterministically under pytest-xdist\")`, sends two distinct requests on separate sockets, and asserts both entries in `server.handler_results`.|8\n\n\n-----Relationships-----\nid|source|target|description|weight|links\n2186|BADFILEOBJ|BADFILEOBJ.SEEK|DEFINES, one visible local class definition contains `def seek(self, pos, whence=0):` and raises `OSError`.|10.0|1\n2188|TEST_REWIND_BODY_FAILED_SEEK|BADFILEOBJ.SEEK|CALLS, the test supplies a `BadFileObj` whose visible `seek(self, pos, whence=0)` raises `OSError`; the chunk does not show the external rewind implementation's direct call expression.|5.0|1\n\n\n-----Sources-----\nid|text\n94|        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com:80/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com:443/bar\"\n        )\n        # Non-standard ports should trigger stripping\n        assert s.should_strip_auth(\n            \"http://example.com:8080/foo\", \"https://example.com/bar\"\n        )\n        assert s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com:8443/bar\"\n        )\n\n    def test_should_strip_auth_port_change(self):\n        s = requests.Session()\n        assert s.should_strip_auth(\n            \"http://example.com:1234/foo\", \"https://example.com:4321/bar\"\n        )\n\n    @pytest.mark.parametrize(\n        \"old_uri, new_uri\",\n        (\n            (\"https://example.com:443/foo\", \"https://example.com/bar\"),\n            (\"http://example.com:80/foo\", \"http://example.com/bar\"),\n            (\"https://example.com/foo\", \"https://example.com:443/bar\"),\n            (\"http://example.com/foo\", \"http://example.com:80/bar\"),\n        ),\n    )\n    def test_should_strip_auth_default_port(self, old_uri, new_uri):\n        s = requests.Session()\n        assert not s.should_strip_auth(old_uri, new_uri)\n\n    def test_manual_redirect_with_partial_body_read(self, httpbin):\n        s = requests.Session()\n        r1 = s.get(httpbin(\"redirect/2\"), allow_redirects=False, stream=True)\n        assert r1.is_redirect\n        rg = s.resolve_redirects(r1, r1.request, stream=True)\n\n        # read only the first eight bytes of the response body,\n        # then follow the redirect\n        r1.iter_content(8)\n        r2 = next(rg)\n        assert r2.is_redirect\n\n        # read all of the response via iter_content,\n        # then follow the redirect\n        for _ in r2.iter_content():\n            pass\n        r3 = next(rg)\n        assert not r3.is_redirect\n\n    def test_prepare_body_position_non_stream(self):\n        data = b\"the data\"\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position is None\n\n    def test_rewind_body(self):\n        data = io.BytesIO(b\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 0\n        assert prep.body.read() == b\"the data\"\n\n        # the data has all been read\n        assert prep.body.read() == b\"\"\n\n        # rewind it back\n        requests.utils.rewind_body(prep)\n        assert prep.body.read() == b\"the data\"\n\n    def test_rewind_partially_read_body(self):\n        data = io.BytesIO(b\"the data\")\n        data.read(4)  # read some data\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 4\n        assert prep.body.read() == b\"data\"\n\n        # the data has all been read\n        assert prep.body.read() == b\"\"\n\n        # rewind it back\n        requests.utils.rewind_body(prep)\n        assert prep.body.read() == b\"data\"\n\n    def test_rewind_body_no_seek(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                return 0\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 0\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"Unable to rewind request body\" in str(e)\n\n    def test_rewind_body_failed_seek(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                return 0\n\n            def seek(self, pos, whence=0):\n                raise OSError()\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 0\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"error occurred when rewinding request body\" in str(e)\n\n    def test_rewind_body_failed_tell(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                raise OSError()\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position is not None\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"Unable to rewind request body\" in str(e)\n\n    def _patch_adapter_gzipped_redirect(self, session, url):\n        adapter = session.get_adapter(url=url)\n        org_build_response = adapter.build_response\n        self._patched_response = False\n\n        def build_response(*args, **kwargs):\n            resp = org_build_response(*args, **kwargs)\n\n",
+      "records": {
+        "relationships": [
+          {
+            "id": "2186",
+            "source": "BADFILEOBJ",
+            "target": "BADFILEOBJ.SEEK",
+            "description": "DEFINES, one visible local class definition contains `def seek(self, pos, whence=0):` and raises `OSError`.",
+            "weight": "10.0",
+            "links": "1",
+            "in_context": true
+          },
+          {
+            "id": "2188",
+            "source": "TEST_REWIND_BODY_FAILED_SEEK",
+            "target": "BADFILEOBJ.SEEK",
+            "description": "CALLS, the test supplies a `BadFileObj` whose visible `seek(self, pos, whence=0)` raises `OSError`; the chunk does not show the external rewind implementation's direct call expression.",
+            "weight": "5.0",
+            "links": "1",
+            "in_context": true
+          }
+        ],
+        "entities": [
+          {
+            "id": "1308",
+            "entity": "BADFILEOBJ.SEEK",
+            "description": "The visible `BadFileObj.seek(self, pos, whence=0)` method raises `OSError`, modeling a failed rewind operation.",
+            "number of relationships": "2",
+            "in_context": true
+          },
+          {
+            "id": "1301",
+            "entity": "TEST_REWIND_BODY_FAILED_SEEK",
+            "description": "The visible test method `test_rewind_body_failed_seek` defines a file-like object whose `seek` raises `OSError`, then asserts that rewinding raises `UnrewindableBodyError` containing `error occurred when rewinding request body`.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "442",
+            "entity": "R.BODY.SEEK",
+            "description": "References the unresolved receiver operation `r.request.body.seek(self._thread_local.pos)` in `handle_401` when a saved body position exists; the runtime type of `r.body` is not established.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "969",
+            "entity": "SEEK",
+            "description": "`seek` is explicitly retrieved from `prepared_request.body` and then called through `body_seek(...)` in `rewind_body`; the receiver's concrete implementation is not visible.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "1102",
+            "entity": "TEST_HTTP_307_ALLOW_REDIRECT_POST_WITH_SEEKABLE",
+            "description": "Defines the test method `test_HTTP_307_ALLOW_REDIRECT_POST_WITH_SEEKABLE`; posts an `io.BytesIO` body through a 307 redirect and asserts status 200, redirect history status 307, redirect state, and decoded response data.",
+            "number of relationships": "5",
+            "in_context": true
+          },
+          {
+            "id": "1392",
+            "entity": "INDEXERROR",
+            "description": "The exception type `IndexError` is referenced in `except IndexError` when `RedirectSession.build_response` exhausts redirect statuses; its definition is not visible.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "1302",
+            "entity": "TEST_REWIND_BODY_FAILED_TELL",
+            "description": "The visible test method `test_rewind_body_failed_tell` defines a file-like object whose `tell` raises `OSError`, asserts `_body_position is not None`, and asserts that rewinding raises `UnrewindableBodyError` containing `Unable to rewind request body`.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "1300",
+            "entity": "TEST_REWIND_BODY_NO_SEEK",
+            "description": "The visible test method `test_rewind_body_no_seek` defines a file-like object without `seek`, prepares it as request data, and asserts that `requests.utils.rewind_body(prep)` raises `UnrewindableBodyError` containing `Unable to rewind request body`.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "370",
+            "entity": "OSERROR",
+            "description": "OSERROR (also written as `OSError`) is an externally defined exception class used throughout the system for operating-system and I/O-related failures. It is referenced in parameterization and `raise error()` scenarios, although its definition is not visible in the provided context. The exception is caught when socket operations reject invalid input, including IPv4 and CIDR validation via `socket.inet_aton`, and during socket closing, connection acceptance, and connection-opening operations. It also handles failures involving file positioning and seeking, including `body_seek`, `body.tell()`, `tell` within `super_len`, `rewind_body`, netrc file processing, and the local `BadFileObj` implementations of `seek` and `tell`. Additionally, it is caught around calls to `platform.system()` and `platform.release()` in `info()`. In `cert_verify`, OSERROR is explicitly raised when configured CA, certificate, or private-key paths do not exist.",
+            "number of relationships": "7",
+            "in_context": true
+          },
+          {
+            "id": "1480",
+            "entity": "NOLENBOOMFILE",
+            "description": "Nested visible class in `test_super_len_tell_ioerror`; defines `tell` to raise the parameterized error and `seek` as a no-op.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "1306",
+            "entity": "BADFILEOBJ.TELL",
+            "description": "The visible `BadFileObj.tell(self)` methods return `0` in the no-seek and failed-seek fixtures, while the failed-tell fixture raises `OSError`; these are separate local class definitions sharing the spelling `BadFileObj.tell`.",
+            "number of relationships": "3",
+            "in_context": true
+          },
+          {
+            "id": "1175",
+            "entity": "TESTSTREAM.SEEK",
+            "description": "Defines `TestStream.seek(self, offset, where=0)`. It sets or adjusts `self.index` for `where` values 0, 1, and 2; behavior for other values is not visible.",
+            "number of relationships": "2",
+            "in_context": true
+          },
+          {
+            "id": "1056",
+            "entity": "TEST_REDIRECT_RFC1808_TO_NON_ASCII_LOCATION",
+            "description": "Defined here as `def test_redirect_rfc1808_to_non_ascii_location()`. It creates a redirect handler, follows a redirect, and asserts the final status, history, percent-encoded non-ASCII path, and second request line.",
+            "number of relationships": "4",
+            "in_context": true
+          },
+          {
+            "id": "1482",
+            "entity": "NOLENBOOMFILE.SEEK",
+            "description": "Visible method accepting `offset` and `whence` and executing `pass`; no return behavior beyond the implicit `None` is shown.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "1304",
+            "entity": "BADFILEOBJ",
+            "description": "A local class named `BadFileObj` is visibly defined in the rewind-failure tests, with instances exposing `data`, `tell`, and `__iter__`; separate local definitions with the same spelling are visible, and one additionally defines `seek`.",
+            "number of relationships": "7",
+            "in_context": true
+          },
+          {
+            "id": "1169",
+            "entity": "TEST_POSTBIN_SEEKED_OBJECT_WITH_NO_ITER",
+            "description": "Defines the test method `test_POSTBIN_SEEKED_OBJECT_WITH_NO_ITER(self, httpbin)`. It posts two `TestStream` instances and asserts status 200 and decoded response data for the initial and seeked stream positions.",
+            "number of relationships": "5",
+            "in_context": true
+          },
+          {
+            "id": "1057",
+            "entity": "REDIRECT_RESP_HANDLER",
+            "description": "Defined here as the nested `def redirect_resp_handler(sock)`. It consumes an initial request, sends a 301 response with a `Location` containing `path`, records a second request in `redirect_request`, and sends a 200 response.",
+            "number of relationships": "3",
+            "in_context": true
+          },
+          {
+            "id": "1296",
+            "entity": "TEST_MANUAL_REDIRECT_WITH_PARTIAL_BODY_READ",
+            "description": "The visible test method `test_manual_redirect_with_partial_body_read` performs a streamed request, resolves redirects, partially and fully consumes response bodies with `iter_content`, and asserts redirect status transitions.",
+            "number of relationships": "8",
+            "in_context": true
+          },
+          {
+            "id": "1444",
+            "entity": "TESTTESTSERVER.TEST_REQUEST_RECOVERY",
+            "description": "The skipped test method `TestTestServer.test_request_recovery`; marked with `@pytest.mark.skip(reason=\"this fails non-deterministically under pytest-xdist\")`, sends two distinct requests on separate sockets, and asserts both entries in `server.handler_results`.",
+            "number of relationships": "8",
+            "in_context": true
+          }
+        ],
+        "sources": [
+          {
+            "id": "94",
+            "text": "        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com:80/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com:443/bar\"\n        )\n        # Non-standard ports should trigger stripping\n        assert s.should_strip_auth(\n            \"http://example.com:8080/foo\", \"https://example.com/bar\"\n        )\n        assert s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com:8443/bar\"\n        )\n\n    def test_should_strip_auth_port_change(self):\n        s = requests.Session()\n        assert s.should_strip_auth(\n            \"http://example.com:1234/foo\", \"https://example.com:4321/bar\"\n        )\n\n    @pytest.mark.parametrize(\n        \"old_uri, new_uri\",\n        (\n            (\"https://example.com:443/foo\", \"https://example.com/bar\"),\n            (\"http://example.com:80/foo\", \"http://example.com/bar\"),\n            (\"https://example.com/foo\", \"https://example.com:443/bar\"),\n            (\"http://example.com/foo\", \"http://example.com:80/bar\"),\n        ),\n    )\n    def test_should_strip_auth_default_port(self, old_uri, new_uri):\n        s = requests.Session()\n        assert not s.should_strip_auth(old_uri, new_uri)\n\n    def test_manual_redirect_with_partial_body_read(self, httpbin):\n        s = requests.Session()\n        r1 = s.get(httpbin(\"redirect/2\"), allow_redirects=False, stream=True)\n        assert r1.is_redirect\n        rg = s.resolve_redirects(r1, r1.request, stream=True)\n\n        # read only the first eight bytes of the response body,\n        # then follow the redirect\n        r1.iter_content(8)\n        r2 = next(rg)\n        assert r2.is_redirect\n\n        # read all of the response via iter_content,\n        # then follow the redirect\n        for _ in r2.iter_content():\n            pass\n        r3 = next(rg)\n        assert not r3.is_redirect\n\n    def test_prepare_body_position_non_stream(self):\n        data = b\"the data\"\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position is None\n\n    def test_rewind_body(self):\n        data = io.BytesIO(b\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 0\n        assert prep.body.read() == b\"the data\"\n\n        # the data has all been read\n        assert prep.body.read() == b\"\"\n\n        # rewind it back\n        requests.utils.rewind_body(prep)\n        assert prep.body.read() == b\"the data\"\n\n    def test_rewind_partially_read_body(self):\n        data = io.BytesIO(b\"the data\")\n        data.read(4)  # read some data\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 4\n        assert prep.body.read() == b\"data\"\n\n        # the data has all been read\n        assert prep.body.read() == b\"\"\n\n        # rewind it back\n        requests.utils.rewind_body(prep)\n        assert prep.body.read() == b\"data\"\n\n    def test_rewind_body_no_seek(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                return 0\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 0\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"Unable to rewind request body\" in str(e)\n\n    def test_rewind_body_failed_seek(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                return 0\n\n            def seek(self, pos, whence=0):\n                raise OSError()\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 0\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"error occurred when rewinding request body\" in str(e)\n\n    def test_rewind_body_failed_tell(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                raise OSError()\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position is not None\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"Unable to rewind request body\" in str(e)\n\n    def _patch_adapter_gzipped_redirect(self, session, url):\n        adapter = session.get_adapter(url=url)\n        org_build_response = adapter.build_response\n        self._patched_response = False\n\n        def build_response(*args, **kwargs):\n            resp = org_build_response(*args, **kwargs)\n"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "short_id": "94",
+          "text_unit_id": "f58c14175330235d8fc1ab76a727a2ebbcb83a7b6f0c40a6b2565546b3e14b71fb34762b92dc723c1560082374706f31f3f79711e7a6a5ea3cc830eac1d00fcb",
+          "id": "8d5caeb573fe757b42490450a06e8776a7cf1fa7ee8ad98baa2a75b74f96a18c",
+          "title": "tests/test_requests.py:L1872-L2028",
+          "path": "tests/test_requests.py",
+          "start_line": 1872,
+          "end_line": 2028,
+          "tokens": 1197,
+          "text_sha256": "50e03c3cf032d66ef1d5707bc05dd5eacf88b79bb353c66a9126438eef568cfe",
+          "ms_text_unit_id": "f58c14175330235d8fc1ab76a727a2ebbcb83a7b6f0c40a6b2565546b3e14b71fb34762b92dc723c1560082374706f31f3f79711e7a6a5ea3cc830eac1d00fcb"
+        }
+      ],
+      "source_text_tokens": 1197,
+      "context_tokens": 2616,
+      "evidence_key": "d79626e2553797626232da6001edd5c1e59640928a4d38eb40cfb90c4aef2386",
+      "read_occurrences": 1
+    },
+    {
+      "stage": "local",
+      "query": "Which Requests module and function contains the redirect handling for streamed request bodies?",
+      "context": "-----Entities-----\nid|entity|description|number of relationships\n1057|REDIRECT_RESP_HANDLER|Defined here as the nested `def redirect_resp_handler(sock)`. It consumes an initial request, sends a 301 response with a `Location` containing `path`, records a second request in `redirect_request`, and sends a 200 response.|3\n1296|TEST_MANUAL_REDIRECT_WITH_PARTIAL_BODY_READ|The visible test method `test_manual_redirect_with_partial_body_read` performs a streamed request, resolves redirects, partially and fully consumes response bodies with `iter_content`, and asserts redirect status transitions.|8\n788|RESOLVE_REDIRECTS|The method `resolve_redirects(self, resp, req, stream=False, timeout=None, verify=True, cert=None, proxies=None, yield_requests=False, **adapter_kwargs)` is defined here. It iterates through redirect targets, updates and prepares requests, optionally yields requests, otherwise sends them and yields responses; the owning class is not visible in this chunk.|26\n1309|REQUESTS.UTILS.REWIND_BODY|`REQUESTS.UTILS.REWIND_BODY` refers to the external callable `requests.utils.rewind_body`, which is used with `prep` to rewind the body of a prepared request. The provided material shows only its invocation and does not include the callable’s definition or implementation details.|5\n1388|REDIRECTSESSION.BUILD_RESPONSE|The method `RedirectSession.build_response` is defined here; it derives a request from the latest recorded call, creates a `requests.Response`, assigns a redirect or 200 status, headers, raw data, and request, then returns the response.|7\n1056|TEST_REDIRECT_RFC1808_TO_NON_ASCII_LOCATION|Defined here as `def test_redirect_rfc1808_to_non_ascii_location()`. It creates a redirect handler, follows a redirect, and asserts the final status, history, percent-encoded non-ASCII path, and second request line.|4\n1385|REDIRECTSESSION|The class `RedirectSession` is defined here and inherits from `SessionRedirectMixin`; it stores redirect order, send calls, redirect limits, cookies, and environment trust state.|6\n1118|S.RESOLVE_REDIRECTS|The attribute call `s.resolve_redirects(resp, prep_req)` is explicitly referenced; the receiver's concrete runtime class is not proven by this chunk.|1\n1391|TEST_REQUESTS_ARE_UPDATED_EACH_TIME|The test function `test_requests_are_updated_each_time` is defined here; it sends a prepared POST request through `RedirectSession`, follows redirects, and asserts recorded redirect requests use `GET`.|7\n1127|TEST_REQUESTS_IN_HISTORY_ARE_NOT_OVERRIDDEN|\"The test function `test_requests_in_history_are_not_overridden` is defined here. It performs `requests.get(httpbin(\"\"redirect/3\"\"))` and asserts response history URLs equal the corresponding request URLs.\"|4\n442|R.BODY.SEEK|References the unresolved receiver operation `r.request.body.seek(self._thread_local.pos)` in `handle_401` when a saved body position exists; the runtime type of `r.body` is not established.|1\n1060|RESPONSE_HANDLER|`RESPONSE_HANDLER` is defined as the nested function `response_handler(sock)`. It processes incoming socket content by calling `consume_socket_content(sock, timeout=0.5)`, consumes three requests, and sends HTTP responses in sequence. It first sends two `302` redirects with `Location` headers set to `/get#relevant-section` and `/final-url/`, followed by a final raw HTTP `200` response containing alternate-encoded bytes.|9\n764|REWIND_BODY|`REWIND_BODY` refers to the `rewind_body` utility, which is imported from `.utils`. It is used to rewind a consumed file-like request body when the `rewindable` option is enabled. Its implementation is not visible in the provided code, and no direct usage appears in the referenced chunk beyond the import.|7\n1102|TEST_HTTP_307_ALLOW_REDIRECT_POST_WITH_SEEKABLE|Defines the test method `test_HTTP_307_ALLOW_REDIRECT_POST_WITH_SEEKABLE`; posts an `io.BytesIO` body through a 307 redirect and asserts status 200, redirect history status 307, redirect state, and decoded response data.|5\n725|RESPONSE.NEXT|Property method `Response.next` is defined here and returns the stored `_next` value, documented as a possible prepared request in a redirect chain.|1\n1126|TEST_COOKIELIB_COOKIEJAR_ON_REDIRECT|\"The test function `test_cookielib_cookiejar_on_redirect` is defined here. It prepares a request with a generic `CookieJar`, sends it, resolves a redirect, and asserts the redirect request retains a generic `CookieJar` containing both `foo == \"\"bar\"\"` and `cookie == \"\"tasty\"\"`.\"|12\n1036|TEST_DIGESTAUTH_401_COUNT_RESET_ON_REDIRECT|`test_digestauth_401_count_reset_on_redirect()` is defined here and documents a digest-authentication redirect scenario involving a successful authentication followed by a 302 redirect to another digest prompt; the visible chunk ends while defining response data, before any executable assertion or request call is shown.|3\n\n-----Relationships-----\nid|source|target|description|weight|links\n1561|REDIRECT_RESP_HANDLER|CONSUME_SOCKET_CONTENT|CALLS, source `redirect_resp_handler` invokes unresolved `consume_socket_content(sock, timeout=0.5)` twice; the callee definition is not visible|10.0|1\n1562|REDIRECT_RESP_HANDLER|SOCK.SEND|CALLS, source `redirect_resp_handler` invokes the unresolved receiver call `sock.send(...)` for the 301 and 200 responses; the receiver binding is not visible|9.0|1\n1560|TEST_REDIRECT_RFC1808_TO_NON_ASCII_LOCATION|REDIRECT_RESP_HANDLER|CALLS, source `test_redirect_rfc1808_to_non_ascii_location` passes `redirect_resp_handler` to `Server(redirect_resp_handler, wait_to_close_event=close_server)`; this is a handler reference, not proof that the server invokes it at runtime|8.0|1\n\n-----Sources-----\nid|source|text\n77|tests/test_lowlevel.py:L250-L390|\"\n    def digest_response_handler(sock):\n        # Respond to GET with a 200 containing www-authenticate header.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content.startswith(b\"\"GET / HTTP/1.1\"\")\n        sock.send(text_200_chal)\n\n        # Verify the client didn't respond with auth.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content == b''\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(digest_response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url, auth=auth)\n        # Verify server didn't receive auth from us.\n        assert r.status_code == 200\n        assert len(r.history) == 0\n        close_server.set()\n\n\n_schemes_by_var_prefix = [\n    ('http', ['http']),\n    ('https', ['https']),\n    ('all', ['http', 'https']),\n]\n\n_proxy_combos = []\nfor prefix, schemes in _schemes_by_var_prefix:\n    for scheme in schemes:\n        _proxy_combos.append((f\"\"{prefix}_proxy\"\", scheme))\n\n_proxy_combos += [(var.upper(), scheme) for var, scheme in _proxy_combos]\n\n\n@pytest.mark.parametrize(\"\"var,scheme\"\", _proxy_combos)\ndef test_use_proxy_from_environment(httpbin, var, scheme):\n    url = f\"\"{scheme}://httpbin.org\"\"\n    fake_proxy = Server()  # do nothing with the requests; just close the socket\n    with fake_proxy as (host, port):\n        proxy_url = f\"\"socks5://{host}:{port}\"\"\n        kwargs = {var: proxy_url}\n        with override_environ(**kwargs):\n            # fake proxy's lack of response will cause a ConnectionError\n            with pytest.raises(requests.exceptions.ConnectionError):\n                requests.get(url)\n\n        # the fake proxy received a request\n        assert len(fake_proxy.handler_results) == 1\n\n        # it had actual content (not checking for SOCKS protocol for now)\n        assert len(fake_proxy.handler_results[0]) > 0\n\n\ndef test_redirect_rfc1808_to_non_ascii_location():\n    path = 'š'\n    expected_path = b'%C5%A1'\n    redirect_request = []  # stores the second request to the server\n\n    def redirect_resp_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        location = f'//{host}:{port}/{path}'\n        sock.send(\n            (\n                b'HTTP/1.1 301 Moved Permanently\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'Location: %s\\r\\n'\n                b'\\r\\n'\n            ) % location.encode('utf8')\n        )\n        redirect_request.append(consume_socket_content(sock, timeout=0.5))\n        sock.send(b'HTTP/1.1 200 OK\\r\\n\\r\\n')\n\n    close_server = threading.Event()\n    server = Server(redirect_resp_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}'\n        r = requests.get(url=url, allow_redirects=True)\n        assert r.status_code == 200\n        assert len(r.history) == 1\n        assert r.history[0].status_code == 301\n        assert redirect_request[0].startswith(b'GET /' + expected_path + b' HTTP/1.1')\n        assert r.url == '{}/{}'.format(url, expected_path.decode('ascii'))\n\n        close_server.set()\n\n\ndef test_fragment_not_sent_with_request():\n    \"\"\"\"\"\"Verify that the fragment portion of a URI isn't sent to the server.\"\"\"\"\"\"\n    close_server = threading.Event()\n    server = Server(echo_response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/path/to/thing/#view=edit&token=hunter2'\n        r = requests.get(url)\n        raw_request = r.content\n\n        assert r.status_code == 200\n        headers, body = raw_request.split(b'\\r\\n\\r\\n', 1)\n        status_line, headers = headers.split(b'\\r\\n', 1)\n\n        assert status_line == b'GET /path/to/thing/ HTTP/1.1'\n        for frag in (b'view', b'edit', b'token', b'hunter2'):\n            assert frag not in headers\n            assert frag not in body\n\n        close_server.set()\n\n\ndef test_fragment_update_on_redirect():\n    \"\"\"\"\"\"Verify we only append previous fragment if one doesn't exist on new\n    location. If a new fragment is encountered in a Location header, it should\n    be added to all subsequent requests.\n    \"\"\"\"\"\"\n\n    def response_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /get#relevant-section\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /final-url/\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n\"\n",
+      "upstream_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n1057|REDIRECT_RESP_HANDLER|Defined here as the nested `def redirect_resp_handler(sock)`. It consumes an initial request, sends a 301 response with a `Location` containing `path`, records a second request in `redirect_request`, and sends a 200 response.|3\n1296|TEST_MANUAL_REDIRECT_WITH_PARTIAL_BODY_READ|The visible test method `test_manual_redirect_with_partial_body_read` performs a streamed request, resolves redirects, partially and fully consumes response bodies with `iter_content`, and asserts redirect status transitions.|8\n788|RESOLVE_REDIRECTS|The method `resolve_redirects(self, resp, req, stream=False, timeout=None, verify=True, cert=None, proxies=None, yield_requests=False, **adapter_kwargs)` is defined here. It iterates through redirect targets, updates and prepares requests, optionally yields requests, otherwise sends them and yields responses; the owning class is not visible in this chunk.|26\n1309|REQUESTS.UTILS.REWIND_BODY|`REQUESTS.UTILS.REWIND_BODY` refers to the external callable `requests.utils.rewind_body`, which is used with `prep` to rewind the body of a prepared request. The provided material shows only its invocation and does not include the callable’s definition or implementation details.|5\n1388|REDIRECTSESSION.BUILD_RESPONSE|The method `RedirectSession.build_response` is defined here; it derives a request from the latest recorded call, creates a `requests.Response`, assigns a redirect or 200 status, headers, raw data, and request, then returns the response.|7\n1056|TEST_REDIRECT_RFC1808_TO_NON_ASCII_LOCATION|Defined here as `def test_redirect_rfc1808_to_non_ascii_location()`. It creates a redirect handler, follows a redirect, and asserts the final status, history, percent-encoded non-ASCII path, and second request line.|4\n1385|REDIRECTSESSION|The class `RedirectSession` is defined here and inherits from `SessionRedirectMixin`; it stores redirect order, send calls, redirect limits, cookies, and environment trust state.|6\n1118|S.RESOLVE_REDIRECTS|The attribute call `s.resolve_redirects(resp, prep_req)` is explicitly referenced; the receiver's concrete runtime class is not proven by this chunk.|1\n1391|TEST_REQUESTS_ARE_UPDATED_EACH_TIME|The test function `test_requests_are_updated_each_time` is defined here; it sends a prepared POST request through `RedirectSession`, follows redirects, and asserts recorded redirect requests use `GET`.|7\n1127|TEST_REQUESTS_IN_HISTORY_ARE_NOT_OVERRIDDEN|The test function `test_requests_in_history_are_not_overridden` is defined here. It performs `requests.get(httpbin(\"redirect/3\"))` and asserts response history URLs equal the corresponding request URLs.|4\n442|R.BODY.SEEK|References the unresolved receiver operation `r.request.body.seek(self._thread_local.pos)` in `handle_401` when a saved body position exists; the runtime type of `r.body` is not established.|1\n1060|RESPONSE_HANDLER|`RESPONSE_HANDLER` is defined as the nested function `response_handler(sock)`. It processes incoming socket content by calling `consume_socket_content(sock, timeout=0.5)`, consumes three requests, and sends HTTP responses in sequence. It first sends two `302` redirects with `Location` headers set to `/get#relevant-section` and `/final-url/`, followed by a final raw HTTP `200` response containing alternate-encoded bytes.|9\n764|REWIND_BODY|`REWIND_BODY` refers to the `rewind_body` utility, which is imported from `.utils`. It is used to rewind a consumed file-like request body when the `rewindable` option is enabled. Its implementation is not visible in the provided code, and no direct usage appears in the referenced chunk beyond the import.|7\n1102|TEST_HTTP_307_ALLOW_REDIRECT_POST_WITH_SEEKABLE|Defines the test method `test_HTTP_307_ALLOW_REDIRECT_POST_WITH_SEEKABLE`; posts an `io.BytesIO` body through a 307 redirect and asserts status 200, redirect history status 307, redirect state, and decoded response data.|5\n725|RESPONSE.NEXT|Property method `Response.next` is defined here and returns the stored `_next` value, documented as a possible prepared request in a redirect chain.|1\n1126|TEST_COOKIELIB_COOKIEJAR_ON_REDIRECT|The test function `test_cookielib_cookiejar_on_redirect` is defined here. It prepares a request with a generic `CookieJar`, sends it, resolves a redirect, and asserts the redirect request retains a generic `CookieJar` containing both `foo == \"bar\"` and `cookie == \"tasty\"`.|12\n1036|TEST_DIGESTAUTH_401_COUNT_RESET_ON_REDIRECT|`test_digestauth_401_count_reset_on_redirect()` is defined here and documents a digest-authentication redirect scenario involving a successful authentication followed by a 302 redirect to another digest prompt; the visible chunk ends while defining response data, before any executable assertion or request call is shown.|3\n\n\n-----Relationships-----\nid|source|target|description|weight|links\n1561|REDIRECT_RESP_HANDLER|CONSUME_SOCKET_CONTENT|CALLS, source `redirect_resp_handler` invokes unresolved `consume_socket_content(sock, timeout=0.5)` twice; the callee definition is not visible|10.0|1\n1562|REDIRECT_RESP_HANDLER|SOCK.SEND|CALLS, source `redirect_resp_handler` invokes the unresolved receiver call `sock.send(...)` for the 301 and 200 responses; the receiver binding is not visible|9.0|1\n1560|TEST_REDIRECT_RFC1808_TO_NON_ASCII_LOCATION|REDIRECT_RESP_HANDLER|CALLS, source `test_redirect_rfc1808_to_non_ascii_location` passes `redirect_resp_handler` to `Server(redirect_resp_handler, wait_to_close_event=close_server)`; this is a handler reference, not proof that the server invokes it at runtime|8.0|1\n\n\n-----Sources-----\nid|text\n77|\n    def digest_response_handler(sock):\n        # Respond to GET with a 200 containing www-authenticate header.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content.startswith(b\"GET / HTTP/1.1\")\n        sock.send(text_200_chal)\n\n        # Verify the client didn't respond with auth.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content == b''\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(digest_response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url, auth=auth)\n        # Verify server didn't receive auth from us.\n        assert r.status_code == 200\n        assert len(r.history) == 0\n        close_server.set()\n\n\n_schemes_by_var_prefix = [\n    ('http', ['http']),\n    ('https', ['https']),\n    ('all', ['http', 'https']),\n]\n\n_proxy_combos = []\nfor prefix, schemes in _schemes_by_var_prefix:\n    for scheme in schemes:\n        _proxy_combos.append((f\"{prefix}_proxy\", scheme))\n\n_proxy_combos += [(var.upper(), scheme) for var, scheme in _proxy_combos]\n\n\n@pytest.mark.parametrize(\"var,scheme\", _proxy_combos)\ndef test_use_proxy_from_environment(httpbin, var, scheme):\n    url = f\"{scheme}://httpbin.org\"\n    fake_proxy = Server()  # do nothing with the requests; just close the socket\n    with fake_proxy as (host, port):\n        proxy_url = f\"socks5://{host}:{port}\"\n        kwargs = {var: proxy_url}\n        with override_environ(**kwargs):\n            # fake proxy's lack of response will cause a ConnectionError\n            with pytest.raises(requests.exceptions.ConnectionError):\n                requests.get(url)\n\n        # the fake proxy received a request\n        assert len(fake_proxy.handler_results) == 1\n\n        # it had actual content (not checking for SOCKS protocol for now)\n        assert len(fake_proxy.handler_results[0]) > 0\n\n\ndef test_redirect_rfc1808_to_non_ascii_location():\n    path = 'š'\n    expected_path = b'%C5%A1'\n    redirect_request = []  # stores the second request to the server\n\n    def redirect_resp_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        location = f'//{host}:{port}/{path}'\n        sock.send(\n            (\n                b'HTTP/1.1 301 Moved Permanently\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'Location: %s\\r\\n'\n                b'\\r\\n'\n            ) % location.encode('utf8')\n        )\n        redirect_request.append(consume_socket_content(sock, timeout=0.5))\n        sock.send(b'HTTP/1.1 200 OK\\r\\n\\r\\n')\n\n    close_server = threading.Event()\n    server = Server(redirect_resp_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}'\n        r = requests.get(url=url, allow_redirects=True)\n        assert r.status_code == 200\n        assert len(r.history) == 1\n        assert r.history[0].status_code == 301\n        assert redirect_request[0].startswith(b'GET /' + expected_path + b' HTTP/1.1')\n        assert r.url == '{}/{}'.format(url, expected_path.decode('ascii'))\n\n        close_server.set()\n\n\ndef test_fragment_not_sent_with_request():\n    \"\"\"Verify that the fragment portion of a URI isn't sent to the server.\"\"\"\n    close_server = threading.Event()\n    server = Server(echo_response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/path/to/thing/#view=edit&token=hunter2'\n        r = requests.get(url)\n        raw_request = r.content\n\n        assert r.status_code == 200\n        headers, body = raw_request.split(b'\\r\\n\\r\\n', 1)\n        status_line, headers = headers.split(b'\\r\\n', 1)\n\n        assert status_line == b'GET /path/to/thing/ HTTP/1.1'\n        for frag in (b'view', b'edit', b'token', b'hunter2'):\n            assert frag not in headers\n            assert frag not in body\n\n        close_server.set()\n\n\ndef test_fragment_update_on_redirect():\n    \"\"\"Verify we only append previous fragment if one doesn't exist on new\n    location. If a new fragment is encountered in a Location header, it should\n    be added to all subsequent requests.\n    \"\"\"\n\n    def response_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /get#relevant-section\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /final-url/\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n\n",
+      "records": {
+        "relationships": [
+          {
+            "id": "1561",
+            "source": "REDIRECT_RESP_HANDLER",
+            "target": "CONSUME_SOCKET_CONTENT",
+            "description": "CALLS, source `redirect_resp_handler` invokes unresolved `consume_socket_content(sock, timeout=0.5)` twice; the callee definition is not visible",
+            "weight": "10.0",
+            "links": "1",
+            "in_context": true
+          },
+          {
+            "id": "1562",
+            "source": "REDIRECT_RESP_HANDLER",
+            "target": "SOCK.SEND",
+            "description": "CALLS, source `redirect_resp_handler` invokes the unresolved receiver call `sock.send(...)` for the 301 and 200 responses; the receiver binding is not visible",
+            "weight": "9.0",
+            "links": "1",
+            "in_context": true
+          },
+          {
+            "id": "1560",
+            "source": "TEST_REDIRECT_RFC1808_TO_NON_ASCII_LOCATION",
+            "target": "REDIRECT_RESP_HANDLER",
+            "description": "CALLS, source `test_redirect_rfc1808_to_non_ascii_location` passes `redirect_resp_handler` to `Server(redirect_resp_handler, wait_to_close_event=close_server)`; this is a handler reference, not proof that the server invokes it at runtime",
+            "weight": "8.0",
+            "links": "1",
+            "in_context": true
+          }
+        ],
+        "entities": [
+          {
+            "id": "1057",
+            "entity": "REDIRECT_RESP_HANDLER",
+            "description": "Defined here as the nested `def redirect_resp_handler(sock)`. It consumes an initial request, sends a 301 response with a `Location` containing `path`, records a second request in `redirect_request`, and sends a 200 response.",
+            "number of relationships": "3",
+            "in_context": true
+          },
+          {
+            "id": "1296",
+            "entity": "TEST_MANUAL_REDIRECT_WITH_PARTIAL_BODY_READ",
+            "description": "The visible test method `test_manual_redirect_with_partial_body_read` performs a streamed request, resolves redirects, partially and fully consumes response bodies with `iter_content`, and asserts redirect status transitions.",
+            "number of relationships": "8",
+            "in_context": true
+          },
+          {
+            "id": "788",
+            "entity": "RESOLVE_REDIRECTS",
+            "description": "The method `resolve_redirects(self, resp, req, stream=False, timeout=None, verify=True, cert=None, proxies=None, yield_requests=False, **adapter_kwargs)` is defined here. It iterates through redirect targets, updates and prepares requests, optionally yields requests, otherwise sends them and yields responses; the owning class is not visible in this chunk.",
+            "number of relationships": "26",
+            "in_context": true
+          },
+          {
+            "id": "1309",
+            "entity": "REQUESTS.UTILS.REWIND_BODY",
+            "description": "`REQUESTS.UTILS.REWIND_BODY` refers to the external callable `requests.utils.rewind_body`, which is used with `prep` to rewind the body of a prepared request. The provided material shows only its invocation and does not include the callable’s definition or implementation details.",
+            "number of relationships": "5",
+            "in_context": true
+          },
+          {
+            "id": "1388",
+            "entity": "REDIRECTSESSION.BUILD_RESPONSE",
+            "description": "The method `RedirectSession.build_response` is defined here; it derives a request from the latest recorded call, creates a `requests.Response`, assigns a redirect or 200 status, headers, raw data, and request, then returns the response.",
+            "number of relationships": "7",
+            "in_context": true
+          },
+          {
+            "id": "1056",
+            "entity": "TEST_REDIRECT_RFC1808_TO_NON_ASCII_LOCATION",
+            "description": "Defined here as `def test_redirect_rfc1808_to_non_ascii_location()`. It creates a redirect handler, follows a redirect, and asserts the final status, history, percent-encoded non-ASCII path, and second request line.",
+            "number of relationships": "4",
+            "in_context": true
+          },
+          {
+            "id": "1385",
+            "entity": "REDIRECTSESSION",
+            "description": "The class `RedirectSession` is defined here and inherits from `SessionRedirectMixin`; it stores redirect order, send calls, redirect limits, cookies, and environment trust state.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "1118",
+            "entity": "S.RESOLVE_REDIRECTS",
+            "description": "The attribute call `s.resolve_redirects(resp, prep_req)` is explicitly referenced; the receiver's concrete runtime class is not proven by this chunk.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "1391",
+            "entity": "TEST_REQUESTS_ARE_UPDATED_EACH_TIME",
+            "description": "The test function `test_requests_are_updated_each_time` is defined here; it sends a prepared POST request through `RedirectSession`, follows redirects, and asserts recorded redirect requests use `GET`.",
+            "number of relationships": "7",
+            "in_context": true
+          },
+          {
+            "id": "1127",
+            "entity": "TEST_REQUESTS_IN_HISTORY_ARE_NOT_OVERRIDDEN",
+            "description": "The test function `test_requests_in_history_are_not_overridden` is defined here. It performs `requests.get(httpbin(\"redirect/3\"))` and asserts response history URLs equal the corresponding request URLs.",
+            "number of relationships": "4",
+            "in_context": true
+          },
+          {
+            "id": "442",
+            "entity": "R.BODY.SEEK",
+            "description": "References the unresolved receiver operation `r.request.body.seek(self._thread_local.pos)` in `handle_401` when a saved body position exists; the runtime type of `r.body` is not established.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "1060",
+            "entity": "RESPONSE_HANDLER",
+            "description": "`RESPONSE_HANDLER` is defined as the nested function `response_handler(sock)`. It processes incoming socket content by calling `consume_socket_content(sock, timeout=0.5)`, consumes three requests, and sends HTTP responses in sequence. It first sends two `302` redirects with `Location` headers set to `/get#relevant-section` and `/final-url/`, followed by a final raw HTTP `200` response containing alternate-encoded bytes.",
+            "number of relationships": "9",
+            "in_context": true
+          },
+          {
+            "id": "764",
+            "entity": "REWIND_BODY",
+            "description": "`REWIND_BODY` refers to the `rewind_body` utility, which is imported from `.utils`. It is used to rewind a consumed file-like request body when the `rewindable` option is enabled. Its implementation is not visible in the provided code, and no direct usage appears in the referenced chunk beyond the import.",
+            "number of relationships": "7",
+            "in_context": true
+          },
+          {
+            "id": "1102",
+            "entity": "TEST_HTTP_307_ALLOW_REDIRECT_POST_WITH_SEEKABLE",
+            "description": "Defines the test method `test_HTTP_307_ALLOW_REDIRECT_POST_WITH_SEEKABLE`; posts an `io.BytesIO` body through a 307 redirect and asserts status 200, redirect history status 307, redirect state, and decoded response data.",
+            "number of relationships": "5",
+            "in_context": true
+          },
+          {
+            "id": "725",
+            "entity": "RESPONSE.NEXT",
+            "description": "Property method `Response.next` is defined here and returns the stored `_next` value, documented as a possible prepared request in a redirect chain.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "1126",
+            "entity": "TEST_COOKIELIB_COOKIEJAR_ON_REDIRECT",
+            "description": "The test function `test_cookielib_cookiejar_on_redirect` is defined here. It prepares a request with a generic `CookieJar`, sends it, resolves a redirect, and asserts the redirect request retains a generic `CookieJar` containing both `foo == \"bar\"` and `cookie == \"tasty\"`.",
+            "number of relationships": "12",
+            "in_context": true
+          },
+          {
+            "id": "1036",
+            "entity": "TEST_DIGESTAUTH_401_COUNT_RESET_ON_REDIRECT",
+            "description": "`test_digestauth_401_count_reset_on_redirect()` is defined here and documents a digest-authentication redirect scenario involving a successful authentication followed by a 302 redirect to another digest prompt; the visible chunk ends while defining response data, before any executable assertion or request call is shown.",
+            "number of relationships": "3",
+            "in_context": true
+          }
+        ],
+        "sources": [
+          {
+            "id": "77",
+            "text": "\n    def digest_response_handler(sock):\n        # Respond to GET with a 200 containing www-authenticate header.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content.startswith(b\"GET / HTTP/1.1\")\n        sock.send(text_200_chal)\n\n        # Verify the client didn't respond with auth.\n        request_content = consume_socket_content(sock, timeout=0.5)\n        assert request_content == b''\n\n        return request_content\n\n    close_server = threading.Event()\n    server = Server(digest_response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/'\n        r = requests.get(url, auth=auth)\n        # Verify server didn't receive auth from us.\n        assert r.status_code == 200\n        assert len(r.history) == 0\n        close_server.set()\n\n\n_schemes_by_var_prefix = [\n    ('http', ['http']),\n    ('https', ['https']),\n    ('all', ['http', 'https']),\n]\n\n_proxy_combos = []\nfor prefix, schemes in _schemes_by_var_prefix:\n    for scheme in schemes:\n        _proxy_combos.append((f\"{prefix}_proxy\", scheme))\n\n_proxy_combos += [(var.upper(), scheme) for var, scheme in _proxy_combos]\n\n\n@pytest.mark.parametrize(\"var,scheme\", _proxy_combos)\ndef test_use_proxy_from_environment(httpbin, var, scheme):\n    url = f\"{scheme}://httpbin.org\"\n    fake_proxy = Server()  # do nothing with the requests; just close the socket\n    with fake_proxy as (host, port):\n        proxy_url = f\"socks5://{host}:{port}\"\n        kwargs = {var: proxy_url}\n        with override_environ(**kwargs):\n            # fake proxy's lack of response will cause a ConnectionError\n            with pytest.raises(requests.exceptions.ConnectionError):\n                requests.get(url)\n\n        # the fake proxy received a request\n        assert len(fake_proxy.handler_results) == 1\n\n        # it had actual content (not checking for SOCKS protocol for now)\n        assert len(fake_proxy.handler_results[0]) > 0\n\n\ndef test_redirect_rfc1808_to_non_ascii_location():\n    path = 'š'\n    expected_path = b'%C5%A1'\n    redirect_request = []  # stores the second request to the server\n\n    def redirect_resp_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        location = f'//{host}:{port}/{path}'\n        sock.send(\n            (\n                b'HTTP/1.1 301 Moved Permanently\\r\\n'\n                b'Content-Length: 0\\r\\n'\n                b'Location: %s\\r\\n'\n                b'\\r\\n'\n            ) % location.encode('utf8')\n        )\n        redirect_request.append(consume_socket_content(sock, timeout=0.5))\n        sock.send(b'HTTP/1.1 200 OK\\r\\n\\r\\n')\n\n    close_server = threading.Event()\n    server = Server(redirect_resp_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}'\n        r = requests.get(url=url, allow_redirects=True)\n        assert r.status_code == 200\n        assert len(r.history) == 1\n        assert r.history[0].status_code == 301\n        assert redirect_request[0].startswith(b'GET /' + expected_path + b' HTTP/1.1')\n        assert r.url == '{}/{}'.format(url, expected_path.decode('ascii'))\n\n        close_server.set()\n\n\ndef test_fragment_not_sent_with_request():\n    \"\"\"Verify that the fragment portion of a URI isn't sent to the server.\"\"\"\n    close_server = threading.Event()\n    server = Server(echo_response_handler, wait_to_close_event=close_server)\n\n    with server as (host, port):\n        url = f'http://{host}:{port}/path/to/thing/#view=edit&token=hunter2'\n        r = requests.get(url)\n        raw_request = r.content\n\n        assert r.status_code == 200\n        headers, body = raw_request.split(b'\\r\\n\\r\\n', 1)\n        status_line, headers = headers.split(b'\\r\\n', 1)\n\n        assert status_line == b'GET /path/to/thing/ HTTP/1.1'\n        for frag in (b'view', b'edit', b'token', b'hunter2'):\n            assert frag not in headers\n            assert frag not in body\n\n        close_server.set()\n\n\ndef test_fragment_update_on_redirect():\n    \"\"\"Verify we only append previous fragment if one doesn't exist on new\n    location. If a new fragment is encountered in a Location header, it should\n    be added to all subsequent requests.\n    \"\"\"\n\n    def response_handler(sock):\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /get#relevant-section\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 302 FOUND\\r\\n'\n            b'Content-Length: 0\\r\\n'\n            b'Location: /final-url/\\r\\n\\r\\n'\n        )\n        consume_socket_content(sock, timeout=0.5)\n        sock.send(\n            b'HTTP/1.1 200 OK\\r\\n\\r\\n'\n        )\n\n    close_server = threading.Event()\n    server = Server(response_handler, wait_to_close_event=close_server)\n\n"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "short_id": "77",
+          "text_unit_id": "da4d936c498ad40c1d91a81f1b444b377d7175ec9c0df47f4be514fb1f8efe11d8e4094624df77fc73da5f684dd5d7c6357352fdfc7545d3f4c0c8b76c32ef2e",
+          "id": "6824739b4a45389a356b3fa872c74b2125d794e3f050a4aa5adbf588a7072035",
+          "title": "tests/test_lowlevel.py:L250-L390",
+          "path": "tests/test_lowlevel.py",
+          "start_line": 250,
+          "end_line": 390,
+          "tokens": 1196,
+          "text_sha256": "90140d8304e63bf59b8d4c00aacad9b20798b06ee261f1f7bc8b9a121cebbe51",
+          "ms_text_unit_id": "da4d936c498ad40c1d91a81f1b444b377d7175ec9c0df47f4be514fb1f8efe11d8e4094624df77fc73da5f684dd5d7c6357352fdfc7545d3f4c0c8b76c32ef2e"
+        }
+      ],
+      "source_text_tokens": 1196,
+      "context_tokens": 2535,
+      "evidence_key": "d128cc94ebb86b4c03ce84f5a184594be158c150884164a8b8176e8e17aef270",
+      "read_occurrences": 1
+    },
+    {
+      "stage": "local",
+      "query": "Are there additional tests covering `OSError` from `seek` after a body has been partially consumed or after multiple redirects?",
+      "context": "-----Entities-----\nid|entity|description|number of relationships\n1301|TEST_REWIND_BODY_FAILED_SEEK|The visible test method `test_rewind_body_failed_seek` defines a file-like object whose `seek` raises `OSError`, then asserts that rewinding raises `UnrewindableBodyError` containing `error occurred when rewinding request body`.|6\n1302|TEST_REWIND_BODY_FAILED_TELL|The visible test method `test_rewind_body_failed_tell` defines a file-like object whose `tell` raises `OSError`, asserts `_body_position is not None`, and asserts that rewinding raises `UnrewindableBodyError` containing `Unable to rewind request body`.|6\n1102|TEST_HTTP_307_ALLOW_REDIRECT_POST_WITH_SEEKABLE|Defines the test method `test_HTTP_307_ALLOW_REDIRECT_POST_WITH_SEEKABLE`; posts an `io.BytesIO` body through a 307 redirect and asserts status 200, redirect history status 307, redirect state, and decoded response data.|5\n1296|TEST_MANUAL_REDIRECT_WITH_PARTIAL_BODY_READ|The visible test method `test_manual_redirect_with_partial_body_read` performs a streamed request, resolves redirects, partially and fully consumes response bodies with `iter_content`, and asserts redirect status transitions.|8\n1299|TEST_REWIND_PARTIALLY_READ_BODY|\"The visible test method `test_rewind_partially_read_body` reads four bytes before request preparation, asserts `_body_position == 4`, exhausts the remaining body, rewinds it with `requests.utils.rewind_body(prep)`, and asserts `b\"\"data\"\"` can be read again.\"|6\n442|R.BODY.SEEK|References the unresolved receiver operation `r.request.body.seek(self._thread_local.pos)` in `handle_401` when a saved body position exists; the runtime type of `r.body` is not established.|1\n1300|TEST_REWIND_BODY_NO_SEEK|The visible test method `test_rewind_body_no_seek` defines a file-like object without `seek`, prepares it as request data, and asserts that `requests.utils.rewind_body(prep)` raises `UnrewindableBodyError` containing `Unable to rewind request body`.|6\n1298|TEST_REWIND_BODY|The visible test method `test_rewind_body` prepares a request from `io.BytesIO`, asserts an initial body position of `0`, reads the body to exhaustion, calls `requests.utils.rewind_body(prep)`, and asserts the original bytes can be read again.|6\n1056|TEST_REDIRECT_RFC1808_TO_NON_ASCII_LOCATION|Defined here as `def test_redirect_rfc1808_to_non_ascii_location()`. It creates a redirect handler, follows a redirect, and asserts the final status, history, percent-encoded non-ASCII path, and second request line.|4\n1169|TEST_POSTBIN_SEEKED_OBJECT_WITH_NO_ITER|Defines the test method `test_POSTBIN_SEEKED_OBJECT_WITH_NO_ITER(self, httpbin)`. It posts two `TestStream` instances and asserts status 200 and decoded response data for the initial and seeked stream positions.|5\n1308|BADFILEOBJ.SEEK|The visible `BadFileObj.seek(self, pos, whence=0)` method raises `OSError`, modeling a failed rewind operation.|2\n1480|NOLENBOOMFILE|Nested visible class in `test_super_len_tell_ioerror`; defines `tell` to raise the parameterized error and `seek` as a no-op.|1\n969|SEEK|`seek` is explicitly retrieved from `prepared_request.body` and then called through `body_seek(...)` in `rewind_body`; the receiver's concrete implementation is not visible.|1\n1316|TEST_REDIRECT_WITH_WRONG_GZIPPED_HEADER|The exact test method `test_redirect_with_wrong_gzipped_header(self, httpbin)` is defined here. It creates a `requests.Session`, patches the adapter for a redirect URL, and performs `s.get(url)`.|4\n1392|INDEXERROR|The exception type `IndexError` is referenced in `except IndexError` when `RedirectSession.build_response` exhausts redirect statuses; its definition is not visible.|1\n1304|BADFILEOBJ|A local class named `BadFileObj` is visibly defined in the rewind-failure tests, with instances exposing `data`, `tell`, and `__iter__`; separate local definitions with the same spelling are visible, and one additionally defines `seek`.|7\n1031|TEST_CHUNKED_ENCODING_ERROR.INCOMPLETE_CHUNKED_RESPONSE_HANDLER|`test_chunked_encoding_error.incomplete_chunked_response_handler(sock)` is defined inside `test_chunked_encoding_error`. It consumes the request and sends only an HTTP status plus `Transfer-Encoding: chunked`, without valid terminating chunks.|3\n370|OSERROR|OSERROR (also written as `OSError`) is an externally defined exception class used throughout the system for operating-system and I/O-related failures. It is referenced in parameterization and `raise error()` scenarios, although its definition is not visible in the provided context. The exception is caught when socket operations reject invalid input, including IPv4 and CIDR validation via `socket.inet_aton`, and during socket closing, connection acceptance, and connection-opening operations. It also handles failures involving file positioning and seeking, including `body_seek`, `body.tell()`, `tell` within `super_len`, `rewind_body`, netrc file processing, and the local `BadFileObj` implementations of `seek` and `tell`. Additionally, it is caught around calls to `platform.system()` and `platform.release()` in `info()`. In `cert_verify`, OSERROR is explicitly raised when configured CA, certificate, or private-key paths do not exist.|7\n1236|TEST_ITER_CONTENT_WRAPS_EXCEPTIONS|The parameterized test function `test_iter_content_wraps_exceptions` is defined here. It configures `r.raw.stream.side_effect` with several urllib3 exceptions and asserts that `next(r.iter_content(1024))` raises the corresponding Requests exception type.|6\n1191|TEST_PYOPENSSL_REDIRECT|\"TEST_PYOPENSSL_REDIRECT defines the test method `test_pyopenssl_redirect(self, httpbin_secure, httpbin_ca_bundle)`. The test uses `requests.get` to request the secure HTTPBin 301 redirect endpoint, constructed with `httpbin_secure(\"\"status\"\", \"\"301\"\")`, while passing `httpbin_ca_bundle` through the `verify` parameter to validate the secure connection using the provided CA bundle.\"|2\n\n-----Sources-----\nid|source|text\n94|tests/test_requests.py:L1872-L2028|\"        assert not s.should_strip_auth(\n            \"\"http://example.com/foo\"\", \"\"https://example.com/bar\"\"\n        )\n        assert not s.should_strip_auth(\n            \"\"http://example.com:80/foo\"\", \"\"https://example.com/bar\"\"\n        )\n        assert not s.should_strip_auth(\n            \"\"http://example.com/foo\"\", \"\"https://example.com:443/bar\"\"\n        )\n        # Non-standard ports should trigger stripping\n        assert s.should_strip_auth(\n            \"\"http://example.com:8080/foo\"\", \"\"https://example.com/bar\"\"\n        )\n        assert s.should_strip_auth(\n            \"\"http://example.com/foo\"\", \"\"https://example.com:8443/bar\"\"\n        )\n\n    def test_should_strip_auth_port_change(self):\n        s = requests.Session()\n        assert s.should_strip_auth(\n            \"\"http://example.com:1234/foo\"\", \"\"https://example.com:4321/bar\"\"\n        )\n\n    @pytest.mark.parametrize(\n        \"\"old_uri, new_uri\"\",\n        (\n            (\"\"https://example.com:443/foo\"\", \"\"https://example.com/bar\"\"),\n            (\"\"http://example.com:80/foo\"\", \"\"http://example.com/bar\"\"),\n            (\"\"https://example.com/foo\"\", \"\"https://example.com:443/bar\"\"),\n            (\"\"http://example.com/foo\"\", \"\"http://example.com:80/bar\"\"),\n        ),\n    )\n    def test_should_strip_auth_default_port(self, old_uri, new_uri):\n        s = requests.Session()\n        assert not s.should_strip_auth(old_uri, new_uri)\n\n    def test_manual_redirect_with_partial_body_read(self, httpbin):\n        s = requests.Session()\n        r1 = s.get(httpbin(\"\"redirect/2\"\"), allow_redirects=False, stream=True)\n        assert r1.is_redirect\n        rg = s.resolve_redirects(r1, r1.request, stream=True)\n\n        # read only the first eight bytes of the response body,\n        # then follow the redirect\n        r1.iter_content(8)\n        r2 = next(rg)\n        assert r2.is_redirect\n\n        # read all of the response via iter_content,\n        # then follow the redirect\n        for _ in r2.iter_content():\n            pass\n        r3 = next(rg)\n        assert not r3.is_redirect\n\n    def test_prepare_body_position_non_stream(self):\n        data = b\"\"the data\"\"\n        prep = requests.Request(\"\"GET\"\", \"\"http://example.com\"\", data=data).prepare()\n        assert prep._body_position is None\n\n    def test_rewind_body(self):\n        data = io.BytesIO(b\"\"the data\"\")\n        prep = requests.Request(\"\"GET\"\", \"\"http://example.com\"\", data=data).prepare()\n        assert prep._body_position == 0\n        assert prep.body.read() == b\"\"the data\"\"\n\n        # the data has all been read\n        assert prep.body.read() == b\"\"\"\"\n\n        # rewind it back\n        requests.utils.rewind_body(prep)\n        assert prep.body.read() == b\"\"the data\"\"\n\n    def test_rewind_partially_read_body(self):\n        data = io.BytesIO(b\"\"the data\"\")\n        data.read(4)  # read some data\n        prep = requests.Request(\"\"GET\"\", \"\"http://example.com\"\", data=data).prepare()\n        assert prep._body_position == 4\n        assert prep.body.read() == b\"\"data\"\"\n\n        # the data has all been read\n        assert prep.body.read() == b\"\"\"\"\n\n        # rewind it back\n        requests.utils.rewind_body(prep)\n        assert prep.body.read() == b\"\"data\"\"\n\n    def test_rewind_body_no_seek(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                return 0\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"\"the data\"\")\n        prep = requests.Request(\"\"GET\"\", \"\"http://example.com\"\", data=data).prepare()\n        assert prep._body_position == 0\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"\"Unable to rewind request body\"\" in str(e)\n\n    def test_rewind_body_failed_seek(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                return 0\n\n            def seek(self, pos, whence=0):\n                raise OSError()\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"\"the data\"\")\n        prep = requests.Request(\"\"GET\"\", \"\"http://example.com\"\", data=data).prepare()\n        assert prep._body_position == 0\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"\"error occurred when rewinding request body\"\" in str(e)\n\n    def test_rewind_body_failed_tell(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                raise OSError()\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"\"the data\"\")\n        prep = requests.Request(\"\"GET\"\", \"\"http://example.com\"\", data=data).prepare()\n        assert prep._body_position is not None\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"\"Unable to rewind request body\"\" in str(e)\n\n    def _patch_adapter_gzipped_redirect(self, session, url):\n        adapter = session.get_adapter(url=url)\n        org_build_response = adapter.build_response\n        self._patched_response = False\n\n        def build_response(*args, **kwargs):\n            resp = org_build_response(*args, **kwargs)\n\"\n",
+      "upstream_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n1301|TEST_REWIND_BODY_FAILED_SEEK|The visible test method `test_rewind_body_failed_seek` defines a file-like object whose `seek` raises `OSError`, then asserts that rewinding raises `UnrewindableBodyError` containing `error occurred when rewinding request body`.|6\n1302|TEST_REWIND_BODY_FAILED_TELL|The visible test method `test_rewind_body_failed_tell` defines a file-like object whose `tell` raises `OSError`, asserts `_body_position is not None`, and asserts that rewinding raises `UnrewindableBodyError` containing `Unable to rewind request body`.|6\n1102|TEST_HTTP_307_ALLOW_REDIRECT_POST_WITH_SEEKABLE|Defines the test method `test_HTTP_307_ALLOW_REDIRECT_POST_WITH_SEEKABLE`; posts an `io.BytesIO` body through a 307 redirect and asserts status 200, redirect history status 307, redirect state, and decoded response data.|5\n1296|TEST_MANUAL_REDIRECT_WITH_PARTIAL_BODY_READ|The visible test method `test_manual_redirect_with_partial_body_read` performs a streamed request, resolves redirects, partially and fully consumes response bodies with `iter_content`, and asserts redirect status transitions.|8\n1299|TEST_REWIND_PARTIALLY_READ_BODY|The visible test method `test_rewind_partially_read_body` reads four bytes before request preparation, asserts `_body_position == 4`, exhausts the remaining body, rewinds it with `requests.utils.rewind_body(prep)`, and asserts `b\"data\"` can be read again.|6\n442|R.BODY.SEEK|References the unresolved receiver operation `r.request.body.seek(self._thread_local.pos)` in `handle_401` when a saved body position exists; the runtime type of `r.body` is not established.|1\n1300|TEST_REWIND_BODY_NO_SEEK|The visible test method `test_rewind_body_no_seek` defines a file-like object without `seek`, prepares it as request data, and asserts that `requests.utils.rewind_body(prep)` raises `UnrewindableBodyError` containing `Unable to rewind request body`.|6\n1298|TEST_REWIND_BODY|The visible test method `test_rewind_body` prepares a request from `io.BytesIO`, asserts an initial body position of `0`, reads the body to exhaustion, calls `requests.utils.rewind_body(prep)`, and asserts the original bytes can be read again.|6\n1056|TEST_REDIRECT_RFC1808_TO_NON_ASCII_LOCATION|Defined here as `def test_redirect_rfc1808_to_non_ascii_location()`. It creates a redirect handler, follows a redirect, and asserts the final status, history, percent-encoded non-ASCII path, and second request line.|4\n1169|TEST_POSTBIN_SEEKED_OBJECT_WITH_NO_ITER|Defines the test method `test_POSTBIN_SEEKED_OBJECT_WITH_NO_ITER(self, httpbin)`. It posts two `TestStream` instances and asserts status 200 and decoded response data for the initial and seeked stream positions.|5\n1308|BADFILEOBJ.SEEK|The visible `BadFileObj.seek(self, pos, whence=0)` method raises `OSError`, modeling a failed rewind operation.|2\n1480|NOLENBOOMFILE|Nested visible class in `test_super_len_tell_ioerror`; defines `tell` to raise the parameterized error and `seek` as a no-op.|1\n969|SEEK|`seek` is explicitly retrieved from `prepared_request.body` and then called through `body_seek(...)` in `rewind_body`; the receiver's concrete implementation is not visible.|1\n1316|TEST_REDIRECT_WITH_WRONG_GZIPPED_HEADER|The exact test method `test_redirect_with_wrong_gzipped_header(self, httpbin)` is defined here. It creates a `requests.Session`, patches the adapter for a redirect URL, and performs `s.get(url)`.|4\n1392|INDEXERROR|The exception type `IndexError` is referenced in `except IndexError` when `RedirectSession.build_response` exhausts redirect statuses; its definition is not visible.|1\n1304|BADFILEOBJ|A local class named `BadFileObj` is visibly defined in the rewind-failure tests, with instances exposing `data`, `tell`, and `__iter__`; separate local definitions with the same spelling are visible, and one additionally defines `seek`.|7\n1031|TEST_CHUNKED_ENCODING_ERROR.INCOMPLETE_CHUNKED_RESPONSE_HANDLER|`test_chunked_encoding_error.incomplete_chunked_response_handler(sock)` is defined inside `test_chunked_encoding_error`. It consumes the request and sends only an HTTP status plus `Transfer-Encoding: chunked`, without valid terminating chunks.|3\n370|OSERROR|OSERROR (also written as `OSError`) is an externally defined exception class used throughout the system for operating-system and I/O-related failures. It is referenced in parameterization and `raise error()` scenarios, although its definition is not visible in the provided context. The exception is caught when socket operations reject invalid input, including IPv4 and CIDR validation via `socket.inet_aton`, and during socket closing, connection acceptance, and connection-opening operations. It also handles failures involving file positioning and seeking, including `body_seek`, `body.tell()`, `tell` within `super_len`, `rewind_body`, netrc file processing, and the local `BadFileObj` implementations of `seek` and `tell`. Additionally, it is caught around calls to `platform.system()` and `platform.release()` in `info()`. In `cert_verify`, OSERROR is explicitly raised when configured CA, certificate, or private-key paths do not exist.|7\n1236|TEST_ITER_CONTENT_WRAPS_EXCEPTIONS|The parameterized test function `test_iter_content_wraps_exceptions` is defined here. It configures `r.raw.stream.side_effect` with several urllib3 exceptions and asserts that `next(r.iter_content(1024))` raises the corresponding Requests exception type.|6\n1191|TEST_PYOPENSSL_REDIRECT|TEST_PYOPENSSL_REDIRECT defines the test method `test_pyopenssl_redirect(self, httpbin_secure, httpbin_ca_bundle)`. The test uses `requests.get` to request the secure HTTPBin 301 redirect endpoint, constructed with `httpbin_secure(\"status\", \"301\")`, while passing `httpbin_ca_bundle` through the `verify` parameter to validate the secure connection using the provided CA bundle.|2\n\n\n\n\n-----Sources-----\nid|text\n94|        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com:80/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com:443/bar\"\n        )\n        # Non-standard ports should trigger stripping\n        assert s.should_strip_auth(\n            \"http://example.com:8080/foo\", \"https://example.com/bar\"\n        )\n        assert s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com:8443/bar\"\n        )\n\n    def test_should_strip_auth_port_change(self):\n        s = requests.Session()\n        assert s.should_strip_auth(\n            \"http://example.com:1234/foo\", \"https://example.com:4321/bar\"\n        )\n\n    @pytest.mark.parametrize(\n        \"old_uri, new_uri\",\n        (\n            (\"https://example.com:443/foo\", \"https://example.com/bar\"),\n            (\"http://example.com:80/foo\", \"http://example.com/bar\"),\n            (\"https://example.com/foo\", \"https://example.com:443/bar\"),\n            (\"http://example.com/foo\", \"http://example.com:80/bar\"),\n        ),\n    )\n    def test_should_strip_auth_default_port(self, old_uri, new_uri):\n        s = requests.Session()\n        assert not s.should_strip_auth(old_uri, new_uri)\n\n    def test_manual_redirect_with_partial_body_read(self, httpbin):\n        s = requests.Session()\n        r1 = s.get(httpbin(\"redirect/2\"), allow_redirects=False, stream=True)\n        assert r1.is_redirect\n        rg = s.resolve_redirects(r1, r1.request, stream=True)\n\n        # read only the first eight bytes of the response body,\n        # then follow the redirect\n        r1.iter_content(8)\n        r2 = next(rg)\n        assert r2.is_redirect\n\n        # read all of the response via iter_content,\n        # then follow the redirect\n        for _ in r2.iter_content():\n            pass\n        r3 = next(rg)\n        assert not r3.is_redirect\n\n    def test_prepare_body_position_non_stream(self):\n        data = b\"the data\"\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position is None\n\n    def test_rewind_body(self):\n        data = io.BytesIO(b\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 0\n        assert prep.body.read() == b\"the data\"\n\n        # the data has all been read\n        assert prep.body.read() == b\"\"\n\n        # rewind it back\n        requests.utils.rewind_body(prep)\n        assert prep.body.read() == b\"the data\"\n\n    def test_rewind_partially_read_body(self):\n        data = io.BytesIO(b\"the data\")\n        data.read(4)  # read some data\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 4\n        assert prep.body.read() == b\"data\"\n\n        # the data has all been read\n        assert prep.body.read() == b\"\"\n\n        # rewind it back\n        requests.utils.rewind_body(prep)\n        assert prep.body.read() == b\"data\"\n\n    def test_rewind_body_no_seek(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                return 0\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 0\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"Unable to rewind request body\" in str(e)\n\n    def test_rewind_body_failed_seek(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                return 0\n\n            def seek(self, pos, whence=0):\n                raise OSError()\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 0\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"error occurred when rewinding request body\" in str(e)\n\n    def test_rewind_body_failed_tell(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                raise OSError()\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position is not None\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"Unable to rewind request body\" in str(e)\n\n    def _patch_adapter_gzipped_redirect(self, session, url):\n        adapter = session.get_adapter(url=url)\n        org_build_response = adapter.build_response\n        self._patched_response = False\n\n        def build_response(*args, **kwargs):\n            resp = org_build_response(*args, **kwargs)\n\n",
+      "records": {
+        "entities": [
+          {
+            "id": "1301",
+            "entity": "TEST_REWIND_BODY_FAILED_SEEK",
+            "description": "The visible test method `test_rewind_body_failed_seek` defines a file-like object whose `seek` raises `OSError`, then asserts that rewinding raises `UnrewindableBodyError` containing `error occurred when rewinding request body`.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "1302",
+            "entity": "TEST_REWIND_BODY_FAILED_TELL",
+            "description": "The visible test method `test_rewind_body_failed_tell` defines a file-like object whose `tell` raises `OSError`, asserts `_body_position is not None`, and asserts that rewinding raises `UnrewindableBodyError` containing `Unable to rewind request body`.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "1102",
+            "entity": "TEST_HTTP_307_ALLOW_REDIRECT_POST_WITH_SEEKABLE",
+            "description": "Defines the test method `test_HTTP_307_ALLOW_REDIRECT_POST_WITH_SEEKABLE`; posts an `io.BytesIO` body through a 307 redirect and asserts status 200, redirect history status 307, redirect state, and decoded response data.",
+            "number of relationships": "5",
+            "in_context": true
+          },
+          {
+            "id": "1296",
+            "entity": "TEST_MANUAL_REDIRECT_WITH_PARTIAL_BODY_READ",
+            "description": "The visible test method `test_manual_redirect_with_partial_body_read` performs a streamed request, resolves redirects, partially and fully consumes response bodies with `iter_content`, and asserts redirect status transitions.",
+            "number of relationships": "8",
+            "in_context": true
+          },
+          {
+            "id": "1299",
+            "entity": "TEST_REWIND_PARTIALLY_READ_BODY",
+            "description": "The visible test method `test_rewind_partially_read_body` reads four bytes before request preparation, asserts `_body_position == 4`, exhausts the remaining body, rewinds it with `requests.utils.rewind_body(prep)`, and asserts `b\"data\"` can be read again.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "442",
+            "entity": "R.BODY.SEEK",
+            "description": "References the unresolved receiver operation `r.request.body.seek(self._thread_local.pos)` in `handle_401` when a saved body position exists; the runtime type of `r.body` is not established.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "1300",
+            "entity": "TEST_REWIND_BODY_NO_SEEK",
+            "description": "The visible test method `test_rewind_body_no_seek` defines a file-like object without `seek`, prepares it as request data, and asserts that `requests.utils.rewind_body(prep)` raises `UnrewindableBodyError` containing `Unable to rewind request body`.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "1298",
+            "entity": "TEST_REWIND_BODY",
+            "description": "The visible test method `test_rewind_body` prepares a request from `io.BytesIO`, asserts an initial body position of `0`, reads the body to exhaustion, calls `requests.utils.rewind_body(prep)`, and asserts the original bytes can be read again.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "1056",
+            "entity": "TEST_REDIRECT_RFC1808_TO_NON_ASCII_LOCATION",
+            "description": "Defined here as `def test_redirect_rfc1808_to_non_ascii_location()`. It creates a redirect handler, follows a redirect, and asserts the final status, history, percent-encoded non-ASCII path, and second request line.",
+            "number of relationships": "4",
+            "in_context": true
+          },
+          {
+            "id": "1169",
+            "entity": "TEST_POSTBIN_SEEKED_OBJECT_WITH_NO_ITER",
+            "description": "Defines the test method `test_POSTBIN_SEEKED_OBJECT_WITH_NO_ITER(self, httpbin)`. It posts two `TestStream` instances and asserts status 200 and decoded response data for the initial and seeked stream positions.",
+            "number of relationships": "5",
+            "in_context": true
+          },
+          {
+            "id": "1308",
+            "entity": "BADFILEOBJ.SEEK",
+            "description": "The visible `BadFileObj.seek(self, pos, whence=0)` method raises `OSError`, modeling a failed rewind operation.",
+            "number of relationships": "2",
+            "in_context": true
+          },
+          {
+            "id": "1480",
+            "entity": "NOLENBOOMFILE",
+            "description": "Nested visible class in `test_super_len_tell_ioerror`; defines `tell` to raise the parameterized error and `seek` as a no-op.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "969",
+            "entity": "SEEK",
+            "description": "`seek` is explicitly retrieved from `prepared_request.body` and then called through `body_seek(...)` in `rewind_body`; the receiver's concrete implementation is not visible.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "1316",
+            "entity": "TEST_REDIRECT_WITH_WRONG_GZIPPED_HEADER",
+            "description": "The exact test method `test_redirect_with_wrong_gzipped_header(self, httpbin)` is defined here. It creates a `requests.Session`, patches the adapter for a redirect URL, and performs `s.get(url)`.",
+            "number of relationships": "4",
+            "in_context": true
+          },
+          {
+            "id": "1392",
+            "entity": "INDEXERROR",
+            "description": "The exception type `IndexError` is referenced in `except IndexError` when `RedirectSession.build_response` exhausts redirect statuses; its definition is not visible.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "1304",
+            "entity": "BADFILEOBJ",
+            "description": "A local class named `BadFileObj` is visibly defined in the rewind-failure tests, with instances exposing `data`, `tell`, and `__iter__`; separate local definitions with the same spelling are visible, and one additionally defines `seek`.",
+            "number of relationships": "7",
+            "in_context": true
+          },
+          {
+            "id": "1031",
+            "entity": "TEST_CHUNKED_ENCODING_ERROR.INCOMPLETE_CHUNKED_RESPONSE_HANDLER",
+            "description": "`test_chunked_encoding_error.incomplete_chunked_response_handler(sock)` is defined inside `test_chunked_encoding_error`. It consumes the request and sends only an HTTP status plus `Transfer-Encoding: chunked`, without valid terminating chunks.",
+            "number of relationships": "3",
+            "in_context": true
+          },
+          {
+            "id": "370",
+            "entity": "OSERROR",
+            "description": "OSERROR (also written as `OSError`) is an externally defined exception class used throughout the system for operating-system and I/O-related failures. It is referenced in parameterization and `raise error()` scenarios, although its definition is not visible in the provided context. The exception is caught when socket operations reject invalid input, including IPv4 and CIDR validation via `socket.inet_aton`, and during socket closing, connection acceptance, and connection-opening operations. It also handles failures involving file positioning and seeking, including `body_seek`, `body.tell()`, `tell` within `super_len`, `rewind_body`, netrc file processing, and the local `BadFileObj` implementations of `seek` and `tell`. Additionally, it is caught around calls to `platform.system()` and `platform.release()` in `info()`. In `cert_verify`, OSERROR is explicitly raised when configured CA, certificate, or private-key paths do not exist.",
+            "number of relationships": "7",
+            "in_context": true
+          },
+          {
+            "id": "1236",
+            "entity": "TEST_ITER_CONTENT_WRAPS_EXCEPTIONS",
+            "description": "The parameterized test function `test_iter_content_wraps_exceptions` is defined here. It configures `r.raw.stream.side_effect` with several urllib3 exceptions and asserts that `next(r.iter_content(1024))` raises the corresponding Requests exception type.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "1191",
+            "entity": "TEST_PYOPENSSL_REDIRECT",
+            "description": "TEST_PYOPENSSL_REDIRECT defines the test method `test_pyopenssl_redirect(self, httpbin_secure, httpbin_ca_bundle)`. The test uses `requests.get` to request the secure HTTPBin 301 redirect endpoint, constructed with `httpbin_secure(\"status\", \"301\")`, while passing `httpbin_ca_bundle` through the `verify` parameter to validate the secure connection using the provided CA bundle.",
+            "number of relationships": "2",
+            "in_context": true
+          }
+        ],
+        "sources": [
+          {
+            "id": "94",
+            "text": "        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com:80/foo\", \"https://example.com/bar\"\n        )\n        assert not s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com:443/bar\"\n        )\n        # Non-standard ports should trigger stripping\n        assert s.should_strip_auth(\n            \"http://example.com:8080/foo\", \"https://example.com/bar\"\n        )\n        assert s.should_strip_auth(\n            \"http://example.com/foo\", \"https://example.com:8443/bar\"\n        )\n\n    def test_should_strip_auth_port_change(self):\n        s = requests.Session()\n        assert s.should_strip_auth(\n            \"http://example.com:1234/foo\", \"https://example.com:4321/bar\"\n        )\n\n    @pytest.mark.parametrize(\n        \"old_uri, new_uri\",\n        (\n            (\"https://example.com:443/foo\", \"https://example.com/bar\"),\n            (\"http://example.com:80/foo\", \"http://example.com/bar\"),\n            (\"https://example.com/foo\", \"https://example.com:443/bar\"),\n            (\"http://example.com/foo\", \"http://example.com:80/bar\"),\n        ),\n    )\n    def test_should_strip_auth_default_port(self, old_uri, new_uri):\n        s = requests.Session()\n        assert not s.should_strip_auth(old_uri, new_uri)\n\n    def test_manual_redirect_with_partial_body_read(self, httpbin):\n        s = requests.Session()\n        r1 = s.get(httpbin(\"redirect/2\"), allow_redirects=False, stream=True)\n        assert r1.is_redirect\n        rg = s.resolve_redirects(r1, r1.request, stream=True)\n\n        # read only the first eight bytes of the response body,\n        # then follow the redirect\n        r1.iter_content(8)\n        r2 = next(rg)\n        assert r2.is_redirect\n\n        # read all of the response via iter_content,\n        # then follow the redirect\n        for _ in r2.iter_content():\n            pass\n        r3 = next(rg)\n        assert not r3.is_redirect\n\n    def test_prepare_body_position_non_stream(self):\n        data = b\"the data\"\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position is None\n\n    def test_rewind_body(self):\n        data = io.BytesIO(b\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 0\n        assert prep.body.read() == b\"the data\"\n\n        # the data has all been read\n        assert prep.body.read() == b\"\"\n\n        # rewind it back\n        requests.utils.rewind_body(prep)\n        assert prep.body.read() == b\"the data\"\n\n    def test_rewind_partially_read_body(self):\n        data = io.BytesIO(b\"the data\")\n        data.read(4)  # read some data\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 4\n        assert prep.body.read() == b\"data\"\n\n        # the data has all been read\n        assert prep.body.read() == b\"\"\n\n        # rewind it back\n        requests.utils.rewind_body(prep)\n        assert prep.body.read() == b\"data\"\n\n    def test_rewind_body_no_seek(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                return 0\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 0\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"Unable to rewind request body\" in str(e)\n\n    def test_rewind_body_failed_seek(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                return 0\n\n            def seek(self, pos, whence=0):\n                raise OSError()\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position == 0\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"error occurred when rewinding request body\" in str(e)\n\n    def test_rewind_body_failed_tell(self):\n        class BadFileObj:\n            def __init__(self, data):\n                self.data = data\n\n            def tell(self):\n                raise OSError()\n\n            def __iter__(self):\n                return\n\n        data = BadFileObj(\"the data\")\n        prep = requests.Request(\"GET\", \"http://example.com\", data=data).prepare()\n        assert prep._body_position is not None\n\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"Unable to rewind request body\" in str(e)\n\n    def _patch_adapter_gzipped_redirect(self, session, url):\n        adapter = session.get_adapter(url=url)\n        org_build_response = adapter.build_response\n        self._patched_response = False\n\n        def build_response(*args, **kwargs):\n            resp = org_build_response(*args, **kwargs)\n"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "short_id": "94",
+          "text_unit_id": "f58c14175330235d8fc1ab76a727a2ebbcb83a7b6f0c40a6b2565546b3e14b71fb34762b92dc723c1560082374706f31f3f79711e7a6a5ea3cc830eac1d00fcb",
+          "id": "8d5caeb573fe757b42490450a06e8776a7cf1fa7ee8ad98baa2a75b74f96a18c",
+          "title": "tests/test_requests.py:L1872-L2028",
+          "path": "tests/test_requests.py",
+          "start_line": 1872,
+          "end_line": 2028,
+          "tokens": 1197,
+          "text_sha256": "50e03c3cf032d66ef1d5707bc05dd5eacf88b79bb353c66a9126438eef568cfe",
+          "ms_text_unit_id": "f58c14175330235d8fc1ab76a727a2ebbcb83a7b6f0c40a6b2565546b3e14b71fb34762b92dc723c1560082374706f31f3f79711e7a6a5ea3cc830eac1d00fcb"
+        }
+      ],
+      "source_text_tokens": 1197,
+      "context_tokens": 2635,
+      "evidence_key": "587dd0eae47a276e3b136e31127e87e07626cf7a4ecdca966e8e3e86ef411aa6",
+      "read_occurrences": 1
+    }
+  ],
+  "decisions": [
+    {
+      "kind": "hyde_template",
+      "report_id": "98c62e1fe29d64abbd1c225e5d0ae7f802a8d8a8a980c6020cc0c6caabdda0dc082075db32b8eade6c4974692145c6397583e2ba3365e1b74b9f23f35ab3857d",
+      "report_content_sha256": "7c2015d54c0f32d6b624c290d9409bc03e667c42d750a07f62835255bfd9f7e5"
+    },
+    {
+      "kind": "adapter_arguments",
+      "stage": "hyde",
+      "request_key": "f1451d27eedef2609c54410bb4d5fb8e36df696cd82e9bf8e7fe21a0df6ad784",
+      "accepted_kwargs": [
+        "messages"
+      ],
+      "provider_parameter_policy": "Fixed provider defaults: n1, top_p1, temperature not sent; output2048. JSON/schema and stream recorded explicitly.",
+      "stream_requested_by_upstream": false
+    },
+    {
+      "kind": "structured_response",
+      "stage": "primer",
+      "request_key": "16d8595c43a9b9a1618f5d4fbc63de03e0194893492a44867a2830d5bccbc576",
+      "parsed": {
+        "intermediate_answer": "# Review Targets for Redirected Stream Rewinding\n\nThe supplied snapshot supports reviewing the prepared request's body-position state and the focused rewind error tests, but it does not identify the redirect implementation or a redirect-specific condition.\n\n**Preparation state.** Review `prep._body_position`, together with `prep.body`. The tests treat `_body_position` as meaningful preparation state: `test_rewind_partially_read_body` records a value of `4` after four bytes have been read, while the normal `test_rewind_body` path starts at position `0`. After the body is exhausted, both tests call the external `requests.utils.rewind_body(prep)` and expect the original bytes to be readable again. This suggests that any changed redirect-rewind path must preserve or correctly consult the recorded body position rather than assuming a fresh stream. The snapshot does not show the prepared-request implementation or the lifecycle rules for `_body_position`, so those mechanics remain uncertain. [Data: Entities (1298, 1299, 1314, 1315); Relationships (2147, 2150, 2151, 2175, 2177)]\n\n**Redirect condition.** No supplied record names a redirect handler, streamed-body branch, or redirect predicate. Therefore, the exact condition to review cannot be established from this evidence. The supported requirement is behavioral: a path that needs to replay a prepared streamed body should be consistent with `requests.utils.rewind_body(prep)`, and should not silently proceed when the body cannot be rewound. Identifying whether that condition is based on `_body_position` being non-`None`, the presence of `prep.body`, or another redirect-specific flag requires the relevant implementation or additional graph records. This is a search target, not an established source fact.\n\n**Focused error test.** The most directly relevant failure coverage is `TEST_REWIND_BODY_FAILED_TELL` (also described as `test_rewind_body_failed_tell`). Its fixture raises `OSError` from `tell`; the test asserts `_body_position` is not `None` and expects `UnrewindableBodyError` containing `Unable to rewind request body`. Also review `TEST_REWIND_BODY_FAILED_SEEK`, which raises `OSError` from `seek` and expects an error containing `error occurred when rewinding request body`. These distinguish preparation-time position failure from seek-time failure. [Data: Entities (1301, 1302, 1304, 1306, 1308, 1309, 1315); Relationships (2159, 2163, 2184, 2186)]\n\nIn short: preserve the prepared `_body_position` state, locate and verify the missing redirect predicate, and prioritize the failed-`tell` test, with failed-`seek` as adjacent coverage. The snapshot is insufficient to name an exact redirect condition or source location.",
+        "score": 56,
+        "follow_up_queries": [
+          "Which Requests module and function contains the redirect handling for streamed request bodies?",
+          "What exact condition determines whether a redirected prepared request body is rewound?",
+          "How is `_body_position` assigned during request preparation?",
+          "Which test covers redirecting a streamed request body?",
+          "Should a failed `tell` during preparation make `_body_position` remain non-`None`?",
+          "What behavior is expected when `seek` raises `OSError` during redirect replay?",
+          "Are there existing tests for `requests.utils.rewind_body` after a redirect?"
+        ]
+      },
+      "repair_applied": false
+    },
+    {
+      "kind": "adapter_arguments",
+      "stage": "primer",
+      "request_key": "16d8595c43a9b9a1618f5d4fbc63de03e0194893492a44867a2830d5bccbc576",
+      "accepted_kwargs": [
+        "messages",
+        "response_format"
+      ],
+      "provider_parameter_policy": "Fixed provider defaults: n1, top_p1, temperature not sent; output2048. JSON/schema and stream recorded explicitly.",
+      "stream_requested_by_upstream": false
+    },
+    {
+      "kind": "pending_action_order",
+      "queries": [
+        "What behavior is expected when `seek` raises `OSError` during redirect replay?",
+        "How is `_body_position` assigned during request preparation?",
+        "Should a failed `tell` during preparation make `_body_position` remain non-`None`?",
+        "Which test covers redirecting a streamed request body?",
+        "Which Requests module and function contains the redirect handling for streamed request bodies?",
+        "Are there existing tests for `requests.utils.rewind_body` after a redirect?",
+        "What exact condition determines whether a redirected prepared request body is rewound?"
+      ]
+    },
+    {
+      "kind": "structured_response",
+      "stage": "local",
+      "request_key": "e788b666bcf3b12675fb5889f5cb905add64f2b2a6f1f481feb383582f54cf8c",
+      "parsed": {
+        "response": "`_body_position` is established while preparing the request body, but the supplied snapshot does not include the implementation of `prepare_body` or the exact assignment statement. The available tests show that a non-stream byte-string body leaves `_body_position` as `None` (`test_prepare_body_position_non_stream`, `tests/test_requests.py:L1998-L2001`).\n\nFor a file-like body, preparation records the body's current position: an untouched `io.BytesIO` produces `_body_position == 0`, while a stream read by four bytes before preparation produces `_body_position == 4` (`test_rewind_body` and `test_rewind_partially_read_body`, `tests/test_requests.py:L2003-L2027`). This indicates that preparation consults the stream's current position, although the exact mechanism is not visible in the supplied evidence.\n\nIf retrieving the position fails, the preparation test only establishes that `_body_position` is not `None`; it does not establish its exact value (`test_rewind_body_failed_tell`, within `tests/test_requests.py:L1872-L2028`). Thus, the precise assignment logic and sentinel value for a failed position lookup require review of the implementation beyond this snapshot. The prepared body is then consumed and `requests.utils.rewind_body(prep)` uses the recorded state to restore it; failed or unsupported rewinding raises `UnrewindableBodyError` [Data: Sources (94); Entities (692, 1297, 1298, 1299, 605)].",
+        "score": 88,
+        "follow_up_queries": [
+          "Which implementation branch in `prepare_body` assigns `_body_position` for file-like and iterable bodies?",
+          "How does `requests.utils.rewind_body` distinguish a valid saved position from the failed-`tell()` sentinel?"
+        ]
+      },
+      "repair_applied": false
+    },
+    {
+      "kind": "adapter_arguments",
+      "stage": "local",
+      "request_key": "e788b666bcf3b12675fb5889f5cb905add64f2b2a6f1f481feb383582f54cf8c",
+      "accepted_kwargs": [
+        "max_completion_tokens",
+        "messages",
+        "n",
+        "response_format_json_object",
+        "stream",
+        "temperature",
+        "top_p"
+      ],
+      "provider_parameter_policy": "Fixed provider defaults: n1, top_p1, temperature not sent; output2048. JSON/schema and stream recorded explicitly.",
+      "stream_requested_by_upstream": true
+    },
+    {
+      "kind": "structured_response",
+      "stage": "local",
+      "request_key": "92394ddb23adbdaa04aa22a4963e1cd1a59124972f29c7059f0db69fa538c6f9",
+      "parsed": {
+        "response": "When a redirected request body must be replayed, the body is expected to be rewound before the next request. If the body's `seek` method raises `OSError`, the replay should fail with `UnrewindableBodyError`, and the error text should contain `\"error occurred when rewinding request body\"`. The focused test prepares a body with `_body_position == 0`, consumes the request body, and verifies this failure behavior in `tests/test_requests.py`, `test_rewind_body_failed_seek` [Data: Sources (94); Entities (1301, 1308, 2188)].\n\nThe supplied evidence does not show the redirect implementation or the exact redirect condition that invokes `rewind_body`; it only establishes the expected focused error behavior. It also does not establish whether changing streamed redirect replay requires updates elsewhere. The relevant preparation state to preserve is a prepared request with a non-`None` body position, while the `seek` failure must be translated into `UnrewindableBodyError` rather than propagated as raw `OSError` [Data: Sources (94); Entities (1301, 1308, 370)].",
+        "score": 91,
+        "follow_up_queries": [
+          "Which redirect code path calls `rewind_body`, and under what streamed-request conditions?",
+          "Are there additional tests covering `OSError` from `seek` after a body has been partially consumed or after multiple redirects?"
+        ]
+      },
+      "repair_applied": false
+    },
+    {
+      "kind": "adapter_arguments",
+      "stage": "local",
+      "request_key": "92394ddb23adbdaa04aa22a4963e1cd1a59124972f29c7059f0db69fa538c6f9",
+      "accepted_kwargs": [
+        "max_completion_tokens",
+        "messages",
+        "n",
+        "response_format_json_object",
+        "stream",
+        "temperature",
+        "top_p"
+      ],
+      "provider_parameter_policy": "Fixed provider defaults: n1, top_p1, temperature not sent; output2048. JSON/schema and stream recorded explicitly.",
+      "stream_requested_by_upstream": true
+    },
+    {
+      "kind": "pending_action_order",
+      "queries": [
+        "Are there additional tests covering `OSError` from `seek` after a body has been partially consumed or after multiple redirects?",
+        "Which Requests module and function contains the redirect handling for streamed request bodies?",
+        "Which implementation branch in `prepare_body` assigns `_body_position` for file-like and iterable bodies?",
+        "Which redirect code path calls `rewind_body`, and under what streamed-request conditions?",
+        "How does `requests.utils.rewind_body` distinguish a valid saved position from the failed-`tell()` sentinel?",
+        "Are there existing tests for `requests.utils.rewind_body` after a redirect?",
+        "Should a failed `tell` during preparation make `_body_position` remain non-`None`?",
+        "Which test covers redirecting a streamed request body?",
+        "What exact condition determines whether a redirected prepared request body is rewound?"
+      ]
+    },
+    {
+      "kind": "structured_response",
+      "stage": "local",
+      "request_key": "3e5d8ab589f50a99cc8ef506befd1f4bdee4eca6043369563aabc052c9530c60",
+      "parsed": {
+        "response": "The supplied evidence identifies the redirect-handling function as `resolve_redirects(self, resp, req, stream=False, timeout=None, verify=True, cert=None, proxies=None, yield_requests=False, **adapter_kwargs)`. It iterates through redirect targets, prepares updated requests, and either yields them or sends them and yields the resulting responses [Data: Entities (788)].\n\nThe snapshot does not explicitly provide the module path or a complete class declaration for this function. It separately shows `RedirectSession` inheriting from `SessionRedirectMixin`, and references `s.resolve_redirects(resp, prep_req)`, so the function is associated with Requests' session redirect machinery, but the exact module location cannot be confirmed from the supplied evidence [Data: Entities (1385, 1118)].",
+        "score": 92,
+        "follow_up_queries": [
+          "Which preparation state is rewound before a streamed request body is resent during redirect handling?",
+          "Which redirect condition and focused test cover errors when a streamed request body cannot be rewound?"
+        ]
+      },
+      "repair_applied": false
+    },
+    {
+      "kind": "adapter_arguments",
+      "stage": "local",
+      "request_key": "3e5d8ab589f50a99cc8ef506befd1f4bdee4eca6043369563aabc052c9530c60",
+      "accepted_kwargs": [
+        "max_completion_tokens",
+        "messages",
+        "n",
+        "response_format_json_object",
+        "stream",
+        "temperature",
+        "top_p"
+      ],
+      "provider_parameter_policy": "Fixed provider defaults: n1, top_p1, temperature not sent; output2048. JSON/schema and stream recorded explicitly.",
+      "stream_requested_by_upstream": true
+    },
+    {
+      "kind": "structured_response",
+      "stage": "local",
+      "request_key": "3b2a8bc5fd4061004f43218a8d4d38871d70e9c0b44f58c9447d7205f7ac081e",
+      "parsed": {
+        "response": "The supplied snapshot does not show an additional test that combines `OSError` from `seek` with a partially consumed body. `test_rewind_body_failed_seek` is located in `tests/test_requests.py`, and its `BadFileObj.seek()` always raises `OSError`, but the body is newly prepared at position `0`; it is not partially read first [Data: Sources (94); Entities (1308, 1301)].\n\nThere is a separate partial-consumption test, `test_rewind_partially_read_body`, in `tests/test_requests.py`. It reads four bytes before preparation, verifies `_body_position == 4`, exhausts the remaining body, and successfully rewinds it, but it uses `io.BytesIO`, so it does not exercise a failing `seek` [Data: Sources (94); Entities (1299)].\n\nThere is also `test_manual_redirect_with_partial_body_read` in `tests/test_requests.py`, which partially reads one redirect response and fully reads another while following multiple redirects. However, it checks redirect status transitions only and does not use a body whose `seek` raises `OSError` [Data: Sources (94); Entities (1296)]. Based on this snapshot, coverage for the combined cases—failed `seek` after partial body consumption and failed `seek` during or after multiple redirects—appears insufficient. A focused change would be to add tests that combine the `BadFileObj` failing `seek` behavior with the partial-read and multi-redirect setups; this is a proposed change, not an existing test shown in the evidence.",
+        "score": 94,
+        "follow_up_queries": [
+          "Which redirect code path invokes `rewind_body`, and what preparation state does it require after a partially consumed streamed body?",
+          "Are there existing tests for `UnrewindableBodyError` when a redirected POST body fails to rewind after more than one redirect?"
+        ]
+      },
+      "repair_applied": false
+    },
+    {
+      "kind": "adapter_arguments",
+      "stage": "local",
+      "request_key": "3b2a8bc5fd4061004f43218a8d4d38871d70e9c0b44f58c9447d7205f7ac081e",
+      "accepted_kwargs": [
+        "max_completion_tokens",
+        "messages",
+        "n",
+        "response_format_json_object",
+        "stream",
+        "temperature",
+        "top_p"
+      ],
+      "provider_parameter_policy": "Fixed provider defaults: n1, top_p1, temperature not sent; output2048. JSON/schema and stream recorded explicitly.",
+      "stream_requested_by_upstream": true
+    },
+    {
+      "kind": "adapter_arguments",
+      "stage": "reduce",
+      "request_key": "becd535d5493466941eb5b98e342a126f9579e9910414346386ff4014dabce1d",
+      "accepted_kwargs": [
+        "max_completion_tokens",
+        "messages",
+        "temperature"
+      ],
+      "provider_parameter_policy": "Fixed provider defaults: n1, top_p1, temperature not sent; output2048. JSON/schema and stream recorded explicitly.",
+      "stream_requested_by_upstream": false
+    }
+  ],
+  "execution_segments": [
+    {
+      "started_utc": "2026-10-14T04:50:05.782045+00:00",
+      "initial_event_count": 109,
+      "elapsed_seconds": 49.233924250118434,
+      "finished_utc": "2026-10-14T04:50:55.016042+00:00",
+      "event_sequences": [
+        110,
+        111,
+        112,
+        113,
+        114,
+        115,
+        116,
+        117,
+        118,
+        119,
+        120,
+        121
+      ]
+    }
+  ],
+  "answer": "### Preparation State\n\nReview the prepared request’s `prep._body_position` together with `prep.body`. For non-stream byte-string bodies, `_body_position` is `None`; for file-like bodies, preparation records the current stream position—`0` for an untouched `io.BytesIO` and `4` when four bytes were read before preparation. The redirect-replay path must preserve and correctly use this recorded position rather than assume a fresh stream. [Data: Sources (94); Entities (692, 1297, 1298, 1299, 605)]\n\nThe exact `prepare_body` assignment logic and the sentinel used when position lookup fails are not included in the supplied evidence. The tests establish only that `_body_position` is not `None` when `tell()` raises `OSError`. [Data: Entities (1301, 1302, 1304, 1306, 1308)]\n\n### Redirect Condition\n\nThe redirect-handling function identified in the evidence is `resolve_redirects(self, resp, req, stream=False, timeout=None, verify=True, cert=None, proxies=None, yield_requests=False, **adapter_kwargs)`. It prepares updated requests and either yields them or sends them and yields the resulting responses. The evidence associates it with Requests’ session redirect machinery, including `SessionRedirectMixin`, but does not provide the exact module path or complete class declaration. [Data: Entities (788, 1385, 1118)]\n\nThe specific condition that invokes `rewind_body` is not shown. The supported behavioral requirement is that a redirected request with a replayable streamed body should rewind it before replay, and should not silently continue if rewinding is impossible. Whether the condition depends on `_body_position` being non-`None`, `prep.body`, or another redirect-specific flag remains uncertain from the snapshot.\n\n### Focused Error Test\n\nPrioritize `test_rewind_body_failed_tell` (also described as `TEST_REWIND_BODY_FAILED_TELL` or `test_rewind_body_failed_tell`). Its fixture raises `OSError` from `tell`; the test verifies that `_body_position` is not `None` and that rewinding raises `UnrewindableBodyError` containing `Unable to rewind request body`. [Data: Entities (1301, 1302, 1304, 1306, 1308)]\n\nAlso review `test_rewind_body_failed_seek`. It prepares the body at position `0`, consumes it, makes `seek()` raise `OSError`, and expects `UnrewindableBodyError` with text containing `error occurred when rewinding request body`, rather than the raw `OSError`. [Data: Sources (94); Entities (1301, 1308, 2188)]\n\nThe supplied evidence does not show coverage combining a failed `seek()` with a partially consumed body or with multiple redirects. Adding such focused tests is a proposed change, not an existing test demonstrated by the snapshot. [Data: Sources (94); Entities (1296, 1299, 1301, 1308)]",
+  "elapsed_seconds": 49.233924250118434,
+  "finished_utc": "2026-10-14T04:50:55.016054+00:00",
+  "interrupted_segments_with_unknown_duration": 0,
+  "outer_timer_includes_reduce": true,
+  "new_event_sequences": [
+    110,
+    111,
+    112,
+    113,
+    114,
+    115,
+    116,
+    117,
+    118,
+    119,
+    120,
+    121
+  ],
+  "actual_context_exposure": [
+    {
+      "evidence_key": "a77d500623c757b2d3396ae22503f305f9bf6275c455b36337226ddb0b233277",
+      "context_sha256": "6dfe5b438bc7632490a3171d3bd23c351b72810a9418791a2393748c09423841",
+      "http200_generation_event_sequences": [
+        114
+      ],
+      "source_ids": [
+        "94"
+      ]
+    },
+    {
+      "evidence_key": "d79626e2553797626232da6001edd5c1e59640928a4d38eb40cfb90c4aef2386",
+      "context_sha256": "24894a77c5da520a504218c2064f1eeafdb74e5a405796748962039073455683",
+      "http200_generation_event_sequences": [
+        116
+      ],
+      "source_ids": [
+        "94"
+      ]
+    },
+    {
+      "evidence_key": "d128cc94ebb86b4c03ce84f5a184594be158c150884164a8b8176e8e17aef270",
+      "context_sha256": "695ba16c9867293b932a5f3723a1121e6f247c13693973f660e3c092c4fcf5a7",
+      "http200_generation_event_sequences": [
+        118
+      ],
+      "source_ids": [
+        "77"
+      ]
+    },
+    {
+      "evidence_key": "587dd0eae47a276e3b136e31127e87e07626cf7a4ecdca966e8e3e86ef411aa6",
+      "context_sha256": "d1dc29f8c7b085394102ede5dd536a289aff22c75b3f4d8db30cc0c1106e344a",
+      "http200_generation_event_sequences": [
+        120
+      ],
+      "source_ids": [
+        "94"
+      ]
+    }
+  ],
+  "raw_sources_in_http200_contexts": [
+    {
+      "short_id": "94",
+      "text_unit_id": "f58c14175330235d8fc1ab76a727a2ebbcb83a7b6f0c40a6b2565546b3e14b71fb34762b92dc723c1560082374706f31f3f79711e7a6a5ea3cc830eac1d00fcb",
+      "id": "8d5caeb573fe757b42490450a06e8776a7cf1fa7ee8ad98baa2a75b74f96a18c",
+      "title": "tests/test_requests.py:L1872-L2028",
+      "path": "tests/test_requests.py",
+      "start_line": 1872,
+      "end_line": 2028,
+      "tokens": 1197,
+      "text_sha256": "50e03c3cf032d66ef1d5707bc05dd5eacf88b79bb353c66a9126438eef568cfe",
+      "ms_text_unit_id": "f58c14175330235d8fc1ab76a727a2ebbcb83a7b6f0c40a6b2565546b3e14b71fb34762b92dc723c1560082374706f31f3f79711e7a6a5ea3cc830eac1d00fcb"
+    },
+    {
+      "short_id": "77",
+      "text_unit_id": "da4d936c498ad40c1d91a81f1b444b377d7175ec9c0df47f4be514fb1f8efe11d8e4094624df77fc73da5f684dd5d7c6357352fdfc7545d3f4c0c8b76c32ef2e",
+      "id": "6824739b4a45389a356b3fa872c74b2125d794e3f050a4aa5adbf588a7072035",
+      "title": "tests/test_lowlevel.py:L250-L390",
+      "path": "tests/test_lowlevel.py",
+      "start_line": 250,
+      "end_line": 390,
+      "tokens": 1196,
+      "text_sha256": "90140d8304e63bf59b8d4c00aacad9b20798b06ee261f1f7bc8b9a121cebbe51",
+      "ms_text_unit_id": "da4d936c498ad40c1d91a81f1b444b377d7175ec9c0df47f4be514fb1f8efe11d8e4094624df77fc73da5f684dd5d7c6357352fdfc7545d3f4c0c8b76c32ef2e"
+    }
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "status": "independent_case_explanation_review_passed",
+  "reviewed_utc": "2026-10-14T05:39:10.808989+00:00",
+  "reviewer": {
+    "type": "independent AI agent",
+    "human_review": false,
+    "blind_to_methods": false,
+    "scope": "Final new explanatory section and its three post-hoc observational case records; no new semantic grading or experiment."
+  },
+  "bindings": {
+    "README.md": "89e7800398c722256db1e736d5007de7a7d21084b3ec5b907c56c53aa9f1f7be",
+    "docs/report.md": "47b186e39635dd2009d3f21518329a703fe6ba4c598df112c28994225a015e94",
+    "research/pilot/strategy-routing/reviews/case-q07-drift.json": "8e364d525fc966466dec178651390104c06f2a2e350419585f9eec3d720301db",
+    "research/pilot/strategy-routing/reviews/cases-global-and-truncation.json": "105fc5d1deab04ba5cc92410b1b49142cac14e718b528f187bcb60e123cbb16b",
+    "research/pilot/strategy-routing/reviews/cases-failures.json": "95e2817813b15b374bea76de2bc1b9bf46eb04413b92d1fd02457a16d5cad8cf",
+    "research/pilot/strategy-routing/results/scores.json": "88c2b1b74a8ee95706a0735cc28f7ac69f3d3794dafe5afba85db85bee5c76c0",
+    "research/pilot/strategy-routing/results/evidence-scores.json": "c549030fedf5d48647ca9fabed97feb72696f1428624f0ddc8060df368cbd94a",
+    "research/pilot/strategy-routing/results/execution.json": "c82c0f8587054f7b2ad79e69f9571d6d94d166a4d6245eb60e5102bbe3d84521"
+  },
+  "report_scope": {
+    "heading": "本轮为什么表现不够好",
+    "readme_anchor": "docs/report.md#本轮为什么表现不够好",
+    "result": "Anchor exists and the new text is consistent with frozen results and available request/response evidence."
+  },
+  "verified_cases": [
+    {
+      "case": "Q08 and six primer decoder failures",
+      "record": "reviews/cases-failures.json",
+      "checks": {
+        "bound_input_files": 64,
+        "runtime_code_anchors": 7,
+        "three_event_failure_chains": 6,
+        "same_question_baselines": 18,
+        "fraction_arithmetic": "all16 / successful11 / failed5 across four methods and explicitly hypothetical sensitivity identities"
+      },
+      "finding": "All six chains have validated HyDE, validated query embedding, then dispatched primer failure; no Local or reduce follows. Only an error envelope remains for each failed primer, with no saved original response/HTTP metadata/usage. The decoder failure precedes PrimerResponse schema validation. The text correctly does not decide whether the remote response was empty, multiple messages, or incompatible with the adapter.",
+      "primary_denominator": "Five test failures are31.25% of16 planned tests; eleven completed tests average80.5303%, and all16 including five zeros average55.3646%. This is denominator arithmetic, not an estimate of repaired performance. Q11 remains dev."
+    },
+    {
+      "case": "Q07 DRIFT exploration and intermediate omission",
+      "record": "reviews/case-q07-drift.json",
+      "checks": {
+        "status": "pass",
+        "bound_files": 31,
+        "frozen_source_files": 3,
+        "official_source_quotes": 2,
+        "actual_stages": 7,
+        "json_pointer_quotes_with_exact_offsets_or_substrings": 22,
+        "source_spans": 13,
+        "reduce_exact_prior_texts": 5,
+        "recorded_rounds": 2,
+        "original_frozen_comparisons": 4,
+        "case_sha256": "8e364d525fc966466dec178651390104c06f2a2e350419585f9eec3d720301db",
+        "api_calls": 0,
+        "credential_reads": 0
+      },
+      "finding": "Four actual Local user queries in HTTP dispatch order match the report. The public-wrapper query exists only in pending lists at ranks4/7. Events32/34 contain prepare_request(req) at sessions.py575 and self.send(prep, **send_kwargs) at589; the decoded Local outputs omit those concrete edges. All five reduce report entries equal the prior primer/Local answer texts, not raw Sources tables, and the final answer omits the edges as described.",
+      "source_boundary": "Source56 starts at569, after the Request constructor start563. The report does not claim all construction evidence was supplied. api.py entry source was absent; this is distinguished from the generation omission.",
+      "comparison_limit": "Four methods have raw coverage0.6 but different actual material/call footprints. Content0.4/0.8/0.7/0.7 remains unchanged; equal coverage is not a controlled generator comparison."
+    },
+    {
+      "case": "F02-plan Source98 boundary and cautious DRIFT statement",
+      "record": "reviews/cases-global-and-truncation.json",
+      "checks": {
+        "source98_end_line": 2570,
+        "missing_assertion_lines": [
+          2571,
+          2572
+        ],
+        "source99_not_supplied_in_all_four_methods": true,
+        "source98_supplied_to": [
+          "routed_graphrag",
+          "bm25",
+          "hybrid"
+        ],
+        "source98_not_supplied_to": [
+          "ms_basic"
+        ]
+      },
+      "finding": "Source98 contains the expected argument dictionary but not the two lines completing the send-call assertion. BM25/hybrid claim the excerpt demonstrates the assertion; DRIFT Local and reduce explicitly retain the boundary. The adjacent indexed source exists but was not supplied. This is a source-selection/chunk-boundary limitation, not a network truncation.",
+      "score_separation": "Both0.9 content scores come from F02-plan-C1, not the citation issue. BM25 includes a conflicting class-attribute example; hybrid omits the explicit unchanged-constructor restriction. The final text says deduction at another frozen criterion rather than calling both reasons pure omissions. No patch or test success is claimed."
+    },
+    {
+      "case": "G01 community summary granularity and final omission",
+      "record": "reviews/cases-global-and-truncation.json",
+      "checks": {
+        "root_reports": 23,
+        "map_calls": 4,
+        "reduce_calls": 1,
+        "raw_sources_supplied_to_global": 0,
+        "PREPARE_AUTH_present_in_event176_input_and_output": true,
+        "PREPARE_AUTH_present_in_event180_input_but_not_output": true,
+        "OAuth_in_actual_map_inputs": false
+      },
+      "finding": "Report11 lacks owner attribution while retaining PREPARE_AUTH; the name survives map and reduce input but disappears from the final answer. Report14 lacks the full request-auth/session-auth absent condition; actual BM25 Source55 contains it. Basic Source10 provides requests-oauthlib evidence. These observations support the narrower representation/generation explanations in the report, not a claim that the whole graph or repository lacks the information.",
+      "score_separation": "Frozen Global/BM25/Basic/hybrid content0.4/0.6/0.7/0.6 is unchanged. The OAuth gap is one component of the broader C5 requirement, not a quantitative causal decomposition of the entire score."
+    }
+  ],
+  "cross_record_checks": {
+    "global_and_truncation_bound_file_instances": 56,
+    "global_and_truncation_wire_quotes": 25,
+    "q07_exact_json_pointer_quotes": 22,
+    "q07_source_spans": 13,
+    "q07_reduce_entries_matched_exactly": 5,
+    "all_reported_same_question_scores_match_frozen_scores": true
+  },
+  "resolved_findings": [
+    {
+      "detail": "F02 wording changed from a shared omission explanation to a deduction at another frozen criterion, preserving the two different C1 reasons.",
+      "status": "resolved in final report"
+    },
+    {
+      "detail": "Two Q07 official-source URLs now include the actual packages/graphrag prefix for the frozen monorepo revision.",
+      "status": "resolved; source contents and hashes were unchanged"
+    }
+  ],
+  "causal_language_assessment": {
+    "accepted_observations": [
+      "Recorded adapter failure prevents a final answer.",
+      "A generated follow-up was not executed.",
+      "A selected source block ends before the relevant assertion.",
+      "An actually supplied call edge or method name is absent from the next generated representation."
+    ],
+    "correctly_unproven": [
+      "Which remote response condition caused each decoder failure.",
+      "Whether another route, random action order, larger budget, community level or prompt would improve these questions.",
+      "Whether adding neighboring source, changing chunking or preserving symbols would repair these failures.",
+      "Any decomposition of aggregate score differences into causal retrieval/graph/model percentages."
+    ],
+    "post_hoc_selection": "The report explicitly treats the cases as post-hoc mechanism illustrations, not an estimate of failure frequency or proof of overall method superiority."
+  },
+  "unresolved_blocking_findings": [],
+  "reviewer_new_model_or_embedding_api_calls": 0,
+  "credential_reads": 0,
+  "scores_routes_rubric_runtime_ledger_graph_cache_modified": false,
+  "historical_completed_reviews_overwritten": false,
+  "write_scope": "Only this new final-case-explanation-review.json; temporary offline audit scripts/results were created outside the repository."
+}

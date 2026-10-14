@@ -1,0 +1,1173 @@
+{
+  "qid": "F02-plan",
+  "method": "routed_graphrag",
+  "route": "drift",
+  "status": "complete",
+  "generation_input_tokens": 21279,
+  "requests": {
+    "2f5665020cce6f07a2423526c019ea74a1a29c5fc999c532e5d3618f2e55987e": {
+      "stage": "hyde",
+      "service": "generation"
+    },
+    "683fc487960663658e0ac50b16f6d800c3d957eeb209c3359137028543b8b2ab": {
+      "stage": "query_embedding",
+      "service": "embedding"
+    },
+    "10cb7fa79dac29cd6263247131f3416b0907788bcd70d8fccbfb5ee67f2dfcec": {
+      "stage": "primer",
+      "service": "generation"
+    },
+    "54960dcba66e05b8a41ae08feb79995e9e5508bc8007c4a87ee49ea715312d34": {
+      "stage": "query_embedding",
+      "service": "embedding"
+    },
+    "27efdd71d12d930cbb9d31347dd9e9abcd4b110c071c6d3610a69705e6111c0f": {
+      "stage": "local",
+      "service": "generation"
+    },
+    "c3670ac45cf6b30a5eb00a323fd37ea30aa48958f73ae376bfa5a378ba1103cc": {
+      "stage": "query_embedding",
+      "service": "embedding"
+    },
+    "504d3c32e4f27444f34b099e78f1cfcff3323f5dbc5c259f69ab0ecfa58dcfc1": {
+      "stage": "local",
+      "service": "generation"
+    },
+    "faa8ee103b1f231ae0ef8de11975920ee3678b41ebf9456f5e51c3ce447eb128": {
+      "stage": "query_embedding",
+      "service": "embedding"
+    },
+    "e1027e8ffc8df5f43a04c374e9e219d868cac7763adbd5142bf9bc02705f239c": {
+      "stage": "local",
+      "service": "generation"
+    },
+    "fcf1b91833d20dec2d833cfd310d4582b3a558f81b77a42cbada6ad3a7986638": {
+      "stage": "query_embedding",
+      "service": "embedding"
+    },
+    "76d2de5ec01275b41b9f8d2c5d4e17e6570d57a1d5e34d9bbcda4dbe1d50d8ab": {
+      "stage": "local",
+      "service": "generation"
+    },
+    "7dc653715019167fbd5bce29cd40d172e5d042ee7e04dacd941162f6a5e0dcf0": {
+      "stage": "reduce",
+      "service": "generation"
+    }
+  },
+  "uses": [
+    {
+      "key": "2f5665020cce6f07a2423526c019ea74a1a29c5fc999c532e5d3618f2e55987e",
+      "stage": "hyde",
+      "cache": false,
+      "origin_event": 160
+    },
+    {
+      "key": "683fc487960663658e0ac50b16f6d800c3d957eeb209c3359137028543b8b2ab",
+      "stage": "query_embedding",
+      "cache": false,
+      "origin_event": 161
+    },
+    {
+      "key": "10cb7fa79dac29cd6263247131f3416b0907788bcd70d8fccbfb5ee67f2dfcec",
+      "stage": "primer",
+      "cache": false,
+      "origin_event": 162
+    },
+    {
+      "key": "54960dcba66e05b8a41ae08feb79995e9e5508bc8007c4a87ee49ea715312d34",
+      "stage": "query_embedding",
+      "cache": false,
+      "origin_event": 163
+    },
+    {
+      "key": "27efdd71d12d930cbb9d31347dd9e9abcd4b110c071c6d3610a69705e6111c0f",
+      "stage": "local",
+      "cache": false,
+      "origin_event": 164
+    },
+    {
+      "key": "c3670ac45cf6b30a5eb00a323fd37ea30aa48958f73ae376bfa5a378ba1103cc",
+      "stage": "query_embedding",
+      "cache": false,
+      "origin_event": 165
+    },
+    {
+      "key": "504d3c32e4f27444f34b099e78f1cfcff3323f5dbc5c259f69ab0ecfa58dcfc1",
+      "stage": "local",
+      "cache": false,
+      "origin_event": 166
+    },
+    {
+      "key": "faa8ee103b1f231ae0ef8de11975920ee3678b41ebf9456f5e51c3ce447eb128",
+      "stage": "query_embedding",
+      "cache": false,
+      "origin_event": 167
+    },
+    {
+      "key": "e1027e8ffc8df5f43a04c374e9e219d868cac7763adbd5142bf9bc02705f239c",
+      "stage": "local",
+      "cache": false,
+      "origin_event": 168
+    },
+    {
+      "key": "fcf1b91833d20dec2d833cfd310d4582b3a558f81b77a42cbada6ad3a7986638",
+      "stage": "query_embedding",
+      "cache": false,
+      "origin_event": 169
+    },
+    {
+      "key": "76d2de5ec01275b41b9f8d2c5d4e17e6570d57a1d5e34d9bbcda4dbe1d50d8ab",
+      "stage": "local",
+      "cache": false,
+      "origin_event": 170
+    },
+    {
+      "key": "7dc653715019167fbd5bce29cd40d172e5d042ee7e04dacd941162f6a5e0dcf0",
+      "stage": "reduce",
+      "cache": false,
+      "origin_event": 171
+    }
+  ],
+  "evidence": [
+    {
+      "stage": "local",
+      "query": "Which source module defines Session.request, Session.get, Session.post, and the other timeout-bearing wrappers?",
+      "context": "-----Entities-----\nid|entity|description|number of relationships\n32|REQUESTS.SESSION|\"`REQUESTS.SESSION` refers to the externally defined Requests library session APIs, primarily the `requests.Session` class/constructor and the `requests.session()` callable. Their implementations are not visible in the available source or documentation context.\n\nThe `requests.Session()` constructor is used throughout the tests and examples to create persistent HTTP session objects. These sessions are configured with default headers, cookies, proxies, redirect limits, response hooks, TLS-related settings, and mounted HTTP adapters. They are also used for sending authenticated and general requests, rebuilding proxies, testing redirect behavior, pickling, adapter lookup, connection cleanup, and other session-level behavior. In some tests, a constructed session is assigned to a variable such as `s` and then used through the local session object.\n\n`requests.Session` is also referenced as the superclass of `CustomRedirectSession`, indicating that custom session implementations can extend the Requests session class. Documentation examples show `requests.Session()` being used to configure default headers, although those examples do not establish production execution.\n\nThe related `requests.session()` callable is explicitly invoked in multiple authentication and redirect tests, including `test_HTTP_302_TOO_MANY_REDIRECTS_WITH_PARAMS`, `test_unconsumed_session_response_closes_connection`, and `TestRequests.test_entry_points`, to create session objects. Although the class constructor and lowercase callable are distinct spellings, both represent externally provided Requests mechanisms for creating HTTP sessions.\"|55\n394|SESSIONS.SESSION|Explicitly referenced as `sessions.Session()` in `request`; the class definition is not visible in this chunk.|1\n395|SESSION.REQUEST|\"SESSION.REQUEST is a method invoked on a locally created `session` object. It accepts an HTTP method, a URL, and optional keyword arguments, as shown by the general call `session.request(method=method, url=url, **kwargs)`. The method is also explicitly called with `method=\"\"GET\"\"` and URLs produced by `httpbin(\"\"get\"\")` or `httpbin()`. The owning class, concrete session type, and implementation are not visible in the available descriptions.\"|2\n8|SESSION|`SESSION` refers to the `requests.Session` class, defined as `Session(SessionRedirectMixin)` and instantiated as `Session()` or `requests.Session()`. It provides persistent session-level behavior across HTTP requests, including cookie and parameter persistence, connection pooling, and request configuration. Session state, such as cookies, is applied when requests are prepared, allowing subsequent requests to reuse shared settings and connection resources.|15\n0|REQUESTS|\"REQUESTS is the Python HTTP client module and dependency referenced throughout the documentation examples and tests. It is imported explicitly with `import requests`, accessed through statements such as `from requests import hooks` and `from requests import Request, Session`, and frequently referenced as the `requests` module namespace. Some excerpts show only qualified references without the corresponding import statement, while several references occur in documentation examples rather than visible production code.\n\nThe module provides APIs for constructing and sending HTTP requests, including `requests.get`, `requests.post`, `requests.put`, `requests.patch`, `requests.delete`, `requests.head`, `requests.options`, and the general `requests.request` function. It supports request construction through `requests.Request`, persistent client behavior through `requests.Session`, adapter configuration through `requests.adapters.HTTPAdapter`, streaming responses, proxy configuration, OAuth-related requests, and access to HTTP status codes such as `requests.codes.ok`.\n\nREQUESTS also supplies response and exception-related interfaces, including `requests.Response`, `requests.exceptions.ConnectionError`, `requests.exceptions.JSONDecodeError`, and `requests.exceptions.SSLError`, as well as the `requests.sessions.get_netrc_auth` helper. Overall, REQUESTS is used as the HTTP client namespace for request execution, session management, response handling, status-code inspection, authentication and proxy behavior, adapter configuration, and error handling.\"|34\n60|REQUESTS.SESSION.GET|`REQUESTS.SESSION.GET` refers to the externally defined `requests.Session.get` method. It is explicitly invoked through `s.get('https://httpbin.org/')`, where `s` is constructed using `requests.Session()`. The method’s runtime binding and implementation are not independently established or visible in the provided code context.|4\n9|SESSION.GET|The method spelling `Session.get` is explicitly referenced through calls such as `s.get('https://httpbin.org/cookies')`; the receiver is the local example variable `s`, initialized from `Session`, and the method definition is not visible here.|1\n796|SESSION.__INIT__|The method `Session.__init__(self)` is defined here. It initializes session defaults including headers, authentication, proxies, hooks, parameters, TLS verification, certificates, redirect limits, environment trust, cookies, and HTTP adapters.|7\n63|URLLIB.REQUEST|`URLLIB.REQUEST` is a Python module that provides functionality for handling HTTP requests and proxy configuration. It is documented as the source of environmental proxy settings through `urllib.request.getproxies`, and it supplies imports used for parsing proxy and HTTP-related lists.|1\n256|TIMEOUT|`TIMEOUT` refers to the `Timeout` exception symbol used in the codebase. It is imported from the local `.exceptions` module in some contexts and from `requests.exceptions` in another. The symbol is referenced in an `isinstance` assertion, while one import has no visible usage in the provided code. Its definition is not included in the available excerpts.|6\n393|SESSIONS|Imported with `from . import sessions`; the imported module is used to construct a session.|1\n50|REQUESTS.AUTH|`REQUESTS.AUTH` refers to the `requests.auth` authentication-handler module. It provides authentication-related classes and implementations, including the `AuthBase` base class and visible Basic, Proxy, and Digest authentication handlers. The module is explicitly imported or referenced through symbols such as `AuthBase`, `HTTPBasicAuth`, and `HTTPDigestAuth`, including qualified usage as `requests.auth.AuthBase`. Some references identify the module and its exported authentication classes without showing their complete definitions.|25\n1113|REQUESTS.SESSION.SEND|References the unresolved method `send` on a session receiver, used as `s.send(r.prepare())`; the receiver is syntactically assigned from `requests.Session()` but the method definition is not visible.|2\n23|SESSION.PREPARE_REQUEST|`Session.prepare_request()` is explicitly referenced as the session-aware preparation method that applies session-level state, including cookies, to a `Request`.|2\n\n-----Sources-----\nid|source|text\n91|tests/test_requests.py:L1488-L1634|\"        pr = pickle.loads(pickle.dumps(r))\n        assert r.request.url == pr.request.url\n        assert r.request.headers == pr.request.headers\n\n    def test_prepared_request_is_pickleable(self, httpbin):\n        p = requests.Request(\"\"GET\"\", httpbin(\"\"get\"\")).prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_file_is_pickleable(self, httpbin):\n        with open(__file__, \"\"rb\"\") as f:\n            r = requests.Request(\"\"POST\"\", httpbin(\"\"post\"\"), files={\"\"file\"\": f})\n            p = r.prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_hook_is_pickleable(self, httpbin):\n        r = requests.Request(\"\"GET\"\", httpbin(\"\"get\"\"), hooks=default_hooks())\n        p = r.prepare()\n\n        # Verify PreparedRequest can be pickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n        assert r.hooks == p.hooks\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_cannot_send_unprepared_requests(self, httpbin):\n        r = requests.Request(url=httpbin())\n        with pytest.raises(ValueError):\n            requests.Session().send(r)\n\n    def test_http_error(self):\n        error = requests.exceptions.HTTPError()\n        assert not error.response\n        response = requests.Response()\n        error = requests.exceptions.HTTPError(response=response)\n        assert error.response == response\n        error = requests.exceptions.HTTPError(\"\"message\"\", response=response)\n        assert str(error) == \"\"message\"\"\n        assert error.response == response\n\n    def test_session_pickling(self, httpbin):\n        r = requests.Request(\"\"GET\"\", httpbin(\"\"get\"\"))\n        s = requests.Session()\n\n        s = pickle.loads(pickle.dumps(s))\n        s.proxies = getproxies()\n\n        r = s.send(r.prepare())\n        assert r.status_code == 200\n\n    def test_fixes_1329(self, httpbin):\n        \"\"\"\"\"\"Ensure that header updates are done case-insensitively.\"\"\"\"\"\"\n        s = requests.Session()\n        s.headers.update({\"\"ACCEPT\"\": \"\"BOGUS\"\"})\n        s.headers.update({\"\"accept\"\": \"\"application/json\"\"})\n        r = s.get(httpbin(\"\"get\"\"))\n        headers = r.request.headers\n        assert headers[\"\"accept\"\"] == \"\"application/json\"\"\n        assert headers[\"\"Accept\"\"] == \"\"application/json\"\"\n        assert headers[\"\"ACCEPT\"\"] == \"\"application/json\"\"\n\n    def test_uppercase_scheme_redirect(self, httpbin):\n        parts = urlparse(httpbin(\"\"html\"\"))\n        url = \"\"HTTP://\"\" + parts.netloc + parts.path\n        r = requests.get(httpbin(\"\"redirect-to\"\"), params={\"\"url\"\": url})\n        assert r.status_code == 200\n        assert r.url.lower() == url.lower()\n\n    def test_transport_adapter_ordering(self):\n        s = requests.Session()\n        order = [\"\"https://\"\", \"\"http://\"\"]\n        assert order == list(s.adapters)\n        s.mount(\"\"http://git\"\", HTTPAdapter())\n        s.mount(\"\"http://github\"\", HTTPAdapter())\n        s.mount(\"\"http://github.com\"\", HTTPAdapter())\n        s.mount(\"\"http://github.com/about/\"\", HTTPAdapter())\n        order = [\n            \"\"http://github.com/about/\"\",\n            \"\"http://github.com\"\",\n            \"\"http://github\"\",\n            \"\"http://git\"\",\n            \"\"https://\"\",\n            \"\"http://\"\",\n        ]\n        assert order == list(s.adapters)\n        s.mount(\"\"http://gittip\"\", HTTPAdapter())\n        s.mount(\"\"http://gittip.com\"\", HTTPAdapter())\n        s.mount(\"\"http://gittip.com/about/\"\", HTTPAdapter())\n        order = [\n            \"\"http://github.com/about/\"\",\n            \"\"http://gittip.com/about/\"\",\n            \"\"http://github.com\"\",\n            \"\"http://gittip.com\"\",\n            \"\"http://github\"\",\n            \"\"http://gittip\"\",\n            \"\"http://git\"\",\n            \"\"https://\"\",\n            \"\"http://\"\",\n        ]\n        assert order == list(s.adapters)\n        s2 = requests.Session()\n        s2.adapters = {\"\"http://\"\": HTTPAdapter()}\n        s2.mount(\"\"https://\"\", HTTPAdapter())\n        assert \"\"http://\"\" in s2.adapters\n        assert \"\"https://\"\" in s2.adapters\n\n    def test_session_get_adapter_prefix_matching(self):\n        prefix = \"\"https://example.com\"\"\n        more_specific_prefix = prefix + \"\"/some/path\"\"\n\n        url_matching_only_prefix = prefix + \"\"/another/path\"\"\n        url_matching_more_specific_prefix = more_specific_prefix + \"\"/longer/path\"\"\n        url_not_matching_prefix = \"\"https://another.example.com/\"\"\n\n        s = requests.Session()\n        prefix_adapter = HTTPAdapter()\n        more_specific_prefix_adapter = HTTPAdapter()\n        s.mount(prefix, prefix_adapter)\n        s.mount(more_specific_prefix, more_specific_prefix_adapter)\n\n        assert s.get_adapter(url_matching_only_prefix) is prefix_adapter\n        assert (\n\"\n",
+      "upstream_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n32|REQUESTS.SESSION|`REQUESTS.SESSION` refers to the externally defined Requests library session APIs, primarily the `requests.Session` class/constructor and the `requests.session()` callable. Their implementations are not visible in the available source or documentation context.\n\nThe `requests.Session()` constructor is used throughout the tests and examples to create persistent HTTP session objects. These sessions are configured with default headers, cookies, proxies, redirect limits, response hooks, TLS-related settings, and mounted HTTP adapters. They are also used for sending authenticated and general requests, rebuilding proxies, testing redirect behavior, pickling, adapter lookup, connection cleanup, and other session-level behavior. In some tests, a constructed session is assigned to a variable such as `s` and then used through the local session object.\n\n`requests.Session` is also referenced as the superclass of `CustomRedirectSession`, indicating that custom session implementations can extend the Requests session class. Documentation examples show `requests.Session()` being used to configure default headers, although those examples do not establish production execution.\n\nThe related `requests.session()` callable is explicitly invoked in multiple authentication and redirect tests, including `test_HTTP_302_TOO_MANY_REDIRECTS_WITH_PARAMS`, `test_unconsumed_session_response_closes_connection`, and `TestRequests.test_entry_points`, to create session objects. Although the class constructor and lowercase callable are distinct spellings, both represent externally provided Requests mechanisms for creating HTTP sessions.|55\n394|SESSIONS.SESSION|Explicitly referenced as `sessions.Session()` in `request`; the class definition is not visible in this chunk.|1\n395|SESSION.REQUEST|SESSION.REQUEST is a method invoked on a locally created `session` object. It accepts an HTTP method, a URL, and optional keyword arguments, as shown by the general call `session.request(method=method, url=url, **kwargs)`. The method is also explicitly called with `method=\"GET\"` and URLs produced by `httpbin(\"get\")` or `httpbin()`. The owning class, concrete session type, and implementation are not visible in the available descriptions.|2\n8|SESSION|`SESSION` refers to the `requests.Session` class, defined as `Session(SessionRedirectMixin)` and instantiated as `Session()` or `requests.Session()`. It provides persistent session-level behavior across HTTP requests, including cookie and parameter persistence, connection pooling, and request configuration. Session state, such as cookies, is applied when requests are prepared, allowing subsequent requests to reuse shared settings and connection resources.|15\n0|REQUESTS|REQUESTS is the Python HTTP client module and dependency referenced throughout the documentation examples and tests. It is imported explicitly with `import requests`, accessed through statements such as `from requests import hooks` and `from requests import Request, Session`, and frequently referenced as the `requests` module namespace. Some excerpts show only qualified references without the corresponding import statement, while several references occur in documentation examples rather than visible production code.\n\nThe module provides APIs for constructing and sending HTTP requests, including `requests.get`, `requests.post`, `requests.put`, `requests.patch`, `requests.delete`, `requests.head`, `requests.options`, and the general `requests.request` function. It supports request construction through `requests.Request`, persistent client behavior through `requests.Session`, adapter configuration through `requests.adapters.HTTPAdapter`, streaming responses, proxy configuration, OAuth-related requests, and access to HTTP status codes such as `requests.codes.ok`.\n\nREQUESTS also supplies response and exception-related interfaces, including `requests.Response`, `requests.exceptions.ConnectionError`, `requests.exceptions.JSONDecodeError`, and `requests.exceptions.SSLError`, as well as the `requests.sessions.get_netrc_auth` helper. Overall, REQUESTS is used as the HTTP client namespace for request execution, session management, response handling, status-code inspection, authentication and proxy behavior, adapter configuration, and error handling.|34\n60|REQUESTS.SESSION.GET|`REQUESTS.SESSION.GET` refers to the externally defined `requests.Session.get` method. It is explicitly invoked through `s.get('https://httpbin.org/')`, where `s` is constructed using `requests.Session()`. The method’s runtime binding and implementation are not independently established or visible in the provided code context.|4\n9|SESSION.GET|The method spelling `Session.get` is explicitly referenced through calls such as `s.get('https://httpbin.org/cookies')`; the receiver is the local example variable `s`, initialized from `Session`, and the method definition is not visible here.|1\n796|SESSION.__INIT__|The method `Session.__init__(self)` is defined here. It initializes session defaults including headers, authentication, proxies, hooks, parameters, TLS verification, certificates, redirect limits, environment trust, cookies, and HTTP adapters.|7\n63|URLLIB.REQUEST|`URLLIB.REQUEST` is a Python module that provides functionality for handling HTTP requests and proxy configuration. It is documented as the source of environmental proxy settings through `urllib.request.getproxies`, and it supplies imports used for parsing proxy and HTTP-related lists.|1\n256|TIMEOUT|`TIMEOUT` refers to the `Timeout` exception symbol used in the codebase. It is imported from the local `.exceptions` module in some contexts and from `requests.exceptions` in another. The symbol is referenced in an `isinstance` assertion, while one import has no visible usage in the provided code. Its definition is not included in the available excerpts.|6\n393|SESSIONS|Imported with `from . import sessions`; the imported module is used to construct a session.|1\n50|REQUESTS.AUTH|`REQUESTS.AUTH` refers to the `requests.auth` authentication-handler module. It provides authentication-related classes and implementations, including the `AuthBase` base class and visible Basic, Proxy, and Digest authentication handlers. The module is explicitly imported or referenced through symbols such as `AuthBase`, `HTTPBasicAuth`, and `HTTPDigestAuth`, including qualified usage as `requests.auth.AuthBase`. Some references identify the module and its exported authentication classes without showing their complete definitions.|25\n1113|REQUESTS.SESSION.SEND|References the unresolved method `send` on a session receiver, used as `s.send(r.prepare())`; the receiver is syntactically assigned from `requests.Session()` but the method definition is not visible.|2\n23|SESSION.PREPARE_REQUEST|`Session.prepare_request()` is explicitly referenced as the session-aware preparation method that applies session-level state, including cookies, to a `Request`.|2\n\n\n\n\n-----Sources-----\nid|text\n91|        pr = pickle.loads(pickle.dumps(r))\n        assert r.request.url == pr.request.url\n        assert r.request.headers == pr.request.headers\n\n    def test_prepared_request_is_pickleable(self, httpbin):\n        p = requests.Request(\"GET\", httpbin(\"get\")).prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_file_is_pickleable(self, httpbin):\n        with open(__file__, \"rb\") as f:\n            r = requests.Request(\"POST\", httpbin(\"post\"), files={\"file\": f})\n            p = r.prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_hook_is_pickleable(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"), hooks=default_hooks())\n        p = r.prepare()\n\n        # Verify PreparedRequest can be pickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n        assert r.hooks == p.hooks\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_cannot_send_unprepared_requests(self, httpbin):\n        r = requests.Request(url=httpbin())\n        with pytest.raises(ValueError):\n            requests.Session().send(r)\n\n    def test_http_error(self):\n        error = requests.exceptions.HTTPError()\n        assert not error.response\n        response = requests.Response()\n        error = requests.exceptions.HTTPError(response=response)\n        assert error.response == response\n        error = requests.exceptions.HTTPError(\"message\", response=response)\n        assert str(error) == \"message\"\n        assert error.response == response\n\n    def test_session_pickling(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"))\n        s = requests.Session()\n\n        s = pickle.loads(pickle.dumps(s))\n        s.proxies = getproxies()\n\n        r = s.send(r.prepare())\n        assert r.status_code == 200\n\n    def test_fixes_1329(self, httpbin):\n        \"\"\"Ensure that header updates are done case-insensitively.\"\"\"\n        s = requests.Session()\n        s.headers.update({\"ACCEPT\": \"BOGUS\"})\n        s.headers.update({\"accept\": \"application/json\"})\n        r = s.get(httpbin(\"get\"))\n        headers = r.request.headers\n        assert headers[\"accept\"] == \"application/json\"\n        assert headers[\"Accept\"] == \"application/json\"\n        assert headers[\"ACCEPT\"] == \"application/json\"\n\n    def test_uppercase_scheme_redirect(self, httpbin):\n        parts = urlparse(httpbin(\"html\"))\n        url = \"HTTP://\" + parts.netloc + parts.path\n        r = requests.get(httpbin(\"redirect-to\"), params={\"url\": url})\n        assert r.status_code == 200\n        assert r.url.lower() == url.lower()\n\n    def test_transport_adapter_ordering(self):\n        s = requests.Session()\n        order = [\"https://\", \"http://\"]\n        assert order == list(s.adapters)\n        s.mount(\"http://git\", HTTPAdapter())\n        s.mount(\"http://github\", HTTPAdapter())\n        s.mount(\"http://github.com\", HTTPAdapter())\n        s.mount(\"http://github.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://github.com\",\n            \"http://github\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s.mount(\"http://gittip\", HTTPAdapter())\n        s.mount(\"http://gittip.com\", HTTPAdapter())\n        s.mount(\"http://gittip.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://gittip.com/about/\",\n            \"http://github.com\",\n            \"http://gittip.com\",\n            \"http://github\",\n            \"http://gittip\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s2 = requests.Session()\n        s2.adapters = {\"http://\": HTTPAdapter()}\n        s2.mount(\"https://\", HTTPAdapter())\n        assert \"http://\" in s2.adapters\n        assert \"https://\" in s2.adapters\n\n    def test_session_get_adapter_prefix_matching(self):\n        prefix = \"https://example.com\"\n        more_specific_prefix = prefix + \"/some/path\"\n\n        url_matching_only_prefix = prefix + \"/another/path\"\n        url_matching_more_specific_prefix = more_specific_prefix + \"/longer/path\"\n        url_not_matching_prefix = \"https://another.example.com/\"\n\n        s = requests.Session()\n        prefix_adapter = HTTPAdapter()\n        more_specific_prefix_adapter = HTTPAdapter()\n        s.mount(prefix, prefix_adapter)\n        s.mount(more_specific_prefix, more_specific_prefix_adapter)\n\n        assert s.get_adapter(url_matching_only_prefix) is prefix_adapter\n        assert (\n\n",
+      "records": {
+        "entities": [
+          {
+            "id": "32",
+            "entity": "REQUESTS.SESSION",
+            "description": "`REQUESTS.SESSION` refers to the externally defined Requests library session APIs, primarily the `requests.Session` class/constructor and the `requests.session()` callable. Their implementations are not visible in the available source or documentation context.\n\nThe `requests.Session()` constructor is used throughout the tests and examples to create persistent HTTP session objects. These sessions are configured with default headers, cookies, proxies, redirect limits, response hooks, TLS-related settings, and mounted HTTP adapters. They are also used for sending authenticated and general requests, rebuilding proxies, testing redirect behavior, pickling, adapter lookup, connection cleanup, and other session-level behavior. In some tests, a constructed session is assigned to a variable such as `s` and then used through the local session object.\n\n`requests.Session` is also referenced as the superclass of `CustomRedirectSession`, indicating that custom session implementations can extend the Requests session class. Documentation examples show `requests.Session()` being used to configure default headers, although those examples do not establish production execution.\n\nThe related `requests.session()` callable is explicitly invoked in multiple authentication and redirect tests, including `test_HTTP_302_TOO_MANY_REDIRECTS_WITH_PARAMS`, `test_unconsumed_session_response_closes_connection`, and `TestRequests.test_entry_points`, to create session objects. Although the class constructor and lowercase callable are distinct spellings, both represent externally provided Requests mechanisms for creating HTTP sessions.",
+            "number of relationships": "55",
+            "in_context": true
+          },
+          {
+            "id": "394",
+            "entity": "SESSIONS.SESSION",
+            "description": "Explicitly referenced as `sessions.Session()` in `request`; the class definition is not visible in this chunk.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "395",
+            "entity": "SESSION.REQUEST",
+            "description": "SESSION.REQUEST is a method invoked on a locally created `session` object. It accepts an HTTP method, a URL, and optional keyword arguments, as shown by the general call `session.request(method=method, url=url, **kwargs)`. The method is also explicitly called with `method=\"GET\"` and URLs produced by `httpbin(\"get\")` or `httpbin()`. The owning class, concrete session type, and implementation are not visible in the available descriptions.",
+            "number of relationships": "2",
+            "in_context": true
+          },
+          {
+            "id": "8",
+            "entity": "SESSION",
+            "description": "`SESSION` refers to the `requests.Session` class, defined as `Session(SessionRedirectMixin)` and instantiated as `Session()` or `requests.Session()`. It provides persistent session-level behavior across HTTP requests, including cookie and parameter persistence, connection pooling, and request configuration. Session state, such as cookies, is applied when requests are prepared, allowing subsequent requests to reuse shared settings and connection resources.",
+            "number of relationships": "15",
+            "in_context": true
+          },
+          {
+            "id": "0",
+            "entity": "REQUESTS",
+            "description": "REQUESTS is the Python HTTP client module and dependency referenced throughout the documentation examples and tests. It is imported explicitly with `import requests`, accessed through statements such as `from requests import hooks` and `from requests import Request, Session`, and frequently referenced as the `requests` module namespace. Some excerpts show only qualified references without the corresponding import statement, while several references occur in documentation examples rather than visible production code.\n\nThe module provides APIs for constructing and sending HTTP requests, including `requests.get`, `requests.post`, `requests.put`, `requests.patch`, `requests.delete`, `requests.head`, `requests.options`, and the general `requests.request` function. It supports request construction through `requests.Request`, persistent client behavior through `requests.Session`, adapter configuration through `requests.adapters.HTTPAdapter`, streaming responses, proxy configuration, OAuth-related requests, and access to HTTP status codes such as `requests.codes.ok`.\n\nREQUESTS also supplies response and exception-related interfaces, including `requests.Response`, `requests.exceptions.ConnectionError`, `requests.exceptions.JSONDecodeError`, and `requests.exceptions.SSLError`, as well as the `requests.sessions.get_netrc_auth` helper. Overall, REQUESTS is used as the HTTP client namespace for request execution, session management, response handling, status-code inspection, authentication and proxy behavior, adapter configuration, and error handling.",
+            "number of relationships": "34",
+            "in_context": true
+          },
+          {
+            "id": "60",
+            "entity": "REQUESTS.SESSION.GET",
+            "description": "`REQUESTS.SESSION.GET` refers to the externally defined `requests.Session.get` method. It is explicitly invoked through `s.get('https://httpbin.org/')`, where `s` is constructed using `requests.Session()`. The method’s runtime binding and implementation are not independently established or visible in the provided code context.",
+            "number of relationships": "4",
+            "in_context": true
+          },
+          {
+            "id": "9",
+            "entity": "SESSION.GET",
+            "description": "The method spelling `Session.get` is explicitly referenced through calls such as `s.get('https://httpbin.org/cookies')`; the receiver is the local example variable `s`, initialized from `Session`, and the method definition is not visible here.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "796",
+            "entity": "SESSION.__INIT__",
+            "description": "The method `Session.__init__(self)` is defined here. It initializes session defaults including headers, authentication, proxies, hooks, parameters, TLS verification, certificates, redirect limits, environment trust, cookies, and HTTP adapters.",
+            "number of relationships": "7",
+            "in_context": true
+          },
+          {
+            "id": "63",
+            "entity": "URLLIB.REQUEST",
+            "description": "`URLLIB.REQUEST` is a Python module that provides functionality for handling HTTP requests and proxy configuration. It is documented as the source of environmental proxy settings through `urllib.request.getproxies`, and it supplies imports used for parsing proxy and HTTP-related lists.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "256",
+            "entity": "TIMEOUT",
+            "description": "`TIMEOUT` refers to the `Timeout` exception symbol used in the codebase. It is imported from the local `.exceptions` module in some contexts and from `requests.exceptions` in another. The symbol is referenced in an `isinstance` assertion, while one import has no visible usage in the provided code. Its definition is not included in the available excerpts.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "393",
+            "entity": "SESSIONS",
+            "description": "Imported with `from . import sessions`; the imported module is used to construct a session.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "50",
+            "entity": "REQUESTS.AUTH",
+            "description": "`REQUESTS.AUTH` refers to the `requests.auth` authentication-handler module. It provides authentication-related classes and implementations, including the `AuthBase` base class and visible Basic, Proxy, and Digest authentication handlers. The module is explicitly imported or referenced through symbols such as `AuthBase`, `HTTPBasicAuth`, and `HTTPDigestAuth`, including qualified usage as `requests.auth.AuthBase`. Some references identify the module and its exported authentication classes without showing their complete definitions.",
+            "number of relationships": "25",
+            "in_context": true
+          },
+          {
+            "id": "1113",
+            "entity": "REQUESTS.SESSION.SEND",
+            "description": "References the unresolved method `send` on a session receiver, used as `s.send(r.prepare())`; the receiver is syntactically assigned from `requests.Session()` but the method definition is not visible.",
+            "number of relationships": "2",
+            "in_context": true
+          },
+          {
+            "id": "23",
+            "entity": "SESSION.PREPARE_REQUEST",
+            "description": "`Session.prepare_request()` is explicitly referenced as the session-aware preparation method that applies session-level state, including cookies, to a `Request`.",
+            "number of relationships": "2",
+            "in_context": true
+          }
+        ],
+        "sources": [
+          {
+            "id": "91",
+            "text": "        pr = pickle.loads(pickle.dumps(r))\n        assert r.request.url == pr.request.url\n        assert r.request.headers == pr.request.headers\n\n    def test_prepared_request_is_pickleable(self, httpbin):\n        p = requests.Request(\"GET\", httpbin(\"get\")).prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_file_is_pickleable(self, httpbin):\n        with open(__file__, \"rb\") as f:\n            r = requests.Request(\"POST\", httpbin(\"post\"), files={\"file\": f})\n            p = r.prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_hook_is_pickleable(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"), hooks=default_hooks())\n        p = r.prepare()\n\n        # Verify PreparedRequest can be pickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n        assert r.hooks == p.hooks\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_cannot_send_unprepared_requests(self, httpbin):\n        r = requests.Request(url=httpbin())\n        with pytest.raises(ValueError):\n            requests.Session().send(r)\n\n    def test_http_error(self):\n        error = requests.exceptions.HTTPError()\n        assert not error.response\n        response = requests.Response()\n        error = requests.exceptions.HTTPError(response=response)\n        assert error.response == response\n        error = requests.exceptions.HTTPError(\"message\", response=response)\n        assert str(error) == \"message\"\n        assert error.response == response\n\n    def test_session_pickling(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"))\n        s = requests.Session()\n\n        s = pickle.loads(pickle.dumps(s))\n        s.proxies = getproxies()\n\n        r = s.send(r.prepare())\n        assert r.status_code == 200\n\n    def test_fixes_1329(self, httpbin):\n        \"\"\"Ensure that header updates are done case-insensitively.\"\"\"\n        s = requests.Session()\n        s.headers.update({\"ACCEPT\": \"BOGUS\"})\n        s.headers.update({\"accept\": \"application/json\"})\n        r = s.get(httpbin(\"get\"))\n        headers = r.request.headers\n        assert headers[\"accept\"] == \"application/json\"\n        assert headers[\"Accept\"] == \"application/json\"\n        assert headers[\"ACCEPT\"] == \"application/json\"\n\n    def test_uppercase_scheme_redirect(self, httpbin):\n        parts = urlparse(httpbin(\"html\"))\n        url = \"HTTP://\" + parts.netloc + parts.path\n        r = requests.get(httpbin(\"redirect-to\"), params={\"url\": url})\n        assert r.status_code == 200\n        assert r.url.lower() == url.lower()\n\n    def test_transport_adapter_ordering(self):\n        s = requests.Session()\n        order = [\"https://\", \"http://\"]\n        assert order == list(s.adapters)\n        s.mount(\"http://git\", HTTPAdapter())\n        s.mount(\"http://github\", HTTPAdapter())\n        s.mount(\"http://github.com\", HTTPAdapter())\n        s.mount(\"http://github.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://github.com\",\n            \"http://github\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s.mount(\"http://gittip\", HTTPAdapter())\n        s.mount(\"http://gittip.com\", HTTPAdapter())\n        s.mount(\"http://gittip.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://gittip.com/about/\",\n            \"http://github.com\",\n            \"http://gittip.com\",\n            \"http://github\",\n            \"http://gittip\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s2 = requests.Session()\n        s2.adapters = {\"http://\": HTTPAdapter()}\n        s2.mount(\"https://\", HTTPAdapter())\n        assert \"http://\" in s2.adapters\n        assert \"https://\" in s2.adapters\n\n    def test_session_get_adapter_prefix_matching(self):\n        prefix = \"https://example.com\"\n        more_specific_prefix = prefix + \"/some/path\"\n\n        url_matching_only_prefix = prefix + \"/another/path\"\n        url_matching_more_specific_prefix = more_specific_prefix + \"/longer/path\"\n        url_not_matching_prefix = \"https://another.example.com/\"\n\n        s = requests.Session()\n        prefix_adapter = HTTPAdapter()\n        more_specific_prefix_adapter = HTTPAdapter()\n        s.mount(prefix, prefix_adapter)\n        s.mount(more_specific_prefix, more_specific_prefix_adapter)\n\n        assert s.get_adapter(url_matching_only_prefix) is prefix_adapter\n        assert (\n"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "short_id": "91",
+          "text_unit_id": "b4fc31fa0398c423c77ca05d45d3311d21c64d32090eb4a80186e559ba11c7f9857fc547284a1b9e915fb677bf5dcdb6dbb8f2c2edb68f5d45dd5f1b87c1171d",
+          "id": "738fe173f86a3ea0fd04fd1badf08b7af0573474d3cadc7105cab638a4925afc",
+          "title": "tests/test_requests.py:L1488-L1634",
+          "path": "tests/test_requests.py",
+          "start_line": 1488,
+          "end_line": 1634,
+          "tokens": 1191,
+          "text_sha256": "ba556710077543acb07ee95b0ea7f2ca76e248ccaa9baaae1319722182791a75",
+          "ms_text_unit_id": "b4fc31fa0398c423c77ca05d45d3311d21c64d32090eb4a80186e559ba11c7f9857fc547284a1b9e915fb677bf5dcdb6dbb8f2c2edb68f5d45dd5f1b87c1171d"
+        }
+      ],
+      "source_text_tokens": 1191,
+      "context_tokens": 2612,
+      "evidence_key": "cb5d126f351bf4b22a4f4c3786fa1bda6dfc2f55514972249e6c8b552a5437bb",
+      "read_occurrences": 1
+    },
+    {
+      "stage": "local",
+      "query": "Where is the public Session API documentation located, and how are timeout semantics currently described?",
+      "context": "-----Entities-----\nid|entity|description|number of relationships\n32|REQUESTS.SESSION|\"`REQUESTS.SESSION` refers to the externally defined Requests library session APIs, primarily the `requests.Session` class/constructor and the `requests.session()` callable. Their implementations are not visible in the available source or documentation context.\n\nThe `requests.Session()` constructor is used throughout the tests and examples to create persistent HTTP session objects. These sessions are configured with default headers, cookies, proxies, redirect limits, response hooks, TLS-related settings, and mounted HTTP adapters. They are also used for sending authenticated and general requests, rebuilding proxies, testing redirect behavior, pickling, adapter lookup, connection cleanup, and other session-level behavior. In some tests, a constructed session is assigned to a variable such as `s` and then used through the local session object.\n\n`requests.Session` is also referenced as the superclass of `CustomRedirectSession`, indicating that custom session implementations can extend the Requests session class. Documentation examples show `requests.Session()` being used to configure default headers, although those examples do not establish production execution.\n\nThe related `requests.session()` callable is explicitly invoked in multiple authentication and redirect tests, including `test_HTTP_302_TOO_MANY_REDIRECTS_WITH_PARAMS`, `test_unconsumed_session_response_closes_connection`, and `TestRequests.test_entry_points`, to create session objects. Although the class constructor and lowercase callable are distinct spellings, both represent externally provided Requests mechanisms for creating HTTP sessions.\"|55\n16|SESSION.AUTH|The class-scoped value spelling `Session.auth` is explicitly referenced through the assignment `s.auth = ('user', 'pass')`; the example documents session-level authentication data, but does not show a class definition.|1\n256|TIMEOUT|`TIMEOUT` refers to the `Timeout` exception symbol used in the codebase. It is imported from the local `.exceptions` module in some contexts and from `requests.exceptions` in another. The symbol is referenced in an `isinstance` assertion, while one import has no visible usage in the provided code. Its definition is not included in the available excerpts.|6\n1376|TESTTIMEOUT|The test class `TestTimeout` is defined here and groups request timeout tests.|7\n18|SESSION.COOKIES|The value spelling `Session.cookies` is explicitly referenced in `Session.cookies` and described as the session cookie collection that persists across requests; its definition is not visible here.|1\n151|REQUESTS.EXCEPTIONS.TIMEOUT|`requests.exceptions.Timeout` is an externally defined exception class in the Requests library. It is raised when an HTTP request exceeds its allowed time limit or otherwise times out. The class is explicitly referenced in timeout examples and documentation, although its implementation is not shown in the available context.|3\n314|TIMEOUTSAUCE|TIMEOUTSAUCE, also spelled `TimeoutSauce`, is an imported alias for `urllib3.util.Timeout`. It is explicitly referenced in the code to construct or recognize timeout objects, including instances configured with separate connection and read durations such as `TimeoutSauce(connect=..., read=...)`. Its underlying definition is not visible in the provided context.|1\n8|SESSION|`SESSION` refers to the `requests.Session` class, defined as `Session(SessionRedirectMixin)` and instantiated as `Session()` or `requests.Session()`. It provides persistent session-level behavior across HTTP requests, including cookie and parameter persistence, connection pooling, and request configuration. Session state, such as cookies, is applied when requests are prepared, allowing subsequent requests to reuse shared settings and connection resources.|15\n258|REQUESTS.API|`REQUESTS.API` refers to the explicit `requests.api` module, which defines the visible request API functions and imports the `sessions` module. Its documentation also references support for additional HTTP methods, although no separate definition for that support is visible in the available information.|6\n269|.SESSIONS|The relative module `.sessions` is explicitly imported by the visible grouped import statement.|1\n9|SESSION.GET|The method spelling `Session.get` is explicitly referenced through calls such as `s.get('https://httpbin.org/cookies')`; the receiver is the local example variable `s`, initialized from `Session`, and the method definition is not visible here.|1\n15|SESSION.CLOSE|The method concept `Session.close` is explicitly referenced by the statement that a session is closed when a context-manager block exits; no direct `close()` expression or method definition is visible, so the owning implementation and exact invocation are not shown here.|2\n17|SESSION.HEADERS|The class-scoped value spelling `Session.headers` is explicitly referenced through `s.headers.update({'x-test': 'true'})`; the example documents default session headers, but does not show a class definition.|2\n1590|SERVER.WAIT_EVENT_TIMEOUT|The class constant `WAIT_EVENT_TIMEOUT = 5` is defined on `Server` and supplies the timeout used for readiness, accepting connections, waiting for shutdown, and context cleanup.|1\n796|SESSION.__INIT__|The method `Session.__init__(self)` is defined here. It initializes session defaults including headers, authentication, proxies, hooks, parameters, TLS verification, certificates, redirect limits, environment trust, cookies, and HTTP adapters.|7\n1451|TIME.SLEEP|The explicitly referenced callable `time.sleep`; its definition is not visible and is called with `2.5` or `1.5` seconds in waiting and timeout tests.|3\n\n-----Sources-----\nid|source|text\n91|tests/test_requests.py:L1488-L1634|\"        pr = pickle.loads(pickle.dumps(r))\n        assert r.request.url == pr.request.url\n        assert r.request.headers == pr.request.headers\n\n    def test_prepared_request_is_pickleable(self, httpbin):\n        p = requests.Request(\"\"GET\"\", httpbin(\"\"get\"\")).prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_file_is_pickleable(self, httpbin):\n        with open(__file__, \"\"rb\"\") as f:\n            r = requests.Request(\"\"POST\"\", httpbin(\"\"post\"\"), files={\"\"file\"\": f})\n            p = r.prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_hook_is_pickleable(self, httpbin):\n        r = requests.Request(\"\"GET\"\", httpbin(\"\"get\"\"), hooks=default_hooks())\n        p = r.prepare()\n\n        # Verify PreparedRequest can be pickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n        assert r.hooks == p.hooks\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_cannot_send_unprepared_requests(self, httpbin):\n        r = requests.Request(url=httpbin())\n        with pytest.raises(ValueError):\n            requests.Session().send(r)\n\n    def test_http_error(self):\n        error = requests.exceptions.HTTPError()\n        assert not error.response\n        response = requests.Response()\n        error = requests.exceptions.HTTPError(response=response)\n        assert error.response == response\n        error = requests.exceptions.HTTPError(\"\"message\"\", response=response)\n        assert str(error) == \"\"message\"\"\n        assert error.response == response\n\n    def test_session_pickling(self, httpbin):\n        r = requests.Request(\"\"GET\"\", httpbin(\"\"get\"\"))\n        s = requests.Session()\n\n        s = pickle.loads(pickle.dumps(s))\n        s.proxies = getproxies()\n\n        r = s.send(r.prepare())\n        assert r.status_code == 200\n\n    def test_fixes_1329(self, httpbin):\n        \"\"\"\"\"\"Ensure that header updates are done case-insensitively.\"\"\"\"\"\"\n        s = requests.Session()\n        s.headers.update({\"\"ACCEPT\"\": \"\"BOGUS\"\"})\n        s.headers.update({\"\"accept\"\": \"\"application/json\"\"})\n        r = s.get(httpbin(\"\"get\"\"))\n        headers = r.request.headers\n        assert headers[\"\"accept\"\"] == \"\"application/json\"\"\n        assert headers[\"\"Accept\"\"] == \"\"application/json\"\"\n        assert headers[\"\"ACCEPT\"\"] == \"\"application/json\"\"\n\n    def test_uppercase_scheme_redirect(self, httpbin):\n        parts = urlparse(httpbin(\"\"html\"\"))\n        url = \"\"HTTP://\"\" + parts.netloc + parts.path\n        r = requests.get(httpbin(\"\"redirect-to\"\"), params={\"\"url\"\": url})\n        assert r.status_code == 200\n        assert r.url.lower() == url.lower()\n\n    def test_transport_adapter_ordering(self):\n        s = requests.Session()\n        order = [\"\"https://\"\", \"\"http://\"\"]\n        assert order == list(s.adapters)\n        s.mount(\"\"http://git\"\", HTTPAdapter())\n        s.mount(\"\"http://github\"\", HTTPAdapter())\n        s.mount(\"\"http://github.com\"\", HTTPAdapter())\n        s.mount(\"\"http://github.com/about/\"\", HTTPAdapter())\n        order = [\n            \"\"http://github.com/about/\"\",\n            \"\"http://github.com\"\",\n            \"\"http://github\"\",\n            \"\"http://git\"\",\n            \"\"https://\"\",\n            \"\"http://\"\",\n        ]\n        assert order == list(s.adapters)\n        s.mount(\"\"http://gittip\"\", HTTPAdapter())\n        s.mount(\"\"http://gittip.com\"\", HTTPAdapter())\n        s.mount(\"\"http://gittip.com/about/\"\", HTTPAdapter())\n        order = [\n            \"\"http://github.com/about/\"\",\n            \"\"http://gittip.com/about/\"\",\n            \"\"http://github.com\"\",\n            \"\"http://gittip.com\"\",\n            \"\"http://github\"\",\n            \"\"http://gittip\"\",\n            \"\"http://git\"\",\n            \"\"https://\"\",\n            \"\"http://\"\",\n        ]\n        assert order == list(s.adapters)\n        s2 = requests.Session()\n        s2.adapters = {\"\"http://\"\": HTTPAdapter()}\n        s2.mount(\"\"https://\"\", HTTPAdapter())\n        assert \"\"http://\"\" in s2.adapters\n        assert \"\"https://\"\" in s2.adapters\n\n    def test_session_get_adapter_prefix_matching(self):\n        prefix = \"\"https://example.com\"\"\n        more_specific_prefix = prefix + \"\"/some/path\"\"\n\n        url_matching_only_prefix = prefix + \"\"/another/path\"\"\n        url_matching_more_specific_prefix = more_specific_prefix + \"\"/longer/path\"\"\n        url_not_matching_prefix = \"\"https://another.example.com/\"\"\n\n        s = requests.Session()\n        prefix_adapter = HTTPAdapter()\n        more_specific_prefix_adapter = HTTPAdapter()\n        s.mount(prefix, prefix_adapter)\n        s.mount(more_specific_prefix, more_specific_prefix_adapter)\n\n        assert s.get_adapter(url_matching_only_prefix) is prefix_adapter\n        assert (\n\"\n",
+      "upstream_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n32|REQUESTS.SESSION|`REQUESTS.SESSION` refers to the externally defined Requests library session APIs, primarily the `requests.Session` class/constructor and the `requests.session()` callable. Their implementations are not visible in the available source or documentation context.\n\nThe `requests.Session()` constructor is used throughout the tests and examples to create persistent HTTP session objects. These sessions are configured with default headers, cookies, proxies, redirect limits, response hooks, TLS-related settings, and mounted HTTP adapters. They are also used for sending authenticated and general requests, rebuilding proxies, testing redirect behavior, pickling, adapter lookup, connection cleanup, and other session-level behavior. In some tests, a constructed session is assigned to a variable such as `s` and then used through the local session object.\n\n`requests.Session` is also referenced as the superclass of `CustomRedirectSession`, indicating that custom session implementations can extend the Requests session class. Documentation examples show `requests.Session()` being used to configure default headers, although those examples do not establish production execution.\n\nThe related `requests.session()` callable is explicitly invoked in multiple authentication and redirect tests, including `test_HTTP_302_TOO_MANY_REDIRECTS_WITH_PARAMS`, `test_unconsumed_session_response_closes_connection`, and `TestRequests.test_entry_points`, to create session objects. Although the class constructor and lowercase callable are distinct spellings, both represent externally provided Requests mechanisms for creating HTTP sessions.|55\n16|SESSION.AUTH|The class-scoped value spelling `Session.auth` is explicitly referenced through the assignment `s.auth = ('user', 'pass')`; the example documents session-level authentication data, but does not show a class definition.|1\n256|TIMEOUT|`TIMEOUT` refers to the `Timeout` exception symbol used in the codebase. It is imported from the local `.exceptions` module in some contexts and from `requests.exceptions` in another. The symbol is referenced in an `isinstance` assertion, while one import has no visible usage in the provided code. Its definition is not included in the available excerpts.|6\n1376|TESTTIMEOUT|The test class `TestTimeout` is defined here and groups request timeout tests.|7\n18|SESSION.COOKIES|The value spelling `Session.cookies` is explicitly referenced in `Session.cookies` and described as the session cookie collection that persists across requests; its definition is not visible here.|1\n151|REQUESTS.EXCEPTIONS.TIMEOUT|`requests.exceptions.Timeout` is an externally defined exception class in the Requests library. It is raised when an HTTP request exceeds its allowed time limit or otherwise times out. The class is explicitly referenced in timeout examples and documentation, although its implementation is not shown in the available context.|3\n314|TIMEOUTSAUCE|TIMEOUTSAUCE, also spelled `TimeoutSauce`, is an imported alias for `urllib3.util.Timeout`. It is explicitly referenced in the code to construct or recognize timeout objects, including instances configured with separate connection and read durations such as `TimeoutSauce(connect=..., read=...)`. Its underlying definition is not visible in the provided context.|1\n8|SESSION|`SESSION` refers to the `requests.Session` class, defined as `Session(SessionRedirectMixin)` and instantiated as `Session()` or `requests.Session()`. It provides persistent session-level behavior across HTTP requests, including cookie and parameter persistence, connection pooling, and request configuration. Session state, such as cookies, is applied when requests are prepared, allowing subsequent requests to reuse shared settings and connection resources.|15\n258|REQUESTS.API|`REQUESTS.API` refers to the explicit `requests.api` module, which defines the visible request API functions and imports the `sessions` module. Its documentation also references support for additional HTTP methods, although no separate definition for that support is visible in the available information.|6\n269|.SESSIONS|The relative module `.sessions` is explicitly imported by the visible grouped import statement.|1\n9|SESSION.GET|The method spelling `Session.get` is explicitly referenced through calls such as `s.get('https://httpbin.org/cookies')`; the receiver is the local example variable `s`, initialized from `Session`, and the method definition is not visible here.|1\n15|SESSION.CLOSE|The method concept `Session.close` is explicitly referenced by the statement that a session is closed when a context-manager block exits; no direct `close()` expression or method definition is visible, so the owning implementation and exact invocation are not shown here.|2\n17|SESSION.HEADERS|The class-scoped value spelling `Session.headers` is explicitly referenced through `s.headers.update({'x-test': 'true'})`; the example documents default session headers, but does not show a class definition.|2\n1590|SERVER.WAIT_EVENT_TIMEOUT|The class constant `WAIT_EVENT_TIMEOUT = 5` is defined on `Server` and supplies the timeout used for readiness, accepting connections, waiting for shutdown, and context cleanup.|1\n796|SESSION.__INIT__|The method `Session.__init__(self)` is defined here. It initializes session defaults including headers, authentication, proxies, hooks, parameters, TLS verification, certificates, redirect limits, environment trust, cookies, and HTTP adapters.|7\n1451|TIME.SLEEP|The explicitly referenced callable `time.sleep`; its definition is not visible and is called with `2.5` or `1.5` seconds in waiting and timeout tests.|3\n\n\n\n\n-----Sources-----\nid|text\n91|        pr = pickle.loads(pickle.dumps(r))\n        assert r.request.url == pr.request.url\n        assert r.request.headers == pr.request.headers\n\n    def test_prepared_request_is_pickleable(self, httpbin):\n        p = requests.Request(\"GET\", httpbin(\"get\")).prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_file_is_pickleable(self, httpbin):\n        with open(__file__, \"rb\") as f:\n            r = requests.Request(\"POST\", httpbin(\"post\"), files={\"file\": f})\n            p = r.prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_hook_is_pickleable(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"), hooks=default_hooks())\n        p = r.prepare()\n\n        # Verify PreparedRequest can be pickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n        assert r.hooks == p.hooks\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_cannot_send_unprepared_requests(self, httpbin):\n        r = requests.Request(url=httpbin())\n        with pytest.raises(ValueError):\n            requests.Session().send(r)\n\n    def test_http_error(self):\n        error = requests.exceptions.HTTPError()\n        assert not error.response\n        response = requests.Response()\n        error = requests.exceptions.HTTPError(response=response)\n        assert error.response == response\n        error = requests.exceptions.HTTPError(\"message\", response=response)\n        assert str(error) == \"message\"\n        assert error.response == response\n\n    def test_session_pickling(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"))\n        s = requests.Session()\n\n        s = pickle.loads(pickle.dumps(s))\n        s.proxies = getproxies()\n\n        r = s.send(r.prepare())\n        assert r.status_code == 200\n\n    def test_fixes_1329(self, httpbin):\n        \"\"\"Ensure that header updates are done case-insensitively.\"\"\"\n        s = requests.Session()\n        s.headers.update({\"ACCEPT\": \"BOGUS\"})\n        s.headers.update({\"accept\": \"application/json\"})\n        r = s.get(httpbin(\"get\"))\n        headers = r.request.headers\n        assert headers[\"accept\"] == \"application/json\"\n        assert headers[\"Accept\"] == \"application/json\"\n        assert headers[\"ACCEPT\"] == \"application/json\"\n\n    def test_uppercase_scheme_redirect(self, httpbin):\n        parts = urlparse(httpbin(\"html\"))\n        url = \"HTTP://\" + parts.netloc + parts.path\n        r = requests.get(httpbin(\"redirect-to\"), params={\"url\": url})\n        assert r.status_code == 200\n        assert r.url.lower() == url.lower()\n\n    def test_transport_adapter_ordering(self):\n        s = requests.Session()\n        order = [\"https://\", \"http://\"]\n        assert order == list(s.adapters)\n        s.mount(\"http://git\", HTTPAdapter())\n        s.mount(\"http://github\", HTTPAdapter())\n        s.mount(\"http://github.com\", HTTPAdapter())\n        s.mount(\"http://github.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://github.com\",\n            \"http://github\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s.mount(\"http://gittip\", HTTPAdapter())\n        s.mount(\"http://gittip.com\", HTTPAdapter())\n        s.mount(\"http://gittip.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://gittip.com/about/\",\n            \"http://github.com\",\n            \"http://gittip.com\",\n            \"http://github\",\n            \"http://gittip\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s2 = requests.Session()\n        s2.adapters = {\"http://\": HTTPAdapter()}\n        s2.mount(\"https://\", HTTPAdapter())\n        assert \"http://\" in s2.adapters\n        assert \"https://\" in s2.adapters\n\n    def test_session_get_adapter_prefix_matching(self):\n        prefix = \"https://example.com\"\n        more_specific_prefix = prefix + \"/some/path\"\n\n        url_matching_only_prefix = prefix + \"/another/path\"\n        url_matching_more_specific_prefix = more_specific_prefix + \"/longer/path\"\n        url_not_matching_prefix = \"https://another.example.com/\"\n\n        s = requests.Session()\n        prefix_adapter = HTTPAdapter()\n        more_specific_prefix_adapter = HTTPAdapter()\n        s.mount(prefix, prefix_adapter)\n        s.mount(more_specific_prefix, more_specific_prefix_adapter)\n\n        assert s.get_adapter(url_matching_only_prefix) is prefix_adapter\n        assert (\n\n",
+      "records": {
+        "entities": [
+          {
+            "id": "32",
+            "entity": "REQUESTS.SESSION",
+            "description": "`REQUESTS.SESSION` refers to the externally defined Requests library session APIs, primarily the `requests.Session` class/constructor and the `requests.session()` callable. Their implementations are not visible in the available source or documentation context.\n\nThe `requests.Session()` constructor is used throughout the tests and examples to create persistent HTTP session objects. These sessions are configured with default headers, cookies, proxies, redirect limits, response hooks, TLS-related settings, and mounted HTTP adapters. They are also used for sending authenticated and general requests, rebuilding proxies, testing redirect behavior, pickling, adapter lookup, connection cleanup, and other session-level behavior. In some tests, a constructed session is assigned to a variable such as `s` and then used through the local session object.\n\n`requests.Session` is also referenced as the superclass of `CustomRedirectSession`, indicating that custom session implementations can extend the Requests session class. Documentation examples show `requests.Session()` being used to configure default headers, although those examples do not establish production execution.\n\nThe related `requests.session()` callable is explicitly invoked in multiple authentication and redirect tests, including `test_HTTP_302_TOO_MANY_REDIRECTS_WITH_PARAMS`, `test_unconsumed_session_response_closes_connection`, and `TestRequests.test_entry_points`, to create session objects. Although the class constructor and lowercase callable are distinct spellings, both represent externally provided Requests mechanisms for creating HTTP sessions.",
+            "number of relationships": "55",
+            "in_context": true
+          },
+          {
+            "id": "16",
+            "entity": "SESSION.AUTH",
+            "description": "The class-scoped value spelling `Session.auth` is explicitly referenced through the assignment `s.auth = ('user', 'pass')`; the example documents session-level authentication data, but does not show a class definition.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "256",
+            "entity": "TIMEOUT",
+            "description": "`TIMEOUT` refers to the `Timeout` exception symbol used in the codebase. It is imported from the local `.exceptions` module in some contexts and from `requests.exceptions` in another. The symbol is referenced in an `isinstance` assertion, while one import has no visible usage in the provided code. Its definition is not included in the available excerpts.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "1376",
+            "entity": "TESTTIMEOUT",
+            "description": "The test class `TestTimeout` is defined here and groups request timeout tests.",
+            "number of relationships": "7",
+            "in_context": true
+          },
+          {
+            "id": "18",
+            "entity": "SESSION.COOKIES",
+            "description": "The value spelling `Session.cookies` is explicitly referenced in `Session.cookies` and described as the session cookie collection that persists across requests; its definition is not visible here.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "151",
+            "entity": "REQUESTS.EXCEPTIONS.TIMEOUT",
+            "description": "`requests.exceptions.Timeout` is an externally defined exception class in the Requests library. It is raised when an HTTP request exceeds its allowed time limit or otherwise times out. The class is explicitly referenced in timeout examples and documentation, although its implementation is not shown in the available context.",
+            "number of relationships": "3",
+            "in_context": true
+          },
+          {
+            "id": "314",
+            "entity": "TIMEOUTSAUCE",
+            "description": "TIMEOUTSAUCE, also spelled `TimeoutSauce`, is an imported alias for `urllib3.util.Timeout`. It is explicitly referenced in the code to construct or recognize timeout objects, including instances configured with separate connection and read durations such as `TimeoutSauce(connect=..., read=...)`. Its underlying definition is not visible in the provided context.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "8",
+            "entity": "SESSION",
+            "description": "`SESSION` refers to the `requests.Session` class, defined as `Session(SessionRedirectMixin)` and instantiated as `Session()` or `requests.Session()`. It provides persistent session-level behavior across HTTP requests, including cookie and parameter persistence, connection pooling, and request configuration. Session state, such as cookies, is applied when requests are prepared, allowing subsequent requests to reuse shared settings and connection resources.",
+            "number of relationships": "15",
+            "in_context": true
+          },
+          {
+            "id": "258",
+            "entity": "REQUESTS.API",
+            "description": "`REQUESTS.API` refers to the explicit `requests.api` module, which defines the visible request API functions and imports the `sessions` module. Its documentation also references support for additional HTTP methods, although no separate definition for that support is visible in the available information.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "269",
+            "entity": ".SESSIONS",
+            "description": "The relative module `.sessions` is explicitly imported by the visible grouped import statement.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "9",
+            "entity": "SESSION.GET",
+            "description": "The method spelling `Session.get` is explicitly referenced through calls such as `s.get('https://httpbin.org/cookies')`; the receiver is the local example variable `s`, initialized from `Session`, and the method definition is not visible here.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "15",
+            "entity": "SESSION.CLOSE",
+            "description": "The method concept `Session.close` is explicitly referenced by the statement that a session is closed when a context-manager block exits; no direct `close()` expression or method definition is visible, so the owning implementation and exact invocation are not shown here.",
+            "number of relationships": "2",
+            "in_context": true
+          },
+          {
+            "id": "17",
+            "entity": "SESSION.HEADERS",
+            "description": "The class-scoped value spelling `Session.headers` is explicitly referenced through `s.headers.update({'x-test': 'true'})`; the example documents default session headers, but does not show a class definition.",
+            "number of relationships": "2",
+            "in_context": true
+          },
+          {
+            "id": "1590",
+            "entity": "SERVER.WAIT_EVENT_TIMEOUT",
+            "description": "The class constant `WAIT_EVENT_TIMEOUT = 5` is defined on `Server` and supplies the timeout used for readiness, accepting connections, waiting for shutdown, and context cleanup.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "796",
+            "entity": "SESSION.__INIT__",
+            "description": "The method `Session.__init__(self)` is defined here. It initializes session defaults including headers, authentication, proxies, hooks, parameters, TLS verification, certificates, redirect limits, environment trust, cookies, and HTTP adapters.",
+            "number of relationships": "7",
+            "in_context": true
+          },
+          {
+            "id": "1451",
+            "entity": "TIME.SLEEP",
+            "description": "The explicitly referenced callable `time.sleep`; its definition is not visible and is called with `2.5` or `1.5` seconds in waiting and timeout tests.",
+            "number of relationships": "3",
+            "in_context": true
+          }
+        ],
+        "sources": [
+          {
+            "id": "91",
+            "text": "        pr = pickle.loads(pickle.dumps(r))\n        assert r.request.url == pr.request.url\n        assert r.request.headers == pr.request.headers\n\n    def test_prepared_request_is_pickleable(self, httpbin):\n        p = requests.Request(\"GET\", httpbin(\"get\")).prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_file_is_pickleable(self, httpbin):\n        with open(__file__, \"rb\") as f:\n            r = requests.Request(\"POST\", httpbin(\"post\"), files={\"file\": f})\n            p = r.prepare()\n\n        # Verify PreparedRequest can be pickled and unpickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_prepared_request_with_hook_is_pickleable(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"), hooks=default_hooks())\n        p = r.prepare()\n\n        # Verify PreparedRequest can be pickled\n        r = pickle.loads(pickle.dumps(p))\n        assert r.url == p.url\n        assert r.headers == p.headers\n        assert r.body == p.body\n        assert r.hooks == p.hooks\n\n        # Verify unpickled PreparedRequest sends properly\n        s = requests.Session()\n        resp = s.send(r)\n        assert resp.status_code == 200\n\n    def test_cannot_send_unprepared_requests(self, httpbin):\n        r = requests.Request(url=httpbin())\n        with pytest.raises(ValueError):\n            requests.Session().send(r)\n\n    def test_http_error(self):\n        error = requests.exceptions.HTTPError()\n        assert not error.response\n        response = requests.Response()\n        error = requests.exceptions.HTTPError(response=response)\n        assert error.response == response\n        error = requests.exceptions.HTTPError(\"message\", response=response)\n        assert str(error) == \"message\"\n        assert error.response == response\n\n    def test_session_pickling(self, httpbin):\n        r = requests.Request(\"GET\", httpbin(\"get\"))\n        s = requests.Session()\n\n        s = pickle.loads(pickle.dumps(s))\n        s.proxies = getproxies()\n\n        r = s.send(r.prepare())\n        assert r.status_code == 200\n\n    def test_fixes_1329(self, httpbin):\n        \"\"\"Ensure that header updates are done case-insensitively.\"\"\"\n        s = requests.Session()\n        s.headers.update({\"ACCEPT\": \"BOGUS\"})\n        s.headers.update({\"accept\": \"application/json\"})\n        r = s.get(httpbin(\"get\"))\n        headers = r.request.headers\n        assert headers[\"accept\"] == \"application/json\"\n        assert headers[\"Accept\"] == \"application/json\"\n        assert headers[\"ACCEPT\"] == \"application/json\"\n\n    def test_uppercase_scheme_redirect(self, httpbin):\n        parts = urlparse(httpbin(\"html\"))\n        url = \"HTTP://\" + parts.netloc + parts.path\n        r = requests.get(httpbin(\"redirect-to\"), params={\"url\": url})\n        assert r.status_code == 200\n        assert r.url.lower() == url.lower()\n\n    def test_transport_adapter_ordering(self):\n        s = requests.Session()\n        order = [\"https://\", \"http://\"]\n        assert order == list(s.adapters)\n        s.mount(\"http://git\", HTTPAdapter())\n        s.mount(\"http://github\", HTTPAdapter())\n        s.mount(\"http://github.com\", HTTPAdapter())\n        s.mount(\"http://github.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://github.com\",\n            \"http://github\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s.mount(\"http://gittip\", HTTPAdapter())\n        s.mount(\"http://gittip.com\", HTTPAdapter())\n        s.mount(\"http://gittip.com/about/\", HTTPAdapter())\n        order = [\n            \"http://github.com/about/\",\n            \"http://gittip.com/about/\",\n            \"http://github.com\",\n            \"http://gittip.com\",\n            \"http://github\",\n            \"http://gittip\",\n            \"http://git\",\n            \"https://\",\n            \"http://\",\n        ]\n        assert order == list(s.adapters)\n        s2 = requests.Session()\n        s2.adapters = {\"http://\": HTTPAdapter()}\n        s2.mount(\"https://\", HTTPAdapter())\n        assert \"http://\" in s2.adapters\n        assert \"https://\" in s2.adapters\n\n    def test_session_get_adapter_prefix_matching(self):\n        prefix = \"https://example.com\"\n        more_specific_prefix = prefix + \"/some/path\"\n\n        url_matching_only_prefix = prefix + \"/another/path\"\n        url_matching_more_specific_prefix = more_specific_prefix + \"/longer/path\"\n        url_not_matching_prefix = \"https://another.example.com/\"\n\n        s = requests.Session()\n        prefix_adapter = HTTPAdapter()\n        more_specific_prefix_adapter = HTTPAdapter()\n        s.mount(prefix, prefix_adapter)\n        s.mount(more_specific_prefix, more_specific_prefix_adapter)\n\n        assert s.get_adapter(url_matching_only_prefix) is prefix_adapter\n        assert (\n"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "short_id": "91",
+          "text_unit_id": "b4fc31fa0398c423c77ca05d45d3311d21c64d32090eb4a80186e559ba11c7f9857fc547284a1b9e915fb677bf5dcdb6dbb8f2c2edb68f5d45dd5f1b87c1171d",
+          "id": "738fe173f86a3ea0fd04fd1badf08b7af0573474d3cadc7105cab638a4925afc",
+          "title": "tests/test_requests.py:L1488-L1634",
+          "path": "tests/test_requests.py",
+          "start_line": 1488,
+          "end_line": 1634,
+          "tokens": 1191,
+          "text_sha256": "ba556710077543acb07ee95b0ea7f2ca76e248ccaa9baaae1319722182791a75",
+          "ms_text_unit_id": "b4fc31fa0398c423c77ca05d45d3311d21c64d32090eb4a80186e559ba11c7f9857fc547284a1b9e915fb677bf5dcdb6dbb8f2c2edb68f5d45dd5f1b87c1171d"
+        }
+      ],
+      "source_text_tokens": 1191,
+      "context_tokens": 2391,
+      "evidence_key": "56d7e97c776d9e37ed7d902db70d3f1d63966ac2035994aeb6599b139258498e",
+      "read_occurrences": 1
+    },
+    {
+      "stage": "local",
+      "query": "What do the existing timeout and redirect tests assert about omitted timeouts, explicit `None`, tuple values, and timeout propagation?",
+      "context": "-----Entities-----\nid|entity|description|number of relationships\n1379|TESTTIMEOUT.TEST_NONE_TIMEOUT|The parametrized test method `test_none_timeout` is defined here; it calls `requests.get(..., timeout=timeout)` for `None` or `Urllib3Timeout(connect=None, read=None)` and asserts `r.status_code == 200`.|5\n1378|TESTTIMEOUT.TEST_INVALID_TIMEOUT|The parametrized test method `test_invalid_timeout` is defined here; it calls `requests.get` with invalid timeout values and asserts `ValueError` plus the expected text.|6\n1376|TESTTIMEOUT|The test class `TestTimeout` is defined here and groups request timeout tests.|7\n1381|TESTTIMEOUT.TEST_CONNECT_TIMEOUT|The parametrized test method `test_connect_timeout` is defined here; it expects a request to `TARPIT` to raise `ConnectTimeout` and asserts the exception is also a `ConnectionError` and `Timeout`.|4\n256|TIMEOUT|`TIMEOUT` refers to the `Timeout` exception symbol used in the codebase. It is imported from the local `.exceptions` module in some contexts and from `requests.exceptions` in another. The symbol is referenced in an `isinstance` assertion, while one import has no visible usage in the provided code. Its definition is not included in the available excerpts.|6\n1382|TESTTIMEOUT.TEST_TOTAL_TIMEOUT_CONNECT|The parametrized test method `test_total_timeout_connect` is defined here; it expects a request to `TARPIT` to raise `ConnectTimeout`, otherwise calling `pytest.fail`.|4\n1377|TESTTIMEOUT.TEST_STREAM_TIMEOUT|\"The test method `test_stream_timeout` is defined here; it calls `requests.get(httpbin(\"\"delay/10\"\"), timeout=2.0)` and asserts the nested timeout error text contains `Read timed out` when `requests.exceptions.Timeout` is raised.\"|4\n1380|TESTTIMEOUT.TEST_READ_TIMEOUT|\"The parametrized test method `test_read_timeout` is defined here; it expects `requests.get` against `httpbin(\"\"delay/10\"\")` to raise `ReadTimeout`, otherwise calling `pytest.fail`.\"|5\n1445|TESTTESTSERVER.TEST_REQUESTS_AFTER_TIMEOUT_ARE_NOT_RECEIVED|\"The test method `TestTestServer.test_requests_after_timeout_are_not_received`; configures `request_timeout=1`, waits 1.5 seconds before sending data, and asserts `server.handler_results[0] == b\"\"\"\"`.\"|7\n1486|TESTTOKEYVALLIST.TEST_VALID|Visible parameterized test asserting list, tuple, dictionary, and `None` inputs produce the shown expected normalized values.|1\n1341|TEST_CUSTOM_REDIRECT_MIXIN|The test method `test_custom_redirect_mixin` is defined here. It creates malformed redirect URLs, uses a locally defined custom session, performs a request, and asserts the redirect history, status codes, redirect flags, and final URL.|4\n1129|TEST_HEADERS_ON_SESSION_WITH_NONE_ARE_NOT_SENT|\"The test function `test_headers_on_session_with_None_are_not_sent` is defined here. It assigns `None` to `ses.headers[\"\"Accept-Encoding\"\"]`, prepares a request, and asserts that header is absent from `prep.headers`.\"|4\n339|DEFAULT_POOL_TIMEOUT|Module constant defined as `None`; its value is visible but no use occurs in this chunk.|1\n1368|TESTMORSELTOCOOKIEEXPIRES.TEST_EXPIRES_NONE|\"The test method `TestMorselToCookieExpires.test_expires_none` is defined here. It sets `Morsel[\"\"expires\"\"]` to `None`, calls `morsel_to_cookie`, and asserts `cookie.expires is None`.\"|3\n1139|TEST_ERRORS|The parameterized test function `test_errors(self, url, exception)` is defined here and asserts that `requests.get(url, timeout=1)` raises the supplied `exception` for an unknown domain, invalid port, or unparsable URL.|1\n1128|TEST_HISTORY_IS_ALWAYS_A_LIST|The test function `test_history_is_always_a_list` is defined here. It asserts `Response.history` is a list for both a direct response and a redirect response, and is not a tuple.|6\n314|TIMEOUTSAUCE|TIMEOUTSAUCE, also spelled `TimeoutSauce`, is an imported alias for `urllib3.util.Timeout`. It is explicitly referenced in the code to construct or recognize timeout objects, including instances configured with separate connection and read durations such as `TimeoutSauce(connect=..., read=...)`. Its underlying definition is not visible in the provided context.|1\n151|REQUESTS.EXCEPTIONS.TIMEOUT|`requests.exceptions.Timeout` is an externally defined exception class in the Requests library. It is raised when an HTTP request exceeds its allowed time limit or otherwise times out. The class is explicitly referenced in timeout examples and documentation, although its implementation is not shown in the available context.|3\n1111|PYTEST.FAIL|PYTEST.FAIL refers to the unresolved callable `pytest.fail`. It is used in tests to explicitly fail when expected behavior does not occur, including when a redirect test fails to raise `TooManyRedirects` or when an expected timeout exception is not raised. The definition of `pytest.fail` is not visible in the provided context.|5\n\n-----Relationships-----\nid|source|target|description|weight|links\n2376|TESTTIMEOUT.TEST_NONE_TIMEOUT|HTTPBIN|\"CALLS, the test executes `httpbin(\"\"get\"\")`; the fixture definition is not visible.\"|8.0|1\n2335|TESTTIMEOUT.TEST_NONE_TIMEOUT|REQUESTS.GET|\"CALLS, the test executes `requests.get(httpbin(\"\"get\"\"), timeout=timeout)` and asserts status 200.\"|10.0|1\n2333|TESTTIMEOUT.TEST_NONE_TIMEOUT|PYTEST.MARK.PARAMETRIZE|CALLS, the decorator supplies `None` and `Urllib3Timeout(connect=None, read=None)` cases.|10.0|1\n2322|TESTTIMEOUT|TESTTIMEOUT.TEST_NONE_TIMEOUT|DEFINES, the test class contains the visibly defined test method `test_none_timeout`.|10.0|1\n2334|TESTTIMEOUT.TEST_NONE_TIMEOUT|URLLIB3TIMEOUT|CALLS, the parametrization constructs `Urllib3Timeout(connect=None, read=None)`.|9.0|1\n\n-----Sources-----\nid|source|text\n98|tests/test_requests.py:L2414-L2570|\"\n        morsel = Morsel()\n        morsel[\"\"expires\"\"] = None\n        cookie = morsel_to_cookie(morsel)\n        assert cookie.expires is None\n\n\nclass TestMorselToCookieMaxAge:\n\n    \"\"\"\"\"\"Tests for morsel_to_cookie when morsel contains max-age.\"\"\"\"\"\"\n\n    def test_max_age_valid_int(self):\n        \"\"\"\"\"\"Test case where a valid max age in seconds is passed.\"\"\"\"\"\"\n\n        morsel = Morsel()\n        morsel[\"\"max-age\"\"] = 60\n        cookie = morsel_to_cookie(morsel)\n        assert isinstance(cookie.expires, int)\n\n    def test_max_age_invalid_str(self):\n        \"\"\"\"\"\"Test case where a invalid max age is passed.\"\"\"\"\"\"\n\n        morsel = Morsel()\n        morsel[\"\"max-age\"\"] = \"\"woops\"\"\n        with pytest.raises(TypeError):\n            morsel_to_cookie(morsel)\n\n\nclass TestTimeout:\n    def test_stream_timeout(self, httpbin):\n        try:\n            requests.get(httpbin(\"\"delay/10\"\"), timeout=2.0)\n        except requests.exceptions.Timeout as e:\n            assert \"\"Read timed out\"\" in e.args[0].args[0]\n\n    @pytest.mark.parametrize(\n        \"\"timeout, error_text\"\",\n        (\n            ((3, 4, 5), \"\"(connect, read)\"\"),\n            (\"\"foo\"\", \"\"must be an int, float or None\"\"),\n        ),\n    )\n    def test_invalid_timeout(self, httpbin, timeout, error_text):\n        with pytest.raises(ValueError) as e:\n            requests.get(httpbin(\"\"get\"\"), timeout=timeout)\n        assert error_text in str(e)\n\n    @pytest.mark.parametrize(\"\"timeout\"\", (None, Urllib3Timeout(connect=None, read=None)))\n    def test_none_timeout(self, httpbin, timeout):\n        \"\"\"\"\"\"Check that you can set None as a valid timeout value.\n\n        To actually test this behavior, we'd want to check that setting the\n        timeout to None actually lets the request block past the system default\n        timeout. However, this would make the test suite unbearably slow.\n        Instead we verify that setting the timeout to None does not prevent the\n        request from succeeding.\n        \"\"\"\"\"\"\n        r = requests.get(httpbin(\"\"get\"\"), timeout=timeout)\n        assert r.status_code == 200\n\n    @pytest.mark.parametrize(\n        \"\"timeout\"\", ((None, 0.1), Urllib3Timeout(connect=None, read=0.1))\n    )\n    def test_read_timeout(self, httpbin, timeout):\n        try:\n            requests.get(httpbin(\"\"delay/10\"\"), timeout=timeout)\n            pytest.fail(\"\"The recv() request should time out.\"\")\n        except ReadTimeout:\n            pass\n\n    @pytest.mark.parametrize(\n        \"\"timeout\"\", ((0.1, None), Urllib3Timeout(connect=0.1, read=None))\n    )\n    def test_connect_timeout(self, timeout):\n        try:\n            requests.get(TARPIT, timeout=timeout)\n            pytest.fail(\"\"The connect() request should time out.\"\")\n        except ConnectTimeout as e:\n            assert isinstance(e, ConnectionError)\n            assert isinstance(e, Timeout)\n\n    @pytest.mark.parametrize(\n        \"\"timeout\"\", ((0.1, 0.1), Urllib3Timeout(connect=0.1, read=0.1))\n    )\n    def test_total_timeout_connect(self, timeout):\n        try:\n            requests.get(TARPIT, timeout=timeout)\n            pytest.fail(\"\"The connect() request should time out.\"\")\n        except ConnectTimeout:\n            pass\n\n    def test_encoded_methods(self, httpbin):\n        \"\"\"\"\"\"See: https://github.com/psf/requests/issues/2316\"\"\"\"\"\"\n        r = requests.request(b\"\"GET\"\", httpbin(\"\"get\"\"))\n        assert r.ok\n\n\nSendCall = collections.namedtuple(\"\"SendCall\"\", (\"\"args\"\", \"\"kwargs\"\"))\n\n\nclass RedirectSession(SessionRedirectMixin):\n    def __init__(self, order_of_redirects):\n        self.redirects = order_of_redirects\n        self.calls = []\n        self.max_redirects = 30\n        self.cookies = {}\n        self.trust_env = False\n\n    def send(self, *args, **kwargs):\n        self.calls.append(SendCall(args, kwargs))\n        return self.build_response()\n\n    def build_response(self):\n        request = self.calls[-1].args[0]\n        r = requests.Response()\n\n        try:\n            r.status_code = int(self.redirects.pop(0))\n        except IndexError:\n            r.status_code = 200\n\n        r.headers = CaseInsensitiveDict({\"\"Location\"\": \"\"/\"\"})\n        r.raw = self._build_raw()\n        r.request = request\n        return r\n\n    def _build_raw(self):\n        string = StringIO.StringIO(\"\"\"\")\n        setattr(string, \"\"release_conn\"\", lambda *args: args)\n        return string\n\n\ndef test_json_encodes_as_bytes():\n    # urllib3 expects bodies as bytes-like objects\n    body = {\"\"key\"\": \"\"value\"\"}\n    p = PreparedRequest()\n    p.prepare(method=\"\"GET\"\", url=\"\"https://www.example.com/\"\", json=body)\n    assert isinstance(p.body, bytes)\n\n\ndef test_requests_are_updated_each_time(httpbin):\n    session = RedirectSession([303, 307])\n    prep = requests.Request(\"\"POST\"\", httpbin(\"\"post\"\")).prepare()\n    r0 = session.send(prep)\n    assert r0.request.method == \"\"POST\"\"\n    assert session.calls[-1] == SendCall((r0.request,), {})\n    redirect_generator = session.resolve_redirects(r0, prep)\n    default_keyword_args = {\n        \"\"stream\"\": False,\n        \"\"verify\"\": True,\n        \"\"cert\"\": None,\n        \"\"timeout\"\": None,\n        \"\"allow_redirects\"\": False,\n        \"\"proxies\"\": {},\n    }\n    for response in redirect_generator:\n        assert response.request.method == \"\"GET\"\"\n\"\n21|src/requests/__init__.py:L155-L184|\"    __build__,\n    __cake__,\n    __copyright__,\n    __description__,\n    __license__,\n    __title__,\n    __url__,\n    __version__,\n)\nfrom .api import delete, get, head, options, patch, post, put, request\nfrom .exceptions import (\n    ConnectionError,\n    ConnectTimeout,\n    FileModeWarning,\n    HTTPError,\n    JSONDecodeError,\n    ReadTimeout,\n    RequestException,\n    Timeout,\n    TooManyRedirects,\n    URLRequired,\n)\nfrom .models import PreparedRequest, Request, Response\nfrom .sessions import Session, session\nfrom .status_codes import codes\n\nlogging.getLogger(__name__).addHandler(NullHandler())\n\n# FileModeWarnings go off per the default.\nwarnings.simplefilter(\"\"default\"\", FileModeWarning, append=True)\n\"\n",
+      "upstream_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n1379|TESTTIMEOUT.TEST_NONE_TIMEOUT|The parametrized test method `test_none_timeout` is defined here; it calls `requests.get(..., timeout=timeout)` for `None` or `Urllib3Timeout(connect=None, read=None)` and asserts `r.status_code == 200`.|5\n1378|TESTTIMEOUT.TEST_INVALID_TIMEOUT|The parametrized test method `test_invalid_timeout` is defined here; it calls `requests.get` with invalid timeout values and asserts `ValueError` plus the expected text.|6\n1376|TESTTIMEOUT|The test class `TestTimeout` is defined here and groups request timeout tests.|7\n1381|TESTTIMEOUT.TEST_CONNECT_TIMEOUT|The parametrized test method `test_connect_timeout` is defined here; it expects a request to `TARPIT` to raise `ConnectTimeout` and asserts the exception is also a `ConnectionError` and `Timeout`.|4\n256|TIMEOUT|`TIMEOUT` refers to the `Timeout` exception symbol used in the codebase. It is imported from the local `.exceptions` module in some contexts and from `requests.exceptions` in another. The symbol is referenced in an `isinstance` assertion, while one import has no visible usage in the provided code. Its definition is not included in the available excerpts.|6\n1382|TESTTIMEOUT.TEST_TOTAL_TIMEOUT_CONNECT|The parametrized test method `test_total_timeout_connect` is defined here; it expects a request to `TARPIT` to raise `ConnectTimeout`, otherwise calling `pytest.fail`.|4\n1377|TESTTIMEOUT.TEST_STREAM_TIMEOUT|The test method `test_stream_timeout` is defined here; it calls `requests.get(httpbin(\"delay/10\"), timeout=2.0)` and asserts the nested timeout error text contains `Read timed out` when `requests.exceptions.Timeout` is raised.|4\n1380|TESTTIMEOUT.TEST_READ_TIMEOUT|The parametrized test method `test_read_timeout` is defined here; it expects `requests.get` against `httpbin(\"delay/10\")` to raise `ReadTimeout`, otherwise calling `pytest.fail`.|5\n1445|TESTTESTSERVER.TEST_REQUESTS_AFTER_TIMEOUT_ARE_NOT_RECEIVED|The test method `TestTestServer.test_requests_after_timeout_are_not_received`; configures `request_timeout=1`, waits 1.5 seconds before sending data, and asserts `server.handler_results[0] == b\"\"`.|7\n1486|TESTTOKEYVALLIST.TEST_VALID|Visible parameterized test asserting list, tuple, dictionary, and `None` inputs produce the shown expected normalized values.|1\n1341|TEST_CUSTOM_REDIRECT_MIXIN|The test method `test_custom_redirect_mixin` is defined here. It creates malformed redirect URLs, uses a locally defined custom session, performs a request, and asserts the redirect history, status codes, redirect flags, and final URL.|4\n1129|TEST_HEADERS_ON_SESSION_WITH_NONE_ARE_NOT_SENT|The test function `test_headers_on_session_with_None_are_not_sent` is defined here. It assigns `None` to `ses.headers[\"Accept-Encoding\"]`, prepares a request, and asserts that header is absent from `prep.headers`.|4\n339|DEFAULT_POOL_TIMEOUT|Module constant defined as `None`; its value is visible but no use occurs in this chunk.|1\n1368|TESTMORSELTOCOOKIEEXPIRES.TEST_EXPIRES_NONE|The test method `TestMorselToCookieExpires.test_expires_none` is defined here. It sets `Morsel[\"expires\"]` to `None`, calls `morsel_to_cookie`, and asserts `cookie.expires is None`.|3\n1139|TEST_ERRORS|The parameterized test function `test_errors(self, url, exception)` is defined here and asserts that `requests.get(url, timeout=1)` raises the supplied `exception` for an unknown domain, invalid port, or unparsable URL.|1\n1128|TEST_HISTORY_IS_ALWAYS_A_LIST|The test function `test_history_is_always_a_list` is defined here. It asserts `Response.history` is a list for both a direct response and a redirect response, and is not a tuple.|6\n314|TIMEOUTSAUCE|TIMEOUTSAUCE, also spelled `TimeoutSauce`, is an imported alias for `urllib3.util.Timeout`. It is explicitly referenced in the code to construct or recognize timeout objects, including instances configured with separate connection and read durations such as `TimeoutSauce(connect=..., read=...)`. Its underlying definition is not visible in the provided context.|1\n151|REQUESTS.EXCEPTIONS.TIMEOUT|`requests.exceptions.Timeout` is an externally defined exception class in the Requests library. It is raised when an HTTP request exceeds its allowed time limit or otherwise times out. The class is explicitly referenced in timeout examples and documentation, although its implementation is not shown in the available context.|3\n1111|PYTEST.FAIL|PYTEST.FAIL refers to the unresolved callable `pytest.fail`. It is used in tests to explicitly fail when expected behavior does not occur, including when a redirect test fails to raise `TooManyRedirects` or when an expected timeout exception is not raised. The definition of `pytest.fail` is not visible in the provided context.|5\n\n\n-----Relationships-----\nid|source|target|description|weight|links\n2376|TESTTIMEOUT.TEST_NONE_TIMEOUT|HTTPBIN|CALLS, the test executes `httpbin(\"get\")`; the fixture definition is not visible.|8.0|1\n2335|TESTTIMEOUT.TEST_NONE_TIMEOUT|REQUESTS.GET|CALLS, the test executes `requests.get(httpbin(\"get\"), timeout=timeout)` and asserts status 200.|10.0|1\n2333|TESTTIMEOUT.TEST_NONE_TIMEOUT|PYTEST.MARK.PARAMETRIZE|CALLS, the decorator supplies `None` and `Urllib3Timeout(connect=None, read=None)` cases.|10.0|1\n2322|TESTTIMEOUT|TESTTIMEOUT.TEST_NONE_TIMEOUT|DEFINES, the test class contains the visibly defined test method `test_none_timeout`.|10.0|1\n2334|TESTTIMEOUT.TEST_NONE_TIMEOUT|URLLIB3TIMEOUT|CALLS, the parametrization constructs `Urllib3Timeout(connect=None, read=None)`.|9.0|1\n\n\n-----Sources-----\nid|text\n98|\n        morsel = Morsel()\n        morsel[\"expires\"] = None\n        cookie = morsel_to_cookie(morsel)\n        assert cookie.expires is None\n\n\nclass TestMorselToCookieMaxAge:\n\n    \"\"\"Tests for morsel_to_cookie when morsel contains max-age.\"\"\"\n\n    def test_max_age_valid_int(self):\n        \"\"\"Test case where a valid max age in seconds is passed.\"\"\"\n\n        morsel = Morsel()\n        morsel[\"max-age\"] = 60\n        cookie = morsel_to_cookie(morsel)\n        assert isinstance(cookie.expires, int)\n\n    def test_max_age_invalid_str(self):\n        \"\"\"Test case where a invalid max age is passed.\"\"\"\n\n        morsel = Morsel()\n        morsel[\"max-age\"] = \"woops\"\n        with pytest.raises(TypeError):\n            morsel_to_cookie(morsel)\n\n\nclass TestTimeout:\n    def test_stream_timeout(self, httpbin):\n        try:\n            requests.get(httpbin(\"delay/10\"), timeout=2.0)\n        except requests.exceptions.Timeout as e:\n            assert \"Read timed out\" in e.args[0].args[0]\n\n    @pytest.mark.parametrize(\n        \"timeout, error_text\",\n        (\n            ((3, 4, 5), \"(connect, read)\"),\n            (\"foo\", \"must be an int, float or None\"),\n        ),\n    )\n    def test_invalid_timeout(self, httpbin, timeout, error_text):\n        with pytest.raises(ValueError) as e:\n            requests.get(httpbin(\"get\"), timeout=timeout)\n        assert error_text in str(e)\n\n    @pytest.mark.parametrize(\"timeout\", (None, Urllib3Timeout(connect=None, read=None)))\n    def test_none_timeout(self, httpbin, timeout):\n        \"\"\"Check that you can set None as a valid timeout value.\n\n        To actually test this behavior, we'd want to check that setting the\n        timeout to None actually lets the request block past the system default\n        timeout. However, this would make the test suite unbearably slow.\n        Instead we verify that setting the timeout to None does not prevent the\n        request from succeeding.\n        \"\"\"\n        r = requests.get(httpbin(\"get\"), timeout=timeout)\n        assert r.status_code == 200\n\n    @pytest.mark.parametrize(\n        \"timeout\", ((None, 0.1), Urllib3Timeout(connect=None, read=0.1))\n    )\n    def test_read_timeout(self, httpbin, timeout):\n        try:\n            requests.get(httpbin(\"delay/10\"), timeout=timeout)\n            pytest.fail(\"The recv() request should time out.\")\n        except ReadTimeout:\n            pass\n\n    @pytest.mark.parametrize(\n        \"timeout\", ((0.1, None), Urllib3Timeout(connect=0.1, read=None))\n    )\n    def test_connect_timeout(self, timeout):\n        try:\n            requests.get(TARPIT, timeout=timeout)\n            pytest.fail(\"The connect() request should time out.\")\n        except ConnectTimeout as e:\n            assert isinstance(e, ConnectionError)\n            assert isinstance(e, Timeout)\n\n    @pytest.mark.parametrize(\n        \"timeout\", ((0.1, 0.1), Urllib3Timeout(connect=0.1, read=0.1))\n    )\n    def test_total_timeout_connect(self, timeout):\n        try:\n            requests.get(TARPIT, timeout=timeout)\n            pytest.fail(\"The connect() request should time out.\")\n        except ConnectTimeout:\n            pass\n\n    def test_encoded_methods(self, httpbin):\n        \"\"\"See: https://github.com/psf/requests/issues/2316\"\"\"\n        r = requests.request(b\"GET\", httpbin(\"get\"))\n        assert r.ok\n\n\nSendCall = collections.namedtuple(\"SendCall\", (\"args\", \"kwargs\"))\n\n\nclass RedirectSession(SessionRedirectMixin):\n    def __init__(self, order_of_redirects):\n        self.redirects = order_of_redirects\n        self.calls = []\n        self.max_redirects = 30\n        self.cookies = {}\n        self.trust_env = False\n\n    def send(self, *args, **kwargs):\n        self.calls.append(SendCall(args, kwargs))\n        return self.build_response()\n\n    def build_response(self):\n        request = self.calls[-1].args[0]\n        r = requests.Response()\n\n        try:\n            r.status_code = int(self.redirects.pop(0))\n        except IndexError:\n            r.status_code = 200\n\n        r.headers = CaseInsensitiveDict({\"Location\": \"/\"})\n        r.raw = self._build_raw()\n        r.request = request\n        return r\n\n    def _build_raw(self):\n        string = StringIO.StringIO(\"\")\n        setattr(string, \"release_conn\", lambda *args: args)\n        return string\n\n\ndef test_json_encodes_as_bytes():\n    # urllib3 expects bodies as bytes-like objects\n    body = {\"key\": \"value\"}\n    p = PreparedRequest()\n    p.prepare(method=\"GET\", url=\"https://www.example.com/\", json=body)\n    assert isinstance(p.body, bytes)\n\n\ndef test_requests_are_updated_each_time(httpbin):\n    session = RedirectSession([303, 307])\n    prep = requests.Request(\"POST\", httpbin(\"post\")).prepare()\n    r0 = session.send(prep)\n    assert r0.request.method == \"POST\"\n    assert session.calls[-1] == SendCall((r0.request,), {})\n    redirect_generator = session.resolve_redirects(r0, prep)\n    default_keyword_args = {\n        \"stream\": False,\n        \"verify\": True,\n        \"cert\": None,\n        \"timeout\": None,\n        \"allow_redirects\": False,\n        \"proxies\": {},\n    }\n    for response in redirect_generator:\n        assert response.request.method == \"GET\"\n\n21|    __build__,\n    __cake__,\n    __copyright__,\n    __description__,\n    __license__,\n    __title__,\n    __url__,\n    __version__,\n)\nfrom .api import delete, get, head, options, patch, post, put, request\nfrom .exceptions import (\n    ConnectionError,\n    ConnectTimeout,\n    FileModeWarning,\n    HTTPError,\n    JSONDecodeError,\n    ReadTimeout,\n    RequestException,\n    Timeout,\n    TooManyRedirects,\n    URLRequired,\n)\nfrom .models import PreparedRequest, Request, Response\nfrom .sessions import Session, session\nfrom .status_codes import codes\n\nlogging.getLogger(__name__).addHandler(NullHandler())\n\n# FileModeWarnings go off per the default.\nwarnings.simplefilter(\"default\", FileModeWarning, append=True)\n\n",
+      "records": {
+        "relationships": [
+          {
+            "id": "2376",
+            "source": "TESTTIMEOUT.TEST_NONE_TIMEOUT",
+            "target": "HTTPBIN",
+            "description": "CALLS, the test executes `httpbin(\"get\")`; the fixture definition is not visible.",
+            "weight": "8.0",
+            "links": "1",
+            "in_context": true
+          },
+          {
+            "id": "2335",
+            "source": "TESTTIMEOUT.TEST_NONE_TIMEOUT",
+            "target": "REQUESTS.GET",
+            "description": "CALLS, the test executes `requests.get(httpbin(\"get\"), timeout=timeout)` and asserts status 200.",
+            "weight": "10.0",
+            "links": "1",
+            "in_context": true
+          },
+          {
+            "id": "2333",
+            "source": "TESTTIMEOUT.TEST_NONE_TIMEOUT",
+            "target": "PYTEST.MARK.PARAMETRIZE",
+            "description": "CALLS, the decorator supplies `None` and `Urllib3Timeout(connect=None, read=None)` cases.",
+            "weight": "10.0",
+            "links": "1",
+            "in_context": true
+          },
+          {
+            "id": "2322",
+            "source": "TESTTIMEOUT",
+            "target": "TESTTIMEOUT.TEST_NONE_TIMEOUT",
+            "description": "DEFINES, the test class contains the visibly defined test method `test_none_timeout`.",
+            "weight": "10.0",
+            "links": "1",
+            "in_context": true
+          },
+          {
+            "id": "2334",
+            "source": "TESTTIMEOUT.TEST_NONE_TIMEOUT",
+            "target": "URLLIB3TIMEOUT",
+            "description": "CALLS, the parametrization constructs `Urllib3Timeout(connect=None, read=None)`.",
+            "weight": "9.0",
+            "links": "1",
+            "in_context": true
+          }
+        ],
+        "entities": [
+          {
+            "id": "1379",
+            "entity": "TESTTIMEOUT.TEST_NONE_TIMEOUT",
+            "description": "The parametrized test method `test_none_timeout` is defined here; it calls `requests.get(..., timeout=timeout)` for `None` or `Urllib3Timeout(connect=None, read=None)` and asserts `r.status_code == 200`.",
+            "number of relationships": "5",
+            "in_context": true
+          },
+          {
+            "id": "1378",
+            "entity": "TESTTIMEOUT.TEST_INVALID_TIMEOUT",
+            "description": "The parametrized test method `test_invalid_timeout` is defined here; it calls `requests.get` with invalid timeout values and asserts `ValueError` plus the expected text.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "1376",
+            "entity": "TESTTIMEOUT",
+            "description": "The test class `TestTimeout` is defined here and groups request timeout tests.",
+            "number of relationships": "7",
+            "in_context": true
+          },
+          {
+            "id": "1381",
+            "entity": "TESTTIMEOUT.TEST_CONNECT_TIMEOUT",
+            "description": "The parametrized test method `test_connect_timeout` is defined here; it expects a request to `TARPIT` to raise `ConnectTimeout` and asserts the exception is also a `ConnectionError` and `Timeout`.",
+            "number of relationships": "4",
+            "in_context": true
+          },
+          {
+            "id": "256",
+            "entity": "TIMEOUT",
+            "description": "`TIMEOUT` refers to the `Timeout` exception symbol used in the codebase. It is imported from the local `.exceptions` module in some contexts and from `requests.exceptions` in another. The symbol is referenced in an `isinstance` assertion, while one import has no visible usage in the provided code. Its definition is not included in the available excerpts.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "1382",
+            "entity": "TESTTIMEOUT.TEST_TOTAL_TIMEOUT_CONNECT",
+            "description": "The parametrized test method `test_total_timeout_connect` is defined here; it expects a request to `TARPIT` to raise `ConnectTimeout`, otherwise calling `pytest.fail`.",
+            "number of relationships": "4",
+            "in_context": true
+          },
+          {
+            "id": "1377",
+            "entity": "TESTTIMEOUT.TEST_STREAM_TIMEOUT",
+            "description": "The test method `test_stream_timeout` is defined here; it calls `requests.get(httpbin(\"delay/10\"), timeout=2.0)` and asserts the nested timeout error text contains `Read timed out` when `requests.exceptions.Timeout` is raised.",
+            "number of relationships": "4",
+            "in_context": true
+          },
+          {
+            "id": "1380",
+            "entity": "TESTTIMEOUT.TEST_READ_TIMEOUT",
+            "description": "The parametrized test method `test_read_timeout` is defined here; it expects `requests.get` against `httpbin(\"delay/10\")` to raise `ReadTimeout`, otherwise calling `pytest.fail`.",
+            "number of relationships": "5",
+            "in_context": true
+          },
+          {
+            "id": "1445",
+            "entity": "TESTTESTSERVER.TEST_REQUESTS_AFTER_TIMEOUT_ARE_NOT_RECEIVED",
+            "description": "The test method `TestTestServer.test_requests_after_timeout_are_not_received`; configures `request_timeout=1`, waits 1.5 seconds before sending data, and asserts `server.handler_results[0] == b\"\"`.",
+            "number of relationships": "7",
+            "in_context": true
+          },
+          {
+            "id": "1486",
+            "entity": "TESTTOKEYVALLIST.TEST_VALID",
+            "description": "Visible parameterized test asserting list, tuple, dictionary, and `None` inputs produce the shown expected normalized values.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "1341",
+            "entity": "TEST_CUSTOM_REDIRECT_MIXIN",
+            "description": "The test method `test_custom_redirect_mixin` is defined here. It creates malformed redirect URLs, uses a locally defined custom session, performs a request, and asserts the redirect history, status codes, redirect flags, and final URL.",
+            "number of relationships": "4",
+            "in_context": true
+          },
+          {
+            "id": "1129",
+            "entity": "TEST_HEADERS_ON_SESSION_WITH_NONE_ARE_NOT_SENT",
+            "description": "The test function `test_headers_on_session_with_None_are_not_sent` is defined here. It assigns `None` to `ses.headers[\"Accept-Encoding\"]`, prepares a request, and asserts that header is absent from `prep.headers`.",
+            "number of relationships": "4",
+            "in_context": true
+          },
+          {
+            "id": "339",
+            "entity": "DEFAULT_POOL_TIMEOUT",
+            "description": "Module constant defined as `None`; its value is visible but no use occurs in this chunk.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "1368",
+            "entity": "TESTMORSELTOCOOKIEEXPIRES.TEST_EXPIRES_NONE",
+            "description": "The test method `TestMorselToCookieExpires.test_expires_none` is defined here. It sets `Morsel[\"expires\"]` to `None`, calls `morsel_to_cookie`, and asserts `cookie.expires is None`.",
+            "number of relationships": "3",
+            "in_context": true
+          },
+          {
+            "id": "1139",
+            "entity": "TEST_ERRORS",
+            "description": "The parameterized test function `test_errors(self, url, exception)` is defined here and asserts that `requests.get(url, timeout=1)` raises the supplied `exception` for an unknown domain, invalid port, or unparsable URL.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "1128",
+            "entity": "TEST_HISTORY_IS_ALWAYS_A_LIST",
+            "description": "The test function `test_history_is_always_a_list` is defined here. It asserts `Response.history` is a list for both a direct response and a redirect response, and is not a tuple.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "314",
+            "entity": "TIMEOUTSAUCE",
+            "description": "TIMEOUTSAUCE, also spelled `TimeoutSauce`, is an imported alias for `urllib3.util.Timeout`. It is explicitly referenced in the code to construct or recognize timeout objects, including instances configured with separate connection and read durations such as `TimeoutSauce(connect=..., read=...)`. Its underlying definition is not visible in the provided context.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "151",
+            "entity": "REQUESTS.EXCEPTIONS.TIMEOUT",
+            "description": "`requests.exceptions.Timeout` is an externally defined exception class in the Requests library. It is raised when an HTTP request exceeds its allowed time limit or otherwise times out. The class is explicitly referenced in timeout examples and documentation, although its implementation is not shown in the available context.",
+            "number of relationships": "3",
+            "in_context": true
+          },
+          {
+            "id": "1111",
+            "entity": "PYTEST.FAIL",
+            "description": "PYTEST.FAIL refers to the unresolved callable `pytest.fail`. It is used in tests to explicitly fail when expected behavior does not occur, including when a redirect test fails to raise `TooManyRedirects` or when an expected timeout exception is not raised. The definition of `pytest.fail` is not visible in the provided context.",
+            "number of relationships": "5",
+            "in_context": true
+          }
+        ],
+        "sources": [
+          {
+            "id": "98",
+            "text": "\n        morsel = Morsel()\n        morsel[\"expires\"] = None\n        cookie = morsel_to_cookie(morsel)\n        assert cookie.expires is None\n\n\nclass TestMorselToCookieMaxAge:\n\n    \"\"\"Tests for morsel_to_cookie when morsel contains max-age.\"\"\"\n\n    def test_max_age_valid_int(self):\n        \"\"\"Test case where a valid max age in seconds is passed.\"\"\"\n\n        morsel = Morsel()\n        morsel[\"max-age\"] = 60\n        cookie = morsel_to_cookie(morsel)\n        assert isinstance(cookie.expires, int)\n\n    def test_max_age_invalid_str(self):\n        \"\"\"Test case where a invalid max age is passed.\"\"\"\n\n        morsel = Morsel()\n        morsel[\"max-age\"] = \"woops\"\n        with pytest.raises(TypeError):\n            morsel_to_cookie(morsel)\n\n\nclass TestTimeout:\n    def test_stream_timeout(self, httpbin):\n        try:\n            requests.get(httpbin(\"delay/10\"), timeout=2.0)\n        except requests.exceptions.Timeout as e:\n            assert \"Read timed out\" in e.args[0].args[0]\n\n    @pytest.mark.parametrize(\n        \"timeout, error_text\",\n        (\n            ((3, 4, 5), \"(connect, read)\"),\n            (\"foo\", \"must be an int, float or None\"),\n        ),\n    )\n    def test_invalid_timeout(self, httpbin, timeout, error_text):\n        with pytest.raises(ValueError) as e:\n            requests.get(httpbin(\"get\"), timeout=timeout)\n        assert error_text in str(e)\n\n    @pytest.mark.parametrize(\"timeout\", (None, Urllib3Timeout(connect=None, read=None)))\n    def test_none_timeout(self, httpbin, timeout):\n        \"\"\"Check that you can set None as a valid timeout value.\n\n        To actually test this behavior, we'd want to check that setting the\n        timeout to None actually lets the request block past the system default\n        timeout. However, this would make the test suite unbearably slow.\n        Instead we verify that setting the timeout to None does not prevent the\n        request from succeeding.\n        \"\"\"\n        r = requests.get(httpbin(\"get\"), timeout=timeout)\n        assert r.status_code == 200\n\n    @pytest.mark.parametrize(\n        \"timeout\", ((None, 0.1), Urllib3Timeout(connect=None, read=0.1))\n    )\n    def test_read_timeout(self, httpbin, timeout):\n        try:\n            requests.get(httpbin(\"delay/10\"), timeout=timeout)\n            pytest.fail(\"The recv() request should time out.\")\n        except ReadTimeout:\n            pass\n\n    @pytest.mark.parametrize(\n        \"timeout\", ((0.1, None), Urllib3Timeout(connect=0.1, read=None))\n    )\n    def test_connect_timeout(self, timeout):\n        try:\n            requests.get(TARPIT, timeout=timeout)\n            pytest.fail(\"The connect() request should time out.\")\n        except ConnectTimeout as e:\n            assert isinstance(e, ConnectionError)\n            assert isinstance(e, Timeout)\n\n    @pytest.mark.parametrize(\n        \"timeout\", ((0.1, 0.1), Urllib3Timeout(connect=0.1, read=0.1))\n    )\n    def test_total_timeout_connect(self, timeout):\n        try:\n            requests.get(TARPIT, timeout=timeout)\n            pytest.fail(\"The connect() request should time out.\")\n        except ConnectTimeout:\n            pass\n\n    def test_encoded_methods(self, httpbin):\n        \"\"\"See: https://github.com/psf/requests/issues/2316\"\"\"\n        r = requests.request(b\"GET\", httpbin(\"get\"))\n        assert r.ok\n\n\nSendCall = collections.namedtuple(\"SendCall\", (\"args\", \"kwargs\"))\n\n\nclass RedirectSession(SessionRedirectMixin):\n    def __init__(self, order_of_redirects):\n        self.redirects = order_of_redirects\n        self.calls = []\n        self.max_redirects = 30\n        self.cookies = {}\n        self.trust_env = False\n\n    def send(self, *args, **kwargs):\n        self.calls.append(SendCall(args, kwargs))\n        return self.build_response()\n\n    def build_response(self):\n        request = self.calls[-1].args[0]\n        r = requests.Response()\n\n        try:\n            r.status_code = int(self.redirects.pop(0))\n        except IndexError:\n            r.status_code = 200\n\n        r.headers = CaseInsensitiveDict({\"Location\": \"/\"})\n        r.raw = self._build_raw()\n        r.request = request\n        return r\n\n    def _build_raw(self):\n        string = StringIO.StringIO(\"\")\n        setattr(string, \"release_conn\", lambda *args: args)\n        return string\n\n\ndef test_json_encodes_as_bytes():\n    # urllib3 expects bodies as bytes-like objects\n    body = {\"key\": \"value\"}\n    p = PreparedRequest()\n    p.prepare(method=\"GET\", url=\"https://www.example.com/\", json=body)\n    assert isinstance(p.body, bytes)\n\n\ndef test_requests_are_updated_each_time(httpbin):\n    session = RedirectSession([303, 307])\n    prep = requests.Request(\"POST\", httpbin(\"post\")).prepare()\n    r0 = session.send(prep)\n    assert r0.request.method == \"POST\"\n    assert session.calls[-1] == SendCall((r0.request,), {})\n    redirect_generator = session.resolve_redirects(r0, prep)\n    default_keyword_args = {\n        \"stream\": False,\n        \"verify\": True,\n        \"cert\": None,\n        \"timeout\": None,\n        \"allow_redirects\": False,\n        \"proxies\": {},\n    }\n    for response in redirect_generator:\n        assert response.request.method == \"GET\"\n"
+          },
+          {
+            "id": "21",
+            "text": "    __build__,\n    __cake__,\n    __copyright__,\n    __description__,\n    __license__,\n    __title__,\n    __url__,\n    __version__,\n)\nfrom .api import delete, get, head, options, patch, post, put, request\nfrom .exceptions import (\n    ConnectionError,\n    ConnectTimeout,\n    FileModeWarning,\n    HTTPError,\n    JSONDecodeError,\n    ReadTimeout,\n    RequestException,\n    Timeout,\n    TooManyRedirects,\n    URLRequired,\n)\nfrom .models import PreparedRequest, Request, Response\nfrom .sessions import Session, session\nfrom .status_codes import codes\n\nlogging.getLogger(__name__).addHandler(NullHandler())\n\n# FileModeWarnings go off per the default.\nwarnings.simplefilter(\"default\", FileModeWarning, append=True)\n"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "short_id": "98",
+          "text_unit_id": "37da1205bca9087f81a5c28961b6f3e9fcfb816c1df9548c0c78121eefb7a5339080dac11060a9f200ad5f13680ea1ef2ee84f58a37a882d9421cf8bda50fe42",
+          "id": "574528d297ed1664e6a804d14629633481f9f2b3e89563c941369817db6f6da6",
+          "title": "tests/test_requests.py:L2414-L2570",
+          "path": "tests/test_requests.py",
+          "start_line": 2414,
+          "end_line": 2570,
+          "tokens": 1194,
+          "text_sha256": "6ffb5e997dcbd4a151e6ae33980ecfc81e2ffea9bd71368c7bb8589ca418c8e3",
+          "ms_text_unit_id": "37da1205bca9087f81a5c28961b6f3e9fcfb816c1df9548c0c78121eefb7a5339080dac11060a9f200ad5f13680ea1ef2ee84f58a37a882d9421cf8bda50fe42"
+        },
+        {
+          "short_id": "21",
+          "text_unit_id": "e4d16b03bbebbab7887e98b56beb2a1f42973152e06e0aba30b7afb4127ca9fdb4bd1959c3654263a278094012aba9f4bd428b408450a05216d06496ed3bbb63",
+          "id": "786110695dad7aa24c7b42bb5a97659e96566b413277aacefec8285c7cc7836e",
+          "title": "src/requests/__init__.py:L155-L184",
+          "path": "src/requests/__init__.py",
+          "start_line": 155,
+          "end_line": 184,
+          "tokens": 163,
+          "text_sha256": "09118c16491f4da4c52ef5cd4adc11cf4e5714263ec05a6f4b5018fe2b2ed1c5",
+          "ms_text_unit_id": "e4d16b03bbebbab7887e98b56beb2a1f42973152e06e0aba30b7afb4127ca9fdb4bd1959c3654263a278094012aba9f4bd428b408450a05216d06496ed3bbb63"
+        }
+      ],
+      "source_text_tokens": 1357,
+      "context_tokens": 2794,
+      "evidence_key": "ba49a59a818063bfe1bf8711945229f42f7d22c30fd038c9a68bfe843d737df8",
+      "read_occurrences": 1
+    },
+    {
+      "stage": "local",
+      "query": "Which tests currently cover omitted timeout, explicit timeout=None, and float or (connect, read) values?",
+      "context": "-----Entities-----\nid|entity|description|number of relationships\n1381|TESTTIMEOUT.TEST_CONNECT_TIMEOUT|The parametrized test method `test_connect_timeout` is defined here; it expects a request to `TARPIT` to raise `ConnectTimeout` and asserts the exception is also a `ConnectionError` and `Timeout`.|4\n1379|TESTTIMEOUT.TEST_NONE_TIMEOUT|The parametrized test method `test_none_timeout` is defined here; it calls `requests.get(..., timeout=timeout)` for `None` or `Urllib3Timeout(connect=None, read=None)` and asserts `r.status_code == 200`.|5\n1382|TESTTIMEOUT.TEST_TOTAL_TIMEOUT_CONNECT|The parametrized test method `test_total_timeout_connect` is defined here; it expects a request to `TARPIT` to raise `ConnectTimeout`, otherwise calling `pytest.fail`.|4\n1377|TESTTIMEOUT.TEST_STREAM_TIMEOUT|\"The test method `test_stream_timeout` is defined here; it calls `requests.get(httpbin(\"\"delay/10\"\"), timeout=2.0)` and asserts the nested timeout error text contains `Read timed out` when `requests.exceptions.Timeout` is raised.\"|4\n1378|TESTTIMEOUT.TEST_INVALID_TIMEOUT|The parametrized test method `test_invalid_timeout` is defined here; it calls `requests.get` with invalid timeout values and asserts `ValueError` plus the expected text.|6\n1380|TESTTIMEOUT.TEST_READ_TIMEOUT|\"The parametrized test method `test_read_timeout` is defined here; it expects `requests.get` against `httpbin(\"\"delay/10\"\")` to raise `ReadTimeout`, otherwise calling `pytest.fail`.\"|5\n250|CONNECTTIMEOUT|CONNECTTIMEOUT, referenced in code as `ConnectTimeout`, is an exception type used to represent connection timeout failures. It is imported from `.exceptions` in several contexts and from `requests.exceptions` in another, although its definition and definitive owning module are not visible in the available code. The symbol is used as an expected exception type and is explicitly raised as `ConnectTimeout(e, request=request)` when a `MaxRetryError` is caused by a `ConnectTimeoutError`, except when the underlying reason is a `NewConnectionError`. Some occurrences show no visible use beyond the import.|5\n1376|TESTTIMEOUT|The test class `TestTimeout` is defined here and groups request timeout tests.|7\n256|TIMEOUT|`TIMEOUT` refers to the `Timeout` exception symbol used in the codebase. It is imported from the local `.exceptions` module in some contexts and from `requests.exceptions` in another. The symbol is referenced in an `isinstance` assertion, while one import has no visible usage in the provided code. Its definition is not included in the available excerpts.|6\n1445|TESTTESTSERVER.TEST_REQUESTS_AFTER_TIMEOUT_ARE_NOT_RECEIVED|\"The test method `TestTestServer.test_requests_after_timeout_are_not_received`; configures `request_timeout=1`, waits 1.5 seconds before sending data, and asserts `server.handler_results[0] == b\"\"\"\"`.\"|7\n254|READTIMEOUT|READTIMEOUT, also written as `ReadTimeout`, is an exception symbol used across the referenced code. It is imported from a local `.exceptions` module in some contexts and from `requests.exceptions` in another. Its definition is not visible in the provided code. `ReadTimeout` is referenced as an expected exception type and used as a constructor in `raise ReadTimeout(e, request=request)`, while some occurrences show no visible use beyond the import.|4\n314|TIMEOUTSAUCE|TIMEOUTSAUCE, also spelled `TimeoutSauce`, is an imported alias for `urllib3.util.Timeout`. It is explicitly referenced in the code to construct or recognize timeout objects, including instances configured with separate connection and read durations such as `TimeoutSauce(connect=..., read=...)`. Its underlying definition is not visible in the provided context.|1\n1021|CONSUME_SOCKET_CONTENT|CONSUME_SOCKET_CONTENT is an external callable used to consume or read request data from a socket. It is invoked as `consume_socket_content(sock, timeout=0.5)`, passing a socket object and a visible timeout of 0.5 seconds. The callable is typically used within nested socket response handlers, including `response_handler(sock)`, to read incoming socket bytes or content. Its symbol is imported from a test server module, referenced variously as `.testserver.server` or `tests.testserver.server`. Its implementation is not defined or visible in the available code.|14\n339|DEFAULT_POOL_TIMEOUT|Module constant defined as `None`; its value is visible but no use occurs in this chunk.|1\n1451|TIME.SLEEP|The explicitly referenced callable `time.sleep`; its definition is not visible and is called with `2.5` or `1.5` seconds in waiting and timeout tests.|3\n1139|TEST_ERRORS|The parameterized test function `test_errors(self, url, exception)` is defined here and asserts that `requests.get(url, timeout=1)` raises the supplied `exception` for an unknown domain, invalid port, or unparsable URL.|1\n151|REQUESTS.EXCEPTIONS.TIMEOUT|`requests.exceptions.Timeout` is an externally defined exception class in the Requests library. It is raised when an HTTP request exceeds its allowed time limit or otherwise times out. The class is explicitly referenced in timeout examples and documentation, although its implementation is not shown in the available context.|3\n\n-----Relationships-----\nid|source|target|description|weight|links\n2340|TESTTIMEOUT.TEST_CONNECT_TIMEOUT|REQUESTS.GET|CALLS, the test executes `requests.get(TARPIT, timeout=timeout)` and expects `ConnectTimeout`.|10.0|1\n2339|TESTTIMEOUT.TEST_CONNECT_TIMEOUT|PYTEST.MARK.PARAMETRIZE|CALLS, the decorator supplies connect-timeout cases including `Urllib3Timeout(connect=0.1, read=None)`.|10.0|1\n2324|TESTTIMEOUT|TESTTIMEOUT.TEST_CONNECT_TIMEOUT|DEFINES, the test class contains the visibly defined test method `test_connect_timeout`.|10.0|1\n2341|TESTTIMEOUT.TEST_CONNECT_TIMEOUT|PYTEST.FAIL|\"CALLS, the test calls `pytest.fail(\"\"The connect() request should time out.\"\")` if no timeout occurs.\"|10.0|1\n\n-----Sources-----\nid|source|text\n98|tests/test_requests.py:L2414-L2570|\"\n        morsel = Morsel()\n        morsel[\"\"expires\"\"] = None\n        cookie = morsel_to_cookie(morsel)\n        assert cookie.expires is None\n\n\nclass TestMorselToCookieMaxAge:\n\n    \"\"\"\"\"\"Tests for morsel_to_cookie when morsel contains max-age.\"\"\"\"\"\"\n\n    def test_max_age_valid_int(self):\n        \"\"\"\"\"\"Test case where a valid max age in seconds is passed.\"\"\"\"\"\"\n\n        morsel = Morsel()\n        morsel[\"\"max-age\"\"] = 60\n        cookie = morsel_to_cookie(morsel)\n        assert isinstance(cookie.expires, int)\n\n    def test_max_age_invalid_str(self):\n        \"\"\"\"\"\"Test case where a invalid max age is passed.\"\"\"\"\"\"\n\n        morsel = Morsel()\n        morsel[\"\"max-age\"\"] = \"\"woops\"\"\n        with pytest.raises(TypeError):\n            morsel_to_cookie(morsel)\n\n\nclass TestTimeout:\n    def test_stream_timeout(self, httpbin):\n        try:\n            requests.get(httpbin(\"\"delay/10\"\"), timeout=2.0)\n        except requests.exceptions.Timeout as e:\n            assert \"\"Read timed out\"\" in e.args[0].args[0]\n\n    @pytest.mark.parametrize(\n        \"\"timeout, error_text\"\",\n        (\n            ((3, 4, 5), \"\"(connect, read)\"\"),\n            (\"\"foo\"\", \"\"must be an int, float or None\"\"),\n        ),\n    )\n    def test_invalid_timeout(self, httpbin, timeout, error_text):\n        with pytest.raises(ValueError) as e:\n            requests.get(httpbin(\"\"get\"\"), timeout=timeout)\n        assert error_text in str(e)\n\n    @pytest.mark.parametrize(\"\"timeout\"\", (None, Urllib3Timeout(connect=None, read=None)))\n    def test_none_timeout(self, httpbin, timeout):\n        \"\"\"\"\"\"Check that you can set None as a valid timeout value.\n\n        To actually test this behavior, we'd want to check that setting the\n        timeout to None actually lets the request block past the system default\n        timeout. However, this would make the test suite unbearably slow.\n        Instead we verify that setting the timeout to None does not prevent the\n        request from succeeding.\n        \"\"\"\"\"\"\n        r = requests.get(httpbin(\"\"get\"\"), timeout=timeout)\n        assert r.status_code == 200\n\n    @pytest.mark.parametrize(\n        \"\"timeout\"\", ((None, 0.1), Urllib3Timeout(connect=None, read=0.1))\n    )\n    def test_read_timeout(self, httpbin, timeout):\n        try:\n            requests.get(httpbin(\"\"delay/10\"\"), timeout=timeout)\n            pytest.fail(\"\"The recv() request should time out.\"\")\n        except ReadTimeout:\n            pass\n\n    @pytest.mark.parametrize(\n        \"\"timeout\"\", ((0.1, None), Urllib3Timeout(connect=0.1, read=None))\n    )\n    def test_connect_timeout(self, timeout):\n        try:\n            requests.get(TARPIT, timeout=timeout)\n            pytest.fail(\"\"The connect() request should time out.\"\")\n        except ConnectTimeout as e:\n            assert isinstance(e, ConnectionError)\n            assert isinstance(e, Timeout)\n\n    @pytest.mark.parametrize(\n        \"\"timeout\"\", ((0.1, 0.1), Urllib3Timeout(connect=0.1, read=0.1))\n    )\n    def test_total_timeout_connect(self, timeout):\n        try:\n            requests.get(TARPIT, timeout=timeout)\n            pytest.fail(\"\"The connect() request should time out.\"\")\n        except ConnectTimeout:\n            pass\n\n    def test_encoded_methods(self, httpbin):\n        \"\"\"\"\"\"See: https://github.com/psf/requests/issues/2316\"\"\"\"\"\"\n        r = requests.request(b\"\"GET\"\", httpbin(\"\"get\"\"))\n        assert r.ok\n\n\nSendCall = collections.namedtuple(\"\"SendCall\"\", (\"\"args\"\", \"\"kwargs\"\"))\n\n\nclass RedirectSession(SessionRedirectMixin):\n    def __init__(self, order_of_redirects):\n        self.redirects = order_of_redirects\n        self.calls = []\n        self.max_redirects = 30\n        self.cookies = {}\n        self.trust_env = False\n\n    def send(self, *args, **kwargs):\n        self.calls.append(SendCall(args, kwargs))\n        return self.build_response()\n\n    def build_response(self):\n        request = self.calls[-1].args[0]\n        r = requests.Response()\n\n        try:\n            r.status_code = int(self.redirects.pop(0))\n        except IndexError:\n            r.status_code = 200\n\n        r.headers = CaseInsensitiveDict({\"\"Location\"\": \"\"/\"\"})\n        r.raw = self._build_raw()\n        r.request = request\n        return r\n\n    def _build_raw(self):\n        string = StringIO.StringIO(\"\"\"\")\n        setattr(string, \"\"release_conn\"\", lambda *args: args)\n        return string\n\n\ndef test_json_encodes_as_bytes():\n    # urllib3 expects bodies as bytes-like objects\n    body = {\"\"key\"\": \"\"value\"\"}\n    p = PreparedRequest()\n    p.prepare(method=\"\"GET\"\", url=\"\"https://www.example.com/\"\", json=body)\n    assert isinstance(p.body, bytes)\n\n\ndef test_requests_are_updated_each_time(httpbin):\n    session = RedirectSession([303, 307])\n    prep = requests.Request(\"\"POST\"\", httpbin(\"\"post\"\")).prepare()\n    r0 = session.send(prep)\n    assert r0.request.method == \"\"POST\"\"\n    assert session.calls[-1] == SendCall((r0.request,), {})\n    redirect_generator = session.resolve_redirects(r0, prep)\n    default_keyword_args = {\n        \"\"stream\"\": False,\n        \"\"verify\"\": True,\n        \"\"cert\"\": None,\n        \"\"timeout\"\": None,\n        \"\"allow_redirects\"\": False,\n        \"\"proxies\"\": {},\n    }\n    for response in redirect_generator:\n        assert response.request.method == \"\"GET\"\"\n\"\n21|src/requests/__init__.py:L155-L184|\"    __build__,\n    __cake__,\n    __copyright__,\n    __description__,\n    __license__,\n    __title__,\n    __url__,\n    __version__,\n)\nfrom .api import delete, get, head, options, patch, post, put, request\nfrom .exceptions import (\n    ConnectionError,\n    ConnectTimeout,\n    FileModeWarning,\n    HTTPError,\n    JSONDecodeError,\n    ReadTimeout,\n    RequestException,\n    Timeout,\n    TooManyRedirects,\n    URLRequired,\n)\nfrom .models import PreparedRequest, Request, Response\nfrom .sessions import Session, session\nfrom .status_codes import codes\n\nlogging.getLogger(__name__).addHandler(NullHandler())\n\n# FileModeWarnings go off per the default.\nwarnings.simplefilter(\"\"default\"\", FileModeWarning, append=True)\n\"\n",
+      "upstream_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n1381|TESTTIMEOUT.TEST_CONNECT_TIMEOUT|The parametrized test method `test_connect_timeout` is defined here; it expects a request to `TARPIT` to raise `ConnectTimeout` and asserts the exception is also a `ConnectionError` and `Timeout`.|4\n1379|TESTTIMEOUT.TEST_NONE_TIMEOUT|The parametrized test method `test_none_timeout` is defined here; it calls `requests.get(..., timeout=timeout)` for `None` or `Urllib3Timeout(connect=None, read=None)` and asserts `r.status_code == 200`.|5\n1382|TESTTIMEOUT.TEST_TOTAL_TIMEOUT_CONNECT|The parametrized test method `test_total_timeout_connect` is defined here; it expects a request to `TARPIT` to raise `ConnectTimeout`, otherwise calling `pytest.fail`.|4\n1377|TESTTIMEOUT.TEST_STREAM_TIMEOUT|The test method `test_stream_timeout` is defined here; it calls `requests.get(httpbin(\"delay/10\"), timeout=2.0)` and asserts the nested timeout error text contains `Read timed out` when `requests.exceptions.Timeout` is raised.|4\n1378|TESTTIMEOUT.TEST_INVALID_TIMEOUT|The parametrized test method `test_invalid_timeout` is defined here; it calls `requests.get` with invalid timeout values and asserts `ValueError` plus the expected text.|6\n1380|TESTTIMEOUT.TEST_READ_TIMEOUT|The parametrized test method `test_read_timeout` is defined here; it expects `requests.get` against `httpbin(\"delay/10\")` to raise `ReadTimeout`, otherwise calling `pytest.fail`.|5\n250|CONNECTTIMEOUT|CONNECTTIMEOUT, referenced in code as `ConnectTimeout`, is an exception type used to represent connection timeout failures. It is imported from `.exceptions` in several contexts and from `requests.exceptions` in another, although its definition and definitive owning module are not visible in the available code. The symbol is used as an expected exception type and is explicitly raised as `ConnectTimeout(e, request=request)` when a `MaxRetryError` is caused by a `ConnectTimeoutError`, except when the underlying reason is a `NewConnectionError`. Some occurrences show no visible use beyond the import.|5\n1376|TESTTIMEOUT|The test class `TestTimeout` is defined here and groups request timeout tests.|7\n256|TIMEOUT|`TIMEOUT` refers to the `Timeout` exception symbol used in the codebase. It is imported from the local `.exceptions` module in some contexts and from `requests.exceptions` in another. The symbol is referenced in an `isinstance` assertion, while one import has no visible usage in the provided code. Its definition is not included in the available excerpts.|6\n1445|TESTTESTSERVER.TEST_REQUESTS_AFTER_TIMEOUT_ARE_NOT_RECEIVED|The test method `TestTestServer.test_requests_after_timeout_are_not_received`; configures `request_timeout=1`, waits 1.5 seconds before sending data, and asserts `server.handler_results[0] == b\"\"`.|7\n254|READTIMEOUT|READTIMEOUT, also written as `ReadTimeout`, is an exception symbol used across the referenced code. It is imported from a local `.exceptions` module in some contexts and from `requests.exceptions` in another. Its definition is not visible in the provided code. `ReadTimeout` is referenced as an expected exception type and used as a constructor in `raise ReadTimeout(e, request=request)`, while some occurrences show no visible use beyond the import.|4\n314|TIMEOUTSAUCE|TIMEOUTSAUCE, also spelled `TimeoutSauce`, is an imported alias for `urllib3.util.Timeout`. It is explicitly referenced in the code to construct or recognize timeout objects, including instances configured with separate connection and read durations such as `TimeoutSauce(connect=..., read=...)`. Its underlying definition is not visible in the provided context.|1\n1021|CONSUME_SOCKET_CONTENT|CONSUME_SOCKET_CONTENT is an external callable used to consume or read request data from a socket. It is invoked as `consume_socket_content(sock, timeout=0.5)`, passing a socket object and a visible timeout of 0.5 seconds. The callable is typically used within nested socket response handlers, including `response_handler(sock)`, to read incoming socket bytes or content. Its symbol is imported from a test server module, referenced variously as `.testserver.server` or `tests.testserver.server`. Its implementation is not defined or visible in the available code.|14\n339|DEFAULT_POOL_TIMEOUT|Module constant defined as `None`; its value is visible but no use occurs in this chunk.|1\n1451|TIME.SLEEP|The explicitly referenced callable `time.sleep`; its definition is not visible and is called with `2.5` or `1.5` seconds in waiting and timeout tests.|3\n1139|TEST_ERRORS|The parameterized test function `test_errors(self, url, exception)` is defined here and asserts that `requests.get(url, timeout=1)` raises the supplied `exception` for an unknown domain, invalid port, or unparsable URL.|1\n151|REQUESTS.EXCEPTIONS.TIMEOUT|`requests.exceptions.Timeout` is an externally defined exception class in the Requests library. It is raised when an HTTP request exceeds its allowed time limit or otherwise times out. The class is explicitly referenced in timeout examples and documentation, although its implementation is not shown in the available context.|3\n\n\n-----Relationships-----\nid|source|target|description|weight|links\n2340|TESTTIMEOUT.TEST_CONNECT_TIMEOUT|REQUESTS.GET|CALLS, the test executes `requests.get(TARPIT, timeout=timeout)` and expects `ConnectTimeout`.|10.0|1\n2339|TESTTIMEOUT.TEST_CONNECT_TIMEOUT|PYTEST.MARK.PARAMETRIZE|CALLS, the decorator supplies connect-timeout cases including `Urllib3Timeout(connect=0.1, read=None)`.|10.0|1\n2324|TESTTIMEOUT|TESTTIMEOUT.TEST_CONNECT_TIMEOUT|DEFINES, the test class contains the visibly defined test method `test_connect_timeout`.|10.0|1\n2341|TESTTIMEOUT.TEST_CONNECT_TIMEOUT|PYTEST.FAIL|CALLS, the test calls `pytest.fail(\"The connect() request should time out.\")` if no timeout occurs.|10.0|1\n\n\n-----Sources-----\nid|text\n98|\n        morsel = Morsel()\n        morsel[\"expires\"] = None\n        cookie = morsel_to_cookie(morsel)\n        assert cookie.expires is None\n\n\nclass TestMorselToCookieMaxAge:\n\n    \"\"\"Tests for morsel_to_cookie when morsel contains max-age.\"\"\"\n\n    def test_max_age_valid_int(self):\n        \"\"\"Test case where a valid max age in seconds is passed.\"\"\"\n\n        morsel = Morsel()\n        morsel[\"max-age\"] = 60\n        cookie = morsel_to_cookie(morsel)\n        assert isinstance(cookie.expires, int)\n\n    def test_max_age_invalid_str(self):\n        \"\"\"Test case where a invalid max age is passed.\"\"\"\n\n        morsel = Morsel()\n        morsel[\"max-age\"] = \"woops\"\n        with pytest.raises(TypeError):\n            morsel_to_cookie(morsel)\n\n\nclass TestTimeout:\n    def test_stream_timeout(self, httpbin):\n        try:\n            requests.get(httpbin(\"delay/10\"), timeout=2.0)\n        except requests.exceptions.Timeout as e:\n            assert \"Read timed out\" in e.args[0].args[0]\n\n    @pytest.mark.parametrize(\n        \"timeout, error_text\",\n        (\n            ((3, 4, 5), \"(connect, read)\"),\n            (\"foo\", \"must be an int, float or None\"),\n        ),\n    )\n    def test_invalid_timeout(self, httpbin, timeout, error_text):\n        with pytest.raises(ValueError) as e:\n            requests.get(httpbin(\"get\"), timeout=timeout)\n        assert error_text in str(e)\n\n    @pytest.mark.parametrize(\"timeout\", (None, Urllib3Timeout(connect=None, read=None)))\n    def test_none_timeout(self, httpbin, timeout):\n        \"\"\"Check that you can set None as a valid timeout value.\n\n        To actually test this behavior, we'd want to check that setting the\n        timeout to None actually lets the request block past the system default\n        timeout. However, this would make the test suite unbearably slow.\n        Instead we verify that setting the timeout to None does not prevent the\n        request from succeeding.\n        \"\"\"\n        r = requests.get(httpbin(\"get\"), timeout=timeout)\n        assert r.status_code == 200\n\n    @pytest.mark.parametrize(\n        \"timeout\", ((None, 0.1), Urllib3Timeout(connect=None, read=0.1))\n    )\n    def test_read_timeout(self, httpbin, timeout):\n        try:\n            requests.get(httpbin(\"delay/10\"), timeout=timeout)\n            pytest.fail(\"The recv() request should time out.\")\n        except ReadTimeout:\n            pass\n\n    @pytest.mark.parametrize(\n        \"timeout\", ((0.1, None), Urllib3Timeout(connect=0.1, read=None))\n    )\n    def test_connect_timeout(self, timeout):\n        try:\n            requests.get(TARPIT, timeout=timeout)\n            pytest.fail(\"The connect() request should time out.\")\n        except ConnectTimeout as e:\n            assert isinstance(e, ConnectionError)\n            assert isinstance(e, Timeout)\n\n    @pytest.mark.parametrize(\n        \"timeout\", ((0.1, 0.1), Urllib3Timeout(connect=0.1, read=0.1))\n    )\n    def test_total_timeout_connect(self, timeout):\n        try:\n            requests.get(TARPIT, timeout=timeout)\n            pytest.fail(\"The connect() request should time out.\")\n        except ConnectTimeout:\n            pass\n\n    def test_encoded_methods(self, httpbin):\n        \"\"\"See: https://github.com/psf/requests/issues/2316\"\"\"\n        r = requests.request(b\"GET\", httpbin(\"get\"))\n        assert r.ok\n\n\nSendCall = collections.namedtuple(\"SendCall\", (\"args\", \"kwargs\"))\n\n\nclass RedirectSession(SessionRedirectMixin):\n    def __init__(self, order_of_redirects):\n        self.redirects = order_of_redirects\n        self.calls = []\n        self.max_redirects = 30\n        self.cookies = {}\n        self.trust_env = False\n\n    def send(self, *args, **kwargs):\n        self.calls.append(SendCall(args, kwargs))\n        return self.build_response()\n\n    def build_response(self):\n        request = self.calls[-1].args[0]\n        r = requests.Response()\n\n        try:\n            r.status_code = int(self.redirects.pop(0))\n        except IndexError:\n            r.status_code = 200\n\n        r.headers = CaseInsensitiveDict({\"Location\": \"/\"})\n        r.raw = self._build_raw()\n        r.request = request\n        return r\n\n    def _build_raw(self):\n        string = StringIO.StringIO(\"\")\n        setattr(string, \"release_conn\", lambda *args: args)\n        return string\n\n\ndef test_json_encodes_as_bytes():\n    # urllib3 expects bodies as bytes-like objects\n    body = {\"key\": \"value\"}\n    p = PreparedRequest()\n    p.prepare(method=\"GET\", url=\"https://www.example.com/\", json=body)\n    assert isinstance(p.body, bytes)\n\n\ndef test_requests_are_updated_each_time(httpbin):\n    session = RedirectSession([303, 307])\n    prep = requests.Request(\"POST\", httpbin(\"post\")).prepare()\n    r0 = session.send(prep)\n    assert r0.request.method == \"POST\"\n    assert session.calls[-1] == SendCall((r0.request,), {})\n    redirect_generator = session.resolve_redirects(r0, prep)\n    default_keyword_args = {\n        \"stream\": False,\n        \"verify\": True,\n        \"cert\": None,\n        \"timeout\": None,\n        \"allow_redirects\": False,\n        \"proxies\": {},\n    }\n    for response in redirect_generator:\n        assert response.request.method == \"GET\"\n\n21|    __build__,\n    __cake__,\n    __copyright__,\n    __description__,\n    __license__,\n    __title__,\n    __url__,\n    __version__,\n)\nfrom .api import delete, get, head, options, patch, post, put, request\nfrom .exceptions import (\n    ConnectionError,\n    ConnectTimeout,\n    FileModeWarning,\n    HTTPError,\n    JSONDecodeError,\n    ReadTimeout,\n    RequestException,\n    Timeout,\n    TooManyRedirects,\n    URLRequired,\n)\nfrom .models import PreparedRequest, Request, Response\nfrom .sessions import Session, session\nfrom .status_codes import codes\n\nlogging.getLogger(__name__).addHandler(NullHandler())\n\n# FileModeWarnings go off per the default.\nwarnings.simplefilter(\"default\", FileModeWarning, append=True)\n\n",
+      "records": {
+        "relationships": [
+          {
+            "id": "2340",
+            "source": "TESTTIMEOUT.TEST_CONNECT_TIMEOUT",
+            "target": "REQUESTS.GET",
+            "description": "CALLS, the test executes `requests.get(TARPIT, timeout=timeout)` and expects `ConnectTimeout`.",
+            "weight": "10.0",
+            "links": "1",
+            "in_context": true
+          },
+          {
+            "id": "2339",
+            "source": "TESTTIMEOUT.TEST_CONNECT_TIMEOUT",
+            "target": "PYTEST.MARK.PARAMETRIZE",
+            "description": "CALLS, the decorator supplies connect-timeout cases including `Urllib3Timeout(connect=0.1, read=None)`.",
+            "weight": "10.0",
+            "links": "1",
+            "in_context": true
+          },
+          {
+            "id": "2324",
+            "source": "TESTTIMEOUT",
+            "target": "TESTTIMEOUT.TEST_CONNECT_TIMEOUT",
+            "description": "DEFINES, the test class contains the visibly defined test method `test_connect_timeout`.",
+            "weight": "10.0",
+            "links": "1",
+            "in_context": true
+          },
+          {
+            "id": "2341",
+            "source": "TESTTIMEOUT.TEST_CONNECT_TIMEOUT",
+            "target": "PYTEST.FAIL",
+            "description": "CALLS, the test calls `pytest.fail(\"The connect() request should time out.\")` if no timeout occurs.",
+            "weight": "10.0",
+            "links": "1",
+            "in_context": true
+          }
+        ],
+        "entities": [
+          {
+            "id": "1381",
+            "entity": "TESTTIMEOUT.TEST_CONNECT_TIMEOUT",
+            "description": "The parametrized test method `test_connect_timeout` is defined here; it expects a request to `TARPIT` to raise `ConnectTimeout` and asserts the exception is also a `ConnectionError` and `Timeout`.",
+            "number of relationships": "4",
+            "in_context": true
+          },
+          {
+            "id": "1379",
+            "entity": "TESTTIMEOUT.TEST_NONE_TIMEOUT",
+            "description": "The parametrized test method `test_none_timeout` is defined here; it calls `requests.get(..., timeout=timeout)` for `None` or `Urllib3Timeout(connect=None, read=None)` and asserts `r.status_code == 200`.",
+            "number of relationships": "5",
+            "in_context": true
+          },
+          {
+            "id": "1382",
+            "entity": "TESTTIMEOUT.TEST_TOTAL_TIMEOUT_CONNECT",
+            "description": "The parametrized test method `test_total_timeout_connect` is defined here; it expects a request to `TARPIT` to raise `ConnectTimeout`, otherwise calling `pytest.fail`.",
+            "number of relationships": "4",
+            "in_context": true
+          },
+          {
+            "id": "1377",
+            "entity": "TESTTIMEOUT.TEST_STREAM_TIMEOUT",
+            "description": "The test method `test_stream_timeout` is defined here; it calls `requests.get(httpbin(\"delay/10\"), timeout=2.0)` and asserts the nested timeout error text contains `Read timed out` when `requests.exceptions.Timeout` is raised.",
+            "number of relationships": "4",
+            "in_context": true
+          },
+          {
+            "id": "1378",
+            "entity": "TESTTIMEOUT.TEST_INVALID_TIMEOUT",
+            "description": "The parametrized test method `test_invalid_timeout` is defined here; it calls `requests.get` with invalid timeout values and asserts `ValueError` plus the expected text.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "1380",
+            "entity": "TESTTIMEOUT.TEST_READ_TIMEOUT",
+            "description": "The parametrized test method `test_read_timeout` is defined here; it expects `requests.get` against `httpbin(\"delay/10\")` to raise `ReadTimeout`, otherwise calling `pytest.fail`.",
+            "number of relationships": "5",
+            "in_context": true
+          },
+          {
+            "id": "250",
+            "entity": "CONNECTTIMEOUT",
+            "description": "CONNECTTIMEOUT, referenced in code as `ConnectTimeout`, is an exception type used to represent connection timeout failures. It is imported from `.exceptions` in several contexts and from `requests.exceptions` in another, although its definition and definitive owning module are not visible in the available code. The symbol is used as an expected exception type and is explicitly raised as `ConnectTimeout(e, request=request)` when a `MaxRetryError` is caused by a `ConnectTimeoutError`, except when the underlying reason is a `NewConnectionError`. Some occurrences show no visible use beyond the import.",
+            "number of relationships": "5",
+            "in_context": true
+          },
+          {
+            "id": "1376",
+            "entity": "TESTTIMEOUT",
+            "description": "The test class `TestTimeout` is defined here and groups request timeout tests.",
+            "number of relationships": "7",
+            "in_context": true
+          },
+          {
+            "id": "256",
+            "entity": "TIMEOUT",
+            "description": "`TIMEOUT` refers to the `Timeout` exception symbol used in the codebase. It is imported from the local `.exceptions` module in some contexts and from `requests.exceptions` in another. The symbol is referenced in an `isinstance` assertion, while one import has no visible usage in the provided code. Its definition is not included in the available excerpts.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "1445",
+            "entity": "TESTTESTSERVER.TEST_REQUESTS_AFTER_TIMEOUT_ARE_NOT_RECEIVED",
+            "description": "The test method `TestTestServer.test_requests_after_timeout_are_not_received`; configures `request_timeout=1`, waits 1.5 seconds before sending data, and asserts `server.handler_results[0] == b\"\"`.",
+            "number of relationships": "7",
+            "in_context": true
+          },
+          {
+            "id": "254",
+            "entity": "READTIMEOUT",
+            "description": "READTIMEOUT, also written as `ReadTimeout`, is an exception symbol used across the referenced code. It is imported from a local `.exceptions` module in some contexts and from `requests.exceptions` in another. Its definition is not visible in the provided code. `ReadTimeout` is referenced as an expected exception type and used as a constructor in `raise ReadTimeout(e, request=request)`, while some occurrences show no visible use beyond the import.",
+            "number of relationships": "4",
+            "in_context": true
+          },
+          {
+            "id": "314",
+            "entity": "TIMEOUTSAUCE",
+            "description": "TIMEOUTSAUCE, also spelled `TimeoutSauce`, is an imported alias for `urllib3.util.Timeout`. It is explicitly referenced in the code to construct or recognize timeout objects, including instances configured with separate connection and read durations such as `TimeoutSauce(connect=..., read=...)`. Its underlying definition is not visible in the provided context.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "1021",
+            "entity": "CONSUME_SOCKET_CONTENT",
+            "description": "CONSUME_SOCKET_CONTENT is an external callable used to consume or read request data from a socket. It is invoked as `consume_socket_content(sock, timeout=0.5)`, passing a socket object and a visible timeout of 0.5 seconds. The callable is typically used within nested socket response handlers, including `response_handler(sock)`, to read incoming socket bytes or content. Its symbol is imported from a test server module, referenced variously as `.testserver.server` or `tests.testserver.server`. Its implementation is not defined or visible in the available code.",
+            "number of relationships": "14",
+            "in_context": true
+          },
+          {
+            "id": "339",
+            "entity": "DEFAULT_POOL_TIMEOUT",
+            "description": "Module constant defined as `None`; its value is visible but no use occurs in this chunk.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "1451",
+            "entity": "TIME.SLEEP",
+            "description": "The explicitly referenced callable `time.sleep`; its definition is not visible and is called with `2.5` or `1.5` seconds in waiting and timeout tests.",
+            "number of relationships": "3",
+            "in_context": true
+          },
+          {
+            "id": "1139",
+            "entity": "TEST_ERRORS",
+            "description": "The parameterized test function `test_errors(self, url, exception)` is defined here and asserts that `requests.get(url, timeout=1)` raises the supplied `exception` for an unknown domain, invalid port, or unparsable URL.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "151",
+            "entity": "REQUESTS.EXCEPTIONS.TIMEOUT",
+            "description": "`requests.exceptions.Timeout` is an externally defined exception class in the Requests library. It is raised when an HTTP request exceeds its allowed time limit or otherwise times out. The class is explicitly referenced in timeout examples and documentation, although its implementation is not shown in the available context.",
+            "number of relationships": "3",
+            "in_context": true
+          }
+        ],
+        "sources": [
+          {
+            "id": "98",
+            "text": "\n        morsel = Morsel()\n        morsel[\"expires\"] = None\n        cookie = morsel_to_cookie(morsel)\n        assert cookie.expires is None\n\n\nclass TestMorselToCookieMaxAge:\n\n    \"\"\"Tests for morsel_to_cookie when morsel contains max-age.\"\"\"\n\n    def test_max_age_valid_int(self):\n        \"\"\"Test case where a valid max age in seconds is passed.\"\"\"\n\n        morsel = Morsel()\n        morsel[\"max-age\"] = 60\n        cookie = morsel_to_cookie(morsel)\n        assert isinstance(cookie.expires, int)\n\n    def test_max_age_invalid_str(self):\n        \"\"\"Test case where a invalid max age is passed.\"\"\"\n\n        morsel = Morsel()\n        morsel[\"max-age\"] = \"woops\"\n        with pytest.raises(TypeError):\n            morsel_to_cookie(morsel)\n\n\nclass TestTimeout:\n    def test_stream_timeout(self, httpbin):\n        try:\n            requests.get(httpbin(\"delay/10\"), timeout=2.0)\n        except requests.exceptions.Timeout as e:\n            assert \"Read timed out\" in e.args[0].args[0]\n\n    @pytest.mark.parametrize(\n        \"timeout, error_text\",\n        (\n            ((3, 4, 5), \"(connect, read)\"),\n            (\"foo\", \"must be an int, float or None\"),\n        ),\n    )\n    def test_invalid_timeout(self, httpbin, timeout, error_text):\n        with pytest.raises(ValueError) as e:\n            requests.get(httpbin(\"get\"), timeout=timeout)\n        assert error_text in str(e)\n\n    @pytest.mark.parametrize(\"timeout\", (None, Urllib3Timeout(connect=None, read=None)))\n    def test_none_timeout(self, httpbin, timeout):\n        \"\"\"Check that you can set None as a valid timeout value.\n\n        To actually test this behavior, we'd want to check that setting the\n        timeout to None actually lets the request block past the system default\n        timeout. However, this would make the test suite unbearably slow.\n        Instead we verify that setting the timeout to None does not prevent the\n        request from succeeding.\n        \"\"\"\n        r = requests.get(httpbin(\"get\"), timeout=timeout)\n        assert r.status_code == 200\n\n    @pytest.mark.parametrize(\n        \"timeout\", ((None, 0.1), Urllib3Timeout(connect=None, read=0.1))\n    )\n    def test_read_timeout(self, httpbin, timeout):\n        try:\n            requests.get(httpbin(\"delay/10\"), timeout=timeout)\n            pytest.fail(\"The recv() request should time out.\")\n        except ReadTimeout:\n            pass\n\n    @pytest.mark.parametrize(\n        \"timeout\", ((0.1, None), Urllib3Timeout(connect=0.1, read=None))\n    )\n    def test_connect_timeout(self, timeout):\n        try:\n            requests.get(TARPIT, timeout=timeout)\n            pytest.fail(\"The connect() request should time out.\")\n        except ConnectTimeout as e:\n            assert isinstance(e, ConnectionError)\n            assert isinstance(e, Timeout)\n\n    @pytest.mark.parametrize(\n        \"timeout\", ((0.1, 0.1), Urllib3Timeout(connect=0.1, read=0.1))\n    )\n    def test_total_timeout_connect(self, timeout):\n        try:\n            requests.get(TARPIT, timeout=timeout)\n            pytest.fail(\"The connect() request should time out.\")\n        except ConnectTimeout:\n            pass\n\n    def test_encoded_methods(self, httpbin):\n        \"\"\"See: https://github.com/psf/requests/issues/2316\"\"\"\n        r = requests.request(b\"GET\", httpbin(\"get\"))\n        assert r.ok\n\n\nSendCall = collections.namedtuple(\"SendCall\", (\"args\", \"kwargs\"))\n\n\nclass RedirectSession(SessionRedirectMixin):\n    def __init__(self, order_of_redirects):\n        self.redirects = order_of_redirects\n        self.calls = []\n        self.max_redirects = 30\n        self.cookies = {}\n        self.trust_env = False\n\n    def send(self, *args, **kwargs):\n        self.calls.append(SendCall(args, kwargs))\n        return self.build_response()\n\n    def build_response(self):\n        request = self.calls[-1].args[0]\n        r = requests.Response()\n\n        try:\n            r.status_code = int(self.redirects.pop(0))\n        except IndexError:\n            r.status_code = 200\n\n        r.headers = CaseInsensitiveDict({\"Location\": \"/\"})\n        r.raw = self._build_raw()\n        r.request = request\n        return r\n\n    def _build_raw(self):\n        string = StringIO.StringIO(\"\")\n        setattr(string, \"release_conn\", lambda *args: args)\n        return string\n\n\ndef test_json_encodes_as_bytes():\n    # urllib3 expects bodies as bytes-like objects\n    body = {\"key\": \"value\"}\n    p = PreparedRequest()\n    p.prepare(method=\"GET\", url=\"https://www.example.com/\", json=body)\n    assert isinstance(p.body, bytes)\n\n\ndef test_requests_are_updated_each_time(httpbin):\n    session = RedirectSession([303, 307])\n    prep = requests.Request(\"POST\", httpbin(\"post\")).prepare()\n    r0 = session.send(prep)\n    assert r0.request.method == \"POST\"\n    assert session.calls[-1] == SendCall((r0.request,), {})\n    redirect_generator = session.resolve_redirects(r0, prep)\n    default_keyword_args = {\n        \"stream\": False,\n        \"verify\": True,\n        \"cert\": None,\n        \"timeout\": None,\n        \"allow_redirects\": False,\n        \"proxies\": {},\n    }\n    for response in redirect_generator:\n        assert response.request.method == \"GET\"\n"
+          },
+          {
+            "id": "21",
+            "text": "    __build__,\n    __cake__,\n    __copyright__,\n    __description__,\n    __license__,\n    __title__,\n    __url__,\n    __version__,\n)\nfrom .api import delete, get, head, options, patch, post, put, request\nfrom .exceptions import (\n    ConnectionError,\n    ConnectTimeout,\n    FileModeWarning,\n    HTTPError,\n    JSONDecodeError,\n    ReadTimeout,\n    RequestException,\n    Timeout,\n    TooManyRedirects,\n    URLRequired,\n)\nfrom .models import PreparedRequest, Request, Response\nfrom .sessions import Session, session\nfrom .status_codes import codes\n\nlogging.getLogger(__name__).addHandler(NullHandler())\n\n# FileModeWarnings go off per the default.\nwarnings.simplefilter(\"default\", FileModeWarning, append=True)\n"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "short_id": "98",
+          "text_unit_id": "37da1205bca9087f81a5c28961b6f3e9fcfb816c1df9548c0c78121eefb7a5339080dac11060a9f200ad5f13680ea1ef2ee84f58a37a882d9421cf8bda50fe42",
+          "id": "574528d297ed1664e6a804d14629633481f9f2b3e89563c941369817db6f6da6",
+          "title": "tests/test_requests.py:L2414-L2570",
+          "path": "tests/test_requests.py",
+          "start_line": 2414,
+          "end_line": 2570,
+          "tokens": 1194,
+          "text_sha256": "6ffb5e997dcbd4a151e6ae33980ecfc81e2ffea9bd71368c7bb8589ca418c8e3",
+          "ms_text_unit_id": "37da1205bca9087f81a5c28961b6f3e9fcfb816c1df9548c0c78121eefb7a5339080dac11060a9f200ad5f13680ea1ef2ee84f58a37a882d9421cf8bda50fe42"
+        },
+        {
+          "short_id": "21",
+          "text_unit_id": "e4d16b03bbebbab7887e98b56beb2a1f42973152e06e0aba30b7afb4127ca9fdb4bd1959c3654263a278094012aba9f4bd428b408450a05216d06496ed3bbb63",
+          "id": "786110695dad7aa24c7b42bb5a97659e96566b413277aacefec8285c7cc7836e",
+          "title": "src/requests/__init__.py:L155-L184",
+          "path": "src/requests/__init__.py",
+          "start_line": 155,
+          "end_line": 184,
+          "tokens": 163,
+          "text_sha256": "09118c16491f4da4c52ef5cd4adc11cf4e5714263ec05a6f4b5018fe2b2ed1c5",
+          "ms_text_unit_id": "e4d16b03bbebbab7887e98b56beb2a1f42973152e06e0aba30b7afb4127ca9fdb4bd1959c3654263a278094012aba9f4bd428b408450a05216d06496ed3bbb63"
+        }
+      ],
+      "source_text_tokens": 1357,
+      "context_tokens": 2786,
+      "evidence_key": "5b81a867cb302e70a50fff7414428383de3e6294aaa8c5f7363ee25ad015a7d3",
+      "read_occurrences": 1
+    }
+  ],
+  "decisions": [
+    {
+      "kind": "hyde_template",
+      "report_id": "b4c1523b151ff0757cb45437c2ac68d06de9e839b58cb1e7d3a9647e1ca71bcd856fc23defef3315a3a7c2130c6251b39cef9aa77ffddaad519564017d663ab7",
+      "report_content_sha256": "6d1c253b3f3af28285edee494a0e5ac53fbf23d24b91ac509fcb054382255483"
+    },
+    {
+      "kind": "adapter_arguments",
+      "stage": "hyde",
+      "request_key": "2f5665020cce6f07a2423526c019ea74a1a29c5fc999c532e5d3618f2e55987e",
+      "accepted_kwargs": [
+        "messages"
+      ],
+      "provider_parameter_policy": "Fixed provider defaults: n1, top_p1, temperature not sent; output2048. JSON/schema and stream recorded explicitly.",
+      "stream_requested_by_upstream": false
+    },
+    {
+      "kind": "structured_response",
+      "stage": "primer",
+      "request_key": "10cb7fa79dac29cd6263247131f3416b0907788bcd70d8fccbfb5ee67f2dfcec",
+      "parsed": {
+        "intermediate_answer": "# Planned Session Timeout Feature\n\nThe supplied evidence identifies `Session` as an abstraction inheriting from `SessionRedirectMixin`, and identifies `RedirectSession.send`, `RedirectSession.build_response`, and `test_requests_are_updated_each_time` as relevant redirect paths [Data: Relationships (1068, 2346, 2351, 2353, 2360)]. It does not expose the `Session` source module, `request`/`get`/`post` implementations, constructor, adapter dispatch, or documentation files. Exact file and line locations are therefore insufficiently supported.\n\n**Implementation responsibilities.** Add a per-instance mutable `Session.default_timeout`, initialized to `None`, without changing `Session` constructor arguments or introducing a global setting. The request entry point and every existing wrapper must distinguish an omitted timeout from an explicitly supplied value. A private sentinel or equivalent omission marker is the likely design, but the supplied snapshot does not establish a preferred implementation. If timeout is omitted, resolve it from the session attribute; if it is explicitly supplied, including `None`, pass that value unchanged. Preserve the existing float and `(connect, read)` forms and add no validation rules.\n\nThe direct `Session.send` contract must remain unchanged: do not silently apply the session default there unless existing code already routes `send` through the request-level resolution. Redirect handling must propagate the effective timeout on every redirected send. This matters because `RedirectSession.send` records `kwargs` in `SendCall`, while `build_response` constructs responses from the latest recorded call [Data: Entities (1384, 1388); Relationships (2351, 2353)]. The redirect tests currently cover POST requests and 303/307 sequences, but do not establish timeout assertions [Data: Entities (1391); Relationships (2360)].\n\n**Behavioral edge cases.** Cover omission versus explicit `None`, per-instance isolation, mutation after construction, positional and keyword wrapper paths, both supported timeout shapes, and redirects whose effective timeout must not disappear or be replaced. Verify that explicit values override a non-`None` default, while omission uses the current default at call time. Verify that direct `send` behavior and constructor compatibility remain stable. Do not infer authentication behavior from the redirect-authentication community; its evidence concerns `rebuild_auth` and `should_strip_auth`, not timeout propagation [Data: Entities (789, 1290-1295); Relationships (1056, 1066, 2110-2138)].\n\n**Tests and documentation.** Inspect existing `Session` request-wrapper, redirect, and `send` tests. Add focused tests for each rule above, including recorded `SendCall.kwargs` across multiple redirects and 303/307 behavior. Document that omitted timeout means “use `Session.default_timeout`,” whereas explicit `timeout=None` disables or preserves the underlying library’s existing no-timeout behavior. The snapshot supplies no documentation location or test results, so coverage and runtime correctness remain unverified.\n",
+        "score": 93,
+        "follow_up_queries": [
+          "Which source module defines Session.request, Session.get, Session.post, and the other timeout-bearing wrappers?",
+          "Where is Session.send implemented, and what direct-call contract do its existing tests assert?",
+          "How are timeout kwargs propagated by resolve_redirects and redirected PreparedRequest sends?",
+          "Which tests currently cover omitted timeout, explicit timeout=None, and float or (connect, read) values?",
+          "Where is the public Session API documentation located, and how are timeout semantics currently described?",
+          "Does the adapter or transport layer distinguish a missing timeout kwarg from an explicit None value?"
+        ]
+      },
+      "repair_applied": false
+    },
+    {
+      "kind": "adapter_arguments",
+      "stage": "primer",
+      "request_key": "10cb7fa79dac29cd6263247131f3416b0907788bcd70d8fccbfb5ee67f2dfcec",
+      "accepted_kwargs": [
+        "messages",
+        "response_format"
+      ],
+      "provider_parameter_policy": "Fixed provider defaults: n1, top_p1, temperature not sent; output2048. JSON/schema and stream recorded explicitly.",
+      "stream_requested_by_upstream": false
+    },
+    {
+      "kind": "pending_action_order",
+      "queries": [
+        "Which source module defines Session.request, Session.get, Session.post, and the other timeout-bearing wrappers?",
+        "Where is the public Session API documentation located, and how are timeout semantics currently described?",
+        "Which tests currently cover omitted timeout, explicit timeout=None, and float or (connect, read) values?",
+        "Does the adapter or transport layer distinguish a missing timeout kwarg from an explicit None value?",
+        "Where is Session.send implemented, and what direct-call contract do its existing tests assert?",
+        "How are timeout kwargs propagated by resolve_redirects and redirected PreparedRequest sends?"
+      ]
+    },
+    {
+      "kind": "structured_response",
+      "stage": "local",
+      "request_key": "27efdd71d12d930cbb9d31347dd9e9abcd4b110c071c6d3610a69705e6111c0f",
+      "parsed": {
+        "response": "The supplied snapshot does not identify the source module that defines `Session.request`, `Session.get`, `Session.post`, or the other timeout-bearing wrappers. It only shows these APIs being called through session objects and identifies `Session` generally as the Requests session class; the implementation location is not included [Data: Entities (8, 395); Sources (91)].\n\nThe evidence does show that `requests.Session()` instances call methods such as `send`, `get`, and request-related APIs, but the cited source is a test module rather than the implementation module. Therefore, naming a defining module or exact function locations would be unsupported by this snapshot [Data: Sources (91)].",
+        "score": 88,
+        "follow_up_queries": [
+          "Which files in the repository define the `Session` class and its request wrapper methods?",
+          "Where is timeout forwarding from `Session.request` and the convenience wrappers implemented and tested?"
+        ]
+      },
+      "repair_applied": false
+    },
+    {
+      "kind": "adapter_arguments",
+      "stage": "local",
+      "request_key": "27efdd71d12d930cbb9d31347dd9e9abcd4b110c071c6d3610a69705e6111c0f",
+      "accepted_kwargs": [
+        "max_completion_tokens",
+        "messages",
+        "n",
+        "response_format_json_object",
+        "stream",
+        "temperature",
+        "top_p"
+      ],
+      "provider_parameter_policy": "Fixed provider defaults: n1, top_p1, temperature not sent; output2048. JSON/schema and stream recorded explicitly.",
+      "stream_requested_by_upstream": true
+    },
+    {
+      "kind": "structured_response",
+      "stage": "local",
+      "request_key": "504d3c32e4f27444f34b099e78f1cfcff3323f5dbc5c259f69ab0ecfa58dcfc1",
+      "parsed": {
+        "response": "The supplied snapshot does not identify an exact path or URL for the public `Session` API documentation. It does establish that `requests.Session()` is used in documentation examples for configuring default headers, and that `requests.api` is the documented API module; however, the relevant documentation source location is not included in the snapshot [Data: Entities (32, 258)].\n\nThe available evidence describes timeout behavior mainly through the externally defined `requests.exceptions.Timeout` exception and the `TimeoutSauce` alias for `urllib3.util.Timeout`. `TimeoutSauce` supports separate connection and read durations, such as `TimeoutSauce(connect=..., read=...)`, while timeout tests use `time.sleep` with delays of 2.5 and 1.5 seconds [Data: Entities (151, 314, 1451)]. The snapshot also identifies a `TestTimeout` test class, but does not provide its source text or a complete description of timeout argument semantics [Data: Entities (1376)].\n\nThe supplied evidence is therefore insufficient to state where the public `Session` API documentation is located or to describe precisely how omitted `timeout`, explicit `timeout=None`, tuple timeouts, and redirect propagation are currently documented. The source excerpt does confirm that `Session` objects are created with `requests.Session()` and used for sending prepared requests, while direct `Session.send` behavior is exercised separately [Data: Sources (91)].",
+        "score": 88,
+        "follow_up_queries": [
+          "Which files or documentation pages in the full repository define and describe `Session.request`, its method wrappers, and the `timeout` parameter?",
+          "What do the existing timeout and redirect tests assert about omitted timeouts, explicit `None`, tuple values, and timeout propagation?"
+        ]
+      },
+      "repair_applied": false
+    },
+    {
+      "kind": "adapter_arguments",
+      "stage": "local",
+      "request_key": "504d3c32e4f27444f34b099e78f1cfcff3323f5dbc5c259f69ab0ecfa58dcfc1",
+      "accepted_kwargs": [
+        "max_completion_tokens",
+        "messages",
+        "n",
+        "response_format_json_object",
+        "stream",
+        "temperature",
+        "top_p"
+      ],
+      "provider_parameter_policy": "Fixed provider defaults: n1, top_p1, temperature not sent; output2048. JSON/schema and stream recorded explicitly.",
+      "stream_requested_by_upstream": true
+    },
+    {
+      "kind": "pending_action_order",
+      "queries": [
+        "What do the existing timeout and redirect tests assert about omitted timeouts, explicit `None`, tuple values, and timeout propagation?",
+        "Which tests currently cover omitted timeout, explicit timeout=None, and float or (connect, read) values?",
+        "Where is Session.send implemented, and what direct-call contract do its existing tests assert?",
+        "Does the adapter or transport layer distinguish a missing timeout kwarg from an explicit None value?",
+        "Where is timeout forwarding from `Session.request` and the convenience wrappers implemented and tested?",
+        "How are timeout kwargs propagated by resolve_redirects and redirected PreparedRequest sends?",
+        "Which files in the repository define the `Session` class and its request wrapper methods?",
+        "Which files or documentation pages in the full repository define and describe `Session.request`, its method wrappers, and the `timeout` parameter?"
+      ]
+    },
+    {
+      "kind": "structured_response",
+      "stage": "local",
+      "request_key": "e1027e8ffc8df5f43a04c374e9e219d868cac7763adbd5142bf9bc02705f239c",
+      "parsed": {
+        "response": "The supplied timeout tests are in `tests/test_requests.py`, within `TestTimeout` (the provided excerpt is at `tests/test_requests.py:L2414-L2570`). They do not test an omitted `timeout` argument in `Session.request` or the method wrappers. Instead, `test_none_timeout` explicitly passes `timeout=None`, and also explicitly passes `Urllib3Timeout(connect=None, read=None)`. Both cases are expected to complete successfully with status 200. The test comment says this verifies that `None` does not prevent success, not that it exercises behavior beyond a system-default timeout. [Data: Sources (98)]\n\nThe tests cover tuple-shaped values for separate connection and read limits. `test_read_timeout` passes `(None, 0.1)` and the equivalent `Urllib3Timeout(connect=None, read=0.1)`, expecting `ReadTimeout`. `test_connect_timeout` passes `(0.1, None)` and the equivalent timeout object, expecting `ConnectTimeout`; it additionally asserts that the exception is both a `ConnectionError` and a `Timeout`. `test_total_timeout_connect` covers `(0.1, 0.1)` and the equivalent object, again expecting `ConnectTimeout`. Invalid shapes are also checked: `(3, 4, 5)` and `\"foo\"` must raise `ValueError` with the expected message fragments. [Data: Sources (98)]\n\nFor redirects, the supplied excerpt defines `RedirectSession`, records calls to `send`, and constructs redirect responses, but it does not show an assertion proving that an effective timeout is propagated across redirects. In `test_requests_are_updated_each_time`, a `default_keyword_args` dictionary includes `\"timeout\": None`, alongside other redirect defaults, but the provided source ends before showing whether or how that dictionary is asserted. Therefore, the snapshot supports that redirect handling has a timeout default represented as `None` in this test setup, but it is insufficient to establish a complete timeout-propagation guarantee. [Data: Sources (98)]\n\nThe available `requests` package excerpt confirms that `Timeout`, `ConnectTimeout`, and `ReadTimeout` are exported from `requests.exceptions`, but it does not add further assertions about omission-versus-explicit-`None` semantics or redirect propagation. [Data: Sources (21)]",
+        "score": 94,
+        "follow_up_queries": [
+          "Can the complete `test_requests_are_updated_each_time` and related redirect tests be inspected to determine whether timeout values are asserted on every redirected request?",
+          "Are there existing tests for `Session.request`, `Session.get`, or `Session.post` that distinguish an omitted timeout from an explicitly supplied `None`?"
+        ]
+      },
+      "repair_applied": false
+    },
+    {
+      "kind": "adapter_arguments",
+      "stage": "local",
+      "request_key": "e1027e8ffc8df5f43a04c374e9e219d868cac7763adbd5142bf9bc02705f239c",
+      "accepted_kwargs": [
+        "max_completion_tokens",
+        "messages",
+        "n",
+        "response_format_json_object",
+        "stream",
+        "temperature",
+        "top_p"
+      ],
+      "provider_parameter_policy": "Fixed provider defaults: n1, top_p1, temperature not sent; output2048. JSON/schema and stream recorded explicitly.",
+      "stream_requested_by_upstream": true
+    },
+    {
+      "kind": "structured_response",
+      "stage": "local",
+      "request_key": "76d2de5ec01275b41b9f8d2c5d4e17e6570d57a1d5e34d9bbcda4dbe1d50d8ab",
+      "parsed": {
+        "response": "The supplied snapshot does not show a dedicated test for an omitted `timeout` argument on `Session.request`, `Session.get`, `Session.post`, or the other session wrappers. The closest omission is `test_encoded_methods`, which calls `requests.request(...)` without `timeout`, but it only asserts that the response is successful and does not inspect timeout propagation [Data: Sources (98)].\n\nExplicit `timeout=None` is covered by `TestTimeout.test_none_timeout` in `tests/test_requests.py`, at `tests/test_requests.py:L2414-L2570`. Its parameterization passes `None` explicitly, and the test asserts that the request succeeds with status code 200. The same test also covers `Urllib3Timeout(connect=None, read=None)`, which is a distinct timeout-object case [Data: Sources (98)].\n\nA float timeout is covered by `TestTimeout.test_stream_timeout`, which calls `requests.get(httpbin(\"delay/10\"), timeout=2.0)` and checks for a read-timeout error. Two-value `(connect, read)` shapes are covered by `test_read_timeout` with `(None, 0.1)`, `test_connect_timeout` with `(0.1, None)`, and `test_total_timeout_connect` with `(0.1, 0.1)`. Each also covers the corresponding `Urllib3Timeout(connect=..., read=...)` form [Data: Sources (98)]. The snapshot therefore establishes coverage for explicit values, but is insufficient to establish coverage for a per-instance `Session.default_timeout`, distinguishing omission from explicit `None`, or preserving an effective timeout across redirects.",
+        "score": 91,
+        "follow_up_queries": [
+          "Which existing Session wrapper and redirect tests should be extended to verify that an omitted timeout uses a per-instance default while explicit None disables it?",
+          "Are there additional timeout-related tests outside the supplied snapshot that inspect Session.request or Session.send behavior?"
+        ]
+      },
+      "repair_applied": false
+    },
+    {
+      "kind": "adapter_arguments",
+      "stage": "local",
+      "request_key": "76d2de5ec01275b41b9f8d2c5d4e17e6570d57a1d5e34d9bbcda4dbe1d50d8ab",
+      "accepted_kwargs": [
+        "max_completion_tokens",
+        "messages",
+        "n",
+        "response_format_json_object",
+        "stream",
+        "temperature",
+        "top_p"
+      ],
+      "provider_parameter_policy": "Fixed provider defaults: n1, top_p1, temperature not sent; output2048. JSON/schema and stream recorded explicitly.",
+      "stream_requested_by_upstream": true
+    },
+    {
+      "kind": "adapter_arguments",
+      "stage": "reduce",
+      "request_key": "7dc653715019167fbd5bce29cd40d172e5d042ee7e04dacd941162f6a5e0dcf0",
+      "accepted_kwargs": [
+        "max_completion_tokens",
+        "messages",
+        "temperature"
+      ],
+      "provider_parameter_policy": "Fixed provider defaults: n1, top_p1, temperature not sent; output2048. JSON/schema and stream recorded explicitly.",
+      "stream_requested_by_upstream": false
+    }
+  ],
+  "execution_segments": [
+    {
+      "started_utc": "2026-10-14T04:55:02.119434+00:00",
+      "initial_event_count": 159,
+      "elapsed_seconds": 79.08416883274913,
+      "finished_utc": "2026-10-14T04:56:21.203787+00:00",
+      "event_sequences": [
+        160,
+        161,
+        162,
+        163,
+        164,
+        165,
+        166,
+        167,
+        168,
+        169,
+        170,
+        171
+      ]
+    }
+  ],
+  "answer": "## Scope and Known Constraints\n\nThe supplied snapshot does not identify the source module or exact implementations of `Session.request`, `Session.get`, `Session.post`, the other wrappers, or the constructor. It only establishes that `Session` is the relevant Requests abstraction and that session methods are exercised in the available test source. Therefore, the implementation file and exact function locations must be found by inspecting the repository; they cannot be named from the supplied evidence [Data: Entities (8, 395); Sources (91)].\n\nThe proposed change should add a mutable, per-instance `Session.default_timeout`, initialized to `None`, without changing constructor arguments, adding a global setting, or changing the direct `Session.send` contract. The timeout should be resolved at the request-wrapper boundary: an omitted argument uses the session’s current `default_timeout`, while an explicitly supplied value—including `None`—is passed through unchanged. A private sentinel or equivalent omission marker is a suitable implementation approach, but the evidence does not establish a required design.\n\n## Implementation Responsibilities\n\nInspect the existing request entry point and every wrapper that accepts or forwards `timeout`. Their signatures or forwarding logic must distinguish omission from explicit `None`; ordinary `timeout=None` defaults cannot do that by themselves. Preserve the existing float and `(connect, read)` forms and avoid introducing new validation, because the current tests already cover both forms and invalid timeout shapes [Data: Sources (98)].\n\nKeep `Session.send` behavior unchanged unless the existing implementation already routes calls through request-level timeout resolution. The new default should apply to calls through `request`, `get`, `post`, and other existing wrappers, not silently to direct `send` calls. Constructor compatibility must also remain unchanged.\n\nRedirect handling must retain the effective timeout on every redirected send. The available evidence identifies `RedirectSession.send` as recording keyword arguments in `SendCall`, while `build_response` constructs responses from the latest recorded call; this makes the recorded `SendCall.kwargs` a useful verification point [Data: Entities (1384, 1388); Relationships (2351, 2353)]. The redirect evidence covers POST and 303/307 flows but does not currently establish timeout assertions [Data: Entities (1391); Relationships (2360)].\n\n## Behavioral Edge Cases\n\nTests and implementation review should cover:\n\n- Omitted `timeout` with `default_timeout=None`.\n- Omitted `timeout` after assigning a float default.\n- Omitted `timeout` after assigning a `(connect, read)` default.\n- Explicit `timeout=None` when the session default is non-`None`; the explicit value must win.\n- An explicit float or tuple overriding the session default.\n- Changing `session.default_timeout` after construction and before a call; resolution should occur at call time.\n- Two session instances having independent defaults.\n- Positional and keyword wrapper paths, including all existing wrappers that forward timeout.\n- Redirect chains, including 303 and 307 behavior, retaining the effective timeout in every recorded send.\n- Direct `Session.send` behavior and constructor compatibility remaining stable.\n\nExisting timeout coverage is in `tests/test_requests.py`, within `TestTimeout`; the supplied excerpt is reported at `tests/test_requests.py:L2414-L2570`. `test_none_timeout` explicitly passes `None` and expects a successful response, while other tests cover float and tuple-shaped timeout values, including `(None, 0.1)`, `(0.1, None)`, and `(0.1, 0.1)` [Data: Sources (98)]. These tests should be inspected and retained, but they do not cover session defaults or omission-versus-explicit-`None` behavior.\n\nThe redirect test setup includes a `default_keyword_args` entry with `\"timeout\": None`, but the supplied excerpt does not show a complete assertion that timeout is propagated across redirects. Add focused assertions against recorded `SendCall.kwargs` for both omitted timeout resolved from `default_timeout` and explicit timeout values [Data: Sources (98)].\n\n## Documentation and Uncertainty\n\nDocument the distinction clearly: an omitted timeout means “use this session’s current `default_timeout`,” whereas an explicitly supplied `timeout=None` bypasses that session default and preserves the underlying library’s existing no-timeout behavior. The tests show that explicit `None` currently succeeds, but the snapshot does not provide the complete semantic documentation or implementation details needed to describe the lower-level behavior more precisely [Data: Sources (98)].\n\nThe snapshot does not identify the exact public API documentation path or a documentation source file. It only shows that `requests.Session()` is used in documentation examples and that `requests.api` is a documented API module [Data: Entities (32, 258)]. Documentation location, the complete wrapper list, and current runtime behavior remain items to inspect rather than established facts.",
+  "elapsed_seconds": 79.08416883274913,
+  "finished_utc": "2026-10-14T04:56:21.203800+00:00",
+  "interrupted_segments_with_unknown_duration": 0,
+  "outer_timer_includes_reduce": true,
+  "new_event_sequences": [
+    160,
+    161,
+    162,
+    163,
+    164,
+    165,
+    166,
+    167,
+    168,
+    169,
+    170,
+    171
+  ],
+  "actual_context_exposure": [
+    {
+      "evidence_key": "cb5d126f351bf4b22a4f4c3786fa1bda6dfc2f55514972249e6c8b552a5437bb",
+      "context_sha256": "df56eaca431eac456580537c8707c0d5df49881c2773e7eaf177d6b554839196",
+      "http200_generation_event_sequences": [
+        164
+      ],
+      "source_ids": [
+        "91"
+      ]
+    },
+    {
+      "evidence_key": "56d7e97c776d9e37ed7d902db70d3f1d63966ac2035994aeb6599b139258498e",
+      "context_sha256": "5c4cd7f52d8f9bd627c2050cf4b857f5a79c88d01f86d7d7ed2fa60c9ca9ad15",
+      "http200_generation_event_sequences": [
+        166
+      ],
+      "source_ids": [
+        "91"
+      ]
+    },
+    {
+      "evidence_key": "ba49a59a818063bfe1bf8711945229f42f7d22c30fd038c9a68bfe843d737df8",
+      "context_sha256": "5523484456fd9a5817e7f6f3fd961706a3abe5674265b4b3565cf675b56fea29",
+      "http200_generation_event_sequences": [
+        168
+      ],
+      "source_ids": [
+        "98",
+        "21"
+      ]
+    },
+    {
+      "evidence_key": "5b81a867cb302e70a50fff7414428383de3e6294aaa8c5f7363ee25ad015a7d3",
+      "context_sha256": "f8e358a2b7af39de86fa6c9b7642820853724032f3b26ec6f24a7a5f4e69dfb8",
+      "http200_generation_event_sequences": [
+        170
+      ],
+      "source_ids": [
+        "98",
+        "21"
+      ]
+    }
+  ],
+  "raw_sources_in_http200_contexts": [
+    {
+      "short_id": "91",
+      "text_unit_id": "b4fc31fa0398c423c77ca05d45d3311d21c64d32090eb4a80186e559ba11c7f9857fc547284a1b9e915fb677bf5dcdb6dbb8f2c2edb68f5d45dd5f1b87c1171d",
+      "id": "738fe173f86a3ea0fd04fd1badf08b7af0573474d3cadc7105cab638a4925afc",
+      "title": "tests/test_requests.py:L1488-L1634",
+      "path": "tests/test_requests.py",
+      "start_line": 1488,
+      "end_line": 1634,
+      "tokens": 1191,
+      "text_sha256": "ba556710077543acb07ee95b0ea7f2ca76e248ccaa9baaae1319722182791a75",
+      "ms_text_unit_id": "b4fc31fa0398c423c77ca05d45d3311d21c64d32090eb4a80186e559ba11c7f9857fc547284a1b9e915fb677bf5dcdb6dbb8f2c2edb68f5d45dd5f1b87c1171d"
+    },
+    {
+      "short_id": "98",
+      "text_unit_id": "37da1205bca9087f81a5c28961b6f3e9fcfb816c1df9548c0c78121eefb7a5339080dac11060a9f200ad5f13680ea1ef2ee84f58a37a882d9421cf8bda50fe42",
+      "id": "574528d297ed1664e6a804d14629633481f9f2b3e89563c941369817db6f6da6",
+      "title": "tests/test_requests.py:L2414-L2570",
+      "path": "tests/test_requests.py",
+      "start_line": 2414,
+      "end_line": 2570,
+      "tokens": 1194,
+      "text_sha256": "6ffb5e997dcbd4a151e6ae33980ecfc81e2ffea9bd71368c7bb8589ca418c8e3",
+      "ms_text_unit_id": "37da1205bca9087f81a5c28961b6f3e9fcfb816c1df9548c0c78121eefb7a5339080dac11060a9f200ad5f13680ea1ef2ee84f58a37a882d9421cf8bda50fe42"
+    },
+    {
+      "short_id": "21",
+      "text_unit_id": "e4d16b03bbebbab7887e98b56beb2a1f42973152e06e0aba30b7afb4127ca9fdb4bd1959c3654263a278094012aba9f4bd428b408450a05216d06496ed3bbb63",
+      "id": "786110695dad7aa24c7b42bb5a97659e96566b413277aacefec8285c7cc7836e",
+      "title": "src/requests/__init__.py:L155-L184",
+      "path": "src/requests/__init__.py",
+      "start_line": 155,
+      "end_line": 184,
+      "tokens": 163,
+      "text_sha256": "09118c16491f4da4c52ef5cd4adc11cf4e5714263ec05a6f4b5018fe2b2ed1c5",
+      "ms_text_unit_id": "e4d16b03bbebbab7887e98b56beb2a1f42973152e06e0aba30b7afb4127ca9fdb4bd1959c3654263a278094012aba9f4bd428b408450a05216d06496ed3bbb63"
+    }
+  ]
+}

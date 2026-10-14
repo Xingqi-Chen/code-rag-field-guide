@@ -1,0 +1,120 @@
+{
+  "status": "independent_methodology_and_aggregation_review_passed",
+  "reviewed_utc": "2026-10-14T04:58:07.455317+00:00",
+  "reviewer": {
+    "identity": "independent AI audit agent",
+    "human": false,
+    "blind": false
+  },
+  "scope": "Static review and fully temporary synthetic92-cell tests of final aggregation and second-stage evidence-pack preparation. No real final scores or complete92-cell scientific results were evaluated.",
+  "implementation_sha256": {
+    "research/pilot/strategy-routing/aggregate_results.py": "6fe4d74dae9d90b92c12ad97b38c36f8591d3754fad4ec53cf95e549b0f1b732",
+    "research/pilot/strategy-routing/build_evidence_pack.py": "22b0426f817a412be5bff2ba0adf0a5c9d25d57e90187abc96a35d03aba07fa4",
+    "research/pilot/score_results.py": "c3c8692c9a6f20f681c510c9b3018f6722dc6576a615a7532ed6c6e6742122a4"
+  },
+  "input_sha256": {
+    "research/pilot/strategy-routing/answer-gold.json": "d1bdca1bf597530a0f90081220b5370893bc04742b080fe3dbd492dd7b3de225",
+    "research/pilot/gold.json": "32727f0d150fbe961da6a061c52b7d6de63ae48904c548c6c7e208bcff40fb23",
+    "research/pilot/strategy-routing/queries.json": "fd94cba5f5c49797863df3f60c236fed533d282b29c77fb13825191988b3e34d",
+    "research/pilot/strategy-routing/freeze.json": "3505ba039faa1591c49452e211d77ac6c52710ab673196d13c6d12bbc8467c0b"
+  },
+  "all_14_frozen_files_unchanged": true,
+  "new_model_api_calls": 0,
+  "new_embedding_api_calls": 0,
+  "credential_reads": 0,
+  "real_runtime_readiness_ledger_or_scores_modified": false,
+  "verified_aggregation_rules": {
+    "planned_grid": "23 unique questions times4 methods equals92 rows. Q01/Q07/Q13 reuse the same question-method answer and score in both main and supplemental groups.",
+    "content_denominators": {
+      "main_test16": 16,
+      "main_dev4": 4,
+      "main_all20_descriptive": 20,
+      "supplement6": 6
+    },
+    "source_coverage_denominators": {
+      "main_test16": 15,
+      "main_dev4": 4,
+      "main_all20_descriptive": 19,
+      "supplement6": 3
+    },
+    "Q19_Q20": "Q19 andQ20 are both in the main content denominator. Q19 has no raw-source gold and is excluded only from raw-source coverage; Q20 remains scorable there.",
+    "weighting": "Within each question, criterion scores0/.5/1 are averaged equally; question means are then averaged equally. Different criterion counts do not weight questions differently.",
+    "failed_answers": "Every failed final answer must have zero content score and remains in the planned denominator. Earlier successful subcall exposure can remain nonempty without turning failure into an answer success.",
+    "completed_only": "The completed-only field is a separately named selected-subset diagnostic. The frozen rubric answer_reuse rule explicitly permits it. Primary content and paired comparisons still use all planned questions, including failures.",
+    "provider_and_budget": "Known provider input/output and unknown possible-dispatch counts remain separate from common-input reservations. The retained non-dispatch reservation stays in reservation/input totals and its own count; no provider usage is inferred.",
+    "overlap_costs": "Cohort costs are non-additive because main/supplement overlap. A unique92-cell total must be computed once from unique rows or the corresponding phase ledger.",
+    "bootstrap": "Differences are paired by identical question and method; fixed-seed10000-resample intervals describe variation across this chosen small question set. They do not estimate repeat-service randomness or industry-wide accuracy."
+  },
+  "tests": [
+    {
+      "type": "Synthetic92-cell full-grid fixture",
+      "result": "passed",
+      "checks": [
+        "92 rows,16 method/cohort aggregates and12 paired summaries.",
+        "Independent rational-arithmetic checks of question-weighted means.",
+        "Content denominators16/4/20/6 and source denominators15/4/19/3.",
+        "Three synthetic failed routed answers retained at0; positive failed-answer scores rejected.",
+        "Completed-only diagnostic matches the completed subset and leaves primary means unchanged.",
+        "Identical overlaps reuse the same scores; synthetic main-plus-supplement cost totals intentionally exceed the unique total.",
+        "Known provider/common reservation totals and an initial non-dispatch reservation remain distinct.",
+        "Paired means and win/tie/loss counts independently recomputed; bootstrap is deterministic and intervals bounded."
+      ]
+    },
+    {
+      "type": "Evidence-pack preparation on temporary synthetic92 rows",
+      "result": "passed",
+      "checks": [
+        "Valid complete review emits92 temporary cases plus a manifest.",
+        "Empty review, stale pack SHA, missing row, boolean score and wrong answer SHA each stop before any material output.",
+        "Both scripts reject a changed answer string with stale per-answer SHA even when the whole-pack SHA was updated consistently."
+      ]
+    },
+    {
+      "type": "Offline execution boundaries",
+      "result": "passed",
+      "checks": [
+        "Network and credential-file reads explicitly denied by the test process.",
+        "Only temporary fixtures, temporary grading packs and this review document were written.",
+        "Aggregation imports the pure source-coverage function; neither reviewed script starts a worker, model client or index workflow."
+      ]
+    }
+  ],
+  "resolved_findings": [
+    {
+      "id": "evidence-review-gate",
+      "original_issue": "An existing review filename alone previously permitted evidence exposure, including incomplete or stale grading.",
+      "resolution": "Before material output, the gate now verifies rubric and pack SHA, exact unique row coverage, per-answer text hashes, matching question/status/hash, exact criteria and allowed numeric scores/means, and failed=0."
+    },
+    {
+      "id": "pack-to-reviewed-answer-binding",
+      "original_issue": "A whole-pack hash alone did not establish that the scored answer text matched its retained per-answer hash and execution identity.",
+      "resolution": "Both scripts recompute answer-text SHA; aggregation additionally binds each complete pack row to its content review and the exported execution answer hash."
+    },
+    {
+      "id": "boolean-score-acceptance",
+      "original_issue": "Python boolean equality could satisfy membership in{0,.5,1}.",
+      "resolution": "Both score validators explicitly require int/float types and reject bool."
+    },
+    {
+      "id": "metric-and-failure-interpretation",
+      "original_issue": "Cross-subcall ordering, unequal context/call counts and decoder failures required more precise interpretation.",
+      "resolution": "The result interpretation now separates exposure-order MRR from earlier retrieval MRR, fixed-policy comparisons from equal-cost causal isolation, incremental cached latency from production speed, and decoder outcomes from claims about remote text or algorithm defects."
+    }
+  ],
+  "unresolved_blocking_findings": [],
+  "required_interpretation_and_final_checks": [
+    "This review validates code paths and arithmetic using synthetic results, not the real final92 answers, real content grades, final metrics or conclusions. Those still require a separate completed-result audit.",
+    "Raw-source coverage is the union of source ranges included in traceableHTTP200 generation requests across the actual chain. It is not the old independent-retrieval result, a complete record of unknown dispatches, or answer accuracy; graph report text is not counted as raw source.",
+    "DRIFT/Global may consume different numbers of generations and total context than one-shot baselines. Equal ceilings do not create equal realized budgets or isolate the causal effect of graph reasoning.",
+    "The ordered source reciprocal-position diagnostic reflects first exposure across subcalls, not a single retriever ranking. It should not be presented as directly comparable to earlier MRR.",
+    "Completed-only scores condition on successful completion and must remain secondary; model/service/adapter failures stay at0 in the primary planned-question score.",
+    "The responses_empty_or_multiple_messages category can reflect the service/decoder boundary. Without retained rawSSE, it does not establish exactly what the remote model produced. Do not silently repair or regenerate these completed-attempt outcomes for grading.",
+    "Generation token summaries are not total dollar spend; unknown usage, shared embedding reuse, carried graph-build costs and overlapping cohorts require separate accounting. Never add main and supplemental group totals.",
+    "Elapsed values describe this execution and its caching arrangement. Check interrupted-duration flags before claiming complete wall time, and do not infer production speed from this unequal-cache setup.",
+    "Evidence grading is separate from content grading; gold-anchor overlap is navigation only. The full graph used to verify provenance is not automatically material supplied to the answer model.",
+    "Method labels are masked, but prompt structures and content may identify methods. This is AI review, not a human blind evaluation."
+  ],
+  "write_scope": [
+    "research/pilot/strategy-routing/reviews/aggregation-review.json"
+  ]
+}

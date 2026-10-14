@@ -1,0 +1,729 @@
+{
+  "rubric_sha256": "d1bdca1bf597530a0f90081220b5370893bc04742b080fe3dbd492dd7b3de225",
+  "blind_pack_sha256": "2a781b298ea4e16a4ec018ca3abb72aae16e8aba8da248bf6e39d06c12d63ccf",
+  "reviewer": "answer_review_d",
+  "scope": "第一阶段：16 条匿名 Q17–Q20 最终答案内容独立复核；仅读取本匿名包、冻结 rubric 和固定 Requests 源码。方法映射未读；引用样式可能提示路线，非双盲。引用解析及实际暴露材料支持度等待第二阶段，当前 citation_audit 留空。",
+  "scoring_notes": [
+    "按冻结必要含义评分，不用 gold 补齐答案未陈述控制流。",
+    "只有 longest-prefix 选择结果而没有 mount 长度降序组织规则时，Q20-C2 给 .5；只说按长度排序未给方向也为 .5。",
+    "有双边 lower/startswith 和遍历但没有明确首匹配返回，Q17-C2 给 .5。",
+    "源文件行号/材料可见性主张留待第二阶段证据核验，不因此扣正确内容分。",
+    "相关正向源码锚点 SHA 全部核对通过；Q19 按冻结列表静态 AST 检查 34 文件，没有 AsyncSession ClassDef。"
+  ],
+  "rows": [
+    {
+      "anonymous_id": "A047",
+      "question_id": "Q17",
+      "answer_sha256": "94721a1b7e9934697ca3248699d05184dad3d102bf0ccd5f1fe3b6d8134572d6",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q17-C1",
+          "score": 1,
+          "answer_quote": "more-specific prefixes precede less-specific prefixes",
+          "rationale": "登记到 adapters 映射及更具体前缀在前明确；结合 prefix 语境可等价表达长度降序。",
+          "gold_anchor_ids": [
+            "Q17-E1"
+          ]
+        },
+        {
+          "id": "Q17-C2",
+          "score": 0.5,
+          "answer_quote": "The evidence establishes that the more-specific prefix currently takes precedence",
+          "rationale": "说明更具体前缀优先，但没有完成双边 lower 的大小写规则与首匹配返回规则；测试名不能代替规则说明。",
+          "gold_anchor_ids": [
+            "Q17-E2"
+          ]
+        },
+        {
+          "id": "Q17-C3",
+          "score": 1,
+          "answer_quote": "`Session.send` then calls `self.get_adapter(url=request.url)` and sends through the selected adapter with `adapter.send(request, **kwargs)`",
+          "rationale": "明确按 request.url 取得对象再调用其 send；并将子类实际目标留待检查。",
+          "gold_anchor_ids": [
+            "Q17-E3"
+          ]
+        }
+      ],
+      "content_mean": 0.8333333333333334,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A078",
+      "question_id": "Q20",
+      "answer_sha256": "98b0df0be19087f4db109fa13d787bc3eadc31b195bb6cb290f583a5c0b28132",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q20-C1",
+          "score": 1,
+          "answer_quote": "the application’s custom adapter class and mounted prefix are not provided",
+          "rationale": "明确缺应用的自定义类型与挂载前缀，拒绝武断认定 HTTPAdapter。",
+          "gold_anchor_ids": [
+            "Q20-E1",
+            "Q20-E2",
+            "Q20-E3"
+          ]
+        },
+        {
+          "id": "Q20-C2",
+          "score": 0.5,
+          "answer_quote": "`Session.mount()` registers an adapter instance for a URL prefix; the adapter whose prefix matches the request is selected using the longest-prefix match",
+          "rationale": "登记实例与前缀正确；最长匹配说明选择结果，但未明确 mount 把映射按长度降序组织。",
+          "gold_anchor_ids": [
+            "Q20-E1",
+            "A-Q20-mount-order"
+          ]
+        },
+        {
+          "id": "Q20-C3",
+          "score": 0.5,
+          "answer_quote": "selected using the longest-prefix match",
+          "rationale": "有 URL 前缀选择规则，未说明大小写无关与顺序首匹配。",
+          "gold_anchor_ids": [
+            "Q20-E2"
+          ]
+        },
+        {
+          "id": "Q20-C4",
+          "score": 1,
+          "answer_quote": "The selected adapter’s `send()` method handles the request.",
+          "rationale": "已连接所选对象与 send；结合开头缺自定义类/前缀说明，动态目标边界充分。",
+          "gold_anchor_ids": [
+            "Q20-E3",
+            "Q20-E1",
+            "Q20-E2"
+          ]
+        }
+      ],
+      "content_mean": 0.75,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A033",
+      "question_id": "Q18",
+      "answer_sha256": "1e76ade2fe73027c4b9f12ea7731115c4cf5b4b02466489b6a790360294cb9ab",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q18-C1",
+          "score": 1,
+          "answer_quote": "only a non-`None` callback result replaces it",
+          "rationale": "正确说明仅非 None 替换，且明确现有 None 保留行为。",
+          "gold_anchor_ids": [
+            "Q18-E1"
+          ]
+        },
+        {
+          "id": "Q18-C2",
+          "score": 0.5,
+          "answer_quote": "responses are expected to feed session-cookie handling",
+          "rationale": "只给 session cookie 处理方向，并明确无法定位；缺 Session.send 中 r.history/r.raw 的实际消费。",
+          "gold_anchor_ids": [
+            "Q18-E2"
+          ]
+        },
+        {
+          "id": "Q18-C3",
+          "score": 1,
+          "answer_quote": "specifically the case `([hook, lambda x: None, hook], \"ta\")`",
+          "rationale": "定位 test_hooks 的现有 None 回调序列和 ta 预期，完整。",
+          "gold_anchor_ids": [
+            "Q18-E3"
+          ]
+        }
+      ],
+      "content_mean": 0.8333333333333334,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A039",
+      "question_id": "Q17",
+      "answer_sha256": "295f9810a3c88bf1de17e8f7f1eed0e52bf5643361dc87ea276848534d1e38ec",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q17-C1",
+          "score": 1,
+          "answer_quote": "It stores `self.adapters[prefix] = adapter`, then moves existing shorter prefixes behind the new prefix. The documented intent is descending prefix length.",
+          "rationale": "保存对象与前缀并将较短前缀后移，必要含义齐全。",
+          "gold_anchor_ids": [
+            "Q17-E1"
+          ]
+        },
+        {
+          "id": "Q17-C2",
+          "score": 0.5,
+          "answer_quote": "Its loop iterates `self.adapters.items()` and currently matches with `url.lower().startswith(prefix.lower())`",
+          "rationale": "双边 lower、startswith 和遍历均正确，但未明确遇到首匹配即返回；不使用评审所知源码补上这一控制流条件。",
+          "gold_anchor_ids": [
+            "Q17-E2"
+          ]
+        },
+        {
+          "id": "Q17-C3",
+          "score": 0.5,
+          "answer_quote": "Inspect the `Session.send()` implementation and its adapter lookup path.",
+          "rationale": "指出 Session.send 的查找路径，但未给出 get_adapter(request.url) 到 adapter.send 的消费链。",
+          "gold_anchor_ids": [
+            "Q17-E3"
+          ]
+        }
+      ],
+      "content_mean": 0.6666666666666666,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A077",
+      "question_id": "Q20",
+      "answer_sha256": "c670cef1058676c41592f42825e244aef3bc8458be297852e75fef6fe846b626",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q20-C1",
+          "score": 1,
+          "answer_quote": "The application’s custom adapter class and its `mount()` call are not provided.",
+          "rationale": "明确缺实际自定义类与 mount 配置，不假定具体类。",
+          "gold_anchor_ids": [
+            "Q20-E1",
+            "Q20-E2",
+            "Q20-E3"
+          ]
+        },
+        {
+          "id": "Q20-C2",
+          "score": 0.5,
+          "answer_quote": "if multiple prefixes match, Requests uses the longest prefix",
+          "rationale": "说明已挂载对象及最长匹配，但没有 mount 组织长度降序的机制。",
+          "gold_anchor_ids": [
+            "Q20-E1",
+            "A-Q20-mount-order"
+          ]
+        },
+        {
+          "id": "Q20-C3",
+          "score": 0.5,
+          "answer_quote": "`self.get_adapter(url=request.url)`",
+          "rationale": "有 URL 前缀查找与最长匹配，缺双边大小写处理和首匹配条件。",
+          "gold_anchor_ids": [
+            "Q20-E2"
+          ]
+        },
+        {
+          "id": "Q20-C4",
+          "score": 1,
+          "answer_quote": "`Session.send()` obtains the adapter with `self.get_adapter(url=request.url)` and then invokes `adapter.send(request, **kwargs)`",
+          "rationale": "调用链明确，结合缺 mount 配置的说明，正确限定运行时目标。",
+          "gold_anchor_ids": [
+            "Q20-E3",
+            "Q20-E1",
+            "Q20-E2"
+          ]
+        }
+      ],
+      "content_mean": 0.75,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A057",
+      "question_id": "Q20",
+      "answer_sha256": "99dff107a89071b564ce1965bfc5a090013cab8433d2faf7ffd37232fbd99754",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q20-C1",
+          "score": 1,
+          "answer_quote": "The snapshot does not provide the custom adapter’s class definition or its `send` implementation.",
+          "rationale": "明确缺应用自定义类信息，并拒绝给出具体运行时类。",
+          "gold_anchor_ids": [
+            "Q20-E1",
+            "Q20-E2",
+            "Q20-E3"
+          ]
+        },
+        {
+          "id": "Q20-C2",
+          "score": 0.5,
+          "answer_quote": "A runtime-mounted adapter is selected by URL-prefix matching; the tests verify that more-specific prefixes take precedence",
+          "rationale": "能说明已登记对象与前缀选择，但未说明 mount 如何按长度降序组织匹配顺序。",
+          "gold_anchor_ids": [
+            "Q20-E1",
+            "A-Q20-mount-order"
+          ]
+        },
+        {
+          "id": "Q20-C3",
+          "score": 0.5,
+          "answer_quote": "`Session.send` selects the adapter with `self.get_adapter(url=request.url)`",
+          "rationale": "有 URL 前缀选择及更具体优先，缺大小写无关和首匹配返回。",
+          "gold_anchor_ids": [
+            "Q20-E2"
+          ]
+        },
+        {
+          "id": "Q20-C4",
+          "score": 1,
+          "answer_quote": "and then invokes `adapter.send(request, **kwargs)`",
+          "rationale": "前句由 get_adapter 选择，随后调用对象 send；并指出实际自定义类未提供，边界清楚。",
+          "gold_anchor_ids": [
+            "Q20-E3",
+            "Q20-E1",
+            "Q20-E2"
+          ]
+        }
+      ],
+      "content_mean": 0.75,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A056",
+      "question_id": "Q17",
+      "answer_sha256": "dfb5362c16e147ea8b984542ab7b29a38d93dbbf26aa3eb5741eb14e6be8e1a5",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q17-C1",
+          "score": 0.5,
+          "answer_quote": "Inspect `Session.mount()` and the code maintaining `Session.adapters`.",
+          "rationale": "知道登记映射及最长前缀选择合同，但未明确 mount 维持前缀长度降序的组织规则。",
+          "gold_anchor_ids": [
+            "Q17-E1"
+          ]
+        },
+        {
+          "id": "Q17-C2",
+          "score": 0.5,
+          "answer_quote": "which verifies that differently cased URL and prefix strings still match",
+          "rationale": "正确识别大小写无关和更具体前缀选择的测试行为，但只提待查循环，未说明首匹配返回。",
+          "gold_anchor_ids": [
+            "Q17-E2"
+          ]
+        },
+        {
+          "id": "Q17-C3",
+          "score": 0.5,
+          "answer_quote": "Inspect `Session.send()` to confirm where it obtains the adapter and invokes the adapter’s `send()` method.",
+          "rationale": "正确检查方向，尚未给出 get_adapter(request.url) 到 adapter.send 的具体消费关系。",
+          "gold_anchor_ids": [
+            "Q17-E3"
+          ]
+        }
+      ],
+      "content_mean": 0.5,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A075",
+      "question_id": "Q18",
+      "answer_sha256": "7def0629c5518c9a4b469cceea3d95e284a9a8ad5211e9c35cde5fdbf67c09df",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q18-C1",
+          "score": 0,
+          "answer_quote": "it is insufficient to quote the current callback dispatch rule",
+          "rationale": "未给出现有 None 保留规则，不能以材料不足替代完成。",
+          "gold_anchor_ids": [
+            "Q18-E1"
+          ]
+        },
+        {
+          "id": "Q18-C2",
+          "score": 0.5,
+          "answer_quote": "The downstream cookie consumer is `extract_cookies_to_jar` in `SessionRedirectMixin.resolve_redirects`",
+          "rationale": "识别实际存在的 cookie 消费函数及重定向访问，但没有定位题目要求的 Session.send 中更早的 r.history/r.raw 两个消费点。",
+          "gold_anchor_ids": [
+            "Q18-E2"
+          ]
+        },
+        {
+          "id": "Q18-C3",
+          "score": 0,
+          "answer_quote": "it is insufficient to identify an existing test by name or location",
+          "rationale": "未定位 test_hooks 的 None-return 用例；testserver 的泛例不能代替。",
+          "gold_anchor_ids": [
+            "Q18-E3"
+          ]
+        }
+      ],
+      "content_mean": 0.16666666666666666,
+      "errors": [
+        {
+          "question_id": "Q18",
+          "method": null,
+          "answer_quote": "this redirect path would attempt to access `resp.raw` on `None`",
+          "claim": "将 None 替换的直接失败路径定位成 resolve_redirects 内 resp.raw 访问",
+          "category": "contradicted_by_frozen_source",
+          "source_or_query_anchor": [
+            "Q18-E2",
+            "src/requests/sessions.py:713",
+            "src/requests/sessions.py:723"
+          ],
+          "rationale": "Session.send 先把 dispatch 结果赋回 r，然后在 713 行访问 r.history；当其为 None 时在进入 redirect 路径前即失败。此项指出流程归因错误，不额外从内容均值扣分。",
+          "affected_criterion_ids": [
+            "Q18-C2"
+          ]
+        }
+      ],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A071",
+      "question_id": "Q19",
+      "answer_sha256": "f0895e323a07f0af0e3c66c6610bed735b809d8213f221318f9843d8312ba978",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q19-C1",
+          "score": 1,
+          "answer_quote": "`AsyncSession` was not found in the supplied snapshot.",
+          "rationale": "明确在给定快照中未找到 AsyncSession，无编造定义。",
+          "gold_anchor_ids": [
+            "A-Q19-negative"
+          ]
+        },
+        {
+          "id": "Q19-C2",
+          "score": 1,
+          "answer_quote": "`AsyncSession` was not found in the supplied snapshot.",
+          "rationale": "未找到结论限定给定/当前索引快照，没有外推所有版本或外部包。",
+          "gold_anchor_ids": [
+            "A-Q19-negative"
+          ]
+        },
+        {
+          "id": "Q19-C3",
+          "score": 1,
+          "answer_quote": "`AsyncSession` was not found in the supplied snapshot.",
+          "rationale": "提及同步 Session 或外部库只作为区分，全程未将其冒充 AsyncSession 实现。",
+          "gold_anchor_ids": [
+            "A-Q19-negative"
+          ]
+        }
+      ],
+      "content_mean": 1.0,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A030",
+      "question_id": "Q18",
+      "answer_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "failed",
+      "criteria": [
+        {
+          "id": "Q18-C1",
+          "score": 0,
+          "answer_quote": "",
+          "rationale": "最终执行失败且答案为空，冻结协议要求保留该题并记 0。",
+          "gold_anchor_ids": [
+            "Q18-E1"
+          ]
+        },
+        {
+          "id": "Q18-C2",
+          "score": 0,
+          "answer_quote": "",
+          "rationale": "最终执行失败且答案为空，冻结协议要求保留该题并记 0。",
+          "gold_anchor_ids": [
+            "Q18-E2"
+          ]
+        },
+        {
+          "id": "Q18-C3",
+          "score": 0,
+          "answer_quote": "",
+          "rationale": "最终执行失败且答案为空，冻结协议要求保留该题并记 0。",
+          "gold_anchor_ids": [
+            "Q18-E3"
+          ]
+        }
+      ],
+      "content_mean": 0.0,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A042",
+      "question_id": "Q19",
+      "answer_sha256": "c154fde98dbc06bf5816931974696c4ded2dcfab0a957a3b0b27ba275d300263",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q19-C1",
+          "score": 1,
+          "answer_quote": "AsyncSession was not found in the supplied snapshot.",
+          "rationale": "明确在给定快照中未找到 AsyncSession，无编造定义。",
+          "gold_anchor_ids": [
+            "A-Q19-negative"
+          ]
+        },
+        {
+          "id": "Q19-C2",
+          "score": 1,
+          "answer_quote": "AsyncSession was not found in the supplied snapshot.",
+          "rationale": "未找到结论限定给定/当前索引快照，没有外推所有版本或外部包。",
+          "gold_anchor_ids": [
+            "A-Q19-negative"
+          ]
+        },
+        {
+          "id": "Q19-C3",
+          "score": 1,
+          "answer_quote": "AsyncSession was not found in the supplied snapshot.",
+          "rationale": "提及同步 Session 或外部库只作为区分，全程未将其冒充 AsyncSession 实现。",
+          "gold_anchor_ids": [
+            "A-Q19-negative"
+          ]
+        }
+      ],
+      "content_mean": 1.0,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A001",
+      "question_id": "Q19",
+      "answer_sha256": "c3c3954821fdc2a808a86010f94f7214d4af97c6e372440160dcfff50c428313",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q19-C1",
+          "score": 1,
+          "answer_quote": "No `AsyncSession` implementation was found in the supplied indexed snapshot.",
+          "rationale": "明确在给定快照中未找到 AsyncSession，无编造定义。",
+          "gold_anchor_ids": [
+            "A-Q19-negative"
+          ]
+        },
+        {
+          "id": "Q19-C2",
+          "score": 1,
+          "answer_quote": "No `AsyncSession` implementation was found in the supplied indexed snapshot.",
+          "rationale": "未找到结论限定给定/当前索引快照，没有外推所有版本或外部包。",
+          "gold_anchor_ids": [
+            "A-Q19-negative"
+          ]
+        },
+        {
+          "id": "Q19-C3",
+          "score": 1,
+          "answer_quote": "No `AsyncSession` implementation was found in the supplied indexed snapshot.",
+          "rationale": "提及同步 Session 或外部库只作为区分，全程未将其冒充 AsyncSession 实现。",
+          "gold_anchor_ids": [
+            "A-Q19-negative"
+          ]
+        }
+      ],
+      "content_mean": 1.0,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A028",
+      "question_id": "Q19",
+      "answer_sha256": "38036d3f5360baf47e2425a06fe9d8dc0719a37fca8b208575003f9f63ead77c",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q19-C1",
+          "score": 1,
+          "answer_quote": "`AsyncSession` was not found in the supplied Requests 2.32.3 snapshot.",
+          "rationale": "明确在给定快照中未找到 AsyncSession，无编造定义。",
+          "gold_anchor_ids": [
+            "A-Q19-negative"
+          ]
+        },
+        {
+          "id": "Q19-C2",
+          "score": 1,
+          "answer_quote": "`AsyncSession` was not found in the supplied Requests 2.32.3 snapshot.",
+          "rationale": "未找到结论限定给定/当前索引快照，没有外推所有版本或外部包。",
+          "gold_anchor_ids": [
+            "A-Q19-negative"
+          ]
+        },
+        {
+          "id": "Q19-C3",
+          "score": 1,
+          "answer_quote": "`AsyncSession` was not found in the supplied Requests 2.32.3 snapshot.",
+          "rationale": "提及同步 Session 或外部库只作为区分，全程未将其冒充 AsyncSession 实现。",
+          "gold_anchor_ids": [
+            "A-Q19-negative"
+          ]
+        }
+      ],
+      "content_mean": 1.0,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A002",
+      "question_id": "Q20",
+      "answer_sha256": "e144d8a9eb01e912a0aafdb739ff0e79d70a3e3451a44003b61e683c484a51ca",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q20-C1",
+          "score": 1,
+          "answer_quote": "The application’s custom adapter class and its runtime `Session.mount(...)` call are not provided.",
+          "rationale": "明确缺应用自定义类和实际 mount 调用，无法从仓库定类。",
+          "gold_anchor_ids": [
+            "Q20-E1",
+            "Q20-E2",
+            "Q20-E3"
+          ]
+        },
+        {
+          "id": "Q20-C2",
+          "score": 0.5,
+          "answer_quote": "stores the supplied adapter instance and orders adapters by prefix length",
+          "rationale": "登记与按长度排序正确，但没有指出长度降序/长前缀优先，遗漏方向。",
+          "gold_anchor_ids": [
+            "Q20-E1",
+            "A-Q20-mount-order"
+          ]
+        },
+        {
+          "id": "Q20-C3",
+          "score": 0.5,
+          "answer_quote": "selects the first adapter whose prefix matches the URL",
+          "rationale": "首匹配明确，但缺大小写无关的双边规范化条件。",
+          "gold_anchor_ids": [
+            "Q20-E2"
+          ]
+        },
+        {
+          "id": "Q20-C4",
+          "score": 0.5,
+          "answer_quote": "the method that runs is the `send` method of the application’s mounted adapter instance",
+          "rationale": "知道对象 send 动态目标不明，但未说明 Session.send 消费 get_adapter 结果；挂载对象还需结合具体 URL 选择，链条不完整。",
+          "gold_anchor_ids": [
+            "Q20-E3",
+            "Q20-E1",
+            "Q20-E2"
+          ]
+        }
+      ],
+      "content_mean": 0.625,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A086",
+      "question_id": "Q17",
+      "answer_sha256": "acc9f7b21c4fdbab5dd02f801786aba692ac8e6b15520909fe927990b065414d",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q17-C1",
+          "score": 1,
+          "answer_quote": "It inserts the prefix into `self.adapters`, then moves existing shorter prefixes behind it. This implements descending prefix-length ordering",
+          "rationale": "明确保存前缀并把较短项后移，长度降序规则正确。",
+          "gold_anchor_ids": [
+            "Q17-E1"
+          ]
+        },
+        {
+          "id": "Q17-C2",
+          "score": 0.5,
+          "answer_quote": "It iterates `self.adapters.items()` and currently compares case-insensitively with:\n  `url.lower().startswith(prefix.lower())`.",
+          "rationale": "双边 lower 与 startswith 正确，并提依赖插入顺序，但遗漏匹配后立即返回首个对象的规则。",
+          "gold_anchor_ids": [
+            "Q17-E2"
+          ]
+        },
+        {
+          "id": "Q17-C3",
+          "score": 0.5,
+          "answer_quote": "Inspect `Session.send()` in `src/requests/sessions.py` around the supplied `L704-L831` section",
+          "rationale": "列出 send 与重定向检查位置，未明确 get_adapter(request.url) 到所选 adapter.send 的链条。",
+          "gold_anchor_ids": [
+            "Q17-E3"
+          ]
+        }
+      ],
+      "content_mean": 0.6666666666666666,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A087",
+      "question_id": "Q18",
+      "answer_sha256": "05e61d13613161b3c0fc23ab2275138c62026cabdccb94b29ad9b8e8507d565b",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q18-C1",
+          "score": 1,
+          "answer_quote": "returning `None` preserves the existing response",
+          "rationale": "现有非 None 才替换、None 保留规则正确；引用支持另外核验。",
+          "gold_anchor_ids": [
+            "Q18-E1"
+          ]
+        },
+        {
+          "id": "Q18-C2",
+          "score": 0.5,
+          "answer_quote": "The downstream cookie consumer is `extract_cookies_to_jar`",
+          "rationale": "正确找到 cookie 消费函数，但只描述重定向合并，遗漏 Session.send 中 dispatch 后 r.history/r.raw 的两个消费者。",
+          "gold_anchor_ids": [
+            "Q18-E2"
+          ]
+        },
+        {
+          "id": "Q18-C3",
+          "score": 0,
+          "answer_quote": "The existing test threatened is `test_cookie_persists_via_api`",
+          "rationale": "未定位 tests/test_hooks.py 的 None callback 用例；所列 cookie 测试没有注册该回调，不能替代冻结必要点。",
+          "gold_anchor_ids": [
+            "Q18-E3"
+          ]
+        }
+      ],
+      "content_mean": 0.5,
+      "errors": [
+        {
+          "question_id": "Q18",
+          "method": null,
+          "answer_quote": "threatening `test_cookie_persists_via_api`",
+          "claim": "现有 test_cookie_persists_via_api 会被改变 None callback 返回处理的提案直接威胁",
+          "category": "contradicted_by_frozen_source",
+          "source_or_query_anchor": [
+            "src/requests/hooks.py:24-33",
+            "tests/test_requests.py:399-403",
+            "Q18-E3"
+          ],
+          "rationale": "该 cookie 测试不注册 response hook；无回调时 dispatch_hook 循环不执行，所述 None 替换改变不触发。它不能代替实际包含 None callback 的 test_hooks。风险若泛指另行添加回调后的新场景，需要明确该新增条件。",
+          "affected_criterion_ids": [
+            "Q18-C3"
+          ]
+        }
+      ],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    }
+  ]
+}

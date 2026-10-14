@@ -1,0 +1,974 @@
+{
+  "schema": "strategy-routing-causal-case-review-v1",
+  "reviewer": "answer_review_c",
+  "scope": "offline post-hoc mechanism case analysis; labels unblinded only after frozen content/evidence reviews",
+  "no_new_api_calls": true,
+  "scores_or_routes_modified": false,
+  "bindings": {
+    "method_map": {
+      "path": "research/pilot/strategy-routing/results/grading-method-map.json",
+      "sha256": "b8666866ccaf130b11771ebefc66a213a762fb9a3b0414c624fd7c3b9cf2a81c"
+    },
+    "content_review": {
+      "path": "research/pilot/strategy-routing/reviews/content-batch7.json",
+      "sha256": "20fdec6316da3a03eb5f82152b524115519a84dc6f2d6fb38dc3d45df7acb0d4"
+    },
+    "evidence_review": {
+      "path": "research/pilot/strategy-routing/reviews/evidence-batch7.json",
+      "sha256": "a66f237bcb9ac95b18fcfa3620d99aa8174971e8c87f47a30fbf76495e220982"
+    },
+    "rubric": {
+      "path": "research/pilot/strategy-routing/answer-gold.json",
+      "sha256": "d1bdca1bf597530a0f90081220b5370893bc04742b080fe3dbd492dd7b3de225"
+    },
+    "source_provenance": {
+      "path": "research/pilot/results/code-prompt/index/text-unit-provenance.json",
+      "sha256": "78d726bf38b5b66f3335e5410736f377f2449c99bf4bd63379425d56d7c1b4e3"
+    }
+  },
+  "cases": [
+    {
+      "id": "F02-source98-boundary",
+      "question_id": "F02-plan",
+      "title_zh": "证据停在字典，回答却说已经看到断言",
+      "primary_method": "bm25",
+      "primary_anonymous_id": "A061",
+      "plain_language_zh": [
+        "像翻到菜谱的材料清单就说“烹饪步骤已经检查过”：预期timeout=None字典可见，真正逐次比较发送参数的两行却在下一片段。",
+        "BM25和hybrid确实找到了相关测试，但引用比实际读到的证据走得更远。DRIFT同样没有拿到缺失两行，却在多轮回答中保留了这个边界。",
+        "这条断言在完整源码里确实存在。因此此例是所引材料不足和引用过度，而非“上游根本没有这项测试”。"
+      ],
+      "actual_material": {
+        "selected_source_id": "98",
+        "source_metadata": {
+          "id": "574528d297ed1664e6a804d14629633481f9f2b3e89563c941369817db6f6da6",
+          "title": "tests/test_requests.py:L2414-L2570",
+          "path": "tests/test_requests.py",
+          "start_line": 2414,
+          "end_line": 2570,
+          "tokens": 1194,
+          "text_sha256": "6ffb5e997dcbd4a151e6ae33980ecfc81e2ffea9bd71368c7bb8589ca418c8e3",
+          "ms_text_unit_id": "37da1205bca9087f81a5c28961b6f3e9fcfb816c1df9548c0c78121eefb7a5339080dac11060a9f200ad5f13680ea1ef2ee84f58a37a882d9421cf8bda50fe42"
+        },
+        "adjacent_chunk_provenance_only": {
+          "id": "f52a03f4b2d80c7c7bca6c7aa36c3be4ecda121a6dc3a449c6ddc58bd0824f15",
+          "title": "tests/test_requests.py:L2559-L2696",
+          "path": "tests/test_requests.py",
+          "start_line": 2559,
+          "end_line": 2696,
+          "tokens": 1198,
+          "text_sha256": "a62a15d5d2f4dac08eadf932065521d7074d8b2560fd1dade059864c184a1b77",
+          "ms_text_unit_id": "bc4ab2502f49c1e1aa173a6c8081bcd4b23a1e7f5e3616ffd849f3f6111902d346779211e0fd205ecc677a53b9c50399d5d7b7830f3d0fe9112ff0ad133fd5c2"
+        },
+        "adjacent_chunk_note": "2559–2696的相邻已索引块包含缺失断言；本题四方法实际HTTP200原始Source均未提供该块。不能把索引中存在当模型读过。",
+        "visible_tail": "    default_keyword_args = {\n        \"stream\": False,\n        \"verify\": True,\n        \"cert\": None,\n        \"timeout\": None,\n        \"allow_redirects\": False,\n        \"proxies\": {},\n    }\n    for response in redirect_generator:\n        assert response.request.method == \"GET\"\n",
+        "missing_lines": {
+          "path": "tests/test_requests.py",
+          "start_line": 2571,
+          "end_line": 2572,
+          "text": "        send_call = SendCall((response.request,), default_keyword_args)\n        assert session.calls[-1] == send_call\n",
+          "sha256": "1125494a17b98e022868b3b1a9c2cebd436baa82ad7b901632266ed04dcf5de5"
+        },
+        "boundary_type": "固定检索片段边界/未选择相邻块；不是HTTP响应中断，不是断言在源码中不存在。"
+      },
+      "logged_chain": [
+        {
+          "wire": {
+            "path": "research/pilot/strategy-routing/results/wire/event-172.json",
+            "sha256": "0362edf9ad3b5b8c6c961f7028d239d9d7dd461b2e683ec929761ba27c589bc2"
+          },
+          "event_sequence": 172,
+          "stage": "answer",
+          "http_status": 200,
+          "request_body_sha256": "90e250ef91bd3e594d006b584020ac0c70622334377aa8469f95fdc39afb0b41",
+          "location": "request.body.input",
+          "record": "Sources (98)",
+          "quote": "98|tests/test_requests.py:L2414-L2570"
+        },
+        {
+          "wire": {
+            "path": "research/pilot/strategy-routing/results/wire/event-172.json",
+            "sha256": "0362edf9ad3b5b8c6c961f7028d239d9d7dd461b2e683ec929761ba27c589bc2"
+          },
+          "event_sequence": 172,
+          "stage": "answer",
+          "http_status": 200,
+          "request_body_sha256": "90e250ef91bd3e594d006b584020ac0c70622334377aa8469f95fdc39afb0b41",
+          "location": "request.body.input",
+          "record": "Sources (98), line 2565; CSV escaped quotes",
+          "quote": "        \"\"timeout\"\": None,"
+        },
+        {
+          "wire": {
+            "path": "research/pilot/strategy-routing/results/wire/event-172.json",
+            "sha256": "0362edf9ad3b5b8c6c961f7028d239d9d7dd461b2e683ec929761ba27c589bc2"
+          },
+          "event_sequence": 172,
+          "stage": "answer",
+          "http_status": 200,
+          "request_body_sha256": "90e250ef91bd3e594d006b584020ac0c70622334377aa8469f95fdc39afb0b41",
+          "location": "request.body.input",
+          "record": "Sources (98), last line 2570",
+          "quote": "        assert response.request.method == \"\"GET\"\""
+        },
+        {
+          "wire": {
+            "path": "research/pilot/strategy-routing/results/wire/event-172.json",
+            "sha256": "0362edf9ad3b5b8c6c961f7028d239d9d7dd461b2e683ec929761ba27c589bc2"
+          },
+          "event_sequence": 172,
+          "stage": "answer",
+          "http_status": 200,
+          "request_body_sha256": "90e250ef91bd3e594d006b584020ac0c70622334377aa8469f95fdc39afb0b41",
+          "location": "response_envelope.response.choices[].message.content",
+          "record": "final BM25 answer",
+          "quote": "Existing redirect tests assert that redirect sends receive a `timeout` value in their send arguments, currently `None`"
+        },
+        {
+          "wire": {
+            "path": "research/pilot/strategy-routing/results/wire/event-175.json",
+            "sha256": "8c0ef9c14f227a67512bd28873cc30f2b513e890e069caad25c7037923340aa3"
+          },
+          "event_sequence": 175,
+          "stage": "answer",
+          "http_status": 200,
+          "request_body_sha256": "90e1449e239e264e99b2e7607bf26147542c0eaa1380d7b96e3574fe4c70f8e8",
+          "location": "response_envelope.response.choices[].message.content",
+          "record": "final hybrid answer",
+          "quote": "has tests asserting redirect-related send keyword arguments, including `timeout: None`"
+        },
+        {
+          "wire": {
+            "path": "research/pilot/strategy-routing/results/wire/event-168.json",
+            "sha256": "ecbb5180a2e88ef5c7589318adc94d35d9bbf5f646e727582aa67f17c11b2867"
+          },
+          "event_sequence": 168,
+          "stage": "local",
+          "http_status": 200,
+          "request_body_sha256": "7b28ff6e2080d1a6894f1d5ecae79ac3468797cb53f9b86a33109debd6b1f768",
+          "location": "request.body.input",
+          "record": "DRIFT local Sources (98)",
+          "quote": "98|tests/test_requests.py:L2414-L2570"
+        },
+        {
+          "wire": {
+            "path": "research/pilot/strategy-routing/results/wire/event-168.json",
+            "sha256": "ecbb5180a2e88ef5c7589318adc94d35d9bbf5f646e727582aa67f17c11b2867"
+          },
+          "event_sequence": 168,
+          "stage": "local",
+          "http_status": 200,
+          "request_body_sha256": "7b28ff6e2080d1a6894f1d5ecae79ac3468797cb53f9b86a33109debd6b1f768",
+          "location": "response_envelope.response.choices[].message.content",
+          "record": "DRIFT local visible response",
+          "quote": "the provided source ends before showing whether or how that dictionary is asserted"
+        },
+        {
+          "wire": {
+            "path": "research/pilot/strategy-routing/results/wire/event-171.json",
+            "sha256": "55c4f3836328833c019ce65ce3b91568924d9ffa4daaeefcdaff8a4a72fdfef6"
+          },
+          "event_sequence": 171,
+          "stage": "reduce",
+          "http_status": 200,
+          "request_body_sha256": "f659e0e9854777a9382d05aae27c1bf2adfc9a806b42221446b664e15bb33533",
+          "location": "request.body.input",
+          "record": "DRIFT reduce input carrying the local result",
+          "quote": "the provided source ends before showing whether or how that dictionary is asserted"
+        },
+        {
+          "wire": {
+            "path": "research/pilot/strategy-routing/results/wire/event-171.json",
+            "sha256": "55c4f3836328833c019ce65ce3b91568924d9ffa4daaeefcdaff8a4a72fdfef6"
+          },
+          "event_sequence": 171,
+          "stage": "reduce",
+          "http_status": 200,
+          "request_body_sha256": "f659e0e9854777a9382d05aae27c1bf2adfc9a806b42221446b664e15bb33533",
+          "location": "response_envelope.response.choices[].message.content",
+          "record": "DRIFT final answer",
+          "quote": "the supplied excerpt does not show a complete assertion that timeout is propagated across redirects"
+        }
+      ],
+      "answer_comparison": [
+        {
+          "anonymous_id": "A061",
+          "method": "bm25",
+          "quote": "Existing redirect tests assert that redirect sends receive a `timeout` value in their send arguments, currently `None`",
+          "answer_sha256": "eed312777c3f7b4f9702c133cdbc14739107c831369c8b67d1b5cb25c6d0972e",
+          "case_citation_support_score": 0.5,
+          "case_location_match": false,
+          "assessment_zh": "断言正确存在于完整源码，但所引Source98并未显示完成比较；冻结引用审计给部分支持。"
+        },
+        {
+          "anonymous_id": "A009",
+          "method": "hybrid",
+          "quote": "has tests asserting redirect-related send keyword arguments, including `timeout: None`",
+          "answer_sha256": "9eae9f5dc3340b865517fdf4cb3c29f5f56bdbedfcc8af0f54c32040b2638b0f",
+          "case_citation_support_score": 0.5,
+          "case_location_match": false,
+          "assessment_zh": "同样越过Source98边界，将预期字典当成已看到的断言。"
+        },
+        {
+          "anonymous_id": "A055",
+          "method": "routed_graphrag",
+          "quote": "the supplied excerpt does not show a complete assertion that timeout is propagated across redirects",
+          "answer_sha256": "700c0d5571fdd115daeba0dbbb854185db2715a8ee27e62152b13e9c2251924b",
+          "case_citation_support_score": 1,
+          "case_location_match": true,
+          "assessment_zh": "准确区分字典与实际断言，并建议补检查；不是图路线拿到了缺失两行。"
+        },
+        {
+          "anonymous_id": "A036",
+          "method": "ms_basic",
+          "quote": "The supplied excerpts do not show the existing timeout test coverage or the `Session.request` and wrapper implementations.",
+          "answer_sha256": "af8b130396c5b9cf8eb4f8f842c04b5d48b0702220f473dcc5d9b4e71837058a",
+          "assessment_zh": "Microsoft Basic未取到Source98；明确承认缺少timeout测试覆盖，但邻近段落仍有笼统timeout-related coverage措辞，不能据此说整份回答所有引用都无问题。"
+        }
+      ],
+      "same_question_frozen_scores": [
+        {
+          "anonymous_id": "A055",
+          "method": "routed_graphrag",
+          "route": "drift",
+          "cell": {
+            "path": "research/pilot/strategy-routing/results/cells/F02-plan-routed_graphrag.json",
+            "sha256": "dbd220fb546e5e010ce8235ae2835f8eb0e41ad62fe6f8032a789550d8ab01fc"
+          },
+          "answer_sha256": "700c0d5571fdd115daeba0dbbb854185db2715a8ee27e62152b13e9c2251924b",
+          "generation_http200_events": [
+            160,
+            162,
+            164,
+            166,
+            168,
+            170,
+            171
+          ],
+          "wire_files": [
+            {
+              "path": "research/pilot/strategy-routing/results/wire/event-160.json",
+              "sha256": "bf8c7f9771e7916fd7d3c2627314056359c9ca40689a1cf6e9ef965f4343a51d"
+            },
+            {
+              "path": "research/pilot/strategy-routing/results/wire/event-162.json",
+              "sha256": "0d6afdeb544e6248e767a8cbe2af985fdddc88f4a1ca80f52ed948d462e28274"
+            },
+            {
+              "path": "research/pilot/strategy-routing/results/wire/event-164.json",
+              "sha256": "8e5fe92c6a478b2b53b68793794b06310a7e06fc2fd950e37632437c835bf3d3"
+            },
+            {
+              "path": "research/pilot/strategy-routing/results/wire/event-166.json",
+              "sha256": "5f14d0328a4e98c99dac67bf94a990fd3d78fbedbd86aad65900486cf2a9ec8f"
+            },
+            {
+              "path": "research/pilot/strategy-routing/results/wire/event-168.json",
+              "sha256": "ecbb5180a2e88ef5c7589318adc94d35d9bbf5f646e727582aa67f17c11b2867"
+            },
+            {
+              "path": "research/pilot/strategy-routing/results/wire/event-170.json",
+              "sha256": "1243981da52ef573e1b16c0715d35e0bc0dd0fa4beab40e6e88f71823b379563"
+            },
+            {
+              "path": "research/pilot/strategy-routing/results/wire/event-171.json",
+              "sha256": "55c4f3836328833c019ce65ce3b91568924d9ffa4daaeefcdaff8a4a72fdfef6"
+            }
+          ],
+          "actual_source_ids": [
+            "21",
+            "91",
+            "98"
+          ],
+          "content_mean": 1.0,
+          "content_criteria": {
+            "F02-plan-C1": 1,
+            "F02-plan-C2": 1,
+            "F02-plan-C3": 1,
+            "F02-plan-C4": 1,
+            "F02-plan-C5": 1
+          },
+          "evidence_mean": 1.0,
+          "evidence_criteria": {
+            "F02-plan-C1": 1,
+            "F02-plan-C2": 1,
+            "F02-plan-C3": 1,
+            "F02-plan-C4": 1,
+            "F02-plan-C5": 1
+          },
+          "generation_input_tokens_common_counter": 21279
+        },
+        {
+          "anonymous_id": "A061",
+          "method": "bm25",
+          "route": "bm25",
+          "cell": {
+            "path": "research/pilot/strategy-routing/results/cells/F02-plan-bm25.json",
+            "sha256": "af2fb2f2d92fd7980b462cc263ea04f222a0fbeaa79fd9d662620aec86d9f8cf"
+          },
+          "answer_sha256": "eed312777c3f7b4f9702c133cdbc14739107c831369c8b67d1b5cb25c6d0972e",
+          "generation_http200_events": [
+            172
+          ],
+          "wire_files": [
+            {
+              "path": "research/pilot/strategy-routing/results/wire/event-172.json",
+              "sha256": "0362edf9ad3b5b8c6c961f7028d239d9d7dd461b2e683ec929761ba27c589bc2"
+            }
+          ],
+          "actual_source_ids": [
+            "1",
+            "2",
+            "7",
+            "8",
+            "9",
+            "28",
+            "30",
+            "55",
+            "98"
+          ],
+          "content_mean": 0.9,
+          "content_criteria": {
+            "F02-plan-C1": 0.5,
+            "F02-plan-C2": 1,
+            "F02-plan-C3": 1,
+            "F02-plan-C4": 1,
+            "F02-plan-C5": 1
+          },
+          "evidence_mean": 1.0,
+          "evidence_criteria": {
+            "F02-plan-C1": 1,
+            "F02-plan-C2": 1,
+            "F02-plan-C3": 1,
+            "F02-plan-C4": 1,
+            "F02-plan-C5": 1
+          },
+          "generation_input_tokens_common_counter": 11124
+        },
+        {
+          "anonymous_id": "A036",
+          "method": "ms_basic",
+          "route": "ms_basic",
+          "cell": {
+            "path": "research/pilot/strategy-routing/results/cells/F02-plan-ms_basic.json",
+            "sha256": "e38be369fc4c07ad00e8976715ed26404bad8b406a2910fb610b756176ca7998"
+          },
+          "answer_sha256": "af8b130396c5b9cf8eb4f8f842c04b5d48b0702220f473dcc5d9b4e71837058a",
+          "generation_http200_events": [
+            174
+          ],
+          "wire_files": [
+            {
+              "path": "research/pilot/strategy-routing/results/wire/event-174.json",
+              "sha256": "bb96ab067b4071a735ee3523c1d3d39490c8311fea4b595de4fedf1a72262baa"
+            }
+          ],
+          "actual_source_ids": [
+            "1",
+            "9",
+            "52",
+            "54",
+            "77",
+            "80",
+            "82",
+            "94",
+            "95"
+          ],
+          "content_mean": 1.0,
+          "content_criteria": {
+            "F02-plan-C1": 1,
+            "F02-plan-C2": 1,
+            "F02-plan-C3": 1,
+            "F02-plan-C4": 1,
+            "F02-plan-C5": 1
+          },
+          "evidence_mean": 1.0,
+          "evidence_criteria": {
+            "F02-plan-C1": 1,
+            "F02-plan-C2": 1,
+            "F02-plan-C3": 1,
+            "F02-plan-C4": 1,
+            "F02-plan-C5": 1
+          },
+          "generation_input_tokens_common_counter": 11285
+        },
+        {
+          "anonymous_id": "A009",
+          "method": "hybrid",
+          "route": "hybrid",
+          "cell": {
+            "path": "research/pilot/strategy-routing/results/cells/F02-plan-hybrid.json",
+            "sha256": "6fe623ef82dca0f4e98c4c6cd21e8d6a61bfb0d80077b64358921110a4e7f620"
+          },
+          "answer_sha256": "9eae9f5dc3340b865517fdf4cb3c29f5f56bdbedfcc8af0f54c32040b2638b0f",
+          "generation_http200_events": [
+            175
+          ],
+          "wire_files": [
+            {
+              "path": "research/pilot/strategy-routing/results/wire/event-175.json",
+              "sha256": "8c0ef9c14f227a67512bd28873cc30f2b513e890e069caad25c7037923340aa3"
+            }
+          ],
+          "actual_source_ids": [
+            "1",
+            "2",
+            "8",
+            "9",
+            "14",
+            "30",
+            "54",
+            "80",
+            "98"
+          ],
+          "content_mean": 0.9,
+          "content_criteria": {
+            "F02-plan-C1": 0.5,
+            "F02-plan-C2": 1,
+            "F02-plan-C3": 1,
+            "F02-plan-C4": 1,
+            "F02-plan-C5": 1
+          },
+          "evidence_mean": 1.0,
+          "evidence_criteria": {
+            "F02-plan-C1": 1,
+            "F02-plan-C2": 1,
+            "F02-plan-C3": 1,
+            "F02-plan-C4": 1,
+            "F02-plan-C5": 1
+          },
+          "generation_input_tokens_common_counter": 11163
+        }
+      ],
+      "score_interpretation_zh": "F02是未来功能规划题，四方法证据均值1来自题目自身权威需求，不能当成检索召回率。BM25/hybrid内容0.9与本处引用过度不是同一扣分原因：分别是实例/类属性示例冲突，以及未明确不改构造器参数。DRIFT和Basic内容1也不说明现有实现证据齐全。",
+      "certain_layers": [
+        {
+          "layer": "chunk/source selection",
+          "finding": "Source98 ends2570，相邻索引块99包含2571–72但未提供；HTTP200原始请求可直接核对。"
+        },
+        {
+          "layer": "generation/citation",
+          "finding": "BM25/hybrid把可见预期字典概括成已经有send参数断言；DRIFT local168指出缺口，reduce171保留。"
+        }
+      ],
+      "hypotheses_not_established": [
+        "片段切在测试内部可能提高模型补全惯常测试形状的风险；只有这次日志，没有补入相邻块的反事实重跑，不能说缺少这两行单独造成错误。",
+        "DRIFT多轮局部问答可能促成边界检查，但此题路线同时改变调用次数、上下文及汇总过程，不能归因于图结构本身。"
+      ],
+      "actionable_inference_zh": "适合尝试测试函数完整分块、按断言/局部邻接补读，以及在生成前检查“assert”是否实际落入引用范围；这是从案例提出的改进方向，未在本轮验证。"
+    },
+    {
+      "id": "G01-global-summary-granularity",
+      "question_id": "G01",
+      "title_zh": "地图保留了地区名称，却缺少精确门牌和通行条件",
+      "primary_method": "routed_graphrag",
+      "route": "global",
+      "primary_anonymous_id": "A065",
+      "plain_language_zh": [
+        "这道题要解释认证工作由哪些模块负责。Global收到23份社区摘要，能讲清Basic、Digest、代理、准备和重定向的大致分工，但没有收到原始代码块。",
+        "摘要说“信任环境时会查netrc”，没有给出“请求和Session都没明确认证”这个必要条件。最后回答的模糊在输入摘要中已经存在，不能全怪最后写答案。",
+        "另一方面，PREPARE_AUTH这个名字已通过map进入reduce输入，最后却只剩行为描述。这里可以确认发生了生成阶段的信息省略；但类和模块归属早在摘要阶段就缺失。",
+        "OAuth外部包这一要求在实际23份摘要中没有出现。能在完整图索引溯源到认证文档，不等于这次Global模型读过该文档。"
+      ],
+      "actual_material": {
+        "report_count": 23,
+        "raw_source_count": 0,
+        "map_events": [
+          176,
+          177,
+          178,
+          179
+        ],
+        "reduce_event": 180,
+        "report11": {
+          "id": "11",
+          "title": "Requests HTTP Preparation, Authentication, and Utility Community",
+          "content_sha256": "6acf21354238e61f0e49526ec9bd5e48f9b759395cf31a616fd3cc356fa6fb94"
+        },
+        "report14": {
+          "id": "14",
+          "title": "Requests HTTP Core, Sessions, and Redirect Handling",
+          "content_sha256": "91ab31f6d4198708eed718a3ded7501318c7647f90f0ad6f6ec9c72311f0efa1"
+        },
+        "not_model_evidence": "固定Requests完整源码和full graph仅用于事实核验；未把它们扩充到Global上下文。"
+      },
+      "chains": [
+        {
+          "topic": "准备期消费者的精确名字和归属",
+          "criterion": "G01-C2",
+          "trace": [
+            {
+              "wire": {
+                "path": "research/pilot/strategy-routing/results/wire/event-176.json",
+                "sha256": "69e57427b00a68dc84b53442fbf269a80b86e290aca56bd90ca8aa787e486032"
+              },
+              "event_sequence": 176,
+              "stage": "map",
+              "http_status": 200,
+              "request_body_sha256": "a508d9ddea26097f55641973d53b8ff51f467117c14381680ece7732c68e1cb9",
+              "location": "request.body.input",
+              "record": "Reports (11)",
+              "quote": "PREPARE_AUTH prepares authentication before request hooks execute."
+            },
+            {
+              "wire": {
+                "path": "research/pilot/strategy-routing/results/wire/event-176.json",
+                "sha256": "69e57427b00a68dc84b53442fbf269a80b86e290aca56bd90ca8aa787e486032"
+              },
+              "event_sequence": 176,
+              "stage": "map",
+              "http_status": 200,
+              "request_body_sha256": "a508d9ddea26097f55641973d53b8ff51f467117c14381680ece7732c68e1cb9",
+              "location": "request.body.input",
+              "record": "Reports (11)",
+              "quote": "The provided material does not identify the owning request class"
+            },
+            {
+              "wire": {
+                "path": "research/pilot/strategy-routing/results/wire/event-176.json",
+                "sha256": "69e57427b00a68dc84b53442fbf269a80b86e290aca56bd90ca8aa787e486032"
+              },
+              "event_sequence": 176,
+              "stage": "map",
+              "http_status": 200,
+              "request_body_sha256": "a508d9ddea26097f55641973d53b8ff51f467117c14381680ece7732c68e1cb9",
+              "location": "response_envelope.response.choices[].message.content",
+              "record": "map point 2; Reports (11,18)",
+              "quote": "PREPARE_AUTH obtains credentials from the request URL when explicit authentication is absent"
+            },
+            {
+              "wire": {
+                "path": "research/pilot/strategy-routing/results/wire/event-180.json",
+                "sha256": "3d324de731774e4cbef39b725f733bd029e6b69a08e2bede736585007d71bd4d"
+              },
+              "event_sequence": 180,
+              "stage": "reduce",
+              "http_status": 200,
+              "request_body_sha256": "bc2926314bf0924a544fe802ac076c6d453584a96772065d9b99f43519de0f9a",
+              "location": "request.body.input",
+              "record": "reduce input; Analyst 1 score92",
+              "quote": "PREPARE_AUTH obtains credentials from the request URL when explicit authentication is absent"
+            },
+            {
+              "wire": {
+                "path": "research/pilot/strategy-routing/results/wire/event-180.json",
+                "sha256": "3d324de731774e4cbef39b725f733bd029e6b69a08e2bede736585007d71bd4d"
+              },
+              "event_sequence": 180,
+              "stage": "reduce",
+              "http_status": 200,
+              "request_body_sha256": "bc2926314bf0924a544fe802ac076c6d453584a96772065d9b99f43519de0f9a",
+              "location": "response_envelope.response.choices[].message.content",
+              "record": "final preparation paragraph",
+              "quote": "A two-item credential tuple is converted into an `HTTPBasicAuth` object, applied to the request, and followed by content-length recalculation."
+            }
+          ],
+          "source_truth": {
+            "path": "src/requests/models.py",
+            "lines": "351-377,588-608",
+            "symbol": "PreparedRequest.prepare_auth",
+            "provided_as_raw_source_to_global": false
+          },
+          "certain_diagnosis_zh": "Report11有功能名而缺类归属；map保留PREPARE_AUTH，reduce最终未保留该名字。类归属缺失是输入粒度问题，函数标识丢失是可观察的最终汇总省略。",
+          "limit_zh": "不能因还原完整源码后知道归属，就说模型在reduce中丢掉了完整models.PreparedRequest.prepare_auth；完整限定名从未在该摘要链中出现。"
+        },
+        {
+          "topic": "netrc认证选择条件",
+          "criterion": "G01-C3",
+          "trace": [
+            {
+              "wire": {
+                "path": "research/pilot/strategy-routing/results/wire/event-177.json",
+                "sha256": "447772b313e6105d99d09a6f21eb65b2e8b73ccdeb1dacce15761d3fbb333bf0"
+              },
+              "event_sequence": 177,
+              "stage": "map",
+              "http_status": 200,
+              "request_body_sha256": "c084bd759d95ca9f893eda4931391ef08ce3b430d7ef7a6b4c3d58a9c62c71f9",
+              "location": "request.body.input",
+              "record": "Reports (14)",
+              "quote": "When trust_env is enabled, environment proxy discovery and netrc-based authentication are consulted."
+            },
+            {
+              "wire": {
+                "path": "research/pilot/strategy-routing/results/wire/event-177.json",
+                "sha256": "447772b313e6105d99d09a6f21eb65b2e8b73ccdeb1dacce15761d3fbb333bf0"
+              },
+              "event_sequence": 177,
+              "stage": "map",
+              "http_status": 200,
+              "request_body_sha256": "c084bd759d95ca9f893eda4931391ef08ce3b430d7ef7a6b4c3d58a9c62c71f9",
+              "location": "response_envelope.response.choices[].message.content",
+              "record": "map point3; Reports (14)",
+              "quote": "The supplied evidence does not establish the precise precedence rules"
+            },
+            {
+              "wire": {
+                "path": "research/pilot/strategy-routing/results/wire/event-180.json",
+                "sha256": "3d324de731774e4cbef39b725f733bd029e6b69a08e2bede736585007d71bd4d"
+              },
+              "event_sequence": 180,
+              "stage": "reduce",
+              "http_status": 200,
+              "request_body_sha256": "bc2926314bf0924a544fe802ac076c6d453584a96772065d9b99f43519de0f9a",
+              "location": "request.body.input",
+              "record": "reduce input; Analyst2 score88",
+              "quote": "The supplied evidence does not establish the precise precedence rules"
+            },
+            {
+              "wire": {
+                "path": "research/pilot/strategy-routing/results/wire/event-180.json",
+                "sha256": "3d324de731774e4cbef39b725f733bd029e6b69a08e2bede736585007d71bd4d"
+              },
+              "event_sequence": 180,
+              "stage": "reduce",
+              "http_status": 200,
+              "request_body_sha256": "bc2926314bf0924a544fe802ac076c6d453584a96772065d9b99f43519de0f9a",
+              "location": "response_envelope.response.choices[].message.content",
+              "record": "final Session/environment section",
+              "quote": "The precise precedence rules and whether netrc credentials apply to origin servers, proxies, or both are not established."
+            },
+            {
+              "wire": {
+                "path": "research/pilot/strategy-routing/results/wire/event-181.json",
+                "sha256": "ed6f741ab5d71fbde68218de93520cdd2b9560120e22ef14be4e03d141ad60ea"
+              },
+              "event_sequence": 181,
+              "stage": "answer",
+              "http_status": 200,
+              "request_body_sha256": "70499a67c403ef6207fba89292621409cf5b3a1a492296b971cf8f3ee958df16",
+              "location": "request.body.input",
+              "record": "BM25 Sources (55), sessions.py480",
+              "quote": "if self.trust_env and not auth and not self.auth:"
+            },
+            {
+              "wire": {
+                "path": "research/pilot/strategy-routing/results/wire/event-181.json",
+                "sha256": "ed6f741ab5d71fbde68218de93520cdd2b9560120e22ef14be4e03d141ad60ea"
+              },
+              "event_sequence": 181,
+              "stage": "answer",
+              "http_status": 200,
+              "request_body_sha256": "70499a67c403ef6207fba89292621409cf5b3a1a492296b971cf8f3ee958df16",
+              "location": "response_envelope.response.choices[].message.content",
+              "record": "BM25 final preparation section",
+              "quote": "If `trust_env` is enabled and neither request-level nor session-level authentication is set, it calls `get_netrc_auth(request.url)`."
+            }
+          ],
+          "certain_diagnosis_zh": "实际Report14仅给trust_env粗条件；精确的双重auth缺省门槛未出现在这次Global的map输入中。map/reduce保留了不确定性。BM25实际Source55包含完整条件，答案C3为1；Global该点0.5。",
+          "limit_zh": "这不是证明BM25总能找到正确代码；另外两条基线本题也没提供Source55，C3同为0.5。"
+        },
+        {
+          "topic": "OAuth是外部扩展还是内置",
+          "criterion": "G01-C5",
+          "trace": [
+            {
+              "wire": {
+                "path": "research/pilot/strategy-routing/results/wire/event-178.json",
+                "sha256": "35fd75c2906fa3b193a03e0418507ce8466bd140efdf38ba527b9794e31f0339"
+              },
+              "event_sequence": 178,
+              "stage": "map",
+              "http_status": 200,
+              "request_body_sha256": "40b4be725ec5fdff4bdbf71a0f7234256b90b2941434e7517f10a65994c33893",
+              "location": "response_envelope.response.choices[].message.content",
+              "record": "map point7; Reports (1)",
+              "quote": "no separate external authentication library, provider, or runtime integration is identified."
+            },
+            {
+              "wire": {
+                "path": "research/pilot/strategy-routing/results/wire/event-180.json",
+                "sha256": "3d324de731774e4cbef39b725f733bd029e6b69a08e2bede736585007d71bd4d"
+              },
+              "event_sequence": 180,
+              "stage": "reduce",
+              "http_status": 200,
+              "request_body_sha256": "bc2926314bf0924a544fe802ac076c6d453584a96772065d9b99f43519de0f9a",
+              "location": "request.body.input",
+              "record": "reduce input; Analyst3 score90",
+              "quote": "no separate external authentication library, provider, or runtime integration is identified."
+            },
+            {
+              "wire": {
+                "path": "research/pilot/strategy-routing/results/wire/event-180.json",
+                "sha256": "3d324de731774e4cbef39b725f733bd029e6b69a08e2bede736585007d71bd4d"
+              },
+              "event_sequence": 180,
+              "stage": "reduce",
+              "http_status": 200,
+              "request_body_sha256": "bc2926314bf0924a544fe802ac076c6d453584a96772065d9b99f43519de0f9a",
+              "location": "response_envelope.response.choices[].message.content",
+              "record": "final Built-in Handlers section",
+              "quote": "it does not identify a separate external authentication provider or library."
+            },
+            {
+              "wire": {
+                "path": "research/pilot/strategy-routing/results/wire/event-183.json",
+                "sha256": "085e4c88476d0d39e29817c708cae1bfdbb061f34ffcd4df5da1c02bfa29e074"
+              },
+              "event_sequence": 183,
+              "stage": "answer",
+              "http_status": 200,
+              "request_body_sha256": "85319c7e3edaeb89246b1c47001e92be50ff8e0c2629b81648f58e237ddb6775",
+              "location": "request.body.input",
+              "record": "Microsoft Basic Sources (10), authentication.rst83",
+              "quote": "The ``requests-oauthlib`` library also handles OAuth 2"
+            },
+            {
+              "wire": {
+                "path": "research/pilot/strategy-routing/results/wire/event-183.json",
+                "sha256": "085e4c88476d0d39e29817c708cae1bfdbb061f34ffcd4df5da1c02bfa29e074"
+              },
+              "event_sequence": 183,
+              "stage": "answer",
+              "http_status": 200,
+              "request_body_sha256": "85319c7e3edaeb89246b1c47001e92be50ff8e0c2629b81648f58e237ddb6775",
+              "location": "response_envelope.response.choices[].message.content",
+              "record": "Microsoft Basic final third-party section",
+              "quote": "OAuth 1 and OAuth 2/OpenID Connect are explicitly delegated to `requests-oauthlib`"
+            }
+          ],
+          "negative_check": {
+            "checked_map_request_events": [
+              176,
+              177,
+              178,
+              179
+            ],
+            "oauth_case_insensitive_occurrences": 0,
+            "requests_oauthlib_occurrences": 0,
+            "scope": "actual supplied report text in successful HTTP200 request bodies, not full graph"
+          },
+          "certain_diagnosis_zh": "实际报告未呈现OAuth外部包，后续map和final都没补足。Global C5还因未给具体认证docs/tests定位得0；不能把该整项0全部归因于OAuth一条。Basic有Source10及认证测试，C5为1。"
+        }
+      ],
+      "same_question_frozen_scores": [
+        {
+          "anonymous_id": "A065",
+          "method": "routed_graphrag",
+          "route": "global",
+          "cell": {
+            "path": "research/pilot/strategy-routing/results/cells/G01-routed_graphrag.json",
+            "sha256": "6d78e6d46b1432e4a89ebace36551f612f5e09f0d04845e98bec49450da4f2a5"
+          },
+          "answer_sha256": "36cff6b592dfae0c26dfddece7cb93a9bb66d59780bba34a4e20c6bfdf2add27",
+          "generation_http200_events": [
+            176,
+            177,
+            178,
+            179,
+            180
+          ],
+          "wire_files": [
+            {
+              "path": "research/pilot/strategy-routing/results/wire/event-176.json",
+              "sha256": "69e57427b00a68dc84b53442fbf269a80b86e290aca56bd90ca8aa787e486032"
+            },
+            {
+              "path": "research/pilot/strategy-routing/results/wire/event-177.json",
+              "sha256": "447772b313e6105d99d09a6f21eb65b2e8b73ccdeb1dacce15761d3fbb333bf0"
+            },
+            {
+              "path": "research/pilot/strategy-routing/results/wire/event-178.json",
+              "sha256": "35fd75c2906fa3b193a03e0418507ce8466bd140efdf38ba527b9794e31f0339"
+            },
+            {
+              "path": "research/pilot/strategy-routing/results/wire/event-179.json",
+              "sha256": "066e0c1690a76c90ecbd43c96c942590f4b01cff08aea35fd79553c58362a587"
+            },
+            {
+              "path": "research/pilot/strategy-routing/results/wire/event-180.json",
+              "sha256": "3d324de731774e4cbef39b725f733bd029e6b69a08e2bede736585007d71bd4d"
+            }
+          ],
+          "actual_source_ids": [],
+          "content_mean": 0.4,
+          "content_criteria": {
+            "G01-C1": 0.5,
+            "G01-C2": 0.5,
+            "G01-C3": 0.5,
+            "G01-C4": 0.5,
+            "G01-C5": 0
+          },
+          "evidence_mean": 0.6,
+          "evidence_criteria": {
+            "G01-C1": 1,
+            "G01-C2": 0.5,
+            "G01-C3": 0.5,
+            "G01-C4": 0.5,
+            "G01-C5": 0.5
+          },
+          "generation_input_tokens_common_counter": 41923
+        },
+        {
+          "anonymous_id": "A022",
+          "method": "bm25",
+          "route": "bm25",
+          "cell": {
+            "path": "research/pilot/strategy-routing/results/cells/G01-bm25.json",
+            "sha256": "9445d374d23833893fe518e79bdba532f802689533478e728395a0191a5ffd97"
+          },
+          "answer_sha256": "f446197bdaa45852c8ad1dc57c8c2ef7d2b9c63e4c716eaa5f93ad3c86f032d4",
+          "generation_http200_events": [
+            181
+          ],
+          "wire_files": [
+            {
+              "path": "research/pilot/strategy-routing/results/wire/event-181.json",
+              "sha256": "ed6f741ab5d71fbde68218de93520cdd2b9560120e22ef14be4e03d141ad60ea"
+            }
+          ],
+          "actual_source_ids": [
+            "1",
+            "5",
+            "6",
+            "10",
+            "52",
+            "54",
+            "55",
+            "57",
+            "83"
+          ],
+          "content_mean": 0.6,
+          "content_criteria": {
+            "G01-C1": 0.5,
+            "G01-C2": 0.5,
+            "G01-C3": 1,
+            "G01-C4": 0.5,
+            "G01-C5": 0.5
+          },
+          "evidence_mean": 0.7,
+          "evidence_criteria": {
+            "G01-C1": 0.5,
+            "G01-C2": 0.5,
+            "G01-C3": 1,
+            "G01-C4": 1,
+            "G01-C5": 0.5
+          },
+          "generation_input_tokens_common_counter": 10911
+        },
+        {
+          "anonymous_id": "A079",
+          "method": "ms_basic",
+          "route": "ms_basic",
+          "cell": {
+            "path": "research/pilot/strategy-routing/results/cells/G01-ms_basic.json",
+            "sha256": "b29d25d2da2749233fd82a39cf34c7a1e9ee7c86381b91bc51efa09110064280"
+          },
+          "answer_sha256": "13c54ef77052d1b3e45424ce49ccd5397897f9faf63ecfb2224b02a65b5cdbbf",
+          "generation_http200_events": [
+            183
+          ],
+          "wire_files": [
+            {
+              "path": "research/pilot/strategy-routing/results/wire/event-183.json",
+              "sha256": "085e4c88476d0d39e29817c708cae1bfdbb061f34ffcd4df5da1c02bfa29e074"
+            }
+          ],
+          "actual_source_ids": [
+            "0",
+            "1",
+            "2",
+            "8",
+            "10",
+            "20",
+            "32",
+            "80",
+            "85",
+            "94"
+          ],
+          "content_mean": 0.7,
+          "content_criteria": {
+            "G01-C1": 1,
+            "G01-C2": 0.5,
+            "G01-C3": 0.5,
+            "G01-C4": 0.5,
+            "G01-C5": 1
+          },
+          "evidence_mean": 0.7,
+          "evidence_criteria": {
+            "G01-C1": 1,
+            "G01-C2": 0.5,
+            "G01-C3": 0.5,
+            "G01-C4": 0.5,
+            "G01-C5": 1
+          },
+          "generation_input_tokens_common_counter": 11921
+        },
+        {
+          "anonymous_id": "A060",
+          "method": "hybrid",
+          "route": "hybrid",
+          "cell": {
+            "path": "research/pilot/strategy-routing/results/cells/G01-hybrid.json",
+            "sha256": "dc71dde89b80972756949b6bdf86e7172c135e57aa5612e0b51dd80ff67b574b"
+          },
+          "answer_sha256": "b9a90f7cac5e2a7f3829ed617dc34ce38231c70347531331b12617aafd6e853c",
+          "generation_http200_events": [
+            184
+          ],
+          "wire_files": [
+            {
+              "path": "research/pilot/strategy-routing/results/wire/event-184.json",
+              "sha256": "6b8f438b31ee3ee5966b581dd568a0ed84e9d7dc2b0dc2536c4255c9182e9661"
+            }
+          ],
+          "actual_source_ids": [
+            "0",
+            "1",
+            "2",
+            "5",
+            "6",
+            "8",
+            "10",
+            "32",
+            "52",
+            "80"
+          ],
+          "content_mean": 0.6,
+          "content_criteria": {
+            "G01-C1": 1,
+            "G01-C2": 0.5,
+            "G01-C3": 0.5,
+            "G01-C4": 0.5,
+            "G01-C5": 0.5
+          },
+          "evidence_mean": 0.6,
+          "evidence_criteria": {
+            "G01-C1": 1,
+            "G01-C2": 0.5,
+            "G01-C3": 0.5,
+            "G01-C4": 0.5,
+            "G01-C5": 0.5
+          },
+          "generation_input_tokens_common_counter": 11881
+        }
+      ],
+      "certain_layers": [
+        {
+          "layer": "provided representation",
+          "finding": "Global实际是23报告、0原始Source；摘要缺确切owner、完整netrc条件及OAuth外部包。"
+        },
+        {
+          "layer": "map/reduce transformation",
+          "finding": "PREPARE_AUTH标识通过map输出和reduce输入，最终回答仅留行为；可直接定位这一次信息省略。"
+        },
+        {
+          "layer": "comparison",
+          "finding": "BM25本题实际Source55能支持完整条件；Basic实际Source10/85支持外部扩展和具体认证测试，分项更高。"
+        }
+      ],
+      "hypotheses_not_established": [
+        "社区摘要可能因压缩、跨分块符号合并或报告提示词而丢失粒度；本案例没有重跑索引与报告生成，不能把缺口唯一归因于某一个组件。",
+        "全局问题选Global可能需要搭配源码回读才能给精确模块/条件；此轮没有该增补消融，只能提出为后续验证方向。"
+      ],
+      "score_interpretation_zh": "Global内容0.4、证据0.6说明模型仍遗漏一些已提供的接口/测试信息，同时部分必要细节确实缺于摘要。内容与证据分不是因果拆分比例，不应据此把误差按百分比分摊。四方法调用数与上下文量不同，单题不能支持行业胜负。",
+      "actionable_inference_zh": "如果答案需要函数归属或布尔条件，应从摘要选出候选模块后回读对应源码；同时让reduce保留已经出现的关键符号名。此改进尚未实验。"
+    }
+  ],
+  "limits_zh": [
+    "只描述已有单次运行的可观察信息流，未做新调用、反事实干预或重评分。",
+    "实际模型材料以HTTP200请求正文为准；map/reduce的生成结论仅用来追踪信息如何变换，不当成新的源码事实。",
+    "样例挑选用于解释机制，不能估计错误发生率或证明某方法总体更强。"
+  ]
+}

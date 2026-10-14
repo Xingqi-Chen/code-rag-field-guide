@@ -1,0 +1,657 @@
+{
+  "rubric_sha256": "d1bdca1bf597530a0f90081220b5370893bc04742b080fe3dbd492dd7b3de225",
+  "blind_pack_sha256": "8753fcccc7f926d8716671f553e2eb102f13f3b816b6b1d775b24394ba94cf86",
+  "reviewer": "answer_review_c",
+  "scope": {
+    "batch": 5,
+    "question_ids": [
+      "Q14",
+      "Q15",
+      "Q16"
+    ],
+    "row_count": 12,
+    "mode": "method-identity-blinded content review; citation syntax may imply method, not double blind",
+    "source": "Frozen Requests 2.32.3; all Q14–Q16 gold spans hash-verified; relevant source/test excerpts inspected statically",
+    "constraints": "No method mapping, actual supplied materials, run summary, results/cells, other scores, exporter, API or credentials read; existing scores and rubric unchanged.",
+    "strict_rubric_notes": [
+      "Q14-C2 encoding non-None refers to the local detector result, not Response.encoding; these are distinct guards in the frozen source.",
+      "Full credit requires all explicitly frozen necessary meanings. Correct but incomplete core receives .5; missing guards or operations are identified in rationales.",
+      "Source-location citation mismatches are separate from content points."
+    ]
+  },
+  "rows": [
+    {
+      "anonymous_id": "A013",
+      "question_id": "Q14",
+      "answer_sha256": "cfe3d5e1e20e2714a31e32f172e85243db6bc27e1ed99967179f118e2f0f9c1d",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q14-C1",
+          "score": 0.5,
+          "answer_quote": "a reference to `guess_json_utf` outside the test import",
+          "rationale": "识别 JSON Unicode 检测主题和 helper 名，但没有定位 utils.py 或解释 BOM/前四字节模式。",
+          "gold_anchor_ids": [
+            "Q14-E1"
+          ]
+        },
+        {
+          "id": "Q14-C2",
+          "score": 0.5,
+          "answer_quote": "Response decoding is exercised through `r.json()`",
+          "rationale": "识别 Response.json/r.json 这一消费者，但未说明探测结果解码后传给 complexjson.loads 的链条。",
+          "gold_anchor_ids": [
+            "Q14-E2"
+          ]
+        },
+        {
+          "id": "Q14-C3",
+          "score": 0.5,
+          "answer_quote": "class `TestGuessJSONUTF`, especially `test_encoded`, `test_bad_utf_like_encoding`, and `test_guess_by_bom`",
+          "rationale": "准确列出类和测试名称，但没有说明 test_encoded 的多种 UTF 参数化覆盖。",
+          "gold_anchor_ids": [
+            "Q14-E3"
+          ]
+        }
+      ],
+      "content_mean": 0.5,
+      "errors": [],
+      "citation_audit": [
+        {
+          "answer_quote": "(Source 107, `tests/test_utils.py:L344-L389`)",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "tests/test_utils.py:376-408",
+          "rationale": "指定范围仅到 test_encoded 参数化装饰器末尾；test_encoded 定义为390，其他两个测试394/406。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        }
+      ],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A032",
+      "question_id": "Q15",
+      "answer_sha256": "d0bf97c4e2c69110f35402268bcaff717f1d2e89e64b66e10f5d3735c05549f4",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q15-C1",
+          "score": 1,
+          "answer_quote": "if `tell()` raises `OSError`, it stores `object()` rather than `None`",
+          "rationale": "完整说明 prepare_body 记录位置及失败时 object 哨兵。",
+          "gold_anchor_ids": [
+            "Q15-E1"
+          ]
+        },
+        {
+          "id": "Q15-C2",
+          "score": 1,
+          "answer_quote": "`_body_position is not None` and the copied request has either `Content-Length` or `Transfer-Encoding`",
+          "rationale": "完整说明两个条件及条件内调用 rewind_body。",
+          "gold_anchor_ids": [
+            "Q15-E2"
+          ]
+        },
+        {
+          "id": "Q15-C3",
+          "score": 0.5,
+          "answer_quote": "body whose `seek()` raises `OSError` and verifies that `rewind_body()` raises `UnrewindableBodyError`",
+          "rationale": "说明 seek 缺失/失败的错误分支，但未说明正常路径要求整数 _body_position。",
+          "gold_anchor_ids": [
+            "Q15-E3"
+          ]
+        },
+        {
+          "id": "Q15-C4",
+          "score": 1,
+          "answer_quote": "`test_rewind_body_failed_seek`",
+          "rationale": "明确现有测试、抛 OSError 的 seek 对象及 UnrewindableBodyError 断言。",
+          "gold_anchor_ids": [
+            "Q15-E4"
+          ]
+        }
+      ],
+      "content_mean": 0.875,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A073",
+      "question_id": "Q14",
+      "answer_sha256": "9a99975bdb6b13572f60f2fdaf2b6c9148bf3e8a6049cda5b4c01bc9da6417d7",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q14-C1",
+          "score": 0.5,
+          "answer_quote": "The JSON Unicode detector is `requests.utils.guess_json_utf()`",
+          "rationale": "定位函数/模块且提到 BOM 检测测试，但未说明前四字节空字节模式；检测规则要点不完整。",
+          "gold_anchor_ids": [
+            "Q14-E1"
+          ]
+        },
+        {
+          "id": "Q14-C2",
+          "score": 0.5,
+          "answer_quote": "decodes using the returned encoding, and passes the result to `complexjson.loads`",
+          "rationale": "调用链核心正确，但未说明探测返回值须非 None 才走该解码路径；也略去正文长度门槛。",
+          "gold_anchor_ids": [
+            "Q14-E2"
+          ]
+        },
+        {
+          "id": "Q14-C3",
+          "score": 1,
+          "answer_quote": "`test_encoded` checks UTF-32, UTF-8 with/without BOM, UTF-16, and endian-specific encodings.",
+          "rationale": "准确定位现有参数化测试并说明多种 UTF 覆盖。",
+          "gold_anchor_ids": [
+            "Q14-E3"
+          ]
+        }
+      ],
+      "content_mean": 0.6666666666666666,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A046",
+      "question_id": "Q15",
+      "answer_sha256": "4c0e7449f8d08f831df99553708ed117531e495536107907f28ba9c3b69b2112",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q15-C1",
+          "score": 0.5,
+          "answer_quote": "file-like bodies record the current offset, including a partially read offset",
+          "rationale": "正常位置状态正确，但未说明 tell 失败的 object/non-None 哨兵。",
+          "gold_anchor_ids": [
+            "Q15-E1"
+          ]
+        },
+        {
+          "id": "Q15-C2",
+          "score": 1,
+          "answer_quote": "`prepared_request._body_position is not None and (\"Content-Length\" in headers or \"Transfer-Encoding\" in headers)`",
+          "rationale": "两个条件及 rewind_body 调用完整正确。",
+          "gold_anchor_ids": [
+            "Q15-E2"
+          ]
+        },
+        {
+          "id": "Q15-C3",
+          "score": 0.5,
+          "answer_quote": "raises those two errors for failed or unavailable seeking",
+          "rationale": "区分 seek 缺失/失败错误，但遗漏正常恢复要求整数位置。",
+          "gold_anchor_ids": [
+            "Q15-E3"
+          ]
+        },
+        {
+          "id": "Q15-C4",
+          "score": 1,
+          "answer_quote": "`test_rewind_body_failed_seek`, which prepares a body whose `seek()` raises `OSError` and asserts `UnrewindableBodyError`",
+          "rationale": "完整定位聚焦测试及其失败对象、断言；行号错配另记。",
+          "gold_anchor_ids": [
+            "Q15-E4"
+          ]
+        }
+      ],
+      "content_mean": 0.75,
+      "errors": [],
+      "citation_audit": [
+        {
+          "answer_quote": "[Source 94, `tests/test_requests.py:L2016-L2028`]",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "tests/test_requests.py:1979-2000",
+          "rationale": "failed_seek 实际1979–2000；2016–2028为failed_tell末尾及另一辅助函数。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        }
+      ],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A058",
+      "question_id": "Q14",
+      "answer_sha256": "c2838c669a04c15c2a6936b5c8c42e84d589c39bb692e41fd7d01e5e08af1c1b",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q14-C1",
+          "score": 1,
+          "answer_quote": "It examines the first four bytes for BOMs and null-byte patterns",
+          "rationale": "函数/模块、BOM 和前四字节模式完整。",
+          "gold_anchor_ids": [
+            "Q14-E1"
+          ]
+        },
+        {
+          "id": "Q14-C2",
+          "score": 0.5,
+          "answer_quote": "it calls `guess_json_utf(self.content)` and uses the detected codec to decode before `complexjson.loads(...)`",
+          "rationale": "完整定位 consumer 与调用链，但未明确探测结果非 None 的解码条件；已说明外层正文长度和响应编码条件。",
+          "gold_anchor_ids": [
+            "Q14-E2"
+          ]
+        },
+        {
+          "id": "Q14-C3",
+          "score": 0,
+          "answer_quote": "does not include an existing focused test for `guess_json_utf()`",
+          "rationale": "没有定位既有聚焦检测测试；不确定声明不替代内容。",
+          "gold_anchor_ids": [
+            "Q14-E3"
+          ]
+        }
+      ],
+      "content_mean": 0.5,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A029",
+      "question_id": "Q16",
+      "answer_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "failed",
+      "criteria": [
+        {
+          "id": "Q16-C1",
+          "score": 0,
+          "answer_quote": "",
+          "rationale": "最终执行失败、空回答。",
+          "gold_anchor_ids": [
+            "Q16-E2"
+          ]
+        },
+        {
+          "id": "Q16-C2",
+          "score": 0,
+          "answer_quote": "",
+          "rationale": "最终执行失败、空回答。",
+          "gold_anchor_ids": [
+            "Q16-E1"
+          ]
+        },
+        {
+          "id": "Q16-C3",
+          "score": 0,
+          "answer_quote": "",
+          "rationale": "最终执行失败、空回答。",
+          "gold_anchor_ids": [
+            "Q16-E3"
+          ]
+        },
+        {
+          "id": "Q16-C4",
+          "score": 0,
+          "answer_quote": "",
+          "rationale": "最终执行失败、空回答。",
+          "gold_anchor_ids": [
+            "Q16-E4",
+            "Q16-E1"
+          ]
+        }
+      ],
+      "content_mean": 0.0,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A016",
+      "question_id": "Q16",
+      "answer_sha256": "c051fe9946667311f5dbc96d5bedc5c7385ad4994280f1e62e99674e674ce249",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q16-C1",
+          "score": 1,
+          "answer_quote": "keys whose merged value is `None` are then deleted",
+          "rationale": "明确复制/覆盖后删除合并映射中的 None 键。",
+          "gold_anchor_ids": [
+            "Q16-E2"
+          ]
+        },
+        {
+          "id": "Q16-C2",
+          "score": 0.5,
+          "answer_quote": "Non-mapping settings bypass this removal.",
+          "rationale": "限定双 Mapping 删除路径，但未说明非 Mapping 直接返回 request_setting；仅声明绕过。",
+          "gold_anchor_ids": [
+            "Q16-E1"
+          ]
+        },
+        {
+          "id": "Q16-C3",
+          "score": 1,
+          "answer_quote": "`merge_setting(request.params, self.params)`",
+          "rationale": "准确识别 prepare_request 的 headers（含 CaseInsensitiveDict）与 params 两个消费点。",
+          "gold_anchor_ids": [
+            "Q16-E3"
+          ]
+        },
+        {
+          "id": "Q16-C4",
+          "score": 1,
+          "answer_quote": "`cert = merge_setting(cert, self.cert)`",
+          "rationale": "四个环境设置 merge_setting 调用均列出，并限定映射时才受键删除影响。",
+          "gold_anchor_ids": [
+            "Q16-E4",
+            "Q16-E1"
+          ]
+        }
+      ],
+      "content_mean": 0.875,
+      "errors": [],
+      "citation_audit": [
+        {
+          "answer_quote": "(`Source 52`, `L38-L68`)",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "src/requests/sessions.py:61-88",
+          "rationale": "指定范围不包含双Mapping合并及None键删除（74–87）。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        },
+        {
+          "answer_quote": "(`Source 55`, `L477-L484`)",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "src/requests/sessions.py:490-492",
+          "rationale": "headers合并实际490–492；所给范围只到p.prepare调用开头。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        },
+        {
+          "answer_quote": "(`Source 92`, `L1661-L1666`)",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "tests/test_requests.py:1665-1670",
+          "rationale": "范围包含测试定义但不含None header及删除断言1667–1670。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        },
+        {
+          "answer_quote": "(`Source 55`, `L484-L485`)",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "src/requests/sessions.py:493",
+          "rationale": "params合并位于493，所引行是p.prepare及method。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        },
+        {
+          "answer_quote": "(`src/requests/sessions.py`, `Source 57`, `L738-L761`)",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "src/requests/sessions.py:774-777",
+          "rationale": "所给范围止于环境代理收集，未覆盖四个merge_setting调用。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        },
+        {
+          "answer_quote": "(`Source 55`, `L574-L579`)",
+          "status": "frozen_source_location_mismatch",
+          "source_or_query_anchor": "src/requests/sessions.py:579-581",
+          "rationale": "范围只包含merge_environment_settings调用首行，不包含引用的参数。",
+          "actual_supplied_material_review": "pending",
+          "content_score_adjustment": 0
+        }
+      ],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A066",
+      "question_id": "Q15",
+      "answer_sha256": "83acac6004d56235e8b0f8df4cd9c7cf19d789a3bd5bcedeafcee1dac9c3f658",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q15-C1",
+          "score": 1,
+          "answer_quote": "A failed `tell()` stores a non-`None` sentinel object",
+          "rationale": "正常位置和失败标记区分完整。",
+          "gold_anchor_ids": [
+            "Q15-E1"
+          ]
+        },
+        {
+          "id": "Q15-C2",
+          "score": 1,
+          "answer_quote": "`_body_position is not None` and either `Content-Length` or `Transfer-Encoding` is present",
+          "rationale": "两个 redirect 条件及调用完整正确。",
+          "gold_anchor_ids": [
+            "Q15-E2"
+          ]
+        },
+        {
+          "id": "Q15-C3",
+          "score": 0.5,
+          "answer_quote": "missing/non-integer rewind state raises `UnrewindableBodyError`, while an `OSError` from `seek()` raises the same exception",
+          "rationale": "整数状态与 seek 失败正确，但未完整识别 seek 方法缺失也进入不可恢复分支；严格必要要点未全部给出。",
+          "gold_anchor_ids": [
+            "Q15-E3"
+          ]
+        },
+        {
+          "id": "Q15-C4",
+          "score": 1,
+          "answer_quote": "`test_rewind_body_failed_tell` and `test_rewind_body_failed_seek`",
+          "rationale": "结合上一条 seek OSError 行为，定位现有失败测试及异常；没有声称执行测试。",
+          "gold_anchor_ids": [
+            "Q15-E4"
+          ]
+        }
+      ],
+      "content_mean": 0.875,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A006",
+      "question_id": "Q16",
+      "answer_sha256": "2a5d4c1a060b1e23d8402e75849b61168838fea94c49d1e961183cf5197f6e34",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q16-C1",
+          "score": 1,
+          "answer_quote": "keys whose merged value is `None` are then deleted",
+          "rationale": "明确合并后逐键删除规则。",
+          "gold_anchor_ids": [
+            "Q16-E2"
+          ]
+        },
+        {
+          "id": "Q16-C2",
+          "score": 0.5,
+          "answer_quote": "otherwise the function’s early `None`/non-mapping handling still applies.",
+          "rationale": "限定双 Mapping 路径但未说明非 Mapping 分支直接返回请求设置。",
+          "gold_anchor_ids": [
+            "Q16-E1"
+          ]
+        },
+        {
+          "id": "Q16-C3",
+          "score": 1,
+          "answer_quote": "params=merge_setting(request.params, self.params)",
+          "rationale": "准确给出 prepare_request 两个调用点；保留 None 请求头可留在 prepared headers 的额外错误另记。",
+          "gold_anchor_ids": [
+            "Q16-E3"
+          ]
+        },
+        {
+          "id": "Q16-C4",
+          "score": 1,
+          "answer_quote": "cert = merge_setting(cert, self.cert)",
+          "rationale": "准确列出环境四调用且限定只有映射才走删除分支。",
+          "gold_anchor_ids": [
+            "Q16-E4",
+            "Q16-E1"
+          ]
+        }
+      ],
+      "content_mean": 0.875,
+      "errors": [
+        {
+          "question_id": "Q16",
+          "method": null,
+          "answer_quote": "A request header set to `None` would remain in the prepared headers instead of removing the session-level header.",
+          "claim": "取消merge_setting删除后，None请求头会留在成功准备后的headers中。",
+          "category": "contradicted_by_frozen_source",
+          "source_or_query_anchor": "src/requests/models.py:483-492; src/requests/utils.py:1034-1054",
+          "rationale": "合并映射确会保留None，但随后prepare_headers在赋值前调用check_header_validity，None值由_validate_header_part抛InvalidHeader，不会作为普通None值完成prepared headers写入。调用点内容分保持，额外后果错误不重复扣分。",
+          "affected_criterion_ids": []
+        }
+      ],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A010",
+      "question_id": "Q16",
+      "answer_sha256": "4cd5f473d92a161aa4d35a2697528ac52a6d27164181e4a4d6ff185746afd49b",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q16-C1",
+          "score": 1,
+          "answer_quote": "It then removes every key whose merged value is `None`",
+          "rationale": "明确 merged_setting 的键删除。",
+          "gold_anchor_ids": [
+            "Q16-E2"
+          ]
+        },
+        {
+          "id": "Q16-C2",
+          "score": 1,
+          "answer_quote": "Non-mapping settings, such as `verify`, bypass dictionary merging and are returned from the request side.",
+          "rationale": "正确说明非 Mapping 的请求侧返回及删除边界。",
+          "gold_anchor_ids": [
+            "Q16-E1"
+          ]
+        },
+        {
+          "id": "Q16-C3",
+          "score": 1,
+          "answer_quote": "`Session.prepare_request()` is the affected merge call site for request/session headers and parameters.",
+          "rationale": "识别 headers 与 params 两类调用点；不要求抄精确表达式。",
+          "gold_anchor_ids": [
+            "Q16-E3"
+          ]
+        },
+        {
+          "id": "Q16-C4",
+          "score": 0.5,
+          "answer_quote": "`Session.merge_environment_settings()` is the affected environment-settings call site",
+          "rationale": "只识别函数和环境代理主题，没有四个共享 helper 的 merge 调用。",
+          "gold_anchor_ids": [
+            "Q16-E4",
+            "Q16-E1"
+          ]
+        }
+      ],
+      "content_mean": 0.875,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A040",
+      "question_id": "Q15",
+      "answer_sha256": "eb76231206fcdae1d2f519221e2d3b9ed2c430d2325c64ce3be50f5626db2015",
+      "status": "completed",
+      "criteria": [
+        {
+          "id": "Q15-C1",
+          "score": 0.5,
+          "answer_quote": "The tests establish only that `_body_position` is not `None` when `tell()` raises `OSError`.",
+          "rationale": "说明正常位置和失败非 None 区别，但未识别 prepare_body 具体赋值与 object 哨兵。",
+          "gold_anchor_ids": [
+            "Q15-E1"
+          ]
+        },
+        {
+          "id": "Q15-C2",
+          "score": 0,
+          "answer_quote": "The specific condition that invokes `rewind_body` is not shown.",
+          "rationale": "明确未给出两个 redirect guard 条件；泛称重放前 rewind 不构成所要求的条件分析。",
+          "gold_anchor_ids": [
+            "Q15-E2"
+          ]
+        },
+        {
+          "id": "Q15-C3",
+          "score": 0.5,
+          "answer_quote": "makes `seek()` raise `OSError`, and expects `UnrewindableBodyError`",
+          "rationale": "给出 seek 失败与异常但未说明 seek 可用且位置为整数的正常路径。",
+          "gold_anchor_ids": [
+            "Q15-E3"
+          ]
+        },
+        {
+          "id": "Q15-C4",
+          "score": 1,
+          "answer_quote": "Also review `test_rewind_body_failed_seek`.",
+          "rationale": "指出准确测试名称、OSError 的 seek 和预期异常；虚增消费正文步骤属于额外错误另记。",
+          "gold_anchor_ids": [
+            "Q15-E4"
+          ]
+        }
+      ],
+      "content_mean": 0.5,
+      "errors": [
+        {
+          "question_id": "Q15",
+          "method": null,
+          "answer_quote": "It prepares the body at position `0`, consumes it, makes `seek()` raise `OSError`",
+          "claim": "现有test_rewind_body_failed_seek在触发seek失败前消费正文。",
+          "category": "contradicted_by_frozen_source",
+          "source_or_query_anchor": "tests/test_requests.py:1979-2000",
+          "rationale": "此测试的BadFileObj只有tell/seek/__iter__；准备后直接调用rewind_body，无读取/消费步骤。消费发生在相邻成功rewind测试，不在failed_seek。核心测试定位和异常断言仍正确。",
+          "affected_criterion_ids": []
+        }
+      ],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    },
+    {
+      "anonymous_id": "A092",
+      "question_id": "Q14",
+      "answer_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "failed",
+      "criteria": [
+        {
+          "id": "Q14-C1",
+          "score": 0,
+          "answer_quote": "",
+          "rationale": "最终执行失败、空回答。",
+          "gold_anchor_ids": [
+            "Q14-E1"
+          ]
+        },
+        {
+          "id": "Q14-C2",
+          "score": 0,
+          "answer_quote": "",
+          "rationale": "最终执行失败、空回答。",
+          "gold_anchor_ids": [
+            "Q14-E2"
+          ]
+        },
+        {
+          "id": "Q14-C3",
+          "score": 0,
+          "answer_quote": "",
+          "rationale": "最终执行失败、空回答。",
+          "gold_anchor_ids": [
+            "Q14-E3"
+          ]
+        }
+      ],
+      "content_mean": 0.0,
+      "errors": [],
+      "citation_audit": [],
+      "evidence_review_status": "pending"
+    }
+  ]
+}

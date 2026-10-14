@@ -1,0 +1,1109 @@
+{
+  "qid": "Q07",
+  "method": "routed_graphrag",
+  "route": "drift",
+  "status": "complete",
+  "generation_input_tokens": 20447,
+  "requests": {
+    "40a588be1764514132dd6fa08b511d74ce81cac6377834b879c7c79248cdbfdd": {
+      "stage": "hyde",
+      "service": "generation"
+    },
+    "f001c473688d81d41a66b666570c1e4fced1a7210befdeae1b731cd3abbb8e47": {
+      "stage": "query_embedding",
+      "service": "embedding"
+    },
+    "1dd78ebb254e43f01ce3932dcb9861c2937f73b5c5cb0e97f96bc80ad1c39d19": {
+      "stage": "primer",
+      "service": "generation"
+    },
+    "5634cebe6d09501df950e8e5f814b5a68b8c0673d444cc09cbbf33cec48a6033": {
+      "stage": "query_embedding",
+      "service": "embedding"
+    },
+    "f40fad5e174a405f84dbb61049485458f1b26b1b29d8897c5c5e185bd53cfabd": {
+      "stage": "local",
+      "service": "generation"
+    },
+    "ab7ddc343478316423f81a1f0c4b79f07cc8c51ffa38c432d9e5099606a276e7": {
+      "stage": "query_embedding",
+      "service": "embedding"
+    },
+    "2fb25e9d380e0328a1ac72458eca5016585e60f0d6ba116922108626cb8ac1fa": {
+      "stage": "local",
+      "service": "generation"
+    },
+    "a2480be0cf211a86e0bdd2e493981f51eef808d8521e13f79089586f7846357c": {
+      "stage": "query_embedding",
+      "service": "embedding"
+    },
+    "ab022506853f711f192308e8cca6b853d599cfb5c8278a27bd5c084a4278f52e": {
+      "stage": "local",
+      "service": "generation"
+    },
+    "5fa920ae2ec17215970bcbca809c05329ff2d31dce62275d6005818153755656": {
+      "stage": "query_embedding",
+      "service": "embedding"
+    },
+    "a2e232d8c3729d861077ca19ce85ab261cbe7e21b3947c0ef73284bea31586a4": {
+      "stage": "local",
+      "service": "generation"
+    },
+    "67d01ba451289a31bca1ce71d0312f2b8657044df9d15844290343d37859a17c": {
+      "stage": "reduce",
+      "service": "generation"
+    }
+  },
+  "uses": [
+    {
+      "key": "40a588be1764514132dd6fa08b511d74ce81cac6377834b879c7c79248cdbfdd",
+      "stage": "hyde",
+      "cache": false,
+      "origin_event": 26
+    },
+    {
+      "key": "f001c473688d81d41a66b666570c1e4fced1a7210befdeae1b731cd3abbb8e47",
+      "stage": "query_embedding",
+      "cache": false,
+      "origin_event": 27
+    },
+    {
+      "key": "1dd78ebb254e43f01ce3932dcb9861c2937f73b5c5cb0e97f96bc80ad1c39d19",
+      "stage": "primer",
+      "cache": false,
+      "origin_event": 28
+    },
+    {
+      "key": "5634cebe6d09501df950e8e5f814b5a68b8c0673d444cc09cbbf33cec48a6033",
+      "stage": "query_embedding",
+      "cache": false,
+      "origin_event": 29
+    },
+    {
+      "key": "f40fad5e174a405f84dbb61049485458f1b26b1b29d8897c5c5e185bd53cfabd",
+      "stage": "local",
+      "cache": false,
+      "origin_event": 30
+    },
+    {
+      "key": "ab7ddc343478316423f81a1f0c4b79f07cc8c51ffa38c432d9e5099606a276e7",
+      "stage": "query_embedding",
+      "cache": false,
+      "origin_event": 31
+    },
+    {
+      "key": "2fb25e9d380e0328a1ac72458eca5016585e60f0d6ba116922108626cb8ac1fa",
+      "stage": "local",
+      "cache": false,
+      "origin_event": 32
+    },
+    {
+      "key": "a2480be0cf211a86e0bdd2e493981f51eef808d8521e13f79089586f7846357c",
+      "stage": "query_embedding",
+      "cache": false,
+      "origin_event": 33
+    },
+    {
+      "key": "ab022506853f711f192308e8cca6b853d599cfb5c8278a27bd5c084a4278f52e",
+      "stage": "local",
+      "cache": false,
+      "origin_event": 34
+    },
+    {
+      "key": "5fa920ae2ec17215970bcbca809c05329ff2d31dce62275d6005818153755656",
+      "stage": "query_embedding",
+      "cache": false,
+      "origin_event": 35
+    },
+    {
+      "key": "a2e232d8c3729d861077ca19ce85ab261cbe7e21b3947c0ef73284bea31586a4",
+      "stage": "local",
+      "cache": false,
+      "origin_event": 36
+    },
+    {
+      "key": "67d01ba451289a31bca1ce71d0312f2b8657044df9d15844290343d37859a17c",
+      "stage": "reduce",
+      "cache": false,
+      "origin_event": 37
+    }
+  ],
+  "evidence": [
+    {
+      "stage": "local",
+      "query": "How are proxy selection and TLS verification applied before adapter execution?",
+      "context": "-----Entities-----\nid|entity|description|number of relationships\n362|HTTPADAPTER.PROXY_HEADERS|`HTTPADAPTER.PROXY_HEADERS` refers to the `proxy_headers` method associated with an `HTTPAdapter` instance. It is called as `self.proxy_headers(proxy)` for non-SOCKS proxies and as `adapter.proxy_headers(...)` in proxy-authentication tests. The visible tests construct the receiver as an `HTTPAdapter`, but the method’s definition is not included, so its exact implementation and runtime ownership cannot be confirmed from the available information.|3\n360|HTTPADAPTER.CERT_VERIFY|Defined method `HTTPAdapter.cert_verify(self, conn, url, verify, cert)`; its visible signature accepts a connection, URL, verification setting, and certificate, while its implementation is not included in this chunk.|1\n95|SSL3HTTPADAPTER|The class `Ssl3HttpAdapter` is defined in the documentation example as `class Ssl3HttpAdapter(HTTPAdapter)` and is described as a transport adapter that allows SSLv3.|1\n359|HTTPADAPTER.PROXY_MANAGER_FOR|Defined method `HTTPAdapter.proxy_manager_for(self, proxy, **proxy_kwargs)`; returns a cached proxy manager or constructs a SOCKS or non-SOCKS proxy manager based on the proxy string.|6\n376|GET_CONNECTION_WITH_TLS_CONTEXT|The method `get_connection_with_tls_context` is defined here. It selects a proxy, builds host and pool parameters, obtains a proxy or pool-manager connection, and returns `conn`; the owning class is not visible.|11\n97|HTTPADAPTER|\"HTTPADAPTER refers to the externally defined `HTTPAdapter` class from the Requests library, typically imported from `requests.adapters` or a local `.adapters` module. It serves as the default transport adapter for HTTP and HTTPS session connections and is instantiated as `HTTPAdapter()` when mounting default adapters for the `http://` and `https://` URL prefixes.\n\nHTTPADAPTER can also be configured with connection-pool or retry options, including constructions such as `HTTPAdapter(max_retries=retries)`, before being mounted on a session. It provides adapter functionality such as `proxy_headers`, and it is used directly in tests and other visible code. The class is also documented and used as the base class for specialized adapters such as `Ssl3HttpAdapter`.\n\nAlthough HTTPADAPTER is imported and referenced repeatedly—including for session mounting, retry configuration, proxy handling, subclassing, and tests—its actual implementation is not visible in the provided material.\"|24\n333|SELECT_PROXY|SELECT_PROXY refers to the `select_proxy` callable, imported or referenced from utility modules such as `.utils` or `requests.utils`, depending on the context. Its implementation is not visible in the provided code. The callable is used to select the appropriate proxy configuration for a given URL or request, as shown by calls such as `select_proxy(url, proxies)` and `select_proxy(request.url, proxies)`. The visible tests validate its behavior by comparing the returned proxy selection against an expected result for supplied proxy mappings.|7\n1261|TEST_TRANSPORT_ADAPTER_ORDERING|The visible test function `test_transport_adapter_ordering` constructs sessions, mounts `HTTPAdapter` instances at URL prefixes, and asserts adapter-key ordering and retained `http://` and `https://` mappings. Its owning class is not visible in this chunk.|5\n1264|S.GET_ADAPTER|The unresolved receiver call `s.get_adapter(...)` is referenced three times to select adapters for URLs matching only the general prefix, matching the more-specific prefix, and not matching the configured prefix; the receiver's concrete class is not proven beyond session construction in the test.|1\n492|PROXY_BYPASS|PROXY_BYPASS refers to a callable used to determine whether a given host should bypass configured proxy settings. It is explicitly invoked with `parsed.hostname` in a preceding incomplete function context. Its implementation is not visible in the provided material. In different code contexts, `proxy_bypass` is sourced either from the local `.compat` module, where it may be conditionally redefined for Windows, or directly from Python’s `urllib.request`; the available descriptions do not establish whether these references ultimately use the same underlying behavior.|4\n1418|TEST_DIFFERENT_CONNECTION_POOL_FOR_TLS_SETTINGS_VERIFY_BUNDLE_UNEXPIRED_CERT|Defines the visible test method `test_different_connection_pool_for_tls_settings_verify_bundle_unexpired_cert`; it performs TLS requests with `verify=False` and a valid CA bundle, asserts both responses have status code 200, and asserts two HTTPS adapter pools.|7\n1326|TEST_PROXY_AUTH|The exact test method `test_proxy_auth(self)` is defined here. It calls `HTTPAdapter.proxy_headers` for credentials and asserts the Basic proxy authorization header.|2\n813|ADAPTER.SEND|`adapter.send` is an explicitly referenced receiver call in `send`; the adapter's class and method definition are not visible, so its runtime binding is uncertain.|1\n371|REQUESTS.ADAPTERS.HTTPADAPTER|`requests.adapters.HTTPAdapter` is a documented external class from the Requests library. It is referenced as a class that may be subclassed to expose methods such as `cert_verify`, and it is also instantiated through the expression `requests.adapters.HTTPAdapter()`. However, the class definition is not visible in the available context, and the references do not independently establish a runtime call or inheritance relationship beyond the documented subclassing and instantiation references.|1\n1417|TEST_DIFFERENT_CONNECTION_POOL_FOR_TLS_SETTINGS_VERIFY_BUNDLE_EXPIRED_CERT|Defines the visible test method `test_different_connection_pool_for_tls_settings_verify_bundle_expired_cert`; it performs TLS requests with `verify=False` and an expired CA bundle, expects `requests.exceptions.SSLError`, and asserts two HTTPS adapter pools.|9\n1325|TEST_SESSION_CLOSE_PROXY_CLEAR|The exact test method `test_session_close_proxy_clear(self)` is defined here. It patches an HTTP adapter proxy manager, calls `session.close()`, and asserts both proxy mocks receive `clear()` once.|7\n1262|S2.MOUNT|The unresolved receiver call `s2.mount(...)` is referenced to add an HTTPS adapter after assigning `s2.adapters`; the receiver's concrete class is not proven beyond session construction in the test.|1\n950|PROXIES.GET|\"Callable attribute `proxies.get` is explicitly called by `select_proxy` to retrieve a scheme or `\"\"all\"\"` proxy value; its receiver and definition are not visible here.\"|2\n\n-----Sources-----\nid|source|text\n95|tests/test_requests.py:L2016-L2165|\"\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"\"Unable to rewind request body\"\" in str(e)\n\n    def _patch_adapter_gzipped_redirect(self, session, url):\n        adapter = session.get_adapter(url=url)\n        org_build_response = adapter.build_response\n        self._patched_response = False\n\n        def build_response(*args, **kwargs):\n            resp = org_build_response(*args, **kwargs)\n            if not self._patched_response:\n                resp.raw.headers[\"\"content-encoding\"\"] = \"\"gzip\"\"\n                self._patched_response = True\n            return resp\n\n        adapter.build_response = build_response\n\n    def test_redirect_with_wrong_gzipped_header(self, httpbin):\n        s = requests.Session()\n        url = httpbin(\"\"redirect/1\"\")\n        self._patch_adapter_gzipped_redirect(s, url)\n        s.get(url)\n\n    @pytest.mark.parametrize(\n        \"\"username, password, auth_str\"\",\n        (\n            (\"\"test\"\", \"\"test\"\", \"\"Basic dGVzdDp0ZXN0\"\"),\n            (\n                \"\"имя\"\".encode(),\n                \"\"пароль\"\".encode(),\n                \"\"Basic 0LjQvNGPOtC/0LDRgNC+0LvRjA==\"\",\n            ),\n        ),\n    )\n    def test_basic_auth_str_is_always_native(self, username, password, auth_str):\n        s = _basic_auth_str(username, password)\n        assert isinstance(s, builtin_str)\n        assert s == auth_str\n\n    def test_requests_history_is_saved(self, httpbin):\n        r = requests.get(httpbin(\"\"redirect/5\"\"))\n        total = r.history[-1].history\n        i = 0\n        for item in r.history:\n            assert item.history == total[0:i]\n            i += 1\n\n    def test_json_param_post_content_type_works(self, httpbin):\n        r = requests.post(httpbin(\"\"post\"\"), json={\"\"life\"\": 42})\n        assert r.status_code == 200\n        assert \"\"application/json\"\" in r.request.headers[\"\"Content-Type\"\"]\n        assert {\"\"life\"\": 42} == r.json()[\"\"json\"\"]\n\n    def test_json_param_post_should_not_override_data_param(self, httpbin):\n        r = requests.Request(\n            method=\"\"POST\"\",\n            url=httpbin(\"\"post\"\"),\n            data={\"\"stuff\"\": \"\"elixr\"\"},\n            json={\"\"music\"\": \"\"flute\"\"},\n        )\n        prep = r.prepare()\n        assert \"\"stuff=elixr\"\" == prep.body\n\n    def test_response_iter_lines(self, httpbin):\n        r = requests.get(httpbin(\"\"stream/4\"\"), stream=True)\n        assert r.status_code == 200\n\n        it = r.iter_lines()\n        next(it)\n        assert len(list(it)) == 3\n\n    def test_response_context_manager(self, httpbin):\n        with requests.get(httpbin(\"\"stream/4\"\"), stream=True) as response:\n            assert isinstance(response, requests.Response)\n\n        assert response.raw.closed\n\n    def test_unconsumed_session_response_closes_connection(self, httpbin):\n        s = requests.session()\n\n        with contextlib.closing(s.get(httpbin(\"\"stream/4\"\"), stream=True)) as response:\n            pass\n\n        assert response._content_consumed is False\n        assert response.raw.closed\n\n    @pytest.mark.xfail\n    def test_response_iter_lines_reentrant(self, httpbin):\n        \"\"\"\"\"\"Response.iter_lines() is not reentrant safe\"\"\"\"\"\"\n        r = requests.get(httpbin(\"\"stream/4\"\"), stream=True)\n        assert r.status_code == 200\n\n        next(r.iter_lines())\n        assert len(list(r.iter_lines())) == 3\n\n    def test_session_close_proxy_clear(self):\n        proxies = {\n            \"\"one\"\": mock.Mock(),\n            \"\"two\"\": mock.Mock(),\n        }\n        session = requests.Session()\n        with mock.patch.dict(session.adapters[\"\"http://\"\"].proxy_manager, proxies):\n            session.close()\n            proxies[\"\"one\"\"].clear.assert_called_once_with()\n            proxies[\"\"two\"\"].clear.assert_called_once_with()\n\n    def test_proxy_auth(self):\n        adapter = HTTPAdapter()\n        headers = adapter.proxy_headers(\"\"http://user:pass@httpbin.org\"\")\n        assert headers == {\"\"Proxy-Authorization\"\": \"\"Basic dXNlcjpwYXNz\"\"}\n\n    def test_proxy_auth_empty_pass(self):\n        adapter = HTTPAdapter()\n        headers = adapter.proxy_headers(\"\"http://user:@httpbin.org\"\")\n        assert headers == {\"\"Proxy-Authorization\"\": \"\"Basic dXNlcjo=\"\"}\n\n    def test_response_json_when_content_is_None(self, httpbin):\n        r = requests.get(httpbin(\"\"/status/204\"\"))\n        # Make sure r.content is None\n        r.status_code = 0\n        r._content = False\n        r._content_consumed = False\n\n        assert r.content is None\n        with pytest.raises(ValueError):\n            r.json()\n\n    def test_response_without_release_conn(self):\n        \"\"\"\"\"\"Test `close` call for non-urllib3-like raw objects.\n        Should work when `release_conn` attr doesn't exist on `response.raw`.\n        \"\"\"\"\"\"\n        resp = requests.Response()\n        resp.raw = StringIO.StringIO(\"\"test\"\")\n        assert not resp.raw.closed\n        resp.close()\n        assert resp.raw.closed\n\n    def test_empty_stream_with_auth_does_not_set_content_length_header(self, httpbin):\n        \"\"\"\"\"\"Ensure that a byte stream with size 0 will not set both a Content-Length\n        and Transfer-Encoding header.\n        \"\"\"\"\"\"\n        auth = (\"\"user\"\", \"\"pass\"\")\n        url = httpbin(\"\"post\"\")\n        file_obj = io.BytesIO(b\"\"\"\")\n        r = requests.Request(\"\"POST\"\", url, auth=auth, data=file_obj)\n        prepared_request = r.prepare()\n        assert \"\"Transfer-Encoding\"\" in prepared_request.headers\n\"\n",
+      "upstream_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n362|HTTPADAPTER.PROXY_HEADERS|`HTTPADAPTER.PROXY_HEADERS` refers to the `proxy_headers` method associated with an `HTTPAdapter` instance. It is called as `self.proxy_headers(proxy)` for non-SOCKS proxies and as `adapter.proxy_headers(...)` in proxy-authentication tests. The visible tests construct the receiver as an `HTTPAdapter`, but the method’s definition is not included, so its exact implementation and runtime ownership cannot be confirmed from the available information.|3\n360|HTTPADAPTER.CERT_VERIFY|Defined method `HTTPAdapter.cert_verify(self, conn, url, verify, cert)`; its visible signature accepts a connection, URL, verification setting, and certificate, while its implementation is not included in this chunk.|1\n95|SSL3HTTPADAPTER|The class `Ssl3HttpAdapter` is defined in the documentation example as `class Ssl3HttpAdapter(HTTPAdapter)` and is described as a transport adapter that allows SSLv3.|1\n359|HTTPADAPTER.PROXY_MANAGER_FOR|Defined method `HTTPAdapter.proxy_manager_for(self, proxy, **proxy_kwargs)`; returns a cached proxy manager or constructs a SOCKS or non-SOCKS proxy manager based on the proxy string.|6\n376|GET_CONNECTION_WITH_TLS_CONTEXT|The method `get_connection_with_tls_context` is defined here. It selects a proxy, builds host and pool parameters, obtains a proxy or pool-manager connection, and returns `conn`; the owning class is not visible.|11\n97|HTTPADAPTER|HTTPADAPTER refers to the externally defined `HTTPAdapter` class from the Requests library, typically imported from `requests.adapters` or a local `.adapters` module. It serves as the default transport adapter for HTTP and HTTPS session connections and is instantiated as `HTTPAdapter()` when mounting default adapters for the `http://` and `https://` URL prefixes.\n\nHTTPADAPTER can also be configured with connection-pool or retry options, including constructions such as `HTTPAdapter(max_retries=retries)`, before being mounted on a session. It provides adapter functionality such as `proxy_headers`, and it is used directly in tests and other visible code. The class is also documented and used as the base class for specialized adapters such as `Ssl3HttpAdapter`.\n\nAlthough HTTPADAPTER is imported and referenced repeatedly—including for session mounting, retry configuration, proxy handling, subclassing, and tests—its actual implementation is not visible in the provided material.|24\n333|SELECT_PROXY|SELECT_PROXY refers to the `select_proxy` callable, imported or referenced from utility modules such as `.utils` or `requests.utils`, depending on the context. Its implementation is not visible in the provided code. The callable is used to select the appropriate proxy configuration for a given URL or request, as shown by calls such as `select_proxy(url, proxies)` and `select_proxy(request.url, proxies)`. The visible tests validate its behavior by comparing the returned proxy selection against an expected result for supplied proxy mappings.|7\n1261|TEST_TRANSPORT_ADAPTER_ORDERING|The visible test function `test_transport_adapter_ordering` constructs sessions, mounts `HTTPAdapter` instances at URL prefixes, and asserts adapter-key ordering and retained `http://` and `https://` mappings. Its owning class is not visible in this chunk.|5\n1264|S.GET_ADAPTER|The unresolved receiver call `s.get_adapter(...)` is referenced three times to select adapters for URLs matching only the general prefix, matching the more-specific prefix, and not matching the configured prefix; the receiver's concrete class is not proven beyond session construction in the test.|1\n492|PROXY_BYPASS|PROXY_BYPASS refers to a callable used to determine whether a given host should bypass configured proxy settings. It is explicitly invoked with `parsed.hostname` in a preceding incomplete function context. Its implementation is not visible in the provided material. In different code contexts, `proxy_bypass` is sourced either from the local `.compat` module, where it may be conditionally redefined for Windows, or directly from Python’s `urllib.request`; the available descriptions do not establish whether these references ultimately use the same underlying behavior.|4\n1418|TEST_DIFFERENT_CONNECTION_POOL_FOR_TLS_SETTINGS_VERIFY_BUNDLE_UNEXPIRED_CERT|Defines the visible test method `test_different_connection_pool_for_tls_settings_verify_bundle_unexpired_cert`; it performs TLS requests with `verify=False` and a valid CA bundle, asserts both responses have status code 200, and asserts two HTTPS adapter pools.|7\n1326|TEST_PROXY_AUTH|The exact test method `test_proxy_auth(self)` is defined here. It calls `HTTPAdapter.proxy_headers` for credentials and asserts the Basic proxy authorization header.|2\n813|ADAPTER.SEND|`adapter.send` is an explicitly referenced receiver call in `send`; the adapter's class and method definition are not visible, so its runtime binding is uncertain.|1\n371|REQUESTS.ADAPTERS.HTTPADAPTER|`requests.adapters.HTTPAdapter` is a documented external class from the Requests library. It is referenced as a class that may be subclassed to expose methods such as `cert_verify`, and it is also instantiated through the expression `requests.adapters.HTTPAdapter()`. However, the class definition is not visible in the available context, and the references do not independently establish a runtime call or inheritance relationship beyond the documented subclassing and instantiation references.|1\n1417|TEST_DIFFERENT_CONNECTION_POOL_FOR_TLS_SETTINGS_VERIFY_BUNDLE_EXPIRED_CERT|Defines the visible test method `test_different_connection_pool_for_tls_settings_verify_bundle_expired_cert`; it performs TLS requests with `verify=False` and an expired CA bundle, expects `requests.exceptions.SSLError`, and asserts two HTTPS adapter pools.|9\n1325|TEST_SESSION_CLOSE_PROXY_CLEAR|The exact test method `test_session_close_proxy_clear(self)` is defined here. It patches an HTTP adapter proxy manager, calls `session.close()`, and asserts both proxy mocks receive `clear()` once.|7\n1262|S2.MOUNT|The unresolved receiver call `s2.mount(...)` is referenced to add an HTTPS adapter after assigning `s2.adapters`; the receiver's concrete class is not proven beyond session construction in the test.|1\n950|PROXIES.GET|Callable attribute `proxies.get` is explicitly called by `select_proxy` to retrieve a scheme or `\"all\"` proxy value; its receiver and definition are not visible here.|2\n\n\n\n\n-----Sources-----\nid|text\n95|\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"Unable to rewind request body\" in str(e)\n\n    def _patch_adapter_gzipped_redirect(self, session, url):\n        adapter = session.get_adapter(url=url)\n        org_build_response = adapter.build_response\n        self._patched_response = False\n\n        def build_response(*args, **kwargs):\n            resp = org_build_response(*args, **kwargs)\n            if not self._patched_response:\n                resp.raw.headers[\"content-encoding\"] = \"gzip\"\n                self._patched_response = True\n            return resp\n\n        adapter.build_response = build_response\n\n    def test_redirect_with_wrong_gzipped_header(self, httpbin):\n        s = requests.Session()\n        url = httpbin(\"redirect/1\")\n        self._patch_adapter_gzipped_redirect(s, url)\n        s.get(url)\n\n    @pytest.mark.parametrize(\n        \"username, password, auth_str\",\n        (\n            (\"test\", \"test\", \"Basic dGVzdDp0ZXN0\"),\n            (\n                \"имя\".encode(),\n                \"пароль\".encode(),\n                \"Basic 0LjQvNGPOtC/0LDRgNC+0LvRjA==\",\n            ),\n        ),\n    )\n    def test_basic_auth_str_is_always_native(self, username, password, auth_str):\n        s = _basic_auth_str(username, password)\n        assert isinstance(s, builtin_str)\n        assert s == auth_str\n\n    def test_requests_history_is_saved(self, httpbin):\n        r = requests.get(httpbin(\"redirect/5\"))\n        total = r.history[-1].history\n        i = 0\n        for item in r.history:\n            assert item.history == total[0:i]\n            i += 1\n\n    def test_json_param_post_content_type_works(self, httpbin):\n        r = requests.post(httpbin(\"post\"), json={\"life\": 42})\n        assert r.status_code == 200\n        assert \"application/json\" in r.request.headers[\"Content-Type\"]\n        assert {\"life\": 42} == r.json()[\"json\"]\n\n    def test_json_param_post_should_not_override_data_param(self, httpbin):\n        r = requests.Request(\n            method=\"POST\",\n            url=httpbin(\"post\"),\n            data={\"stuff\": \"elixr\"},\n            json={\"music\": \"flute\"},\n        )\n        prep = r.prepare()\n        assert \"stuff=elixr\" == prep.body\n\n    def test_response_iter_lines(self, httpbin):\n        r = requests.get(httpbin(\"stream/4\"), stream=True)\n        assert r.status_code == 200\n\n        it = r.iter_lines()\n        next(it)\n        assert len(list(it)) == 3\n\n    def test_response_context_manager(self, httpbin):\n        with requests.get(httpbin(\"stream/4\"), stream=True) as response:\n            assert isinstance(response, requests.Response)\n\n        assert response.raw.closed\n\n    def test_unconsumed_session_response_closes_connection(self, httpbin):\n        s = requests.session()\n\n        with contextlib.closing(s.get(httpbin(\"stream/4\"), stream=True)) as response:\n            pass\n\n        assert response._content_consumed is False\n        assert response.raw.closed\n\n    @pytest.mark.xfail\n    def test_response_iter_lines_reentrant(self, httpbin):\n        \"\"\"Response.iter_lines() is not reentrant safe\"\"\"\n        r = requests.get(httpbin(\"stream/4\"), stream=True)\n        assert r.status_code == 200\n\n        next(r.iter_lines())\n        assert len(list(r.iter_lines())) == 3\n\n    def test_session_close_proxy_clear(self):\n        proxies = {\n            \"one\": mock.Mock(),\n            \"two\": mock.Mock(),\n        }\n        session = requests.Session()\n        with mock.patch.dict(session.adapters[\"http://\"].proxy_manager, proxies):\n            session.close()\n            proxies[\"one\"].clear.assert_called_once_with()\n            proxies[\"two\"].clear.assert_called_once_with()\n\n    def test_proxy_auth(self):\n        adapter = HTTPAdapter()\n        headers = adapter.proxy_headers(\"http://user:pass@httpbin.org\")\n        assert headers == {\"Proxy-Authorization\": \"Basic dXNlcjpwYXNz\"}\n\n    def test_proxy_auth_empty_pass(self):\n        adapter = HTTPAdapter()\n        headers = adapter.proxy_headers(\"http://user:@httpbin.org\")\n        assert headers == {\"Proxy-Authorization\": \"Basic dXNlcjo=\"}\n\n    def test_response_json_when_content_is_None(self, httpbin):\n        r = requests.get(httpbin(\"/status/204\"))\n        # Make sure r.content is None\n        r.status_code = 0\n        r._content = False\n        r._content_consumed = False\n\n        assert r.content is None\n        with pytest.raises(ValueError):\n            r.json()\n\n    def test_response_without_release_conn(self):\n        \"\"\"Test `close` call for non-urllib3-like raw objects.\n        Should work when `release_conn` attr doesn't exist on `response.raw`.\n        \"\"\"\n        resp = requests.Response()\n        resp.raw = StringIO.StringIO(\"test\")\n        assert not resp.raw.closed\n        resp.close()\n        assert resp.raw.closed\n\n    def test_empty_stream_with_auth_does_not_set_content_length_header(self, httpbin):\n        \"\"\"Ensure that a byte stream with size 0 will not set both a Content-Length\n        and Transfer-Encoding header.\n        \"\"\"\n        auth = (\"user\", \"pass\")\n        url = httpbin(\"post\")\n        file_obj = io.BytesIO(b\"\")\n        r = requests.Request(\"POST\", url, auth=auth, data=file_obj)\n        prepared_request = r.prepare()\n        assert \"Transfer-Encoding\" in prepared_request.headers\n\n",
+      "records": {
+        "entities": [
+          {
+            "id": "362",
+            "entity": "HTTPADAPTER.PROXY_HEADERS",
+            "description": "`HTTPADAPTER.PROXY_HEADERS` refers to the `proxy_headers` method associated with an `HTTPAdapter` instance. It is called as `self.proxy_headers(proxy)` for non-SOCKS proxies and as `adapter.proxy_headers(...)` in proxy-authentication tests. The visible tests construct the receiver as an `HTTPAdapter`, but the method’s definition is not included, so its exact implementation and runtime ownership cannot be confirmed from the available information.",
+            "number of relationships": "3",
+            "in_context": true
+          },
+          {
+            "id": "360",
+            "entity": "HTTPADAPTER.CERT_VERIFY",
+            "description": "Defined method `HTTPAdapter.cert_verify(self, conn, url, verify, cert)`; its visible signature accepts a connection, URL, verification setting, and certificate, while its implementation is not included in this chunk.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "95",
+            "entity": "SSL3HTTPADAPTER",
+            "description": "The class `Ssl3HttpAdapter` is defined in the documentation example as `class Ssl3HttpAdapter(HTTPAdapter)` and is described as a transport adapter that allows SSLv3.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "359",
+            "entity": "HTTPADAPTER.PROXY_MANAGER_FOR",
+            "description": "Defined method `HTTPAdapter.proxy_manager_for(self, proxy, **proxy_kwargs)`; returns a cached proxy manager or constructs a SOCKS or non-SOCKS proxy manager based on the proxy string.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "376",
+            "entity": "GET_CONNECTION_WITH_TLS_CONTEXT",
+            "description": "The method `get_connection_with_tls_context` is defined here. It selects a proxy, builds host and pool parameters, obtains a proxy or pool-manager connection, and returns `conn`; the owning class is not visible.",
+            "number of relationships": "11",
+            "in_context": true
+          },
+          {
+            "id": "97",
+            "entity": "HTTPADAPTER",
+            "description": "HTTPADAPTER refers to the externally defined `HTTPAdapter` class from the Requests library, typically imported from `requests.adapters` or a local `.adapters` module. It serves as the default transport adapter for HTTP and HTTPS session connections and is instantiated as `HTTPAdapter()` when mounting default adapters for the `http://` and `https://` URL prefixes.\n\nHTTPADAPTER can also be configured with connection-pool or retry options, including constructions such as `HTTPAdapter(max_retries=retries)`, before being mounted on a session. It provides adapter functionality such as `proxy_headers`, and it is used directly in tests and other visible code. The class is also documented and used as the base class for specialized adapters such as `Ssl3HttpAdapter`.\n\nAlthough HTTPADAPTER is imported and referenced repeatedly—including for session mounting, retry configuration, proxy handling, subclassing, and tests—its actual implementation is not visible in the provided material.",
+            "number of relationships": "24",
+            "in_context": true
+          },
+          {
+            "id": "333",
+            "entity": "SELECT_PROXY",
+            "description": "SELECT_PROXY refers to the `select_proxy` callable, imported or referenced from utility modules such as `.utils` or `requests.utils`, depending on the context. Its implementation is not visible in the provided code. The callable is used to select the appropriate proxy configuration for a given URL or request, as shown by calls such as `select_proxy(url, proxies)` and `select_proxy(request.url, proxies)`. The visible tests validate its behavior by comparing the returned proxy selection against an expected result for supplied proxy mappings.",
+            "number of relationships": "7",
+            "in_context": true
+          },
+          {
+            "id": "1261",
+            "entity": "TEST_TRANSPORT_ADAPTER_ORDERING",
+            "description": "The visible test function `test_transport_adapter_ordering` constructs sessions, mounts `HTTPAdapter` instances at URL prefixes, and asserts adapter-key ordering and retained `http://` and `https://` mappings. Its owning class is not visible in this chunk.",
+            "number of relationships": "5",
+            "in_context": true
+          },
+          {
+            "id": "1264",
+            "entity": "S.GET_ADAPTER",
+            "description": "The unresolved receiver call `s.get_adapter(...)` is referenced three times to select adapters for URLs matching only the general prefix, matching the more-specific prefix, and not matching the configured prefix; the receiver's concrete class is not proven beyond session construction in the test.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "492",
+            "entity": "PROXY_BYPASS",
+            "description": "PROXY_BYPASS refers to a callable used to determine whether a given host should bypass configured proxy settings. It is explicitly invoked with `parsed.hostname` in a preceding incomplete function context. Its implementation is not visible in the provided material. In different code contexts, `proxy_bypass` is sourced either from the local `.compat` module, where it may be conditionally redefined for Windows, or directly from Python’s `urllib.request`; the available descriptions do not establish whether these references ultimately use the same underlying behavior.",
+            "number of relationships": "4",
+            "in_context": true
+          },
+          {
+            "id": "1418",
+            "entity": "TEST_DIFFERENT_CONNECTION_POOL_FOR_TLS_SETTINGS_VERIFY_BUNDLE_UNEXPIRED_CERT",
+            "description": "Defines the visible test method `test_different_connection_pool_for_tls_settings_verify_bundle_unexpired_cert`; it performs TLS requests with `verify=False` and a valid CA bundle, asserts both responses have status code 200, and asserts two HTTPS adapter pools.",
+            "number of relationships": "7",
+            "in_context": true
+          },
+          {
+            "id": "1326",
+            "entity": "TEST_PROXY_AUTH",
+            "description": "The exact test method `test_proxy_auth(self)` is defined here. It calls `HTTPAdapter.proxy_headers` for credentials and asserts the Basic proxy authorization header.",
+            "number of relationships": "2",
+            "in_context": true
+          },
+          {
+            "id": "813",
+            "entity": "ADAPTER.SEND",
+            "description": "`adapter.send` is an explicitly referenced receiver call in `send`; the adapter's class and method definition are not visible, so its runtime binding is uncertain.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "371",
+            "entity": "REQUESTS.ADAPTERS.HTTPADAPTER",
+            "description": "`requests.adapters.HTTPAdapter` is a documented external class from the Requests library. It is referenced as a class that may be subclassed to expose methods such as `cert_verify`, and it is also instantiated through the expression `requests.adapters.HTTPAdapter()`. However, the class definition is not visible in the available context, and the references do not independently establish a runtime call or inheritance relationship beyond the documented subclassing and instantiation references.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "1417",
+            "entity": "TEST_DIFFERENT_CONNECTION_POOL_FOR_TLS_SETTINGS_VERIFY_BUNDLE_EXPIRED_CERT",
+            "description": "Defines the visible test method `test_different_connection_pool_for_tls_settings_verify_bundle_expired_cert`; it performs TLS requests with `verify=False` and an expired CA bundle, expects `requests.exceptions.SSLError`, and asserts two HTTPS adapter pools.",
+            "number of relationships": "9",
+            "in_context": true
+          },
+          {
+            "id": "1325",
+            "entity": "TEST_SESSION_CLOSE_PROXY_CLEAR",
+            "description": "The exact test method `test_session_close_proxy_clear(self)` is defined here. It patches an HTTP adapter proxy manager, calls `session.close()`, and asserts both proxy mocks receive `clear()` once.",
+            "number of relationships": "7",
+            "in_context": true
+          },
+          {
+            "id": "1262",
+            "entity": "S2.MOUNT",
+            "description": "The unresolved receiver call `s2.mount(...)` is referenced to add an HTTPS adapter after assigning `s2.adapters`; the receiver's concrete class is not proven beyond session construction in the test.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "950",
+            "entity": "PROXIES.GET",
+            "description": "Callable attribute `proxies.get` is explicitly called by `select_proxy` to retrieve a scheme or `\"all\"` proxy value; its receiver and definition are not visible here.",
+            "number of relationships": "2",
+            "in_context": true
+          }
+        ],
+        "sources": [
+          {
+            "id": "95",
+            "text": "\n        with pytest.raises(UnrewindableBodyError) as e:\n            requests.utils.rewind_body(prep)\n\n        assert \"Unable to rewind request body\" in str(e)\n\n    def _patch_adapter_gzipped_redirect(self, session, url):\n        adapter = session.get_adapter(url=url)\n        org_build_response = adapter.build_response\n        self._patched_response = False\n\n        def build_response(*args, **kwargs):\n            resp = org_build_response(*args, **kwargs)\n            if not self._patched_response:\n                resp.raw.headers[\"content-encoding\"] = \"gzip\"\n                self._patched_response = True\n            return resp\n\n        adapter.build_response = build_response\n\n    def test_redirect_with_wrong_gzipped_header(self, httpbin):\n        s = requests.Session()\n        url = httpbin(\"redirect/1\")\n        self._patch_adapter_gzipped_redirect(s, url)\n        s.get(url)\n\n    @pytest.mark.parametrize(\n        \"username, password, auth_str\",\n        (\n            (\"test\", \"test\", \"Basic dGVzdDp0ZXN0\"),\n            (\n                \"имя\".encode(),\n                \"пароль\".encode(),\n                \"Basic 0LjQvNGPOtC/0LDRgNC+0LvRjA==\",\n            ),\n        ),\n    )\n    def test_basic_auth_str_is_always_native(self, username, password, auth_str):\n        s = _basic_auth_str(username, password)\n        assert isinstance(s, builtin_str)\n        assert s == auth_str\n\n    def test_requests_history_is_saved(self, httpbin):\n        r = requests.get(httpbin(\"redirect/5\"))\n        total = r.history[-1].history\n        i = 0\n        for item in r.history:\n            assert item.history == total[0:i]\n            i += 1\n\n    def test_json_param_post_content_type_works(self, httpbin):\n        r = requests.post(httpbin(\"post\"), json={\"life\": 42})\n        assert r.status_code == 200\n        assert \"application/json\" in r.request.headers[\"Content-Type\"]\n        assert {\"life\": 42} == r.json()[\"json\"]\n\n    def test_json_param_post_should_not_override_data_param(self, httpbin):\n        r = requests.Request(\n            method=\"POST\",\n            url=httpbin(\"post\"),\n            data={\"stuff\": \"elixr\"},\n            json={\"music\": \"flute\"},\n        )\n        prep = r.prepare()\n        assert \"stuff=elixr\" == prep.body\n\n    def test_response_iter_lines(self, httpbin):\n        r = requests.get(httpbin(\"stream/4\"), stream=True)\n        assert r.status_code == 200\n\n        it = r.iter_lines()\n        next(it)\n        assert len(list(it)) == 3\n\n    def test_response_context_manager(self, httpbin):\n        with requests.get(httpbin(\"stream/4\"), stream=True) as response:\n            assert isinstance(response, requests.Response)\n\n        assert response.raw.closed\n\n    def test_unconsumed_session_response_closes_connection(self, httpbin):\n        s = requests.session()\n\n        with contextlib.closing(s.get(httpbin(\"stream/4\"), stream=True)) as response:\n            pass\n\n        assert response._content_consumed is False\n        assert response.raw.closed\n\n    @pytest.mark.xfail\n    def test_response_iter_lines_reentrant(self, httpbin):\n        \"\"\"Response.iter_lines() is not reentrant safe\"\"\"\n        r = requests.get(httpbin(\"stream/4\"), stream=True)\n        assert r.status_code == 200\n\n        next(r.iter_lines())\n        assert len(list(r.iter_lines())) == 3\n\n    def test_session_close_proxy_clear(self):\n        proxies = {\n            \"one\": mock.Mock(),\n            \"two\": mock.Mock(),\n        }\n        session = requests.Session()\n        with mock.patch.dict(session.adapters[\"http://\"].proxy_manager, proxies):\n            session.close()\n            proxies[\"one\"].clear.assert_called_once_with()\n            proxies[\"two\"].clear.assert_called_once_with()\n\n    def test_proxy_auth(self):\n        adapter = HTTPAdapter()\n        headers = adapter.proxy_headers(\"http://user:pass@httpbin.org\")\n        assert headers == {\"Proxy-Authorization\": \"Basic dXNlcjpwYXNz\"}\n\n    def test_proxy_auth_empty_pass(self):\n        adapter = HTTPAdapter()\n        headers = adapter.proxy_headers(\"http://user:@httpbin.org\")\n        assert headers == {\"Proxy-Authorization\": \"Basic dXNlcjo=\"}\n\n    def test_response_json_when_content_is_None(self, httpbin):\n        r = requests.get(httpbin(\"/status/204\"))\n        # Make sure r.content is None\n        r.status_code = 0\n        r._content = False\n        r._content_consumed = False\n\n        assert r.content is None\n        with pytest.raises(ValueError):\n            r.json()\n\n    def test_response_without_release_conn(self):\n        \"\"\"Test `close` call for non-urllib3-like raw objects.\n        Should work when `release_conn` attr doesn't exist on `response.raw`.\n        \"\"\"\n        resp = requests.Response()\n        resp.raw = StringIO.StringIO(\"test\")\n        assert not resp.raw.closed\n        resp.close()\n        assert resp.raw.closed\n\n    def test_empty_stream_with_auth_does_not_set_content_length_header(self, httpbin):\n        \"\"\"Ensure that a byte stream with size 0 will not set both a Content-Length\n        and Transfer-Encoding header.\n        \"\"\"\n        auth = (\"user\", \"pass\")\n        url = httpbin(\"post\")\n        file_obj = io.BytesIO(b\"\")\n        r = requests.Request(\"POST\", url, auth=auth, data=file_obj)\n        prepared_request = r.prepare()\n        assert \"Transfer-Encoding\" in prepared_request.headers\n"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "short_id": "95",
+          "text_unit_id": "a2472c1ed2a06cdf1ac34c4edd112af95b3f3ed97f4657dc62a10e50ed98ba75681c81cb6cb33c393a814fb51a035d1ab8fef29ae36fe95f2393cbc77c50bfc2",
+          "id": "bd1917605a30d62d0b147525d20ff7bf7d8f991a7e343ea4a08bd2b8a76ebf50",
+          "title": "tests/test_requests.py:L2016-L2165",
+          "path": "tests/test_requests.py",
+          "start_line": 2016,
+          "end_line": 2165,
+          "tokens": 1194,
+          "text_sha256": "d0ba8ccdf9b4d78373cbd3e8d11bce6d35058bb8d5317b566c37124d44e0a7d2",
+          "ms_text_unit_id": "a2472c1ed2a06cdf1ac34c4edd112af95b3f3ed97f4657dc62a10e50ed98ba75681c81cb6cb33c393a814fb51a035d1ab8fef29ae36fe95f2393cbc77c50bfc2"
+        }
+      ],
+      "source_text_tokens": 1194,
+      "context_tokens": 2618,
+      "evidence_key": "a6693f37ee1206cacf9d1c2c96a65a7c0a0f6643170bf372c015f588990cc918",
+      "read_occurrences": 1
+    },
+    {
+      "stage": "local",
+      "query": "Which concrete class implements `ADAPTER.SEND`?",
+      "context": "-----Entities-----\nid|entity|description|number of relationships\n813|ADAPTER.SEND|`adapter.send` is an explicitly referenced receiver call in `send`; the adapter's class and method definition are not visible, so its runtime binding is uncertain.|1\n812|GET_ADAPTER|`get_adapter` is an unresolved receiver method explicitly called as `self.get_adapter(url=request.url)` in `send`; its definition and owning class are not visible.|4\n389|SEND|SEND refers to request-sending methods that prepare, execute, and finalize HTTP requests. One implementation fills in default transport settings, rejects an already constructed `Request` instance, selects the appropriate adapter, sends the request, records elapsed time, dispatches response hooks, and persists cookies. Another implementation obtains a connection, verifies certificates, constructs the request URL, adds headers, normalizes timeout values, invokes `conn.urlopen`, and translates visible connection exceptions into request-related errors. Together, SEND handles transport configuration, connection and security setup, request execution, error mapping, response processing, timing, and cookie persistence. The owning classes for these methods are not visible.|23\n343|BASEADAPTER.SEND|Method defined with signature `send(self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None)`; its documentation describes sending a PreparedRequest and returning a Response, while the visible body raises `NotImplementedError`.|2\n98|BASEADAPTER|BASEADAPTER is an externally defined base class for transport adapters. It serves as the parent class of `HTTPAdapter`, as shown by `class HTTPAdapter(BaseAdapter)`, and is documented as a class that can be subclassed to implement custom transport adapter behavior. Its definition is not included in the provided code.|6\n1264|S.GET_ADAPTER|The unresolved receiver call `s.get_adapter(...)` is referenced three times to select adapters for URLs matching only the general prefix, matching the more-specific prefix, and not matching the configured prefix; the receiver's concrete class is not proven beyond session construction in the test.|1\n1311|ADAPTER.BUILD_RESPONSE|ADAPTER.BUILD_RESPONSE refers to the exact adapter attribute `adapter.build_response`. Within `_patch_adapter_gzipped_redirect`, this attribute is explicitly read and saved as `org_build_response` before being replaced. The receiver adapter’s concrete runtime class is not established or visible in the available information.|1\n97|HTTPADAPTER|\"HTTPADAPTER refers to the externally defined `HTTPAdapter` class from the Requests library, typically imported from `requests.adapters` or a local `.adapters` module. It serves as the default transport adapter for HTTP and HTTPS session connections and is instantiated as `HTTPAdapter()` when mounting default adapters for the `http://` and `https://` URL prefixes.\n\nHTTPADAPTER can also be configured with connection-pool or retry options, including constructions such as `HTTPAdapter(max_retries=retries)`, before being mounted on a session. It provides adapter functionality such as `proxy_headers`, and it is used directly in tests and other visible code. The class is also documented and used as the base class for specialized adapters such as `Ssl3HttpAdapter`.\n\nAlthough HTTPADAPTER is imported and referenced repeatedly—including for session mounting, retry configuration, proxy handling, subclassing, and tests—its actual implementation is not visible in the provided material.\"|24\n95|SSL3HTTPADAPTER|The class `Ssl3HttpAdapter` is defined in the documentation example as `class Ssl3HttpAdapter(HTTPAdapter)` and is described as a transport adapter that allows SSLv3.|1\n1117|S.SEND|S.SEND refers to the attribute call `s.send(...)`, invoked on a locally created session object to transmit prepared or unprepared requests, including the example `s.send(prep_req)`. The available descriptions explicitly identify the receiver as `s`, but they do not establish its concrete runtime class.|6\n1262|S2.MOUNT|The unresolved receiver call `s2.mount(...)` is referenced to add an HTTPS adapter after assigning `s2.adapters`; the receiver's concrete class is not proven beyond session construction in the test.|1\n1310|SESSION.GET_ADAPTER|`SESSION.GET_ADAPTER` refers to the exact attribute call `session.get_adapter(url=url)`, which is used inside `_patch_adapter_gzipped_redirect`. The receiver is the parameter named `session`, but the available context does not establish its concrete runtime class.|1\n1455|SOCKET.SENDALL|The explicitly referenced receiver method `socket.sendall`; its definition is not visible. The chunk shows calls sending request and response bytes, but does not prove a specific runtime class binding for `sock`.|6\n371|REQUESTS.ADAPTERS.HTTPADAPTER|`requests.adapters.HTTPAdapter` is a documented external class from the Requests library. It is referenced as a class that may be subclassed to expose methods such as `cert_verify`, and it is also instantiated through the expression `requests.adapters.HTTPAdapter()`. However, the class definition is not visible in the available context, and the references do not independently establish a runtime call or inheritance relationship beyond the documented subclassing and instantiation references.|1\n1276|REQUESTS.SESSION.GET_ADAPTER|`requests.Session.get_adapter` is an explicitly referenced external method through `s.get_adapter(...)`; the receiver is created with `requests.Session()`, but the method implementation is not visible here.|2\n93|REQUESTS.ADAPTERS|`REQUESTS.ADAPTERS` refers to the `requests.adapters` module. It is explicitly imported both as `import requests.adapters` and through `from requests.adapters import HTTPAdapter`, including usage via the `HTTPAdapter` symbol. The module defines transport adapters and contains the visible symbols associated with adapter-based request handling; no additional module behavior is evident from the provided descriptions.|32\n1050|SOCK.SEND|SOCK.SEND is an unresolved callable invoked as `sock.send(...)` on a handler’s `sock` receiver. It is used by the visible `response_handler` implementations, including `Server.text_response_server.text_response_handler`, to transmit HTTP response data over a socket. The transmitted payloads include encoded response bytes, raw HTTP response bytes, and the value `text_200_chal`. The concrete type of the `sock` receiver, its socket class, and the implementation or method binding of `send` are not visible in the available descriptions.|8\n\n-----Relationships-----\nid|source|target|description|weight\n1105|SEND|ADAPTER.SEND|CALLS, `send` calls the syntactically named receiver method `adapter.send(request, **kwargs)`; the adapter binding and runtime target are not established by this chunk.|9.0\n\n-----Sources-----\nid|source|text\n56|src/requests/sessions.py:L569-L717|\"            json=json,\n            params=params or {},\n            auth=auth,\n            cookies=cookies,\n            hooks=hooks,\n        )\n        prep = self.prepare_request(req)\n\n        proxies = proxies or {}\n\n        settings = self.merge_environment_settings(\n            prep.url, proxies, stream, verify, cert\n        )\n\n        # Send the request.\n        send_kwargs = {\n            \"\"timeout\"\": timeout,\n            \"\"allow_redirects\"\": allow_redirects,\n        }\n        send_kwargs.update(settings)\n        resp = self.send(prep, **send_kwargs)\n\n        return resp\n\n    def get(self, url, **kwargs):\n        r\"\"\"\"\"\"Sends a GET request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\"\"\"\n\n        kwargs.setdefault(\"\"allow_redirects\"\", True)\n        return self.request(\"\"GET\"\", url, **kwargs)\n\n    def options(self, url, **kwargs):\n        r\"\"\"\"\"\"Sends a OPTIONS request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\"\"\"\n\n        kwargs.setdefault(\"\"allow_redirects\"\", True)\n        return self.request(\"\"OPTIONS\"\", url, **kwargs)\n\n    def head(self, url, **kwargs):\n        r\"\"\"\"\"\"Sends a HEAD request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\"\"\"\n\n        kwargs.setdefault(\"\"allow_redirects\"\", False)\n        return self.request(\"\"HEAD\"\", url, **kwargs)\n\n    def post(self, url, data=None, json=None, **kwargs):\n        r\"\"\"\"\"\"Sends a POST request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param json: (optional) json to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\"\"\"\n\n        return self.request(\"\"POST\"\", url, data=data, json=json, **kwargs)\n\n    def put(self, url, data=None, **kwargs):\n        r\"\"\"\"\"\"Sends a PUT request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\"\"\"\n\n        return self.request(\"\"PUT\"\", url, data=data, **kwargs)\n\n    def patch(self, url, data=None, **kwargs):\n        r\"\"\"\"\"\"Sends a PATCH request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\"\"\"\n\n        return self.request(\"\"PATCH\"\", url, data=data, **kwargs)\n\n    def delete(self, url, **kwargs):\n        r\"\"\"\"\"\"Sends a DELETE request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\"\"\"\n\n        return self.request(\"\"DELETE\"\", url, **kwargs)\n\n    def send(self, request, **kwargs):\n        \"\"\"\"\"\"Send a given PreparedRequest.\n\n        :rtype: requests.Response\n        \"\"\"\"\"\"\n        # Set defaults that the hooks can utilize to ensure they always have\n        # the correct parameters to reproduce the previous request.\n        kwargs.setdefault(\"\"stream\"\", self.stream)\n        kwargs.setdefault(\"\"verify\"\", self.verify)\n        kwargs.setdefault(\"\"cert\"\", self.cert)\n        if \"\"proxies\"\" not in kwargs:\n            kwargs[\"\"proxies\"\"] = resolve_proxies(request, self.proxies, self.trust_env)\n\n        # It's possible that users might accidentally send a Request object.\n        # Guard against that specific failure case.\n        if isinstance(request, Request):\n            raise ValueError(\"\"You can only send PreparedRequests.\"\")\n\n        # Set up variables needed for resolve_redirects and dispatching of hooks\n        allow_redirects = kwargs.pop(\"\"allow_redirects\"\", True)\n        stream = kwargs.get(\"\"stream\"\")\n        hooks = request.hooks\n\n        # Get the appropriate adapter to use\n        adapter = self.get_adapter(url=request.url)\n\n        # Start time (approximately) of the request\n        start = preferred_clock()\n\n        # Send the request\n        r = adapter.send(request, **kwargs)\n\n        # Total elapsed time of the request (approximately)\n        elapsed = preferred_clock() - start\n        r.elapsed = timedelta(seconds=elapsed)\n\n        # Response manipulation hooks\n        r = dispatch_hook(\"\"response\"\", hooks, r, **kwargs)\n\n        # Persist cookies\n        if r.history:\n            # If the hooks create history then we want those cookies too\n            for resp in r.history:\n                extract_cookies_to_jar(self.cookies, resp.request, resp.raw)\n\n\"\n",
+      "upstream_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n813|ADAPTER.SEND|`adapter.send` is an explicitly referenced receiver call in `send`; the adapter's class and method definition are not visible, so its runtime binding is uncertain.|1\n812|GET_ADAPTER|`get_adapter` is an unresolved receiver method explicitly called as `self.get_adapter(url=request.url)` in `send`; its definition and owning class are not visible.|4\n389|SEND|SEND refers to request-sending methods that prepare, execute, and finalize HTTP requests. One implementation fills in default transport settings, rejects an already constructed `Request` instance, selects the appropriate adapter, sends the request, records elapsed time, dispatches response hooks, and persists cookies. Another implementation obtains a connection, verifies certificates, constructs the request URL, adds headers, normalizes timeout values, invokes `conn.urlopen`, and translates visible connection exceptions into request-related errors. Together, SEND handles transport configuration, connection and security setup, request execution, error mapping, response processing, timing, and cookie persistence. The owning classes for these methods are not visible.|23\n343|BASEADAPTER.SEND|Method defined with signature `send(self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None)`; its documentation describes sending a PreparedRequest and returning a Response, while the visible body raises `NotImplementedError`.|2\n98|BASEADAPTER|BASEADAPTER is an externally defined base class for transport adapters. It serves as the parent class of `HTTPAdapter`, as shown by `class HTTPAdapter(BaseAdapter)`, and is documented as a class that can be subclassed to implement custom transport adapter behavior. Its definition is not included in the provided code.|6\n1264|S.GET_ADAPTER|The unresolved receiver call `s.get_adapter(...)` is referenced three times to select adapters for URLs matching only the general prefix, matching the more-specific prefix, and not matching the configured prefix; the receiver's concrete class is not proven beyond session construction in the test.|1\n1311|ADAPTER.BUILD_RESPONSE|ADAPTER.BUILD_RESPONSE refers to the exact adapter attribute `adapter.build_response`. Within `_patch_adapter_gzipped_redirect`, this attribute is explicitly read and saved as `org_build_response` before being replaced. The receiver adapter’s concrete runtime class is not established or visible in the available information.|1\n97|HTTPADAPTER|HTTPADAPTER refers to the externally defined `HTTPAdapter` class from the Requests library, typically imported from `requests.adapters` or a local `.adapters` module. It serves as the default transport adapter for HTTP and HTTPS session connections and is instantiated as `HTTPAdapter()` when mounting default adapters for the `http://` and `https://` URL prefixes.\n\nHTTPADAPTER can also be configured with connection-pool or retry options, including constructions such as `HTTPAdapter(max_retries=retries)`, before being mounted on a session. It provides adapter functionality such as `proxy_headers`, and it is used directly in tests and other visible code. The class is also documented and used as the base class for specialized adapters such as `Ssl3HttpAdapter`.\n\nAlthough HTTPADAPTER is imported and referenced repeatedly—including for session mounting, retry configuration, proxy handling, subclassing, and tests—its actual implementation is not visible in the provided material.|24\n95|SSL3HTTPADAPTER|The class `Ssl3HttpAdapter` is defined in the documentation example as `class Ssl3HttpAdapter(HTTPAdapter)` and is described as a transport adapter that allows SSLv3.|1\n1117|S.SEND|S.SEND refers to the attribute call `s.send(...)`, invoked on a locally created session object to transmit prepared or unprepared requests, including the example `s.send(prep_req)`. The available descriptions explicitly identify the receiver as `s`, but they do not establish its concrete runtime class.|6\n1262|S2.MOUNT|The unresolved receiver call `s2.mount(...)` is referenced to add an HTTPS adapter after assigning `s2.adapters`; the receiver's concrete class is not proven beyond session construction in the test.|1\n1310|SESSION.GET_ADAPTER|`SESSION.GET_ADAPTER` refers to the exact attribute call `session.get_adapter(url=url)`, which is used inside `_patch_adapter_gzipped_redirect`. The receiver is the parameter named `session`, but the available context does not establish its concrete runtime class.|1\n1455|SOCKET.SENDALL|The explicitly referenced receiver method `socket.sendall`; its definition is not visible. The chunk shows calls sending request and response bytes, but does not prove a specific runtime class binding for `sock`.|6\n371|REQUESTS.ADAPTERS.HTTPADAPTER|`requests.adapters.HTTPAdapter` is a documented external class from the Requests library. It is referenced as a class that may be subclassed to expose methods such as `cert_verify`, and it is also instantiated through the expression `requests.adapters.HTTPAdapter()`. However, the class definition is not visible in the available context, and the references do not independently establish a runtime call or inheritance relationship beyond the documented subclassing and instantiation references.|1\n1276|REQUESTS.SESSION.GET_ADAPTER|`requests.Session.get_adapter` is an explicitly referenced external method through `s.get_adapter(...)`; the receiver is created with `requests.Session()`, but the method implementation is not visible here.|2\n93|REQUESTS.ADAPTERS|`REQUESTS.ADAPTERS` refers to the `requests.adapters` module. It is explicitly imported both as `import requests.adapters` and through `from requests.adapters import HTTPAdapter`, including usage via the `HTTPAdapter` symbol. The module defines transport adapters and contains the visible symbols associated with adapter-based request handling; no additional module behavior is evident from the provided descriptions.|32\n1050|SOCK.SEND|SOCK.SEND is an unresolved callable invoked as `sock.send(...)` on a handler’s `sock` receiver. It is used by the visible `response_handler` implementations, including `Server.text_response_server.text_response_handler`, to transmit HTTP response data over a socket. The transmitted payloads include encoded response bytes, raw HTTP response bytes, and the value `text_200_chal`. The concrete type of the `sock` receiver, its socket class, and the implementation or method binding of `send` are not visible in the available descriptions.|8\n\n\n-----Relationships-----\nid|source|target|description|weight\n1105|SEND|ADAPTER.SEND|CALLS, `send` calls the syntactically named receiver method `adapter.send(request, **kwargs)`; the adapter binding and runtime target are not established by this chunk.|9.0\n\n\n-----Sources-----\nid|text\n56|            json=json,\n            params=params or {},\n            auth=auth,\n            cookies=cookies,\n            hooks=hooks,\n        )\n        prep = self.prepare_request(req)\n\n        proxies = proxies or {}\n\n        settings = self.merge_environment_settings(\n            prep.url, proxies, stream, verify, cert\n        )\n\n        # Send the request.\n        send_kwargs = {\n            \"timeout\": timeout,\n            \"allow_redirects\": allow_redirects,\n        }\n        send_kwargs.update(settings)\n        resp = self.send(prep, **send_kwargs)\n\n        return resp\n\n    def get(self, url, **kwargs):\n        r\"\"\"Sends a GET request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        kwargs.setdefault(\"allow_redirects\", True)\n        return self.request(\"GET\", url, **kwargs)\n\n    def options(self, url, **kwargs):\n        r\"\"\"Sends a OPTIONS request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        kwargs.setdefault(\"allow_redirects\", True)\n        return self.request(\"OPTIONS\", url, **kwargs)\n\n    def head(self, url, **kwargs):\n        r\"\"\"Sends a HEAD request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        kwargs.setdefault(\"allow_redirects\", False)\n        return self.request(\"HEAD\", url, **kwargs)\n\n    def post(self, url, data=None, json=None, **kwargs):\n        r\"\"\"Sends a POST request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param json: (optional) json to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        return self.request(\"POST\", url, data=data, json=json, **kwargs)\n\n    def put(self, url, data=None, **kwargs):\n        r\"\"\"Sends a PUT request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        return self.request(\"PUT\", url, data=data, **kwargs)\n\n    def patch(self, url, data=None, **kwargs):\n        r\"\"\"Sends a PATCH request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        return self.request(\"PATCH\", url, data=data, **kwargs)\n\n    def delete(self, url, **kwargs):\n        r\"\"\"Sends a DELETE request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        return self.request(\"DELETE\", url, **kwargs)\n\n    def send(self, request, **kwargs):\n        \"\"\"Send a given PreparedRequest.\n\n        :rtype: requests.Response\n        \"\"\"\n        # Set defaults that the hooks can utilize to ensure they always have\n        # the correct parameters to reproduce the previous request.\n        kwargs.setdefault(\"stream\", self.stream)\n        kwargs.setdefault(\"verify\", self.verify)\n        kwargs.setdefault(\"cert\", self.cert)\n        if \"proxies\" not in kwargs:\n            kwargs[\"proxies\"] = resolve_proxies(request, self.proxies, self.trust_env)\n\n        # It's possible that users might accidentally send a Request object.\n        # Guard against that specific failure case.\n        if isinstance(request, Request):\n            raise ValueError(\"You can only send PreparedRequests.\")\n\n        # Set up variables needed for resolve_redirects and dispatching of hooks\n        allow_redirects = kwargs.pop(\"allow_redirects\", True)\n        stream = kwargs.get(\"stream\")\n        hooks = request.hooks\n\n        # Get the appropriate adapter to use\n        adapter = self.get_adapter(url=request.url)\n\n        # Start time (approximately) of the request\n        start = preferred_clock()\n\n        # Send the request\n        r = adapter.send(request, **kwargs)\n\n        # Total elapsed time of the request (approximately)\n        elapsed = preferred_clock() - start\n        r.elapsed = timedelta(seconds=elapsed)\n\n        # Response manipulation hooks\n        r = dispatch_hook(\"response\", hooks, r, **kwargs)\n\n        # Persist cookies\n        if r.history:\n            # If the hooks create history then we want those cookies too\n            for resp in r.history:\n                extract_cookies_to_jar(self.cookies, resp.request, resp.raw)\n\n\n",
+      "records": {
+        "relationships": [
+          {
+            "id": "1105",
+            "source": "SEND",
+            "target": "ADAPTER.SEND",
+            "description": "CALLS, `send` calls the syntactically named receiver method `adapter.send(request, **kwargs)`; the adapter binding and runtime target are not established by this chunk.",
+            "weight": "9.0",
+            "in_context": true
+          }
+        ],
+        "entities": [
+          {
+            "id": "813",
+            "entity": "ADAPTER.SEND",
+            "description": "`adapter.send` is an explicitly referenced receiver call in `send`; the adapter's class and method definition are not visible, so its runtime binding is uncertain.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "812",
+            "entity": "GET_ADAPTER",
+            "description": "`get_adapter` is an unresolved receiver method explicitly called as `self.get_adapter(url=request.url)` in `send`; its definition and owning class are not visible.",
+            "number of relationships": "4",
+            "in_context": true
+          },
+          {
+            "id": "389",
+            "entity": "SEND",
+            "description": "SEND refers to request-sending methods that prepare, execute, and finalize HTTP requests. One implementation fills in default transport settings, rejects an already constructed `Request` instance, selects the appropriate adapter, sends the request, records elapsed time, dispatches response hooks, and persists cookies. Another implementation obtains a connection, verifies certificates, constructs the request URL, adds headers, normalizes timeout values, invokes `conn.urlopen`, and translates visible connection exceptions into request-related errors. Together, SEND handles transport configuration, connection and security setup, request execution, error mapping, response processing, timing, and cookie persistence. The owning classes for these methods are not visible.",
+            "number of relationships": "23",
+            "in_context": true
+          },
+          {
+            "id": "343",
+            "entity": "BASEADAPTER.SEND",
+            "description": "Method defined with signature `send(self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None)`; its documentation describes sending a PreparedRequest and returning a Response, while the visible body raises `NotImplementedError`.",
+            "number of relationships": "2",
+            "in_context": true
+          },
+          {
+            "id": "98",
+            "entity": "BASEADAPTER",
+            "description": "BASEADAPTER is an externally defined base class for transport adapters. It serves as the parent class of `HTTPAdapter`, as shown by `class HTTPAdapter(BaseAdapter)`, and is documented as a class that can be subclassed to implement custom transport adapter behavior. Its definition is not included in the provided code.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "1264",
+            "entity": "S.GET_ADAPTER",
+            "description": "The unresolved receiver call `s.get_adapter(...)` is referenced three times to select adapters for URLs matching only the general prefix, matching the more-specific prefix, and not matching the configured prefix; the receiver's concrete class is not proven beyond session construction in the test.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "1311",
+            "entity": "ADAPTER.BUILD_RESPONSE",
+            "description": "ADAPTER.BUILD_RESPONSE refers to the exact adapter attribute `adapter.build_response`. Within `_patch_adapter_gzipped_redirect`, this attribute is explicitly read and saved as `org_build_response` before being replaced. The receiver adapter’s concrete runtime class is not established or visible in the available information.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "97",
+            "entity": "HTTPADAPTER",
+            "description": "HTTPADAPTER refers to the externally defined `HTTPAdapter` class from the Requests library, typically imported from `requests.adapters` or a local `.adapters` module. It serves as the default transport adapter for HTTP and HTTPS session connections and is instantiated as `HTTPAdapter()` when mounting default adapters for the `http://` and `https://` URL prefixes.\n\nHTTPADAPTER can also be configured with connection-pool or retry options, including constructions such as `HTTPAdapter(max_retries=retries)`, before being mounted on a session. It provides adapter functionality such as `proxy_headers`, and it is used directly in tests and other visible code. The class is also documented and used as the base class for specialized adapters such as `Ssl3HttpAdapter`.\n\nAlthough HTTPADAPTER is imported and referenced repeatedly—including for session mounting, retry configuration, proxy handling, subclassing, and tests—its actual implementation is not visible in the provided material.",
+            "number of relationships": "24",
+            "in_context": true
+          },
+          {
+            "id": "95",
+            "entity": "SSL3HTTPADAPTER",
+            "description": "The class `Ssl3HttpAdapter` is defined in the documentation example as `class Ssl3HttpAdapter(HTTPAdapter)` and is described as a transport adapter that allows SSLv3.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "1117",
+            "entity": "S.SEND",
+            "description": "S.SEND refers to the attribute call `s.send(...)`, invoked on a locally created session object to transmit prepared or unprepared requests, including the example `s.send(prep_req)`. The available descriptions explicitly identify the receiver as `s`, but they do not establish its concrete runtime class.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "1262",
+            "entity": "S2.MOUNT",
+            "description": "The unresolved receiver call `s2.mount(...)` is referenced to add an HTTPS adapter after assigning `s2.adapters`; the receiver's concrete class is not proven beyond session construction in the test.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "1310",
+            "entity": "SESSION.GET_ADAPTER",
+            "description": "`SESSION.GET_ADAPTER` refers to the exact attribute call `session.get_adapter(url=url)`, which is used inside `_patch_adapter_gzipped_redirect`. The receiver is the parameter named `session`, but the available context does not establish its concrete runtime class.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "1455",
+            "entity": "SOCKET.SENDALL",
+            "description": "The explicitly referenced receiver method `socket.sendall`; its definition is not visible. The chunk shows calls sending request and response bytes, but does not prove a specific runtime class binding for `sock`.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "371",
+            "entity": "REQUESTS.ADAPTERS.HTTPADAPTER",
+            "description": "`requests.adapters.HTTPAdapter` is a documented external class from the Requests library. It is referenced as a class that may be subclassed to expose methods such as `cert_verify`, and it is also instantiated through the expression `requests.adapters.HTTPAdapter()`. However, the class definition is not visible in the available context, and the references do not independently establish a runtime call or inheritance relationship beyond the documented subclassing and instantiation references.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "1276",
+            "entity": "REQUESTS.SESSION.GET_ADAPTER",
+            "description": "`requests.Session.get_adapter` is an explicitly referenced external method through `s.get_adapter(...)`; the receiver is created with `requests.Session()`, but the method implementation is not visible here.",
+            "number of relationships": "2",
+            "in_context": true
+          },
+          {
+            "id": "93",
+            "entity": "REQUESTS.ADAPTERS",
+            "description": "`REQUESTS.ADAPTERS` refers to the `requests.adapters` module. It is explicitly imported both as `import requests.adapters` and through `from requests.adapters import HTTPAdapter`, including usage via the `HTTPAdapter` symbol. The module defines transport adapters and contains the visible symbols associated with adapter-based request handling; no additional module behavior is evident from the provided descriptions.",
+            "number of relationships": "32",
+            "in_context": true
+          },
+          {
+            "id": "1050",
+            "entity": "SOCK.SEND",
+            "description": "SOCK.SEND is an unresolved callable invoked as `sock.send(...)` on a handler’s `sock` receiver. It is used by the visible `response_handler` implementations, including `Server.text_response_server.text_response_handler`, to transmit HTTP response data over a socket. The transmitted payloads include encoded response bytes, raw HTTP response bytes, and the value `text_200_chal`. The concrete type of the `sock` receiver, its socket class, and the implementation or method binding of `send` are not visible in the available descriptions.",
+            "number of relationships": "8",
+            "in_context": true
+          }
+        ],
+        "sources": [
+          {
+            "id": "56",
+            "text": "            json=json,\n            params=params or {},\n            auth=auth,\n            cookies=cookies,\n            hooks=hooks,\n        )\n        prep = self.prepare_request(req)\n\n        proxies = proxies or {}\n\n        settings = self.merge_environment_settings(\n            prep.url, proxies, stream, verify, cert\n        )\n\n        # Send the request.\n        send_kwargs = {\n            \"timeout\": timeout,\n            \"allow_redirects\": allow_redirects,\n        }\n        send_kwargs.update(settings)\n        resp = self.send(prep, **send_kwargs)\n\n        return resp\n\n    def get(self, url, **kwargs):\n        r\"\"\"Sends a GET request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        kwargs.setdefault(\"allow_redirects\", True)\n        return self.request(\"GET\", url, **kwargs)\n\n    def options(self, url, **kwargs):\n        r\"\"\"Sends a OPTIONS request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        kwargs.setdefault(\"allow_redirects\", True)\n        return self.request(\"OPTIONS\", url, **kwargs)\n\n    def head(self, url, **kwargs):\n        r\"\"\"Sends a HEAD request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        kwargs.setdefault(\"allow_redirects\", False)\n        return self.request(\"HEAD\", url, **kwargs)\n\n    def post(self, url, data=None, json=None, **kwargs):\n        r\"\"\"Sends a POST request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param json: (optional) json to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        return self.request(\"POST\", url, data=data, json=json, **kwargs)\n\n    def put(self, url, data=None, **kwargs):\n        r\"\"\"Sends a PUT request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        return self.request(\"PUT\", url, data=data, **kwargs)\n\n    def patch(self, url, data=None, **kwargs):\n        r\"\"\"Sends a PATCH request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        return self.request(\"PATCH\", url, data=data, **kwargs)\n\n    def delete(self, url, **kwargs):\n        r\"\"\"Sends a DELETE request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        return self.request(\"DELETE\", url, **kwargs)\n\n    def send(self, request, **kwargs):\n        \"\"\"Send a given PreparedRequest.\n\n        :rtype: requests.Response\n        \"\"\"\n        # Set defaults that the hooks can utilize to ensure they always have\n        # the correct parameters to reproduce the previous request.\n        kwargs.setdefault(\"stream\", self.stream)\n        kwargs.setdefault(\"verify\", self.verify)\n        kwargs.setdefault(\"cert\", self.cert)\n        if \"proxies\" not in kwargs:\n            kwargs[\"proxies\"] = resolve_proxies(request, self.proxies, self.trust_env)\n\n        # It's possible that users might accidentally send a Request object.\n        # Guard against that specific failure case.\n        if isinstance(request, Request):\n            raise ValueError(\"You can only send PreparedRequests.\")\n\n        # Set up variables needed for resolve_redirects and dispatching of hooks\n        allow_redirects = kwargs.pop(\"allow_redirects\", True)\n        stream = kwargs.get(\"stream\")\n        hooks = request.hooks\n\n        # Get the appropriate adapter to use\n        adapter = self.get_adapter(url=request.url)\n\n        # Start time (approximately) of the request\n        start = preferred_clock()\n\n        # Send the request\n        r = adapter.send(request, **kwargs)\n\n        # Total elapsed time of the request (approximately)\n        elapsed = preferred_clock() - start\n        r.elapsed = timedelta(seconds=elapsed)\n\n        # Response manipulation hooks\n        r = dispatch_hook(\"response\", hooks, r, **kwargs)\n\n        # Persist cookies\n        if r.history:\n            # If the hooks create history then we want those cookies too\n            for resp in r.history:\n                extract_cookies_to_jar(self.cookies, resp.request, resp.raw)\n\n"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "short_id": "56",
+          "text_unit_id": "c1cd745424c9cd15526c9817388dc761eab81a549baf632b9622061dd8600fe1fb5e55d10a13f6b782d3dc128c3753a80008475b6213aa20323d051b6601ea38",
+          "id": "d7e626799389abc05c4760dab8b0116164b3c22fca658f7fe01bebd628df1934",
+          "title": "src/requests/sessions.py:L569-L717",
+          "path": "src/requests/sessions.py",
+          "start_line": 569,
+          "end_line": 717,
+          "tokens": 1196,
+          "text_sha256": "aeffda39beb3981fa06d5f06cf8cd570b80fd60fe7367fce3d8f5b00d309c10c",
+          "ms_text_unit_id": "c1cd745424c9cd15526c9817388dc761eab81a549baf632b9622061dd8600fe1fb5e55d10a13f6b782d3dc128c3753a80008475b6213aa20323d051b6601ea38"
+        }
+      ],
+      "source_text_tokens": 1196,
+      "context_tokens": 2641,
+      "evidence_key": "9466c8fa847782f0ab13828262334b9b1ad34c19aa29927b8854e8038e1ba40e",
+      "read_occurrences": 1
+    },
+    {
+      "stage": "local",
+      "query": "What arguments does `SEND` pass to `adapter.send`?",
+      "context": "-----Entities-----\nid|entity|description|number of relationships\n813|ADAPTER.SEND|`adapter.send` is an explicitly referenced receiver call in `send`; the adapter's class and method definition are not visible, so its runtime binding is uncertain.|1\n389|SEND|SEND refers to request-sending methods that prepare, execute, and finalize HTTP requests. One implementation fills in default transport settings, rejects an already constructed `Request` instance, selects the appropriate adapter, sends the request, records elapsed time, dispatches response hooks, and persists cookies. Another implementation obtains a connection, verifies certificates, constructs the request URL, adds headers, normalizes timeout values, invokes `conn.urlopen`, and translates visible connection exceptions into request-related errors. Together, SEND handles transport configuration, connection and security setup, request execution, error mapping, response processing, timing, and cookie persistence. The owning classes for these methods are not visible.|23\n812|GET_ADAPTER|`get_adapter` is an unresolved receiver method explicitly called as `self.get_adapter(url=request.url)` in `send`; its definition and owning class are not visible.|4\n1117|S.SEND|S.SEND refers to the attribute call `s.send(...)`, invoked on a locally created session object to transmit prepared or unprepared requests, including the example `s.send(prep_req)`. The available descriptions explicitly identify the receiver as `s`, but they do not establish its concrete runtime class.|6\n343|BASEADAPTER.SEND|Method defined with signature `send(self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None)`; its documentation describes sending a PreparedRequest and returning a Response, while the visible body raises `NotImplementedError`.|2\n1113|REQUESTS.SESSION.SEND|References the unresolved method `send` on a session receiver, used as `s.send(r.prepare())`; the receiver is syntactically assigned from `requests.Session()` but the method definition is not visible.|2\n1455|SOCKET.SENDALL|The explicitly referenced receiver method `socket.sendall`; its definition is not visible. The chunk shows calls sending request and response bytes, but does not prove a specific runtime class binding for `sock`.|6\n1050|SOCK.SEND|SOCK.SEND is an unresolved callable invoked as `sock.send(...)` on a handler’s `sock` receiver. It is used by the visible `response_handler` implementations, including `Server.text_response_server.text_response_handler`, to transmit HTTP response data over a socket. The transmitted payloads include encoded response bytes, raw HTTP response bytes, and the value `text_200_chal`. The concrete type of the `sock` receiver, its socket class, and the implementation or method binding of `send` are not visible in the available descriptions.|8\n1384|SENDCALL|\"The module-level value `SendCall` is defined here by `collections.namedtuple(\"\"SendCall\"\", (\"\"args\"\", \"\"kwargs\"\"))` and is used to record redirect-send arguments.\"|2\n1264|S.GET_ADAPTER|The unresolved receiver call `s.get_adapter(...)` is referenced three times to select adapters for URLs matching only the general prefix, matching the more-specific prefix, and not matching the configured prefix; the receiver's concrete class is not proven beyond session construction in the test.|1\n93|REQUESTS.ADAPTERS|`REQUESTS.ADAPTERS` refers to the `requests.adapters` module. It is explicitly imported both as `import requests.adapters` and through `from requests.adapters import HTTPAdapter`, including usage via the `HTTPAdapter` symbol. The module defines transport adapters and contains the visible symbols associated with adapter-based request handling; no additional module behavior is evident from the provided descriptions.|32\n97|HTTPADAPTER|\"HTTPADAPTER refers to the externally defined `HTTPAdapter` class from the Requests library, typically imported from `requests.adapters` or a local `.adapters` module. It serves as the default transport adapter for HTTP and HTTPS session connections and is instantiated as `HTTPAdapter()` when mounting default adapters for the `http://` and `https://` URL prefixes.\n\nHTTPADAPTER can also be configured with connection-pool or retry options, including constructions such as `HTTPAdapter(max_retries=retries)`, before being mounted on a session. It provides adapter functionality such as `proxy_headers`, and it is used directly in tests and other visible code. The class is also documented and used as the base class for specialized adapters such as `Ssl3HttpAdapter`.\n\nAlthough HTTPADAPTER is imported and referenced repeatedly—including for session mounting, retry configuration, proxy handling, subclassing, and tests—its actual implementation is not visible in the provided material.\"|24\n1276|REQUESTS.SESSION.GET_ADAPTER|`requests.Session.get_adapter` is an explicitly referenced external method through `s.get_adapter(...)`; the receiver is created with `requests.Session()`, but the method implementation is not visible here.|2\n95|SSL3HTTPADAPTER|The class `Ssl3HttpAdapter` is defined in the documentation example as `class Ssl3HttpAdapter(HTTPAdapter)` and is described as a transport adapter that allows SSLv3.|1\n1310|SESSION.GET_ADAPTER|`SESSION.GET_ADAPTER` refers to the exact attribute call `session.get_adapter(url=url)`, which is used inside `_patch_adapter_gzipped_redirect`. The receiver is the parameter named `session`, but the available context does not establish its concrete runtime class.|1\n24|SESSION.SEND|`Session.send()` is explicitly called as `s.send(prepped, stream=stream, verify=verify, proxies=proxies, cert=cert, timeout=timeout)` to send a prepared request.|1\n1387|REDIRECTSESSION.SEND|The method `RedirectSession.send` is defined here; it appends `SendCall(args, kwargs)` to `self.calls` and returns `self.build_response()`.|4\n446|R.CONNECTION.SEND|References the unresolved receiver operation `r.connection.send(prep, **kwargs)` in `handle_401`; the connection's runtime type is not established.|1\n1311|ADAPTER.BUILD_RESPONSE|ADAPTER.BUILD_RESPONSE refers to the exact adapter attribute `adapter.build_response`. Within `_patch_adapter_gzipped_redirect`, this attribute is explicitly read and saved as `org_build_response` before being replaced. The receiver adapter’s concrete runtime class is not established or visible in the available information.|1\n\n-----Sources-----\nid|source|text\n56|src/requests/sessions.py:L569-L717|\"            json=json,\n            params=params or {},\n            auth=auth,\n            cookies=cookies,\n            hooks=hooks,\n        )\n        prep = self.prepare_request(req)\n\n        proxies = proxies or {}\n\n        settings = self.merge_environment_settings(\n            prep.url, proxies, stream, verify, cert\n        )\n\n        # Send the request.\n        send_kwargs = {\n            \"\"timeout\"\": timeout,\n            \"\"allow_redirects\"\": allow_redirects,\n        }\n        send_kwargs.update(settings)\n        resp = self.send(prep, **send_kwargs)\n\n        return resp\n\n    def get(self, url, **kwargs):\n        r\"\"\"\"\"\"Sends a GET request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\"\"\"\n\n        kwargs.setdefault(\"\"allow_redirects\"\", True)\n        return self.request(\"\"GET\"\", url, **kwargs)\n\n    def options(self, url, **kwargs):\n        r\"\"\"\"\"\"Sends a OPTIONS request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\"\"\"\n\n        kwargs.setdefault(\"\"allow_redirects\"\", True)\n        return self.request(\"\"OPTIONS\"\", url, **kwargs)\n\n    def head(self, url, **kwargs):\n        r\"\"\"\"\"\"Sends a HEAD request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\"\"\"\n\n        kwargs.setdefault(\"\"allow_redirects\"\", False)\n        return self.request(\"\"HEAD\"\", url, **kwargs)\n\n    def post(self, url, data=None, json=None, **kwargs):\n        r\"\"\"\"\"\"Sends a POST request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param json: (optional) json to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\"\"\"\n\n        return self.request(\"\"POST\"\", url, data=data, json=json, **kwargs)\n\n    def put(self, url, data=None, **kwargs):\n        r\"\"\"\"\"\"Sends a PUT request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\"\"\"\n\n        return self.request(\"\"PUT\"\", url, data=data, **kwargs)\n\n    def patch(self, url, data=None, **kwargs):\n        r\"\"\"\"\"\"Sends a PATCH request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\"\"\"\n\n        return self.request(\"\"PATCH\"\", url, data=data, **kwargs)\n\n    def delete(self, url, **kwargs):\n        r\"\"\"\"\"\"Sends a DELETE request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\"\"\"\n\n        return self.request(\"\"DELETE\"\", url, **kwargs)\n\n    def send(self, request, **kwargs):\n        \"\"\"\"\"\"Send a given PreparedRequest.\n\n        :rtype: requests.Response\n        \"\"\"\"\"\"\n        # Set defaults that the hooks can utilize to ensure they always have\n        # the correct parameters to reproduce the previous request.\n        kwargs.setdefault(\"\"stream\"\", self.stream)\n        kwargs.setdefault(\"\"verify\"\", self.verify)\n        kwargs.setdefault(\"\"cert\"\", self.cert)\n        if \"\"proxies\"\" not in kwargs:\n            kwargs[\"\"proxies\"\"] = resolve_proxies(request, self.proxies, self.trust_env)\n\n        # It's possible that users might accidentally send a Request object.\n        # Guard against that specific failure case.\n        if isinstance(request, Request):\n            raise ValueError(\"\"You can only send PreparedRequests.\"\")\n\n        # Set up variables needed for resolve_redirects and dispatching of hooks\n        allow_redirects = kwargs.pop(\"\"allow_redirects\"\", True)\n        stream = kwargs.get(\"\"stream\"\")\n        hooks = request.hooks\n\n        # Get the appropriate adapter to use\n        adapter = self.get_adapter(url=request.url)\n\n        # Start time (approximately) of the request\n        start = preferred_clock()\n\n        # Send the request\n        r = adapter.send(request, **kwargs)\n\n        # Total elapsed time of the request (approximately)\n        elapsed = preferred_clock() - start\n        r.elapsed = timedelta(seconds=elapsed)\n\n        # Response manipulation hooks\n        r = dispatch_hook(\"\"response\"\", hooks, r, **kwargs)\n\n        # Persist cookies\n        if r.history:\n            # If the hooks create history then we want those cookies too\n            for resp in r.history:\n                extract_cookies_to_jar(self.cookies, resp.request, resp.raw)\n\n\"\n",
+      "upstream_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n813|ADAPTER.SEND|`adapter.send` is an explicitly referenced receiver call in `send`; the adapter's class and method definition are not visible, so its runtime binding is uncertain.|1\n389|SEND|SEND refers to request-sending methods that prepare, execute, and finalize HTTP requests. One implementation fills in default transport settings, rejects an already constructed `Request` instance, selects the appropriate adapter, sends the request, records elapsed time, dispatches response hooks, and persists cookies. Another implementation obtains a connection, verifies certificates, constructs the request URL, adds headers, normalizes timeout values, invokes `conn.urlopen`, and translates visible connection exceptions into request-related errors. Together, SEND handles transport configuration, connection and security setup, request execution, error mapping, response processing, timing, and cookie persistence. The owning classes for these methods are not visible.|23\n812|GET_ADAPTER|`get_adapter` is an unresolved receiver method explicitly called as `self.get_adapter(url=request.url)` in `send`; its definition and owning class are not visible.|4\n1117|S.SEND|S.SEND refers to the attribute call `s.send(...)`, invoked on a locally created session object to transmit prepared or unprepared requests, including the example `s.send(prep_req)`. The available descriptions explicitly identify the receiver as `s`, but they do not establish its concrete runtime class.|6\n343|BASEADAPTER.SEND|Method defined with signature `send(self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None)`; its documentation describes sending a PreparedRequest and returning a Response, while the visible body raises `NotImplementedError`.|2\n1113|REQUESTS.SESSION.SEND|References the unresolved method `send` on a session receiver, used as `s.send(r.prepare())`; the receiver is syntactically assigned from `requests.Session()` but the method definition is not visible.|2\n1455|SOCKET.SENDALL|The explicitly referenced receiver method `socket.sendall`; its definition is not visible. The chunk shows calls sending request and response bytes, but does not prove a specific runtime class binding for `sock`.|6\n1050|SOCK.SEND|SOCK.SEND is an unresolved callable invoked as `sock.send(...)` on a handler’s `sock` receiver. It is used by the visible `response_handler` implementations, including `Server.text_response_server.text_response_handler`, to transmit HTTP response data over a socket. The transmitted payloads include encoded response bytes, raw HTTP response bytes, and the value `text_200_chal`. The concrete type of the `sock` receiver, its socket class, and the implementation or method binding of `send` are not visible in the available descriptions.|8\n1384|SENDCALL|The module-level value `SendCall` is defined here by `collections.namedtuple(\"SendCall\", (\"args\", \"kwargs\"))` and is used to record redirect-send arguments.|2\n1264|S.GET_ADAPTER|The unresolved receiver call `s.get_adapter(...)` is referenced three times to select adapters for URLs matching only the general prefix, matching the more-specific prefix, and not matching the configured prefix; the receiver's concrete class is not proven beyond session construction in the test.|1\n93|REQUESTS.ADAPTERS|`REQUESTS.ADAPTERS` refers to the `requests.adapters` module. It is explicitly imported both as `import requests.adapters` and through `from requests.adapters import HTTPAdapter`, including usage via the `HTTPAdapter` symbol. The module defines transport adapters and contains the visible symbols associated with adapter-based request handling; no additional module behavior is evident from the provided descriptions.|32\n97|HTTPADAPTER|HTTPADAPTER refers to the externally defined `HTTPAdapter` class from the Requests library, typically imported from `requests.adapters` or a local `.adapters` module. It serves as the default transport adapter for HTTP and HTTPS session connections and is instantiated as `HTTPAdapter()` when mounting default adapters for the `http://` and `https://` URL prefixes.\n\nHTTPADAPTER can also be configured with connection-pool or retry options, including constructions such as `HTTPAdapter(max_retries=retries)`, before being mounted on a session. It provides adapter functionality such as `proxy_headers`, and it is used directly in tests and other visible code. The class is also documented and used as the base class for specialized adapters such as `Ssl3HttpAdapter`.\n\nAlthough HTTPADAPTER is imported and referenced repeatedly—including for session mounting, retry configuration, proxy handling, subclassing, and tests—its actual implementation is not visible in the provided material.|24\n1276|REQUESTS.SESSION.GET_ADAPTER|`requests.Session.get_adapter` is an explicitly referenced external method through `s.get_adapter(...)`; the receiver is created with `requests.Session()`, but the method implementation is not visible here.|2\n95|SSL3HTTPADAPTER|The class `Ssl3HttpAdapter` is defined in the documentation example as `class Ssl3HttpAdapter(HTTPAdapter)` and is described as a transport adapter that allows SSLv3.|1\n1310|SESSION.GET_ADAPTER|`SESSION.GET_ADAPTER` refers to the exact attribute call `session.get_adapter(url=url)`, which is used inside `_patch_adapter_gzipped_redirect`. The receiver is the parameter named `session`, but the available context does not establish its concrete runtime class.|1\n24|SESSION.SEND|`Session.send()` is explicitly called as `s.send(prepped, stream=stream, verify=verify, proxies=proxies, cert=cert, timeout=timeout)` to send a prepared request.|1\n1387|REDIRECTSESSION.SEND|The method `RedirectSession.send` is defined here; it appends `SendCall(args, kwargs)` to `self.calls` and returns `self.build_response()`.|4\n446|R.CONNECTION.SEND|References the unresolved receiver operation `r.connection.send(prep, **kwargs)` in `handle_401`; the connection's runtime type is not established.|1\n1311|ADAPTER.BUILD_RESPONSE|ADAPTER.BUILD_RESPONSE refers to the exact adapter attribute `adapter.build_response`. Within `_patch_adapter_gzipped_redirect`, this attribute is explicitly read and saved as `org_build_response` before being replaced. The receiver adapter’s concrete runtime class is not established or visible in the available information.|1\n\n\n\n\n-----Sources-----\nid|text\n56|            json=json,\n            params=params or {},\n            auth=auth,\n            cookies=cookies,\n            hooks=hooks,\n        )\n        prep = self.prepare_request(req)\n\n        proxies = proxies or {}\n\n        settings = self.merge_environment_settings(\n            prep.url, proxies, stream, verify, cert\n        )\n\n        # Send the request.\n        send_kwargs = {\n            \"timeout\": timeout,\n            \"allow_redirects\": allow_redirects,\n        }\n        send_kwargs.update(settings)\n        resp = self.send(prep, **send_kwargs)\n\n        return resp\n\n    def get(self, url, **kwargs):\n        r\"\"\"Sends a GET request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        kwargs.setdefault(\"allow_redirects\", True)\n        return self.request(\"GET\", url, **kwargs)\n\n    def options(self, url, **kwargs):\n        r\"\"\"Sends a OPTIONS request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        kwargs.setdefault(\"allow_redirects\", True)\n        return self.request(\"OPTIONS\", url, **kwargs)\n\n    def head(self, url, **kwargs):\n        r\"\"\"Sends a HEAD request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        kwargs.setdefault(\"allow_redirects\", False)\n        return self.request(\"HEAD\", url, **kwargs)\n\n    def post(self, url, data=None, json=None, **kwargs):\n        r\"\"\"Sends a POST request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param json: (optional) json to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        return self.request(\"POST\", url, data=data, json=json, **kwargs)\n\n    def put(self, url, data=None, **kwargs):\n        r\"\"\"Sends a PUT request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        return self.request(\"PUT\", url, data=data, **kwargs)\n\n    def patch(self, url, data=None, **kwargs):\n        r\"\"\"Sends a PATCH request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        return self.request(\"PATCH\", url, data=data, **kwargs)\n\n    def delete(self, url, **kwargs):\n        r\"\"\"Sends a DELETE request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        return self.request(\"DELETE\", url, **kwargs)\n\n    def send(self, request, **kwargs):\n        \"\"\"Send a given PreparedRequest.\n\n        :rtype: requests.Response\n        \"\"\"\n        # Set defaults that the hooks can utilize to ensure they always have\n        # the correct parameters to reproduce the previous request.\n        kwargs.setdefault(\"stream\", self.stream)\n        kwargs.setdefault(\"verify\", self.verify)\n        kwargs.setdefault(\"cert\", self.cert)\n        if \"proxies\" not in kwargs:\n            kwargs[\"proxies\"] = resolve_proxies(request, self.proxies, self.trust_env)\n\n        # It's possible that users might accidentally send a Request object.\n        # Guard against that specific failure case.\n        if isinstance(request, Request):\n            raise ValueError(\"You can only send PreparedRequests.\")\n\n        # Set up variables needed for resolve_redirects and dispatching of hooks\n        allow_redirects = kwargs.pop(\"allow_redirects\", True)\n        stream = kwargs.get(\"stream\")\n        hooks = request.hooks\n\n        # Get the appropriate adapter to use\n        adapter = self.get_adapter(url=request.url)\n\n        # Start time (approximately) of the request\n        start = preferred_clock()\n\n        # Send the request\n        r = adapter.send(request, **kwargs)\n\n        # Total elapsed time of the request (approximately)\n        elapsed = preferred_clock() - start\n        r.elapsed = timedelta(seconds=elapsed)\n\n        # Response manipulation hooks\n        r = dispatch_hook(\"response\", hooks, r, **kwargs)\n\n        # Persist cookies\n        if r.history:\n            # If the hooks create history then we want those cookies too\n            for resp in r.history:\n                extract_cookies_to_jar(self.cookies, resp.request, resp.raw)\n\n\n",
+      "records": {
+        "entities": [
+          {
+            "id": "813",
+            "entity": "ADAPTER.SEND",
+            "description": "`adapter.send` is an explicitly referenced receiver call in `send`; the adapter's class and method definition are not visible, so its runtime binding is uncertain.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "389",
+            "entity": "SEND",
+            "description": "SEND refers to request-sending methods that prepare, execute, and finalize HTTP requests. One implementation fills in default transport settings, rejects an already constructed `Request` instance, selects the appropriate adapter, sends the request, records elapsed time, dispatches response hooks, and persists cookies. Another implementation obtains a connection, verifies certificates, constructs the request URL, adds headers, normalizes timeout values, invokes `conn.urlopen`, and translates visible connection exceptions into request-related errors. Together, SEND handles transport configuration, connection and security setup, request execution, error mapping, response processing, timing, and cookie persistence. The owning classes for these methods are not visible.",
+            "number of relationships": "23",
+            "in_context": true
+          },
+          {
+            "id": "812",
+            "entity": "GET_ADAPTER",
+            "description": "`get_adapter` is an unresolved receiver method explicitly called as `self.get_adapter(url=request.url)` in `send`; its definition and owning class are not visible.",
+            "number of relationships": "4",
+            "in_context": true
+          },
+          {
+            "id": "1117",
+            "entity": "S.SEND",
+            "description": "S.SEND refers to the attribute call `s.send(...)`, invoked on a locally created session object to transmit prepared or unprepared requests, including the example `s.send(prep_req)`. The available descriptions explicitly identify the receiver as `s`, but they do not establish its concrete runtime class.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "343",
+            "entity": "BASEADAPTER.SEND",
+            "description": "Method defined with signature `send(self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None)`; its documentation describes sending a PreparedRequest and returning a Response, while the visible body raises `NotImplementedError`.",
+            "number of relationships": "2",
+            "in_context": true
+          },
+          {
+            "id": "1113",
+            "entity": "REQUESTS.SESSION.SEND",
+            "description": "References the unresolved method `send` on a session receiver, used as `s.send(r.prepare())`; the receiver is syntactically assigned from `requests.Session()` but the method definition is not visible.",
+            "number of relationships": "2",
+            "in_context": true
+          },
+          {
+            "id": "1455",
+            "entity": "SOCKET.SENDALL",
+            "description": "The explicitly referenced receiver method `socket.sendall`; its definition is not visible. The chunk shows calls sending request and response bytes, but does not prove a specific runtime class binding for `sock`.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "1050",
+            "entity": "SOCK.SEND",
+            "description": "SOCK.SEND is an unresolved callable invoked as `sock.send(...)` on a handler’s `sock` receiver. It is used by the visible `response_handler` implementations, including `Server.text_response_server.text_response_handler`, to transmit HTTP response data over a socket. The transmitted payloads include encoded response bytes, raw HTTP response bytes, and the value `text_200_chal`. The concrete type of the `sock` receiver, its socket class, and the implementation or method binding of `send` are not visible in the available descriptions.",
+            "number of relationships": "8",
+            "in_context": true
+          },
+          {
+            "id": "1384",
+            "entity": "SENDCALL",
+            "description": "The module-level value `SendCall` is defined here by `collections.namedtuple(\"SendCall\", (\"args\", \"kwargs\"))` and is used to record redirect-send arguments.",
+            "number of relationships": "2",
+            "in_context": true
+          },
+          {
+            "id": "1264",
+            "entity": "S.GET_ADAPTER",
+            "description": "The unresolved receiver call `s.get_adapter(...)` is referenced three times to select adapters for URLs matching only the general prefix, matching the more-specific prefix, and not matching the configured prefix; the receiver's concrete class is not proven beyond session construction in the test.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "93",
+            "entity": "REQUESTS.ADAPTERS",
+            "description": "`REQUESTS.ADAPTERS` refers to the `requests.adapters` module. It is explicitly imported both as `import requests.adapters` and through `from requests.adapters import HTTPAdapter`, including usage via the `HTTPAdapter` symbol. The module defines transport adapters and contains the visible symbols associated with adapter-based request handling; no additional module behavior is evident from the provided descriptions.",
+            "number of relationships": "32",
+            "in_context": true
+          },
+          {
+            "id": "97",
+            "entity": "HTTPADAPTER",
+            "description": "HTTPADAPTER refers to the externally defined `HTTPAdapter` class from the Requests library, typically imported from `requests.adapters` or a local `.adapters` module. It serves as the default transport adapter for HTTP and HTTPS session connections and is instantiated as `HTTPAdapter()` when mounting default adapters for the `http://` and `https://` URL prefixes.\n\nHTTPADAPTER can also be configured with connection-pool or retry options, including constructions such as `HTTPAdapter(max_retries=retries)`, before being mounted on a session. It provides adapter functionality such as `proxy_headers`, and it is used directly in tests and other visible code. The class is also documented and used as the base class for specialized adapters such as `Ssl3HttpAdapter`.\n\nAlthough HTTPADAPTER is imported and referenced repeatedly—including for session mounting, retry configuration, proxy handling, subclassing, and tests—its actual implementation is not visible in the provided material.",
+            "number of relationships": "24",
+            "in_context": true
+          },
+          {
+            "id": "1276",
+            "entity": "REQUESTS.SESSION.GET_ADAPTER",
+            "description": "`requests.Session.get_adapter` is an explicitly referenced external method through `s.get_adapter(...)`; the receiver is created with `requests.Session()`, but the method implementation is not visible here.",
+            "number of relationships": "2",
+            "in_context": true
+          },
+          {
+            "id": "95",
+            "entity": "SSL3HTTPADAPTER",
+            "description": "The class `Ssl3HttpAdapter` is defined in the documentation example as `class Ssl3HttpAdapter(HTTPAdapter)` and is described as a transport adapter that allows SSLv3.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "1310",
+            "entity": "SESSION.GET_ADAPTER",
+            "description": "`SESSION.GET_ADAPTER` refers to the exact attribute call `session.get_adapter(url=url)`, which is used inside `_patch_adapter_gzipped_redirect`. The receiver is the parameter named `session`, but the available context does not establish its concrete runtime class.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "24",
+            "entity": "SESSION.SEND",
+            "description": "`Session.send()` is explicitly called as `s.send(prepped, stream=stream, verify=verify, proxies=proxies, cert=cert, timeout=timeout)` to send a prepared request.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "1387",
+            "entity": "REDIRECTSESSION.SEND",
+            "description": "The method `RedirectSession.send` is defined here; it appends `SendCall(args, kwargs)` to `self.calls` and returns `self.build_response()`.",
+            "number of relationships": "4",
+            "in_context": true
+          },
+          {
+            "id": "446",
+            "entity": "R.CONNECTION.SEND",
+            "description": "References the unresolved receiver operation `r.connection.send(prep, **kwargs)` in `handle_401`; the connection's runtime type is not established.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "1311",
+            "entity": "ADAPTER.BUILD_RESPONSE",
+            "description": "ADAPTER.BUILD_RESPONSE refers to the exact adapter attribute `adapter.build_response`. Within `_patch_adapter_gzipped_redirect`, this attribute is explicitly read and saved as `org_build_response` before being replaced. The receiver adapter’s concrete runtime class is not established or visible in the available information.",
+            "number of relationships": "1",
+            "in_context": true
+          }
+        ],
+        "sources": [
+          {
+            "id": "56",
+            "text": "            json=json,\n            params=params or {},\n            auth=auth,\n            cookies=cookies,\n            hooks=hooks,\n        )\n        prep = self.prepare_request(req)\n\n        proxies = proxies or {}\n\n        settings = self.merge_environment_settings(\n            prep.url, proxies, stream, verify, cert\n        )\n\n        # Send the request.\n        send_kwargs = {\n            \"timeout\": timeout,\n            \"allow_redirects\": allow_redirects,\n        }\n        send_kwargs.update(settings)\n        resp = self.send(prep, **send_kwargs)\n\n        return resp\n\n    def get(self, url, **kwargs):\n        r\"\"\"Sends a GET request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        kwargs.setdefault(\"allow_redirects\", True)\n        return self.request(\"GET\", url, **kwargs)\n\n    def options(self, url, **kwargs):\n        r\"\"\"Sends a OPTIONS request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        kwargs.setdefault(\"allow_redirects\", True)\n        return self.request(\"OPTIONS\", url, **kwargs)\n\n    def head(self, url, **kwargs):\n        r\"\"\"Sends a HEAD request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        kwargs.setdefault(\"allow_redirects\", False)\n        return self.request(\"HEAD\", url, **kwargs)\n\n    def post(self, url, data=None, json=None, **kwargs):\n        r\"\"\"Sends a POST request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param json: (optional) json to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        return self.request(\"POST\", url, data=data, json=json, **kwargs)\n\n    def put(self, url, data=None, **kwargs):\n        r\"\"\"Sends a PUT request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        return self.request(\"PUT\", url, data=data, **kwargs)\n\n    def patch(self, url, data=None, **kwargs):\n        r\"\"\"Sends a PATCH request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n            object to send in the body of the :class:`Request`.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        return self.request(\"PATCH\", url, data=data, **kwargs)\n\n    def delete(self, url, **kwargs):\n        r\"\"\"Sends a DELETE request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        return self.request(\"DELETE\", url, **kwargs)\n\n    def send(self, request, **kwargs):\n        \"\"\"Send a given PreparedRequest.\n\n        :rtype: requests.Response\n        \"\"\"\n        # Set defaults that the hooks can utilize to ensure they always have\n        # the correct parameters to reproduce the previous request.\n        kwargs.setdefault(\"stream\", self.stream)\n        kwargs.setdefault(\"verify\", self.verify)\n        kwargs.setdefault(\"cert\", self.cert)\n        if \"proxies\" not in kwargs:\n            kwargs[\"proxies\"] = resolve_proxies(request, self.proxies, self.trust_env)\n\n        # It's possible that users might accidentally send a Request object.\n        # Guard against that specific failure case.\n        if isinstance(request, Request):\n            raise ValueError(\"You can only send PreparedRequests.\")\n\n        # Set up variables needed for resolve_redirects and dispatching of hooks\n        allow_redirects = kwargs.pop(\"allow_redirects\", True)\n        stream = kwargs.get(\"stream\")\n        hooks = request.hooks\n\n        # Get the appropriate adapter to use\n        adapter = self.get_adapter(url=request.url)\n\n        # Start time (approximately) of the request\n        start = preferred_clock()\n\n        # Send the request\n        r = adapter.send(request, **kwargs)\n\n        # Total elapsed time of the request (approximately)\n        elapsed = preferred_clock() - start\n        r.elapsed = timedelta(seconds=elapsed)\n\n        # Response manipulation hooks\n        r = dispatch_hook(\"response\", hooks, r, **kwargs)\n\n        # Persist cookies\n        if r.history:\n            # If the hooks create history then we want those cookies too\n            for resp in r.history:\n                extract_cookies_to_jar(self.cookies, resp.request, resp.raw)\n\n"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "short_id": "56",
+          "text_unit_id": "c1cd745424c9cd15526c9817388dc761eab81a549baf632b9622061dd8600fe1fb5e55d10a13f6b782d3dc128c3753a80008475b6213aa20323d051b6601ea38",
+          "id": "d7e626799389abc05c4760dab8b0116164b3c22fca658f7fe01bebd628df1934",
+          "title": "src/requests/sessions.py:L569-L717",
+          "path": "src/requests/sessions.py",
+          "start_line": 569,
+          "end_line": 717,
+          "tokens": 1196,
+          "text_sha256": "aeffda39beb3981fa06d5f06cf8cd570b80fd60fe7367fce3d8f5b00d309c10c",
+          "ms_text_unit_id": "c1cd745424c9cd15526c9817388dc761eab81a549baf632b9622061dd8600fe1fb5e55d10a13f6b782d3dc128c3753a80008475b6213aa20323d051b6601ea38"
+        }
+      ],
+      "source_text_tokens": 1196,
+      "context_tokens": 2592,
+      "evidence_key": "2f1c6483ac655928a876c03a29732c03985af53192eca8c7dfce4f873bc02127",
+      "read_occurrences": 1
+    },
+    {
+      "stage": "local",
+      "query": "Where is the concrete `HTTPAdapter.send` implementation defined in the available source?",
+      "context": "-----Entities-----\nid|entity|description|number of relationships\n97|HTTPADAPTER|\"HTTPADAPTER refers to the externally defined `HTTPAdapter` class from the Requests library, typically imported from `requests.adapters` or a local `.adapters` module. It serves as the default transport adapter for HTTP and HTTPS session connections and is instantiated as `HTTPAdapter()` when mounting default adapters for the `http://` and `https://` URL prefixes.\n\nHTTPADAPTER can also be configured with connection-pool or retry options, including constructions such as `HTTPAdapter(max_retries=retries)`, before being mounted on a session. It provides adapter functionality such as `proxy_headers`, and it is used directly in tests and other visible code. The class is also documented and used as the base class for specialized adapters such as `Ssl3HttpAdapter`.\n\nAlthough HTTPADAPTER is imported and referenced repeatedly—including for session mounting, retry configuration, proxy handling, subclassing, and tests—its actual implementation is not visible in the provided material.\"|24\n371|REQUESTS.ADAPTERS.HTTPADAPTER|`requests.adapters.HTTPAdapter` is a documented external class from the Requests library. It is referenced as a class that may be subclassed to expose methods such as `cert_verify`, and it is also instantiated through the expression `requests.adapters.HTTPAdapter()`. However, the class definition is not visible in the available context, and the references do not independently establish a runtime call or inheritance relationship beyond the documented subclassing and instantiation references.|1\n812|GET_ADAPTER|`get_adapter` is an unresolved receiver method explicitly called as `self.get_adapter(url=request.url)` in `send`; its definition and owning class are not visible.|4\n95|SSL3HTTPADAPTER|The class `Ssl3HttpAdapter` is defined in the documentation example as `class Ssl3HttpAdapter(HTTPAdapter)` and is described as a transport adapter that allows SSLv3.|1\n813|ADAPTER.SEND|`adapter.send` is an explicitly referenced receiver call in `send`; the adapter's class and method definition are not visible, so its runtime binding is uncertain.|1\n93|REQUESTS.ADAPTERS|`REQUESTS.ADAPTERS` refers to the `requests.adapters` module. It is explicitly imported both as `import requests.adapters` and through `from requests.adapters import HTTPAdapter`, including usage via the `HTTPAdapter` symbol. The module defines transport adapters and contains the visible symbols associated with adapter-based request handling; no additional module behavior is evident from the provided descriptions.|32\n362|HTTPADAPTER.PROXY_HEADERS|`HTTPADAPTER.PROXY_HEADERS` refers to the `proxy_headers` method associated with an `HTTPAdapter` instance. It is called as `self.proxy_headers(proxy)` for non-SOCKS proxies and as `adapter.proxy_headers(...)` in proxy-authentication tests. The visible tests construct the receiver as an `HTTPAdapter`, but the method’s definition is not included, so its exact implementation and runtime ownership cannot be confirmed from the available information.|3\n98|BASEADAPTER|BASEADAPTER is an externally defined base class for transport adapters. It serves as the parent class of `HTTPAdapter`, as shown by `class HTTPAdapter(BaseAdapter)`, and is documented as a class that can be subclassed to implement custom transport adapter behavior. Its definition is not included in the provided code.|6\n389|SEND|SEND refers to request-sending methods that prepare, execute, and finalize HTTP requests. One implementation fills in default transport settings, rejects an already constructed `Request` instance, selects the appropriate adapter, sends the request, records elapsed time, dispatches response hooks, and persists cookies. Another implementation obtains a connection, verifies certificates, constructs the request URL, adds headers, normalizes timeout values, invokes `conn.urlopen`, and translates visible connection exceptions into request-related errors. Together, SEND handles transport configuration, connection and security setup, request execution, error mapping, response processing, timing, and cookie persistence. The owning classes for these methods are not visible.|23\n360|HTTPADAPTER.CERT_VERIFY|Defined method `HTTPAdapter.cert_verify(self, conn, url, verify, cert)`; its visible signature accepts a connection, URL, verification setting, and certificate, while its implementation is not included in this chunk.|1\n354|HTTPADAPTER.__ATTRS__|\"Defined class value `HTTPAdapter.__attrs__`; lists `\"\"max_retries\"\"`, `\"\"config\"\"`, `\"\"_pool_connections\"\"`, `\"\"_pool_maxsize\"\"`, and `\"\"_pool_block\"\"` for state serialization.\"|2\n343|BASEADAPTER.SEND|Method defined with signature `send(self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None)`; its documentation describes sending a PreparedRequest and returning a Response, while the visible body raises `NotImplementedError`.|2\n1261|TEST_TRANSPORT_ADAPTER_ORDERING|The visible test function `test_transport_adapter_ordering` constructs sessions, mounts `HTTPAdapter` instances at URL prefixes, and asserts adapter-key ordering and retained `http://` and `https://` mappings. Its owning class is not visible in this chunk.|5\n1276|REQUESTS.SESSION.GET_ADAPTER|`requests.Session.get_adapter` is an explicitly referenced external method through `s.get_adapter(...)`; the receiver is created with `requests.Session()`, but the method implementation is not visible here.|2\n1311|ADAPTER.BUILD_RESPONSE|ADAPTER.BUILD_RESPONSE refers to the exact adapter attribute `adapter.build_response`. Within `_patch_adapter_gzipped_redirect`, this attribute is explicitly read and saved as `org_build_response` before being replaced. The receiver adapter’s concrete runtime class is not established or visible in the available information.|1\n355|HTTPADAPTER.__INIT__|Defined method `HTTPAdapter.__init__(self, pool_connections=DEFAULT_POOLSIZE, pool_maxsize=DEFAULT_POOLSIZE, max_retries=DEFAULT_RETRIES, pool_block=DEFAULT_POOLBLOCK)`; selects a `Retry` instance, initializes configuration and proxy-manager storage, invokes superclass initialization, stores pool settings, and initializes the pool manager.|8\n1264|S.GET_ADAPTER|The unresolved receiver call `s.get_adapter(...)` is referenced three times to select adapters for URLs matching only the general prefix, matching the more-specific prefix, and not matching the configured prefix; the receiver's concrete class is not proven beyond session construction in the test.|1\n1310|SESSION.GET_ADAPTER|`SESSION.GET_ADAPTER` refers to the exact attribute call `session.get_adapter(url=url)`, which is used inside `_patch_adapter_gzipped_redirect`. The receiver is the parameter named `session`, but the available context does not establish its concrete runtime class.|1\n\n-----Sources-----\nid|source|text\n8|docs/user/advanced.rst:L929-L1057|\"\nFrom time to time you may be working with a server that, for whatever reason,\nallows use or even requires use of HTTP verbs not covered above. One example of\nthis would be the MKCOL method some WEBDAV servers use. Do not fret, these can\nstill be used with Requests. These make use of the built-in ``.request``\nmethod. For example::\n\n    >>> r = requests.request('MKCOL', url, data=data)\n    >>> r.status_code\n    200 # Assuming your call was correct\n\nUtilising this, you can make use of any method verb that your server allows.\n\n\n.. _link-headers:\n\nLink Headers\n------------\n\nMany HTTP APIs feature Link headers. They make APIs more self describing and\ndiscoverable.\n\nGitHub uses these for `pagination <https://docs.github.com/en/rest/guides/using-pagination-in-the-rest-api>`_\nin their API, for example::\n\n    >>> url = 'https://api.github.com/users/kennethreitz/repos?page=1&per_page=10'\n    >>> r = requests.head(url=url)\n    >>> r.headers['link']\n    '<https://api.github.com/users/kennethreitz/repos?page=2&per_page=10>; rel=\"\"next\"\", <https://api.github.com/users/kennethreitz/repos?page=6&per_page=10>; rel=\"\"last\"\"'\n\nRequests will automatically parse these link headers and make them easily consumable::\n\n    >>> r.links[\"\"next\"\"]\n    {'url': 'https://api.github.com/users/kennethreitz/repos?page=2&per_page=10', 'rel': 'next'}\n\n    >>> r.links[\"\"last\"\"]\n    {'url': 'https://api.github.com/users/kennethreitz/repos?page=7&per_page=10', 'rel': 'last'}\n\n.. _transport-adapters:\n\nTransport Adapters\n------------------\n\nAs of v1.0.0, Requests has moved to a modular internal design. Part of the\nreason this was done was to implement Transport Adapters, originally\n`described here`_. Transport Adapters provide a mechanism to define interaction\nmethods for an HTTP service. In particular, they allow you to apply per-service\nconfiguration.\n\nRequests ships with a single Transport Adapter, the :class:`HTTPAdapter\n<requests.adapters.HTTPAdapter>`. This adapter provides the default Requests\ninteraction with HTTP and HTTPS using the powerful `urllib3`_ library. Whenever\na Requests :class:`Session <requests.Session>` is initialized, one of these is\nattached to the :class:`Session <requests.Session>` object for HTTP, and one\nfor HTTPS.\n\nRequests enables users to create and use their own Transport Adapters that\nprovide specific functionality. Once created, a Transport Adapter can be\nmounted to a Session object, along with an indication of which web services\nit should apply to.\n\n::\n\n    >>> s = requests.Session()\n    >>> s.mount('https://github.com/', MyAdapter())\n\nThe mount call registers a specific instance of a Transport Adapter to a\nprefix. Once mounted, any HTTP request made using that session whose URL starts\nwith the given prefix will use the given Transport Adapter.\n\n.. note:: The adapter will be chosen based on a longest prefix match. Be mindful\n   prefixes such as ``http://localhost`` will also match ``http://localhost.other.com``\n   or ``http://localhost@other.com``. It's recommended to terminate full hostnames with a ``/``.\n\nMany of the details of implementing a Transport Adapter are beyond the scope of\nthis documentation, but take a look at the next example for a simple SSL use-\ncase. For more than that, you might look at subclassing the\n:class:`BaseAdapter <requests.adapters.BaseAdapter>`.\n\nExample: Specific SSL Version\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nThe Requests team has made a specific choice to use whatever SSL version is\ndefault in the underlying library (`urllib3`_). Normally this is fine, but from\ntime to time, you might find yourself needing to connect to a service-endpoint\nthat uses a version that isn't compatible with the default.\n\nYou can use Transport Adapters for this by taking most of the existing\nimplementation of HTTPAdapter, and adding a parameter *ssl_version* that gets\npassed-through to `urllib3`. We'll make a Transport Adapter that instructs the\nlibrary to use SSLv3::\n\n    import ssl\n    from urllib3.poolmanager import PoolManager\n\n    from requests.adapters import HTTPAdapter\n\n\n    class Ssl3HttpAdapter(HTTPAdapter):\n        \"\"\"\"\"\"\"\"Transport adapter\"\" that allows us to use SSLv3.\"\"\"\"\"\"\n\n        def init_poolmanager(self, connections, maxsize, block=False):\n            self.poolmanager = PoolManager(\n                num_pools=connections, maxsize=maxsize,\n                block=block, ssl_version=ssl.PROTOCOL_SSLv3)\n\nExample: Automatic Retries\n^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nBy default, Requests does not retry failed connections. However, it is possible\nto implement automatic retries with a powerful array of features, including\nbackoff, within a Requests :class:`Session <requests.Session>` using the\n`urllib3.util.Retry`_ class::\n\n    from urllib3.util import Retry\n    from requests import Session\n    from requests.adapters import HTTPAdapter\n\n    s = Session()\n    retries = Retry(\n        total=3,\n        backoff_factor=0.1,\n        status_forcelist=[502, 503, 504],\n        allowed_methods={'POST'},\n    )\n    s.mount('https://', HTTPAdapter(max_retries=retries))\n\n.. _`described here`: https://kenreitz.org/essays/2012/06/14/the-future-of-python-http\n.. _`urllib3`: https://github.com/urllib3/urllib3\n\"\n",
+      "upstream_context": "[]\n\n-----Entities-----\nid|entity|description|number of relationships\n97|HTTPADAPTER|HTTPADAPTER refers to the externally defined `HTTPAdapter` class from the Requests library, typically imported from `requests.adapters` or a local `.adapters` module. It serves as the default transport adapter for HTTP and HTTPS session connections and is instantiated as `HTTPAdapter()` when mounting default adapters for the `http://` and `https://` URL prefixes.\n\nHTTPADAPTER can also be configured with connection-pool or retry options, including constructions such as `HTTPAdapter(max_retries=retries)`, before being mounted on a session. It provides adapter functionality such as `proxy_headers`, and it is used directly in tests and other visible code. The class is also documented and used as the base class for specialized adapters such as `Ssl3HttpAdapter`.\n\nAlthough HTTPADAPTER is imported and referenced repeatedly—including for session mounting, retry configuration, proxy handling, subclassing, and tests—its actual implementation is not visible in the provided material.|24\n371|REQUESTS.ADAPTERS.HTTPADAPTER|`requests.adapters.HTTPAdapter` is a documented external class from the Requests library. It is referenced as a class that may be subclassed to expose methods such as `cert_verify`, and it is also instantiated through the expression `requests.adapters.HTTPAdapter()`. However, the class definition is not visible in the available context, and the references do not independently establish a runtime call or inheritance relationship beyond the documented subclassing and instantiation references.|1\n812|GET_ADAPTER|`get_adapter` is an unresolved receiver method explicitly called as `self.get_adapter(url=request.url)` in `send`; its definition and owning class are not visible.|4\n95|SSL3HTTPADAPTER|The class `Ssl3HttpAdapter` is defined in the documentation example as `class Ssl3HttpAdapter(HTTPAdapter)` and is described as a transport adapter that allows SSLv3.|1\n813|ADAPTER.SEND|`adapter.send` is an explicitly referenced receiver call in `send`; the adapter's class and method definition are not visible, so its runtime binding is uncertain.|1\n93|REQUESTS.ADAPTERS|`REQUESTS.ADAPTERS` refers to the `requests.adapters` module. It is explicitly imported both as `import requests.adapters` and through `from requests.adapters import HTTPAdapter`, including usage via the `HTTPAdapter` symbol. The module defines transport adapters and contains the visible symbols associated with adapter-based request handling; no additional module behavior is evident from the provided descriptions.|32\n362|HTTPADAPTER.PROXY_HEADERS|`HTTPADAPTER.PROXY_HEADERS` refers to the `proxy_headers` method associated with an `HTTPAdapter` instance. It is called as `self.proxy_headers(proxy)` for non-SOCKS proxies and as `adapter.proxy_headers(...)` in proxy-authentication tests. The visible tests construct the receiver as an `HTTPAdapter`, but the method’s definition is not included, so its exact implementation and runtime ownership cannot be confirmed from the available information.|3\n98|BASEADAPTER|BASEADAPTER is an externally defined base class for transport adapters. It serves as the parent class of `HTTPAdapter`, as shown by `class HTTPAdapter(BaseAdapter)`, and is documented as a class that can be subclassed to implement custom transport adapter behavior. Its definition is not included in the provided code.|6\n389|SEND|SEND refers to request-sending methods that prepare, execute, and finalize HTTP requests. One implementation fills in default transport settings, rejects an already constructed `Request` instance, selects the appropriate adapter, sends the request, records elapsed time, dispatches response hooks, and persists cookies. Another implementation obtains a connection, verifies certificates, constructs the request URL, adds headers, normalizes timeout values, invokes `conn.urlopen`, and translates visible connection exceptions into request-related errors. Together, SEND handles transport configuration, connection and security setup, request execution, error mapping, response processing, timing, and cookie persistence. The owning classes for these methods are not visible.|23\n360|HTTPADAPTER.CERT_VERIFY|Defined method `HTTPAdapter.cert_verify(self, conn, url, verify, cert)`; its visible signature accepts a connection, URL, verification setting, and certificate, while its implementation is not included in this chunk.|1\n354|HTTPADAPTER.__ATTRS__|Defined class value `HTTPAdapter.__attrs__`; lists `\"max_retries\"`, `\"config\"`, `\"_pool_connections\"`, `\"_pool_maxsize\"`, and `\"_pool_block\"` for state serialization.|2\n343|BASEADAPTER.SEND|Method defined with signature `send(self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None)`; its documentation describes sending a PreparedRequest and returning a Response, while the visible body raises `NotImplementedError`.|2\n1261|TEST_TRANSPORT_ADAPTER_ORDERING|The visible test function `test_transport_adapter_ordering` constructs sessions, mounts `HTTPAdapter` instances at URL prefixes, and asserts adapter-key ordering and retained `http://` and `https://` mappings. Its owning class is not visible in this chunk.|5\n1276|REQUESTS.SESSION.GET_ADAPTER|`requests.Session.get_adapter` is an explicitly referenced external method through `s.get_adapter(...)`; the receiver is created with `requests.Session()`, but the method implementation is not visible here.|2\n1311|ADAPTER.BUILD_RESPONSE|ADAPTER.BUILD_RESPONSE refers to the exact adapter attribute `adapter.build_response`. Within `_patch_adapter_gzipped_redirect`, this attribute is explicitly read and saved as `org_build_response` before being replaced. The receiver adapter’s concrete runtime class is not established or visible in the available information.|1\n355|HTTPADAPTER.__INIT__|Defined method `HTTPAdapter.__init__(self, pool_connections=DEFAULT_POOLSIZE, pool_maxsize=DEFAULT_POOLSIZE, max_retries=DEFAULT_RETRIES, pool_block=DEFAULT_POOLBLOCK)`; selects a `Retry` instance, initializes configuration and proxy-manager storage, invokes superclass initialization, stores pool settings, and initializes the pool manager.|8\n1264|S.GET_ADAPTER|The unresolved receiver call `s.get_adapter(...)` is referenced three times to select adapters for URLs matching only the general prefix, matching the more-specific prefix, and not matching the configured prefix; the receiver's concrete class is not proven beyond session construction in the test.|1\n1310|SESSION.GET_ADAPTER|`SESSION.GET_ADAPTER` refers to the exact attribute call `session.get_adapter(url=url)`, which is used inside `_patch_adapter_gzipped_redirect`. The receiver is the parameter named `session`, but the available context does not establish its concrete runtime class.|1\n\n\n\n\n-----Sources-----\nid|text\n8|\nFrom time to time you may be working with a server that, for whatever reason,\nallows use or even requires use of HTTP verbs not covered above. One example of\nthis would be the MKCOL method some WEBDAV servers use. Do not fret, these can\nstill be used with Requests. These make use of the built-in ``.request``\nmethod. For example::\n\n    >>> r = requests.request('MKCOL', url, data=data)\n    >>> r.status_code\n    200 # Assuming your call was correct\n\nUtilising this, you can make use of any method verb that your server allows.\n\n\n.. _link-headers:\n\nLink Headers\n------------\n\nMany HTTP APIs feature Link headers. They make APIs more self describing and\ndiscoverable.\n\nGitHub uses these for `pagination <https://docs.github.com/en/rest/guides/using-pagination-in-the-rest-api>`_\nin their API, for example::\n\n    >>> url = 'https://api.github.com/users/kennethreitz/repos?page=1&per_page=10'\n    >>> r = requests.head(url=url)\n    >>> r.headers['link']\n    '<https://api.github.com/users/kennethreitz/repos?page=2&per_page=10>; rel=\"next\", <https://api.github.com/users/kennethreitz/repos?page=6&per_page=10>; rel=\"last\"'\n\nRequests will automatically parse these link headers and make them easily consumable::\n\n    >>> r.links[\"next\"]\n    {'url': 'https://api.github.com/users/kennethreitz/repos?page=2&per_page=10', 'rel': 'next'}\n\n    >>> r.links[\"last\"]\n    {'url': 'https://api.github.com/users/kennethreitz/repos?page=7&per_page=10', 'rel': 'last'}\n\n.. _transport-adapters:\n\nTransport Adapters\n------------------\n\nAs of v1.0.0, Requests has moved to a modular internal design. Part of the\nreason this was done was to implement Transport Adapters, originally\n`described here`_. Transport Adapters provide a mechanism to define interaction\nmethods for an HTTP service. In particular, they allow you to apply per-service\nconfiguration.\n\nRequests ships with a single Transport Adapter, the :class:`HTTPAdapter\n<requests.adapters.HTTPAdapter>`. This adapter provides the default Requests\ninteraction with HTTP and HTTPS using the powerful `urllib3`_ library. Whenever\na Requests :class:`Session <requests.Session>` is initialized, one of these is\nattached to the :class:`Session <requests.Session>` object for HTTP, and one\nfor HTTPS.\n\nRequests enables users to create and use their own Transport Adapters that\nprovide specific functionality. Once created, a Transport Adapter can be\nmounted to a Session object, along with an indication of which web services\nit should apply to.\n\n::\n\n    >>> s = requests.Session()\n    >>> s.mount('https://github.com/', MyAdapter())\n\nThe mount call registers a specific instance of a Transport Adapter to a\nprefix. Once mounted, any HTTP request made using that session whose URL starts\nwith the given prefix will use the given Transport Adapter.\n\n.. note:: The adapter will be chosen based on a longest prefix match. Be mindful\n   prefixes such as ``http://localhost`` will also match ``http://localhost.other.com``\n   or ``http://localhost@other.com``. It's recommended to terminate full hostnames with a ``/``.\n\nMany of the details of implementing a Transport Adapter are beyond the scope of\nthis documentation, but take a look at the next example for a simple SSL use-\ncase. For more than that, you might look at subclassing the\n:class:`BaseAdapter <requests.adapters.BaseAdapter>`.\n\nExample: Specific SSL Version\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nThe Requests team has made a specific choice to use whatever SSL version is\ndefault in the underlying library (`urllib3`_). Normally this is fine, but from\ntime to time, you might find yourself needing to connect to a service-endpoint\nthat uses a version that isn't compatible with the default.\n\nYou can use Transport Adapters for this by taking most of the existing\nimplementation of HTTPAdapter, and adding a parameter *ssl_version* that gets\npassed-through to `urllib3`. We'll make a Transport Adapter that instructs the\nlibrary to use SSLv3::\n\n    import ssl\n    from urllib3.poolmanager import PoolManager\n\n    from requests.adapters import HTTPAdapter\n\n\n    class Ssl3HttpAdapter(HTTPAdapter):\n        \"\"\"\"Transport adapter\" that allows us to use SSLv3.\"\"\"\n\n        def init_poolmanager(self, connections, maxsize, block=False):\n            self.poolmanager = PoolManager(\n                num_pools=connections, maxsize=maxsize,\n                block=block, ssl_version=ssl.PROTOCOL_SSLv3)\n\nExample: Automatic Retries\n^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nBy default, Requests does not retry failed connections. However, it is possible\nto implement automatic retries with a powerful array of features, including\nbackoff, within a Requests :class:`Session <requests.Session>` using the\n`urllib3.util.Retry`_ class::\n\n    from urllib3.util import Retry\n    from requests import Session\n    from requests.adapters import HTTPAdapter\n\n    s = Session()\n    retries = Retry(\n        total=3,\n        backoff_factor=0.1,\n        status_forcelist=[502, 503, 504],\n        allowed_methods={'POST'},\n    )\n    s.mount('https://', HTTPAdapter(max_retries=retries))\n\n.. _`described here`: https://kenreitz.org/essays/2012/06/14/the-future-of-python-http\n.. _`urllib3`: https://github.com/urllib3/urllib3\n\n",
+      "records": {
+        "entities": [
+          {
+            "id": "97",
+            "entity": "HTTPADAPTER",
+            "description": "HTTPADAPTER refers to the externally defined `HTTPAdapter` class from the Requests library, typically imported from `requests.adapters` or a local `.adapters` module. It serves as the default transport adapter for HTTP and HTTPS session connections and is instantiated as `HTTPAdapter()` when mounting default adapters for the `http://` and `https://` URL prefixes.\n\nHTTPADAPTER can also be configured with connection-pool or retry options, including constructions such as `HTTPAdapter(max_retries=retries)`, before being mounted on a session. It provides adapter functionality such as `proxy_headers`, and it is used directly in tests and other visible code. The class is also documented and used as the base class for specialized adapters such as `Ssl3HttpAdapter`.\n\nAlthough HTTPADAPTER is imported and referenced repeatedly—including for session mounting, retry configuration, proxy handling, subclassing, and tests—its actual implementation is not visible in the provided material.",
+            "number of relationships": "24",
+            "in_context": true
+          },
+          {
+            "id": "371",
+            "entity": "REQUESTS.ADAPTERS.HTTPADAPTER",
+            "description": "`requests.adapters.HTTPAdapter` is a documented external class from the Requests library. It is referenced as a class that may be subclassed to expose methods such as `cert_verify`, and it is also instantiated through the expression `requests.adapters.HTTPAdapter()`. However, the class definition is not visible in the available context, and the references do not independently establish a runtime call or inheritance relationship beyond the documented subclassing and instantiation references.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "812",
+            "entity": "GET_ADAPTER",
+            "description": "`get_adapter` is an unresolved receiver method explicitly called as `self.get_adapter(url=request.url)` in `send`; its definition and owning class are not visible.",
+            "number of relationships": "4",
+            "in_context": true
+          },
+          {
+            "id": "95",
+            "entity": "SSL3HTTPADAPTER",
+            "description": "The class `Ssl3HttpAdapter` is defined in the documentation example as `class Ssl3HttpAdapter(HTTPAdapter)` and is described as a transport adapter that allows SSLv3.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "813",
+            "entity": "ADAPTER.SEND",
+            "description": "`adapter.send` is an explicitly referenced receiver call in `send`; the adapter's class and method definition are not visible, so its runtime binding is uncertain.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "93",
+            "entity": "REQUESTS.ADAPTERS",
+            "description": "`REQUESTS.ADAPTERS` refers to the `requests.adapters` module. It is explicitly imported both as `import requests.adapters` and through `from requests.adapters import HTTPAdapter`, including usage via the `HTTPAdapter` symbol. The module defines transport adapters and contains the visible symbols associated with adapter-based request handling; no additional module behavior is evident from the provided descriptions.",
+            "number of relationships": "32",
+            "in_context": true
+          },
+          {
+            "id": "362",
+            "entity": "HTTPADAPTER.PROXY_HEADERS",
+            "description": "`HTTPADAPTER.PROXY_HEADERS` refers to the `proxy_headers` method associated with an `HTTPAdapter` instance. It is called as `self.proxy_headers(proxy)` for non-SOCKS proxies and as `adapter.proxy_headers(...)` in proxy-authentication tests. The visible tests construct the receiver as an `HTTPAdapter`, but the method’s definition is not included, so its exact implementation and runtime ownership cannot be confirmed from the available information.",
+            "number of relationships": "3",
+            "in_context": true
+          },
+          {
+            "id": "98",
+            "entity": "BASEADAPTER",
+            "description": "BASEADAPTER is an externally defined base class for transport adapters. It serves as the parent class of `HTTPAdapter`, as shown by `class HTTPAdapter(BaseAdapter)`, and is documented as a class that can be subclassed to implement custom transport adapter behavior. Its definition is not included in the provided code.",
+            "number of relationships": "6",
+            "in_context": true
+          },
+          {
+            "id": "389",
+            "entity": "SEND",
+            "description": "SEND refers to request-sending methods that prepare, execute, and finalize HTTP requests. One implementation fills in default transport settings, rejects an already constructed `Request` instance, selects the appropriate adapter, sends the request, records elapsed time, dispatches response hooks, and persists cookies. Another implementation obtains a connection, verifies certificates, constructs the request URL, adds headers, normalizes timeout values, invokes `conn.urlopen`, and translates visible connection exceptions into request-related errors. Together, SEND handles transport configuration, connection and security setup, request execution, error mapping, response processing, timing, and cookie persistence. The owning classes for these methods are not visible.",
+            "number of relationships": "23",
+            "in_context": true
+          },
+          {
+            "id": "360",
+            "entity": "HTTPADAPTER.CERT_VERIFY",
+            "description": "Defined method `HTTPAdapter.cert_verify(self, conn, url, verify, cert)`; its visible signature accepts a connection, URL, verification setting, and certificate, while its implementation is not included in this chunk.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "354",
+            "entity": "HTTPADAPTER.__ATTRS__",
+            "description": "Defined class value `HTTPAdapter.__attrs__`; lists `\"max_retries\"`, `\"config\"`, `\"_pool_connections\"`, `\"_pool_maxsize\"`, and `\"_pool_block\"` for state serialization.",
+            "number of relationships": "2",
+            "in_context": true
+          },
+          {
+            "id": "343",
+            "entity": "BASEADAPTER.SEND",
+            "description": "Method defined with signature `send(self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None)`; its documentation describes sending a PreparedRequest and returning a Response, while the visible body raises `NotImplementedError`.",
+            "number of relationships": "2",
+            "in_context": true
+          },
+          {
+            "id": "1261",
+            "entity": "TEST_TRANSPORT_ADAPTER_ORDERING",
+            "description": "The visible test function `test_transport_adapter_ordering` constructs sessions, mounts `HTTPAdapter` instances at URL prefixes, and asserts adapter-key ordering and retained `http://` and `https://` mappings. Its owning class is not visible in this chunk.",
+            "number of relationships": "5",
+            "in_context": true
+          },
+          {
+            "id": "1276",
+            "entity": "REQUESTS.SESSION.GET_ADAPTER",
+            "description": "`requests.Session.get_adapter` is an explicitly referenced external method through `s.get_adapter(...)`; the receiver is created with `requests.Session()`, but the method implementation is not visible here.",
+            "number of relationships": "2",
+            "in_context": true
+          },
+          {
+            "id": "1311",
+            "entity": "ADAPTER.BUILD_RESPONSE",
+            "description": "ADAPTER.BUILD_RESPONSE refers to the exact adapter attribute `adapter.build_response`. Within `_patch_adapter_gzipped_redirect`, this attribute is explicitly read and saved as `org_build_response` before being replaced. The receiver adapter’s concrete runtime class is not established or visible in the available information.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "355",
+            "entity": "HTTPADAPTER.__INIT__",
+            "description": "Defined method `HTTPAdapter.__init__(self, pool_connections=DEFAULT_POOLSIZE, pool_maxsize=DEFAULT_POOLSIZE, max_retries=DEFAULT_RETRIES, pool_block=DEFAULT_POOLBLOCK)`; selects a `Retry` instance, initializes configuration and proxy-manager storage, invokes superclass initialization, stores pool settings, and initializes the pool manager.",
+            "number of relationships": "8",
+            "in_context": true
+          },
+          {
+            "id": "1264",
+            "entity": "S.GET_ADAPTER",
+            "description": "The unresolved receiver call `s.get_adapter(...)` is referenced three times to select adapters for URLs matching only the general prefix, matching the more-specific prefix, and not matching the configured prefix; the receiver's concrete class is not proven beyond session construction in the test.",
+            "number of relationships": "1",
+            "in_context": true
+          },
+          {
+            "id": "1310",
+            "entity": "SESSION.GET_ADAPTER",
+            "description": "`SESSION.GET_ADAPTER` refers to the exact attribute call `session.get_adapter(url=url)`, which is used inside `_patch_adapter_gzipped_redirect`. The receiver is the parameter named `session`, but the available context does not establish its concrete runtime class.",
+            "number of relationships": "1",
+            "in_context": true
+          }
+        ],
+        "sources": [
+          {
+            "id": "8",
+            "text": "\nFrom time to time you may be working with a server that, for whatever reason,\nallows use or even requires use of HTTP verbs not covered above. One example of\nthis would be the MKCOL method some WEBDAV servers use. Do not fret, these can\nstill be used with Requests. These make use of the built-in ``.request``\nmethod. For example::\n\n    >>> r = requests.request('MKCOL', url, data=data)\n    >>> r.status_code\n    200 # Assuming your call was correct\n\nUtilising this, you can make use of any method verb that your server allows.\n\n\n.. _link-headers:\n\nLink Headers\n------------\n\nMany HTTP APIs feature Link headers. They make APIs more self describing and\ndiscoverable.\n\nGitHub uses these for `pagination <https://docs.github.com/en/rest/guides/using-pagination-in-the-rest-api>`_\nin their API, for example::\n\n    >>> url = 'https://api.github.com/users/kennethreitz/repos?page=1&per_page=10'\n    >>> r = requests.head(url=url)\n    >>> r.headers['link']\n    '<https://api.github.com/users/kennethreitz/repos?page=2&per_page=10>; rel=\"next\", <https://api.github.com/users/kennethreitz/repos?page=6&per_page=10>; rel=\"last\"'\n\nRequests will automatically parse these link headers and make them easily consumable::\n\n    >>> r.links[\"next\"]\n    {'url': 'https://api.github.com/users/kennethreitz/repos?page=2&per_page=10', 'rel': 'next'}\n\n    >>> r.links[\"last\"]\n    {'url': 'https://api.github.com/users/kennethreitz/repos?page=7&per_page=10', 'rel': 'last'}\n\n.. _transport-adapters:\n\nTransport Adapters\n------------------\n\nAs of v1.0.0, Requests has moved to a modular internal design. Part of the\nreason this was done was to implement Transport Adapters, originally\n`described here`_. Transport Adapters provide a mechanism to define interaction\nmethods for an HTTP service. In particular, they allow you to apply per-service\nconfiguration.\n\nRequests ships with a single Transport Adapter, the :class:`HTTPAdapter\n<requests.adapters.HTTPAdapter>`. This adapter provides the default Requests\ninteraction with HTTP and HTTPS using the powerful `urllib3`_ library. Whenever\na Requests :class:`Session <requests.Session>` is initialized, one of these is\nattached to the :class:`Session <requests.Session>` object for HTTP, and one\nfor HTTPS.\n\nRequests enables users to create and use their own Transport Adapters that\nprovide specific functionality. Once created, a Transport Adapter can be\nmounted to a Session object, along with an indication of which web services\nit should apply to.\n\n::\n\n    >>> s = requests.Session()\n    >>> s.mount('https://github.com/', MyAdapter())\n\nThe mount call registers a specific instance of a Transport Adapter to a\nprefix. Once mounted, any HTTP request made using that session whose URL starts\nwith the given prefix will use the given Transport Adapter.\n\n.. note:: The adapter will be chosen based on a longest prefix match. Be mindful\n   prefixes such as ``http://localhost`` will also match ``http://localhost.other.com``\n   or ``http://localhost@other.com``. It's recommended to terminate full hostnames with a ``/``.\n\nMany of the details of implementing a Transport Adapter are beyond the scope of\nthis documentation, but take a look at the next example for a simple SSL use-\ncase. For more than that, you might look at subclassing the\n:class:`BaseAdapter <requests.adapters.BaseAdapter>`.\n\nExample: Specific SSL Version\n^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nThe Requests team has made a specific choice to use whatever SSL version is\ndefault in the underlying library (`urllib3`_). Normally this is fine, but from\ntime to time, you might find yourself needing to connect to a service-endpoint\nthat uses a version that isn't compatible with the default.\n\nYou can use Transport Adapters for this by taking most of the existing\nimplementation of HTTPAdapter, and adding a parameter *ssl_version* that gets\npassed-through to `urllib3`. We'll make a Transport Adapter that instructs the\nlibrary to use SSLv3::\n\n    import ssl\n    from urllib3.poolmanager import PoolManager\n\n    from requests.adapters import HTTPAdapter\n\n\n    class Ssl3HttpAdapter(HTTPAdapter):\n        \"\"\"\"Transport adapter\" that allows us to use SSLv3.\"\"\"\n\n        def init_poolmanager(self, connections, maxsize, block=False):\n            self.poolmanager = PoolManager(\n                num_pools=connections, maxsize=maxsize,\n                block=block, ssl_version=ssl.PROTOCOL_SSLv3)\n\nExample: Automatic Retries\n^^^^^^^^^^^^^^^^^^^^^^^^^^\n\nBy default, Requests does not retry failed connections. However, it is possible\nto implement automatic retries with a powerful array of features, including\nbackoff, within a Requests :class:`Session <requests.Session>` using the\n`urllib3.util.Retry`_ class::\n\n    from urllib3.util import Retry\n    from requests import Session\n    from requests.adapters import HTTPAdapter\n\n    s = Session()\n    retries = Retry(\n        total=3,\n        backoff_factor=0.1,\n        status_forcelist=[502, 503, 504],\n        allowed_methods={'POST'},\n    )\n    s.mount('https://', HTTPAdapter(max_retries=retries))\n\n.. _`described here`: https://kenreitz.org/essays/2012/06/14/the-future-of-python-http\n.. _`urllib3`: https://github.com/urllib3/urllib3\n"
+          }
+        ]
+      },
+      "sources": [
+        {
+          "short_id": "8",
+          "text_unit_id": "e76cef82fcafe901f313bcfda0f5b41f66887c2e89bb8063d4934fb20875242855c64215b1b72a069c22b421bc94a41752ffa62004e456fc9bc584de31abe80e",
+          "id": "fed560d4cf53c3f49927f81d9d28eabeea7358a0a49b68d553c6bf2c6c2bd1a8",
+          "title": "docs/user/advanced.rst:L929-L1057",
+          "path": "docs/user/advanced.rst",
+          "start_line": 929,
+          "end_line": 1057,
+          "tokens": 1196,
+          "text_sha256": "f1771b61bd4d7625f93d23f223a10dd9114c86555b30fdf2c0adaa40e73d72b9",
+          "ms_text_unit_id": "e76cef82fcafe901f313bcfda0f5b41f66887c2e89bb8063d4934fb20875242855c64215b1b72a069c22b421bc94a41752ffa62004e456fc9bc584de31abe80e"
+        }
+      ],
+      "source_text_tokens": 1196,
+      "context_tokens": 2631,
+      "evidence_key": "cb7f762b63f388117e9f0451812e3a00966e49e70ebada7af2fd72cbab491f14",
+      "read_occurrences": 1
+    }
+  ],
+  "decisions": [
+    {
+      "kind": "hyde_template",
+      "report_id": "e2d35a04da95a530018c408ec688193b238160552fe0b4d70fa112ec16fc1f861bd72868f16607026a2a8faea1653e9752e5661b09509fc9f2cae2edf82f2670",
+      "report_content_sha256": "2be3fc2e50a0266844425e97b4ebf5c97bd3944aa0c8541e532f051c0fbbd1e6"
+    },
+    {
+      "kind": "adapter_arguments",
+      "stage": "hyde",
+      "request_key": "40a588be1764514132dd6fa08b511d74ce81cac6377834b879c7c79248cdbfdd",
+      "accepted_kwargs": [
+        "messages"
+      ],
+      "provider_parameter_policy": "Fixed provider defaults: n1, top_p1, temperature not sent; output2048. JSON/schema and stream recorded explicitly.",
+      "stream_requested_by_upstream": false
+    },
+    {
+      "kind": "structured_response",
+      "stage": "primer",
+      "request_key": "1dd78ebb254e43f01ce3932dcb9861c2937f73b5c5cb0e97f96bc80ad1c39d19",
+      "parsed": {
+        "intermediate_answer": "# Request path from `requests.get(url)` to `adapter.send`\n\nThe supplied snapshot identifies `SEND` as the execution hub, but it does not expose the exact public-wrapper source or module path for `requests.get`. It does establish the intended path: the public call enters session request processing, preparation produces a `PreparedRequest`, and `SEND` performs adapter selection and transport execution. The evidence therefore supports the following architectural trace, while leaving some receiver bindings unresolved.\n\n`requests.get(url)` is the public entry point named in the invalid-URL test `TESTREQUESTS.TEST_INVALID_URL`, which wraps that call in `pytest.raises` [Data: Entities (1081); Relationships (1612)]. The snapshot does not show the wrapper body, so its exact delegation and default arguments are not established. The request then reaches preparation. `prepare` coordinates method, URL, headers, cookies, body, authentication, and hooks, and explicitly invokes `prepare_method` first [Data: Entities (686); Relationships (892)]. `prepare_method` uppercases a supplied method and passes it to `to_native_string` [Data: Entities (688, 703); Relationships (901, 924)]. Preparation also invokes `prepare_hooks`, which normalizes false-y hook input and registers hooks by event [Data: Entities (695); Relationships (892, 941)].\n\nThe preparation stage includes body and header normalization. UTF-8 encoding is used for parameter keys and values [Data: Entities (669); Relationships (869)]. Multipart preparation is covered for string, bytes, and bytearray file content, with the expected `multipart/form-data` content type [Data: Entities (1282, 1293); Relationships (2100, 2135)]. UTF-8 byte length is used for `Content-Length`, including multibyte strings [Data: Entities (1285, 1286); Relationships (2105, 2106)]. The resulting object must be a `PreparedRequest`; `SEND` rejects an unprepared `Request` with `ValueError` and the message `You can only send PreparedRequests.` [Data: Entities (389, 261); Relationships (2018)].\n\nInside `SEND`, transport defaults and request execution are coordinated. The method selects an adapter through `get_adapter`; the visible description says that failure to match a URL prefix raises `INVALIDSCHEMA`, although the receiver implementation is unresolved [Data: Entities (390, 813, 323); Relationships (1112)]. `SEND` also invokes connection setup with TLS context, header handling, timeout construction, and `conn.urlopen` [Data: Entities (389); Relationships (350, 354, 355)]. Certificate behavior is handled by `CERT_VERIFY`, which checks HTTPS URLs and validates certificate files or directories when verification is enabled [Data: Entities (365); Relationships (310, 311, 323)].\n\nThe requested stopping point is the selected adapter's `send` call. The snapshot explicitly links `SEND` to `ADAPTER.SEND` [Data: Entities (389); Relationships (356)]. Before that call, timeout input is converted through `TIMEOUTSAUCE`; tuple values become separate connect and read durations, while a scalar is used for both [Data: Entities (314); Relationships (355)]. After `adapter.send`, `SEND` measures elapsed time with `preferred_clock`, stores a `datetime.timedelta`, dispatches response hooks, and persists cookies [Data: Entities (389, 766, 758); Relationships (356, 1104, 1105, 1106)]. Those post-send actions are outside the requested trace. Exact wrapper, session, adapter-selection, and adapter implementation locations are insufficiently represented in the snapshot.",
+        "score": 91,
+        "follow_up_queries": [
+          "What is the exact module and function body for the public `requests.get` wrapper?",
+          "Which `Session` method receives the call from `requests.get`?",
+          "What exact preparation method sequence constructs the `PreparedRequest`?",
+          "How does `get_adapter` select an adapter from URL prefixes?",
+          "What arguments does `SEND` pass to `adapter.send`?",
+          "Which concrete class implements `ADAPTER.SEND`?",
+          "How are proxy selection and TLS verification applied before adapter execution?"
+        ]
+      },
+      "repair_applied": false
+    },
+    {
+      "kind": "adapter_arguments",
+      "stage": "primer",
+      "request_key": "1dd78ebb254e43f01ce3932dcb9861c2937f73b5c5cb0e97f96bc80ad1c39d19",
+      "accepted_kwargs": [
+        "messages",
+        "response_format"
+      ],
+      "provider_parameter_policy": "Fixed provider defaults: n1, top_p1, temperature not sent; output2048. JSON/schema and stream recorded explicitly.",
+      "stream_requested_by_upstream": false
+    },
+    {
+      "kind": "pending_action_order",
+      "queries": [
+        "Which concrete class implements `ADAPTER.SEND`?",
+        "How are proxy selection and TLS verification applied before adapter execution?",
+        "What exact preparation method sequence constructs the `PreparedRequest`?",
+        "What is the exact module and function body for the public `requests.get` wrapper?",
+        "What arguments does `SEND` pass to `adapter.send`?",
+        "How does `get_adapter` select an adapter from URL prefixes?",
+        "Which `Session` method receives the call from `requests.get`?"
+      ]
+    },
+    {
+      "kind": "structured_response",
+      "stage": "local",
+      "request_key": "f40fad5e174a405f84dbb61049485458f1b26b1b29d8897c5c5e185bd53cfabd",
+      "parsed": {
+        "response": "The supplied snapshot does not include the implementation of the public `requests.get(url)` wrapper, request preparation, or the complete adapter execution path. It only establishes that `adapter.send` is referenced as an unresolved receiver call, so the exact transition from the prepared request to `adapter.send` cannot be traced from the available source [Data: Entities (813, 97)].\n\nBefore a connection is obtained, proxy selection is performed through `select_proxy(url, proxies)` (or `select_proxy(request.url, proxies)` in the visible references). The callable retrieves scheme-specific or `\"all\"` proxy values through `proxies.get`; its implementation and exact module are not included, with references indicating either a utility module or `requests.utils` depending on context [Data: Entities (333, 950)]. The selected proxy is then used by `get_connection_with_tls_context`, which selects a proxy, builds host and pool parameters, and obtains either a proxy or pool-manager connection before returning `conn`. The owning class and exact source location of this method are not visible in the snapshot [Data: Entities (376)].\n\nTLS verification is represented by `HTTPAdapter.cert_verify(self, conn, url, verify, cert)`. The snapshot confirms the method signature and that it accepts the connection, URL, verification setting, and certificate, but it does not provide the implementation or show the exact call site relative to `adapter.send` [Data: Entities (360)]. The tests do establish observable behavior around TLS settings: requests using `verify=False` and either a valid or expired CA bundle expect different HTTPS adapter pools; the valid-bundle case returns status 200, while the expired-bundle case expects `requests.exceptions.SSLError` [Data: Sources (1418, 1417)].\n\nTherefore, the evidence supports this high-level ordering: proxy configuration is selected, connection and pool parameters are built, TLS-related verification inputs are handled by the adapter's `cert_verify` interface, and the adapter is eventually invoked through `adapter.send`. It is insufficient to prove the exact internal ordering between `cert_verify` and `send`, the precise public-wrapper preparation steps, or the concrete module ownership of the connection method.",
+        "score": 84,
+        "follow_up_queries": [
+          "Locate the source implementation and call sites for `requests.get`, `Session.request`, `Session.send`, and `HTTPAdapter.send` to establish the complete ordering.",
+          "Locate `HTTPAdapter.cert_verify` and `get_connection_with_tls_context` implementations to determine exactly how proxy selection, pool construction, and TLS verification interact."
+        ]
+      },
+      "repair_applied": false
+    },
+    {
+      "kind": "adapter_arguments",
+      "stage": "local",
+      "request_key": "f40fad5e174a405f84dbb61049485458f1b26b1b29d8897c5c5e185bd53cfabd",
+      "accepted_kwargs": [
+        "max_completion_tokens",
+        "messages",
+        "n",
+        "response_format_json_object",
+        "stream",
+        "temperature",
+        "top_p"
+      ],
+      "provider_parameter_policy": "Fixed provider defaults: n1, top_p1, temperature not sent; output2048. JSON/schema and stream recorded explicitly.",
+      "stream_requested_by_upstream": true
+    },
+    {
+      "kind": "structured_response",
+      "stage": "local",
+      "request_key": "2fb25e9d380e0328a1ac72458eca5016585e60f0d6ba116922108626cb8ac1fa",
+      "parsed": {
+        "response": "The supplied evidence is insufficient to identify a concrete class implementing `ADAPTER.SEND`. In `src/requests/sessions.py`, `Session.send` selects an adapter with `self.get_adapter(url=request.url)` and then invokes `adapter.send(request, **kwargs)`, but the adapter's runtime class is not established in the snapshot [Data: Sources (56); Entities (812, 813)].\n\n`HTTPAdapter` is documented as the default transport adapter for HTTP and HTTPS sessions, so it is a possible implementation in the broader Requests context. However, the supplied evidence does not prove that this particular `adapter` instance is an `HTTPAdapter`; it explicitly states that the concrete binding is uncertain [Data: Entities (97, 343); Relationships (1105)].",
+        "score": 88,
+        "follow_up_queries": [
+          "Which code or configuration establishes the concrete adapter returned by `self.get_adapter(url=request.url)`?",
+          "Where is the concrete `HTTPAdapter.send` implementation defined in the available source?"
+        ]
+      },
+      "repair_applied": false
+    },
+    {
+      "kind": "adapter_arguments",
+      "stage": "local",
+      "request_key": "2fb25e9d380e0328a1ac72458eca5016585e60f0d6ba116922108626cb8ac1fa",
+      "accepted_kwargs": [
+        "max_completion_tokens",
+        "messages",
+        "n",
+        "response_format_json_object",
+        "stream",
+        "temperature",
+        "top_p"
+      ],
+      "provider_parameter_policy": "Fixed provider defaults: n1, top_p1, temperature not sent; output2048. JSON/schema and stream recorded explicitly.",
+      "stream_requested_by_upstream": true
+    },
+    {
+      "kind": "pending_action_order",
+      "queries": [
+        "What arguments does `SEND` pass to `adapter.send`?",
+        "Where is the concrete `HTTPAdapter.send` implementation defined in the available source?",
+        "Which code or configuration establishes the concrete adapter returned by `self.get_adapter(url=request.url)`?",
+        "Which `Session` method receives the call from `requests.get`?",
+        "How does `get_adapter` select an adapter from URL prefixes?",
+        "Locate `HTTPAdapter.cert_verify` and `get_connection_with_tls_context` implementations to determine exactly how proxy selection, pool construction, and TLS verification interact.",
+        "What is the exact module and function body for the public `requests.get` wrapper?",
+        "What exact preparation method sequence constructs the `PreparedRequest`?",
+        "Locate the source implementation and call sites for `requests.get`, `Session.request`, `Session.send`, and `HTTPAdapter.send` to establish the complete ordering."
+      ]
+    },
+    {
+      "kind": "structured_response",
+      "stage": "local",
+      "request_key": "ab022506853f711f192308e8cca6b853d599cfb5c8278a27bd5c084a4278f52e",
+      "parsed": {
+        "response": "`SEND` calls `adapter.send(request, **kwargs)` in `src/requests/sessions.py`, within `Session.send` [Data: Sources (56)].\n\nBefore that call, `kwargs` is populated with defaults for `stream`, `verify`, and `cert`; if `proxies` is absent, it is set using `resolve_proxies(request, self.proxies, self.trust_env)`. The `allow_redirects` argument is removed from `kwargs` before the adapter call, so it is not passed to `adapter.send` [Data: Sources (56)].\n\nWhen reached through `requests.get(url)`, the request path supplies `timeout` and `allow_redirects` to `Session.send`; `timeout` remains in `kwargs` and is therefore forwarded to the adapter, while `allow_redirects` is consumed by `Session.send` [Data: Sources (56)]. The supplied evidence does not show the concrete adapter implementation or any additional arguments it might process [Data: Entities (389, 812, 97)].",
+        "score": 96,
+        "follow_up_queries": [
+          "How does `requests.get(url)` construct and prepare the `PreparedRequest` before calling `Session.send`?",
+          "How does `Session.get_adapter(url=request.url)` select the transport adapter?"
+        ]
+      },
+      "repair_applied": false
+    },
+    {
+      "kind": "adapter_arguments",
+      "stage": "local",
+      "request_key": "ab022506853f711f192308e8cca6b853d599cfb5c8278a27bd5c084a4278f52e",
+      "accepted_kwargs": [
+        "max_completion_tokens",
+        "messages",
+        "n",
+        "response_format_json_object",
+        "stream",
+        "temperature",
+        "top_p"
+      ],
+      "provider_parameter_policy": "Fixed provider defaults: n1, top_p1, temperature not sent; output2048. JSON/schema and stream recorded explicitly.",
+      "stream_requested_by_upstream": true
+    },
+    {
+      "kind": "structured_response",
+      "stage": "local",
+      "request_key": "a2e232d8c3729d861077ca19ce85ab261cbe7e21b3947c0ef73284bea31586a4",
+      "parsed": {
+        "response": "The concrete `HTTPAdapter.send` implementation is not defined in the supplied source snapshot. The available documentation identifies the adapter as `requests.adapters.HTTPAdapter` and shows it being mounted on sessions, but it does not include the class's `send` method body [Data: Sources (8)].\n\nThe snapshot does show a `send` method at the abstract `BaseAdapter` level, with location and signature described as `BaseAdapter.send(self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None)`, but its visible body raises `NotImplementedError`; this is not the concrete `HTTPAdapter.send` implementation [Data: Entities (343)]. The available entity information likewise states that the owning class for the described request-sending implementation is not visible [Data: Entities (389)]. Therefore, no exact module/function source location for concrete `HTTPAdapter.send` can be established from the supplied evidence.",
+        "score": 100,
+        "follow_up_queries": [
+          "Can the source snapshot be expanded to include the `requests.adapters.HTTPAdapter` class definition and its `send` method?",
+          "Where is `Session.get` or `Session.request` defined in the snapshot, so the call path leading to `adapter.send` can be traced?"
+        ]
+      },
+      "repair_applied": false
+    },
+    {
+      "kind": "adapter_arguments",
+      "stage": "local",
+      "request_key": "a2e232d8c3729d861077ca19ce85ab261cbe7e21b3947c0ef73284bea31586a4",
+      "accepted_kwargs": [
+        "max_completion_tokens",
+        "messages",
+        "n",
+        "response_format_json_object",
+        "stream",
+        "temperature",
+        "top_p"
+      ],
+      "provider_parameter_policy": "Fixed provider defaults: n1, top_p1, temperature not sent; output2048. JSON/schema and stream recorded explicitly.",
+      "stream_requested_by_upstream": true
+    },
+    {
+      "kind": "adapter_arguments",
+      "stage": "reduce",
+      "request_key": "67d01ba451289a31bca1ce71d0312f2b8657044df9d15844290343d37859a17c",
+      "accepted_kwargs": [
+        "max_completion_tokens",
+        "messages",
+        "temperature"
+      ],
+      "provider_parameter_policy": "Fixed provider defaults: n1, top_p1, temperature not sent; output2048. JSON/schema and stream recorded explicitly.",
+      "stream_requested_by_upstream": false
+    }
+  ],
+  "execution_segments": [
+    {
+      "started_utc": "2026-10-14T04:41:24.422698+00:00",
+      "initial_event_count": 25,
+      "elapsed_seconds": 62.69822599925101,
+      "finished_utc": "2026-10-14T04:42:27.121021+00:00",
+      "event_sequences": [
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37
+      ]
+    }
+  ],
+  "answer": "## Trace\n\nThe public `requests.get(url)` call is identified by the invalid-URL test, but the supplied snapshot does not include the wrapper’s implementation or exact module location. It therefore establishes the entry point, but not the wrapper’s precise delegation or default arguments [Data: Entities (1081); Relationships (1612)].\n\nThe request proceeds through session request processing and preparation. `prepare` coordinates the method, URL, headers, cookies, body, authentication, and hooks, invoking `prepare_method` first. `prepare_method` uppercases the supplied method and converts it with `to_native_string`; preparation also invokes `prepare_hooks`, which normalizes false-y hook input and registers hooks by event [Data: Entities (686, 688, 695, 703); Relationships (892, 901, 924, 941)].\n\nPreparation also normalizes request data. Parameter keys and values use UTF-8 encoding, multipart handling supports string, bytes, and bytearray file contents, and UTF-8 byte length is used when calculating `Content-Length` [Data: Entities (669, 1282, 1285, 1286, 1293); Relationships (869, 2100, 2105, 2106, 2135)]. The resulting object must be a `PreparedRequest`; attempting to send an unprepared `Request` raises `ValueError` with `You can only send PreparedRequests.` [Data: Entities (389, 261); Relationships (2018)]\n\nIn `src/requests/sessions.py`, `Session.send` selects the transport adapter with `self.get_adapter(url=request.url)`. It fills defaults for `stream`, `verify`, and `cert`, resolves proxies when needed through `resolve_proxies(request, self.proxies, self.trust_env)`, and removes `allow_redirects` from `kwargs`. Thus, when reached through `requests.get(url)`, `timeout` remains in `kwargs` and is forwarded, while `allow_redirects` is consumed by `Session.send` [Data: Sources (56)].\n\nThe selected adapter is then invoked at the stopping point: `adapter.send(request, **kwargs)` in `src/requests/sessions.py`, within `Session.send` [Data: Sources (56)]. Before that invocation, the evidence indicates proxy selection via `select_proxy`, connection and pool setup, timeout conversion through `TIMEOUTSAUCE`, and TLS-related handling through the adapter’s `cert_verify` interface. However, the exact ordering of those internal operations relative to `adapter.send` is not established by the snapshot [Data: Entities (333, 314, 360, 376); Relationships (355)].\n\nThe concrete runtime class and implementation of `adapter.send` are not established. `HTTPAdapter` is documented as the default HTTP/HTTPS transport adapter, but the supplied evidence does not prove that the selected instance is an `HTTPAdapter`; the visible `BaseAdapter.send` is abstract and raises `NotImplementedError` [Data: Sources (8); Entities (97, 343, 812, 813)].",
+  "elapsed_seconds": 62.69822599925101,
+  "finished_utc": "2026-10-14T04:42:27.121034+00:00",
+  "interrupted_segments_with_unknown_duration": 0,
+  "outer_timer_includes_reduce": true,
+  "new_event_sequences": [
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37
+  ],
+  "actual_context_exposure": [
+    {
+      "evidence_key": "a6693f37ee1206cacf9d1c2c96a65a7c0a0f6643170bf372c015f588990cc918",
+      "context_sha256": "3d306b51713e4458f25772dbd11cc2b3dd993b4af449811c152224c1ff1e3451",
+      "http200_generation_event_sequences": [
+        30
+      ],
+      "source_ids": [
+        "95"
+      ]
+    },
+    {
+      "evidence_key": "9466c8fa847782f0ab13828262334b9b1ad34c19aa29927b8854e8038e1ba40e",
+      "context_sha256": "dd6e0ed2a37f41b64548ced2d9a3a8268e09af590ea33d70ef73dc2e25333264",
+      "http200_generation_event_sequences": [
+        32
+      ],
+      "source_ids": [
+        "56"
+      ]
+    },
+    {
+      "evidence_key": "2f1c6483ac655928a876c03a29732c03985af53192eca8c7dfce4f873bc02127",
+      "context_sha256": "94da9a63befd6d814b6b248800226cab48cc9e93d4ab4872b78a6a454dbd1e07",
+      "http200_generation_event_sequences": [
+        34
+      ],
+      "source_ids": [
+        "56"
+      ]
+    },
+    {
+      "evidence_key": "cb7f762b63f388117e9f0451812e3a00966e49e70ebada7af2fd72cbab491f14",
+      "context_sha256": "8e2e2296e09beddf0f13ebcb5d02e16b0a3031a4a9dfd01245cb4c9ab6f0ce9b",
+      "http200_generation_event_sequences": [
+        36
+      ],
+      "source_ids": [
+        "8"
+      ]
+    }
+  ],
+  "raw_sources_in_http200_contexts": [
+    {
+      "short_id": "95",
+      "text_unit_id": "a2472c1ed2a06cdf1ac34c4edd112af95b3f3ed97f4657dc62a10e50ed98ba75681c81cb6cb33c393a814fb51a035d1ab8fef29ae36fe95f2393cbc77c50bfc2",
+      "id": "bd1917605a30d62d0b147525d20ff7bf7d8f991a7e343ea4a08bd2b8a76ebf50",
+      "title": "tests/test_requests.py:L2016-L2165",
+      "path": "tests/test_requests.py",
+      "start_line": 2016,
+      "end_line": 2165,
+      "tokens": 1194,
+      "text_sha256": "d0ba8ccdf9b4d78373cbd3e8d11bce6d35058bb8d5317b566c37124d44e0a7d2",
+      "ms_text_unit_id": "a2472c1ed2a06cdf1ac34c4edd112af95b3f3ed97f4657dc62a10e50ed98ba75681c81cb6cb33c393a814fb51a035d1ab8fef29ae36fe95f2393cbc77c50bfc2"
+    },
+    {
+      "short_id": "56",
+      "text_unit_id": "c1cd745424c9cd15526c9817388dc761eab81a549baf632b9622061dd8600fe1fb5e55d10a13f6b782d3dc128c3753a80008475b6213aa20323d051b6601ea38",
+      "id": "d7e626799389abc05c4760dab8b0116164b3c22fca658f7fe01bebd628df1934",
+      "title": "src/requests/sessions.py:L569-L717",
+      "path": "src/requests/sessions.py",
+      "start_line": 569,
+      "end_line": 717,
+      "tokens": 1196,
+      "text_sha256": "aeffda39beb3981fa06d5f06cf8cd570b80fd60fe7367fce3d8f5b00d309c10c",
+      "ms_text_unit_id": "c1cd745424c9cd15526c9817388dc761eab81a549baf632b9622061dd8600fe1fb5e55d10a13f6b782d3dc128c3753a80008475b6213aa20323d051b6601ea38"
+    },
+    {
+      "short_id": "8",
+      "text_unit_id": "e76cef82fcafe901f313bcfda0f5b41f66887c2e89bb8063d4934fb20875242855c64215b1b72a069c22b421bc94a41752ffa62004e456fc9bc584de31abe80e",
+      "id": "fed560d4cf53c3f49927f81d9d28eabeea7358a0a49b68d553c6bf2c6c2bd1a8",
+      "title": "docs/user/advanced.rst:L929-L1057",
+      "path": "docs/user/advanced.rst",
+      "start_line": 929,
+      "end_line": 1057,
+      "tokens": 1196,
+      "text_sha256": "f1771b61bd4d7625f93d23f223a10dd9114c86555b30fdf2c0adaa40e73d72b9",
+      "ms_text_unit_id": "e76cef82fcafe901f313bcfda0f5b41f66887c2e89bb8063d4934fb20875242855c64215b1b72a069c22b421bc94a41752ffa62004e456fc9bc584de31abe80e"
+    }
+  ]
+}

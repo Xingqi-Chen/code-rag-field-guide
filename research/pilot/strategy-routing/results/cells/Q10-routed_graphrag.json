@@ -1,0 +1,80 @@
+{
+  "qid": "Q10",
+  "method": "routed_graphrag",
+  "route": "drift",
+  "status": "failed",
+  "generation_input_tokens": 3430,
+  "requests": {
+    "8242c8e5da387deead2dabca49b5811b43ae72a304390300a01a213475ca4d7d": {
+      "stage": "hyde",
+      "service": "generation"
+    },
+    "ed3edc6eb9e939c6451018789bee98a68ce1599777ef81954cfe93e31acd3166": {
+      "stage": "query_embedding",
+      "service": "embedding"
+    },
+    "3ff1e710799fbad17a49166d00204e2fa518c2e8339e37231a14b29eba8b9a91": {
+      "stage": "primer",
+      "service": "generation"
+    }
+  },
+  "uses": [
+    {
+      "key": "8242c8e5da387deead2dabca49b5811b43ae72a304390300a01a213475ca4d7d",
+      "stage": "hyde",
+      "cache": false,
+      "origin_event": 62
+    },
+    {
+      "key": "ed3edc6eb9e939c6451018789bee98a68ce1599777ef81954cfe93e31acd3166",
+      "stage": "query_embedding",
+      "cache": false,
+      "origin_event": 63
+    }
+  ],
+  "evidence": [],
+  "decisions": [
+    {
+      "kind": "hyde_template",
+      "report_id": "37a3e59cf71703938842a68a53f69b520705cebc4bbd64181ef4d605b56798cf7f1434c750b794d5354978f571273625b853c97add847c7495ae76399a51dd4c",
+      "report_content_sha256": "6ebad76b522fdada1072200b90a52f5c4052987b6ea7de3759a161134af77090"
+    },
+    {
+      "kind": "adapter_arguments",
+      "stage": "hyde",
+      "request_key": "8242c8e5da387deead2dabca49b5811b43ae72a304390300a01a213475ca4d7d",
+      "accepted_kwargs": [
+        "messages"
+      ],
+      "provider_parameter_policy": "Fixed provider defaults: n1, top_p1, temperature not sent; output2048. JSON/schema and stream recorded explicitly.",
+      "stream_requested_by_upstream": false
+    }
+  ],
+  "execution_segments": [
+    {
+      "started_utc": "2026-10-14T04:45:11.011478+00:00",
+      "initial_event_count": 61,
+      "elapsed_seconds": 30.065854833461344,
+      "finished_utc": "2026-10-14T04:45:41.077376+00:00",
+      "event_sequences": [
+        62,
+        63,
+        64
+      ]
+    }
+  ],
+  "failure": "responses_empty_or_multiple_messages",
+  "fatal": false,
+  "answer": null,
+  "elapsed_seconds": 30.065854833461344,
+  "finished_utc": "2026-10-14T04:45:41.077387+00:00",
+  "interrupted_segments_with_unknown_duration": 0,
+  "outer_timer_includes_reduce": true,
+  "new_event_sequences": [
+    62,
+    63,
+    64
+  ],
+  "actual_context_exposure": [],
+  "raw_sources_in_http200_contexts": []
+}

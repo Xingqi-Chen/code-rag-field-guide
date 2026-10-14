@@ -1,0 +1,53 @@
+{
+  "event": {
+    "sequence": 75,
+    "cell": "Q12:routed_graphrag",
+    "service": "embedding",
+    "stage": "query_embedding",
+    "status": "validated",
+    "request_body_sha256": "ff3dd00073e60f6a14c45b97410ed411a1834ba766ebf66c9acec21fff52075b",
+    "key": "5745d08e20f1a58a0b49e19e7f764b2e7069bdb9c93228db419df5dc911a8665",
+    "input_tokens": 496,
+    "started_utc": "2026-10-14T04:46:53.554903+00:00",
+    "usage": {
+      "prompt_tokens": 496,
+      "total_tokens": 496
+    },
+    "synthetic": false,
+    "elapsed_seconds": 1.0854805000126362,
+    "finished_utc": "2026-10-14T04:46:54.662558+00:00",
+    "http_status": 200,
+    "response_bytes": 60516,
+    "response_byte_limit": 4194304,
+    "request_dispatched": true
+  },
+  "request": {
+    "service": "embedding",
+    "body": {
+      "model": "text-embedding-3-large",
+      "input": [
+        "# Session.send Response Callback Dispatch\n\nThis community centers on `Session.send`, registered callables, and the `Response` consumed by later steps. The supplied evidence does not include the implementation of `Session.send`, the callback-dispatch loop, callable registration, or the subsequent response-processing path. Therefore, it is insufficient to establish whether every registered callable returns the `Response` later steps use.\n\n## `Session.send` is the relevant dispatch location\n\nThe query identifies `Session.send` as the starting point for tracing response callback dispatch. However, no exact module or source location is supplied for `Session.send`, and no dispatch statements are available for inspection.\n\nThe available material therefore does not establish whether `Session.send` invokes registered callables sequentially, passes the same `Response` to each callable, replaces the current `Response` with each callable's return value, or ignores callback return values.\n\n## Registered callables may not necessarily return the later `Response`\n\nThe supplied evidence does not prove that every registered callable returns a `Response`. It also does not show whether return values are required, validated, discarded, or used to update the response passed to later steps.\n\nAccordingly, the answer cannot be established as “yes.” A callable could potentially perform an action without returning a value, return the original `Response`, or return another value, but these are possibilities rather than facts supported by the snapshot.\n\n## The later response-processing path is not visible\n\nNo source evidence identifies the later steps that consume the `Response` or shows how that object is obtained after callback dispatch. In particular, the snapshot does not establish whether later steps use:\n\n- the original `Response` from `Session.send`;\n- the return value from the last registered callable;\n- a response updated after each callable; or\n- a separately retained response value.\n\nWithout that control-flow evidence, the relationship between callback return values and the later `Response` remains uncertain.\n\n## A definitive answer requires the dispatch implementation\n\nTo answer the question, the relevant source path would need to be inspected from `Session.send` through registered-callable invocation and into the first later use of `Response`. The key facts would be whether the callable return value is assigned, whether it is checked for a `Response`, and which value is passed to subsequent steps.\n\nNo proposed code change can be supported from the supplied evidence. The strongest supported conclusion is that the snapshot is insufficient to determine whether every registered callable necessarily returns the `Response` later steps use."
+      ],
+      "dimensions": 3072,
+      "encoding_format": "float"
+    }
+  },
+  "response_envelope": {
+    "http_status": 200,
+    "response": {
+      "model": "text-embedding-3-large",
+      "usage": {
+        "prompt_tokens": 496,
+        "total_tokens": 496
+      },
+      "vectors_omitted": true,
+      "vector_count": 1,
+      "dimensions": [
+        3072
+      ]
+    },
+    "response_byte_limit": 4194304,
+    "response_bytes": 60516,
+    "private_complete_response_sha256": "76f35435965652944a7fc6e14c14018bee025a0f22e154a3d19bca2334b55d7c"
+  }
+}
