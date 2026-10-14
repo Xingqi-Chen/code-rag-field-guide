@@ -19,7 +19,14 @@ def write_table(path,rows,*,split_if_bytes=1900000,page_bytes=1500000):
     if len(raw)<=split_if_bytes:
         path.write_bytes(raw)
         return {'format':'json-array','rows':len(rows),'logical_rows_sha256':rows_sha(rows)}
-    directory=path.with_suffix('');directory.mkdir(exist_ok=False)
+    directory=path.with_suffix('')
+    if directory.exists():
+        assert path.exists(), 'Incomplete prior export: use a fresh output directory'
+        existing=json.loads(path.read_bytes())
+        assert isinstance(existing,dict) and existing.get('format')=='paged-json-table-v1'
+        assert read_table(path)==rows, 'Refuse to replace a different published table'
+        return existing
+    directory.mkdir(exist_ok=False)
     groups=[];current=[]
     for row in rows:
         assert len(encoded([row]))<=page_bytes,'Single public record exceeds the page budget'

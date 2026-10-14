@@ -1,6 +1,12 @@
 # 代码提示词实验：真实中断与恢复记录
 
-**当前状态：本轮纯JSON尾逗号处理已获准，1091恢复成功，报告继续生成。** 用户2026-10-14 01:27:36 UTC明确允许后续同类错误无需逐次确认；只删除字符串外、下一非空白字符为对象／数组闭括号的逗号，原schema及字符串逐字校验必须通过。原始完整回复不重发、不改写，逐条保存原文、候选、字符偏移和usage。其他JSON或语义错误仍停止，预算和瞬态重试规则不变。[授权](json-tail-comma-authorization.json)、[实际配置](json-tail-comma-amendment.json)、[独立启动复核](json-tail-comma-resume-review.json)、[1091逐条差异](json-syntax-repairs/event-1091.json)及[实际继续证据](json-tail-comma-progress.json)均已保存。1,082份生成缓存与134向量复用，累计缓存命中4,862；1092作为不同请求随后成功。尚无新Local评分。
+**当前状态：第1,147次字符串内引号转义错误，已暂停，等待单独格式许可。** 2026-10-14 01:44:55 UTC收到完整HTTP200回复，输入3,904／输出1,147 token已知；前171份社区报告可用（含1027及1091的已批准尾逗号处理），第172份尚未通过原JSON解析。当前授权只允许删除字符串外尾逗号，正确地没有修复此新错误。
+
+[第13份中断快照](execution-interrupted-13.json)、[完整原文与精确候选](schema-1147-diagnosis.json)、[独立复核](schema-1147-review.json)和[离线验证日志](verification-13.json)已保存。候选仅在单个代码片段的4个引号前各插入一个反斜线；解析后仍保留原文`urljoin(httpbin_url, ""/"".join(suffix))`，不把双重引号改成正确源码。原schema和官方结构解析通过，但没有启用处理、修改原cache／usage或重发；需要新的明确许可后才可继续。离线检查：`python3 research/pilot/diagnose_code_prompt_quotes.py --check`。
+
+以下保留此前尾逗号授权及恢复历史。
+
+**此前状态：本轮纯JSON尾逗号处理已获准，1091恢复成功。** 用户2026-10-14 01:27:36 UTC明确允许后续同类错误无需逐次确认；只删除字符串外、下一非空白字符为对象／数组闭括号的逗号，原schema及字符串逐字校验必须通过。原始完整回复不重发、不改写，逐条保存原文、候选、字符偏移和usage。其他JSON或语义错误仍停止，预算和瞬态重试规则不变。[授权](json-tail-comma-authorization.json)、[实际配置](json-tail-comma-amendment.json)、[独立启动复核](json-tail-comma-resume-review.json)、[1091逐条差异](json-syntax-repairs/event-1091.json)及[实际继续证据](json-tail-comma-progress.json)均已保存。1,082份生成缓存与134向量复用，累计缓存命中4,862；1092作为不同请求随后成功。尚无新Local评分。
 
 此前2026-10-14 01:22:28 UTC，第116份社区报告回复含4个对象末尾多余逗号，未通过原版JSON解析而停止。前115份可用，其中1027使用了一次已获准格式例外；当时该许可不覆盖1091。
 

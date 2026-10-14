@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 
 from verify_code_prompt import no_network  # Installs the network-denying audit hook.
-from index_artifacts import read_table
+from index_artifacts import read_table, rows_sha
 from code_prompt_json_syntax import candidate as tail_comma_candidate
 
 HERE=Path(__file__).resolve().parent
@@ -50,7 +50,7 @@ def main():
     dispatched=[e for e in events if e.get('request_dispatched') is not False]
     assert dict(Counter(e['service'] for e in dispatched))==s['provider_dispatch_attempts']
     assert [e['sequence'] for e in dispatched if 'usage' not in e]==s['unknown_usage_sequences']
-    assert {75,96,107,108,109,272}<=set(s['unknown_usage_sequences'])
+    assert {75,96,107,108,109,272,623}<=set(s['unknown_usage_sequences'])
     usage=Counter()
     for e in events:
         for k,v in e.get('usage',{}).items():
@@ -109,6 +109,7 @@ def main():
     for kind in ['entities','relationships','communities','community_reports']:
         rows=read_table(OUT/f'index/{kind}.json')
         assert len(rows)==index['tables'][kind]['rows'] and len({r['id'] for r in rows})==len(rows)
+        assert rows_sha(rows)==index['tables'][kind]['public_json_layout']['logical_rows_sha256']
         if kind in ['entities','relationships']:
             assert graph_semantic_sha(rows)==fixed_review['whole_graph_semantic_sha256'][kind]
             ordered=sorted(rows,key=lambda r:hashlib.sha256(f"20261012:{kind}:{r['id']}".encode()).hexdigest())

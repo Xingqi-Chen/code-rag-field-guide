@@ -18,6 +18,11 @@ class PublicTableTests(unittest.TestCase):
             self.assertGreater(len(manifest['parts']),1)
             self.assertTrue(all(p['bytes']<=550 for p in manifest['parts']))
             self.assertEqual(read_table(path),rows)
+            original_files={p:p.read_bytes() for p in Path(directory).rglob('*') if p.is_file()}
+            self.assertEqual(write_table(path,rows,split_if_bytes=600,page_bytes=550),manifest)
+            self.assertTrue(all(p.read_bytes()==data for p,data in original_files.items()))
+            with self.assertRaises(AssertionError):
+                write_table(path,rows+[{'id':'different','text':'changed'*100}],split_if_bytes=600,page_bytes=550)
             part=path.parent/manifest['parts'][0]['file']
             original=part.read_bytes();part.write_bytes(original.replace(b'null',b'true'))
             with self.assertRaises(AssertionError):read_table(path)
