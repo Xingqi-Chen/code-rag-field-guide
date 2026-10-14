@@ -1,0 +1,117 @@
+{
+  "status": "independent_review_passed",
+  "reviewer": {
+    "type": "independent AI agent",
+    "human": false,
+    "blinded": false
+  },
+  "reviewed_utc": "2026-10-14T07:00:12.378081+00:00",
+  "stopped_summary_sha256": "e129ada9670a58b640586618c9d7cd86f833a6a8ffc4fceecb83a78712953ccc",
+  "implementation_sha256": {
+    "manual_recovery.py": "84b005238f5be656d1f04e742f95af4ec7b29406809e339c26c23fa76ca2ff1a",
+    "bounded.py": "20afece2f10f018b70adaefa08f90952cf6dedc6be07b649192d86ebf260e302",
+    "runner.py": "e0d717b55338929024f1d956122d879672cd017e65b5cf90568f6b560ca5b1f9",
+    "transport.py": "a36ab7176443392fc961e086ea964de174daacb3f7721368e5f6fe71b7d4dbe2",
+    "responses_decoder.py": "bd4f9684094336e5076bae6a4deb8e853cb3cc699363010b3c031a496fb2ab15",
+    "authorization.json": "f2f075ee86cf28b1080a0f1c2f63b872f296a9989412063d52870ac0299c02aa",
+    "inherited-manifest.json": "7def30cdc512fd531f3a56a19544109122156e0c951996155b83146c382c0d8f",
+    "transport-stop.json": "9900fd5ba6d151735c5e2b8ddc74ded3ac5815ed2ec1b07d2141cd82ef209e3c"
+  },
+  "evidence_sha256": {
+    "test_manual_recovery.py": "8a4fd4419190b6b25cc0ab94292e56d9369fae2d229615771ebe9e6050d341aa",
+    "test_retry_boundaries.py": "64c5257cac18efb061a1bb754c7605d8c47c01d2e18336566275d60588b14656",
+    "TLS-RECOVERY.md": "85d4583b1d9d5f1b6fce5a30220ce8e33e10e1bb5ba33aecd9d4a1dbf537e6cc",
+    "live-readiness-before-tls-review.json": "a0cda17a69efb4a41726d61e72a78817142317097392f294e54e61cca1e01d88",
+    "results/retry-diagnosis.json": "62402760d710fd253bf5ffe2ea58f29e56e7128a52240ec2ea30326a8e0db000"
+  },
+  "unresolved_blocking_findings": [],
+  "scope": "Exactly one reviewed continuation of Q10 embedding event12, preserving TLS verification, all old outcomes, cumulative counters and the three-attempt request ceiling.",
+  "authorization_assessment": "The existing human instruction to investigate and retry the six failed DRIFT cells covers this reviewed exact continuation without raising limits or weakening TLS. This is a recorded manual exception, not a new automatic TLS retry category.",
+  "tests": [
+    {
+      "command": "PYTHONHASHSEED=20261012 PYTHONDONTWRITEBYTECODE=1 .cache/graphrag-venv/bin/python research/pilot/strategy-routing-retry/test_manual_recovery.py -v",
+      "passed": 14,
+      "failed": 0,
+      "elapsed_seconds": 5.238
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -S research/pilot/strategy-routing-retry/test_retry_boundaries.py -v",
+      "passed": 23,
+      "failed": 0,
+      "elapsed_seconds": 2.079
+    }
+  ],
+  "actual_official_engine_offline_test": {
+    "input": "Immutable real stopped-summary clone in a temporary directory; real frozen Data, graph, tokenizers and official execute_cell; fake transport for every new response.",
+    "production_prefetch_called": true,
+    "first_new_sequence": 13,
+    "first_new_service": "embedding",
+    "first_new_request_key": "5eb2eac01495c36c9a3031d825f99ebca3a6f7295ffcec83a69e758e0502ade0",
+    "first_new_request_body_sha256": "f8e1af67cf0381e1a73948fe9785951c425725630256ba533a20f7fdd2073df7",
+    "cached_replay_origins": {
+      "hyde": 62,
+      "old_embedding": 63,
+      "primer": 11,
+      "prefetched_embedding": 13
+    },
+    "new_synthetic_embedding_dispatches": 4,
+    "new_synthetic_local_generation_dispatches": 4,
+    "new_synthetic_reduce_dispatches": 1,
+    "synthetic_Q10_final_status": "complete",
+    "Q08_object_unchanged": true,
+    "ledger_reconstruction_and_restart_passed": true,
+    "limitation": "Synthetic answers and vectors verify execution and cache identity, not experimental answer quality."
+  },
+  "verified_controls": [
+    "Authorization requires the exact stopped summary and snapshot SHA and unchanged in-memory state. No original event or counter changes during authorization.",
+    "The exact event12 cell, service, stage, status, security-error category, key, body SHA and prior event list are checked. Other targets and duplicate authorization are rejected.",
+    "Pending manual recovery rejects any other new request before cell/request metadata, counters, reservation or dispatch are mutated; rejected requests leave a resumable ledger.",
+    "Production runner prefetches the exact authorized old embedding body before official Q10 replay. Successful reply enters the ordinary exact cache; no query, route, prompt, graph, seed or Local selection algorithm changes.",
+    "The manual permission is consumed atomically with durable event13 reservation before fake dispatch. Host loss after reservation without a complete reply remains unknown and stops on resume.",
+    "A second TLS/security failure stops after event13. If event13 instead encounters an ordinarily authorized transient error, only event14 remains, with 15-second backoff; no fourth physical attempt is permitted.",
+    "Permission/authentication/safety denials remain fatal; TLS verification, certifi, hostname checks and redirect rejection remain intact.",
+    "All twelve old event objects remain equal, canonical event12 bytes remain identical, old request/response files retain their hashes, original usage stays null, and Q08 stays complete and unmodified.",
+    "Review/source hashes, snapshot, old history and consumption linkage are checked; mutated snapshots, counters, request metadata, history and consumption are rejected.",
+    "Worker diagnostics add only filtered TLS class/reason symbols and integer verification codes. The broad TLS error classification and retry policy are unchanged."
+  ],
+  "resolved_findings": [
+    {
+      "issue": "Actual official Q10 replay can schedule a different Local embedding first, before the failed event12 key; reserving it would occupy sequence13.",
+      "repair": "Parent added exact production prefetch plus a pending-slot guard. Independent real-engine replay now confirms event13 is exactly event12 body, later reused from cache."
+    },
+    {
+      "issue": "The first pending-slot guard placement rejected a new body after persisting cell metadata, leaving an orphan request that could not resume.",
+      "repair": "Parent moved an additional guard before new metadata mutation. The rejection-and-reopen negative test now passes."
+    }
+  ],
+  "counters_at_review": {
+    "generation_reservations": 1505,
+    "generation_input_tokens": 3115768,
+    "embedding_tokens": 666630,
+    "embedding_attempts": 152
+  },
+  "exact_request_accounting": {
+    "old_failed_attempts": 1,
+    "manual_request_is_attempt": 2,
+    "maximum_total_attempts": 3,
+    "tokens_per_embedding_reservation": 13,
+    "on_second_attempt_success_embedding_attempts": 153,
+    "on_second_attempt_success_embedding_tokens": 666643,
+    "on_authorized_third_attempt_embedding_attempts": 154,
+    "on_authorized_third_attempt_embedding_tokens": 666656,
+    "generation_counters_and_per_cell_generation_inputs_unchanged_by_embedding_retry": true
+  },
+  "limitations": [
+    "The failed worker retained only transport_security_error, not the SSL reason. Later successful verified TLS handshakes cannot identify the old cause or establish that provider usage was zero.",
+    "dispatch_started is set before opener.open; it records entry to the dispatch boundary, not proof of provider receipt.",
+    "The private original run stayed stopped during this review. No production authorize/prefetch/worker was executed, no live-readiness was changed, no model or HTTP API calls were made, and no credentials were read.",
+    "Existing scores and historical failures are unchanged. Any later retry outcomes must remain separate from the original experiment."
+  ],
+  "audit_environment": {
+    "real_api_calls": 0,
+    "credential_reads": 0,
+    "original_run_mutations": 0,
+    "network_and_credentials_denied_by_test_audit_hook": true,
+    "temporary_synthetic_runs_only": true
+  }
+}

@@ -20,7 +20,7 @@ sys.path.insert(0,str(PILOT))
 from bounded import Halt, read, save, file_sha, LIMITS, CARRY, inheritance
 from responses_decoder import decode_generation, DecodeError
 RUN=ROOT/'.cache/pilot/strategy-routing-retry-20261014'
-REQUIRED={'bounded.py','transport.py','runner.py','responses_decoder.py','authorization.json','inherited-manifest.json'}
+REQUIRED={'bounded.py','transport.py','runner.py','responses_decoder.py','authorization.json','inherited-manifest.json','manual_recovery.py','manual-resume-review.json','transport-stop.json'}
 
 def legacy_transport():
     spec=importlib.util.spec_from_file_location('retry_legacy_transport',LEGACY/'transport.py')
@@ -139,6 +139,12 @@ def worker(request,response):
             result.update(retry_after(error.headers.get('Retry-After'),datetime.now(timezone.utc)))
         except (urllib.error.URLError,ConnectionError,TimeoutError) as error:
             result.update(error_category=connection_category(error) or 'transport_error')
+            cause=error.reason if isinstance(error,urllib.error.URLError) else error
+            reason=getattr(cause,'reason',None)
+            # Fixed symbols only, never arbitrary exception messages or URLs.
+            result['transport_error_detail']={'class':type(cause).__name__ if type(cause).__name__ in {'SSLError','SSLEOFError','SSLCertVerificationError','SSLZeroReturnError','TimeoutError','ConnectionResetError','ConnectionRefusedError'} else 'other',
+                'ssl_reason':reason if isinstance(reason,str) and reason.isascii() and reason.replace('_','').isalnum() and reason.upper()==reason else None,
+                'verify_code':getattr(cause,'verify_code',None) if type(getattr(cause,'verify_code',None)) is int else None}
     except Halt as error:result.update(error_category=str(error))
     except probe.Stop as error:result.update(error_category=str(error))
     except Exception:result.update(error_category='worker_exception_redacted')

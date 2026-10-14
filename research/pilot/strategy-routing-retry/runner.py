@@ -24,6 +24,8 @@ async def execute():
         'process_hash_seed':os.environ['PYTHONHASHSEED'],'prior_counts_preserved':runtime.state['counts'].copy()})
     runtime.persist()
     try:
+        from manual_recovery import prefetch
+        prefetch(runtime)
         for q in queries:
             if q['id'] not in QIDS:continue
             if q['route']['method']!='drift':raise Halt('retry_route_changed',fatal=True)

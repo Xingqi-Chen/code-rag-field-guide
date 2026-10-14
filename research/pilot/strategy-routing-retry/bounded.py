@@ -200,6 +200,9 @@ class Runtime:
         for key,r in self.state['requests'].items():
             if key!=digest({'service':r['service'],'body':r['body']}):raise Halt('resume_record_key_integrity',fatal=True)
             if not any(key in c['requests'] for c in self.state['cells'].values()):raise Halt('resume_orphan_record',fatal=True)
+        if self.state.get('manual_recovery'):
+            from manual_recovery import verify_state
+            verify_state(self)
         expected=copy.deepcopy(self.carry);per_cell={key:self.inherited['cells'][key]['generation_input_tokens'] for key in self.state['cells']};by_key={}
         for seq,event in enumerate(self.state['events'],1):
             key=event['key'];record=self.state['requests'][key];body=record['body'];service=record['service']
@@ -268,6 +271,8 @@ class Runtime:
             if (not counts or any(n<=0 for n in counts) or service=='generation' and counts[0]>self.limits['request_input'] or
                 service=='embedding' and (len(counts)!=1 or counts[0]>self.limits['embedding_item'])):self.fail(cell,'request_input_limit')
             if key not in c['requests']:
+                from manual_recovery import guard_new_reservation
+                guard_new_reservation(self,cell,service,key)
                 if service=='generation':
                     used=sum(x['stage']==stage and x['service']==service for x in c['requests'].values())
                     if used>=STAGES[c['route']].get(stage,0):self.fail(cell,'logical_stage_limit')
@@ -287,6 +292,7 @@ class Runtime:
                     except Halt as error:self.fail(cell,str(error))
                     c['uses'].append({'key':key,'stage':stage,'cache':True,'origin_event':record['events'][-1]})
                     self.persist();return value,usage,key
+                manual_retry=False
                 attempts=[self.state['events'][seq-1] for seq in record['events']]
                 if attempts:
                     last=attempts[-1]
@@ -308,12 +314,17 @@ class Runtime:
                         from recovery import verify_resume_slot
                         verify_resume_slot(self,last,record)
                         delay=0
-                    else:delay=retry_delay(last,len(attempts)+record.get('prior_attempts',0))
+                    else:
+                        from manual_recovery import eligible
+                        manual_retry=eligible(self,last,record)
+                        delay=0 if manual_retry else retry_delay(last,len(attempts)+record.get('prior_attempts',0))
                     if delay is None:self.fail(cell,last.get('error_category','request_not_retryable'))
                     # Hold dispatch lock for wait, reservation and request. Runtime
                     # work is serial; sleep is split for signal responsiveness.
                     while delay>0:
                         step=min(30,delay);self.wait(step);delay-=step
+                from manual_recovery import guard_new_reservation
+                guard_new_reservation(self,cell,service,key)
                 if len(record['events'])+record.get('prior_attempts',0)>=self.limits['attempts_per_request']:self.fail(cell,'request_attempt_limit')
                 new=copy.deepcopy(self.state['counts'])
                 if not self.synthetic:
@@ -334,6 +345,9 @@ class Runtime:
                     'key':key,'input_tokens':sum(counts),'started_utc':now(),'usage':None,'synthetic':self.synthetic}
                 self.state['counts']=new
                 if service=='generation':c['generation_input_tokens']+=counts[0]
+                if manual_retry:
+                    if seq!=13:self.fail(cell,'manual_resume_sequence_changed',fatal=True)
+                    event['manual_retry_of']=12;self.state['manual_recovery']['consumed_by']=seq
                 self.state['events'].append(event);record['events'].append(seq)
                 request=self.directory/f'request-{seq:02}.json';response_path=self.directory/f'response-{seq:02}.json'
                 save(request,{'service':service,'body':body});self.persist()

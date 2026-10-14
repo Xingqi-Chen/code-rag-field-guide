@@ -42,7 +42,7 @@ def export():
             'new_generation_input_tokens':sum(e['input_tokens'] for e in gs),'new_generation_reservations':len(gs),'new_embedding_attempts':sum(e['service']=='embedding' for e in es),
             'known_provider_input_tokens_new':sum(u['prompt_tokens'] for u in known),'known_provider_output_tokens_new':sum(u['completion_tokens'] for u in known),
             'provider_usage_unknown_new_generation_events':sum(e.get('usage') is None for e in gs),'elapsed_seconds_new':c['elapsed_seconds'],
-            'inherited_cache_uses':sum(bool(u.get('origin_run')) for u in c['uses']),'raw_sources_in_http200_contexts':sources}
+            'inherited_cache_uses':len({u['key'] for u in c['uses'] if u.get('origin_run')}),'inherited_cache_read_operations':sum(bool(u.get('origin_run')) for u in c['uses']),'raw_sources_in_http200_contexts':sources}
         records.append(record);pack.append({'anonymous_id':f'R{n:03}','question_id':c['qid'],'query':queries[c['qid']]['query'],'answer':c.get('answer') or '',
             'answer_sha256':record['answer_sha256'],'status':'completed' if c['status']=='complete' else 'failed'})
     public={k:v for k,v in state.items() if k not in {'requests','cells','supervisor_pid'}}
