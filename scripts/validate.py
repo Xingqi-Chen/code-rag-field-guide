@@ -78,7 +78,7 @@ def anchors(text):
     return result
 
 def check_mermaid(text):
-    """Check the deliberately small flowchart subset used by our Markdown.
+    """Check the small flowchart/sequence subsets used by our Markdown.
 
     This is a structural/syntax check, not a screenshot or GitHub renderer test.
     """
@@ -86,6 +86,31 @@ def check_mermaid(text):
     node=r'([A-Za-z][A-Za-z0-9_]*)(?:\[(?:"([^"\n]+)"|([^\[\]"\n]+))\])?'
     for block in blocks:
         lines=[line.strip() for line in block.splitlines() if line.strip()]
+        assert lines,'Empty Mermaid diagram'
+        if lines[0]=='sequenceDiagram':
+            participants=set();references=set();nesting=[]
+            for line in lines[1:]:
+                if line=='autonumber':continue
+                declaration=re.fullmatch(r'(?:actor|participant) ([A-Za-z][A-Za-z0-9_]*) as (.+)',line)
+                if declaration:
+                    assert declaration[1] not in participants,('Duplicate sequence participant',line)
+                    participants.add(declaration[1]);continue
+                message=re.fullmatch(r'([A-Za-z][A-Za-z0-9_]*)(?:->>|-->>)([A-Za-z][A-Za-z0-9_]*): (.+)',line)
+                if message:
+                    references.update(message.group(1,2));continue
+                note=re.fullmatch(r'Note over ([A-Za-z][A-Za-z0-9_]*(?:,[A-Za-z][A-Za-z0-9_]*)?): (.+)',line)
+                if note:
+                    references.update(note[1].split(','));continue
+                group=re.fullmatch(r'(loop|opt) (.+)',line)
+                if group:
+                    nesting.append(group[1]);continue
+                if line=='end':
+                    assert nesting,('Unmatched sequence end',line)
+                    nesting.pop();continue
+                raise AssertionError(('Unsupported Mermaid sequence statement',line))
+            assert not nesting,'Unclosed Mermaid sequence block'
+            assert participants and references<=participants,('Undefined sequence participant',references-participants)
+            continue
         assert re.fullmatch(r'flowchart (?:LR|RL|TD|TB|BT)',lines[0]),'Mermaid direction'
         labels={}; references=set()
         for line in lines[1:]:
@@ -135,5 +160,5 @@ def main():
     version=json.loads((ROOT/'research/microsoft-version.json').read_text())
     assert '5faaaf4f5685fa2056fa8c3bf9342cb089f2942f' in json.dumps(version),'fixed Microsoft source revision'
     assert not (ROOT/'results').exists() and not (ROOT/'benchmark').exists(),'old experiment belongs in Git history'
-    print(f'Validated {len(files)} public files, {links} local links/anchors, 4 PNG/SVG pairs, {mermaids} Mermaid flowcharts, source pin and privacy patterns.')
+    print(f'Validated {len(files)} public files, {links} local links/anchors, 4 PNG/SVG pairs, {mermaids} Mermaid diagrams, source pin and privacy patterns.')
 if __name__=='__main__':main()

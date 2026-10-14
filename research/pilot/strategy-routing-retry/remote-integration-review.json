@@ -1,0 +1,181 @@
+{
+  "status": "completed_no_substantive_conflict",
+  "reviewed_at_utc": "2026-10-14T08:05:26.166383+00:00",
+  "reviewer": "publication_text_review independent delegated agent",
+  "scope": "只读检查远端新增的两篇文档是否与冻结实验事实、最新 72.8% 必要要点分冲突，或将教学 AST 流程误称为本次实测；不是对全部教学细节的新一轮研究。",
+  "remote_commit": "4d0ab59c425cf5b3b944de3cda2b388a4fea814b",
+  "local_pre_merge_commit": "60c29ad3f073496eea080e1c65f939f9cb419567",
+  "remote_documents": [
+    {
+      "path": "docs/conclusion.md",
+      "git_blob": "8974241efeb5c07bde0f39f36d83b7cde3f314be",
+      "sha256": "a7c00f0806ef89472380853b16e0d5c8deb9fc0579b6c9b0326f759a84b95ef3",
+      "line_count": 138,
+      "working_tree_bytes_match_remote": true
+    },
+    {
+      "path": "docs/graphrag-full-explained.md",
+      "git_blob": "22f4612855e4634eb57a4d10f2733ce440c76e87",
+      "sha256": "227570b4175308ba63e57d0cc9065267fb9a98dea42e9a4ba488f4ada5fdcd6b",
+      "line_count": 1463,
+      "working_tree_bytes_match_remote": true
+    }
+  ],
+  "evidence_files": [
+    {
+      "path": "research/pilot/results/code-prompt/analysis.json",
+      "sha256": "e716122cd1f11551a954a3803e930d399761df7c9863e75fda581b02497914cd"
+    },
+    {
+      "path": "research/pilot/results/budget-supplement/budget-analysis.json",
+      "sha256": "3fa6644b3578ce23ea3fdc1bd41f3c6f490bd4d2e4df104ae1bccf7cbfb4d039"
+    },
+    {
+      "path": "research/pilot/results/failure-analysis/analysis.json",
+      "sha256": "e7877b15dfb999b227eadacea5e2b8606b7f7cd167d6280e5f6666755ffd8039"
+    },
+    {
+      "path": "research/pilot/size.json",
+      "sha256": "05f89b9de0335536749adb62680d8a05a3a35fb60a800286d527f09aed8a5b40"
+    },
+    {
+      "path": "research/pilot/strategy-routing-retry/results/scores.json",
+      "sha256": "24ccf91951ca2ea6385a3110be8c202c32182be93084fd3835fb1e57d24c356a"
+    },
+    {
+      "path": "research/pilot/strategy-routing-retry/results/evidence-scores.json",
+      "sha256": "2cd9d8ce80193800fa07bd2b038832a66cd1b8eb74250edf9dd0b7797eb8d672"
+    }
+  ],
+  "preserved_previous_review": {
+    "path": "research/pilot/strategy-routing-retry/retry-publication-text-review.json",
+    "sha256": "8d60d9fb12745e7cdb610228c2f6367f32dda9926ccc66d0820eae96d6639e0e",
+    "modified": false
+  },
+  "substantive_conflicts": [],
+  "required_edits": [],
+  "checks": [
+    {
+      "check": "检索与回答阶段区分",
+      "result": "pass",
+      "evidence": "conclusion.md:61–87 明确 15 道可评分 test 题、必要源码证据覆盖率与四档上下文预算。42.9%/77.9% 等属于先前检索实验，不是必要要点分；文档未给出与最新 72.8% 相反的回答分，也未将源码覆盖率称为回答准确率。",
+      "latest_answer_metric": {
+        "cohort": "main_test16",
+        "questions": 16,
+        "content_score": 0.728125,
+        "rounded_percent": 72.8,
+        "metric": "冻结必要要点得分，并非全文正确率"
+      }
+    },
+    {
+      "check": "冻结检索表",
+      "result": "pass",
+      "recalculated_from_frozen_aggregates": [
+        {
+          "method": "bm25",
+          "budgets": [
+            4000,
+            8000,
+            12000,
+            16000
+          ],
+          "source_coverage_percent_rounded": [
+            35.3,
+            43.7,
+            64.3,
+            69.3
+          ],
+          "scorable_questions": 15
+        },
+        {
+          "method": "hybrid",
+          "budgets": [
+            4000,
+            8000,
+            12000,
+            16000
+          ],
+          "source_coverage_percent_rounded": [
+            42.9,
+            56.3,
+            71.0,
+            77.9
+          ],
+          "scorable_questions": 15
+        },
+        {
+          "method": "ms_basic",
+          "budgets": [
+            4000,
+            8000,
+            12000,
+            16000
+          ],
+          "source_coverage_percent_rounded": [
+            35.8,
+            55.8,
+            57.4,
+            57.4
+          ],
+          "scorable_questions": 15
+        },
+        {
+          "method": "ms_local",
+          "budgets": [
+            4000,
+            8000,
+            12000,
+            16000
+          ],
+          "source_coverage_percent_rounded": [
+            5.6,
+            21.0,
+            21.0,
+            23.2
+          ],
+          "scorable_questions": 15
+        },
+        {
+          "method": "ms_local_code_prompt",
+          "budgets": [
+            4000,
+            8000,
+            12000,
+            16000
+          ],
+          "source_coverage_percent_rounded": [
+            19.0,
+            42.2,
+            53.8,
+            55.4
+          ],
+          "scorable_questions": 15
+        }
+      ],
+      "evidence": "conclusion.md:74–85 与 code-prompt/analysis.json 一位小数舍入一致；相同预算上限不等于同等实际源码量的边界保留。"
+    },
+    {
+      "check": "索引成本和语料规模",
+      "result": "pass",
+      "evidence": "conclusion.md:18–35、95–128 与冻结 size.json、code-prompt/analysis.json、failure-analysis/analysis.json 对照：41 文件、12705 行、114 块、429368 字节；默认/代码索引物理生成 518/1347，有效阶段合计 517/1338，embedding 46/103 批。所列请求为两次索引范围，未冒充含后续查询重试的全项目总数。"
+    },
+    {
+      "check": "教学 AST 与实测边界",
+      "result": "pass",
+      "evidence": "graphrag-full-explained.md:6、105、175 将 AST 分块列为预处理建议；:540 说明五表内容是简化教学示例；:583 明确一文件一函数的外观不意味着默认 AST 切分；:634 说明 Path/Symbol/Lines 是预写输入字段。未声称本次 Requests GraphRAG 索引实际用了该教学 AST 流程。"
+    },
+    {
+      "check": "更新微测与完整模型实验边界",
+      "result": "pass",
+      "evidence": "conclusion.md:130–138 及 graphrag-full-explained.md:1246 起标明固定 v3.3.0 的差分/拼接函数微测和范围，没有将教学更新示例说成已完成全模型重建或端到端增量更新实验。"
+    }
+  ],
+  "conclusion": "未发现需要阻止整合的实验事实或结论冲突；两篇远端文档可在保持原始字节和已有最新版主报告的条件下保留。",
+  "execution_constraints": {
+    "model_or_api_calls": 0,
+    "browser_used": false,
+    "remote_documents_modified": false,
+    "scores_or_gold_modified": false,
+    "prior_final_review_modified": false
+  }
+}

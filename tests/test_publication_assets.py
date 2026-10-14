@@ -10,6 +10,17 @@ spec=importlib.util.spec_from_file_location('publication_validate',ROOT/'scripts
 validator=importlib.util.module_from_spec(spec); spec.loader.exec_module(validator)
 
 class PublicationAssets(unittest.TestCase):
+    def test_remote_tutorial_sequence_diagrams_are_valid(self):
+        self.assertEqual(validator.check_mermaid((ROOT/'docs/graphrag-full-explained.md').read_text()),4)
+
+    def test_sequence_references_and_nested_blocks_are_checked(self):
+        good='```mermaid\nsequenceDiagram\nparticipant A as Reader\nparticipant B as Index\nloop Repeated lookup\nopt Cache miss\nA->>B: Lookup\nNote over A,B: Context\nB-->>A: Result\nend\nend\n```'
+        self.assertEqual(validator.check_mermaid(good),1)
+        for broken in [good.replace('A->>B:','A->>Missing:'),good.replace('Note over A,B:','Note over A,Missing:'),
+                       good.replace('\nend\nend','\nend'),good.replace('\nend\nend','\nend\nend\nend'),
+                       good.replace('A->>B: Lookup','unrecognized statement')]:
+            with self.subTest(broken=broken),self.assertRaises(AssertionError):validator.check_mermaid(broken)
+
     def test_original_figures_are_valid(self):
         figures=list((ROOT/'docs/figures').glob('*.svg'))
         self.assertEqual(len(figures),4)
