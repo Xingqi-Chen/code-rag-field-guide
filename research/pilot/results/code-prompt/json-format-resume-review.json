@@ -1,0 +1,95 @@
+{
+  "schema": 1,
+  "reviewer": {
+    "type": "independent_ai_agent",
+    "human_review": false,
+    "blind_review": false
+  },
+  "reviewed_utc": "2026-10-14T01:57:56.806797+00:00",
+  "status": "passed_after_duplicate_field_composition_fix_no_execution_blocker",
+  "human_approval_utc": "2026-10-14T01:51:30+00:00",
+  "scope": "Fixed code-prompt run, reviewed1147 quote escaping and subsequently similar deterministic minimal JSON-format repairs. No semantic rewriting or complete-response resend.",
+  "reviewed_source_sha256": {
+    "research/pilot/code_prompt_format_repair.py": "41567276a91943e8f4821e12b499fe7aa5d96f6b6b19c66001f63e3bb2a675ca",
+    "research/pilot/resume_code_prompt_format.py": "ca0b1674bf722c1bbac29b89800fe72c9c1bb3fbee09d869c0d8415bb177aa8a",
+    "research/pilot/code_prompt_experiment.py": "517e8d13458ac5544e817b37dd16d4e0d79b8fef85201fd74bdd1dcb12f87466",
+    "research/pilot/code_prompt_json_syntax.py": "6e682a1d5266348c9f7a1ce7929be17e2d67808a1f57747c565f1aeb78c135d6",
+    "research/pilot/code_prompt_schema_exception.py": "086bd4fa41571c2b94372d233ff3934fd3b7cc6a033410a7cb7fc8159fc1aff4",
+    "research/pilot/export_run_evidence.py": "97e809e21c6ef5bb6e3aa555eabb21506043d062003fcac6105b44bf231bd34b"
+  },
+  "resolved_finding": {
+    "issue": "The earlier tail-comma hook could accept duplicate JSON fields before the new ambiguity-rejecting hook.",
+    "fix": "The earlier tail candidate now parses with a duplicate-field-rejecting object_pairs_hook.",
+    "regression_verified": true,
+    "duplicate_field_negative_case_rejected_by_both_hooks": true,
+    "previous_1027_and_1091_candidates_unchanged": true
+  },
+  "cache_verification": {
+    "successful_generation_caches": 1138,
+    "imported_vectors": 134,
+    "trigger_event": 1147
+  },
+  "actual_CodeRuntime_offline_mock": {
+    "exact_cache_replays": 2,
+    "provider_request_spy_calls": 0,
+    "unique_per_reply_difference_records": 1,
+    "application_records": 2,
+    "exact_1147_quote_offsets_zero_based": [
+      2109,
+      2110,
+      2112,
+      2113
+    ],
+    "candidate_matches_independently_reviewed_diagnosis": true,
+    "private_and_public_record_identical_and_stable_on_replay": true,
+    "original_content_usage_response_hash_and_cache_hash_retained": true,
+    "copied_reply_only_changes_content": true,
+    "physical_events_attempt_counts_input_budget_embedding_budget_and_retry_policy_unchanged": true,
+    "real_ledger_request_response_and_cache_hashes_unchanged": true
+  },
+  "boundary_checks": {
+    "combined_inline_quotes_and_tail_comma_use_original_character_offsets": true,
+    "existing_escaped_quotes_preserved_without_extra_escape": true,
+    "unbounded_unbalanced_fenced_or_unmarked_quotes_rejected": true,
+    "duplicate_fields_missing_required_fields_and_wrong_field_types_rejected": true,
+    "each_selected_edit_required_for_json_syntactic_validity": true,
+    "original_REQUEST_SCHEMA_and_official_CommunityReportResponse_passed": true,
+    "original_doubled_code_quotes_preserved": true,
+    "other_unrecognized_schema_failure_still_nonretryable": true
+  },
+  "recovery_static_and_controller_mock": {
+    "prepare_requires_exact_approval_and_stopped_validated_1147": true,
+    "exclusive_lock_frozen_inputs_and_all_success_caches_checked": true,
+    "recovery_sequence_13_preserves_original_snapshot": true,
+    "generation_cap_1600_embedding_usd_cap_1_request_timeout_120_and_no_total_deadline_unchanged": true,
+    "controller_success_exits_without_retry": true,
+    "controller_unrecognized_failure_stops": true,
+    "controller_approved_transient_failure_uses_existing_bounded_policy_and_lineage_binding": true,
+    "subprocesses_replaced_by_mocks": true
+  },
+  "export_static_check": {
+    "policy_unique_repairs_and_applications_allowlisted": true,
+    "per_event_syntax_exception_links_original_and_candidate_hashes_and_evidence": true,
+    "original_usage_and_visible_tokens_not_replaced": true
+  },
+  "verification": {
+    "targeted_standard_library_format_tests_passed": 4,
+    "additional_schema_and_real_cache_mocks_passed": true
+  },
+  "reviewer_execution_boundary": {
+    "prepare_or_continue_executed": false,
+    "generation_calls": 0,
+    "embedding_calls": 0,
+    "real_worker_processes": 0,
+    "credentials_read": false,
+    "runtime_source_real_ledger_or_cache_modified_by_reviewer": false,
+    "mock_evidence_writes_in_memory_only": true,
+    "only_deliverable_written": "research/pilot/results/code-prompt/json-format-resume-review.json"
+  },
+  "limitations": [
+    "Independent AI implementation review, not human or blinded evaluation.",
+    "Invalid original JSON has no parsed value for an equivalence proof. Verification establishes exact restricted edits, preserved original code text and valid resulting schema, not factual correctness.",
+    "The implemented rule covers balanced single-backtick inline code quote escaping and trailing commas. Unrecognized or ambiguous formats remain stopped.",
+    "Actual recovery, index completion and final retrieval evaluation were not executed by the reviewer."
+  ]
+}

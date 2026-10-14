@@ -1,8 +1,10 @@
 # 代码提示词实验：真实中断与恢复记录
 
-**当前状态：第1,147次字符串内引号转义错误，已暂停，等待单独格式许可。** 2026-10-14 01:44:55 UTC收到完整HTTP200回复，输入3,904／输出1,147 token已知；前171份社区报告可用（含1027及1091的已批准尾逗号处理），第172份尚未通过原JSON解析。当前授权只允许删除字符串外尾逗号，正确地没有修复此新错误。
+**当前状态：1147已按新许可恢复，社区报告继续生成。** 用户2026-10-14 01:51:30 UTC明确批准已复核的四反斜线修复及本轮后续类似确定、最小纯JSON格式处理。原schema必须通过；文字语义／字段值、原回复、缓存及usage保留，完整响应不重发；歧义、缺字段、类型或语义变更排除。[用户授权](json-format-authorization.json)、[实际配置](json-format-amendment.json)、[启动前独立复核](json-format-resume-review.json)、[1147逐字符差异](json-format-repairs/event-1147.json)及[实际恢复](json-format-progress.json)已保存。01:58:06 UTC实际应用，1,138份生成缓存和134向量复用，累计缓存命中6,000；1148新请求随后成功。尚无新Local评分。
 
-[第13份中断快照](execution-interrupted-13.json)、[完整原文与精确候选](schema-1147-diagnosis.json)、[独立复核](schema-1147-review.json)和[离线验证日志](verification-13.json)已保存。候选仅在单个代码片段的4个引号前各插入一个反斜线；解析后仍保留原文`urljoin(httpbin_url, ""/"".join(suffix))`，不把双重引号改成正确源码。原schema和官方结构解析通过，但没有启用处理、修改原cache／usage或重发；需要新的明确许可后才可继续。离线检查：`python3 research/pilot/diagnose_code_prompt_quotes.py --check`。
+此前01:44:55 UTC收到第1147次完整HTTP200回复，但字符串内引号使JSON无效；输入3,904／输出1,147 token已知。前171份报告可用（含1027及1091尾逗号处理），第172份当时仅通过传输／内容完整性验证。旧尾逗号许可未覆盖该错误，原暂停证据保留。
+
+[第13份中断快照](execution-interrupted-13.json)、[完整原文与精确候选](schema-1147-diagnosis.json)、[独立复核](schema-1147-review.json)和[离线验证日志](verification-13.json)已保存。候选仅在单个代码片段的4个引号前各插入一个反斜线；解析后仍保留原文`urljoin(httpbin_url, ""/"".join(suffix))`，不把双重引号改成正确源码。原schema和官方结构解析通过；该诊断保留批准前状态，随后按上文新授权实际恢复，未修改原cache／usage或重发。离线检查：`python3 research/pilot/diagnose_code_prompt_quotes.py --check`。
 
 以下保留此前尾逗号授权及恢复历史。
 
