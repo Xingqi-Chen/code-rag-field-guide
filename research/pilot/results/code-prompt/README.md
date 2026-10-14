@@ -1,8 +1,10 @@
 # 代码提示词实验：真实中断与恢复记录
 
-**当前状态：第1,091次遇新的JSON格式错误，已停止。** 2026-10-14 01:22:28 UTC，第116份社区报告回复含4个对象末尾多余逗号，未通过原版JSON解析。前115份可用，其中1027使用了一次已获准格式例外；1091不在该许可内，没有修复或重发。新索引、embedding与Local评分未完成。
+**当前状态：本轮纯JSON尾逗号处理已获准，1091恢复成功，报告继续生成。** 用户2026-10-14 01:27:36 UTC明确允许后续同类错误无需逐次确认；只删除字符串外、下一非空白字符为对象／数组闭括号的逗号，原schema及字符串逐字校验必须通过。原始完整回复不重发、不改写，逐条保存原文、候选、字符偏移和usage。其他JSON或语义错误仍停止，预算和瞬态重试规则不变。[授权](json-tail-comma-authorization.json)、[实际配置](json-tail-comma-amendment.json)、[独立启动复核](json-tail-comma-resume-review.json)、[1091逐条差异](json-syntax-repairs/event-1091.json)及[实际继续证据](json-tail-comma-progress.json)均已保存。1,082份生成缓存与134向量复用，累计缓存命中4,862；1092作为不同请求随后成功。尚无新Local评分。
 
-[第12份停止快照](execution-interrupted-12.json)、[1091完整原文与精确候选](schema-1091-diagnosis.json)及[独立复核](schema-1091-review.json)已保存。仅删除4个字符串外逗号后，原schema通过、全部字符串与5条findings保留；候选未用于正式流程。1091 HTTP200、finish stop，已知provider输入4,252／输出1,029 token，未把格式失败记为未知用量。可离线运行`python3 research/pilot/diagnose_code_prompt_schema.py --event 1091 --check`。
+此前2026-10-14 01:22:28 UTC，第116份社区报告回复含4个对象末尾多余逗号，未通过原版JSON解析而停止。前115份可用，其中1027使用了一次已获准格式例外；当时该许可不覆盖1091。
+
+[第12份停止快照](execution-interrupted-12.json)、[1091完整原文与精确候选](schema-1091-diagnosis.json)及[独立复核](schema-1091-review.json)已保存。仅删除4个字符串外逗号后，原schema通过、全部字符串与5条findings保留；诊断文件保留批准前状态，后续执行以上述统一授权和差异记录为准。1091 HTTP200、finish stop，已知provider输入4,252／输出1,029 token，未把格式失败记为未知用量。可离线运行`python3 research/pilot/diagnose_code_prompt_schema.py --event 1091 --check`。
 
 此前用户于2026-10-14 01:03:05 UTC明确批准仅1027删除4个对象末尾逗号，按原schema验证后继续，不重发、不做其他JSON或语义修复。01:10:51 UTC在读取精确缓存时成功应用；原response／cache哈希和usage均保持不变，1028作为不同的新报告请求随后成功。1,018份原生成回复及134向量核验复用，累计缓存命中3,780。[授权](schema-1027-authorization.json)、[实际配置](schema-1027-amendment.json)、[恢复前独立复核](schema-1027-resume-review.json)及[实际继续证据](schema-1027-progress.json)保留全过程。
 
