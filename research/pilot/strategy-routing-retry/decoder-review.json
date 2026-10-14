@@ -1,0 +1,99 @@
+{
+  "reviewer": "answer_review_d",
+  "status": "offline_decoder_tests_passed_worker_integration_not_reviewed",
+  "date": "2026-10-14",
+  "network_generation_calls": 0,
+  "credential_reads": false,
+  "old_files_modified": false,
+  "old_file_sha256": {
+    "research/pilot/probe_runtime.py": "6489f4d87d3bc0f2e6f55e3d6e9b70db6105212f8da6fcc60d8f3c99a5211820",
+    "research/pilot/code_prompt_transport.py": "5d7ab414ee5eb2f280c71834ccdf3824555d00b90aba050ce12f326b08e55e5d",
+    "research/pilot/strategy-routing/runtime/transport.py": "7be36788295d296727e30c14c6e8c01aed37aa6d5cca64efd7c0217e1f85ad9c",
+    "research/pilot/strategy-routing/runtime/official.py": "814cee392a035243ba043e6acacb1383f677001f1b01774dd06b7526d283427e",
+    "research/pilot/strategy-routing/runtime/bounded.py": "97c2c195834ef3806766aee8f5980b585e454682a062d266851cef3872b6dcd3"
+  },
+  "source_sha256": {
+    ".cache/ms-graphrag/graphrag-5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/query/structured_search/drift_search/primer.py": "9dcecfd6028a5b1a29846c88c4535970e8fa35887cd4fb4ab5ff4db773864110",
+    ".cache/ms-graphrag/graphrag-5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag-llm/graphrag_llm/types/types.py": "68d8e9155aa4fef6a6742cd024a0b06dc783f38f08c28671292f458872bb9078",
+    ".cache/ms-graphrag/graphrag-5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag-llm/graphrag_llm/utils/structure_response.py": "f1fd73aec047e058817510b4301b40ae4049eb595eb00b902057fb00ad10e7c9",
+    ".cache/graphrag-venv/lib/python3.12/site-packages/openai/types/responses/response.py": "38c562a4c9a104cae472bf2e9af097bad9311fad82906b1de8cf61a78b717cb1",
+    ".cache/graphrag-venv/lib/python3.12/site-packages/openai-2.54.0.dist-info/METADATA": "a2b835e6085339169e701557eca14b1b93d5cabc5ff01f535a66023b5f41bb59"
+  },
+  "implementation_sha256": {
+    "research/pilot/strategy-routing-retry/responses_decoder.py": "bd4f9684094336e5076bae6a4deb8e853cb3cc699363010b3c031a496fb2ab15",
+    "research/pilot/strategy-routing-retry/test_responses_decoder.py": "a8678a938378d948419bdf9d5e370c4b6c2c1a233c502e93251b2565fea004d0",
+    "research/pilot/strategy-routing-retry/DECODER.md": "6e5bb3e4eb752949a51b8fa7183496c7446979691f9cffba63b2fbdf7880b013"
+  },
+  "official_sources": [
+    {
+      "name": "OpenAI Python Response.output_text",
+      "version": "2.54.0",
+      "local_lines": [
+        476,
+        488
+      ],
+      "url": "https://github.com/openai/openai-python/blob/v2.54.0/src/openai/types/responses/response.py",
+      "accessed": "2026-10-14",
+      "short_quote": "return \"\".join(texts)"
+    },
+    {
+      "name": "GraphRAG DRIFT PrimerResponse",
+      "version": "3.3.0",
+      "commit": "5faaaf4f5685fa2056fa8c3bf9342cb089f2942f",
+      "url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/query/structured_search/drift_search/primer.py",
+      "accessed": "2026-10-14"
+    }
+  ],
+  "confirmed_findings": [
+    "Frozen decoder rejects more than one assistant message even when all output text is valid; synthetic regression and installed SDK property demonstrate the mismatch.",
+    "Frozen decoder failure precedes PrimerResponse parsing.",
+    "Frozen worker persists no raw body or HTTP metadata on this decoder error.",
+    "New decoder preserves ordered text without selecting a JSON-looking message, and strict JSON/schema validation remains required."
+  ],
+  "historical_causality": "The six original error categories do not distinguish empty/blank/multiple messages. Their raw replies are unavailable. No claim that the tested compatibility fix solves their actual causes.",
+  "tests": {
+    "command": ".cache/graphrag-venv/bin/python -B research/pilot/strategy-routing-retry/test_responses_decoder.py",
+    "python": "3.12.10",
+    "run": 28,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "names": [
+      "decoder_tests.DecoderTests.test_commentary_plus_json_not_cherry_picked",
+      "decoder_tests.DecoderTests.test_delta_without_terminal_not_success",
+      "decoder_tests.DecoderTests.test_diagnostics_never_reflect_arbitrary_labels",
+      "decoder_tests.DecoderTests.test_done_marker_after_terminal_allowed",
+      "decoder_tests.DecoderTests.test_done_recovery_preserved",
+      "decoder_tests.DecoderTests.test_done_terminal_conflict_rejected",
+      "decoder_tests.DecoderTests.test_done_without_terminal_not_success",
+      "decoder_tests.DecoderTests.test_duplicate_done_id_rejected",
+      "decoder_tests.DecoderTests.test_duplicate_done_rejected",
+      "decoder_tests.DecoderTests.test_duplicate_terminal_output_id_rejected",
+      "decoder_tests.DecoderTests.test_empty_and_reasoning_only_are_failures",
+      "decoder_tests.DecoderTests.test_incomplete_and_failed_rejected",
+      "decoder_tests.DecoderTests.test_installed_sdk_output_text_property_equivalence",
+      "decoder_tests.DecoderTests.test_invalid_and_missing_usage_not_fabricated",
+      "decoder_tests.DecoderTests.test_malformed_event_type_and_status_remain_fixed_errors",
+      "decoder_tests.DecoderTests.test_multiple_content_blocks",
+      "decoder_tests.DecoderTests.test_noncontiguous_done_recovery_rejected",
+      "decoder_tests.DecoderTests.test_output_after_terminal_rejected",
+      "decoder_tests.DecoderTests.test_reasoning_excluded",
+      "decoder_tests.DecoderTests.test_refusal_and_tool_rejected",
+      "decoder_tests.DecoderTests.test_single_message_old_and_new_identical",
+      "decoder_tests.DecoderTests.test_split_json_reassembles_without_repair",
+      "decoder_tests.DecoderTests.test_strict_primer_contract_from_pinned_source",
+      "decoder_tests.DecoderTests.test_top_level_output_text_not_fallback",
+      "decoder_tests.DecoderTests.test_two_complete_json_documents_not_cherry_picked",
+      "decoder_tests.DecoderTests.test_two_message_sse_aggregation",
+      "decoder_tests.DecoderTests.test_two_messages_old_rejects_new_aggregates",
+      "decoder_tests.DecoderTests.test_wrong_identity_rejected"
+    ],
+    "output": "test_commentary_plus_json_not_cherry_picked (decoder_tests.DecoderTests.test_commentary_plus_json_not_cherry_picked) ... ok\ntest_delta_without_terminal_not_success (decoder_tests.DecoderTests.test_delta_without_terminal_not_success) ... ok\ntest_diagnostics_never_reflect_arbitrary_labels (decoder_tests.DecoderTests.test_diagnostics_never_reflect_arbitrary_labels) ... ok\ntest_done_marker_after_terminal_allowed (decoder_tests.DecoderTests.test_done_marker_after_terminal_allowed) ... ok\ntest_done_recovery_preserved (decoder_tests.DecoderTests.test_done_recovery_preserved) ... ok\ntest_done_terminal_conflict_rejected (decoder_tests.DecoderTests.test_done_terminal_conflict_rejected) ... ok\ntest_done_without_terminal_not_success (decoder_tests.DecoderTests.test_done_without_terminal_not_success) ... ok\ntest_duplicate_done_id_rejected (decoder_tests.DecoderTests.test_duplicate_done_id_rejected) ... ok\ntest_duplicate_done_rejected (decoder_tests.DecoderTests.test_duplicate_done_rejected) ... ok\ntest_duplicate_terminal_output_id_rejected (decoder_tests.DecoderTests.test_duplicate_terminal_output_id_rejected) ... ok\ntest_empty_and_reasoning_only_are_failures (decoder_tests.DecoderTests.test_empty_and_reasoning_only_are_failures) ... ok\ntest_incomplete_and_failed_rejected (decoder_tests.DecoderTests.test_incomplete_and_failed_rejected) ... ok\ntest_installed_sdk_output_text_property_equivalence (decoder_tests.DecoderTests.test_installed_sdk_output_text_property_equivalence) ... ok\ntest_invalid_and_missing_usage_not_fabricated (decoder_tests.DecoderTests.test_invalid_and_missing_usage_not_fabricated) ... ok\ntest_malformed_event_type_and_status_remain_fixed_errors (decoder_tests.DecoderTests.test_malformed_event_type_and_status_remain_fixed_errors) ... ok\ntest_multiple_content_blocks (decoder_tests.DecoderTests.test_multiple_content_blocks) ... ok\ntest_noncontiguous_done_recovery_rejected (decoder_tests.DecoderTests.test_noncontiguous_done_recovery_rejected) ... ok\ntest_output_after_terminal_rejected (decoder_tests.DecoderTests.test_output_after_terminal_rejected) ... ok\ntest_reasoning_excluded (decoder_tests.DecoderTests.test_reasoning_excluded) ... ok\ntest_refusal_and_tool_rejected (decoder_tests.DecoderTests.test_refusal_and_tool_rejected) ... ok\ntest_single_message_old_and_new_identical (decoder_tests.DecoderTests.test_single_message_old_and_new_identical) ... ok\ntest_split_json_reassembles_without_repair (decoder_tests.DecoderTests.test_split_json_reassembles_without_repair) ... ok\ntest_strict_primer_contract_from_pinned_source (decoder_tests.DecoderTests.test_strict_primer_contract_from_pinned_source) ... ok\ntest_top_level_output_text_not_fallback (decoder_tests.DecoderTests.test_top_level_output_text_not_fallback) ... ok\ntest_two_complete_json_documents_not_cherry_picked (decoder_tests.DecoderTests.test_two_complete_json_documents_not_cherry_picked) ... ok\ntest_two_message_sse_aggregation (decoder_tests.DecoderTests.test_two_message_sse_aggregation) ... ok\ntest_two_messages_old_rejects_new_aggregates (decoder_tests.DecoderTests.test_two_messages_old_rejects_new_aggregates) ... ok\ntest_wrong_identity_rejected (decoder_tests.DecoderTests.test_wrong_identity_rejected) ... ok\n\n----------------------------------------------------------------------\nRan 28 tests in 0.065s\n\nOK\n"
+  },
+  "integration_requirements": [
+    "Save bounded raw bytes privately before decoding; classify complete vs truncated; do not export raw, reasoning, headers, credentials or arbitrary errors.",
+    "Catch DecodeError, persist its safe diagnostics, retain valid usage for failed decodes, and leave absent usage unknown.",
+    "Keep original model, usage and token cap validation, strict JSON, PrimerResponse contract, and new cumulative ledger limits.",
+    "New retry results and failure attribution must be recorded separately; never replace frozen original scores."
+  ]
+}

@@ -1,0 +1,3110 @@
+{
+  "schema": "drift_retry_readonly_diagnosis_v1",
+  "date_utc": "2026-10-14",
+  "status": "completed_readonly_diagnosis",
+  "scope": {
+    "task": "核对13个DRIFT逐阶段状态、6个失败缓存可恢复性与7个成功primer结构",
+    "api_calls": 0,
+    "new_model_inferences": 0,
+    "credentials_read": false,
+    "worker_executed": false,
+    "old_results_modified": false,
+    "gold_modified": false,
+    "scores_modified": false,
+    "routes_modified": false,
+    "only_written_file": "research/pilot/strategy-routing-retry/diagnosis.json",
+    "public_safety": "只保存固定错误类别、结构、计数、哈希、事件与相对路径；不读取credentials.env或任何密钥，不发布原始响应/推理正文。"
+  },
+  "summary_zh": [
+    "旧轮13次DRIFT为7成功、6失败。6次均在primer响应的可见消息解码检查失败；此前HyDE和初始embedding已验证，后续Local和reduce未执行。",
+    "6个原始response缓存都只有63字节、同一条error_category；没有SSE正文、可见输出、HTTP状态或usage。已核查的缓存与日志不足以离线恢复这6份primer。",
+    "不能把缓存只剩错误类别说成上游返回了空响应。该类别合并零消息、多消息或单条空白消息，现有记录无法区分；HTTP确切状态和生成用量也未知。",
+    "7次成功primer使用相同模型、2048输出设置、stream=true及strict PrimerResponse结构，均保存单条非空可解析内容。现有对比不能唯一归因到provider、网关、schema兼容、长度限制或解码器。"
+  ],
+  "counts": {
+    "drift_total": 13,
+    "completed": 7,
+    "failed": 6,
+    "failed_main_test": 5,
+    "failed_dev": 1,
+    "failed_supplement": 0,
+    "successful_generation_stages": 49,
+    "failed_cells_generation_attempts": 12,
+    "failure_stage": "primer",
+    "failure_event_sequences": [
+      43,
+      64,
+      70,
+      106,
+      127,
+      148
+    ],
+    "completed_question_ids": [
+      "Q07",
+      "Q09",
+      "Q12",
+      "Q13",
+      "Q15",
+      "Q17",
+      "F02-plan"
+    ],
+    "failed_question_ids": [
+      "Q08",
+      "Q10",
+      "Q11",
+      "Q14",
+      "Q16",
+      "Q18"
+    ]
+  },
+  "old_ledger_binding": {
+    "file": ".cache/pilot/strategy-routing-20261014/summary.json",
+    "sha256": "f2eb40e3839e2a04b3ece1cf2a9fa3b9db4f03371d5e4eeee9505e40f3a405c5",
+    "public_execution_file": "research/pilot/strategy-routing/results/execution.json",
+    "public_execution_private_summary_sha256": "f2eb40e3839e2a04b3ece1cf2a9fa3b9db4f03371d5e4eeee9505e40f3a405c5",
+    "equal": true,
+    "cumulative_counts_unchanged": {
+      "generation_reservations": 1498,
+      "generation_input_tokens": 3095030,
+      "embedding_tokens": 666553,
+      "embedding_attempts": 147
+    },
+    "status": "complete_with_recorded_failures"
+  },
+  "stage_table": [
+    {
+      "question_id": "Q07",
+      "split": "test",
+      "status": "complete",
+      "failure": null,
+      "cell_file": "research/pilot/strategy-routing/results/cells/Q07-routed_graphrag.json",
+      "primer_event": 28,
+      "generation_attempts": 7,
+      "embedding_attempts": 5,
+      "stages": {
+        "hyde": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            26
+          ]
+        },
+        "query_embedding": {
+          "attempts": 5,
+          "validated": 5,
+          "failed": 0,
+          "event_sequences": [
+            27,
+            29,
+            31,
+            33,
+            35
+          ]
+        },
+        "primer": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            28
+          ]
+        },
+        "local": {
+          "attempts": 4,
+          "validated": 4,
+          "failed": 0,
+          "event_sequences": [
+            30,
+            32,
+            34,
+            36
+          ]
+        },
+        "reduce": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            37
+          ]
+        }
+      },
+      "event_order": [
+        {
+          "event": 26,
+          "stage": "hyde",
+          "status": "validated"
+        },
+        {
+          "event": 27,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 28,
+          "stage": "primer",
+          "status": "validated"
+        },
+        {
+          "event": 29,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 30,
+          "stage": "local",
+          "status": "validated"
+        },
+        {
+          "event": 31,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 32,
+          "stage": "local",
+          "status": "validated"
+        },
+        {
+          "event": 33,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 34,
+          "stage": "local",
+          "status": "validated"
+        },
+        {
+          "event": 35,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 36,
+          "stage": "local",
+          "status": "validated"
+        },
+        {
+          "event": 37,
+          "stage": "reduce",
+          "status": "validated"
+        }
+      ],
+      "answer_saved": true
+    },
+    {
+      "question_id": "Q08",
+      "split": "test",
+      "status": "failed",
+      "failure": "responses_empty_or_multiple_messages",
+      "cell_file": "research/pilot/strategy-routing/results/cells/Q08-routed_graphrag.json",
+      "primer_event": 43,
+      "generation_attempts": 2,
+      "embedding_attempts": 1,
+      "stages": {
+        "hyde": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            41
+          ]
+        },
+        "query_embedding": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            42
+          ]
+        },
+        "primer": {
+          "attempts": 1,
+          "validated": 0,
+          "failed": 1,
+          "event_sequences": [
+            43
+          ]
+        },
+        "local": {
+          "attempts": 0,
+          "validated": 0,
+          "failed": 0,
+          "event_sequences": []
+        },
+        "reduce": {
+          "attempts": 0,
+          "validated": 0,
+          "failed": 0,
+          "event_sequences": []
+        }
+      },
+      "event_order": [
+        {
+          "event": 41,
+          "stage": "hyde",
+          "status": "validated"
+        },
+        {
+          "event": 42,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 43,
+          "stage": "primer",
+          "status": "failed"
+        }
+      ],
+      "answer_saved": false
+    },
+    {
+      "question_id": "Q09",
+      "split": "test",
+      "status": "complete",
+      "failure": null,
+      "cell_file": "research/pilot/strategy-routing/results/cells/Q09-routed_graphrag.json",
+      "primer_event": 49,
+      "generation_attempts": 7,
+      "embedding_attempts": 5,
+      "stages": {
+        "hyde": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            47
+          ]
+        },
+        "query_embedding": {
+          "attempts": 5,
+          "validated": 5,
+          "failed": 0,
+          "event_sequences": [
+            48,
+            50,
+            52,
+            54,
+            56
+          ]
+        },
+        "primer": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            49
+          ]
+        },
+        "local": {
+          "attempts": 4,
+          "validated": 4,
+          "failed": 0,
+          "event_sequences": [
+            51,
+            53,
+            55,
+            57
+          ]
+        },
+        "reduce": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            58
+          ]
+        }
+      },
+      "event_order": [
+        {
+          "event": 47,
+          "stage": "hyde",
+          "status": "validated"
+        },
+        {
+          "event": 48,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 49,
+          "stage": "primer",
+          "status": "validated"
+        },
+        {
+          "event": 50,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 51,
+          "stage": "local",
+          "status": "validated"
+        },
+        {
+          "event": 52,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 53,
+          "stage": "local",
+          "status": "validated"
+        },
+        {
+          "event": 54,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 55,
+          "stage": "local",
+          "status": "validated"
+        },
+        {
+          "event": 56,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 57,
+          "stage": "local",
+          "status": "validated"
+        },
+        {
+          "event": 58,
+          "stage": "reduce",
+          "status": "validated"
+        }
+      ],
+      "answer_saved": true
+    },
+    {
+      "question_id": "Q10",
+      "split": "test",
+      "status": "failed",
+      "failure": "responses_empty_or_multiple_messages",
+      "cell_file": "research/pilot/strategy-routing/results/cells/Q10-routed_graphrag.json",
+      "primer_event": 64,
+      "generation_attempts": 2,
+      "embedding_attempts": 1,
+      "stages": {
+        "hyde": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            62
+          ]
+        },
+        "query_embedding": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            63
+          ]
+        },
+        "primer": {
+          "attempts": 1,
+          "validated": 0,
+          "failed": 1,
+          "event_sequences": [
+            64
+          ]
+        },
+        "local": {
+          "attempts": 0,
+          "validated": 0,
+          "failed": 0,
+          "event_sequences": []
+        },
+        "reduce": {
+          "attempts": 0,
+          "validated": 0,
+          "failed": 0,
+          "event_sequences": []
+        }
+      },
+      "event_order": [
+        {
+          "event": 62,
+          "stage": "hyde",
+          "status": "validated"
+        },
+        {
+          "event": 63,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 64,
+          "stage": "primer",
+          "status": "failed"
+        }
+      ],
+      "answer_saved": false
+    },
+    {
+      "question_id": "Q11",
+      "split": "dev",
+      "status": "failed",
+      "failure": "responses_empty_or_multiple_messages",
+      "cell_file": "research/pilot/strategy-routing/results/cells/Q11-routed_graphrag.json",
+      "primer_event": 70,
+      "generation_attempts": 2,
+      "embedding_attempts": 1,
+      "stages": {
+        "hyde": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            68
+          ]
+        },
+        "query_embedding": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            69
+          ]
+        },
+        "primer": {
+          "attempts": 1,
+          "validated": 0,
+          "failed": 1,
+          "event_sequences": [
+            70
+          ]
+        },
+        "local": {
+          "attempts": 0,
+          "validated": 0,
+          "failed": 0,
+          "event_sequences": []
+        },
+        "reduce": {
+          "attempts": 0,
+          "validated": 0,
+          "failed": 0,
+          "event_sequences": []
+        }
+      },
+      "event_order": [
+        {
+          "event": 68,
+          "stage": "hyde",
+          "status": "validated"
+        },
+        {
+          "event": 69,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 70,
+          "stage": "primer",
+          "status": "failed"
+        }
+      ],
+      "answer_saved": false
+    },
+    {
+      "question_id": "Q12",
+      "split": "test",
+      "status": "complete",
+      "failure": null,
+      "cell_file": "research/pilot/strategy-routing/results/cells/Q12-routed_graphrag.json",
+      "primer_event": 76,
+      "generation_attempts": 7,
+      "embedding_attempts": 5,
+      "stages": {
+        "hyde": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            74
+          ]
+        },
+        "query_embedding": {
+          "attempts": 5,
+          "validated": 5,
+          "failed": 0,
+          "event_sequences": [
+            75,
+            77,
+            79,
+            81,
+            83
+          ]
+        },
+        "primer": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            76
+          ]
+        },
+        "local": {
+          "attempts": 4,
+          "validated": 4,
+          "failed": 0,
+          "event_sequences": [
+            78,
+            80,
+            82,
+            84
+          ]
+        },
+        "reduce": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            85
+          ]
+        }
+      },
+      "event_order": [
+        {
+          "event": 74,
+          "stage": "hyde",
+          "status": "validated"
+        },
+        {
+          "event": 75,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 76,
+          "stage": "primer",
+          "status": "validated"
+        },
+        {
+          "event": 77,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 78,
+          "stage": "local",
+          "status": "validated"
+        },
+        {
+          "event": 79,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 80,
+          "stage": "local",
+          "status": "validated"
+        },
+        {
+          "event": 81,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 82,
+          "stage": "local",
+          "status": "validated"
+        },
+        {
+          "event": 83,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 84,
+          "stage": "local",
+          "status": "validated"
+        },
+        {
+          "event": 85,
+          "stage": "reduce",
+          "status": "validated"
+        }
+      ],
+      "answer_saved": true
+    },
+    {
+      "question_id": "Q13",
+      "split": "test",
+      "status": "complete",
+      "failure": null,
+      "cell_file": "research/pilot/strategy-routing/results/cells/Q13-routed_graphrag.json",
+      "primer_event": 91,
+      "generation_attempts": 7,
+      "embedding_attempts": 5,
+      "stages": {
+        "hyde": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            89
+          ]
+        },
+        "query_embedding": {
+          "attempts": 5,
+          "validated": 5,
+          "failed": 0,
+          "event_sequences": [
+            90,
+            92,
+            94,
+            96,
+            98
+          ]
+        },
+        "primer": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            91
+          ]
+        },
+        "local": {
+          "attempts": 4,
+          "validated": 4,
+          "failed": 0,
+          "event_sequences": [
+            93,
+            95,
+            97,
+            99
+          ]
+        },
+        "reduce": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            100
+          ]
+        }
+      },
+      "event_order": [
+        {
+          "event": 89,
+          "stage": "hyde",
+          "status": "validated"
+        },
+        {
+          "event": 90,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 91,
+          "stage": "primer",
+          "status": "validated"
+        },
+        {
+          "event": 92,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 93,
+          "stage": "local",
+          "status": "validated"
+        },
+        {
+          "event": 94,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 95,
+          "stage": "local",
+          "status": "validated"
+        },
+        {
+          "event": 96,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 97,
+          "stage": "local",
+          "status": "validated"
+        },
+        {
+          "event": 98,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 99,
+          "stage": "local",
+          "status": "validated"
+        },
+        {
+          "event": 100,
+          "stage": "reduce",
+          "status": "validated"
+        }
+      ],
+      "answer_saved": true
+    },
+    {
+      "question_id": "Q14",
+      "split": "test",
+      "status": "failed",
+      "failure": "responses_empty_or_multiple_messages",
+      "cell_file": "research/pilot/strategy-routing/results/cells/Q14-routed_graphrag.json",
+      "primer_event": 106,
+      "generation_attempts": 2,
+      "embedding_attempts": 1,
+      "stages": {
+        "hyde": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            104
+          ]
+        },
+        "query_embedding": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            105
+          ]
+        },
+        "primer": {
+          "attempts": 1,
+          "validated": 0,
+          "failed": 1,
+          "event_sequences": [
+            106
+          ]
+        },
+        "local": {
+          "attempts": 0,
+          "validated": 0,
+          "failed": 0,
+          "event_sequences": []
+        },
+        "reduce": {
+          "attempts": 0,
+          "validated": 0,
+          "failed": 0,
+          "event_sequences": []
+        }
+      },
+      "event_order": [
+        {
+          "event": 104,
+          "stage": "hyde",
+          "status": "validated"
+        },
+        {
+          "event": 105,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 106,
+          "stage": "primer",
+          "status": "failed"
+        }
+      ],
+      "answer_saved": false
+    },
+    {
+      "question_id": "Q15",
+      "split": "test",
+      "status": "complete",
+      "failure": null,
+      "cell_file": "research/pilot/strategy-routing/results/cells/Q15-routed_graphrag.json",
+      "primer_event": 112,
+      "generation_attempts": 7,
+      "embedding_attempts": 5,
+      "stages": {
+        "hyde": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            110
+          ]
+        },
+        "query_embedding": {
+          "attempts": 5,
+          "validated": 5,
+          "failed": 0,
+          "event_sequences": [
+            111,
+            113,
+            115,
+            117,
+            119
+          ]
+        },
+        "primer": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            112
+          ]
+        },
+        "local": {
+          "attempts": 4,
+          "validated": 4,
+          "failed": 0,
+          "event_sequences": [
+            114,
+            116,
+            118,
+            120
+          ]
+        },
+        "reduce": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            121
+          ]
+        }
+      },
+      "event_order": [
+        {
+          "event": 110,
+          "stage": "hyde",
+          "status": "validated"
+        },
+        {
+          "event": 111,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 112,
+          "stage": "primer",
+          "status": "validated"
+        },
+        {
+          "event": 113,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 114,
+          "stage": "local",
+          "status": "validated"
+        },
+        {
+          "event": 115,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 116,
+          "stage": "local",
+          "status": "validated"
+        },
+        {
+          "event": 117,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 118,
+          "stage": "local",
+          "status": "validated"
+        },
+        {
+          "event": 119,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 120,
+          "stage": "local",
+          "status": "validated"
+        },
+        {
+          "event": 121,
+          "stage": "reduce",
+          "status": "validated"
+        }
+      ],
+      "answer_saved": true
+    },
+    {
+      "question_id": "Q16",
+      "split": "test",
+      "status": "failed",
+      "failure": "responses_empty_or_multiple_messages",
+      "cell_file": "research/pilot/strategy-routing/results/cells/Q16-routed_graphrag.json",
+      "primer_event": 127,
+      "generation_attempts": 2,
+      "embedding_attempts": 1,
+      "stages": {
+        "hyde": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            125
+          ]
+        },
+        "query_embedding": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            126
+          ]
+        },
+        "primer": {
+          "attempts": 1,
+          "validated": 0,
+          "failed": 1,
+          "event_sequences": [
+            127
+          ]
+        },
+        "local": {
+          "attempts": 0,
+          "validated": 0,
+          "failed": 0,
+          "event_sequences": []
+        },
+        "reduce": {
+          "attempts": 0,
+          "validated": 0,
+          "failed": 0,
+          "event_sequences": []
+        }
+      },
+      "event_order": [
+        {
+          "event": 125,
+          "stage": "hyde",
+          "status": "validated"
+        },
+        {
+          "event": 126,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 127,
+          "stage": "primer",
+          "status": "failed"
+        }
+      ],
+      "answer_saved": false
+    },
+    {
+      "question_id": "Q17",
+      "split": "test",
+      "status": "complete",
+      "failure": null,
+      "cell_file": "research/pilot/strategy-routing/results/cells/Q17-routed_graphrag.json",
+      "primer_event": 133,
+      "generation_attempts": 7,
+      "embedding_attempts": 5,
+      "stages": {
+        "hyde": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            131
+          ]
+        },
+        "query_embedding": {
+          "attempts": 5,
+          "validated": 5,
+          "failed": 0,
+          "event_sequences": [
+            132,
+            134,
+            136,
+            138,
+            140
+          ]
+        },
+        "primer": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            133
+          ]
+        },
+        "local": {
+          "attempts": 4,
+          "validated": 4,
+          "failed": 0,
+          "event_sequences": [
+            135,
+            137,
+            139,
+            141
+          ]
+        },
+        "reduce": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            142
+          ]
+        }
+      },
+      "event_order": [
+        {
+          "event": 131,
+          "stage": "hyde",
+          "status": "validated"
+        },
+        {
+          "event": 132,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 133,
+          "stage": "primer",
+          "status": "validated"
+        },
+        {
+          "event": 134,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 135,
+          "stage": "local",
+          "status": "validated"
+        },
+        {
+          "event": 136,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 137,
+          "stage": "local",
+          "status": "validated"
+        },
+        {
+          "event": 138,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 139,
+          "stage": "local",
+          "status": "validated"
+        },
+        {
+          "event": 140,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 141,
+          "stage": "local",
+          "status": "validated"
+        },
+        {
+          "event": 142,
+          "stage": "reduce",
+          "status": "validated"
+        }
+      ],
+      "answer_saved": true
+    },
+    {
+      "question_id": "Q18",
+      "split": "test",
+      "status": "failed",
+      "failure": "responses_empty_or_multiple_messages",
+      "cell_file": "research/pilot/strategy-routing/results/cells/Q18-routed_graphrag.json",
+      "primer_event": 148,
+      "generation_attempts": 2,
+      "embedding_attempts": 1,
+      "stages": {
+        "hyde": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            146
+          ]
+        },
+        "query_embedding": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            147
+          ]
+        },
+        "primer": {
+          "attempts": 1,
+          "validated": 0,
+          "failed": 1,
+          "event_sequences": [
+            148
+          ]
+        },
+        "local": {
+          "attempts": 0,
+          "validated": 0,
+          "failed": 0,
+          "event_sequences": []
+        },
+        "reduce": {
+          "attempts": 0,
+          "validated": 0,
+          "failed": 0,
+          "event_sequences": []
+        }
+      },
+      "event_order": [
+        {
+          "event": 146,
+          "stage": "hyde",
+          "status": "validated"
+        },
+        {
+          "event": 147,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 148,
+          "stage": "primer",
+          "status": "failed"
+        }
+      ],
+      "answer_saved": false
+    },
+    {
+      "question_id": "F02-plan",
+      "split": "separate_supplement",
+      "status": "complete",
+      "failure": null,
+      "cell_file": "research/pilot/strategy-routing/results/cells/F02-plan-routed_graphrag.json",
+      "primer_event": 162,
+      "generation_attempts": 7,
+      "embedding_attempts": 5,
+      "stages": {
+        "hyde": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            160
+          ]
+        },
+        "query_embedding": {
+          "attempts": 5,
+          "validated": 5,
+          "failed": 0,
+          "event_sequences": [
+            161,
+            163,
+            165,
+            167,
+            169
+          ]
+        },
+        "primer": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            162
+          ]
+        },
+        "local": {
+          "attempts": 4,
+          "validated": 4,
+          "failed": 0,
+          "event_sequences": [
+            164,
+            166,
+            168,
+            170
+          ]
+        },
+        "reduce": {
+          "attempts": 1,
+          "validated": 1,
+          "failed": 0,
+          "event_sequences": [
+            171
+          ]
+        }
+      },
+      "event_order": [
+        {
+          "event": 160,
+          "stage": "hyde",
+          "status": "validated"
+        },
+        {
+          "event": 161,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 162,
+          "stage": "primer",
+          "status": "validated"
+        },
+        {
+          "event": 163,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 164,
+          "stage": "local",
+          "status": "validated"
+        },
+        {
+          "event": 165,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 166,
+          "stage": "local",
+          "status": "validated"
+        },
+        {
+          "event": 167,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 168,
+          "stage": "local",
+          "status": "validated"
+        },
+        {
+          "event": 169,
+          "stage": "query_embedding",
+          "status": "validated"
+        },
+        {
+          "event": 170,
+          "stage": "local",
+          "status": "validated"
+        },
+        {
+          "event": 171,
+          "stage": "reduce",
+          "status": "validated"
+        }
+      ],
+      "answer_saved": true
+    }
+  ],
+  "failure_cache_diagnostics": [
+    {
+      "question_id": "Q08",
+      "split": "test",
+      "event": 43,
+      "stage": "primer",
+      "status": "failed",
+      "request_dispatched": true,
+      "http_status_saved": null,
+      "usage_saved": null,
+      "request_body_sha256": "c472c7e55140cfe9d6301c4d0eed62f47460344e837fdb8a7e55eceb6d7c7ef5",
+      "request_key": "fe6d250390d8dd785d0e731e5be25ab50a36b61369da2744724bb8fa1b0de364",
+      "response_cache": {
+        "file": ".cache/pilot/strategy-routing-20261014/response-43.json",
+        "bytes": 63,
+        "sha256": "e8a6774b49bb83eccd61ab0647e46cd39514e8d5c0785a7c72da87b574e9f1ef",
+        "saved_json_verbatim": {
+          "error_category": "responses_empty_or_multiple_messages"
+        },
+        "raw_http_or_sse_body_present": false,
+        "visible_answer_text_present": false,
+        "http_status_present": false,
+        "usage_present": false,
+        "response_bytes_present": false
+      },
+      "dispatch_sidecar": {
+        "file": ".cache/pilot/strategy-routing-20261014/response-43.dispatch.json",
+        "sha256": "b9623c19d5321bd1e8a7666cc7a75a3e59062d58930c3735c8135c8608ad88d2",
+        "saved_json_verbatim": {
+          "dispatch_slot_claimed": true,
+          "dispatch_started": true
+        }
+      },
+      "request_cache": {
+        "file": ".cache/pilot/strategy-routing-20261014/request-43.json",
+        "bytes": 14908,
+        "sha256": "c4918e98605010f9fe403e28f72af849e5fb3a14600dbe4b5d77469e8eaf3b3d",
+        "top_level_keys": [
+          "service",
+          "body"
+        ],
+        "body_keys": [
+          "model",
+          "input",
+          "max_output_tokens",
+          "store",
+          "stream",
+          "num_retries",
+          "fallbacks",
+          "context_window_fallback_dict",
+          "caching",
+          "text"
+        ],
+        "input_messages": 2,
+        "contains_payload_not_reply": true
+      },
+      "ledger_request_record_keys": [
+        "service",
+        "body",
+        "events"
+      ],
+      "completed_response_pointer_present": false,
+      "cell_evidence_count": 0,
+      "cell_decision_kinds": [
+        "hyde_template",
+        "adapter_arguments"
+      ],
+      "local_or_reduce_dispatched": false,
+      "run_log_occurrences": [
+        {
+          "line": 52,
+          "json": {
+            "event": "cell_finished",
+            "question": "Q08",
+            "method": "routed_graphrag",
+            "route": "drift",
+            "status": "failed",
+            "failure": "responses_empty_or_multiple_messages",
+            "cumulative_counts": {
+              "generation_reservations": 1386,
+              "generation_input_tokens": 2309671,
+              "embedding_tokens": 659226,
+              "embedding_attempts": 109
+            }
+          }
+        }
+      ],
+      "recoverability": {
+        "primer_answer_recoverable_offline_from_checked_artifacts": false,
+        "original_sse_or_message_count_reconstructable": false,
+        "reason_zh": "缓存只留固定错误类别；请求文件是输入，dispatch marker只证明发起，账本没有完成响应指针，日志没有原始输出。不能凭错误名补造primer。",
+        "earlier_successful_stages_available": [
+          "hyde",
+          "query_embedding"
+        ],
+        "earlier_stage_note_zh": "这些较早阶段有已验证记录，可供后续设计续跑边界；本诊断未复制、重用或重发请求。"
+      }
+    },
+    {
+      "question_id": "Q10",
+      "split": "test",
+      "event": 64,
+      "stage": "primer",
+      "status": "failed",
+      "request_dispatched": true,
+      "http_status_saved": null,
+      "usage_saved": null,
+      "request_body_sha256": "51381e99fd9b939ac9e6e48eeeaf85d2aa2ff11da7b9094cf81f2c665289a1ee",
+      "request_key": "3ff1e710799fbad17a49166d00204e2fa518c2e8339e37231a14b29eba8b9a91",
+      "response_cache": {
+        "file": ".cache/pilot/strategy-routing-20261014/response-64.json",
+        "bytes": 63,
+        "sha256": "e8a6774b49bb83eccd61ab0647e46cd39514e8d5c0785a7c72da87b574e9f1ef",
+        "saved_json_verbatim": {
+          "error_category": "responses_empty_or_multiple_messages"
+        },
+        "raw_http_or_sse_body_present": false,
+        "visible_answer_text_present": false,
+        "http_status_present": false,
+        "usage_present": false,
+        "response_bytes_present": false
+      },
+      "dispatch_sidecar": {
+        "file": ".cache/pilot/strategy-routing-20261014/response-64.dispatch.json",
+        "sha256": "b9623c19d5321bd1e8a7666cc7a75a3e59062d58930c3735c8135c8608ad88d2",
+        "saved_json_verbatim": {
+          "dispatch_slot_claimed": true,
+          "dispatch_started": true
+        }
+      },
+      "request_cache": {
+        "file": ".cache/pilot/strategy-routing-20261014/request-64.json",
+        "bytes": 14298,
+        "sha256": "e9b01b9a20d29b3b5fce170925820b6be9908d7d5f7f22b8cda7accea18e16f8",
+        "top_level_keys": [
+          "service",
+          "body"
+        ],
+        "body_keys": [
+          "model",
+          "input",
+          "max_output_tokens",
+          "store",
+          "stream",
+          "num_retries",
+          "fallbacks",
+          "context_window_fallback_dict",
+          "caching",
+          "text"
+        ],
+        "input_messages": 2,
+        "contains_payload_not_reply": true
+      },
+      "ledger_request_record_keys": [
+        "service",
+        "body",
+        "events"
+      ],
+      "completed_response_pointer_present": false,
+      "cell_evidence_count": 0,
+      "cell_decision_kinds": [
+        "hyde_template",
+        "adapter_arguments"
+      ],
+      "local_or_reduce_dispatched": false,
+      "run_log_occurrences": [
+        {
+          "line": 83,
+          "json": {
+            "event": "cell_finished",
+            "question": "Q10",
+            "method": "routed_graphrag",
+            "route": "drift",
+            "status": "failed",
+            "failure": "responses_empty_or_multiple_messages",
+            "cumulative_counts": {
+              "generation_reservations": 1401,
+              "generation_input_tokens": 2400472,
+              "embedding_tokens": 660270,
+              "embedding_attempts": 115
+            }
+          }
+        }
+      ],
+      "recoverability": {
+        "primer_answer_recoverable_offline_from_checked_artifacts": false,
+        "original_sse_or_message_count_reconstructable": false,
+        "reason_zh": "缓存只留固定错误类别；请求文件是输入，dispatch marker只证明发起，账本没有完成响应指针，日志没有原始输出。不能凭错误名补造primer。",
+        "earlier_successful_stages_available": [
+          "hyde",
+          "query_embedding"
+        ],
+        "earlier_stage_note_zh": "这些较早阶段有已验证记录，可供后续设计续跑边界；本诊断未复制、重用或重发请求。"
+      }
+    },
+    {
+      "question_id": "Q11",
+      "split": "dev",
+      "event": 70,
+      "stage": "primer",
+      "status": "failed",
+      "request_dispatched": true,
+      "http_status_saved": null,
+      "usage_saved": null,
+      "request_body_sha256": "458b2b7cb4057b9ecf58a96ae0b16ee7f861de9b47a7928cede18f21b86aedd2",
+      "request_key": "26431c7684b556b192ae70c9521ed36f84e8b8274aaabce1c36cf3ef80ab53dc",
+      "response_cache": {
+        "file": ".cache/pilot/strategy-routing-20261014/response-70.json",
+        "bytes": 63,
+        "sha256": "e8a6774b49bb83eccd61ab0647e46cd39514e8d5c0785a7c72da87b574e9f1ef",
+        "saved_json_verbatim": {
+          "error_category": "responses_empty_or_multiple_messages"
+        },
+        "raw_http_or_sse_body_present": false,
+        "visible_answer_text_present": false,
+        "http_status_present": false,
+        "usage_present": false,
+        "response_bytes_present": false
+      },
+      "dispatch_sidecar": {
+        "file": ".cache/pilot/strategy-routing-20261014/response-70.dispatch.json",
+        "sha256": "b9623c19d5321bd1e8a7666cc7a75a3e59062d58930c3735c8135c8608ad88d2",
+        "saved_json_verbatim": {
+          "dispatch_slot_claimed": true,
+          "dispatch_started": true
+        }
+      },
+      "request_cache": {
+        "file": ".cache/pilot/strategy-routing-20261014/request-70.json",
+        "bytes": 13983,
+        "sha256": "147614b44a39048b48ec1cba23169d0b5fc91f651a2d9a9d7c3a428d442cbdc0",
+        "top_level_keys": [
+          "service",
+          "body"
+        ],
+        "body_keys": [
+          "model",
+          "input",
+          "max_output_tokens",
+          "store",
+          "stream",
+          "num_retries",
+          "fallbacks",
+          "context_window_fallback_dict",
+          "caching",
+          "text"
+        ],
+        "input_messages": 2,
+        "contains_payload_not_reply": true
+      },
+      "ledger_request_record_keys": [
+        "service",
+        "body",
+        "events"
+      ],
+      "completed_response_pointer_present": false,
+      "cell_evidence_count": 0,
+      "cell_decision_kinds": [
+        "hyde_template",
+        "adapter_arguments"
+      ],
+      "local_or_reduce_dispatched": false,
+      "run_log_occurrences": [
+        {
+          "line": 90,
+          "json": {
+            "event": "cell_finished",
+            "question": "Q11",
+            "method": "routed_graphrag",
+            "route": "drift",
+            "status": "failed",
+            "failure": "responses_empty_or_multiple_messages",
+            "cumulative_counts": {
+              "generation_reservations": 1406,
+              "generation_input_tokens": 2437034,
+              "embedding_tokens": 660674,
+              "embedding_attempts": 116
+            }
+          }
+        }
+      ],
+      "recoverability": {
+        "primer_answer_recoverable_offline_from_checked_artifacts": false,
+        "original_sse_or_message_count_reconstructable": false,
+        "reason_zh": "缓存只留固定错误类别；请求文件是输入，dispatch marker只证明发起，账本没有完成响应指针，日志没有原始输出。不能凭错误名补造primer。",
+        "earlier_successful_stages_available": [
+          "hyde",
+          "query_embedding"
+        ],
+        "earlier_stage_note_zh": "这些较早阶段有已验证记录，可供后续设计续跑边界；本诊断未复制、重用或重发请求。"
+      }
+    },
+    {
+      "question_id": "Q14",
+      "split": "test",
+      "event": 106,
+      "stage": "primer",
+      "status": "failed",
+      "request_dispatched": true,
+      "http_status_saved": null,
+      "usage_saved": null,
+      "request_body_sha256": "4ffb746b9af0209c45cb7cf4e43a911f7b1632910c996ca33aabee219524e358",
+      "request_key": "bd403e064e9cf674761b0e4e2f8fa49420b43ed29b5ac7dbde5d82e6c112a799",
+      "response_cache": {
+        "file": ".cache/pilot/strategy-routing-20261014/response-106.json",
+        "bytes": 63,
+        "sha256": "e8a6774b49bb83eccd61ab0647e46cd39514e8d5c0785a7c72da87b574e9f1ef",
+        "saved_json_verbatim": {
+          "error_category": "responses_empty_or_multiple_messages"
+        },
+        "raw_http_or_sse_body_present": false,
+        "visible_answer_text_present": false,
+        "http_status_present": false,
+        "usage_present": false,
+        "response_bytes_present": false
+      },
+      "dispatch_sidecar": {
+        "file": ".cache/pilot/strategy-routing-20261014/response-106.dispatch.json",
+        "sha256": "b9623c19d5321bd1e8a7666cc7a75a3e59062d58930c3735c8135c8608ad88d2",
+        "saved_json_verbatim": {
+          "dispatch_slot_claimed": true,
+          "dispatch_started": true
+        }
+      },
+      "request_cache": {
+        "file": ".cache/pilot/strategy-routing-20261014/request-106.json",
+        "bytes": 15671,
+        "sha256": "073c246b59284540a9308cdec379757d80c803beefc601fed4d315b4f6f5beb9",
+        "top_level_keys": [
+          "service",
+          "body"
+        ],
+        "body_keys": [
+          "model",
+          "input",
+          "max_output_tokens",
+          "store",
+          "stream",
+          "num_retries",
+          "fallbacks",
+          "context_window_fallback_dict",
+          "caching",
+          "text"
+        ],
+        "input_messages": 2,
+        "contains_payload_not_reply": true
+      },
+      "ledger_request_record_keys": [
+        "service",
+        "body",
+        "events"
+      ],
+      "completed_response_pointer_present": false,
+      "cell_evidence_count": 0,
+      "cell_decision_kinds": [
+        "hyde_template",
+        "adapter_arguments"
+      ],
+      "local_or_reduce_dispatched": false,
+      "run_log_occurrences": [
+        {
+          "line": 145,
+          "json": {
+            "event": "cell_finished",
+            "question": "Q14",
+            "method": "routed_graphrag",
+            "route": "drift",
+            "status": "failed",
+            "failure": "responses_empty_or_multiple_messages",
+            "cumulative_counts": {
+              "generation_reservations": 1431,
+              "generation_input_tokens": 2586650,
+              "embedding_tokens": 662387,
+              "embedding_attempts": 127
+            }
+          }
+        }
+      ],
+      "recoverability": {
+        "primer_answer_recoverable_offline_from_checked_artifacts": false,
+        "original_sse_or_message_count_reconstructable": false,
+        "reason_zh": "缓存只留固定错误类别；请求文件是输入，dispatch marker只证明发起，账本没有完成响应指针，日志没有原始输出。不能凭错误名补造primer。",
+        "earlier_successful_stages_available": [
+          "hyde",
+          "query_embedding"
+        ],
+        "earlier_stage_note_zh": "这些较早阶段有已验证记录，可供后续设计续跑边界；本诊断未复制、重用或重发请求。"
+      }
+    },
+    {
+      "question_id": "Q16",
+      "split": "test",
+      "event": 127,
+      "stage": "primer",
+      "status": "failed",
+      "request_dispatched": true,
+      "http_status_saved": null,
+      "usage_saved": null,
+      "request_body_sha256": "75749b3d587a94101a0ac59c2ff02fb5bacf29530e6eed823403c3f5a434d868",
+      "request_key": "de9a075d1a947fb76e20140bd505eebbf06fd22cfaa78ee136016086a5c71e4e",
+      "response_cache": {
+        "file": ".cache/pilot/strategy-routing-20261014/response-127.json",
+        "bytes": 63,
+        "sha256": "e8a6774b49bb83eccd61ab0647e46cd39514e8d5c0785a7c72da87b574e9f1ef",
+        "saved_json_verbatim": {
+          "error_category": "responses_empty_or_multiple_messages"
+        },
+        "raw_http_or_sse_body_present": false,
+        "visible_answer_text_present": false,
+        "http_status_present": false,
+        "usage_present": false,
+        "response_bytes_present": false
+      },
+      "dispatch_sidecar": {
+        "file": ".cache/pilot/strategy-routing-20261014/response-127.dispatch.json",
+        "sha256": "b9623c19d5321bd1e8a7666cc7a75a3e59062d58930c3735c8135c8608ad88d2",
+        "saved_json_verbatim": {
+          "dispatch_slot_claimed": true,
+          "dispatch_started": true
+        }
+      },
+      "request_cache": {
+        "file": ".cache/pilot/strategy-routing-20261014/request-127.json",
+        "bytes": 14066,
+        "sha256": "3cae7b17b37fd93705a4e4d6f90dffa2529da51c5bc6f4e2e4fc271af32bc4d0",
+        "top_level_keys": [
+          "service",
+          "body"
+        ],
+        "body_keys": [
+          "model",
+          "input",
+          "max_output_tokens",
+          "store",
+          "stream",
+          "num_retries",
+          "fallbacks",
+          "context_window_fallback_dict",
+          "caching",
+          "text"
+        ],
+        "input_messages": 2,
+        "contains_payload_not_reply": true
+      },
+      "ledger_request_record_keys": [
+        "service",
+        "body",
+        "events"
+      ],
+      "completed_response_pointer_present": false,
+      "cell_evidence_count": 0,
+      "cell_decision_kinds": [
+        "hyde_template",
+        "adapter_arguments"
+      ],
+      "local_or_reduce_dispatched": false,
+      "run_log_occurrences": [
+        {
+          "line": 176,
+          "json": {
+            "event": "cell_finished",
+            "question": "Q16",
+            "method": "routed_graphrag",
+            "route": "drift",
+            "status": "failed",
+            "failure": "responses_empty_or_multiple_messages",
+            "cumulative_counts": {
+              "generation_reservations": 1446,
+              "generation_input_tokens": 2675368,
+              "embedding_tokens": 663398,
+              "embedding_attempts": 133
+            }
+          }
+        }
+      ],
+      "recoverability": {
+        "primer_answer_recoverable_offline_from_checked_artifacts": false,
+        "original_sse_or_message_count_reconstructable": false,
+        "reason_zh": "缓存只留固定错误类别；请求文件是输入，dispatch marker只证明发起，账本没有完成响应指针，日志没有原始输出。不能凭错误名补造primer。",
+        "earlier_successful_stages_available": [
+          "hyde",
+          "query_embedding"
+        ],
+        "earlier_stage_note_zh": "这些较早阶段有已验证记录，可供后续设计续跑边界；本诊断未复制、重用或重发请求。"
+      }
+    },
+    {
+      "question_id": "Q18",
+      "split": "test",
+      "event": 148,
+      "stage": "primer",
+      "status": "failed",
+      "request_dispatched": true,
+      "http_status_saved": null,
+      "usage_saved": null,
+      "request_body_sha256": "1e524bab16ac72632c9d80208076c12dd691cb3c8609c803b5f0a205c12cfbee",
+      "request_key": "97523a1b6b7218705561383fc8cfa0adda8444811cd3af18a6714e1772483f3c",
+      "response_cache": {
+        "file": ".cache/pilot/strategy-routing-20261014/response-148.json",
+        "bytes": 63,
+        "sha256": "e8a6774b49bb83eccd61ab0647e46cd39514e8d5c0785a7c72da87b574e9f1ef",
+        "saved_json_verbatim": {
+          "error_category": "responses_empty_or_multiple_messages"
+        },
+        "raw_http_or_sse_body_present": false,
+        "visible_answer_text_present": false,
+        "http_status_present": false,
+        "usage_present": false,
+        "response_bytes_present": false
+      },
+      "dispatch_sidecar": {
+        "file": ".cache/pilot/strategy-routing-20261014/response-148.dispatch.json",
+        "sha256": "b9623c19d5321bd1e8a7666cc7a75a3e59062d58930c3735c8135c8608ad88d2",
+        "saved_json_verbatim": {
+          "dispatch_slot_claimed": true,
+          "dispatch_started": true
+        }
+      },
+      "request_cache": {
+        "file": ".cache/pilot/strategy-routing-20261014/request-148.json",
+        "bytes": 15662,
+        "sha256": "310b5478ae62975daf5a00bd5325edf5eb0178a7fda002f5cd1852f10517d4b9",
+        "top_level_keys": [
+          "service",
+          "body"
+        ],
+        "body_keys": [
+          "model",
+          "input",
+          "max_output_tokens",
+          "store",
+          "stream",
+          "num_retries",
+          "fallbacks",
+          "context_window_fallback_dict",
+          "caching",
+          "text"
+        ],
+        "input_messages": 2,
+        "contains_payload_not_reply": true
+      },
+      "ledger_request_record_keys": [
+        "service",
+        "body",
+        "events"
+      ],
+      "completed_response_pointer_present": false,
+      "cell_evidence_count": 0,
+      "cell_decision_kinds": [
+        "hyde_template",
+        "adapter_arguments"
+      ],
+      "local_or_reduce_dispatched": false,
+      "run_log_occurrences": [
+        {
+          "line": 207,
+          "json": {
+            "event": "cell_finished",
+            "question": "Q18",
+            "method": "routed_graphrag",
+            "route": "drift",
+            "status": "failed",
+            "failure": "responses_empty_or_multiple_messages",
+            "cumulative_counts": {
+              "generation_reservations": 1461,
+              "generation_input_tokens": 2765465,
+              "embedding_tokens": 664615,
+              "embedding_attempts": 139
+            }
+          }
+        }
+      ],
+      "recoverability": {
+        "primer_answer_recoverable_offline_from_checked_artifacts": false,
+        "original_sse_or_message_count_reconstructable": false,
+        "reason_zh": "缓存只留固定错误类别；请求文件是输入，dispatch marker只证明发起，账本没有完成响应指针，日志没有原始输出。不能凭错误名补造primer。",
+        "earlier_successful_stages_available": [
+          "hyde",
+          "query_embedding"
+        ],
+        "earlier_stage_note_zh": "这些较早阶段有已验证记录，可供后续设计续跑边界；本诊断未复制、重用或重发请求。"
+      }
+    }
+  ],
+  "successful_primer_comparison": [
+    {
+      "question_id": "Q07",
+      "event": 28,
+      "http_status": 200,
+      "response_file": ".cache/pilot/strategy-routing-20261014/response-28.json",
+      "response_file_sha256": "0ffb5b890b01d6ea04dc628342a8147d78ea6ffe4255a790c21751cf473331e8",
+      "response_file_bytes": 4533,
+      "envelope_keys": [
+        "http_status",
+        "response",
+        "response_byte_limit",
+        "response_bytes"
+      ],
+      "normalized_response_keys": [
+        "model",
+        "choices",
+        "usage",
+        "responses_transport",
+        "recovered_output_items"
+      ],
+      "transport": "sse",
+      "recovered_output_items": false,
+      "choices": 1,
+      "normalized_finish_reason": "stop",
+      "visible_content_chars": 4055,
+      "visible_content_sha256": "244b2cf383ea379775cdd496b87fcfe8ea659c4641c227b856dd0fcf2cc729f4",
+      "parsed_primer_keys": [
+        "intermediate_answer",
+        "score",
+        "follow_up_queries"
+      ],
+      "intermediate_answer_type": "str",
+      "intermediate_answer_chars": 3517,
+      "score_type": "int",
+      "follow_up_count": 7,
+      "all_follow_ups_strings": true,
+      "repair_applied": false,
+      "provider_usage": {
+        "prompt_tokens": 4634,
+        "completion_tokens": 1697,
+        "total_tokens": 6331
+      },
+      "response_bytes_reported": 334460,
+      "requested_output_limit_exceeded_recorded": false,
+      "original_raw_sse_saved": false,
+      "normalized_visible_answer_available": true
+    },
+    {
+      "question_id": "Q09",
+      "event": 49,
+      "http_status": 200,
+      "response_file": ".cache/pilot/strategy-routing-20261014/response-49.json",
+      "response_file_sha256": "10eb512ed4affed71a709442857d0d2a3e330ffa46f0dfcb1d49716a21418df5",
+      "response_file_bytes": 3582,
+      "envelope_keys": [
+        "http_status",
+        "response",
+        "response_byte_limit",
+        "response_bytes"
+      ],
+      "normalized_response_keys": [
+        "model",
+        "choices",
+        "usage",
+        "responses_transport",
+        "recovered_output_items"
+      ],
+      "transport": "sse",
+      "recovered_output_items": false,
+      "choices": 1,
+      "normalized_finish_reason": "stop",
+      "visible_content_chars": 3107,
+      "visible_content_sha256": "1c95c24d96fb6c515a5f9b24a26475d5d612d28b0cbe988343a999b6261d0816",
+      "parsed_primer_keys": [
+        "intermediate_answer",
+        "score",
+        "follow_up_queries"
+      ],
+      "intermediate_answer_type": "str",
+      "intermediate_answer_chars": 2524,
+      "score_type": "int",
+      "follow_up_count": 6,
+      "all_follow_ups_strings": true,
+      "repair_applied": false,
+      "provider_usage": {
+        "prompt_tokens": 4502,
+        "completion_tokens": 1352,
+        "total_tokens": 5854
+      },
+      "response_bytes_reported": 244223,
+      "requested_output_limit_exceeded_recorded": false,
+      "original_raw_sse_saved": false,
+      "normalized_visible_answer_available": true
+    },
+    {
+      "question_id": "Q12",
+      "event": 76,
+      "http_status": 200,
+      "response_file": ".cache/pilot/strategy-routing-20261014/response-76.json",
+      "response_file_sha256": "04de30df157c22c80a4be241f0e0a7d008ae6c9f6c690fdfdf9b3388552c4d1a",
+      "response_file_bytes": 3401,
+      "envelope_keys": [
+        "http_status",
+        "response",
+        "response_byte_limit",
+        "response_bytes"
+      ],
+      "normalized_response_keys": [
+        "model",
+        "choices",
+        "usage",
+        "responses_transport",
+        "recovered_output_items"
+      ],
+      "transport": "sse",
+      "recovered_output_items": false,
+      "choices": 1,
+      "normalized_finish_reason": "stop",
+      "visible_content_chars": 2904,
+      "visible_content_sha256": "b22b247fe515495b45fb7f6141328c5f481acea94e23787e4eebb43293e4ad4e",
+      "parsed_primer_keys": [
+        "intermediate_answer",
+        "score",
+        "follow_up_queries"
+      ],
+      "intermediate_answer_type": "str",
+      "intermediate_answer_chars": 2380,
+      "score_type": "int",
+      "follow_up_count": 7,
+      "all_follow_ups_strings": true,
+      "repair_applied": false,
+      "provider_usage": {
+        "prompt_tokens": 4409,
+        "completion_tokens": 937,
+        "total_tokens": 5346
+      },
+      "response_bytes_reported": 233449,
+      "requested_output_limit_exceeded_recorded": false,
+      "original_raw_sse_saved": false,
+      "normalized_visible_answer_available": true
+    },
+    {
+      "question_id": "Q13",
+      "event": 91,
+      "http_status": 200,
+      "response_file": ".cache/pilot/strategy-routing-20261014/response-91.json",
+      "response_file_sha256": "3b329b8e4d7e95cecc365fd86d3fe6366e615b8b5fc1b86c93e9dbd642e35c98",
+      "response_file_bytes": 3797,
+      "envelope_keys": [
+        "http_status",
+        "response",
+        "response_byte_limit",
+        "response_bytes"
+      ],
+      "normalized_response_keys": [
+        "model",
+        "choices",
+        "usage",
+        "responses_transport",
+        "recovered_output_items"
+      ],
+      "transport": "sse",
+      "recovered_output_items": false,
+      "choices": 1,
+      "normalized_finish_reason": "stop",
+      "visible_content_chars": 3321,
+      "visible_content_sha256": "f7705ba69c59060a312e959dcb13b513fea895969a87071f8a08e22c3313e876",
+      "parsed_primer_keys": [
+        "intermediate_answer",
+        "score",
+        "follow_up_queries"
+      ],
+      "intermediate_answer_type": "str",
+      "intermediate_answer_chars": 2742,
+      "score_type": "int",
+      "follow_up_count": 6,
+      "all_follow_ups_strings": true,
+      "repair_applied": false,
+      "provider_usage": {
+        "prompt_tokens": 4306,
+        "completion_tokens": 2047,
+        "total_tokens": 6353
+      },
+      "response_bytes_reported": 307604,
+      "requested_output_limit_exceeded_recorded": false,
+      "original_raw_sse_saved": false,
+      "normalized_visible_answer_available": true
+    },
+    {
+      "question_id": "Q15",
+      "event": 112,
+      "http_status": 200,
+      "response_file": ".cache/pilot/strategy-routing-20261014/response-112.json",
+      "response_file_sha256": "a4f62036fadf822a4b420b0ae6a04ca36b3c7e7ebf5f082a011f99c8e0ea8ffe",
+      "response_file_bytes": 3801,
+      "envelope_keys": [
+        "http_status",
+        "response",
+        "response_byte_limit",
+        "response_bytes"
+      ],
+      "normalized_response_keys": [
+        "model",
+        "choices",
+        "usage",
+        "responses_transport",
+        "recovered_output_items"
+      ],
+      "transport": "sse",
+      "recovered_output_items": false,
+      "choices": 1,
+      "normalized_finish_reason": "stop",
+      "visible_content_chars": 3323,
+      "visible_content_sha256": "ee03737f51e6cdbf4532dc94e0611273c12017ae7d59091fab3cba1673d7f79a",
+      "parsed_primer_keys": [
+        "intermediate_answer",
+        "score",
+        "follow_up_queries"
+      ],
+      "intermediate_answer_type": "str",
+      "intermediate_answer_chars": 2704,
+      "score_type": "int",
+      "follow_up_count": 7,
+      "all_follow_ups_strings": true,
+      "repair_applied": false,
+      "provider_usage": {
+        "prompt_tokens": 4348,
+        "completion_tokens": 1038,
+        "total_tokens": 5386
+      },
+      "response_bytes_reported": 247386,
+      "requested_output_limit_exceeded_recorded": false,
+      "original_raw_sse_saved": false,
+      "normalized_visible_answer_available": true
+    },
+    {
+      "question_id": "Q17",
+      "event": 133,
+      "http_status": 200,
+      "response_file": ".cache/pilot/strategy-routing-20261014/response-133.json",
+      "response_file_sha256": "8e4790f0231096a53dab56a65ea7fadf94a697861809d45b46705a3d4cb31bd9",
+      "response_file_bytes": 3211,
+      "envelope_keys": [
+        "http_status",
+        "response",
+        "response_byte_limit",
+        "response_bytes"
+      ],
+      "normalized_response_keys": [
+        "model",
+        "choices",
+        "usage",
+        "responses_transport",
+        "recovered_output_items"
+      ],
+      "transport": "sse",
+      "recovered_output_items": false,
+      "choices": 1,
+      "normalized_finish_reason": "stop",
+      "visible_content_chars": 2733,
+      "visible_content_sha256": "848e8b63a0ef5a328efbabf9ba10778f1acca665a1059a8bba2ec542abf53df0",
+      "parsed_primer_keys": [
+        "intermediate_answer",
+        "score",
+        "follow_up_queries"
+      ],
+      "intermediate_answer_type": "str",
+      "intermediate_answer_chars": 2303,
+      "score_type": "int",
+      "follow_up_count": 7,
+      "all_follow_ups_strings": true,
+      "repair_applied": false,
+      "provider_usage": {
+        "prompt_tokens": 3638,
+        "completion_tokens": 2537,
+        "total_tokens": 6175
+      },
+      "response_bytes_reported": 304966,
+      "requested_output_limit_exceeded_recorded": true,
+      "original_raw_sse_saved": false,
+      "normalized_visible_answer_available": true
+    },
+    {
+      "question_id": "F02-plan",
+      "event": 162,
+      "http_status": 200,
+      "response_file": ".cache/pilot/strategy-routing-20261014/response-162.json",
+      "response_file_sha256": "9e13584f14be4ed40f558abc68599c956e6ad6fb5bc848e4605df80c630c83bc",
+      "response_file_bytes": 4273,
+      "envelope_keys": [
+        "http_status",
+        "response",
+        "response_byte_limit",
+        "response_bytes"
+      ],
+      "normalized_response_keys": [
+        "model",
+        "choices",
+        "usage",
+        "responses_transport",
+        "recovered_output_items"
+      ],
+      "transport": "sse",
+      "recovered_output_items": false,
+      "choices": 1,
+      "normalized_finish_reason": "stop",
+      "visible_content_chars": 3781,
+      "visible_content_sha256": "ab19b24cd3fadf851c36d1684e0acbe415f751f7cf91e48fa56fa8b16f3d060a",
+      "parsed_primer_keys": [
+        "intermediate_answer",
+        "score",
+        "follow_up_queries"
+      ],
+      "intermediate_answer_type": "str",
+      "intermediate_answer_chars": 3087,
+      "score_type": "int",
+      "follow_up_count": 6,
+      "all_follow_ups_strings": true,
+      "repair_applied": false,
+      "provider_usage": {
+        "prompt_tokens": 4463,
+        "completion_tokens": 1635,
+        "total_tokens": 6098
+      },
+      "response_bytes_reported": 276072,
+      "requested_output_limit_exceeded_recorded": false,
+      "original_raw_sse_saved": false,
+      "normalized_visible_answer_available": true
+    }
+  ],
+  "primer_request_comparison": {
+    "all_13_non_input_fields_equal": true,
+    "all_13_roles_equal": true,
+    "common_non_input_fields": {
+      "model": "gpt-5.6-luna",
+      "max_output_tokens": 2048,
+      "store": false,
+      "stream": true,
+      "num_retries": 0,
+      "fallbacks": [],
+      "context_window_fallback_dict": {},
+      "caching": false,
+      "text": {
+        "format": {
+          "type": "json_schema",
+          "name": "PrimerResponse",
+          "strict": true,
+          "schema": {
+            "description": "Response model for the primer.",
+            "properties": {
+              "intermediate_answer": {
+                "description": "This answer should match the level of detail and length found in the community summaries. The intermediate answer should be exactly 2000 characters long. This must be formatted in markdown and must begin with a header that explains how the following text is related to the query.",
+                "title": "Intermediate Answer",
+                "type": "string"
+              },
+              "score": {
+                "description": "A score on how well the intermediate answer addresses the query. A score of 0 indicates a poor, unfocused answer, while a score of 100 indicates a highly focused, relevant answer that addresses the query in its entirety.",
+                "title": "Score",
+                "type": "integer"
+              },
+              "follow_up_queries": {
+                "description": "A list of follow-up queries that could be asked to further explore the topic. These should be formatted as a list of strings. Generate at least five good follow-up queries.",
+                "items": {
+                  "type": "string"
+                },
+                "title": "Follow Up Queries",
+                "type": "array"
+              }
+            },
+            "required": [
+              "intermediate_answer",
+              "score",
+              "follow_up_queries"
+            ],
+            "title": "PrimerResponse",
+            "type": "object",
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    "common_non_input_fields_sha256": "9e1fe6f26337118160e51e6739dff317455f186064c981b6350046f14bf4a427",
+    "common_text_format_sha256": "cb4291778031e5b68cc0a5436a76a2a951ebea27e1a96907610287536be42d6e",
+    "rows": [
+      {
+        "question_id": "Q07",
+        "event": 28,
+        "status": "validated",
+        "private_request_file": ".cache/pilot/strategy-routing-20261014/request-28.json",
+        "public_wire_file": "research/pilot/strategy-routing/results/wire/event-028.json",
+        "request_body_sha256": "e0cfff6fff77aa2c46f3c603fbf6fe5636a536afa1a4a373dc0505f9154982b0",
+        "non_input_fields_sha256": "9e1fe6f26337118160e51e6739dff317455f186064c981b6350046f14bf4a427",
+        "text_format_sha256": "cb4291778031e5b68cc0a5436a76a2a951ebea27e1a96907610287536be42d6e",
+        "message_roles": [
+          "user",
+          "system"
+        ],
+        "input_text_characters": 15714,
+        "ledger_input_tokens": 3000
+      },
+      {
+        "question_id": "Q08",
+        "event": 43,
+        "status": "failed",
+        "private_request_file": ".cache/pilot/strategy-routing-20261014/request-43.json",
+        "public_wire_file": "research/pilot/strategy-routing/results/wire/event-043.json",
+        "request_body_sha256": "c472c7e55140cfe9d6301c4d0eed62f47460344e837fdb8a7e55eceb6d7c7ef5",
+        "non_input_fields_sha256": "9e1fe6f26337118160e51e6739dff317455f186064c981b6350046f14bf4a427",
+        "text_format_sha256": "cb4291778031e5b68cc0a5436a76a2a951ebea27e1a96907610287536be42d6e",
+        "message_roles": [
+          "user",
+          "system"
+        ],
+        "input_text_characters": 12499,
+        "ledger_input_tokens": 2326
+      },
+      {
+        "question_id": "Q09",
+        "event": 49,
+        "status": "validated",
+        "private_request_file": ".cache/pilot/strategy-routing-20261014/request-49.json",
+        "public_wire_file": "research/pilot/strategy-routing/results/wire/event-049.json",
+        "request_body_sha256": "186d63baa07f3fd26493daff452fa261831616a9ee1f7c92c1cada8e79cc98f2",
+        "non_input_fields_sha256": "9e1fe6f26337118160e51e6739dff317455f186064c981b6350046f14bf4a427",
+        "text_format_sha256": "cb4291778031e5b68cc0a5436a76a2a951ebea27e1a96907610287536be42d6e",
+        "message_roles": [
+          "user",
+          "system"
+        ],
+        "input_text_characters": 15093,
+        "ledger_input_tokens": 2868
+      },
+      {
+        "question_id": "Q10",
+        "event": 64,
+        "status": "failed",
+        "private_request_file": ".cache/pilot/strategy-routing-20261014/request-64.json",
+        "public_wire_file": "research/pilot/strategy-routing/results/wire/event-064.json",
+        "request_body_sha256": "51381e99fd9b939ac9e6e48eeeaf85d2aa2ff11da7b9094cf81f2c665289a1ee",
+        "non_input_fields_sha256": "9e1fe6f26337118160e51e6739dff317455f186064c981b6350046f14bf4a427",
+        "text_format_sha256": "cb4291778031e5b68cc0a5436a76a2a951ebea27e1a96907610287536be42d6e",
+        "message_roles": [
+          "user",
+          "system"
+        ],
+        "input_text_characters": 11915,
+        "ledger_input_tokens": 2321
+      },
+      {
+        "question_id": "Q11",
+        "event": 70,
+        "status": "failed",
+        "private_request_file": ".cache/pilot/strategy-routing-20261014/request-70.json",
+        "public_wire_file": "research/pilot/strategy-routing/results/wire/event-070.json",
+        "request_body_sha256": "458b2b7cb4057b9ecf58a96ae0b16ee7f861de9b47a7928cede18f21b86aedd2",
+        "non_input_fields_sha256": "9e1fe6f26337118160e51e6739dff317455f186064c981b6350046f14bf4a427",
+        "text_format_sha256": "cb4291778031e5b68cc0a5436a76a2a951ebea27e1a96907610287536be42d6e",
+        "message_roles": [
+          "user",
+          "system"
+        ],
+        "input_text_characters": 11602,
+        "ledger_input_tokens": 2165
+      },
+      {
+        "question_id": "Q12",
+        "event": 76,
+        "status": "validated",
+        "private_request_file": ".cache/pilot/strategy-routing-20261014/request-76.json",
+        "public_wire_file": "research/pilot/strategy-routing/results/wire/event-076.json",
+        "request_body_sha256": "44d9534d11401f822eae30665f03daf50107dd55be8e93f6639e238e393bc513",
+        "non_input_fields_sha256": "9e1fe6f26337118160e51e6739dff317455f186064c981b6350046f14bf4a427",
+        "text_format_sha256": "cb4291778031e5b68cc0a5436a76a2a951ebea27e1a96907610287536be42d6e",
+        "message_roles": [
+          "user",
+          "system"
+        ],
+        "input_text_characters": 14569,
+        "ledger_input_tokens": 2775
+      },
+      {
+        "question_id": "Q13",
+        "event": 91,
+        "status": "validated",
+        "private_request_file": ".cache/pilot/strategy-routing-20261014/request-91.json",
+        "public_wire_file": "research/pilot/strategy-routing/results/wire/event-091.json",
+        "request_body_sha256": "baca957c6edc043cccbae5f932472ca59d8fc1d4c42c5f67ddaaf1e5c3df08cc",
+        "non_input_fields_sha256": "9e1fe6f26337118160e51e6739dff317455f186064c981b6350046f14bf4a427",
+        "text_format_sha256": "cb4291778031e5b68cc0a5436a76a2a951ebea27e1a96907610287536be42d6e",
+        "message_roles": [
+          "user",
+          "system"
+        ],
+        "input_text_characters": 13872,
+        "ledger_input_tokens": 2672
+      },
+      {
+        "question_id": "Q14",
+        "event": 106,
+        "status": "failed",
+        "private_request_file": ".cache/pilot/strategy-routing-20261014/request-106.json",
+        "public_wire_file": "research/pilot/strategy-routing/results/wire/event-106.json",
+        "request_body_sha256": "4ffb746b9af0209c45cb7cf4e43a911f7b1632910c996ca33aabee219524e358",
+        "non_input_fields_sha256": "9e1fe6f26337118160e51e6739dff317455f186064c981b6350046f14bf4a427",
+        "text_format_sha256": "cb4291778031e5b68cc0a5436a76a2a951ebea27e1a96907610287536be42d6e",
+        "message_roles": [
+          "user",
+          "system"
+        ],
+        "input_text_characters": 13284,
+        "ledger_input_tokens": 2733
+      },
+      {
+        "question_id": "Q15",
+        "event": 112,
+        "status": "validated",
+        "private_request_file": ".cache/pilot/strategy-routing-20261014/request-112.json",
+        "public_wire_file": "research/pilot/strategy-routing/results/wire/event-112.json",
+        "request_body_sha256": "9d5761e5fd882e395e99ef3b6ecfdd824e32ef31bca28495338fa4a2d806e858",
+        "non_input_fields_sha256": "9e1fe6f26337118160e51e6739dff317455f186064c981b6350046f14bf4a427",
+        "text_format_sha256": "cb4291778031e5b68cc0a5436a76a2a951ebea27e1a96907610287536be42d6e",
+        "message_roles": [
+          "user",
+          "system"
+        ],
+        "input_text_characters": 13095,
+        "ledger_input_tokens": 2714
+      },
+      {
+        "question_id": "Q16",
+        "event": 127,
+        "status": "failed",
+        "private_request_file": ".cache/pilot/strategy-routing-20261014/request-127.json",
+        "public_wire_file": "research/pilot/strategy-routing/results/wire/event-127.json",
+        "request_body_sha256": "75749b3d587a94101a0ac59c2ff02fb5bacf29530e6eed823403c3f5a434d868",
+        "non_input_fields_sha256": "9e1fe6f26337118160e51e6739dff317455f186064c981b6350046f14bf4a427",
+        "text_format_sha256": "cb4291778031e5b68cc0a5436a76a2a951ebea27e1a96907610287536be42d6e",
+        "message_roles": [
+          "user",
+          "system"
+        ],
+        "input_text_characters": 11653,
+        "ledger_input_tokens": 2217
+      },
+      {
+        "question_id": "Q17",
+        "event": 133,
+        "status": "validated",
+        "private_request_file": ".cache/pilot/strategy-routing-20261014/request-133.json",
+        "public_wire_file": "research/pilot/strategy-routing/results/wire/event-133.json",
+        "request_body_sha256": "51987d5a8399aa3213d3e0fef91446d5e0bbd8210bec6e78fcc757bc8ea93861",
+        "non_input_fields_sha256": "9e1fe6f26337118160e51e6739dff317455f186064c981b6350046f14bf4a427",
+        "text_format_sha256": "cb4291778031e5b68cc0a5436a76a2a951ebea27e1a96907610287536be42d6e",
+        "message_roles": [
+          "user",
+          "system"
+        ],
+        "input_text_characters": 10417,
+        "ledger_input_tokens": 2004
+      },
+      {
+        "question_id": "Q18",
+        "event": 148,
+        "status": "failed",
+        "private_request_file": ".cache/pilot/strategy-routing-20261014/request-148.json",
+        "public_wire_file": "research/pilot/strategy-routing/results/wire/event-148.json",
+        "request_body_sha256": "1e524bab16ac72632c9d80208076c12dd691cb3c8609c803b5f0a205c12cfbee",
+        "non_input_fields_sha256": "9e1fe6f26337118160e51e6739dff317455f186064c981b6350046f14bf4a427",
+        "text_format_sha256": "cb4291778031e5b68cc0a5436a76a2a951ebea27e1a96907610287536be42d6e",
+        "message_roles": [
+          "user",
+          "system"
+        ],
+        "input_text_characters": 13271,
+        "ledger_input_tokens": 2671
+      },
+      {
+        "question_id": "F02-plan",
+        "event": 162,
+        "status": "validated",
+        "private_request_file": ".cache/pilot/strategy-routing-20261014/request-162.json",
+        "public_wire_file": "research/pilot/strategy-routing/results/wire/event-162.json",
+        "request_body_sha256": "61cb67e180632d43d24833bb81992256cfbbca5628dadf37615cd9f3531a48e9",
+        "non_input_fields_sha256": "9e1fe6f26337118160e51e6739dff317455f186064c981b6350046f14bf4a427",
+        "text_format_sha256": "cb4291778031e5b68cc0a5436a76a2a951ebea27e1a96907610287536be42d6e",
+        "message_roles": [
+          "user",
+          "system"
+        ],
+        "input_text_characters": 14977,
+        "ledger_input_tokens": 2829
+      }
+    ],
+    "observations_zh": [
+      "每题输入问题与社区报告不同，body其余字段一致。",
+      "成功缓存保留规范化可见字符串、usage、transport标记和原始字节数，但也未保留完整原始SSE；失败缓存只余错误名。",
+      "成功event133（Q17）provider completion_tokens=2537，旧事件已标输出超2048；这不能倒推6次失败是输出截断。",
+      "成功响应的finish_reason=stop是适配器在completed终态上填写的规范化字段，并非保存的上游原始finish_reason。"
+    ]
+  },
+  "decoder_and_persistence_evidence": [
+    {
+      "file": "research/pilot/probe_runtime.py",
+      "file_sha256": "6489f4d87d3bc0f2e6f55e3d6e9b70db6105212f8da6fcc60d8f3c99a5211820",
+      "start_line": 229,
+      "end_line": 263,
+      "quote": "    if terminal.get(\"error\") is not None or terminal.get(\"status\") != \"completed\":\n        raise Stop(\"responses_not_completed\")\n    output = terminal.get(\"output\")\n    if not isinstance(output, list):\n        raise Stop(\"responses_missing_output\")\n    recovered = not output and bool(items)\n    if recovered:\n        if sorted(items) != list(range(len(items))):\n            raise Stop(\"responses_item_gap\")\n        output = [items[i] for i in range(len(items))]\n    elif any(i >= len(output) or output[i] != item for i, item in items.items()):\n        raise Stop(\"responses_item_conflict\")\n    messages = []\n    for item in output:\n        if not isinstance(item, dict):\n            raise Stop(\"responses_invalid_item\")\n        if item.get(\"type\") == \"reasoning\":\n            continue  # Never extract, expose or record reasoning content.\n        if item.get(\"type\") != \"message\" or item.get(\"role\") != \"assistant\" or item.get(\"status\") not in (None, \"completed\"):\n            raise Stop(\"responses_unexpected_output\")\n        content = item.get(\"content\")\n        if not isinstance(content, list) or not content or any(\n                not isinstance(c, dict) or c.get(\"type\") != \"output_text\" or not isinstance(c.get(\"text\"), str) for c in content):\n            raise Stop(\"responses_nontext_output\")\n        messages.append(\"\".join(c[\"text\"] for c in content))\n    if len(messages) != 1 or not messages[0].strip():\n        raise Stop(\"responses_empty_or_multiple_messages\")\n    usage = terminal.get(\"usage\")\n    if not isinstance(usage, dict):\n        raise Stop(\"responses_missing_usage\")\n    return {\"model\": terminal.get(\"model\"),\n            \"choices\": [{\"finish_reason\": \"stop\", \"message\": {\"content\": messages[0]}}],\n            \"usage\": {\"prompt_tokens\": usage.get(\"input_tokens\"), \"completion_tokens\": usage.get(\"output_tokens\"),\n                      \"total_tokens\": usage.get(\"total_tokens\")},\n            \"responses_transport\": \"sse\" if sse else \"json\", \"recovered_output_items\": recovered}\n",
+      "span_sha256": "f5ad452accf27c1a89a67977eba4d5fbbda22e165fb663512b5921182695c59c",
+      "meaning_zh": "消息检查早于usage提取；reasoning类型被跳过，不读取或保留。",
+      "matches_original_live_readiness": true
+    },
+    {
+      "file": "research/pilot/probe_runtime.py",
+      "file_sha256": "6489f4d87d3bc0f2e6f55e3d6e9b70db6105212f8da6fcc60d8f3c99a5211820",
+      "start_line": 371,
+      "end_line": 390,
+      "quote": "        try:\n            with opener.open(req, timeout=LIMITS[service + \"_request_seconds\"]) as r:\n                data = r.read(response_byte_limit + 1)\n                if len(data) > response_byte_limit:\n                    raise Stop(\"response_byte_cap_exceeded\")\n                # Never retain response headers. Exact credential redaction is a final safeguard.\n                raw = data.decode().replace(key, \"[REDACTED]\")\n                parsed = (decode_generation(raw, r.headers.get(\"Content-Type\")) if service == \"generation\"\n                          else json.loads(raw))\n                result = {\"http_status\": r.status, \"response\": parsed,\n                          \"response_byte_limit\":response_byte_limit,\"response_bytes\":len(data)}\n        except urllib.error.HTTPError as e:\n            result = {\"http_status\": e.code, **error_summary(e.read(65536))}\n        except urllib.error.URLError:\n            result = {\"error_category\": \"transport_error\"}\n        save(response_path, result)\n    except Stop as e:\n        save(response_path, {\"error_category\": str(e)})\n    except Exception:\n        save(response_path, {\"error_category\": \"worker_exception_redacted\"})\n",
+      "span_sha256": "5b786f6caf4ca44b07ec98008c4559ebb399341a4f5d297b1696d199201cba37",
+      "meaning_zh": "内存中先解码，再组装响应文件；Stop仅保存固定错误类别。",
+      "matches_original_live_readiness": true
+    },
+    {
+      "file": "research/pilot/probe_runtime.py",
+      "file_sha256": "6489f4d87d3bc0f2e6f55e3d6e9b70db6105212f8da6fcc60d8f3c99a5211820",
+      "start_line": 393,
+      "end_line": 395,
+      "quote": "def supervise(command, timeout, deadline):\n    started = time.monotonic()\n    proc = subprocess.Popen(command, start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)\n",
+      "span_sha256": "45c1ea7efaf941dc05c14b79cbac489b728ceed9eeb23aeffb8803b66b1fc0a4",
+      "meaning_zh": "worker stdout/stderr均为DEVNULL。",
+      "matches_original_live_readiness": true
+    },
+    {
+      "file": "research/pilot/strategy-routing/runtime/transport.py",
+      "file_sha256": "7be36788295d296727e30c14c6e8c01aed37aa6d5cca64efd7c0217e1f85ad9c",
+      "start_line": 69,
+      "end_line": 79,
+      "quote": "    def dispatch(self,request,response,seconds):\n        import probe_runtime as probe\n        check_authorization()\n        result=probe.supervise([sys.executable,str(Path(__file__).resolve()),'worker',str(request),str(response)],seconds+2,float('inf'))\n        marker=response.with_suffix('.dispatch.json')\n        dispatched=marker.exists() and read(marker).get('dispatch_started') is True\n        if response.exists():return {**read(response),'request_dispatched':dispatched}\n        # Supervisor-confirmed killed timeout may consume an authorized retry;\n        # arbitrary crashes have unknown outcome and are not automatically retried.\n        return {'error_category':'request_or_batch_timeout' if result['supervisor_reason']=='request_or_batch_timeout' else 'uncertain_worker_outcome',\n                'usage':None,'request_dispatched':dispatched}\n",
+      "span_sha256": "b4dacca39ed9a3f1ab37e966f177c51b99e3ec0ea41668950a24abe85b54fd4a",
+      "meaning_zh": "父进程补dispatch标记，无法补回原始响应。",
+      "matches_original_live_readiness": true
+    },
+    {
+      "file": "research/pilot/strategy-routing/runtime/bounded.py",
+      "file_sha256": "97c2c195834ef3806766aee8f5980b585e454682a062d266851cef3872b6dcd3",
+      "start_line": 286,
+      "end_line": 304,
+      "quote": "                if not response_path.exists():save(response_path,envelope)\n                for field in ('http_status','error_category','retry_not_before_utc','retry_after_invalid','response_bytes','response_byte_limit','request_dispatched'):\n                    if field in envelope:event[field]=envelope[field]\n                if envelope.get('http_status')!=200:\n                    event['status']='failed';self.persist()\n                    if retry_delay(event,len(record['events'])) is None:\n                        reason=('authorization_http_'+str(event['http_status']) if event.get('http_status') in {401,402,403}\n                                else event.get('error_category','nonretryable_http_status'))\n                        self.fail(cell,reason)\n                    continue\n                # Commit every complete transport reply before parsing; even an\n                # invalid schema or unknown usage must not trigger another call.\n                record['completed_response']=response_path.name\n                record['completed_sha256']=file_sha(response_path)\n                event['status']='completed';self.persist()\n                try:value,usage=validate_response(service,envelope['response'],len(counts))\n                except Halt as error:\n                    event['status']='invalid_response';self.persist();self.fail(cell,str(error))\n                event.update(status='validated',usage=usage)\n",
+      "span_sha256": "9f80b4a7a1e8d1376d29a2979933cae68beed2a62781b96e634a9c6ebda83a6d",
+      "meaning_zh": "无http_status=200的envelope列失败，只有完整响应可登记completed_response。",
+      "matches_original_live_readiness": true
+    },
+    {
+      "file": "research/pilot/code_prompt_transport.py",
+      "file_sha256": "5d7ab414ee5eb2f280c71834ccdf3824555d00b90aba050ce12f326b08e55e5d",
+      "start_line": 60,
+      "end_line": 90,
+      "quote": "def run(transport, probe, request, response):\n    metadata={}\n    original_open=urllib.request.OpenerDirector.open\n    original_read=http.client.HTTPResponse.read\n    original_error=probe.error_summary\n    def capture(error):\n        category=connection_category(error)\n        if category:metadata['error_category']=category\n    def opened(self,*args,**kwargs):\n        try:return original_open(self,*args,**kwargs)\n        except urllib.error.HTTPError as error:\n            metadata.update(retry_after(error.headers.get('Retry-After'),datetime.now(timezone.utc)))\n            raise\n        except Exception as error:capture(error);raise\n    def read(self,*args,**kwargs):\n        try:return original_read(self,*args,**kwargs)\n        except Exception as error:capture(error);raise\n    urllib.request.OpenerDirector.open=opened\n    http.client.HTTPResponse.read=read\n    probe.error_summary=lambda data:guarded_error_summary(data,original_error)\n    try:transport.worker(request,response)\n    finally:\n        urllib.request.OpenerDirector.open=original_open\n        http.client.HTTPResponse.read=original_read\n        probe.error_summary=original_error\n    if response.exists() and metadata:\n        envelope=json.loads(response.read_text())\n        # Never transform a successful or safety-rejected response into a retry.\n        if envelope.get('http_status')!=200:\n            envelope.update(metadata)\n            probe.save(response,envelope)\n",
+      "span_sha256": "699e19fb644f3562e4f1d990a99822fc9734e27a571fbeb98f2a82da89b33319",
+      "meaning_zh": "包装层只加连接/HTTP错误元数据，不保存原始回复正文。",
+      "matches_original_live_readiness": true
+    }
+  ],
+  "error_category_interpretation": {
+    "category": "responses_empty_or_multiple_messages",
+    "emission_location": {
+      "file": "research/pilot/probe_runtime.py",
+      "lines": [
+        254,
+        255
+      ]
+    },
+    "possible_conditions_under_reviewed_code": [
+      "messages长度为0，例如终态output为空且无可恢复项，或只有被跳过的reasoning类型项。",
+      "messages长度大于1，存在多个通过类型检查的assistant消息。",
+      "仅1条assistant消息，但拼接后的可见文本是纯空白。"
+    ],
+    "known_prior_checks": "按与原live-readiness哈希一致的代码，该分支在终态status=completed、output为list及输出项基本类型检查之后；但实际原始流未保存，无法重验或区分具体分支。",
+    "unknowns": [
+      "原始响应是SSE还是JSON；请求stream=true不等于已保留响应Content-Type。",
+      "原始可见message数及文本、reasoning项数、响应字节数、usage、HTTP确切状态。",
+      "是否能安全拼接多条可见消息，或是否有可恢复output_item.done。"
+    ],
+    "stage_boundary": "传输层可见消息标准化失败；没有进入GraphRAG PrimerResponse应用层解析，更未执行4个Local或reduce。",
+    "not_supported_diagnoses": [
+      "尚不能定性为PrimerResponse JSON/schema验证失败。",
+      "尚不能定性为上游真的返回空答案、输出token截断或API拒绝。",
+      "dispatch_started不是HTTP200或答案成功证据。"
+    ]
+  },
+  "cache_search_scope": {
+    "run_directory": ".cache/pilot/strategy-routing-20261014",
+    "noncredential_file_count": 689,
+    "file_extensions": {
+      ".json": 687,
+      ".txt": 1,
+      ".lock": 1
+    },
+    "filename_candidates_for_raw_stream_or_worker_logs": [
+      "log-before-supervisor-fix.txt"
+    ],
+    "known_sibling_run_log": {
+      "file": ".cache/pilot/strategy-routing-run.log",
+      "sha256": "bd3a446d7456fb9b9f086071dd72c57550014d0c7487aca180418e9785d952e1",
+      "bytes": 32379,
+      "lines": 250,
+      "pattern_counts": {
+        "responses_empty_or_multiple_messages": 6,
+        "response.output_item.done": 0,
+        "response.completed": 0,
+        "data:": 0
+      },
+      "result_zh": "6条cell_finished失败类别与进度记录，没有原始流或可见消息副本。"
+    },
+    "before_supervisor_fix_log": {
+      "file": ".cache/pilot/strategy-routing-20261014/log-before-supervisor-fix.txt",
+      "sha256": "327079c2e31f2fc42f7073a6f5fbed12e23476c7f0924fc98e0305ef775839e9",
+      "bytes": 3637,
+      "result_zh": "修复前日志未出现这6个错误或SSE正文；属于更早监督器问题，不能混作primer失败原因。"
+    },
+    "worker_stdout_stderr": "固定源码均为DEVNULL，无可回读worker stdout/stderr日志。",
+    "ledger_records": "6个失败request记录只有service/body/events；没有completed_response或响应正文。cell.answer为null，evidence为空，decisions仅HyDE模板和参数。",
+    "public_wire_crosscheck": "13个primer公开wire的event、request、response_envelope均逐项等于私有账本/请求/响应缓存。",
+    "negative_search_boundary": "结论限定于本任务运行目录、已知主日志、公开wire、账本与保存代码；没有搜索其他项目、系统缓存、提供者日志或凭据。"
+  },
+  "retry_implications_without_execution": [
+    "6个失败primer无法从现有记录重新解析出答案；继续需要新增授权范围内的实际请求，不能标成离线恢复成功。",
+    "后续可在新目录保留脱敏的结构诊断：终态、可见message数/字符数、output项类型及usage，以区分分支；本诊断没有实现或执行。",
+    "旧失败记录与旧分数应保留，重试结果和新增成本另报，不能覆盖旧轮。",
+    "较早的已验证HyDE和embedding可供设计续跑起点；是否复用及怎样控制差异需由重试方案显式冻结。"
+  ],
+  "bindings": [
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/summary.json",
+      "sha256": "f2eb40e3839e2a04b3ece1cf2a9fa3b9db4f03371d5e4eeee9505e40f3a405c5",
+      "bytes": 12105406,
+      "private_cache": true
+    },
+    {
+      "file": "research/pilot/strategy-routing/results/execution.json",
+      "sha256": "c82c0f8587054f7b2ad79e69f9571d6d94d166a4d6245eb60e5102bbe3d84521",
+      "bytes": 774533,
+      "private_cache": false
+    },
+    {
+      "file": "research/pilot/strategy-routing/results/scores.json",
+      "sha256": "88c2b1b74a8ee95706a0735cc28f7ac69f3d3794dafe5afba85db85bee5c76c0",
+      "bytes": 106247,
+      "private_cache": false
+    },
+    {
+      "file": "research/pilot/strategy-routing/runtime/live-readiness.json",
+      "sha256": "8426241f11e158bb0f3c46471b98914c5850d897693fb28159d00c7ebc7484b0",
+      "bytes": 3638,
+      "private_cache": false
+    },
+    {
+      "file": "research/pilot/questions.json",
+      "sha256": "bd3d2edccd05023274456e0333bc395400921371ce4ad1bf9352ec65c6b37315",
+      "bytes": 4311,
+      "private_cache": false
+    },
+    {
+      "file": "research/pilot/probe_runtime.py",
+      "sha256": "6489f4d87d3bc0f2e6f55e3d6e9b70db6105212f8da6fcc60d8f3c99a5211820",
+      "bytes": 38273,
+      "private_cache": false
+    },
+    {
+      "file": "research/pilot/code_prompt_transport.py",
+      "sha256": "5d7ab414ee5eb2f280c71834ccdf3824555d00b90aba050ce12f326b08e55e5d",
+      "bytes": 4158,
+      "private_cache": false
+    },
+    {
+      "file": "research/pilot/strategy-routing/runtime/transport.py",
+      "sha256": "7be36788295d296727e30c14c6e8c01aed37aa6d5cca64efd7c0217e1f85ad9c",
+      "bytes": 5641,
+      "private_cache": false
+    },
+    {
+      "file": "research/pilot/strategy-routing/runtime/bounded.py",
+      "sha256": "97c2c195834ef3806766aee8f5980b585e454682a062d266851cef3872b6dcd3",
+      "bytes": 22115,
+      "private_cache": false
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-run.log",
+      "sha256": "bd3a446d7456fb9b9f086071dd72c57550014d0c7487aca180418e9785d952e1",
+      "bytes": 32379,
+      "private_cache": true
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/log-before-supervisor-fix.txt",
+      "sha256": "327079c2e31f2fc42f7073a6f5fbed12e23476c7f0924fc98e0305ef775839e9",
+      "bytes": 3637,
+      "private_cache": true
+    },
+    {
+      "file": "research/pilot/strategy-routing/results/cells/Q07-routed_graphrag.json",
+      "sha256": "1a8c648aff27e97717a4d83038623c4307476d01a4a03c878518cdcf3c77c86f",
+      "bytes": 192785,
+      "private_cache": false
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/request-28.json",
+      "sha256": "bc7f3834674babd9f0cf877628f884e6d77dd53ed2e4297c002c4f1bfefb6ebf",
+      "bytes": 18125,
+      "private_cache": true
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/response-28.json",
+      "sha256": "0ffb5b890b01d6ea04dc628342a8147d78ea6ffe4255a790c21751cf473331e8",
+      "bytes": 4533,
+      "private_cache": true
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/response-28.dispatch.json",
+      "sha256": "b9623c19d5321bd1e8a7666cc7a75a3e59062d58930c3735c8135c8608ad88d2",
+      "bytes": 64,
+      "private_cache": true
+    },
+    {
+      "file": "research/pilot/strategy-routing/results/wire/event-028.json",
+      "sha256": "aa0b606301da32667af9c024bc1c36ab33d0072b9c9073d5539e2944865d1687",
+      "bytes": 23732,
+      "private_cache": false
+    },
+    {
+      "file": "research/pilot/strategy-routing/results/cells/Q08-routed_graphrag.json",
+      "sha256": "f39d90f790c09b11175ac8fc5a49b16552dbac2fb1b0928cd68c8005980fb255",
+      "bytes": 2367,
+      "private_cache": false
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/request-43.json",
+      "sha256": "c4918e98605010f9fe403e28f72af849e5fb3a14600dbe4b5d77469e8eaf3b3d",
+      "bytes": 14908,
+      "private_cache": true
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/response-43.json",
+      "sha256": "e8a6774b49bb83eccd61ab0647e46cd39514e8d5c0785a7c72da87b574e9f1ef",
+      "bytes": 63,
+      "private_cache": true
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/response-43.dispatch.json",
+      "sha256": "b9623c19d5321bd1e8a7666cc7a75a3e59062d58930c3735c8135c8608ad88d2",
+      "bytes": 64,
+      "private_cache": true
+    },
+    {
+      "file": "research/pilot/strategy-routing/results/wire/event-043.json",
+      "sha256": "296756c4c54d72638e34229a19e328859fba03d079895e57e8bccf4c17fe6b63",
+      "bytes": 15795,
+      "private_cache": false
+    },
+    {
+      "file": "research/pilot/strategy-routing/results/cells/Q09-routed_graphrag.json",
+      "sha256": "84e154539717032ac84a8b80dd0b760277fe0cb6fdd2bfc447d11058c1d9a7f8",
+      "bytes": 184413,
+      "private_cache": false
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/request-49.json",
+      "sha256": "a28e4b05dc473de06ff3e078f43441ed63a7c2215e1c2b53030e72210eb43ad2",
+      "bytes": 17486,
+      "private_cache": true
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/response-49.json",
+      "sha256": "10eb512ed4affed71a709442857d0d2a3e330ffa46f0dfcb1d49716a21418df5",
+      "bytes": 3582,
+      "private_cache": true
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/response-49.dispatch.json",
+      "sha256": "b9623c19d5321bd1e8a7666cc7a75a3e59062d58930c3735c8135c8608ad88d2",
+      "bytes": 64,
+      "private_cache": true
+    },
+    {
+      "file": "research/pilot/strategy-routing/results/wire/event-049.json",
+      "sha256": "acf4c9b295e285726c4d02b79e637ef5ac38672a3816d052e842d7e6402d5c7e",
+      "bytes": 22142,
+      "private_cache": false
+    },
+    {
+      "file": "research/pilot/strategy-routing/results/cells/Q10-routed_graphrag.json",
+      "sha256": "ef176effba4759cfee52115f7d7b908ccc57a030cd38cd2a39b297788baa489f",
+      "bytes": 2369,
+      "private_cache": false
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/request-64.json",
+      "sha256": "e9b01b9a20d29b3b5fce170925820b6be9908d7d5f7f22b8cda7accea18e16f8",
+      "bytes": 14298,
+      "private_cache": true
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/response-64.json",
+      "sha256": "e8a6774b49bb83eccd61ab0647e46cd39514e8d5c0785a7c72da87b574e9f1ef",
+      "bytes": 63,
+      "private_cache": true
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/response-64.dispatch.json",
+      "sha256": "b9623c19d5321bd1e8a7666cc7a75a3e59062d58930c3735c8135c8608ad88d2",
+      "bytes": 64,
+      "private_cache": true
+    },
+    {
+      "file": "research/pilot/strategy-routing/results/wire/event-064.json",
+      "sha256": "aebc32b2e2c411210d966ff39dce58ce3b72892d1f1ef5b09ac84487b0d619c2",
+      "bytes": 15185,
+      "private_cache": false
+    },
+    {
+      "file": "research/pilot/strategy-routing/results/cells/Q11-routed_graphrag.json",
+      "sha256": "3d66cf7ffb8bd4a9bdcb2f71c9e19ffb1613dc2ea627bd0fd4915fa6f0a5d062",
+      "bytes": 2369,
+      "private_cache": false
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/request-70.json",
+      "sha256": "147614b44a39048b48ec1cba23169d0b5fc91f651a2d9a9d7c3a428d442cbdc0",
+      "bytes": 13983,
+      "private_cache": true
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/response-70.json",
+      "sha256": "e8a6774b49bb83eccd61ab0647e46cd39514e8d5c0785a7c72da87b574e9f1ef",
+      "bytes": 63,
+      "private_cache": true
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/response-70.dispatch.json",
+      "sha256": "b9623c19d5321bd1e8a7666cc7a75a3e59062d58930c3735c8135c8608ad88d2",
+      "bytes": 64,
+      "private_cache": true
+    },
+    {
+      "file": "research/pilot/strategy-routing/results/wire/event-070.json",
+      "sha256": "9700bc31aad94ef5e5be7f5a56c1189f970ffb5811189d4d8549b1360e06adcd",
+      "bytes": 14870,
+      "private_cache": false
+    },
+    {
+      "file": "research/pilot/strategy-routing/results/cells/Q12-routed_graphrag.json",
+      "sha256": "34b173eb7162af6d3dafb3d96dacba4182253b6f493046d1fdb908de0c2ee4a6",
+      "bytes": 204646,
+      "private_cache": false
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/request-76.json",
+      "sha256": "07af88a5f189dc18451f5496639452648d3353a9660b800c90f055f5fe53d539",
+      "bytes": 16988,
+      "private_cache": true
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/response-76.json",
+      "sha256": "04de30df157c22c80a4be241f0e0a7d008ae6c9f6c690fdfdf9b3388552c4d1a",
+      "bytes": 3401,
+      "private_cache": true
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/response-76.dispatch.json",
+      "sha256": "b9623c19d5321bd1e8a7666cc7a75a3e59062d58930c3735c8135c8608ad88d2",
+      "bytes": 64,
+      "private_cache": true
+    },
+    {
+      "file": "research/pilot/strategy-routing/results/wire/event-076.json",
+      "sha256": "6274b3c0e625a8a5718a59109a528cfe601bb63f57076c19101dae41335d4e33",
+      "bytes": 21448,
+      "private_cache": false
+    },
+    {
+      "file": "research/pilot/strategy-routing/results/cells/Q13-routed_graphrag.json",
+      "sha256": "ad91326a1e6613e2ef7db0f64d35e47509b3c0c1014f49e6534f592ea9a0a344",
+      "bytes": 193770,
+      "private_cache": false
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/request-91.json",
+      "sha256": "821b3e0c26d2b79767e1ccb78bf818e23376cbcaeb0c3c12910dae72b8007087",
+      "bytes": 16279,
+      "private_cache": true
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/response-91.json",
+      "sha256": "3b329b8e4d7e95cecc365fd86d3fe6366e615b8b5fc1b86c93e9dbd642e35c98",
+      "bytes": 3797,
+      "private_cache": true
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/response-91.dispatch.json",
+      "sha256": "b9623c19d5321bd1e8a7666cc7a75a3e59062d58930c3735c8135c8608ad88d2",
+      "bytes": 64,
+      "private_cache": true
+    },
+    {
+      "file": "research/pilot/strategy-routing/results/wire/event-091.json",
+      "sha256": "97838beb2581d994ed45cc2e50bfa9f5a285af6f611d111cecba7cec36865f1c",
+      "bytes": 21149,
+      "private_cache": false
+    },
+    {
+      "file": "research/pilot/strategy-routing/results/cells/Q14-routed_graphrag.json",
+      "sha256": "e178d54dfebcb4f2a029d13b1f52c2e116a01cf4eb160dec8e9011cbc2d9e76b",
+      "bytes": 2378,
+      "private_cache": false
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/request-106.json",
+      "sha256": "073c246b59284540a9308cdec379757d80c803beefc601fed4d315b4f6f5beb9",
+      "bytes": 15671,
+      "private_cache": true
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/response-106.json",
+      "sha256": "e8a6774b49bb83eccd61ab0647e46cd39514e8d5c0785a7c72da87b574e9f1ef",
+      "bytes": 63,
+      "private_cache": true
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/response-106.dispatch.json",
+      "sha256": "b9623c19d5321bd1e8a7666cc7a75a3e59062d58930c3735c8135c8608ad88d2",
+      "bytes": 64,
+      "private_cache": true
+    },
+    {
+      "file": "research/pilot/strategy-routing/results/wire/event-106.json",
+      "sha256": "b751a84ab057b003952830c00e18632bdbeaceae0d8dc451908cf7303f978fa2",
+      "bytes": 16559,
+      "private_cache": false
+    },
+    {
+      "file": "research/pilot/strategy-routing/results/cells/Q15-routed_graphrag.json",
+      "sha256": "bd000e0076882a6e42a13196f200e850e8baa616d6a8c518d5daa292c93af095",
+      "bytes": 180779,
+      "private_cache": false
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/request-112.json",
+      "sha256": "b1b40b29af9e36ed11f7c79d5f8b50f9d9af704e1132d0ecd3a79f564823aa2a",
+      "bytes": 15484,
+      "private_cache": true
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/response-112.json",
+      "sha256": "a4f62036fadf822a4b420b0ae6a04ca36b3c7e7ebf5f082a011f99c8e0ea8ffe",
+      "bytes": 3801,
+      "private_cache": true
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/response-112.dispatch.json",
+      "sha256": "b9623c19d5321bd1e8a7666cc7a75a3e59062d58930c3735c8135c8608ad88d2",
+      "bytes": 64,
+      "private_cache": true
+    },
+    {
+      "file": "research/pilot/strategy-routing/results/wire/event-112.json",
+      "sha256": "29f4121135ec9988145cfff014e4f7d4b252901707ccf6bffecee48fe4aac2da",
+      "bytes": 20359,
+      "private_cache": false
+    },
+    {
+      "file": "research/pilot/strategy-routing/results/cells/Q16-routed_graphrag.json",
+      "sha256": "efd364ddeee0adf03ffab2f9b1c24b491fa286331a066312b4a7048945402841",
+      "bytes": 2378,
+      "private_cache": false
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/request-127.json",
+      "sha256": "3cae7b17b37fd93705a4e4d6f90dffa2529da51c5bc6f4e2e4fc271af32bc4d0",
+      "bytes": 14066,
+      "private_cache": true
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/response-127.json",
+      "sha256": "e8a6774b49bb83eccd61ab0647e46cd39514e8d5c0785a7c72da87b574e9f1ef",
+      "bytes": 63,
+      "private_cache": true
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/response-127.dispatch.json",
+      "sha256": "b9623c19d5321bd1e8a7666cc7a75a3e59062d58930c3735c8135c8608ad88d2",
+      "bytes": 64,
+      "private_cache": true
+    },
+    {
+      "file": "research/pilot/strategy-routing/results/wire/event-127.json",
+      "sha256": "10d07f22058d2de370d8ca923737509c2b6a92cc975f26ab06af70c49fdca90a",
+      "bytes": 14954,
+      "private_cache": false
+    },
+    {
+      "file": "research/pilot/strategy-routing/results/cells/Q17-routed_graphrag.json",
+      "sha256": "2d9258ab9792d4b195cd06e7e48b4b64250582bc8baf3fb712b5bcbcec06b70a",
+      "bytes": 187850,
+      "private_cache": false
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/request-133.json",
+      "sha256": "def04e1a3f20868345112367885a5efd481be00c2a3bb4b61d7fceb98cfcc67e",
+      "bytes": 12786,
+      "private_cache": true
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/response-133.json",
+      "sha256": "8e4790f0231096a53dab56a65ea7fadf94a697861809d45b46705a3d4cb31bd9",
+      "bytes": 3211,
+      "private_cache": true
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/response-133.dispatch.json",
+      "sha256": "b9623c19d5321bd1e8a7666cc7a75a3e59062d58930c3735c8135c8608ad88d2",
+      "bytes": 64,
+      "private_cache": true
+    },
+    {
+      "file": "research/pilot/strategy-routing/results/wire/event-133.json",
+      "sha256": "295e0f54ac0a4a2cb807a4c1cb2a9cde3c58d728f57c7be5f0bf75c1330daac3",
+      "bytes": 17071,
+      "private_cache": false
+    },
+    {
+      "file": "research/pilot/strategy-routing/results/cells/Q18-routed_graphrag.json",
+      "sha256": "a189baa07ab3102e20257ae1a7485af2fb8f075407245945599e23564e218056",
+      "bytes": 2376,
+      "private_cache": false
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/request-148.json",
+      "sha256": "310b5478ae62975daf5a00bd5325edf5eb0178a7fda002f5cd1852f10517d4b9",
+      "bytes": 15662,
+      "private_cache": true
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/response-148.json",
+      "sha256": "e8a6774b49bb83eccd61ab0647e46cd39514e8d5c0785a7c72da87b574e9f1ef",
+      "bytes": 63,
+      "private_cache": true
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/response-148.dispatch.json",
+      "sha256": "b9623c19d5321bd1e8a7666cc7a75a3e59062d58930c3735c8135c8608ad88d2",
+      "bytes": 64,
+      "private_cache": true
+    },
+    {
+      "file": "research/pilot/strategy-routing/results/wire/event-148.json",
+      "sha256": "c39a060cce80901fb56ad1fd18508f5b38e12270463941f76c97d79cd424114c",
+      "bytes": 16550,
+      "private_cache": false
+    },
+    {
+      "file": "research/pilot/strategy-routing/results/cells/F02-plan-routed_graphrag.json",
+      "sha256": "dbd220fb546e5e010ce8235ae2835f8eb0e41ad62fe6f8032a789550d8ab01fc",
+      "bytes": 196382,
+      "private_cache": false
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/request-162.json",
+      "sha256": "4998bee970341940155c316e67d3c782f72288fd913d9643ae802a7e2da26f70",
+      "bytes": 17370,
+      "private_cache": true
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/response-162.json",
+      "sha256": "9e13584f14be4ed40f558abc68599c956e6ad6fb5bc848e4605df80c630c83bc",
+      "bytes": 4273,
+      "private_cache": true
+    },
+    {
+      "file": ".cache/pilot/strategy-routing-20261014/response-162.dispatch.json",
+      "sha256": "b9623c19d5321bd1e8a7666cc7a75a3e59062d58930c3735c8135c8608ad88d2",
+      "bytes": 64,
+      "private_cache": true
+    },
+    {
+      "file": "research/pilot/strategy-routing/results/wire/event-162.json",
+      "sha256": "0d6afdeb544e6248e767a8cbe2af985fdddc88f4a1ca80f52ed948d462e28274",
+      "bytes": 22713,
+      "private_cache": false
+    }
+  ],
+  "validation": {
+    "source_code_matches_original_live_readiness": true,
+    "public_private_primer_records_equal_count": 13,
+    "failed_response_63_bytes_count": 6,
+    "failed_response_hashes_identical": true,
+    "failed_dispatch_started_true_count": 6,
+    "all_seven_successes_have_1_hyde_1_primer_4_local_1_reduce": true,
+    "all_six_failures_have_no_local_or_reduce": true,
+    "original_files_rehashed_unchanged_before_write": true,
+    "api_calls": 0
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "status": "independent_review_passed",
+  "reviewer": {
+    "role": "Independent AI audit agent",
+    "human_review": false,
+    "blinded": false
+  },
+  "reviewed_utc": "2026-10-14T06:38:52.128003+00:00",
+  "scope": "Offline boundary and budget review for six isolated failed-DRIFT retries. No new model results or scoring reviewed.",
+  "unresolved_blocking_findings": [],
+  "implementation_sha256": {
+    "bounded.py": "176e33d8e4901d9c67f46c4c83a3d03942ca33141ae2289e811a12cd1959cb6f",
+    "transport.py": "2dace9eec2aee337b431b7c97fc308fbd255dcac0e9f0a538ff6b2237749bbcf",
+    "runner.py": "13e6280cfeb1051ea798b46399470382100edbc9c2408b709d2923962252996d",
+    "responses_decoder.py": "bd4f9684094336e5076bae6a4deb8e853cb3cc699363010b3c031a496fb2ab15",
+    "authorization.json": "f2f075ee86cf28b1080a0f1c2f63b872f296a9989412063d52870ac0299c02aa",
+    "inherited-manifest.json": "7def30cdc512fd531f3a56a19544109122156e0c951996155b83146c382c0d8f"
+  },
+  "evidence_sha256": {
+    "test_retry_boundaries.py": "64c5257cac18efb061a1bb754c7605d8c47c01d2e18336566275d60588b14656",
+    "test_retry_transport.py": "29689008a47e8660a17b613f33cc18aaf6c230b4feb991675391c40c2d11601a",
+    "test_responses_decoder.py": "a8678a938378d948419bdf9d5e370c4b6c2c1a233c502e93251b2565fea004d0",
+    "decoder-review.json": "7fb31b9506fa2fb0b2a9ba06bf3ce931f7a4f02c39aeb3e75baf8ebd4e99426e",
+    "offline_integration.py": "b095e3422bbed9c3fbf2302e2fe39331bb7d9cf558e3e2d241f8d4df87ff7ba4",
+    "offline-integration.json": "1988dbf8629d7d3d57f28245ba600fe55dae26c50eafc00f8d4f6afe4955ba78",
+    "README.md": "8e1c7d6521b0efc7b29eb1231b7ccd615f7c73a30be4ebe6a4245581bc3f3cba",
+    "DECODER.md": "6e5bb3e4eb752949a51b8fa7183496c7446979691f9cffba63b2fbdf7880b013"
+  },
+  "old_summary_sha256": "f2eb40e3839e2a04b3ece1cf2a9fa3b9db4f03371d5e4eeee9505e40f3a405c5",
+  "independent_test": {
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 -S research/pilot/strategy-routing-retry/test_retry_boundaries.py -v",
+    "tests": 23,
+    "passed": 23,
+    "failures": 0,
+    "elapsed_seconds": 1.944,
+    "writes": "Temporary synthetic run directories plus the new test and review files only.",
+    "network_guard": "Audit hook rejects socket/HTTP dispatch, credential paths and writes under original .cache.",
+    "old_manifest_bound_files_verified": 36,
+    "old_summary_and_inherited_manifest_unchanged": true,
+    "real_api_calls": 0,
+    "credentials_read": false
+  },
+  "verified_boundaries": [
+    "Only Q08/Q10/Q11/Q14/Q16/Q18 routed_graphrag/drift cells can be opened; other question/method/route combinations are rejected.",
+    "All global carry counters and all six original per-cell input totals are retained. The manifest exactly matches the immutable old ledger request metadata and history.",
+    "Twelve prior successful HyDE/embedding responses replay with exact hashes, no transport dispatch, no new reservation and explicit old-event provenance.",
+    "HyDE and primer request bodies must match inherited keys; relabeling an existing key to a different stage/service is rejected.",
+    "Each old failed primer already used one attempt. Only two further physical attempts remain; a transient failure after its second cumulative attempt waits 15 seconds, then the third failure stops.",
+    "Completed valid new responses are reused without new dispatch, including after restart. Complete decoder failure is not retried and known diagnostic provider usage is retained.",
+    "Permission, safety and explicitly non-dispatched failures do not retry. Unknown crash with no complete durable response stops for review and keeps the reserved counts and unknown usage.",
+    "A complete durable response recovered after process loss is validated and reused without a new dispatch or fabricated attempt.",
+    "Resume rejects counter resets, per-cell carry resets, prior-attempt resets, missing inherited records, altered request bodies/service/history, cache hash changes and mismatched event stage/cell metadata.",
+    "Same-process new cache use checks completed response SHA; locking rejects a concurrent controller for the same isolated directory.",
+    "Static runner/transport review confirms fixed isolated run path, six-cell selection, original protocol/input/implementation gates, exact reserved payload validation, parent-process binding, original endpoints and 120/30-second request limits."
+  ],
+  "resolved_findings": [
+    {
+      "finding": "Inherited zero-new-event records and cell metadata were insufficiently reconstructed on resume; existing request stages could be relabeled.",
+      "resolution": "Parent strengthened inherited records/body/service/history/cell route/input/stage reconstruction and stage binding; mutation tests now reject."
+    },
+    {
+      "finding": "New response cache reuse within the same process did not check its stored completed SHA.",
+      "resolution": "Parent added hash validation before cached response parsing; independently reproduced failure before the fix and rejection after it."
+    },
+    {
+      "finding": "Resume accepted event.stage differing from the corresponding cell request metadata.",
+      "resolution": "Parent bound event cell/key/stage/service; independently reproduced failure before the fix and rejection after it."
+    }
+  ],
+  "budget": {
+    "carry": {
+      "generation_reservations": 1498,
+      "generation_input_tokens": 3095030,
+      "embedding_tokens": 666553,
+      "embedding_attempts": 147
+    },
+    "old_per_cell_common_inputs": {
+      "Q08": 3159,
+      "Q10": 3430,
+      "Q11": 3157,
+      "Q14": 3812,
+      "Q16": 2989,
+      "Q18": 3672
+    },
+    "old_six_cell_common_input_total": 20219,
+    "nominal_new_generation_reservations": 36,
+    "worst_new_generation_reservations": 102,
+    "generation_formula": "6 * (2 remaining primer attempts + 5 new generation requests * 3 attempts)",
+    "cumulative_generation_upper_bound": 1600,
+    "generation_limit": 1883,
+    "maximum_new_common_input_from_six_inherited_cell_caps": 363781,
+    "cumulative_common_input_upper_bound": 3458811,
+    "global_common_input_limit": 8000000,
+    "worst_new_embedding_attempts": 72,
+    "cumulative_embedding_attempt_upper_bound": 219,
+    "worst_new_embedding_tokens": 576000,
+    "cumulative_embedding_token_upper_bound": 1242553,
+    "embedding_cumulative_usd_upper_bound": "0.16153189",
+    "embedding_usd_limit": "1.00",
+    "qualification": "Bounds assume the unchanged official DRIFT k2/depth2/fold1 control flow: at most four new Local subcalls and one reduce per cell, plus four new embedding requests. Every actual reservation counts; per-cell 64k limits may stop a cell before all allowed attempts finish."
+  },
+  "other_evidence": {
+    "official_integration": "Read parent-produced offline-integration.json: six real official DRIFT paths, each exact inherited primer key, two inherited cache uses and synthetic primer + four Local + reduce. This artifact was inspected, not rerun by this review.",
+    "transport_and_decoder": "Separate independent decoder-review.json and transport/decoder tests are bound above; this review concentrates on inherited runtime accounting and replay."
+  },
+  "limitations": [
+    "Synthetic transport tests verify execution boundaries only; they do not predict retry success or answer quality.",
+    "Old six decoder failures lack retained raw SSE. Their precise message contents and diagnostic usage cannot be reconstructed or treated as zero.",
+    "This is a conditional retry on known failed questions after a decoder change. Original outcomes and scores must remain, and changes cannot be attributed solely to decoder compatibility.",
+    "No live-readiness file was created, no paid run was launched, and no old ledger, graph, cache, question, route, prompt or score was changed by this review."
+  ]
+}
