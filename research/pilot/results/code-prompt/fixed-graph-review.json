@@ -1,0 +1,2678 @@
+{
+  "schema_version": "1.0",
+  "review_date_utc": "2026-10-14",
+  "language": "zh-CN",
+  "scope": "只核查预先固定Q01/Q07/Q13/G02及其最终图记录的链接来源；必要时查看该记录已链接的相邻块以判断片段外推是否得到补证，不按新题或评分选择案例。",
+  "snapshot_stage": "graph-before-reports 稳定快照；社区报告/最终索引完成状态不在本次核验范围，之后应做语义哈希一致性检查。",
+  "snapshot_counts": {
+    "entities": 1628,
+    "relationships": 2891,
+    "communities": 372
+  },
+  "snapshot_file_sha256": {
+    "entities.parquet": "b68fcfe39fee48140479ee5e30a5da6a5554f33f733a20a01a0ccef747112c0e",
+    "relationships.parquet": "ed38c01461f763729f0115ab37dcd06210cbe39bcd96fde18e6f3e7cb2615472",
+    "communities.parquet": "8c8ec386b0f21dbf0e90e8c6e35725f2956481d7f99271d142f4a94a8fa662bb"
+  },
+  "semantic_hash_protocol": {
+    "algorithm": "SHA-256",
+    "row_normalization": "删除id和human_readable_id；text_unit_ids排序但保留重复次数；其余语义字段原样保留。UTF-8 JSON，ensure_ascii=false，sort_keys=true，separators=(comma,colon)，allow_nan=false。",
+    "entity_fields": [
+      "title",
+      "type",
+      "description",
+      "text_unit_ids",
+      "frequency",
+      "degree"
+    ],
+    "relationship_fields": [
+      "source",
+      "target",
+      "description",
+      "weight",
+      "combined_degree",
+      "text_unit_ids"
+    ],
+    "table_hash": "每行按上述协议序列化；将所有行JSON字符串排序，作为JSON数组按同一协议编码后SHA-256。保留重复行次数；忽略表行顺序。",
+    "meaning": "UUID或human_readable_id变化本身不使实体/关系语义哈希改变；描述、类型、来源、权重、频率或degree变化会使哈希改变。社区含嵌套UUID，本次仅记录文件hash和数量，不拿其文件hash断言语义变化。",
+    "reusable_python": "import hashlib, json\nimport pyarrow.parquet as pq\n\ndef canonical(value):\n    return json.dumps(value, ensure_ascii=False, sort_keys=True,\n                      separators=(\",\", \":\"), allow_nan=False)\n\ndef semantic_row(row):\n    row = {k: v for k, v in row.items()\n           if k not in {\"id\", \"human_readable_id\"}}\n    if row.get(\"text_unit_ids\") is not None:\n        row[\"text_unit_ids\"] = sorted(row[\"text_unit_ids\"])\n    return row\n\ndef row_sha256(row):\n    return hashlib.sha256(canonical(semantic_row(row)).encode(\"utf-8\")).hexdigest()\n\ndef table_sha256(parquet_path):\n    rows = pq.read_table(parquet_path).to_pylist()\n    serialized = sorted(canonical(semantic_row(row)) for row in rows)\n    return hashlib.sha256(canonical(serialized).encode(\"utf-8\")).hexdigest()\n\n# Call table_sha256 on final entities.parquet and relationships.parquet.\n# Compare to whole_graph_semantic_sha256 in this review.\n# If either table differs, compare the selected row hashes and provenance.\n"
+  },
+  "whole_graph_semantic_sha256": {
+    "entities": "c5be8c7d423a0e23627170f6a7bdf9ff0cb7571b66961ef7b58482b434e7b551",
+    "relationships": "204182d1fdfb3d49205fbfe6fc784c845102089ff3f4edb97c443af23498e59c"
+  },
+  "source_integrity": {
+    "documents_file_sha256": "5688b3cca77328965a48d7d7b835b7ad3826d79a4237203281e1ebde8956a6e7",
+    "provenance_file_sha256": "78d726bf38b5b66f3335e5410736f377f2449c99bf4bd63379425d56d7c1b4e3",
+    "all_114_document_text_hashes_verified": true,
+    "all_selected_record_source_ids_resolved": true
+  },
+  "finalization_review": {
+    "raw_entity_title_type_rows": 1905,
+    "raw_unique_title_type_pairs": 1905,
+    "raw_unique_titles": 1628,
+    "final_entities": 1628,
+    "raw_and_final_title_sets_identical": true,
+    "removed_extra_type_rows": 277,
+    "all_final_type_source_and_frequency_fields_match_first_raw_title_row": true,
+    "interpretation": "1905是(title,type)聚合行数；1628是按title去重后的实体数。277是额外同标题类型行的差额，不是277个独立符号消失。官方finalizer保留首次title行，未把后续同标题行的类型与来源自动合入该保留行；固定例中的CLASS/FUNCTION/METHOD定义来源可能因此只留在关系或方法实体中。",
+    "official_source": {
+      "commit": "5faaaf4f5685fa2056fa8c3bf9342cb089f2942f",
+      "file": "packages/graphrag/graphrag/index/operations/finalize_entities.py",
+      "line_start": 39,
+      "line_end": 51,
+      "url": "https://github.com/microsoft/graphrag/blob/5faaaf4f5685fa2056fa8c3bf9342cb089f2942f/packages/graphrag/graphrag/index/operations/finalize_entities.py#L39"
+    },
+    "selected_title_groups": [
+      {
+        "title": "CASEINSENSITIVEDICT",
+        "raw_types_in_order": [
+          "EXTERNAL_SYMBOL",
+          "CLASS"
+        ],
+        "final_type": "EXTERNAL_SYMBOL",
+        "first_type_retained": true,
+        "raw_groups": [
+          {
+            "type": "EXTERNAL_SYMBOL",
+            "semantic_sha256": "cfa41e094693c02cbbff2a30993bb63e5586c033951418b90dfe60ee2dfe2f09",
+            "source_titles": [
+              "src/requests/adapters.py:L1-L169",
+              "src/requests/adapters.py:L298-L429",
+              "src/requests/models.py:L1-L185",
+              "src/requests/models.py:L335-L501",
+              "src/requests/models.py:L635-L790",
+              "src/requests/sessions.py:L1-L166",
+              "src/requests/sessions.py:L441-L588",
+              "src/requests/utils.py:L1-L182",
+              "src/requests/utils.py:L775-L960",
+              "tests/test_requests.py:L1-L170",
+              "tests/test_requests.py:L2157-L2294",
+              "tests/test_requests.py:L2281-L2428",
+              "tests/test_requests.py:L2414-L2570",
+              "tests/test_structures.py:L1-L78",
+              "tests/test_utils.py:L1-L180",
+              "tests/test_utils.py:L456-L618",
+              "tests/test_utils.py:L600-L747"
+            ],
+            "raw_table_row_index_zero_based": 360,
+            "semantic_fields": {
+              "title": "CASEINSENSITIVEDICT",
+              "type": "EXTERNAL_SYMBOL",
+              "description": [
+                "Imported from `.structures`; its definition is not visible and it is not visibly used here.",
+                "The unresolved callable or class `CaseInsensitiveDict` is instantiated by `build_response` to store response headers with case-insensitive lookup behavior.",
+                "`CaseInsensitiveDict` is imported from `.structures`; no use is visible in this chunk.",
+                "`CaseInsensitiveDict` is explicitly constructed by `prepare_headers` for `self.headers`; its definition is not visible.",
+                "External symbol `CaseInsensitiveDict` is referenced as a callable in `Response.__init__` to construct `self.headers`; its definition is not visible.",
+                "`CaseInsensitiveDict` is imported from `.structures`; no visible use occurs in this chunk.",
+                "The class reference `CaseInsensitiveDict` is explicitly passed as `dict_class` to `merge_setting` for header merging; its definition is not visible.",
+                "The name `CaseInsensitiveDict` is imported from `.structures`; no visible use occurs in this chunk.",
+                "Class or callable `CaseInsensitiveDict` is explicitly referenced by `default_headers` to construct the returned header mapping; its definition is not visible here.",
+                "The external symbol `CaseInsensitiveDict` is imported from `requests.structures`; no visible use appears in this chunk.",
+                "`CaseInsensitiveDict` is an explicitly referenced dictionary implementation constructed and exercised by the tests; its definition is not visible in this chunk.",
+                "`CaseInsensitiveDict` is referenced as an externally defined mapping-like dependency. The visible tests construct it and exercise membership, lookup, update, iteration, equality, defaults, lower-case views, and copying; its definition is not visible.",
+                "The exact spelling `CaseInsensitiveDict` is referenced to construct response headers; its definition is not visible.",
+                "The imported symbol `CaseInsensitiveDict` is referenced to construct the fixture object; its class definition is not visible in this chunk.",
+                "Class imported from `requests.structures`; no use is visible in this chunk.",
+                "Explicitly referenced as `CaseInsensitiveDict()` and `CaseInsensitiveDict({...})` in parameter data following the visible tests. Its definition and owning test context are not visible in this chunk.",
+                "Referenced but not defined in this chunk as the callable `CaseInsensitiveDict()` and `CaseInsensitiveDict({...})`, used to construct case-insensitive header mappings."
+              ],
+              "text_unit_ids": [
+                "08ab497b9f63a3b929873cf200e2cf919b6f34e6ed78029c8236e4f52a2655e095f195db464dba582f26e7f56b741723896fc8c113c1c9266ecf7da0c7fa5cfb",
+                "25f95d61d95536dd1c8dfcb0ee9437dd458f372bb0368548fd0f6a0013071b4abcf086665c608bc3eb2f2865f00a1260f90e56307d26a7ae856d7c5c54fd893a",
+                "269b0b8b9d38de61a031fa736ab118ad232643de271ca1bf506657f0e6b8fa264c050c72757daed9246af17a2fddfd34d20fa3223a0d459459b6f03c3c437fe6",
+                "3726d9893d74af0ffe47bf33c7231af1999eb75c5a044060690795e8460359002950fc7fa023e8dbec642e33315f849fa81e5cb3cd9167443b5ccf30467762f9",
+                "37da1205bca9087f81a5c28961b6f3e9fcfb816c1df9548c0c78121eefb7a5339080dac11060a9f200ad5f13680ea1ef2ee84f58a37a882d9421cf8bda50fe42",
+                "43b0eb429fb59d9e8a7c68b6d91b68792ed3a872fb5a20ef46f0f5aa43724a3049ea9fe1b82e4814f4885580bd8bf12cfb1e04e6c9da8f74a9bd69b637d57d71",
+                "4792350d65a47ab9f49eb6ee4cf53f859e6f0ea029a940c2cd90eed4f87922c45839c6a60b3151cc3c441ae4e73dd254accff58efaaf9abd197c4b43dc59af2c",
+                "5260e132e7ccc90e18a6c1db46f4b70da7f4b77783f87857e255069dc030a5da33114dbcc740a80fa27a29cd9e60d8c9a55d775af46d6bb4b4dccd89b6c82615",
+                "52d10b858dab1f191a9fcbf8c94240faa22f13d5cf930c5b892f1856335145dcf612121e76eeeaffd3a329fe3643250a802ea36652a6765cd67a2f03647f7c68",
+                "771e4903fda73a194d5f66a667619b42b504825dda1259bec5448de65ba6ce2e4731189b7a7d45251bfa4c2777f6805f7101c8561ae23b655dce17ff7efc6fe8",
+                "7946bfd6d0f78f50a99eec3d7f7693e032636f8ba0651347c847763366a134fbc999108c838facb30fcc80d2255bdd9f9baf66d6797b218ab3e3a9f7ab1e03d6",
+                "9e71851338044ff01bb59d30fb37d167391c7a04dbe3bc5c179863164458d81c0ffc31cfa5e46f8d02816cb000a70b41686a938e28b0340a5e2393ebd678ae5a",
+                "a82bc30ad451de8b4340aca21b6264cd5f133fa2e1e8dcb48ad781c2946a51b47bbccf7e811b87defd00eb41ca32c115d5c479b2732b630913a90fccd3431470",
+                "bb15e78170390210f44229d1484a7eff8e7571c588e9b6e94c73689a67630a113ff99b235dee94157cca46404401fdce78e59e7ab8eae33bc76145df98501f7e",
+                "c2595a0671c939e229a84e1dcd2321cd3887b1ffe40c2ac840acc8dfb42c7714737e97f632be571e79735c34c1df7dbc3afdba1fc7237c316c18c49240a9e8d7",
+                "cefa6c63ec4b1cd11e1927da93da580dd749ed4855250d8ae7b47ddf05c7f20fdc485ee142e75cea1d24912a49c84d7ee5ff6534440f3db90e2091db6a87ec4e",
+                "f099a5259968e7f0c3ea8ded913a61b2f82d89d21a5a8807ff2c378ebc5fa824638ee90fe30ae7d44779bcb11c893f2c32a96f5c56401a8c546b29941a9c08c7"
+              ],
+              "frequency": 17
+            }
+          },
+          {
+            "type": "CLASS",
+            "semantic_sha256": "8f77d7a1065c59d387f9de021c895141b1b9b52e48ddc3b4c35ffe01801dbcde",
+            "source_titles": [
+              "src/requests/structures.py:L1-L99"
+            ],
+            "raw_table_row_index_zero_based": 982,
+            "semantic_fields": {
+              "title": "CASEINSENSITIVEDICT",
+              "type": "CLASS",
+              "description": [
+                "`CaseInsensitiveDict` is defined as a `MutableMapping` subclass. It stores lowercased lookup keys while retaining the last cased key and implements mapping operations, `copy`, and `lower_items`."
+              ],
+              "text_unit_ids": [
+                "b9256700252d4330095253ff3abaa885cc97967aafb39eeb6720db90ad55f6a9e70d925cdf0b77ca15e9ded6faab571ee2660fd2fdba038dad3247798fc22bc0"
+              ],
+              "frequency": 1
+            }
+          }
+        ],
+        "final_record_key": "entity:CASEINSENSITIVEDICT"
+      },
+      {
+        "title": "REQUEST",
+        "raw_types_in_order": [
+          "CLASS",
+          "EXTERNAL_SYMBOL",
+          "FUNCTION",
+          "METHOD"
+        ],
+        "final_type": "CLASS",
+        "first_type_retained": true,
+        "raw_groups": [
+          {
+            "type": "CLASS",
+            "semantic_sha256": "e258a60be0e17e90c13a44523f6b4b046b629d0bdfe1f968f6ed73cf2b59184d",
+            "source_titles": [
+              "docs/user/advanced.rst:L1-L136",
+              "docs/user/advanced.rst:L125-L271",
+              "src/requests/models.py:L170-L345"
+            ],
+            "raw_table_row_index_zero_based": 10,
+            "semantic_fields": {
+              "title": "REQUEST",
+              "type": "CLASS",
+              "description": [
+                "The class name `Request` is explicitly imported from `requests` and instantiated with `Request('POST', url, data=data, headers=headers)`; its definition is not visible here.",
+                "`Request` is imported from `requests` and instantiated as `Request('POST', url, data=data, headers=headers)` and `Request('GET', url, data=data, headers=headers)`; its definition is not visible here.",
+                "The exact class `Request` is defined here and inherits `RequestHooksMixin`; its constructor stores request configuration, `__repr__` formats the HTTP method, and `prepare` constructs and prepares a `PreparedRequest`."
+              ],
+              "text_unit_ids": [
+                "5331b84c4ee414531020175aaac10ddf0c8492ecbbd220ad32b87854b94b837b16a108993f977b74ce670e34f896a0625eb0c3871502e97d5ef868ad4c60b1c0",
+                "72f346f82323a04ca139166fc7a3e85bdfcf8722b55cd82525246e4cb780f7a0f82e56320f15ef3a18286326826f75b331e12d0838acc5dda9fcb28f5e5b22b9",
+                "d3150f78238f6ad73845b3510a7bf6b0e2cab02f1e1103994a7ac5bbd8f87030f498eeb1b7fcc941cfd21ce3c2b863e7e4343adb5037605afa83f23e9865f047"
+              ],
+              "frequency": 3
+            }
+          },
+          {
+            "type": "EXTERNAL_SYMBOL",
+            "semantic_sha256": "0493c74e91346e33083a50cddc2c4f82808e9db99e2adfd4702f8ab7c324f935",
+            "source_titles": [
+              "src/requests/__init__.py:L1-L174",
+              "src/requests/__init__.py:L155-L184",
+              "src/requests/api.py:L1-L109",
+              "src/requests/api.py:L101-L157",
+              "src/requests/sessions.py:L1-L166",
+              "src/requests/sessions.py:L298-L453",
+              "src/requests/sessions.py:L441-L588",
+              "src/requests/sessions.py:L569-L717",
+              "tests/test_requests.py:L1872-L2028"
+            ],
+            "raw_table_row_index_zero_based": 267,
+            "semantic_fields": {
+              "title": "REQUEST",
+              "type": "EXTERNAL_SYMBOL",
+              "description": [
+                "`request` is imported from `.api`; its definition is not visible.",
+                "The exact symbol `request` is imported from `.api`; its definition is not visible in this chunk.",
+                "The exact symbol `Request` is imported from `.models`; its definition is not visible in this chunk.",
+                "Referenced in docstrings as `:class:\\`Request\\`` and as the object constructed by the documented API; no `Request` class definition is visible here.",
+                "Referenced but not defined in this chunk as the callable invoked by `post`, `put`, `patch`, and `delete`; each call passes an HTTP method string and request arguments.",
+                "Referenced only in documentation as the `Request` object constructed for the supplied URL; its definition is not visible in this chunk.",
+                "`Request` is imported from `.models` and re-exposed here for backward compatibility.",
+                "`Request` is an explicitly referenced class in the documentation role `:class:\\`Request <Request>\\``; its definition is not visible.",
+                "The constructor `Request(...)` is explicitly referenced in `request` to create a request from the supplied method, URL, headers, body, authentication, cookies, and hooks; its definition is not visible.",
+                "`Request` is an explicitly referenced external class in `isinstance(request, Request)`; `send` raises `ValueError` when the supplied request is an instance of this class.",
+                "`request` is explicitly read from `r1` in `r1.request` when passed to `s.resolve_redirects`; the response class and attribute definition are not visible."
+              ],
+              "text_unit_ids": [
+                "2b38dc8ec228c7382e7171c00471643bdc3f65f647cb4e95a15f104d09643d011932e30a00ee5ab63d3a76c6d9a1ee6412f83b455bcf77f08dd29aff22dffcac",
+                "3726d9893d74af0ffe47bf33c7231af1999eb75c5a044060690795e8460359002950fc7fa023e8dbec642e33315f849fa81e5cb3cd9167443b5ccf30467762f9",
+                "533202aec34d70fe2e87635a6991682059e679196c41224d5b6307324c8697a95317fe181221ea36093302a6094bcb18f0a1b1a250522b76441cdfddc762f606",
+                "7e0253862e73230a88a6603a444912c13871e2e1d6c32e0b2aa30e1cfec5ce5537ed82ca06c589359cee8b2a6a7c6333e1eeb8960096da5680361c141c1b50ae",
+                "c1cd745424c9cd15526c9817388dc761eab81a549baf632b9622061dd8600fe1fb5e55d10a13f6b782d3dc128c3753a80008475b6213aa20323d051b6601ea38",
+                "c5cf4cdd51caa0c3e89458e868edccf81b9ce75b113ed87f1edf7226ffa026de9fae220e653218bb860c1372d900eee04d5d66ee00a642c306fcc7f1b5e06373",
+                "c5cf4cdd51caa0c3e89458e868edccf81b9ce75b113ed87f1edf7226ffa026de9fae220e653218bb860c1372d900eee04d5d66ee00a642c306fcc7f1b5e06373",
+                "cefa6c63ec4b1cd11e1927da93da580dd749ed4855250d8ae7b47ddf05c7f20fdc485ee142e75cea1d24912a49c84d7ee5ff6534440f3db90e2091db6a87ec4e",
+                "e4d16b03bbebbab7887e98b56beb2a1f42973152e06e0aba30b7afb4127ca9fdb4bd1959c3654263a278094012aba9f4bd428b408450a05216d06496ed3bbb63",
+                "e4d16b03bbebbab7887e98b56beb2a1f42973152e06e0aba30b7afb4127ca9fdb4bd1959c3654263a278094012aba9f4bd428b408450a05216d06496ed3bbb63",
+                "f58c14175330235d8fc1ab76a727a2ebbcb83a7b6f0c40a6b2565546b3e14b71fb34762b92dc723c1560082374706f31f3f79711e7a6a5ea3cc830eac1d00fcb"
+              ],
+              "frequency": 11
+            }
+          },
+          {
+            "type": "FUNCTION",
+            "semantic_sha256": "f8c59718bbd0823f1ac042d5f7a82a6a4c7083b162013f3b2e124242e6217612",
+            "source_titles": [
+              "src/requests/api.py:L1-L109"
+            ],
+            "raw_table_row_index_zero_based": 437,
+            "semantic_fields": {
+              "title": "REQUEST",
+              "type": "FUNCTION",
+              "description": [
+                "Defined module-level function `request(method, url, **kwargs)`; creates a `sessions.Session()` context and returns `session.request(method=method, url=url, **kwargs)`. Its documented contract accepts an HTTP method and URL and returns a `Response`, but the `Response` definition is not visible here."
+              ],
+              "text_unit_ids": [
+                "7e0253862e73230a88a6603a444912c13871e2e1d6c32e0b2aa30e1cfec5ce5537ed82ca06c589359cee8b2a6a7c6333e1eeb8960096da5680361c141c1b50ae"
+              ],
+              "frequency": 1
+            }
+          },
+          {
+            "type": "METHOD",
+            "semantic_sha256": "1b95dc99fb67ac439dadac22acd40329071b5eeb5593c4766c0f4da7f17bd681",
+            "source_titles": [
+              "src/requests/sessions.py:L441-L588",
+              "src/requests/sessions.py:L569-L717"
+            ],
+            "raw_table_row_index_zero_based": 924,
+            "semantic_fields": {
+              "title": "REQUEST",
+              "type": "METHOD",
+              "description": [
+                "The method `request` is defined in the visible class body, but the owning class is not shown; it constructs a `Request`, prepares it, merges environment settings, and builds send keyword arguments. Its documented return type is `requests.Response`.",
+                "The method `request` is explicitly called by the visible HTTP verb methods, but its definition is not visible in this chunk. Its returned value is propagated by those methods."
+              ],
+              "text_unit_ids": [
+                "c1cd745424c9cd15526c9817388dc761eab81a549baf632b9622061dd8600fe1fb5e55d10a13f6b782d3dc128c3753a80008475b6213aa20323d051b6601ea38",
+                "cefa6c63ec4b1cd11e1927da93da580dd749ed4855250d8ae7b47ddf05c7f20fdc485ee142e75cea1d24912a49c84d7ee5ff6534440f3db90e2091db6a87ec4e"
+              ],
+              "frequency": 2
+            }
+          }
+        ],
+        "final_record_key": "entity:REQUEST"
+      },
+      {
+        "title": "GET",
+        "raw_types_in_order": [
+          "EXTERNAL_SYMBOL",
+          "FUNCTION",
+          "METHOD"
+        ],
+        "final_type": "EXTERNAL_SYMBOL",
+        "first_type_retained": true,
+        "raw_groups": [
+          {
+            "type": "EXTERNAL_SYMBOL",
+            "semantic_sha256": "4842fabe453a2d7625eb97451786f7dd3c451e2a58d448b5f729e119e3c2ea23",
+            "source_titles": [
+              "src/requests/__init__.py:L1-L174",
+              "src/requests/__init__.py:L155-L184",
+              "src/requests/cookies.py:L328-L479",
+              "src/requests/models.py:L930-L1037",
+              "src/requests/sessions.py:L704-L831",
+              "src/requests/structures.py:L1-L99",
+              "tests/test_requests.py:L1872-L2028",
+              "tests/test_requests.py:L2157-L2294",
+              "tests/test_requests.py:L2559-L2696",
+              "tests/test_requests.py:L775-L929"
+            ],
+            "raw_table_row_index_zero_based": 261,
+            "semantic_fields": {
+              "title": "GET",
+              "type": "EXTERNAL_SYMBOL",
+              "description": [
+                "`get` is imported from `.api`; its definition is not visible.",
+                "The exact symbol `get` is imported from `.api`; its definition is not visible in this chunk.",
+                "The method name `get` is explicitly referenced in documentation as the more explicit alternative to `__getitem__` and `_find_no_duplicates`; no executable call to `get` is visible in this chunk.",
+                "`get` is explicitly referenced through `self.headers.get(\"link\")` and `link.get(\"rel\")` or `link.get(\"url\")`; the receiver types and concrete method definitions are not visible.",
+                "The exact method spelling `get` is referenced through `proxies.get(\"no_proxy\")`, `os.environ.get(\"REQUESTS_CA_BUNDLE\")`, and `os.environ.get(\"CURL_CA_BUNDLE\")`; the receiver bindings and method definition are not visible.",
+                "`get` is explicitly called on `self.__dict__` in `LookupDict.__getitem__` and `LookupDict.get`; the dictionary implementation is not visible here.",
+                "References the unresolved mapping/JSON method spelling `get` in `.json().get(\"form\")`; the receiver's class is not visible.",
+                "`get` is referenced as `s.get(httpbin(\"redirect/2\"), allow_redirects=False, stream=True)`; receiver `s` is locally assigned a session, but the concrete runtime binding is not established here.",
+                "`get` is an explicitly referenced unresolved callable invoked as `session.get(urls_test[0])`; the receiver is a `CustomRedirectSession` instance, but the inherited or runtime method binding is not established by this chunk.",
+                "The callable is referenced as `s.get(...)` to perform HTTP requests; the receiver's concrete class binding is not proven and the method definition is not visible."
+              ],
+              "text_unit_ids": [
+                "2b38dc8ec228c7382e7171c00471643bdc3f65f647cb4e95a15f104d09643d011932e30a00ee5ab63d3a76c6d9a1ee6412f83b455bcf77f08dd29aff22dffcac",
+                "4b4b5fc54c5de1b3bc06ae804b6e1a5b97c7354826ae43cb449d641d0ddfd9ca12e0edbdb3bc23b9ef8590995e18471f832326ab7032bf5ddf89637b8f414d3a",
+                "91958b2bb02a43df27603cfa59ebe989b0667b0ba0d79abd53f7973e096502b75ffad6ca9e277a041e834bb9164df4d7dced5026fbdc6ccfa18cb8a0795034c4",
+                "b9256700252d4330095253ff3abaa885cc97967aafb39eeb6720db90ad55f6a9e70d925cdf0b77ca15e9ded6faab571ee2660fd2fdba038dad3247798fc22bc0",
+                "b9ef8bd69524007c70779cbff64c5bc404ceb6dcd3b6f6209812af6c0a3238c28795e233848af76f88755bd43431332033590044d0741cf17c7945e3db61a170",
+                "bc4ab2502f49c1e1aa173a6c8081bcd4b23a1e7f5e3616ffd849f3f6111902d346779211e0fd205ecc677a53b9c50399d5d7b7830f3d0fe9112ff0ad133fd5c2",
+                "e4d16b03bbebbab7887e98b56beb2a1f42973152e06e0aba30b7afb4127ca9fdb4bd1959c3654263a278094012aba9f4bd428b408450a05216d06496ed3bbb63",
+                "f099a5259968e7f0c3ea8ded913a61b2f82d89d21a5a8807ff2c378ebc5fa824638ee90fe30ae7d44779bcb11c893f2c32a96f5c56401a8c546b29941a9c08c7",
+                "f58c14175330235d8fc1ab76a727a2ebbcb83a7b6f0c40a6b2565546b3e14b71fb34762b92dc723c1560082374706f31f3f79711e7a6a5ea3cc830eac1d00fcb",
+                "f7a16e348dbdfcaeb03162dd951c70406911a93102dda5fe8b2bd318ecdcf2a436eeeee6421652fa3c8a858b1ad18bfb376a8566f7620ebffdbec7d86d85181a"
+              ],
+              "frequency": 10
+            }
+          },
+          {
+            "type": "FUNCTION",
+            "semantic_sha256": "f1b89466781f01ffbaaf07223fe8edf485b2bb2ed95cc7bb1c286103ddbe7658",
+            "source_titles": [
+              "src/requests/api.py:L1-L109"
+            ],
+            "raw_table_row_index_zero_based": 438,
+            "semantic_fields": {
+              "title": "GET",
+              "type": "FUNCTION",
+              "description": [
+                "Defined module-level function `get(url, params=None, **kwargs)`; visibly calls `request(\"get\", url, params=params, **kwargs)`."
+              ],
+              "text_unit_ids": [
+                "7e0253862e73230a88a6603a444912c13871e2e1d6c32e0b2aa30e1cfec5ce5537ed82ca06c589359cee8b2a6a7c6333e1eeb8960096da5680361c141c1b50ae"
+              ],
+              "frequency": 1
+            }
+          },
+          {
+            "type": "METHOD",
+            "semantic_sha256": "7352333283651b07077ebfd2b8d190236646e637847831ce11541524da5b98d9",
+            "source_titles": [
+              "src/requests/sessions.py:L569-L717"
+            ],
+            "raw_table_row_index_zero_based": 935,
+            "semantic_fields": {
+              "title": "GET",
+              "type": "METHOD",
+              "description": [
+                "The method `get(self, url, **kwargs)` is defined here; it sets `allow_redirects` to `True` by default and returns `self.request(\"GET\", url, **kwargs)`. The owning class is not visible."
+              ],
+              "text_unit_ids": [
+                "c1cd745424c9cd15526c9817388dc761eab81a549baf632b9622061dd8600fe1fb5e55d10a13f6b782d3dc128c3753a80008475b6213aa20323d051b6601ea38"
+              ],
+              "frequency": 1
+            }
+          }
+        ],
+        "final_record_key": "entity:GET"
+      },
+      {
+        "title": "HEAD",
+        "raw_types_in_order": [
+          "EXTERNAL_SYMBOL",
+          "FUNCTION",
+          "METHOD"
+        ],
+        "final_type": "EXTERNAL_SYMBOL",
+        "first_type_retained": true,
+        "raw_groups": [
+          {
+            "type": "EXTERNAL_SYMBOL",
+            "semantic_sha256": "3ffd17488cfb49a75de1309727c0c777548a0b8d441f208baf04fea185d7becb",
+            "source_titles": [
+              "src/requests/__init__.py:L1-L174",
+              "src/requests/__init__.py:L155-L184"
+            ],
+            "raw_table_row_index_zero_based": 262,
+            "semantic_fields": {
+              "title": "HEAD",
+              "type": "EXTERNAL_SYMBOL",
+              "description": [
+                "`head` is imported from `.api`; its definition is not visible.",
+                "The exact symbol `head` is imported from `.api`; its definition is not visible in this chunk."
+              ],
+              "text_unit_ids": [
+                "2b38dc8ec228c7382e7171c00471643bdc3f65f647cb4e95a15f104d09643d011932e30a00ee5ab63d3a76c6d9a1ee6412f83b455bcf77f08dd29aff22dffcac",
+                "e4d16b03bbebbab7887e98b56beb2a1f42973152e06e0aba30b7afb4127ca9fdb4bd1959c3654263a278094012aba9f4bd428b408450a05216d06496ed3bbb63"
+              ],
+              "frequency": 2
+            }
+          },
+          {
+            "type": "FUNCTION",
+            "semantic_sha256": "0bf13fdda97b45fc0c74a73eebfc48a31ef211b87f9e28e393a7182fe2a2ba4b",
+            "source_titles": [
+              "src/requests/api.py:L1-L109"
+            ],
+            "raw_table_row_index_zero_based": 440,
+            "semantic_fields": {
+              "title": "HEAD",
+              "type": "FUNCTION",
+              "description": [
+                "Defined module-level function `head(url, **kwargs)`; sets `kwargs.setdefault(\"allow_redirects\", False)` and then calls `request(\"head\", url, **kwargs)`."
+              ],
+              "text_unit_ids": [
+                "7e0253862e73230a88a6603a444912c13871e2e1d6c32e0b2aa30e1cfec5ce5537ed82ca06c589359cee8b2a6a7c6333e1eeb8960096da5680361c141c1b50ae"
+              ],
+              "frequency": 1
+            }
+          },
+          {
+            "type": "METHOD",
+            "semantic_sha256": "4fd6a8030d261daaa6e4586b53e4abf823591767f03dbbe2174ba7db5f4df4dd",
+            "source_titles": [
+              "src/requests/sessions.py:L569-L717"
+            ],
+            "raw_table_row_index_zero_based": 937,
+            "semantic_fields": {
+              "title": "HEAD",
+              "type": "METHOD",
+              "description": [
+                "The method `head(self, url, **kwargs)` is defined here; it sets `allow_redirects` to `False` by default and returns `self.request(\"HEAD\", url, **kwargs)`. The owning class is not visible."
+              ],
+              "text_unit_ids": [
+                "c1cd745424c9cd15526c9817388dc761eab81a549baf632b9622061dd8600fe1fb5e55d10a13f6b782d3dc128c3753a80008475b6213aa20323d051b6601ea38"
+              ],
+              "frequency": 1
+            }
+          }
+        ],
+        "final_record_key": "entity:HEAD"
+      },
+      {
+        "title": "OPTIONS",
+        "raw_types_in_order": [
+          "EXTERNAL_SYMBOL",
+          "FUNCTION",
+          "METHOD"
+        ],
+        "final_type": "EXTERNAL_SYMBOL",
+        "first_type_retained": true,
+        "raw_groups": [
+          {
+            "type": "EXTERNAL_SYMBOL",
+            "semantic_sha256": "03087bf6b819361da311ae30e76471d4b8d9fd580ca78d1c7c9a61553b7c3ce0",
+            "source_titles": [
+              "src/requests/__init__.py:L1-L174",
+              "src/requests/__init__.py:L155-L184"
+            ],
+            "raw_table_row_index_zero_based": 263,
+            "semantic_fields": {
+              "title": "OPTIONS",
+              "type": "EXTERNAL_SYMBOL",
+              "description": [
+                "`options` is imported from `.api`; its definition is not visible.",
+                "The exact symbol `options` is imported from `.api`; its definition is not visible in this chunk."
+              ],
+              "text_unit_ids": [
+                "2b38dc8ec228c7382e7171c00471643bdc3f65f647cb4e95a15f104d09643d011932e30a00ee5ab63d3a76c6d9a1ee6412f83b455bcf77f08dd29aff22dffcac",
+                "e4d16b03bbebbab7887e98b56beb2a1f42973152e06e0aba30b7afb4127ca9fdb4bd1959c3654263a278094012aba9f4bd428b408450a05216d06496ed3bbb63"
+              ],
+              "frequency": 2
+            }
+          },
+          {
+            "type": "FUNCTION",
+            "semantic_sha256": "df0076b8a0d321d6e2153af2ffb23fc38054e542c7ceb235207c86e16aeb0dff",
+            "source_titles": [
+              "src/requests/api.py:L1-L109"
+            ],
+            "raw_table_row_index_zero_based": 439,
+            "semantic_fields": {
+              "title": "OPTIONS",
+              "type": "FUNCTION",
+              "description": [
+                "Defined module-level function `options(url, **kwargs)`; visibly calls `request(\"options\", url, **kwargs)`."
+              ],
+              "text_unit_ids": [
+                "7e0253862e73230a88a6603a444912c13871e2e1d6c32e0b2aa30e1cfec5ce5537ed82ca06c589359cee8b2a6a7c6333e1eeb8960096da5680361c141c1b50ae"
+              ],
+              "frequency": 1
+            }
+          },
+          {
+            "type": "METHOD",
+            "semantic_sha256": "5a156ee88f48e133426b35381827838ac2c6685964f6850bb3a8507d61389be6",
+            "source_titles": [
+              "src/requests/sessions.py:L569-L717"
+            ],
+            "raw_table_row_index_zero_based": 936,
+            "semantic_fields": {
+              "title": "OPTIONS",
+              "type": "METHOD",
+              "description": [
+                "The method `options(self, url, **kwargs)` is defined here; it sets `allow_redirects` to `True` by default and returns `self.request(\"OPTIONS\", url, **kwargs)`. The owning class is not visible."
+              ],
+              "text_unit_ids": [
+                "c1cd745424c9cd15526c9817388dc761eab81a549baf632b9622061dd8600fe1fb5e55d10a13f6b782d3dc128c3753a80008475b6213aa20323d051b6601ea38"
+              ],
+              "frequency": 1
+            }
+          }
+        ],
+        "final_record_key": "entity:OPTIONS"
+      },
+      {
+        "title": "POST",
+        "raw_types_in_order": [
+          "EXTERNAL_SYMBOL",
+          "FUNCTION",
+          "METHOD"
+        ],
+        "final_type": "EXTERNAL_SYMBOL",
+        "first_type_retained": true,
+        "raw_groups": [
+          {
+            "type": "EXTERNAL_SYMBOL",
+            "semantic_sha256": "39ae2932be49680ee6f5419a2bdb5a18e048a3ad72e32cd4e1ce5777fe8ad83b",
+            "source_titles": [
+              "src/requests/__init__.py:L1-L174",
+              "src/requests/__init__.py:L155-L184"
+            ],
+            "raw_table_row_index_zero_based": 265,
+            "semantic_fields": {
+              "title": "POST",
+              "type": "EXTERNAL_SYMBOL",
+              "description": [
+                "`post` is imported from `.api`; its definition is not visible.",
+                "The exact symbol `post` is imported from `.api`; its definition is not visible in this chunk."
+              ],
+              "text_unit_ids": [
+                "2b38dc8ec228c7382e7171c00471643bdc3f65f647cb4e95a15f104d09643d011932e30a00ee5ab63d3a76c6d9a1ee6412f83b455bcf77f08dd29aff22dffcac",
+                "e4d16b03bbebbab7887e98b56beb2a1f42973152e06e0aba30b7afb4127ca9fdb4bd1959c3654263a278094012aba9f4bd428b408450a05216d06496ed3bbb63"
+              ],
+              "frequency": 2
+            }
+          },
+          {
+            "type": "FUNCTION",
+            "semantic_sha256": "511f2cdfc4db1da6483f76a4128777ee7f876e4c0aaaf0df308cc6b49379a971",
+            "source_titles": [
+              "src/requests/api.py:L1-L109",
+              "src/requests/api.py:L101-L157"
+            ],
+            "raw_table_row_index_zero_based": 441,
+            "semantic_fields": {
+              "title": "POST",
+              "type": "FUNCTION",
+              "description": [
+                "Defined module-level function `post(url, data=None, json=None, **kwargs)`; its visible portion documents a POST request, but no executable body or return expression is visible before the chunk ends.",
+                "Defines the module-level function `post` with signature `post(url, data=None, json=None, **kwargs)`. It calls the unresolved `request` callable with method `\"post\"` and forwards `url`, `data`, `json`, and `kwargs`; documentation states it returns a `Response` object."
+              ],
+              "text_unit_ids": [
+                "7e0253862e73230a88a6603a444912c13871e2e1d6c32e0b2aa30e1cfec5ce5537ed82ca06c589359cee8b2a6a7c6333e1eeb8960096da5680361c141c1b50ae",
+                "c5cf4cdd51caa0c3e89458e868edccf81b9ce75b113ed87f1edf7226ffa026de9fae220e653218bb860c1372d900eee04d5d66ee00a642c306fcc7f1b5e06373"
+              ],
+              "frequency": 2
+            }
+          },
+          {
+            "type": "METHOD",
+            "semantic_sha256": "7a32b65393ea98db50b10660a59aec22e2baffa5294011900b255c815d64259f",
+            "source_titles": [
+              "src/requests/sessions.py:L569-L717"
+            ],
+            "raw_table_row_index_zero_based": 938,
+            "semantic_fields": {
+              "title": "POST",
+              "type": "METHOD",
+              "description": [
+                "The method `post(self, url, data=None, json=None, **kwargs)` is defined here and returns `self.request(\"POST\", url, data=data, json=json, **kwargs)`. Input body values are accepted through `data` and `json`; the returned value is delegated from `request`. The owning class is not visible."
+              ],
+              "text_unit_ids": [
+                "c1cd745424c9cd15526c9817388dc761eab81a549baf632b9622061dd8600fe1fb5e55d10a13f6b782d3dc128c3753a80008475b6213aa20323d051b6601ea38"
+              ],
+              "frequency": 1
+            }
+          }
+        ],
+        "final_record_key": "entity:POST"
+      },
+      {
+        "title": "HTTPADAPTER",
+        "raw_types_in_order": [
+          "EXTERNAL_SYMBOL",
+          "CLASS"
+        ],
+        "final_type": "EXTERNAL_SYMBOL",
+        "first_type_retained": true,
+        "raw_groups": [
+          {
+            "type": "EXTERNAL_SYMBOL",
+            "semantic_sha256": "7d1a1c05b913717a20443aa7337b5868c8fdbf3976b4dd268d0b009f1876506e",
+            "source_titles": [
+              "docs/user/advanced.rst:L1049-L1141",
+              "docs/user/advanced.rst:L929-L1057",
+              "src/requests/adapters.py:L421-L560",
+              "src/requests/adapters.py:L551-L702",
+              "src/requests/sessions.py:L1-L166",
+              "src/requests/sessions.py:L298-L453",
+              "src/requests/sessions.py:L441-L588",
+              "tests/test_requests.py:L1-L170",
+              "tests/test_requests.py:L1488-L1634",
+              "tests/test_requests.py:L1624-L1760",
+              "tests/test_requests.py:L2016-L2165",
+              "tests/test_requests.py:L2559-L2696"
+            ],
+            "raw_table_row_index_zero_based": 104,
+            "semantic_fields": {
+              "title": "HTTPADAPTER",
+              "type": "EXTERNAL_SYMBOL",
+              "description": [
+                "The externally defined class `HTTPAdapter` is explicitly imported from `requests.adapters`, used as the base class of `Ssl3HttpAdapter`, and documented as the default Requests transport adapter.",
+                "The exact external symbol `HTTPAdapter` is referenced in code as `HTTPAdapter(max_retries=retries)` and passed to `s.mount` for the `https://` prefix; its defining module and caller are not visible here.",
+                "The documented external class `HTTPAdapter` is referenced as the class being subclassed; no definition is visible here.",
+                "`HTTPAdapter` is explicitly referenced in documentation as the class being subclassed; its class definition is not visible in this chunk.",
+                "`HTTPAdapter` is imported from `.adapters`; no visible use occurs in this chunk.",
+                "`HTTPAdapter` is an explicitly referenced unresolved callable or class instantiated as `HTTPAdapter()` for the default HTTP and HTTPS connection adapters.",
+                "The constructor `HTTPAdapter()` is explicitly referenced when mounting default HTTPS and HTTP connection adapters; its definition is not visible.",
+                "The external symbol `HTTPAdapter` is imported from `requests.adapters`; no visible use appears in this chunk.",
+                "The external class or constructor `HTTPAdapter` is referenced repeatedly as the adapter mounted on session URL prefixes; its definition is not visible here.",
+                "`HTTPAdapter` is explicitly referenced as an external dependency and instantiated in the visible tests via `HTTPAdapter()`; its implementation is not visible here.",
+                "The exact class reference `HTTPAdapter` is used to construct an adapter and call `proxy_headers`; its import or definition is not visible here.",
+                "The constructor spelling `HTTPAdapter(...)` is referenced to configure a session adapter with retry or pool settings; its definition is not visible."
+              ],
+              "text_unit_ids": [
+                "2505e1a48b76732000e23ab0354ff6ed17cd408aa62b7e5e48a9b8276915207765f673c94b2fb4a3fac6de128020683d34064c1670811249899e33b954ef2efe",
+                "3726d9893d74af0ffe47bf33c7231af1999eb75c5a044060690795e8460359002950fc7fa023e8dbec642e33315f849fa81e5cb3cd9167443b5ccf30467762f9",
+                "43b0eb429fb59d9e8a7c68b6d91b68792ed3a872fb5a20ef46f0f5aa43724a3049ea9fe1b82e4814f4885580bd8bf12cfb1e04e6c9da8f74a9bd69b637d57d71",
+                "533202aec34d70fe2e87635a6991682059e679196c41224d5b6307324c8697a95317fe181221ea36093302a6094bcb18f0a1b1a250522b76441cdfddc762f606",
+                "a2472c1ed2a06cdf1ac34c4edd112af95b3f3ed97f4657dc62a10e50ed98ba75681c81cb6cb33c393a814fb51a035d1ab8fef29ae36fe95f2393cbc77c50bfc2",
+                "a96f69a2eb86d6a91b46b463e5c9aa6768f7a1f58010af4a8940be59ff71b1db8da523af9fc38fd24ddd17853462052938f2e55c271f8b923b46b1136bad296f",
+                "ae73c7c05818e7b427df8354d6874b4f461ad2e19726f029c7e56600b4bd2e26083c0b18582e66b52305d85d474411c994fb9592a6fdecf6a68badf616d08cf9",
+                "b4fc31fa0398c423c77ca05d45d3311d21c64d32090eb4a80186e559ba11c7f9857fc547284a1b9e915fb677bf5dcdb6dbb8f2c2edb68f5d45dd5f1b87c1171d",
+                "bc4ab2502f49c1e1aa173a6c8081bcd4b23a1e7f5e3616ffd849f3f6111902d346779211e0fd205ecc677a53b9c50399d5d7b7830f3d0fe9112ff0ad133fd5c2",
+                "cefa6c63ec4b1cd11e1927da93da580dd749ed4855250d8ae7b47ddf05c7f20fdc485ee142e75cea1d24912a49c84d7ee5ff6534440f3db90e2091db6a87ec4e",
+                "e76cef82fcafe901f313bcfda0f5b41f66887c2e89bb8063d4934fb20875242855c64215b1b72a069c22b421bc94a41752ffa62004e456fc9bc584de31abe80e",
+                "f0c5e8cb2a8c3f6c2bf7e2bda0965df0363b6bfa8d3dbb7da4bd3e6990a4b436a1fc0d119e913658f183f4947f2e47c0322cb532ecb386800792cec654807cd8"
+              ],
+              "frequency": 12
+            }
+          },
+          {
+            "type": "CLASS",
+            "semantic_sha256": "b430ecb5d1f8730fe198d385f3a1e44eed711ca0ffd57610a0634bb9021cb4fa",
+            "source_titles": [
+              "src/requests/adapters.py:L1-L169",
+              "src/requests/adapters.py:L156-L310"
+            ],
+            "raw_table_row_index_zero_based": 379,
+            "semantic_fields": {
+              "title": "HTTPADAPTER",
+              "type": "CLASS",
+              "description": [
+                "Visible class declaration `class HTTPAdapter(BaseAdapter)`; only its inheritance and documentation are visible in this chunk, not its methods or body.",
+                "Defined class `HTTPAdapter`, inheriting from the referenced `BaseAdapter`; provides adapter initialization, pool management, proxy management, state serialization, and certificate-verification hooks."
+              ],
+              "text_unit_ids": [
+                "38b793d92db530697a201491278adba744c863fa4cfc1fecf0b7e4d1bf07adad817a15eb033605de4dfc93aba4b4aef0040b0eb9206275057588855a49ce5581",
+                "bb15e78170390210f44229d1484a7eff8e7571c588e9b6e94c73689a67630a113ff99b235dee94157cca46404401fdce78e59e7ab8eae33bc76145df98501f7e"
+              ],
+              "frequency": 2
+            }
+          }
+        ],
+        "final_record_key": "entity:HTTPADAPTER"
+      },
+      {
+        "title": "HTTPADAPTER.__GETSTATE__",
+        "raw_types_in_order": [
+          "METHOD"
+        ],
+        "final_type": "METHOD",
+        "first_type_retained": true,
+        "raw_groups": [
+          {
+            "type": "METHOD",
+            "semantic_sha256": "7e59c0e4348a7eebac7810415d90a1864b7e2099bf609333b669f461435dad3d",
+            "source_titles": [
+              "src/requests/adapters.py:L156-L310"
+            ],
+            "raw_table_row_index_zero_based": 391,
+            "semantic_fields": {
+              "title": "HTTPADAPTER.__GETSTATE__",
+              "type": "METHOD",
+              "description": [
+                "Defined method `HTTPAdapter.__getstate__(self)`; returns a dictionary comprehension using `getattr` for each attribute in `HTTPAdapter.__attrs__`."
+              ],
+              "text_unit_ids": [
+                "38b793d92db530697a201491278adba744c863fa4cfc1fecf0b7e4d1bf07adad817a15eb033605de4dfc93aba4b4aef0040b0eb9206275057588855a49ce5581"
+              ],
+              "frequency": 1
+            }
+          }
+        ],
+        "final_record_key": "entity:HTTPADAPTER.__GETSTATE__"
+      },
+      {
+        "title": "HTTPADAPTER.__SETSTATE__",
+        "raw_types_in_order": [
+          "METHOD"
+        ],
+        "final_type": "METHOD",
+        "first_type_retained": true,
+        "raw_groups": [
+          {
+            "type": "METHOD",
+            "semantic_sha256": "81f34a41814e241c3c5a0b6513346fe017e8f1a1572d3d04e9c9be8d1dd47de8",
+            "source_titles": [
+              "src/requests/adapters.py:L156-L310"
+            ],
+            "raw_table_row_index_zero_based": 392,
+            "semantic_fields": {
+              "title": "HTTPADAPTER.__SETSTATE__",
+              "type": "METHOD",
+              "description": [
+                "Defined method `HTTPAdapter.__setstate__(self, state)`; resets proxy-manager and configuration state, assigns supplied state attributes, and reinitializes the pool manager using stored pool settings."
+              ],
+              "text_unit_ids": [
+                "38b793d92db530697a201491278adba744c863fa4cfc1fecf0b7e4d1bf07adad817a15eb033605de4dfc93aba4b4aef0040b0eb9206275057588855a49ce5581"
+              ],
+              "frequency": 1
+            }
+          }
+        ],
+        "final_record_key": "entity:HTTPADAPTER.__SETSTATE__"
+      },
+      {
+        "title": "UPDATE",
+        "raw_types_in_order": [
+          "METHOD"
+        ],
+        "final_type": "METHOD",
+        "first_type_retained": true,
+        "raw_groups": [
+          {
+            "type": "METHOD",
+            "semantic_sha256": "48da3058111c40c9c42573b2b17915137576b943b7bdfac4acf7f688ccbe4178",
+            "source_titles": [
+              "src/requests/cookies.py:L328-L479"
+            ],
+            "raw_table_row_index_zero_based": 627,
+            "semantic_fields": {
+              "title": "UPDATE",
+              "type": "METHOD",
+              "description": [
+                "Defines the visible method `update(self, other)`. It copies cookies from a `cookielib.CookieJar` with `copy.copy` and `self.set_cookie`, otherwise delegates to `super().update(other)`; the owning class is not visible in this chunk."
+              ],
+              "text_unit_ids": [
+                "91958b2bb02a43df27603cfa59ebe989b0667b0ba0d79abd53f7973e096502b75ffad6ca9e277a041e834bb9164df4d7dced5026fbdc6ccfa18cb8a0795034c4"
+              ],
+              "frequency": 1
+            }
+          }
+        ],
+        "final_record_key": "entity:UPDATE"
+      },
+      {
+        "title": "CLOSE",
+        "raw_types_in_order": [
+          "METHOD",
+          "EXTERNAL_SYMBOL"
+        ],
+        "final_type": "METHOD",
+        "first_type_retained": true,
+        "raw_groups": [
+          {
+            "type": "METHOD",
+            "semantic_sha256": "f2ea191f91e588b96ae92ed5a1a081cffa768972365f555fa8f87f20b46dc68d",
+            "source_titles": [
+              "src/requests/adapters.py:L421-L560",
+              "src/requests/models.py:L930-L1037",
+              "src/requests/sessions.py:L704-L831"
+            ],
+            "raw_table_row_index_zero_based": 415,
+            "semantic_fields": {
+              "title": "CLOSE",
+              "type": "METHOD",
+              "description": [
+                "The method `close` is defined here and clears `self.poolmanager` plus each proxy manager in `self.proxy_manager.values()`; the owning class is not visible.",
+                "The method `close` is defined here, but its owning class is not visible. It closes `self.raw` when content has not been consumed and calls an available `release_conn` method.",
+                "The exact method spelling `close` is defined here. It iterates over `self.adapters.values()` and calls `v.close()` for each adapter; the owning class is not visible."
+              ],
+              "text_unit_ids": [
+                "4b4b5fc54c5de1b3bc06ae804b6e1a5b97c7354826ae43cb449d641d0ddfd9ca12e0edbdb3bc23b9ef8590995e18471f832326ab7032bf5ddf89637b8f414d3a",
+                "ae73c7c05818e7b427df8354d6874b4f461ad2e19726f029c7e56600b4bd2e26083c0b18582e66b52305d85d474411c994fb9592a6fdecf6a68badf616d08cf9",
+                "f7a16e348dbdfcaeb03162dd951c70406911a93102dda5fe8b2bd318ecdcf2a436eeeee6421652fa3c8a858b1ad18bfb376a8566f7620ebffdbec7d86d85181a"
+              ],
+              "frequency": 3
+            }
+          },
+          {
+            "type": "EXTERNAL_SYMBOL",
+            "semantic_sha256": "2e5fb547067a673a46d758b99de43e3d6fa5737d0ba6656aa670a3cb1d3190ba",
+            "source_titles": [
+              "src/requests/sessions.py:L149-L305"
+            ],
+            "raw_table_row_index_zero_based": 906,
+            "semantic_fields": {
+              "title": "CLOSE",
+              "type": "EXTERNAL_SYMBOL",
+              "description": [
+                "`close` is explicitly referenced as `resp.close()` to release the response connection before processing the next redirect; its definition is not visible."
+              ],
+              "text_unit_ids": [
+                "315d7f9dae4b63ac95d3dec0b2c02ca55b10aae09be6268b7af95dd004553161c284f99b4113ab9d37bc2ad672faf2689947cfab0bf2d79a24f4c39ba2a5364b"
+              ],
+              "frequency": 1
+            }
+          }
+        ],
+        "final_record_key": "entity:CLOSE"
+      }
+    ],
+    "public_evidence_note": "selected_title_groups只公开固定案例所需的原始候选行，不是全量raw表。semantic_fields保存完整候选行语义内容，description为原始聚合描述列表；text_unit_ids经排序且保留重复。该表分别聚合描述及来源列表，不能把它们按位置任意配对。每组final_record_key指向最终行，读者可用公开provenance核对source_titles。"
+  },
+  "overall_assessment": "四例的部分具体符号和语义纠正确实进入落盘图，但源码身份冲突、错误或不足的来源关联和关系语义问题也进入了图。前次片段外推有的被相邻块补证，有的仍只附不含证据的块。不能用实体增长或局部纠正推断Local检索收益。",
+  "case_reviews": [
+    {
+      "case_id": "Q01",
+      "fixed_source": "src/requests/structures.py:L1-L99",
+      "conclusion": "具体字典方法与源码语义已进入实体和关系；类本身的定义型实体被同标题外部引用型行覆盖，泛名 UPDATE 还与另一字典更新方法混合。",
+      "old_checks": [
+        {
+          "title": "CASEINSENSITIVEDICT.__SETITEM__",
+          "present": false,
+          "records": []
+        },
+        {
+          "title": "CASEINSENSITIVEDICT.__GETITEM__",
+          "present": false,
+          "records": []
+        },
+        {
+          "title": "CASEINSENSITIVEDICT.LOWER_ITEMS",
+          "present": false,
+          "records": []
+        }
+      ],
+      "findings": [
+        {
+          "id": "Q01-G1",
+          "status": "已纠正并进入图",
+          "assessment": "__setitem__、__getitem__、lower_items、__eq__ 以精确名称保留，描述按小写键读写、保留原键和不区分大小写比较均受源码支持；类到方法的 DEFINES 边存在。",
+          "record_keys": [
+            "entity:CASEINSENSITIVEDICT.__SETITEM__",
+            "entity:CASEINSENSITIVEDICT.__GETITEM__",
+            "entity:CASEINSENSITIVEDICT.LOWER_ITEMS",
+            "entity:CASEINSENSITIVEDICT.__EQ__",
+            "relationship:CASEINSENSITIVEDICT -> CASEINSENSITIVEDICT.__SETITEM__",
+            "relationship:CASEINSENSITIVEDICT -> CASEINSENSITIVEDICT.__GETITEM__",
+            "relationship:CASEINSENSITIVEDICT -> CASEINSENSITIVEDICT.LOWER_ITEMS"
+          ],
+          "source_evidence": [
+            {
+              "title": "src/requests/structures.py:L1-L99",
+              "line_start": 46,
+              "line_end": 58,
+              "quote": "    def __setitem__(self, key, value):\n        # Use the lowercased key for lookups, but store the actual\n        # key alongside the value.\n        self._store[key.lower()] = (key, value)\n\n    def __getitem__(self, key):\n        return self._store[key.lower()][1]\n\n    def __delitem__(self, key):\n        del self._store[key.lower()]\n\n    def __iter__(self):\n        return (casedkey for casedkey, mappedvalue in self._store.values())",
+              "source_text_sha256": "f886e6855cf4e92fb968f499b94b6167afba0fd5ce8d1b935c739a6d8d38d573"
+            },
+            {
+              "title": "src/requests/structures.py:L1-L99",
+              "line_start": 63,
+              "line_end": 73,
+              "quote": "    def lower_items(self):\n        \"\"\"Like iteritems(), but with all lowercase keys.\"\"\"\n        return ((lowerkey, keyval[1]) for (lowerkey, keyval) in self._store.items())\n\n    def __eq__(self, other):\n        if isinstance(other, Mapping):\n            other = CaseInsensitiveDict(other)\n        else:\n            return NotImplemented\n        # Compare insensitively\n        return dict(self.lower_items()) == dict(other.lower_items())",
+              "source_text_sha256": "f886e6855cf4e92fb968f499b94b6167afba0fd5ce8d1b935c739a6d8d38d573"
+            }
+          ]
+        },
+        {
+          "id": "Q01-G2",
+          "status": "类型/来源在finalization中丢失",
+          "assessment": "原始 title/type 聚合同时有 CASEINSENSITIVEDICT 的 EXTERNAL_SYMBOL 和 CLASS。最终只保留前者，来源集合不含定义所在 structures.py 块，描述仍称实现不可见；方法实体和 DEFINES 边却保留该定义块。不是整个类名消失，而是实体类型及定义来源未被并入保留行。",
+          "record_keys": [
+            "entity:CASEINSENSITIVEDICT",
+            "relationship:CASEINSENSITIVEDICT -> CASEINSENSITIVEDICT.__SETITEM__"
+          ],
+          "source_evidence": [
+            {
+              "title": "src/requests/structures.py:L1-L99",
+              "line_start": 13,
+              "line_end": 18,
+              "quote": "class CaseInsensitiveDict(MutableMapping):\n    \"\"\"A case-insensitive ``dict``-like object.\n\n    Implements all methods and operations of\n    ``MutableMapping`` as well as dict's ``copy``. Also\n    provides ``lower_items``.",
+              "source_text_sha256": "f886e6855cf4e92fb968f499b94b6167afba0fd5ce8d1b935c739a6d8d38d573"
+            }
+          ]
+        },
+        {
+          "id": "Q01-G3",
+          "status": "名字混合进入图",
+          "assessment": "CaseInsensitiveDict.__init__→UPDATE 边指向裸名 UPDATE。其最终实体描述的是 cookies.py 中处理 CookieJar 的 update(self, other)，而原源码调用的是当前 CaseInsensitiveDict 的 self.update(data, **kwargs)。这不能当作已解析的真实被调函数。前次拼接虽丢了本块 UPDATE 实体记录，全图仍存在其他来源的 UPDATE，恰好说明记录丢失不等于全图缺节点。",
+          "record_keys": [
+            "entity:UPDATE",
+            "relationship:CASEINSENSITIVEDICT.__INIT__ -> UPDATE"
+          ],
+          "source_evidence": [
+            {
+              "title": "src/requests/structures.py:L1-L99",
+              "line_start": 40,
+              "line_end": 44,
+              "quote": "    def __init__(self, data=None, **kwargs):\n        self._store = OrderedDict()\n        if data is None:\n            data = {}\n        self.update(data, **kwargs)",
+              "source_text_sha256": "f886e6855cf4e92fb968f499b94b6167afba0fd5ce8d1b935c739a6d8d38d573"
+            },
+            {
+              "title": "src/requests/cookies.py:L328-L479",
+              "line_start": 358,
+              "line_end": 365,
+              "quote": "    def update(self, other):\n        \"\"\"Updates this jar with cookies from another CookieJar or dict-like\"\"\"\n        if isinstance(other, cookielib.CookieJar):\n            for cookie in other:\n                self.set_cookie(copy.copy(cookie))\n        else:\n            super().update(other)\n",
+              "source_text_sha256": "f8743c2405503cd5ddb0315bd09879864c7c75ee327175d6e36b920a070b2f32"
+            }
+          ]
+        },
+        {
+          "id": "Q01-G4",
+          "status": "关系语义问题仍在",
+          "assessment": "COLLECTIONS→ORDEREDDICT 与 .COMPAT→MAPPING 的描述保存导入语句，但 IMPORTS 的源端点取了被导入来源模块，实际导入者是当前 requests.structures 模块；不能按该箭头直接解释程序模块依赖方向。",
+          "record_keys": [
+            "relationship:COLLECTIONS -> ORDEREDDICT",
+            "relationship:.COMPAT -> MAPPING"
+          ],
+          "source_evidence": [
+            {
+              "title": "src/requests/structures.py:L1-L99",
+              "line_start": 8,
+              "line_end": 10,
+              "quote": "from collections import OrderedDict\n\nfrom .compat import Mapping, MutableMapping",
+              "source_text_sha256": "f886e6855cf4e92fb968f499b94b6167afba0fd5ce8d1b935c739a6d8d38d573"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "Q07",
+      "fixed_source": "src/requests/api.py:L1-L109",
+      "conclusion": "局部 API 调用记录进入图，但裸名和统一大写使函数、类、方法混用；部分截断外推仍以错误来源保留，另一些有相邻块补足事实支持。",
+      "old_edge_checks": [
+        {
+          "source": "GET",
+          "target": "REQUEST",
+          "old_present": false
+        },
+        {
+          "source": "REQUEST",
+          "target": "SESSION.REQUEST",
+          "old_present": false
+        },
+        {
+          "source": "REQUEST",
+          "target": "SESSIONS.SESSION",
+          "old_present": false
+        }
+      ],
+      "findings": [
+        {
+          "id": "Q07-G1",
+          "status": "可见链段进入图",
+          "assessment": "GET/OPTIONS/HEAD→REQUEST、REQUEST→SESSIONS.SESSION 和 REQUEST→SESSION.REQUEST 均存在，可对照 api.py 的实际表达式；这只证明相应关系文字被保留，不等于完整发送链的符号绑定准确。",
+          "record_keys": [
+            "relationship:GET -> REQUEST",
+            "relationship:OPTIONS -> REQUEST",
+            "relationship:HEAD -> REQUEST",
+            "relationship:REQUEST -> SESSIONS.SESSION",
+            "relationship:REQUEST -> SESSION.REQUEST",
+            "entity:SESSION.REQUEST"
+          ],
+          "source_evidence": [
+            {
+              "title": "src/requests/api.py:L1-L109",
+              "line_start": 58,
+              "line_end": 59,
+              "quote": "    with sessions.Session() as session:\n        return session.request(method=method, url=url, **kwargs)",
+              "source_text_sha256": "41151fee6348bc4e82cd4e849e8016004951361258a3f58b9b1d9087438817f2"
+            },
+            {
+              "title": "src/requests/api.py:L1-L109",
+              "line_start": 73,
+              "line_end": 73,
+              "quote": "    return request(\"get\", url, params=params, **kwargs)",
+              "source_text_sha256": "41151fee6348bc4e82cd4e849e8016004951361258a3f58b9b1d9087438817f2"
+            },
+            {
+              "title": "src/requests/api.py:L1-L109",
+              "line_start": 85,
+              "line_end": 85,
+              "quote": "    return request(\"options\", url, **kwargs)",
+              "source_text_sha256": "41151fee6348bc4e82cd4e849e8016004951361258a3f58b9b1d9087438817f2"
+            },
+            {
+              "title": "src/requests/api.py:L1-L109",
+              "line_start": 99,
+              "line_end": 100,
+              "quote": "    kwargs.setdefault(\"allow_redirects\", False)\n    return request(\"head\", url, **kwargs)",
+              "source_text_sha256": "41151fee6348bc4e82cd4e849e8016004951361258a3f58b9b1d9087438817f2"
+            }
+          ]
+        },
+        {
+          "id": "Q07-G2",
+          "status": "身份冲突已进入图",
+          "assessment": "REQUEST 原始有 CLASS、EXTERNAL_SYMBOL、FUNCTION、METHOD 四组，最终保留 Request 类的 CLASS 行及类来源；API request 和 Session.request 的边仍以同一 REQUEST 作端点，甚至出现 REQUEST→REQUEST。GET 最终保留 EXTERNAL_SYMBOL，描述混合映射的 get 和 HTTP get；GET→REQUEST 又合并 API 函数与会话方法的表达式。此图不能凭同名端点视作精确调用图。",
+          "record_keys": [
+            "entity:REQUEST",
+            "entity:GET",
+            "entity:HEAD",
+            "entity:OPTIONS",
+            "relationship:REQUEST -> REQUEST",
+            "relationship:GET -> REQUEST",
+            "relationship:REQUEST -> PREPARE_REQUEST"
+          ],
+          "source_evidence": [
+            {
+              "title": "src/requests/api.py:L1-L109",
+              "line_start": 14,
+              "line_end": 15,
+              "quote": "def request(method, url, **kwargs):\n    \"\"\"Constructs and sends a :class:`Request <Request>`.",
+              "source_text_sha256": "41151fee6348bc4e82cd4e849e8016004951361258a3f58b9b1d9087438817f2"
+            },
+            {
+              "title": "src/requests/api.py:L1-L109",
+              "line_start": 62,
+              "line_end": 73,
+              "quote": "def get(url, params=None, **kwargs):\n    r\"\"\"Sends a GET request.\n\n    :param url: URL for the new :class:`Request` object.\n    :param params: (optional) Dictionary, list of tuples or bytes to send\n        in the query string for the :class:`Request`.\n    :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n    :return: :class:`Response <Response>` object\n    :rtype: requests.Response\n    \"\"\"\n\n    return request(\"get\", url, params=params, **kwargs)",
+              "source_text_sha256": "41151fee6348bc4e82cd4e849e8016004951361258a3f58b9b1d9087438817f2"
+            },
+            {
+              "title": "src/requests/models.py:L170-L345",
+              "line_start": 230,
+              "line_end": 231,
+              "quote": "class Request(RequestHooksMixin):\n    \"\"\"A user-created :class:`Request <Request>` object.",
+              "source_text_sha256": "fed9716db4f44ff2a41f2a4f1d24f8423b0e05a3868a80751b20a69c086ae163"
+            },
+            {
+              "title": "src/requests/sessions.py:L441-L588",
+              "line_start": 500,
+              "line_end": 504,
+              "quote": "    def request(\n        self,\n        method,\n        url,\n        params=None,",
+              "source_text_sha256": "863e93e1d7007503aa75fe6ac8b1dd07b6aacef4bd4314b0839cfbe30fc9c9d5"
+            },
+            {
+              "title": "src/requests/sessions.py:L441-L588",
+              "line_start": 563,
+              "line_end": 575,
+              "quote": "        req = Request(\n            method=method.upper(),\n            url=url,\n            headers=headers,\n            files=files,\n            data=data or {},\n            json=json,\n            params=params or {},\n            auth=auth,\n            cookies=cookies,\n            hooks=hooks,\n        )\n        prep = self.prepare_request(req)",
+              "source_text_sha256": "863e93e1d7007503aa75fe6ac8b1dd07b6aacef4bd4314b0839cfbe30fc9c9d5"
+            },
+            {
+              "title": "src/requests/sessions.py:L569-L717",
+              "line_start": 593,
+              "line_end": 602,
+              "quote": "    def get(self, url, **kwargs):\n        r\"\"\"Sends a GET request. Returns :class:`Response` object.\n\n        :param url: URL for the new :class:`Request` object.\n        :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n        :rtype: requests.Response\n        \"\"\"\n\n        kwargs.setdefault(\"allow_redirects\", True)\n        return self.request(\"GET\", url, **kwargs)",
+              "source_text_sha256": "aeffda39beb3981fa06d5f06cf8cd570b80fd60fe7367fce3d8f5b00d309c10c"
+            }
+          ]
+        },
+        {
+          "id": "Q07-G3",
+          "status": "一条外推获得相邻块支持；仍有表述不一致",
+          "assessment": "POST→RESPONSE 最终同时链接 api.py:L1-L109 和 L101-L157。前块没有 post 返回文档，但后块 L111 有返回文档且 L115 有调用实现，因此不能把这条最终关系整体判为无源码支持。其汇总却仍称实现不可见，与新增链接块的可见正文不一致。",
+          "record_keys": [
+            "relationship:POST -> RESPONSE"
+          ],
+          "source_evidence": [
+            {
+              "title": "src/requests/api.py:L1-L109",
+              "line_start": 103,
+              "line_end": 109,
+              "quote": "def post(url, data=None, json=None, **kwargs):\n    r\"\"\"Sends a POST request.\n\n    :param url: URL for the new :class:`Request` object.\n    :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n        object to send in the body of the :class:`Request`.\n    :param json: (optional) A JSON serializable Python object to send in the body of the :class:`Request`.",
+              "source_text_sha256": "41151fee6348bc4e82cd4e849e8016004951361258a3f58b9b1d9087438817f2"
+            },
+            {
+              "title": "src/requests/api.py:L101-L157",
+              "line_start": 110,
+              "line_end": 115,
+              "quote": "    :param \\*\\*kwargs: Optional arguments that ``request`` takes.\n    :return: :class:`Response <Response>` object\n    :rtype: requests.Response\n    \"\"\"\n\n    return request(\"post\", url, data=data, json=json, **kwargs)",
+              "source_text_sha256": "d690cd0cdf184a199879ccd12f14bde89325b1764f12eb82da728f3a5d1624b0"
+            }
+          ]
+        },
+        {
+          "id": "Q07-G4",
+          "status": "片段外推以不足来源进入图",
+          "assessment": "POST→REQUESTS.RESPONSE 仍只链接 api.py:L1-L109，并称本块可见 post 的 :rtype: requests.Response；实际位于另一个块 L112。返回类型本身可在仓库确认，但该条关系所列来源不足。POST 最终实体还只保留 EXTERNAL_SYMBOL 导入来源，未保留函数定义型行。",
+          "record_keys": [
+            "relationship:POST -> REQUESTS.RESPONSE",
+            "entity:POST"
+          ],
+          "source_evidence": [
+            {
+              "title": "src/requests/api.py:L1-L109",
+              "line_start": 103,
+              "line_end": 109,
+              "quote": "def post(url, data=None, json=None, **kwargs):\n    r\"\"\"Sends a POST request.\n\n    :param url: URL for the new :class:`Request` object.\n    :param data: (optional) Dictionary, list of tuples, bytes, or file-like\n        object to send in the body of the :class:`Request`.\n    :param json: (optional) A JSON serializable Python object to send in the body of the :class:`Request`.",
+              "source_text_sha256": "41151fee6348bc4e82cd4e849e8016004951361258a3f58b9b1d9087438817f2"
+            },
+            {
+              "title": "src/requests/api.py:L101-L157",
+              "line_start": 111,
+              "line_end": 115,
+              "quote": "    :return: :class:`Response <Response>` object\n    :rtype: requests.Response\n    \"\"\"\n\n    return request(\"post\", url, data=data, json=json, **kwargs)",
+              "source_text_sha256": "d690cd0cdf184a199879ccd12f14bde89325b1764f12eb82da728f3a5d1624b0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "Q13",
+      "fixed_source": "tests/test_requests.py:L1624-L1760",
+      "conclusion": "键输入/准备后键的区分进入图。leading-space 的部分外推现在得到链接的相邻块支持，但单独 httpbin 边仍没有执行体来源；其他误述仍在。",
+      "old_checks": [
+        {
+          "title": "NATIVE HEADER KEY HANDLING",
+          "present": true,
+          "records": [
+            {
+              "type": "EVENT",
+              "description": "A test event verifying that prepared request header keys remain usable as native string or byte-string keys",
+              "semantic_sha256": "1e84226f935035f314989e3a0a973ad10ec69bfa1b633473c944e7e125b1cdcb"
+            }
+          ]
+        },
+        {
+          "title": "TEST_HEADER_KEYS_ARE_NATIVE",
+          "present": false,
+          "records": []
+        }
+      ],
+      "findings": [
+        {
+          "id": "Q13-G1",
+          "status": "旧键类型混淆已纠正并进入图",
+          "assessment": "TEST_HEADER_KEYS_ARE_NATIVE 明确输入既含字符串键又含 bytes 键，并准确记录准备后检查字符串 unicode/byte 键。TEST_HEADER_VALIDATION 与 TEST_HEADER_VALUE_NOT_STR 保留值相等及非字符串/非bytes值触发异常的不同检查，未把 header 键规则套到值上。成员断言仍不能单独证明所有准备后键的完整类型约束。",
+          "record_keys": [
+            "entity:TEST_HEADER_KEYS_ARE_NATIVE",
+            "entity:TEST_HEADER_VALIDATION",
+            "entity:TEST_HEADER_VALUE_NOT_STR",
+            "relationship:TEST_HEADER_KEYS_ARE_NATIVE -> REQUESTS.REQUEST.PREPARE",
+            "relationship:TEST_HEADER_KEYS_ARE_NATIVE -> HEADERS.KEYS"
+          ],
+          "source_evidence": [
+            {
+              "title": "tests/test_requests.py:L1624-L1760",
+              "line_start": 1687,
+              "line_end": 1695,
+              "quote": "    def test_header_keys_are_native(self, httpbin):\n        headers = {\"unicode\": \"blah\", b\"byte\": \"blah\"}\n        r = requests.Request(\"GET\", httpbin(\"get\"), headers=headers)\n        p = r.prepare()\n\n        # This is testing that they are builtin strings. A bit weird, but there\n        # we go.\n        assert \"unicode\" in p.headers.keys()\n        assert \"byte\" in p.headers.keys()",
+              "source_text_sha256": "5f99c6d18ca0d3408f9a895aacfc2e59cc41c4ff209ae07314270e7f5947a7d9"
+            },
+            {
+              "title": "tests/test_requests.py:L1624-L1760",
+              "line_start": 1697,
+              "line_end": 1707,
+              "quote": "    def test_header_validation(self, httpbin):\n        \"\"\"Ensure prepare_headers regex isn't flagging valid header contents.\"\"\"\n        valid_headers = {\n            \"foo\": \"bar baz qux\",\n            \"bar\": b\"fbbq\",\n            \"baz\": \"\",\n            \"qux\": \"1\",\n        }\n        r = requests.get(httpbin(\"get\"), headers=valid_headers)\n        for key in valid_headers.keys():\n            assert valid_headers[key] == r.request.headers[key]",
+              "source_text_sha256": "5f99c6d18ca0d3408f9a895aacfc2e59cc41c4ff209ae07314270e7f5947a7d9"
+            },
+            {
+              "title": "tests/test_requests.py:L1624-L1760",
+              "line_start": 1717,
+              "line_end": 1723,
+              "quote": "    def test_header_value_not_str(self, httpbin, invalid_header, key):\n        \"\"\"Ensure the header value is of type string or bytes as\n        per discussion in GH issue #3386\n        \"\"\"\n        with pytest.raises(InvalidHeader) as excinfo:\n            requests.get(httpbin(\"get\"), headers=invalid_header)\n        assert key in str(excinfo.value)",
+              "source_text_sha256": "5f99c6d18ca0d3408f9a895aacfc2e59cc41c4ff209ae07314270e7f5947a7d9"
+            }
+          ]
+        },
+        {
+          "id": "Q13-G2",
+          "status": "部分外推在图级获得合法来源",
+          "assessment": "TEST_HEADER_NO_LEADING_SPACE 实体与到 PYTEST.RAISES、REQUESTS.GET 的关系同时链接两个重叠块。原固定块停在L1760，但相邻块包含L1761–1762的真实执行体，因此这些最终陈述有链接来源支持；不能机械沿用preindex阶段的整体无依据判定。原固定块的越界抽取事实仍然成立。",
+          "record_keys": [
+            "entity:TEST_HEADER_NO_LEADING_SPACE",
+            "relationship:TEST_HEADER_NO_LEADING_SPACE -> PYTEST.RAISES",
+            "relationship:TEST_HEADER_NO_LEADING_SPACE -> REQUESTS.GET"
+          ],
+          "source_evidence": [
+            {
+              "title": "tests/test_requests.py:L1624-L1760",
+              "line_start": 1757,
+              "line_end": 1760,
+              "quote": "    def test_header_no_leading_space(self, httpbin, invalid_header):\n        \"\"\"Ensure headers containing leading whitespace raise\n        InvalidHeader Error before sending.\n        \"\"\"",
+              "source_text_sha256": "5f99c6d18ca0d3408f9a895aacfc2e59cc41c4ff209ae07314270e7f5947a7d9"
+            },
+            {
+              "title": "tests/test_requests.py:L1746-L1882",
+              "line_start": 1757,
+              "line_end": 1762,
+              "quote": "    def test_header_no_leading_space(self, httpbin, invalid_header):\n        \"\"\"Ensure headers containing leading whitespace raise\n        InvalidHeader Error before sending.\n        \"\"\"\n        with pytest.raises(InvalidHeader):\n            requests.get(httpbin(\"get\"), headers=invalid_header)",
+              "source_text_sha256": "5a8065d2e5ca04c9213b63722df31db6ee184c0cb6e0f3f673aac092d99987e9"
+            }
+          ]
+        },
+        {
+          "id": "Q13-G3",
+          "status": "单条关系来源仍不足",
+          "assessment": "TEST_HEADER_NO_LEADING_SPACE→HTTPBIN 仅链接L1624-L1760，并声称可见 httpbin(\"get\") 执行调用。本块没有该执行体；另一块存在同样调用并不能自动补成这条关系的来源。",
+          "record_keys": [
+            "relationship:TEST_HEADER_NO_LEADING_SPACE -> HTTPBIN"
+          ],
+          "source_evidence": [
+            {
+              "title": "tests/test_requests.py:L1624-L1760",
+              "line_start": 1757,
+              "line_end": 1760,
+              "quote": "    def test_header_no_leading_space(self, httpbin, invalid_header):\n        \"\"\"Ensure headers containing leading whitespace raise\n        InvalidHeader Error before sending.\n        \"\"\"",
+              "source_text_sha256": "5f99c6d18ca0d3408f9a895aacfc2e59cc41c4ff209ae07314270e7f5947a7d9"
+            },
+            {
+              "title": "tests/test_requests.py:L1746-L1882",
+              "line_start": 1761,
+              "line_end": 1762,
+              "quote": "        with pytest.raises(InvalidHeader):\n            requests.get(httpbin(\"get\"), headers=invalid_header)",
+              "source_text_sha256": "5a8065d2e5ca04c9213b63722df31db6ee184c0cb6e0f3f673aac092d99987e9"
+            }
+          ]
+        },
+        {
+          "id": "Q13-G4",
+          "status": "表达式误述与关系类型问题仍在",
+          "assessment": "TEST_HEADER_VALUE_NOT_STR→REQUESTS.GET 仍把完整的 httpbin(\"get\") 误写为 requests.get(\"httpbin...\", ...) 并称完整调用不可见；到HTTPBIN的另一条关系却正确。测试到 PYTEST.MARK.PARAMETRIZE 仍标 TESTS，而实际只是使用装饰器。",
+          "record_keys": [
+            "relationship:TEST_HEADER_VALUE_NOT_STR -> REQUESTS.GET",
+            "relationship:TEST_HEADER_VALUE_NOT_STR -> HTTPBIN",
+            "relationship:TEST_HEADER_VALUE_NOT_STR -> PYTEST.MARK.PARAMETRIZE"
+          ],
+          "source_evidence": [
+            {
+              "title": "tests/test_requests.py:L1624-L1760",
+              "line_start": 1709,
+              "line_end": 1723,
+              "quote": "    @pytest.mark.parametrize(\n        \"invalid_header, key\",\n        (\n            ({\"foo\": 3}, \"foo\"),\n            ({\"bar\": {\"foo\": \"bar\"}}, \"bar\"),\n            ({\"baz\": [\"foo\", \"bar\"]}, \"baz\"),\n        ),\n    )\n    def test_header_value_not_str(self, httpbin, invalid_header, key):\n        \"\"\"Ensure the header value is of type string or bytes as\n        per discussion in GH issue #3386\n        \"\"\"\n        with pytest.raises(InvalidHeader) as excinfo:\n            requests.get(httpbin(\"get\"), headers=invalid_header)\n        assert key in str(excinfo.value)",
+              "source_text_sha256": "5f99c6d18ca0d3408f9a895aacfc2e59cc41c4ff209ae07314270e7f5947a7d9"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case_id": "G02",
+      "fixed_source": "src/requests/adapters.py:L156-L310",
+      "conclusion": "精确 dunder 方法和主要状态处理语义进入图；HTTPADAPTER 类行来源被外部符号行取代，通用 CLOSE 节点和异常边仍不宜视作精确调用绑定。",
+      "old_checks": [
+        {
+          "title": "HTTPADAPTER GETSTATE",
+          "present": true,
+          "records": [
+            {
+              "type": "ORGANIZATION",
+              "description": "HTTPAdapter serialization method that returns the configured adapter attributes needed to preserve its state",
+              "semantic_sha256": "40e6ec447b1e49aeec14c01be287241b36c1ea1b09b4341b6a08c953fc39bba3"
+            }
+          ]
+        },
+        {
+          "title": "HTTPADAPTER SETSTATE",
+          "present": true,
+          "records": [
+            {
+              "type": "ORGANIZATION",
+              "description": "HTTPAdapter deserialization method that restores adapter state, recreates proxy and configuration dictionaries, and reinitializes the pool manager",
+              "semantic_sha256": "eec9ee278a4aa45ff63dfd01d7a790f95ab37c0955a766cf9d19ad185a935821"
+            }
+          ]
+        },
+        {
+          "title": "HTTPADAPTER.__GETSTATE__",
+          "present": false,
+          "records": []
+        },
+        {
+          "title": "HTTPADAPTER.__SETSTATE__",
+          "present": false,
+          "records": []
+        }
+      ],
+      "findings": [
+        {
+          "id": "G02-G1",
+          "status": "精确方法名及行为已纠正并进入图",
+          "assessment": "HTTPADAPTER.__GETSTATE__/__SETSTATE__ 均为 METHOD，保留 dunder 与类限定名，链接固定源码块；所属 DEFINES、getattr/setattr 调用和恢复后 init_poolmanager 调用均有源码支持。",
+          "record_keys": [
+            "entity:HTTPADAPTER.__GETSTATE__",
+            "entity:HTTPADAPTER.__SETSTATE__",
+            "relationship:HTTPADAPTER -> HTTPADAPTER.__GETSTATE__",
+            "relationship:HTTPADAPTER -> HTTPADAPTER.__SETSTATE__",
+            "relationship:HTTPADAPTER.__GETSTATE__ -> GETATTR",
+            "relationship:HTTPADAPTER.__GETSTATE__ -> HTTPADAPTER.__ATTRS__",
+            "relationship:HTTPADAPTER.__SETSTATE__ -> SETATTR",
+            "relationship:HTTPADAPTER.__SETSTATE__ -> HTTPADAPTER.INIT_POOLMANAGER"
+          ],
+          "source_evidence": [
+            {
+              "title": "src/requests/adapters.py:L156-L310",
+              "line_start": 194,
+              "line_end": 200,
+              "quote": "    __attrs__ = [\n        \"max_retries\",\n        \"config\",\n        \"_pool_connections\",\n        \"_pool_maxsize\",\n        \"_pool_block\",\n    ]",
+              "source_text_sha256": "63d1bf7a528d68a3a742f98b6641791cf245b01b3776b1ab0cf8b0725e90f602"
+            },
+            {
+              "title": "src/requests/adapters.py:L156-L310",
+              "line_start": 224,
+              "line_end": 238,
+              "quote": "    def __getstate__(self):\n        return {attr: getattr(self, attr, None) for attr in self.__attrs__}\n\n    def __setstate__(self, state):\n        # Can't handle by adding 'proxy_manager' to self.__attrs__ because\n        # self.poolmanager uses a lambda function, which isn't pickleable.\n        self.proxy_manager = {}\n        self.config = {}\n\n        for attr, value in state.items():\n            setattr(self, attr, value)\n\n        self.init_poolmanager(\n            self._pool_connections, self._pool_maxsize, block=self._pool_block\n        )",
+              "source_text_sha256": "63d1bf7a528d68a3a742f98b6641791cf245b01b3776b1ab0cf8b0725e90f602"
+            }
+          ]
+        },
+        {
+          "id": "G02-G2",
+          "status": "定义实体来源和类型仍受去重影响",
+          "assessment": "HTTPADAPTER 原始同时有 EXTERNAL_SYMBOL 与 CLASS，最终保留外部符号行，其来源没有本固定类定义块，描述声称实际实现不可见。两个 dunder 方法及定义边仍存在，故不能把这称为整个 HTTPAdapter 符号丢失。__attrs__ 仍标 CONSTANT，尽管源码是可变列表类属性。",
+          "record_keys": [
+            "entity:HTTPADAPTER",
+            "entity:HTTPADAPTER.__ATTRS__"
+          ],
+          "source_evidence": [
+            {
+              "title": "src/requests/adapters.py:L156-L310",
+              "line_start": 167,
+              "line_end": 174,
+              "quote": "class HTTPAdapter(BaseAdapter):\n    \"\"\"The built-in HTTP Adapter for urllib3.\n\n    Provides a general-case interface for Requests sessions to contact HTTP and\n    HTTPS urls by implementing the Transport Adapter interface. This class will\n    usually be created by the :class:`Session <Session>` class under the\n    covers.\n",
+              "source_text_sha256": "63d1bf7a528d68a3a742f98b6641791cf245b01b3776b1ab0cf8b0725e90f602"
+            },
+            {
+              "title": "src/requests/adapters.py:L156-L310",
+              "line_start": 194,
+              "line_end": 200,
+              "quote": "    __attrs__ = [\n        \"max_retries\",\n        \"config\",\n        \"_pool_connections\",\n        \"_pool_maxsize\",\n        \"_pool_block\",\n    ]",
+              "source_text_sha256": "63d1bf7a528d68a3a742f98b6641791cf245b01b3776b1ab0cf8b0725e90f602"
+            }
+          ]
+        },
+        {
+          "id": "G02-G3",
+          "status": "通用名及边语义问题保留",
+          "assessment": "CLOSE→NOTIMPLEMENTEDERROR 仍以 CALLS 描述 raise NotImplementedError；应区分抛异常与显式调用。最终 CLOSE 节点来自其他close实现，本块glean首条close实体被拼接丢弃，所以不能把该通用节点视为本块未知所属类的close定义。",
+          "record_keys": [
+            "entity:CLOSE",
+            "relationship:CLOSE -> NOTIMPLEMENTEDERROR"
+          ],
+          "source_evidence": [
+            {
+              "title": "src/requests/adapters.py:L156-L310",
+              "line_start": 162,
+              "line_end": 164,
+              "quote": "    def close(self):\n        \"\"\"Cleans up adapter specific items.\"\"\"\n        raise NotImplementedError",
+              "source_text_sha256": "63d1bf7a528d68a3a742f98b6641791cf245b01b3776b1ab0cf8b0725e90f602"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "record_evidence": {
+    "entity:CASEINSENSITIVEDICT.__SETITEM__": {
+      "kind": "entity",
+      "title": "CASEINSENSITIVEDICT.__SETITEM__",
+      "type": "METHOD",
+      "description": "`CaseInsensitiveDict.__setitem__` is defined with `key, value`; it writes `_store[key.lower()] = (key, value)`, using the lowercased key for lookup and preserving the original key.",
+      "semantic_sha256": "4ef0f5dfd157769058bcb1d830bac429b9f74fa3959f8ace157849b479b798be",
+      "frequency": 1,
+      "degree": 2,
+      "source_titles": [
+        "src/requests/structures.py:L1-L99"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "title": "CASEINSENSITIVEDICT.__SETITEM__",
+        "type": "METHOD",
+        "description": "`CaseInsensitiveDict.__setitem__` is defined with `key, value`; it writes `_store[key.lower()] = (key, value)`, using the lowercased key for lookup and preserving the original key.",
+        "text_unit_ids": [
+          "b9256700252d4330095253ff3abaa885cc97967aafb39eeb6720db90ad55f6a9e70d925cdf0b77ca15e9ded6faab571ee2660fd2fdba038dad3247798fc22bc0"
+        ],
+        "frequency": 1,
+        "degree": 2
+      }
+    },
+    "entity:CASEINSENSITIVEDICT.__GETITEM__": {
+      "kind": "entity",
+      "title": "CASEINSENSITIVEDICT.__GETITEM__",
+      "type": "METHOD",
+      "description": "`CaseInsensitiveDict.__getitem__` is defined with `key`; it returns `_store[key.lower()][1]`.",
+      "semantic_sha256": "4becdfbb50b3a6f60f49abdf6e05562007600e221bc2f05dc19abff0be613063",
+      "frequency": 1,
+      "degree": 2,
+      "source_titles": [
+        "src/requests/structures.py:L1-L99"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "title": "CASEINSENSITIVEDICT.__GETITEM__",
+        "type": "METHOD",
+        "description": "`CaseInsensitiveDict.__getitem__` is defined with `key`; it returns `_store[key.lower()][1]`.",
+        "text_unit_ids": [
+          "b9256700252d4330095253ff3abaa885cc97967aafb39eeb6720db90ad55f6a9e70d925cdf0b77ca15e9ded6faab571ee2660fd2fdba038dad3247798fc22bc0"
+        ],
+        "frequency": 1,
+        "degree": 2
+      }
+    },
+    "entity:CASEINSENSITIVEDICT.LOWER_ITEMS": {
+      "kind": "entity",
+      "title": "CASEINSENSITIVEDICT.LOWER_ITEMS",
+      "type": "METHOD",
+      "description": "`CASEINSENSITIVEDICT.LOWER_ITEMS` is a method defined without explicit arguments that iterates over the dictionary’s internal `_store.items()` collection and returns a generator of `(lowerkey, keyval[1])` pairs. It is used through calls such as `cid.lower_items()` in `test_lower_items`, where it is expected to provide key/value pairs with lower-cased keys.",
+      "semantic_sha256": "680494c353cabc498fa3fb502728a7a8f2198d87f7e55b8c514c1ec95fe03c39",
+      "frequency": 2,
+      "degree": 5,
+      "source_titles": [
+        "src/requests/structures.py:L1-L99",
+        "tests/test_requests.py:L2281-L2428"
+      ],
+      "source_reference_occurrences": 2,
+      "semantic_fields": {
+        "title": "CASEINSENSITIVEDICT.LOWER_ITEMS",
+        "type": "METHOD",
+        "description": "`CASEINSENSITIVEDICT.LOWER_ITEMS` is a method defined without explicit arguments that iterates over the dictionary’s internal `_store.items()` collection and returns a generator of `(lowerkey, keyval[1])` pairs. It is used through calls such as `cid.lower_items()` in `test_lower_items`, where it is expected to provide key/value pairs with lower-cased keys.",
+        "text_unit_ids": [
+          "52d10b858dab1f191a9fcbf8c94240faa22f13d5cf930c5b892f1856335145dcf612121e76eeeaffd3a329fe3643250a802ea36652a6765cd67a2f03647f7c68",
+          "b9256700252d4330095253ff3abaa885cc97967aafb39eeb6720db90ad55f6a9e70d925cdf0b77ca15e9ded6faab571ee2660fd2fdba038dad3247798fc22bc0"
+        ],
+        "frequency": 2,
+        "degree": 5
+      }
+    },
+    "entity:CASEINSENSITIVEDICT.__EQ__": {
+      "kind": "entity",
+      "title": "CASEINSENSITIVEDICT.__EQ__",
+      "type": "METHOD",
+      "description": "`CaseInsensitiveDict.__eq__` is defined with `other`; it converts a `Mapping` to `CaseInsensitiveDict`, otherwise returns `NotImplemented`, then compares dictionaries built from `lower_items()`.",
+      "semantic_sha256": "24da6b7131dbaa037db621c765033818a860a832ab9afc95121e953432288de5",
+      "frequency": 1,
+      "degree": 5,
+      "source_titles": [
+        "src/requests/structures.py:L1-L99"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "title": "CASEINSENSITIVEDICT.__EQ__",
+        "type": "METHOD",
+        "description": "`CaseInsensitiveDict.__eq__` is defined with `other`; it converts a `Mapping` to `CaseInsensitiveDict`, otherwise returns `NotImplemented`, then compares dictionaries built from `lower_items()`.",
+        "text_unit_ids": [
+          "b9256700252d4330095253ff3abaa885cc97967aafb39eeb6720db90ad55f6a9e70d925cdf0b77ca15e9ded6faab571ee2660fd2fdba038dad3247798fc22bc0"
+        ],
+        "frequency": 1,
+        "degree": 5
+      }
+    },
+    "relationship:CASEINSENSITIVEDICT -> CASEINSENSITIVEDICT.__SETITEM__": {
+      "kind": "relationship",
+      "source": "CASEINSENSITIVEDICT",
+      "target": "CASEINSENSITIVEDICT.__SETITEM__",
+      "description": "DEFINES, the indented `def __setitem__(self, key, value)` is visibly a method of `CaseInsensitiveDict`.",
+      "weight": 10.0,
+      "combined_degree": 48,
+      "semantic_sha256": "4d9421b44134507c27668304132fa568c69861ed190953aa3825ae5343296dc3",
+      "source_titles": [
+        "src/requests/structures.py:L1-L99"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "source": "CASEINSENSITIVEDICT",
+        "target": "CASEINSENSITIVEDICT.__SETITEM__",
+        "description": "DEFINES, the indented `def __setitem__(self, key, value)` is visibly a method of `CaseInsensitiveDict`.",
+        "weight": 10.0,
+        "combined_degree": 48,
+        "text_unit_ids": [
+          "b9256700252d4330095253ff3abaa885cc97967aafb39eeb6720db90ad55f6a9e70d925cdf0b77ca15e9ded6faab571ee2660fd2fdba038dad3247798fc22bc0"
+        ]
+      }
+    },
+    "relationship:CASEINSENSITIVEDICT -> CASEINSENSITIVEDICT.__GETITEM__": {
+      "kind": "relationship",
+      "source": "CASEINSENSITIVEDICT",
+      "target": "CASEINSENSITIVEDICT.__GETITEM__",
+      "description": "DEFINES, the indented `def __getitem__(self, key)` is visibly a method of `CaseInsensitiveDict`.",
+      "weight": 10.0,
+      "combined_degree": 48,
+      "semantic_sha256": "779bf3b542d506e61de9545ebb3de43ca96f7cfc3d51f3827116717e9f03a8e4",
+      "source_titles": [
+        "src/requests/structures.py:L1-L99"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "source": "CASEINSENSITIVEDICT",
+        "target": "CASEINSENSITIVEDICT.__GETITEM__",
+        "description": "DEFINES, the indented `def __getitem__(self, key)` is visibly a method of `CaseInsensitiveDict`.",
+        "weight": 10.0,
+        "combined_degree": 48,
+        "text_unit_ids": [
+          "b9256700252d4330095253ff3abaa885cc97967aafb39eeb6720db90ad55f6a9e70d925cdf0b77ca15e9ded6faab571ee2660fd2fdba038dad3247798fc22bc0"
+        ]
+      }
+    },
+    "relationship:CASEINSENSITIVEDICT -> CASEINSENSITIVEDICT.LOWER_ITEMS": {
+      "kind": "relationship",
+      "source": "CASEINSENSITIVEDICT",
+      "target": "CASEINSENSITIVEDICT.LOWER_ITEMS",
+      "description": "DEFINES, the indented `def lower_items(self)` is visibly a method of `CaseInsensitiveDict`.",
+      "weight": 10.0,
+      "combined_degree": 51,
+      "semantic_sha256": "7642ca96b2b9c4d1e80690ad06c3c1f77c34eefb5fe47d8ef591f064b4321c0a",
+      "source_titles": [
+        "src/requests/structures.py:L1-L99"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "source": "CASEINSENSITIVEDICT",
+        "target": "CASEINSENSITIVEDICT.LOWER_ITEMS",
+        "description": "DEFINES, the indented `def lower_items(self)` is visibly a method of `CaseInsensitiveDict`.",
+        "weight": 10.0,
+        "combined_degree": 51,
+        "text_unit_ids": [
+          "b9256700252d4330095253ff3abaa885cc97967aafb39eeb6720db90ad55f6a9e70d925cdf0b77ca15e9ded6faab571ee2660fd2fdba038dad3247798fc22bc0"
+        ]
+      }
+    },
+    "entity:CASEINSENSITIVEDICT": {
+      "kind": "entity",
+      "title": "CASEINSENSITIVEDICT",
+      "type": "EXTERNAL_SYMBOL",
+      "description": "CASEINSENSITIVEDICT refers to the externally defined `CaseInsensitiveDict` class imported from `requests.structures` or the package’s relative `.structures` module. Its implementation is not visible in the provided code, but it is used as a dictionary-like mapping for HTTP headers and related configuration.\n\nThe class is instantiated in several contexts, including `Response.__init__`, `build_response`, `prepare_headers`, `default_headers`, fixtures, and visible tests. These usages create empty or populated case-insensitive header mappings, such as `CaseInsensitiveDict()` and `CaseInsensitiveDict({...})`. It is also passed as `dict_class` to `merge_setting` to ensure merged headers preserve case-insensitive behavior.\n\nThe visible tests exercise CASEINSENSITIVEDICT’s membership checks, key lookup, updates, iteration, equality comparisons, default handling, lowercase views, copying behavior, and general mapping semantics. Some files import the class without visibly using it in the provided chunks, while other code relies on it to construct and store response or request headers. Overall, CASEINSENSITIVEDICT represents the external mapping implementation that provides case-insensitive header-key handling throughout the related request and response logic.",
+      "semantic_sha256": "655aa895c30b64ff5985a0984ef2d8f0a550e835142958519c9b54e8bb1a94d4",
+      "frequency": 17,
+      "degree": 46,
+      "source_titles": [
+        "src/requests/adapters.py:L1-L169",
+        "src/requests/adapters.py:L298-L429",
+        "src/requests/models.py:L1-L185",
+        "src/requests/models.py:L335-L501",
+        "src/requests/models.py:L635-L790",
+        "src/requests/sessions.py:L1-L166",
+        "src/requests/sessions.py:L441-L588",
+        "src/requests/utils.py:L1-L182",
+        "src/requests/utils.py:L775-L960",
+        "tests/test_requests.py:L1-L170",
+        "tests/test_requests.py:L2157-L2294",
+        "tests/test_requests.py:L2281-L2428",
+        "tests/test_requests.py:L2414-L2570",
+        "tests/test_structures.py:L1-L78",
+        "tests/test_utils.py:L1-L180",
+        "tests/test_utils.py:L456-L618",
+        "tests/test_utils.py:L600-L747"
+      ],
+      "source_reference_occurrences": 17,
+      "semantic_fields": {
+        "title": "CASEINSENSITIVEDICT",
+        "type": "EXTERNAL_SYMBOL",
+        "description": "CASEINSENSITIVEDICT refers to the externally defined `CaseInsensitiveDict` class imported from `requests.structures` or the package’s relative `.structures` module. Its implementation is not visible in the provided code, but it is used as a dictionary-like mapping for HTTP headers and related configuration.\n\nThe class is instantiated in several contexts, including `Response.__init__`, `build_response`, `prepare_headers`, `default_headers`, fixtures, and visible tests. These usages create empty or populated case-insensitive header mappings, such as `CaseInsensitiveDict()` and `CaseInsensitiveDict({...})`. It is also passed as `dict_class` to `merge_setting` to ensure merged headers preserve case-insensitive behavior.\n\nThe visible tests exercise CASEINSENSITIVEDICT’s membership checks, key lookup, updates, iteration, equality comparisons, default handling, lowercase views, copying behavior, and general mapping semantics. Some files import the class without visibly using it in the provided chunks, while other code relies on it to construct and store response or request headers. Overall, CASEINSENSITIVEDICT represents the external mapping implementation that provides case-insensitive header-key handling throughout the related request and response logic.",
+        "text_unit_ids": [
+          "08ab497b9f63a3b929873cf200e2cf919b6f34e6ed78029c8236e4f52a2655e095f195db464dba582f26e7f56b741723896fc8c113c1c9266ecf7da0c7fa5cfb",
+          "25f95d61d95536dd1c8dfcb0ee9437dd458f372bb0368548fd0f6a0013071b4abcf086665c608bc3eb2f2865f00a1260f90e56307d26a7ae856d7c5c54fd893a",
+          "269b0b8b9d38de61a031fa736ab118ad232643de271ca1bf506657f0e6b8fa264c050c72757daed9246af17a2fddfd34d20fa3223a0d459459b6f03c3c437fe6",
+          "3726d9893d74af0ffe47bf33c7231af1999eb75c5a044060690795e8460359002950fc7fa023e8dbec642e33315f849fa81e5cb3cd9167443b5ccf30467762f9",
+          "37da1205bca9087f81a5c28961b6f3e9fcfb816c1df9548c0c78121eefb7a5339080dac11060a9f200ad5f13680ea1ef2ee84f58a37a882d9421cf8bda50fe42",
+          "43b0eb429fb59d9e8a7c68b6d91b68792ed3a872fb5a20ef46f0f5aa43724a3049ea9fe1b82e4814f4885580bd8bf12cfb1e04e6c9da8f74a9bd69b637d57d71",
+          "4792350d65a47ab9f49eb6ee4cf53f859e6f0ea029a940c2cd90eed4f87922c45839c6a60b3151cc3c441ae4e73dd254accff58efaaf9abd197c4b43dc59af2c",
+          "5260e132e7ccc90e18a6c1db46f4b70da7f4b77783f87857e255069dc030a5da33114dbcc740a80fa27a29cd9e60d8c9a55d775af46d6bb4b4dccd89b6c82615",
+          "52d10b858dab1f191a9fcbf8c94240faa22f13d5cf930c5b892f1856335145dcf612121e76eeeaffd3a329fe3643250a802ea36652a6765cd67a2f03647f7c68",
+          "771e4903fda73a194d5f66a667619b42b504825dda1259bec5448de65ba6ce2e4731189b7a7d45251bfa4c2777f6805f7101c8561ae23b655dce17ff7efc6fe8",
+          "7946bfd6d0f78f50a99eec3d7f7693e032636f8ba0651347c847763366a134fbc999108c838facb30fcc80d2255bdd9f9baf66d6797b218ab3e3a9f7ab1e03d6",
+          "9e71851338044ff01bb59d30fb37d167391c7a04dbe3bc5c179863164458d81c0ffc31cfa5e46f8d02816cb000a70b41686a938e28b0340a5e2393ebd678ae5a",
+          "a82bc30ad451de8b4340aca21b6264cd5f133fa2e1e8dcb48ad781c2946a51b47bbccf7e811b87defd00eb41ca32c115d5c479b2732b630913a90fccd3431470",
+          "bb15e78170390210f44229d1484a7eff8e7571c588e9b6e94c73689a67630a113ff99b235dee94157cca46404401fdce78e59e7ab8eae33bc76145df98501f7e",
+          "c2595a0671c939e229a84e1dcd2321cd3887b1ffe40c2ac840acc8dfb42c7714737e97f632be571e79735c34c1df7dbc3afdba1fc7237c316c18c49240a9e8d7",
+          "cefa6c63ec4b1cd11e1927da93da580dd749ed4855250d8ae7b47ddf05c7f20fdc485ee142e75cea1d24912a49c84d7ee5ff6534440f3db90e2091db6a87ec4e",
+          "f099a5259968e7f0c3ea8ded913a61b2f82d89d21a5a8807ff2c378ebc5fa824638ee90fe30ae7d44779bcb11c893f2c32a96f5c56401a8c546b29941a9c08c7"
+        ],
+        "frequency": 17,
+        "degree": 46
+      }
+    },
+    "entity:UPDATE": {
+      "kind": "entity",
+      "title": "UPDATE",
+      "type": "METHOD",
+      "description": "Defines the visible method `update(self, other)`. It copies cookies from a `cookielib.CookieJar` with `copy.copy` and `self.set_cookie`, otherwise delegates to `super().update(other)`; the owning class is not visible in this chunk.",
+      "semantic_sha256": "bc945954c35fe5cd7d14d744bc293c727b8c9bc7e2d0a947e6b11bbd2d44c2ed",
+      "frequency": 1,
+      "degree": 7,
+      "source_titles": [
+        "src/requests/cookies.py:L328-L479"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "title": "UPDATE",
+        "type": "METHOD",
+        "description": "Defines the visible method `update(self, other)`. It copies cookies from a `cookielib.CookieJar` with `copy.copy` and `self.set_cookie`, otherwise delegates to `super().update(other)`; the owning class is not visible in this chunk.",
+        "text_unit_ids": [
+          "91958b2bb02a43df27603cfa59ebe989b0667b0ba0d79abd53f7973e096502b75ffad6ca9e277a041e834bb9164df4d7dced5026fbdc6ccfa18cb8a0795034c4"
+        ],
+        "frequency": 1,
+        "degree": 7
+      }
+    },
+    "relationship:CASEINSENSITIVEDICT.__INIT__ -> UPDATE": {
+      "kind": "relationship",
+      "source": "CASEINSENSITIVEDICT.__INIT__",
+      "target": "UPDATE",
+      "description": "CALLS, the expression `self.update(data, **kwargs)` updates the mapping after `_store` initialization; the receiver resolves to the current instance but the method implementation is not visible in this chunk.",
+      "weight": 10.0,
+      "combined_degree": 10,
+      "semantic_sha256": "d9f5a41dd697592a367f576d861c50de8922b779a119036a4917e1f4bd2a35d9",
+      "source_titles": [
+        "src/requests/structures.py:L1-L99"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "source": "CASEINSENSITIVEDICT.__INIT__",
+        "target": "UPDATE",
+        "description": "CALLS, the expression `self.update(data, **kwargs)` updates the mapping after `_store` initialization; the receiver resolves to the current instance but the method implementation is not visible in this chunk.",
+        "weight": 10.0,
+        "combined_degree": 10,
+        "text_unit_ids": [
+          "b9256700252d4330095253ff3abaa885cc97967aafb39eeb6720db90ad55f6a9e70d925cdf0b77ca15e9ded6faab571ee2660fd2fdba038dad3247798fc22bc0"
+        ]
+      }
+    },
+    "relationship:COLLECTIONS -> ORDEREDDICT": {
+      "kind": "relationship",
+      "source": "COLLECTIONS",
+      "target": "ORDEREDDICT",
+      "description": "IMPORTS, `from collections import OrderedDict` imports the named symbol; import does not by itself prove any other use.",
+      "weight": 10.0,
+      "combined_degree": 12,
+      "semantic_sha256": "583d99ade7e7e55ce710771f28b6a2b3a41ee7e16cc11c704e347ec8ddc846ad",
+      "source_titles": [
+        "src/requests/structures.py:L1-L99"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "source": "COLLECTIONS",
+        "target": "ORDEREDDICT",
+        "description": "IMPORTS, `from collections import OrderedDict` imports the named symbol; import does not by itself prove any other use.",
+        "weight": 10.0,
+        "combined_degree": 12,
+        "text_unit_ids": [
+          "b9256700252d4330095253ff3abaa885cc97967aafb39eeb6720db90ad55f6a9e70d925cdf0b77ca15e9ded6faab571ee2660fd2fdba038dad3247798fc22bc0"
+        ]
+      }
+    },
+    "relationship:.COMPAT -> MAPPING": {
+      "kind": "relationship",
+      "source": ".COMPAT",
+      "target": "MAPPING",
+      "description": "IMPORTS, `from .compat import Mapping, MutableMapping` imports `Mapping`.",
+      "weight": 10.0,
+      "combined_degree": 17,
+      "semantic_sha256": "ebfd31a57180e4a8832afdd7b40d8952ed4a6725ad6dec13a15108864bceafac",
+      "source_titles": [
+        "src/requests/structures.py:L1-L99"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "source": ".COMPAT",
+        "target": "MAPPING",
+        "description": "IMPORTS, `from .compat import Mapping, MutableMapping` imports `Mapping`.",
+        "weight": 10.0,
+        "combined_degree": 17,
+        "text_unit_ids": [
+          "b9256700252d4330095253ff3abaa885cc97967aafb39eeb6720db90ad55f6a9e70d925cdf0b77ca15e9ded6faab571ee2660fd2fdba038dad3247798fc22bc0"
+        ]
+      }
+    },
+    "relationship:GET -> REQUEST": {
+      "kind": "relationship",
+      "source": "GET",
+      "target": "REQUEST",
+      "description": "GET invokes REQUEST to perform HTTP GET operations. In one implementation, GET calls the unresolved receiver method `self.request(\"GET\", url, **kwargs)` after defaulting `allow_redirects` to `True`. In another visible expression, GET delegates through `request(\"get\", url, params=params, **kwargs)`, passing the URL, query parameters, and additional keyword arguments. The owning class or complete implementation context is not visible.",
+      "weight": 20.0,
+      "combined_degree": 41,
+      "semantic_sha256": "df929fc0991d7fe98a6627950d1b6c06bb7daf181e2489dd1801870dc9e52331",
+      "source_titles": [
+        "src/requests/api.py:L1-L109",
+        "src/requests/sessions.py:L569-L717"
+      ],
+      "source_reference_occurrences": 2,
+      "semantic_fields": {
+        "source": "GET",
+        "target": "REQUEST",
+        "description": "GET invokes REQUEST to perform HTTP GET operations. In one implementation, GET calls the unresolved receiver method `self.request(\"GET\", url, **kwargs)` after defaulting `allow_redirects` to `True`. In another visible expression, GET delegates through `request(\"get\", url, params=params, **kwargs)`, passing the URL, query parameters, and additional keyword arguments. The owning class or complete implementation context is not visible.",
+        "weight": 20.0,
+        "combined_degree": 41,
+        "text_unit_ids": [
+          "7e0253862e73230a88a6603a444912c13871e2e1d6c32e0b2aa30e1cfec5ce5537ed82ca06c589359cee8b2a6a7c6333e1eeb8960096da5680361c141c1b50ae",
+          "c1cd745424c9cd15526c9817388dc761eab81a549baf632b9622061dd8600fe1fb5e55d10a13f6b782d3dc128c3753a80008475b6213aa20323d051b6601ea38"
+        ]
+      }
+    },
+    "relationship:OPTIONS -> REQUEST": {
+      "kind": "relationship",
+      "source": "OPTIONS",
+      "target": "REQUEST",
+      "description": "OPTIONS calls REQUEST to send an HTTP OPTIONS request for the specified URL, forwarding `**kwargs`. In one implementation, OPTIONS invokes `self.request(\"OPTIONS\", url, **kwargs)` after defaulting `allow_redirects` to `True`; another visible expression returns `request(\"options\", url, **kwargs)`. Together, these indicate that OPTIONS delegates request execution to REQUEST while preserving the provided options and ensuring redirects are enabled by default where applicable.",
+      "weight": 20.0,
+      "combined_degree": 31,
+      "semantic_sha256": "a8e362af235c053001c9cf9e6f1c4887a2490833fdea783e9441018095f3dee7",
+      "source_titles": [
+        "src/requests/api.py:L1-L109",
+        "src/requests/sessions.py:L569-L717"
+      ],
+      "source_reference_occurrences": 2,
+      "semantic_fields": {
+        "source": "OPTIONS",
+        "target": "REQUEST",
+        "description": "OPTIONS calls REQUEST to send an HTTP OPTIONS request for the specified URL, forwarding `**kwargs`. In one implementation, OPTIONS invokes `self.request(\"OPTIONS\", url, **kwargs)` after defaulting `allow_redirects` to `True`; another visible expression returns `request(\"options\", url, **kwargs)`. Together, these indicate that OPTIONS delegates request execution to REQUEST while preserving the provided options and ensuring redirects are enabled by default where applicable.",
+        "weight": 20.0,
+        "combined_degree": 31,
+        "text_unit_ids": [
+          "7e0253862e73230a88a6603a444912c13871e2e1d6c32e0b2aa30e1cfec5ce5537ed82ca06c589359cee8b2a6a7c6333e1eeb8960096da5680361c141c1b50ae",
+          "c1cd745424c9cd15526c9817388dc761eab81a549baf632b9622061dd8600fe1fb5e55d10a13f6b782d3dc128c3753a80008475b6213aa20323d051b6601ea38"
+        ]
+      }
+    },
+    "relationship:HEAD -> REQUEST": {
+      "kind": "relationship",
+      "source": "HEAD",
+      "target": "REQUEST",
+      "description": "HEAD calls REQUEST to perform a request for the specified URL, forwarding any additional keyword arguments. Before making the call, HEAD defaults `allow_redirects` to `False` when the option is not explicitly provided. The call is represented as either `self.request(\"HEAD\", url, **kwargs)` or `request(\"head\", url, **kwargs)`, indicating that HEAD delegates to REQUEST using the HTTP HEAD method, with method casing dependent on the visible implementation. The owning class is not visible.",
+      "weight": 20.0,
+      "combined_degree": 32,
+      "semantic_sha256": "a3892dd975d88427b538aa1b90f8cc41d9e92625fb79a8dfb9ba03644c31702f",
+      "source_titles": [
+        "src/requests/api.py:L1-L109",
+        "src/requests/sessions.py:L569-L717"
+      ],
+      "source_reference_occurrences": 2,
+      "semantic_fields": {
+        "source": "HEAD",
+        "target": "REQUEST",
+        "description": "HEAD calls REQUEST to perform a request for the specified URL, forwarding any additional keyword arguments. Before making the call, HEAD defaults `allow_redirects` to `False` when the option is not explicitly provided. The call is represented as either `self.request(\"HEAD\", url, **kwargs)` or `request(\"head\", url, **kwargs)`, indicating that HEAD delegates to REQUEST using the HTTP HEAD method, with method casing dependent on the visible implementation. The owning class is not visible.",
+        "weight": 20.0,
+        "combined_degree": 32,
+        "text_unit_ids": [
+          "7e0253862e73230a88a6603a444912c13871e2e1d6c32e0b2aa30e1cfec5ce5537ed82ca06c589359cee8b2a6a7c6333e1eeb8960096da5680361c141c1b50ae",
+          "c1cd745424c9cd15526c9817388dc761eab81a549baf632b9622061dd8600fe1fb5e55d10a13f6b782d3dc128c3753a80008475b6213aa20323d051b6601ea38"
+        ]
+      }
+    },
+    "relationship:REQUEST -> SESSIONS.SESSION": {
+      "kind": "relationship",
+      "source": "REQUEST",
+      "target": "SESSIONS.SESSION",
+      "description": "CALLS, direction request -> sessions.Session, visible expression `with sessions.Session() as session`; the target class is referenced but its definition is not visible.",
+      "weight": 9.0,
+      "combined_degree": 27,
+      "semantic_sha256": "676e5a474f6ebb7c4297723fb4f695129dd5c1b3a52a18471101d94448084a06",
+      "source_titles": [
+        "src/requests/api.py:L1-L109"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "source": "REQUEST",
+        "target": "SESSIONS.SESSION",
+        "description": "CALLS, direction request -> sessions.Session, visible expression `with sessions.Session() as session`; the target class is referenced but its definition is not visible.",
+        "weight": 9.0,
+        "combined_degree": 27,
+        "text_unit_ids": [
+          "7e0253862e73230a88a6603a444912c13871e2e1d6c32e0b2aa30e1cfec5ce5537ed82ca06c589359cee8b2a6a7c6333e1eeb8960096da5680361c141c1b50ae"
+        ]
+      }
+    },
+    "relationship:REQUEST -> SESSION.REQUEST": {
+      "kind": "relationship",
+      "source": "REQUEST",
+      "target": "SESSION.REQUEST",
+      "description": "CALLS, direction request -> session.request, visible expression `return session.request(method=method, url=url, **kwargs)`; the receiver is the context-bound local `session`, so no specific class method binding can be proven.",
+      "weight": 9.0,
+      "combined_degree": 28,
+      "semantic_sha256": "d630c249fff6a72f01e26486aef3eb18e3eb642bd69de3e676a1dde6a77cb799",
+      "source_titles": [
+        "src/requests/api.py:L1-L109"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "source": "REQUEST",
+        "target": "SESSION.REQUEST",
+        "description": "CALLS, direction request -> session.request, visible expression `return session.request(method=method, url=url, **kwargs)`; the receiver is the context-bound local `session`, so no specific class method binding can be proven.",
+        "weight": 9.0,
+        "combined_degree": 28,
+        "text_unit_ids": [
+          "7e0253862e73230a88a6603a444912c13871e2e1d6c32e0b2aa30e1cfec5ce5537ed82ca06c589359cee8b2a6a7c6333e1eeb8960096da5680361c141c1b50ae"
+        ]
+      }
+    },
+    "entity:SESSION.REQUEST": {
+      "kind": "entity",
+      "title": "SESSION.REQUEST",
+      "type": "EXTERNAL_SYMBOL",
+      "description": "SESSION.REQUEST is a method invoked on a locally created `session` object. It accepts an HTTP method, a URL, and optional keyword arguments, as shown by the general call `session.request(method=method, url=url, **kwargs)`. The method is also explicitly called with `method=\"GET\"` and URLs produced by `httpbin(\"get\")` or `httpbin()`. The owning class, concrete session type, and implementation are not visible in the available descriptions.",
+      "semantic_sha256": "915e99a92b5a0cfdc7795970b02f23b24e63fc3c91e265e8f810efd58fe856dd",
+      "frequency": 3,
+      "degree": 2,
+      "source_titles": [
+        "src/requests/api.py:L1-L109",
+        "tests/test_requests.py:L511-L650",
+        "tests/test_requests.py:L640-L786"
+      ],
+      "source_reference_occurrences": 3,
+      "semantic_fields": {
+        "title": "SESSION.REQUEST",
+        "type": "EXTERNAL_SYMBOL",
+        "description": "SESSION.REQUEST is a method invoked on a locally created `session` object. It accepts an HTTP method, a URL, and optional keyword arguments, as shown by the general call `session.request(method=method, url=url, **kwargs)`. The method is also explicitly called with `method=\"GET\"` and URLs produced by `httpbin(\"get\")` or `httpbin()`. The owning class, concrete session type, and implementation are not visible in the available descriptions.",
+        "text_unit_ids": [
+          "4a14f647958275687081fb7b9acfba5968c97e59340b9817e1861eb7ca591193717dc6709c43cde0b230260743fc48ebada8aa67ed7ce7387163fe1a421a43c6",
+          "7a3fd0af524686df8b7a8b39cc649201959d3e5fef57a5d26cc5671cf6a6dcda6422ecfbc62fd97776b96f8ddd30f5ffcad0df881b85b8095df8a146ddd0ef0a",
+          "7e0253862e73230a88a6603a444912c13871e2e1d6c32e0b2aa30e1cfec5ce5537ed82ca06c589359cee8b2a6a7c6333e1eeb8960096da5680361c141c1b50ae"
+        ],
+        "frequency": 3,
+        "degree": 2
+      }
+    },
+    "entity:REQUEST": {
+      "kind": "entity",
+      "title": "REQUEST",
+      "type": "CLASS",
+      "description": "`REQUEST` refers to the `Request` class used to represent and configure HTTP requests. In some contexts, `Request` is explicitly imported from the `requests` package and instantiated for `POST` requests with `Request('POST', url, data=data, headers=headers)` or for `GET` requests with `Request('GET', url, data=data, headers=headers)`, although the imported class’s definition is not visible there. In the provided implementation, the exact `Request` class inherits from `RequestHooksMixin`; its constructor stores the request configuration, `__repr__` formats the HTTP method for representation, and `prepare` constructs and prepares a corresponding `PreparedRequest`.",
+      "semantic_sha256": "4a7dcd8c888d61e2476d29c8082adf57e314c177261b11dbed8c4a26d3918519",
+      "frequency": 3,
+      "degree": 26,
+      "source_titles": [
+        "docs/user/advanced.rst:L1-L136",
+        "docs/user/advanced.rst:L125-L271",
+        "src/requests/models.py:L170-L345"
+      ],
+      "source_reference_occurrences": 3,
+      "semantic_fields": {
+        "title": "REQUEST",
+        "type": "CLASS",
+        "description": "`REQUEST` refers to the `Request` class used to represent and configure HTTP requests. In some contexts, `Request` is explicitly imported from the `requests` package and instantiated for `POST` requests with `Request('POST', url, data=data, headers=headers)` or for `GET` requests with `Request('GET', url, data=data, headers=headers)`, although the imported class’s definition is not visible there. In the provided implementation, the exact `Request` class inherits from `RequestHooksMixin`; its constructor stores the request configuration, `__repr__` formats the HTTP method for representation, and `prepare` constructs and prepares a corresponding `PreparedRequest`.",
+        "text_unit_ids": [
+          "5331b84c4ee414531020175aaac10ddf0c8492ecbbd220ad32b87854b94b837b16a108993f977b74ce670e34f896a0625eb0c3871502e97d5ef868ad4c60b1c0",
+          "72f346f82323a04ca139166fc7a3e85bdfcf8722b55cd82525246e4cb780f7a0f82e56320f15ef3a18286326826f75b331e12d0838acc5dda9fcb28f5e5b22b9",
+          "d3150f78238f6ad73845b3510a7bf6b0e2cab02f1e1103994a7ac5bbd8f87030f498eeb1b7fcc941cfd21ce3c2b863e7e4343adb5037605afa83f23e9865f047"
+        ],
+        "frequency": 3,
+        "degree": 26
+      }
+    },
+    "entity:GET": {
+      "kind": "entity",
+      "title": "GET",
+      "type": "EXTERNAL_SYMBOL",
+      "description": "GET is referenced throughout the codebase in several contexts, but its concrete implementations are generally not visible in the available descriptions. It appears as an unresolved JSON or mapping method in `.json().get(\"form\")`, as a dictionary-style operation on `self.__dict__` within `LookupDict.__getitem__` and `LookupDict.get`, and through `proxies.get(\"no_proxy\")`, `os.environ.get(\"REQUESTS_CA_BUNDLE\")`, and `os.environ.get(\"CURL_CA_BUNDLE\")`. It is also used on response-related objects through `self.headers.get(\"link\")` and `link.get(\"rel\")` or `link.get(\"url\")`.\n\nGET is imported from `.api` in multiple locations, although the imported definition is not included. Documentation explicitly identifies `get` as a more descriptive alternative to `__getitem__` and `_find_no_duplicates`, without showing an executable call in that context.\n\nThe symbol is also used as an HTTP request method. It is called as `s.get(...)`, including `s.get(httpbin(\"redirect/2\"), allow_redirects=False, stream=True)`, and as `session.get(urls_test[0])`, where `session` is a `CustomRedirectSession` instance. These calls indicate that GET performs HTTP requests, but the concrete runtime binding may be inherited or otherwise defined outside the available code. Overall, GET represents both a common mapping/accessor method and an HTTP client request method, with its receiver types and implementations unresolved or external to the provided material.",
+      "semantic_sha256": "213502c7ed6c3afafa16fe46d86dcb4738fc8940343ddd3e0691c8b68f9508c8",
+      "frequency": 10,
+      "degree": 15,
+      "source_titles": [
+        "src/requests/__init__.py:L1-L174",
+        "src/requests/__init__.py:L155-L184",
+        "src/requests/cookies.py:L328-L479",
+        "src/requests/models.py:L930-L1037",
+        "src/requests/sessions.py:L704-L831",
+        "src/requests/structures.py:L1-L99",
+        "tests/test_requests.py:L1872-L2028",
+        "tests/test_requests.py:L2157-L2294",
+        "tests/test_requests.py:L2559-L2696",
+        "tests/test_requests.py:L775-L929"
+      ],
+      "source_reference_occurrences": 10,
+      "semantic_fields": {
+        "title": "GET",
+        "type": "EXTERNAL_SYMBOL",
+        "description": "GET is referenced throughout the codebase in several contexts, but its concrete implementations are generally not visible in the available descriptions. It appears as an unresolved JSON or mapping method in `.json().get(\"form\")`, as a dictionary-style operation on `self.__dict__` within `LookupDict.__getitem__` and `LookupDict.get`, and through `proxies.get(\"no_proxy\")`, `os.environ.get(\"REQUESTS_CA_BUNDLE\")`, and `os.environ.get(\"CURL_CA_BUNDLE\")`. It is also used on response-related objects through `self.headers.get(\"link\")` and `link.get(\"rel\")` or `link.get(\"url\")`.\n\nGET is imported from `.api` in multiple locations, although the imported definition is not included. Documentation explicitly identifies `get` as a more descriptive alternative to `__getitem__` and `_find_no_duplicates`, without showing an executable call in that context.\n\nThe symbol is also used as an HTTP request method. It is called as `s.get(...)`, including `s.get(httpbin(\"redirect/2\"), allow_redirects=False, stream=True)`, and as `session.get(urls_test[0])`, where `session` is a `CustomRedirectSession` instance. These calls indicate that GET performs HTTP requests, but the concrete runtime binding may be inherited or otherwise defined outside the available code. Overall, GET represents both a common mapping/accessor method and an HTTP client request method, with its receiver types and implementations unresolved or external to the provided material.",
+        "text_unit_ids": [
+          "2b38dc8ec228c7382e7171c00471643bdc3f65f647cb4e95a15f104d09643d011932e30a00ee5ab63d3a76c6d9a1ee6412f83b455bcf77f08dd29aff22dffcac",
+          "4b4b5fc54c5de1b3bc06ae804b6e1a5b97c7354826ae43cb449d641d0ddfd9ca12e0edbdb3bc23b9ef8590995e18471f832326ab7032bf5ddf89637b8f414d3a",
+          "91958b2bb02a43df27603cfa59ebe989b0667b0ba0d79abd53f7973e096502b75ffad6ca9e277a041e834bb9164df4d7dced5026fbdc6ccfa18cb8a0795034c4",
+          "b9256700252d4330095253ff3abaa885cc97967aafb39eeb6720db90ad55f6a9e70d925cdf0b77ca15e9ded6faab571ee2660fd2fdba038dad3247798fc22bc0",
+          "b9ef8bd69524007c70779cbff64c5bc404ceb6dcd3b6f6209812af6c0a3238c28795e233848af76f88755bd43431332033590044d0741cf17c7945e3db61a170",
+          "bc4ab2502f49c1e1aa173a6c8081bcd4b23a1e7f5e3616ffd849f3f6111902d346779211e0fd205ecc677a53b9c50399d5d7b7830f3d0fe9112ff0ad133fd5c2",
+          "e4d16b03bbebbab7887e98b56beb2a1f42973152e06e0aba30b7afb4127ca9fdb4bd1959c3654263a278094012aba9f4bd428b408450a05216d06496ed3bbb63",
+          "f099a5259968e7f0c3ea8ded913a61b2f82d89d21a5a8807ff2c378ebc5fa824638ee90fe30ae7d44779bcb11c893f2c32a96f5c56401a8c546b29941a9c08c7",
+          "f58c14175330235d8fc1ab76a727a2ebbcb83a7b6f0c40a6b2565546b3e14b71fb34762b92dc723c1560082374706f31f3f79711e7a6a5ea3cc830eac1d00fcb",
+          "f7a16e348dbdfcaeb03162dd951c70406911a93102dda5fe8b2bd318ecdcf2a436eeeee6421652fa3c8a858b1ad18bfb376a8566f7620ebffdbec7d86d85181a"
+        ],
+        "frequency": 10,
+        "degree": 15
+      }
+    },
+    "entity:HEAD": {
+      "kind": "entity",
+      "title": "HEAD",
+      "type": "EXTERNAL_SYMBOL",
+      "description": "HEAD refers to the exact symbol `head`, which is imported from the `.api` module. Its definition is not visible in the provided context.",
+      "semantic_sha256": "911e4fa0b976dec06e792d426f55acab62a2d7d90ed732aa1be518c5b88d2fd8",
+      "frequency": 2,
+      "degree": 6,
+      "source_titles": [
+        "src/requests/__init__.py:L1-L174",
+        "src/requests/__init__.py:L155-L184"
+      ],
+      "source_reference_occurrences": 2,
+      "semantic_fields": {
+        "title": "HEAD",
+        "type": "EXTERNAL_SYMBOL",
+        "description": "HEAD refers to the exact symbol `head`, which is imported from the `.api` module. Its definition is not visible in the provided context.",
+        "text_unit_ids": [
+          "2b38dc8ec228c7382e7171c00471643bdc3f65f647cb4e95a15f104d09643d011932e30a00ee5ab63d3a76c6d9a1ee6412f83b455bcf77f08dd29aff22dffcac",
+          "e4d16b03bbebbab7887e98b56beb2a1f42973152e06e0aba30b7afb4127ca9fdb4bd1959c3654263a278094012aba9f4bd428b408450a05216d06496ed3bbb63"
+        ],
+        "frequency": 2,
+        "degree": 6
+      }
+    },
+    "entity:OPTIONS": {
+      "kind": "entity",
+      "title": "OPTIONS",
+      "type": "EXTERNAL_SYMBOL",
+      "description": "OPTIONS refers to the exact symbol `options`, which is imported from the `.api` module. Its definition is not visible in the provided information.",
+      "semantic_sha256": "395123d35796803282c57d6674bf7ed7c7bca806050b03f277c07133d4e5861e",
+      "frequency": 2,
+      "degree": 5,
+      "source_titles": [
+        "src/requests/__init__.py:L1-L174",
+        "src/requests/__init__.py:L155-L184"
+      ],
+      "source_reference_occurrences": 2,
+      "semantic_fields": {
+        "title": "OPTIONS",
+        "type": "EXTERNAL_SYMBOL",
+        "description": "OPTIONS refers to the exact symbol `options`, which is imported from the `.api` module. Its definition is not visible in the provided information.",
+        "text_unit_ids": [
+          "2b38dc8ec228c7382e7171c00471643bdc3f65f647cb4e95a15f104d09643d011932e30a00ee5ab63d3a76c6d9a1ee6412f83b455bcf77f08dd29aff22dffcac",
+          "e4d16b03bbebbab7887e98b56beb2a1f42973152e06e0aba30b7afb4127ca9fdb4bd1959c3654263a278094012aba9f4bd428b408450a05216d06496ed3bbb63"
+        ],
+        "frequency": 2,
+        "degree": 5
+      }
+    },
+    "relationship:REQUEST -> REQUEST": {
+      "kind": "relationship",
+      "source": "REQUEST",
+      "target": "REQUEST",
+      "description": "REQUEST constructs a `Request` object by invoking `Request(method=method.upper(), ...)` before preparation. Its documentation also describes the construction of a `Request` object, although the `Request` class definition is not visible in the available context.",
+      "weight": 15.0,
+      "combined_degree": 52,
+      "semantic_sha256": "7b9c026c3155de19dceaf5d76ae415b1e40076b271b6450d6741ec8975b730c4",
+      "source_titles": [
+        "src/requests/api.py:L1-L109",
+        "src/requests/sessions.py:L441-L588"
+      ],
+      "source_reference_occurrences": 2,
+      "semantic_fields": {
+        "source": "REQUEST",
+        "target": "REQUEST",
+        "description": "REQUEST constructs a `Request` object by invoking `Request(method=method.upper(), ...)` before preparation. Its documentation also describes the construction of a `Request` object, although the `Request` class definition is not visible in the available context.",
+        "weight": 15.0,
+        "combined_degree": 52,
+        "text_unit_ids": [
+          "7e0253862e73230a88a6603a444912c13871e2e1d6c32e0b2aa30e1cfec5ce5537ed82ca06c589359cee8b2a6a7c6333e1eeb8960096da5680361c141c1b50ae",
+          "cefa6c63ec4b1cd11e1927da93da580dd749ed4855250d8ae7b47ddf05c7f20fdc485ee142e75cea1d24912a49c84d7ee5ff6534440f3db90e2091db6a87ec4e"
+        ]
+      }
+    },
+    "relationship:REQUEST -> PREPARE_REQUEST": {
+      "kind": "relationship",
+      "source": "REQUEST",
+      "target": "PREPARE_REQUEST",
+      "description": "CALLS, direction `request` -> `prepare_request`; the visible expression is `self.prepare_request(req)`, but the owning class name is not shown in this chunk.",
+      "weight": 9.0,
+      "combined_degree": 37,
+      "semantic_sha256": "f6f2d3ebd374d07b4e1ea3d64453119b0707eb0c50899f27489ef55bdd56f85f",
+      "source_titles": [
+        "src/requests/sessions.py:L441-L588"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "source": "REQUEST",
+        "target": "PREPARE_REQUEST",
+        "description": "CALLS, direction `request` -> `prepare_request`; the visible expression is `self.prepare_request(req)`, but the owning class name is not shown in this chunk.",
+        "weight": 9.0,
+        "combined_degree": 37,
+        "text_unit_ids": [
+          "cefa6c63ec4b1cd11e1927da93da580dd749ed4855250d8ae7b47ddf05c7f20fdc485ee142e75cea1d24912a49c84d7ee5ff6534440f3db90e2091db6a87ec4e"
+        ]
+      }
+    },
+    "relationship:POST -> RESPONSE": {
+      "kind": "relationship",
+      "source": "POST",
+      "target": "RESPONSE",
+      "description": "POST returns a RESPONSE object. This behavior is stated in its documentation, which describes the return value as a `Response` object, although the executable implementation is not visible in the provided information.",
+      "weight": 9.0,
+      "combined_degree": 38,
+      "semantic_sha256": "9ed62d74f1af3649b375d9b41cd802b44b77f037edb7aa545747ec33a9aeecf0",
+      "source_titles": [
+        "src/requests/api.py:L1-L109",
+        "src/requests/api.py:L101-L157"
+      ],
+      "source_reference_occurrences": 2,
+      "semantic_fields": {
+        "source": "POST",
+        "target": "RESPONSE",
+        "description": "POST returns a RESPONSE object. This behavior is stated in its documentation, which describes the return value as a `Response` object, although the executable implementation is not visible in the provided information.",
+        "weight": 9.0,
+        "combined_degree": 38,
+        "text_unit_ids": [
+          "7e0253862e73230a88a6603a444912c13871e2e1d6c32e0b2aa30e1cfec5ce5537ed82ca06c589359cee8b2a6a7c6333e1eeb8960096da5680361c141c1b50ae",
+          "c5cf4cdd51caa0c3e89458e868edccf81b9ce75b113ed87f1edf7226ffa026de9fae220e653218bb860c1372d900eee04d5d66ee00a642c306fcc7f1b5e06373"
+        ]
+      }
+    },
+    "relationship:POST -> REQUESTS.RESPONSE": {
+      "kind": "relationship",
+      "source": "POST",
+      "target": "REQUESTS.RESPONSE",
+      "description": "REFERENCES, direction post -> requests.Response, the visible docstring declares `:rtype: requests.Response`; the executable body is not visible in this chunk.",
+      "weight": 5.0,
+      "combined_degree": 32,
+      "semantic_sha256": "65ae46ee4bfcd59191ef9f15b83df92e97a2ac237aba85e62ac7d366fea4ca68",
+      "source_titles": [
+        "src/requests/api.py:L1-L109"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "source": "POST",
+        "target": "REQUESTS.RESPONSE",
+        "description": "REFERENCES, direction post -> requests.Response, the visible docstring declares `:rtype: requests.Response`; the executable body is not visible in this chunk.",
+        "weight": 5.0,
+        "combined_degree": 32,
+        "text_unit_ids": [
+          "7e0253862e73230a88a6603a444912c13871e2e1d6c32e0b2aa30e1cfec5ce5537ed82ca06c589359cee8b2a6a7c6333e1eeb8960096da5680361c141c1b50ae"
+        ]
+      }
+    },
+    "entity:POST": {
+      "kind": "entity",
+      "title": "POST",
+      "type": "EXTERNAL_SYMBOL",
+      "description": "POST refers to the exact symbol `post`, which is imported from the `.api` module. Its definition is not visible in the provided information.",
+      "semantic_sha256": "257e5b1a0f6b55a44f2fda8694f3d9bad3eb1e5a075fc34b4fe9ddbc7adce03d",
+      "frequency": 2,
+      "degree": 5,
+      "source_titles": [
+        "src/requests/__init__.py:L1-L174",
+        "src/requests/__init__.py:L155-L184"
+      ],
+      "source_reference_occurrences": 2,
+      "semantic_fields": {
+        "title": "POST",
+        "type": "EXTERNAL_SYMBOL",
+        "description": "POST refers to the exact symbol `post`, which is imported from the `.api` module. Its definition is not visible in the provided information.",
+        "text_unit_ids": [
+          "2b38dc8ec228c7382e7171c00471643bdc3f65f647cb4e95a15f104d09643d011932e30a00ee5ab63d3a76c6d9a1ee6412f83b455bcf77f08dd29aff22dffcac",
+          "e4d16b03bbebbab7887e98b56beb2a1f42973152e06e0aba30b7afb4127ca9fdb4bd1959c3654263a278094012aba9f4bd428b408450a05216d06496ed3bbb63"
+        ],
+        "frequency": 2,
+        "degree": 5
+      }
+    },
+    "entity:TEST_HEADER_KEYS_ARE_NATIVE": {
+      "kind": "entity",
+      "title": "TEST_HEADER_KEYS_ARE_NATIVE",
+      "type": "TEST",
+      "description": "The test `test_header_keys_are_native` is visibly defined here. It prepares a `requests.Request` with string and bytes header keys and asserts `\"unicode\"` and `\"byte\"` are present in `p.headers.keys()`.",
+      "semantic_sha256": "66cfa148742af000c742332b82825ca03bfde13ec219ecde73cda71eacd3c346",
+      "frequency": 1,
+      "degree": 4,
+      "source_titles": [
+        "tests/test_requests.py:L1624-L1760"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "title": "TEST_HEADER_KEYS_ARE_NATIVE",
+        "type": "TEST",
+        "description": "The test `test_header_keys_are_native` is visibly defined here. It prepares a `requests.Request` with string and bytes header keys and asserts `\"unicode\"` and `\"byte\"` are present in `p.headers.keys()`.",
+        "text_unit_ids": [
+          "2505e1a48b76732000e23ab0354ff6ed17cd408aa62b7e5e48a9b8276915207765f673c94b2fb4a3fac6de128020683d34064c1670811249899e33b954ef2efe"
+        ],
+        "frequency": 1,
+        "degree": 4
+      }
+    },
+    "entity:TEST_HEADER_VALIDATION": {
+      "kind": "entity",
+      "title": "TEST_HEADER_VALIDATION",
+      "type": "TEST",
+      "description": "The test `test_header_validation` is visibly defined here. Its documentation states that valid header contents must not be rejected; it calls `requests.get(httpbin(\"get\"), headers=valid_headers)` and asserts each input header value equals the corresponding request header value.",
+      "semantic_sha256": "19e7acae8552276e05493c3a9370516c7ace84075f92c0f229bc9ce1fc03a6b7",
+      "frequency": 1,
+      "degree": 2,
+      "source_titles": [
+        "tests/test_requests.py:L1624-L1760"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "title": "TEST_HEADER_VALIDATION",
+        "type": "TEST",
+        "description": "The test `test_header_validation` is visibly defined here. Its documentation states that valid header contents must not be rejected; it calls `requests.get(httpbin(\"get\"), headers=valid_headers)` and asserts each input header value equals the corresponding request header value.",
+        "text_unit_ids": [
+          "2505e1a48b76732000e23ab0354ff6ed17cd408aa62b7e5e48a9b8276915207765f673c94b2fb4a3fac6de128020683d34064c1670811249899e33b954ef2efe"
+        ],
+        "frequency": 1,
+        "degree": 2
+      }
+    },
+    "entity:TEST_HEADER_VALUE_NOT_STR": {
+      "kind": "entity",
+      "title": "TEST_HEADER_VALUE_NOT_STR",
+      "type": "TEST",
+      "description": "The parametrized test `test_header_value_not_str` is visibly defined here. It enters `pytest.raises(InvalidHeader)` while calling `requests.get(..., headers=invalid_header)` for non-string/non-bytes header values, then asserts the parametrized key occurs in the exception text.",
+      "semantic_sha256": "a5c80306e1e2065ff6c13714608990774c6e99800eca18abbaa1cd9bd2e1ed24",
+      "frequency": 1,
+      "degree": 5,
+      "source_titles": [
+        "tests/test_requests.py:L1624-L1760"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "title": "TEST_HEADER_VALUE_NOT_STR",
+        "type": "TEST",
+        "description": "The parametrized test `test_header_value_not_str` is visibly defined here. It enters `pytest.raises(InvalidHeader)` while calling `requests.get(..., headers=invalid_header)` for non-string/non-bytes header values, then asserts the parametrized key occurs in the exception text.",
+        "text_unit_ids": [
+          "2505e1a48b76732000e23ab0354ff6ed17cd408aa62b7e5e48a9b8276915207765f673c94b2fb4a3fac6de128020683d34064c1670811249899e33b954ef2efe"
+        ],
+        "frequency": 1,
+        "degree": 5
+      }
+    },
+    "relationship:TEST_HEADER_KEYS_ARE_NATIVE -> REQUESTS.REQUEST.PREPARE": {
+      "kind": "relationship",
+      "source": "TEST_HEADER_KEYS_ARE_NATIVE",
+      "target": "REQUESTS.REQUEST.PREPARE",
+      "description": "CALLS, direction test_header_keys_are_native -> requests.Request.prepare: the test visibly calls `p = r.prepare()` on the request created by `requests.Request(...)`.",
+      "weight": 9.0,
+      "combined_degree": 24,
+      "semantic_sha256": "4a603980b2e1f6c01f5c253f0fcb1457313210e4f3ff5ad80a2b5258cdd8159a",
+      "source_titles": [
+        "tests/test_requests.py:L1624-L1760"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "source": "TEST_HEADER_KEYS_ARE_NATIVE",
+        "target": "REQUESTS.REQUEST.PREPARE",
+        "description": "CALLS, direction test_header_keys_are_native -> requests.Request.prepare: the test visibly calls `p = r.prepare()` on the request created by `requests.Request(...)`.",
+        "weight": 9.0,
+        "combined_degree": 24,
+        "text_unit_ids": [
+          "2505e1a48b76732000e23ab0354ff6ed17cd408aa62b7e5e48a9b8276915207765f673c94b2fb4a3fac6de128020683d34064c1670811249899e33b954ef2efe"
+        ]
+      }
+    },
+    "relationship:TEST_HEADER_KEYS_ARE_NATIVE -> HEADERS.KEYS": {
+      "kind": "relationship",
+      "source": "TEST_HEADER_KEYS_ARE_NATIVE",
+      "target": "HEADERS.KEYS",
+      "description": "CALLS, direction test_header_keys_are_native -> headers.keys: the test visibly calls `p.headers.keys()` in two membership assertions; the concrete mapping receiver is not otherwise identified.",
+      "weight": 8.0,
+      "combined_degree": 5,
+      "semantic_sha256": "16da8529c1433873d804cad1a5fe92020c8ea9789b82b29c696c05613723911c",
+      "source_titles": [
+        "tests/test_requests.py:L1624-L1760"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "source": "TEST_HEADER_KEYS_ARE_NATIVE",
+        "target": "HEADERS.KEYS",
+        "description": "CALLS, direction test_header_keys_are_native -> headers.keys: the test visibly calls `p.headers.keys()` in two membership assertions; the concrete mapping receiver is not otherwise identified.",
+        "weight": 8.0,
+        "combined_degree": 5,
+        "text_unit_ids": [
+          "2505e1a48b76732000e23ab0354ff6ed17cd408aa62b7e5e48a9b8276915207765f673c94b2fb4a3fac6de128020683d34064c1670811249899e33b954ef2efe"
+        ]
+      }
+    },
+    "entity:TEST_HEADER_NO_LEADING_SPACE": {
+      "kind": "entity",
+      "title": "TEST_HEADER_NO_LEADING_SPACE",
+      "type": "TEST",
+      "description": "`TEST_HEADER_NO_LEADING_SPACE` refers to the parametrized test function `test_header_no_leading_space(self, httpbin, invalid_header)`. It verifies that `requests.get(httpbin(\"get\"), headers=invalid_header)` raises `InvalidHeader` when a header contains leading whitespace before the request is sent. The test’s documentation states this expected behavior, and its body uses `pytest.raises(InvalidHeader)` around the request call. The exact owning test class or module scope is not shown.",
+      "semantic_sha256": "f7922e2806397d97ce9ff2eb5849c514bbb200e18c6a537f3b5845a862212574",
+      "frequency": 3,
+      "degree": 5,
+      "source_titles": [
+        "tests/test_requests.py:L1624-L1760",
+        "tests/test_requests.py:L1746-L1882"
+      ],
+      "source_reference_occurrences": 3,
+      "semantic_fields": {
+        "title": "TEST_HEADER_NO_LEADING_SPACE",
+        "type": "TEST",
+        "description": "`TEST_HEADER_NO_LEADING_SPACE` refers to the parametrized test function `test_header_no_leading_space(self, httpbin, invalid_header)`. It verifies that `requests.get(httpbin(\"get\"), headers=invalid_header)` raises `InvalidHeader` when a header contains leading whitespace before the request is sent. The test’s documentation states this expected behavior, and its body uses `pytest.raises(InvalidHeader)` around the request call. The exact owning test class or module scope is not shown.",
+        "text_unit_ids": [
+          "2505e1a48b76732000e23ab0354ff6ed17cd408aa62b7e5e48a9b8276915207765f673c94b2fb4a3fac6de128020683d34064c1670811249899e33b954ef2efe",
+          "b0f14cc15eeb69052052cdb3419f9d23f61e2011d3957be6386b6a56900e93b7ce06b38b322b2d5bbe5be2a7f5d57c57a523cb46545e23cb9d5410d5225595d7",
+          "b0f14cc15eeb69052052cdb3419f9d23f61e2011d3957be6386b6a56900e93b7ce06b38b322b2d5bbe5be2a7f5d57c57a523cb46545e23cb9d5410d5225595d7"
+        ],
+        "frequency": 3,
+        "degree": 5
+      }
+    },
+    "relationship:TEST_HEADER_NO_LEADING_SPACE -> PYTEST.RAISES": {
+      "kind": "relationship",
+      "source": "TEST_HEADER_NO_LEADING_SPACE",
+      "target": "PYTEST.RAISES",
+      "description": "`TEST_HEADER_NO_LEADING_SPACE` calls `PYTEST.RAISES` by entering the visible `pytest.raises(InvalidHeader)` context manager before performing the request operation. This context manager verifies that the request raises an `InvalidHeader` exception.",
+      "weight": 18.0,
+      "combined_degree": 53,
+      "semantic_sha256": "fe3f785b02279b59e6a7c83c5c02b20b6654d93e9e5fb2807d70854d00e6a838",
+      "source_titles": [
+        "tests/test_requests.py:L1624-L1760",
+        "tests/test_requests.py:L1746-L1882"
+      ],
+      "source_reference_occurrences": 2,
+      "semantic_fields": {
+        "source": "TEST_HEADER_NO_LEADING_SPACE",
+        "target": "PYTEST.RAISES",
+        "description": "`TEST_HEADER_NO_LEADING_SPACE` calls `PYTEST.RAISES` by entering the visible `pytest.raises(InvalidHeader)` context manager before performing the request operation. This context manager verifies that the request raises an `InvalidHeader` exception.",
+        "weight": 18.0,
+        "combined_degree": 53,
+        "text_unit_ids": [
+          "2505e1a48b76732000e23ab0354ff6ed17cd408aa62b7e5e48a9b8276915207765f673c94b2fb4a3fac6de128020683d34064c1670811249899e33b954ef2efe",
+          "b0f14cc15eeb69052052cdb3419f9d23f61e2011d3957be6386b6a56900e93b7ce06b38b322b2d5bbe5be2a7f5d57c57a523cb46545e23cb9d5410d5225595d7"
+        ]
+      }
+    },
+    "relationship:TEST_HEADER_NO_LEADING_SPACE -> REQUESTS.GET": {
+      "kind": "relationship",
+      "source": "TEST_HEADER_NO_LEADING_SPACE",
+      "target": "REQUESTS.GET",
+      "description": "`TEST_HEADER_NO_LEADING_SPACE` calls `REQUESTS.GET` by invoking `requests.get(httpbin(\"get\"), headers=invalid_header)` inside an exception assertion/context.",
+      "weight": 18.0,
+      "combined_degree": 83,
+      "semantic_sha256": "2e140ec99619ce0f5a1b23080c4cacefcc3d6d4ac52695bec4718a74660d28e6",
+      "source_titles": [
+        "tests/test_requests.py:L1624-L1760",
+        "tests/test_requests.py:L1746-L1882"
+      ],
+      "source_reference_occurrences": 2,
+      "semantic_fields": {
+        "source": "TEST_HEADER_NO_LEADING_SPACE",
+        "target": "REQUESTS.GET",
+        "description": "`TEST_HEADER_NO_LEADING_SPACE` calls `REQUESTS.GET` by invoking `requests.get(httpbin(\"get\"), headers=invalid_header)` inside an exception assertion/context.",
+        "weight": 18.0,
+        "combined_degree": 83,
+        "text_unit_ids": [
+          "2505e1a48b76732000e23ab0354ff6ed17cd408aa62b7e5e48a9b8276915207765f673c94b2fb4a3fac6de128020683d34064c1670811249899e33b954ef2efe",
+          "b0f14cc15eeb69052052cdb3419f9d23f61e2011d3957be6386b6a56900e93b7ce06b38b322b2d5bbe5be2a7f5d57c57a523cb46545e23cb9d5410d5225595d7"
+        ]
+      }
+    },
+    "relationship:TEST_HEADER_NO_LEADING_SPACE -> HTTPBIN": {
+      "kind": "relationship",
+      "source": "TEST_HEADER_NO_LEADING_SPACE",
+      "target": "HTTPBIN",
+      "description": "CALLS, direction test_header_no_leading_space -> httpbin: the test visibly calls `httpbin(\"get\")` as the URL argument inside `requests.get(...)`.",
+      "weight": 9.0,
+      "combined_degree": 99,
+      "semantic_sha256": "e0e99ecfee31682340b4dd5ebc07b42d66f2a925677408550ede425c16145a7b",
+      "source_titles": [
+        "tests/test_requests.py:L1624-L1760"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "source": "TEST_HEADER_NO_LEADING_SPACE",
+        "target": "HTTPBIN",
+        "description": "CALLS, direction test_header_no_leading_space -> httpbin: the test visibly calls `httpbin(\"get\")` as the URL argument inside `requests.get(...)`.",
+        "weight": 9.0,
+        "combined_degree": 99,
+        "text_unit_ids": [
+          "2505e1a48b76732000e23ab0354ff6ed17cd408aa62b7e5e48a9b8276915207765f673c94b2fb4a3fac6de128020683d34064c1670811249899e33b954ef2efe"
+        ]
+      }
+    },
+    "relationship:TEST_HEADER_VALUE_NOT_STR -> REQUESTS.GET": {
+      "kind": "relationship",
+      "source": "TEST_HEADER_VALUE_NOT_STR",
+      "target": "REQUESTS.GET",
+      "description": "CALLS, direction test_header_value_not_str -> requests.get: the visible call is `requests.get(\"httpbin...\", headers=invalid_header)` in the exception context; the URL expression uses the injected `httpbin` parameter but its complete call is not shown in this line.",
+      "weight": 8.0,
+      "combined_degree": 83,
+      "semantic_sha256": "b51e4b2c66b138ec0d81cac0551ab82997656bece5c6d18e69f2c21ee76bb6bc",
+      "source_titles": [
+        "tests/test_requests.py:L1624-L1760"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "source": "TEST_HEADER_VALUE_NOT_STR",
+        "target": "REQUESTS.GET",
+        "description": "CALLS, direction test_header_value_not_str -> requests.get: the visible call is `requests.get(\"httpbin...\", headers=invalid_header)` in the exception context; the URL expression uses the injected `httpbin` parameter but its complete call is not shown in this line.",
+        "weight": 8.0,
+        "combined_degree": 83,
+        "text_unit_ids": [
+          "2505e1a48b76732000e23ab0354ff6ed17cd408aa62b7e5e48a9b8276915207765f673c94b2fb4a3fac6de128020683d34064c1670811249899e33b954ef2efe"
+        ]
+      }
+    },
+    "relationship:TEST_HEADER_VALUE_NOT_STR -> HTTPBIN": {
+      "kind": "relationship",
+      "source": "TEST_HEADER_VALUE_NOT_STR",
+      "target": "HTTPBIN",
+      "description": "CALLS, direction test_header_value_not_str -> httpbin: the test visibly calls `httpbin(\"get\")` as the URL argument inside `requests.get(...)`.",
+      "weight": 9.0,
+      "combined_degree": 99,
+      "semantic_sha256": "a266059f5faf4c71c287f313612ad8c72160e00a8eeb1932e470e6f35069f280",
+      "source_titles": [
+        "tests/test_requests.py:L1624-L1760"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "source": "TEST_HEADER_VALUE_NOT_STR",
+        "target": "HTTPBIN",
+        "description": "CALLS, direction test_header_value_not_str -> httpbin: the test visibly calls `httpbin(\"get\")` as the URL argument inside `requests.get(...)`.",
+        "weight": 9.0,
+        "combined_degree": 99,
+        "text_unit_ids": [
+          "2505e1a48b76732000e23ab0354ff6ed17cd408aa62b7e5e48a9b8276915207765f673c94b2fb4a3fac6de128020683d34064c1670811249899e33b954ef2efe"
+        ]
+      }
+    },
+    "relationship:TEST_HEADER_VALUE_NOT_STR -> PYTEST.MARK.PARAMETRIZE": {
+      "kind": "relationship",
+      "source": "TEST_HEADER_VALUE_NOT_STR",
+      "target": "PYTEST.MARK.PARAMETRIZE",
+      "description": "TESTS, direction test_header_value_not_str -> pytest.mark.parametrize: the test is visibly decorated with `@pytest.mark.parametrize` over invalid header values and keys.",
+      "weight": 9.0,
+      "combined_degree": 72,
+      "semantic_sha256": "2fd5f48295616e2f1fd696e7716510f6cc64b1038785e647f753ab1ddc25c75f",
+      "source_titles": [
+        "tests/test_requests.py:L1624-L1760"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "source": "TEST_HEADER_VALUE_NOT_STR",
+        "target": "PYTEST.MARK.PARAMETRIZE",
+        "description": "TESTS, direction test_header_value_not_str -> pytest.mark.parametrize: the test is visibly decorated with `@pytest.mark.parametrize` over invalid header values and keys.",
+        "weight": 9.0,
+        "combined_degree": 72,
+        "text_unit_ids": [
+          "2505e1a48b76732000e23ab0354ff6ed17cd408aa62b7e5e48a9b8276915207765f673c94b2fb4a3fac6de128020683d34064c1670811249899e33b954ef2efe"
+        ]
+      }
+    },
+    "entity:HTTPADAPTER.__GETSTATE__": {
+      "kind": "entity",
+      "title": "HTTPADAPTER.__GETSTATE__",
+      "type": "METHOD",
+      "description": "Defined method `HTTPAdapter.__getstate__(self)`; returns a dictionary comprehension using `getattr` for each attribute in `HTTPAdapter.__attrs__`.",
+      "semantic_sha256": "9ad41a17fde2437c2c7b868dd667ee020c439fc57fbbf61541c83e6d6807a18b",
+      "frequency": 1,
+      "degree": 3,
+      "source_titles": [
+        "src/requests/adapters.py:L156-L310"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "title": "HTTPADAPTER.__GETSTATE__",
+        "type": "METHOD",
+        "description": "Defined method `HTTPAdapter.__getstate__(self)`; returns a dictionary comprehension using `getattr` for each attribute in `HTTPAdapter.__attrs__`.",
+        "text_unit_ids": [
+          "38b793d92db530697a201491278adba744c863fa4cfc1fecf0b7e4d1bf07adad817a15eb033605de4dfc93aba4b4aef0040b0eb9206275057588855a49ce5581"
+        ],
+        "frequency": 1,
+        "degree": 3
+      }
+    },
+    "entity:HTTPADAPTER.__SETSTATE__": {
+      "kind": "entity",
+      "title": "HTTPADAPTER.__SETSTATE__",
+      "type": "METHOD",
+      "description": "Defined method `HTTPAdapter.__setstate__(self, state)`; resets proxy-manager and configuration state, assigns supplied state attributes, and reinitializes the pool manager using stored pool settings.",
+      "semantic_sha256": "4069a975666300410287b5effe4829ee548c4aa1250e2cb602af782785a74d66",
+      "frequency": 1,
+      "degree": 3,
+      "source_titles": [
+        "src/requests/adapters.py:L156-L310"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "title": "HTTPADAPTER.__SETSTATE__",
+        "type": "METHOD",
+        "description": "Defined method `HTTPAdapter.__setstate__(self, state)`; resets proxy-manager and configuration state, assigns supplied state attributes, and reinitializes the pool manager using stored pool settings.",
+        "text_unit_ids": [
+          "38b793d92db530697a201491278adba744c863fa4cfc1fecf0b7e4d1bf07adad817a15eb033605de4dfc93aba4b4aef0040b0eb9206275057588855a49ce5581"
+        ],
+        "frequency": 1,
+        "degree": 3
+      }
+    },
+    "relationship:HTTPADAPTER -> HTTPADAPTER.__GETSTATE__": {
+      "kind": "relationship",
+      "source": "HTTPADAPTER",
+      "target": "HTTPADAPTER.__GETSTATE__",
+      "description": "DEFINES, HTTPAdapter defines the visible method `__getstate__`",
+      "weight": 10.0,
+      "combined_degree": 27,
+      "semantic_sha256": "6ef95a246efe2ef5cdcb1b28b04599f351bc79da3fe97d2aeaeef701d259b6f1",
+      "source_titles": [
+        "src/requests/adapters.py:L156-L310"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "source": "HTTPADAPTER",
+        "target": "HTTPADAPTER.__GETSTATE__",
+        "description": "DEFINES, HTTPAdapter defines the visible method `__getstate__`",
+        "weight": 10.0,
+        "combined_degree": 27,
+        "text_unit_ids": [
+          "38b793d92db530697a201491278adba744c863fa4cfc1fecf0b7e4d1bf07adad817a15eb033605de4dfc93aba4b4aef0040b0eb9206275057588855a49ce5581"
+        ]
+      }
+    },
+    "relationship:HTTPADAPTER -> HTTPADAPTER.__SETSTATE__": {
+      "kind": "relationship",
+      "source": "HTTPADAPTER",
+      "target": "HTTPADAPTER.__SETSTATE__",
+      "description": "DEFINES, HTTPAdapter defines the visible method `__setstate__`",
+      "weight": 10.0,
+      "combined_degree": 27,
+      "semantic_sha256": "61b12ed4cdf8f3712bb7e8beb610165e8134dc11685ddddee26ab312789e6ab6",
+      "source_titles": [
+        "src/requests/adapters.py:L156-L310"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "source": "HTTPADAPTER",
+        "target": "HTTPADAPTER.__SETSTATE__",
+        "description": "DEFINES, HTTPAdapter defines the visible method `__setstate__`",
+        "weight": 10.0,
+        "combined_degree": 27,
+        "text_unit_ids": [
+          "38b793d92db530697a201491278adba744c863fa4cfc1fecf0b7e4d1bf07adad817a15eb033605de4dfc93aba4b4aef0040b0eb9206275057588855a49ce5581"
+        ]
+      }
+    },
+    "relationship:HTTPADAPTER.__GETSTATE__ -> GETATTR": {
+      "kind": "relationship",
+      "source": "HTTPADAPTER.__GETSTATE__",
+      "target": "GETATTR",
+      "description": "CALLS, the dictionary comprehension evaluates `getattr(self, attr, None)` for each name in `HTTPAdapter.__attrs__`",
+      "weight": 9.0,
+      "combined_degree": 15,
+      "semantic_sha256": "c0542078002e8e7d7d0a321c54f9bfa12be25145467f90762685a825ae4e4f2d",
+      "source_titles": [
+        "src/requests/adapters.py:L156-L310"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "source": "HTTPADAPTER.__GETSTATE__",
+        "target": "GETATTR",
+        "description": "CALLS, the dictionary comprehension evaluates `getattr(self, attr, None)` for each name in `HTTPAdapter.__attrs__`",
+        "weight": 9.0,
+        "combined_degree": 15,
+        "text_unit_ids": [
+          "38b793d92db530697a201491278adba744c863fa4cfc1fecf0b7e4d1bf07adad817a15eb033605de4dfc93aba4b4aef0040b0eb9206275057588855a49ce5581"
+        ]
+      }
+    },
+    "relationship:HTTPADAPTER.__GETSTATE__ -> HTTPADAPTER.__ATTRS__": {
+      "kind": "relationship",
+      "source": "HTTPADAPTER.__GETSTATE__",
+      "target": "HTTPADAPTER.__ATTRS__",
+      "description": "READS, the method iterates over `self.__attrs__` to determine serialized attribute names",
+      "weight": 9.0,
+      "combined_degree": 5,
+      "semantic_sha256": "693012f66f7ce8ae9af05ed567c3771c61cfe403f5c6311ac3a33525ce79245f",
+      "source_titles": [
+        "src/requests/adapters.py:L156-L310"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "source": "HTTPADAPTER.__GETSTATE__",
+        "target": "HTTPADAPTER.__ATTRS__",
+        "description": "READS, the method iterates over `self.__attrs__` to determine serialized attribute names",
+        "weight": 9.0,
+        "combined_degree": 5,
+        "text_unit_ids": [
+          "38b793d92db530697a201491278adba744c863fa4cfc1fecf0b7e4d1bf07adad817a15eb033605de4dfc93aba4b4aef0040b0eb9206275057588855a49ce5581"
+        ]
+      }
+    },
+    "relationship:HTTPADAPTER.__SETSTATE__ -> SETATTR": {
+      "kind": "relationship",
+      "source": "HTTPADAPTER.__SETSTATE__",
+      "target": "SETATTR",
+      "description": "CALLS, the loop evaluates `setattr(self, attr, value)` for every item in `state.items()`",
+      "weight": 9.0,
+      "combined_degree": 10,
+      "semantic_sha256": "ef4d3b3b73f851db025b8a272ddcf58ab33eb41d9854402f20f4bfd8c5fb4c73",
+      "source_titles": [
+        "src/requests/adapters.py:L156-L310"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "source": "HTTPADAPTER.__SETSTATE__",
+        "target": "SETATTR",
+        "description": "CALLS, the loop evaluates `setattr(self, attr, value)` for every item in `state.items()`",
+        "weight": 9.0,
+        "combined_degree": 10,
+        "text_unit_ids": [
+          "38b793d92db530697a201491278adba744c863fa4cfc1fecf0b7e4d1bf07adad817a15eb033605de4dfc93aba4b4aef0040b0eb9206275057588855a49ce5581"
+        ]
+      }
+    },
+    "relationship:HTTPADAPTER.__SETSTATE__ -> HTTPADAPTER.INIT_POOLMANAGER": {
+      "kind": "relationship",
+      "source": "HTTPADAPTER.__SETSTATE__",
+      "target": "HTTPADAPTER.INIT_POOLMANAGER",
+      "description": "CALLS, `self.init_poolmanager(self._pool_connections, self._pool_maxsize, block=self._pool_block)` reinitializes the pool manager after state restoration",
+      "weight": 9.0,
+      "combined_degree": 8,
+      "semantic_sha256": "0a5d33f085313fac6ed97f3c11da7958f4aa2246f3fc678325438533496faeae",
+      "source_titles": [
+        "src/requests/adapters.py:L156-L310"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "source": "HTTPADAPTER.__SETSTATE__",
+        "target": "HTTPADAPTER.INIT_POOLMANAGER",
+        "description": "CALLS, `self.init_poolmanager(self._pool_connections, self._pool_maxsize, block=self._pool_block)` reinitializes the pool manager after state restoration",
+        "weight": 9.0,
+        "combined_degree": 8,
+        "text_unit_ids": [
+          "38b793d92db530697a201491278adba744c863fa4cfc1fecf0b7e4d1bf07adad817a15eb033605de4dfc93aba4b4aef0040b0eb9206275057588855a49ce5581"
+        ]
+      }
+    },
+    "entity:HTTPADAPTER": {
+      "kind": "entity",
+      "title": "HTTPADAPTER",
+      "type": "EXTERNAL_SYMBOL",
+      "description": "HTTPADAPTER refers to the externally defined `HTTPAdapter` class from the Requests library, typically imported from `requests.adapters` or a local `.adapters` module. It serves as the default transport adapter for HTTP and HTTPS session connections and is instantiated as `HTTPAdapter()` when mounting default adapters for the `http://` and `https://` URL prefixes.\n\nHTTPADAPTER can also be configured with connection-pool or retry options, including constructions such as `HTTPAdapter(max_retries=retries)`, before being mounted on a session. It provides adapter functionality such as `proxy_headers`, and it is used directly in tests and other visible code. The class is also documented and used as the base class for specialized adapters such as `Ssl3HttpAdapter`.\n\nAlthough HTTPADAPTER is imported and referenced repeatedly—including for session mounting, retry configuration, proxy handling, subclassing, and tests—its actual implementation is not visible in the provided material.",
+      "semantic_sha256": "2dd5d795758fcfcfff4eca8396f760fdaf73830e26fefa58bf022c9c49ebca5c",
+      "frequency": 12,
+      "degree": 24,
+      "source_titles": [
+        "docs/user/advanced.rst:L1049-L1141",
+        "docs/user/advanced.rst:L929-L1057",
+        "src/requests/adapters.py:L421-L560",
+        "src/requests/adapters.py:L551-L702",
+        "src/requests/sessions.py:L1-L166",
+        "src/requests/sessions.py:L298-L453",
+        "src/requests/sessions.py:L441-L588",
+        "tests/test_requests.py:L1-L170",
+        "tests/test_requests.py:L1488-L1634",
+        "tests/test_requests.py:L1624-L1760",
+        "tests/test_requests.py:L2016-L2165",
+        "tests/test_requests.py:L2559-L2696"
+      ],
+      "source_reference_occurrences": 12,
+      "semantic_fields": {
+        "title": "HTTPADAPTER",
+        "type": "EXTERNAL_SYMBOL",
+        "description": "HTTPADAPTER refers to the externally defined `HTTPAdapter` class from the Requests library, typically imported from `requests.adapters` or a local `.adapters` module. It serves as the default transport adapter for HTTP and HTTPS session connections and is instantiated as `HTTPAdapter()` when mounting default adapters for the `http://` and `https://` URL prefixes.\n\nHTTPADAPTER can also be configured with connection-pool or retry options, including constructions such as `HTTPAdapter(max_retries=retries)`, before being mounted on a session. It provides adapter functionality such as `proxy_headers`, and it is used directly in tests and other visible code. The class is also documented and used as the base class for specialized adapters such as `Ssl3HttpAdapter`.\n\nAlthough HTTPADAPTER is imported and referenced repeatedly—including for session mounting, retry configuration, proxy handling, subclassing, and tests—its actual implementation is not visible in the provided material.",
+        "text_unit_ids": [
+          "2505e1a48b76732000e23ab0354ff6ed17cd408aa62b7e5e48a9b8276915207765f673c94b2fb4a3fac6de128020683d34064c1670811249899e33b954ef2efe",
+          "3726d9893d74af0ffe47bf33c7231af1999eb75c5a044060690795e8460359002950fc7fa023e8dbec642e33315f849fa81e5cb3cd9167443b5ccf30467762f9",
+          "43b0eb429fb59d9e8a7c68b6d91b68792ed3a872fb5a20ef46f0f5aa43724a3049ea9fe1b82e4814f4885580bd8bf12cfb1e04e6c9da8f74a9bd69b637d57d71",
+          "533202aec34d70fe2e87635a6991682059e679196c41224d5b6307324c8697a95317fe181221ea36093302a6094bcb18f0a1b1a250522b76441cdfddc762f606",
+          "a2472c1ed2a06cdf1ac34c4edd112af95b3f3ed97f4657dc62a10e50ed98ba75681c81cb6cb33c393a814fb51a035d1ab8fef29ae36fe95f2393cbc77c50bfc2",
+          "a96f69a2eb86d6a91b46b463e5c9aa6768f7a1f58010af4a8940be59ff71b1db8da523af9fc38fd24ddd17853462052938f2e55c271f8b923b46b1136bad296f",
+          "ae73c7c05818e7b427df8354d6874b4f461ad2e19726f029c7e56600b4bd2e26083c0b18582e66b52305d85d474411c994fb9592a6fdecf6a68badf616d08cf9",
+          "b4fc31fa0398c423c77ca05d45d3311d21c64d32090eb4a80186e559ba11c7f9857fc547284a1b9e915fb677bf5dcdb6dbb8f2c2edb68f5d45dd5f1b87c1171d",
+          "bc4ab2502f49c1e1aa173a6c8081bcd4b23a1e7f5e3616ffd849f3f6111902d346779211e0fd205ecc677a53b9c50399d5d7b7830f3d0fe9112ff0ad133fd5c2",
+          "cefa6c63ec4b1cd11e1927da93da580dd749ed4855250d8ae7b47ddf05c7f20fdc485ee142e75cea1d24912a49c84d7ee5ff6534440f3db90e2091db6a87ec4e",
+          "e76cef82fcafe901f313bcfda0f5b41f66887c2e89bb8063d4934fb20875242855c64215b1b72a069c22b421bc94a41752ffa62004e456fc9bc584de31abe80e",
+          "f0c5e8cb2a8c3f6c2bf7e2bda0965df0363b6bfa8d3dbb7da4bd3e6990a4b436a1fc0d119e913658f183f4947f2e47c0322cb532ecb386800792cec654807cd8"
+        ],
+        "frequency": 12,
+        "degree": 24
+      }
+    },
+    "entity:HTTPADAPTER.__ATTRS__": {
+      "kind": "entity",
+      "title": "HTTPADAPTER.__ATTRS__",
+      "type": "CONSTANT",
+      "description": "Defined class value `HTTPAdapter.__attrs__`; lists `\"max_retries\"`, `\"config\"`, `\"_pool_connections\"`, `\"_pool_maxsize\"`, and `\"_pool_block\"` for state serialization.",
+      "semantic_sha256": "443a984737282d0efa167c8bf2ff76cb1ea3ec3a9a7e3c730152dcf85766384c",
+      "frequency": 1,
+      "degree": 2,
+      "source_titles": [
+        "src/requests/adapters.py:L156-L310"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "title": "HTTPADAPTER.__ATTRS__",
+        "type": "CONSTANT",
+        "description": "Defined class value `HTTPAdapter.__attrs__`; lists `\"max_retries\"`, `\"config\"`, `\"_pool_connections\"`, `\"_pool_maxsize\"`, and `\"_pool_block\"` for state serialization.",
+        "text_unit_ids": [
+          "38b793d92db530697a201491278adba744c863fa4cfc1fecf0b7e4d1bf07adad817a15eb033605de4dfc93aba4b4aef0040b0eb9206275057588855a49ce5581"
+        ],
+        "frequency": 1,
+        "degree": 2
+      }
+    },
+    "entity:CLOSE": {
+      "kind": "entity",
+      "title": "CLOSE",
+      "type": "METHOD",
+      "description": "CLOSE refers to several `close` method implementations. One implementation iterates over `self.adapters.values()` and invokes `close()` on each adapter. Another clears `self.poolmanager` and all proxy managers stored in `self.proxy_manager.values()`. A third closes `self.raw` when the response content has not been consumed and, when available, calls `release_conn` to release the underlying connection. The owning classes for these implementations are not visible in the provided descriptions.",
+      "semantic_sha256": "acf88ec545e4df35118c35c2f365ce68a2ccb350b18494e62d2828325e39efc2",
+      "frequency": 3,
+      "degree": 7,
+      "source_titles": [
+        "src/requests/adapters.py:L421-L560",
+        "src/requests/models.py:L930-L1037",
+        "src/requests/sessions.py:L704-L831"
+      ],
+      "source_reference_occurrences": 3,
+      "semantic_fields": {
+        "title": "CLOSE",
+        "type": "METHOD",
+        "description": "CLOSE refers to several `close` method implementations. One implementation iterates over `self.adapters.values()` and invokes `close()` on each adapter. Another clears `self.poolmanager` and all proxy managers stored in `self.proxy_manager.values()`. A third closes `self.raw` when the response content has not been consumed and, when available, calls `release_conn` to release the underlying connection. The owning classes for these implementations are not visible in the provided descriptions.",
+        "text_unit_ids": [
+          "4b4b5fc54c5de1b3bc06ae804b6e1a5b97c7354826ae43cb449d641d0ddfd9ca12e0edbdb3bc23b9ef8590995e18471f832326ab7032bf5ddf89637b8f414d3a",
+          "ae73c7c05818e7b427df8354d6874b4f461ad2e19726f029c7e56600b4bd2e26083c0b18582e66b52305d85d474411c994fb9592a6fdecf6a68badf616d08cf9",
+          "f7a16e348dbdfcaeb03162dd951c70406911a93102dda5fe8b2bd318ecdcf2a436eeeee6421652fa3c8a858b1ad18bfb376a8566f7620ebffdbec7d86d85181a"
+        ],
+        "frequency": 3,
+        "degree": 7
+      }
+    },
+    "relationship:CLOSE -> NOTIMPLEMENTEDERROR": {
+      "kind": "relationship",
+      "source": "CLOSE",
+      "target": "NOTIMPLEMENTEDERROR",
+      "description": "CALLS, `raise NotImplementedError` is the visible implementation of `close`; the owning class is not visible in this chunk",
+      "weight": 10.0,
+      "combined_degree": 12,
+      "semantic_sha256": "1b54074504db92888dd25072f58037e2891020a055e0ad490bf1f4f6fa226756",
+      "source_titles": [
+        "src/requests/adapters.py:L156-L310"
+      ],
+      "source_reference_occurrences": 1,
+      "semantic_fields": {
+        "source": "CLOSE",
+        "target": "NOTIMPLEMENTEDERROR",
+        "description": "CALLS, `raise NotImplementedError` is the visible implementation of `close`; the owning class is not visible in this chunk",
+        "weight": 10.0,
+        "combined_degree": 12,
+        "text_unit_ids": [
+          "38b793d92db530697a201491278adba744c863fa4cfc1fecf0b7e4d1bf07adad817a15eb033605de4dfc93aba4b4aef0040b0eb9206275057588855a49ce5581"
+        ]
+      }
+    }
+  },
+  "recheck_instructions": [
+    "最终索引完成后用相同协议核对whole_graph_semantic_sha256；两个表均一致可确认本审阅所依赖图语义未变，无需要求UUID一致。",
+    "如整体哈希不同，先按record_evidence的title或source/target定位记录，对照逐记录semantic_sha256；相关记录或来源变化则重审该案例。",
+    "若text_unit_id变化，先核对源块内容与provenance映射，不能仅因ID变化认定事实错误，也不能跳过来源变更。"
+  ],
+  "limitations": [
+    "四例是固定诊断案例，不是随机图质量样本；没有估计全图精确率、召回率或代码任务成功率。",
+    "图关系没有独立的结构化CALLS/TESTS字段，这些标签在description内；本审阅按记录描述和端点解释，没有把图当作编译器级调用图。",
+    "社区报告尚在后续工作流程，本审阅没有评估报告文本、Local候选排序、上下文或答案。",
+    "全局title相同不保证程序符号身份相同；统一大写和未限定作用域已在固定例中造成可见混合。",
+    "只写fixed-graph-review.json；零API/模型调用，未改prompt、gold、图、评分或账本。"
+  ]
+}

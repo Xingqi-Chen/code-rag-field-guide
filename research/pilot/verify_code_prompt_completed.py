@@ -8,12 +8,15 @@ from pathlib import Path
 from verify_code_prompt import no_network  # Installs the network-denying audit hook.
 
 HERE=Path(__file__).resolve().parent
+ROOT=HERE.parents[1]
 OUT=HERE/'results/code-prompt'
 read=lambda p:json.loads(p.read_text())
 sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
 
 
 def main():
+    for name,digest in read(OUT/'preflight.json')['frozen_files'].items():
+        assert sha(ROOT/name)==digest, name
     s=read(OUT/'execution.json');events=s['events']
     assert s['status']=='index_complete' and s['wall_deadline_removed']
     assert s['limits']['wall_seconds'] is None and s['limits']['generation_request_seconds']==120
@@ -68,7 +71,9 @@ def main():
         assert run['chunks']==len(run['rows'])==114
         for key in ['entity_record_count_gap','relationship_record_count_gap']:
             assert run[key]==sum(r[key] for r in run['rows'])
-    retrieval=read(OUT/'retrieval.json')
+    from verify_results import validate
+    retrieval=validate(out=OUT,budgets=(4000,8000,12000,16000),
+        include_features=False,methods=['ms_local_code_prompt'])
     assert len(retrieval['records'])==80 and retrieval['external_calls']==0
     assert retrieval['query_vector_sha256']==read(HERE/'results/budget-supplement/retrieval.json')['query_vector_sha256']
     print('Verified completed ledger, cumulative budgets, unknown usage/timing, graph counts, fixed sample and80 offline contexts. No model calls.')

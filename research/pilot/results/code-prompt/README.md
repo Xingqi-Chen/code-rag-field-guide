@@ -1,8 +1,14 @@
 # 代码提示词实验：真实中断与恢复记录
 
-**当前状态：已获准恢复，正在继续建图。** 2026-10-14 00:24:02 UTC用户批准超时、连接中断、429和5xx共享每请求最多两次额外尝试，遵守Retry-After；00:31:24批准生成预算记录上限提高至1,600，其余预算不变。623→624在4.372秒成功，615份成功缓存复用；675为从未发送的额度检查点，切换时再复用666份成功回复。尚无新Local评分。
+**当前状态：社区报告格式校验失败，已停止。** 2026-10-14 00:55:31 UTC，第1,027次HTTP200完整回复已保存，但含4个对象末尾多余逗号，未通过原版JSON解析。前51份报告格式有效，第52份只有传输／内容完整性验证通过；不能把52次成功HTTP调用写成52份有效报告。新索引、embedding和80份新Local上下文仍未完成。
 
-[统一重试授权](transient-retry-authorization.json)、[实际切换](transient-retry-amendment.json)、[成功关联](transient-recovery-progress.json)、[独立复核](transient-retry-review.json)及[额度变更](generation-cap-amendment.json)记录最新状态。[原503诊断](http503-diagnosis.json)和[暂停快照](execution-interrupted-09.json)不覆盖。之前准备的503单独恢复入口未执行，实际使用统一策略入口。下面是此前停机与恢复的历史事实。
+[中断账本](execution-interrupted-11.json)保留1,027条生成预算记录：195和675未派发，实际服务尝试1,025次；七次原模型用量未知继续保留。图表已生成1,628实体、2,891关系、372个跨层社区。新embedding调用仍为0。
+
+[原回复与候选修复](schema-1027-diagnosis.json)仅作离线审查：删除原字符串外、对象闭括号前的4个逗号后，原版schema通过，全部5条findings保留；原回复、缓存、账本和在线解析器未改，没有新模型调用。[独立复核](schema-1027-review.json)检查字符串内容逐字不变。此错误不属于既有临时网络重试许可；单次格式例外尚待明确批准，未自动重发成功请求。可离线运行`python3 research/pilot/diagnose_code_prompt_schema.py --check`复核公开候选。
+
+此前00:24:02 UTC用户批准超时、连接中断、429和5xx共享每请求最多两次额外尝试，遵守Retry-After；00:31:24批准生成预算记录上限提高至1,600，其余预算不变。623→624在4.372秒成功，615份成功缓存复用；675为从未发送的额度检查点，切换时再复用666份成功回复。
+
+[统一重试授权](transient-retry-authorization.json)、[实际切换](transient-retry-amendment.json)、[成功关联](transient-recovery-progress.json)、[独立复核](transient-retry-review.json)及[额度变更](generation-cap-amendment.json)记录此前恢复状态。[原503诊断](http503-diagnosis.json)和[暂停快照](execution-interrupted-09.json)不覆盖。之前准备的503单独恢复入口未执行，实际使用统一策略入口。下面是此前停机与恢复的历史事实。
 
 第554次因执行通道丢失而未写回账本，但HTTP 200完整回复已经落盘。恢复时离线验证547份成功回复和134个向量，554不重发；之后成功推进555–622。[恢复证据](host-recovery-554.json)记录原账本状态与未知耗时。准确的进程停止时刻未捕获，累计workflow时间含未知停机间隔，不是精确有效运行时间。
 
@@ -67,3 +73,10 @@
 ```bash
 .cache/graphrag-venv/bin/python research/pilot/diagnose_code_prompt.py witness-parse-check --check
 ```
+
+
+## 固定四例的实际图记录审查
+
+[独立审阅](fixed-graph-review.json)检查图表稳定快照，包含51条最终实体／关系及25条必要原始候选、源码短引和可复算语义哈希。具体方法与header语义改善进入图，同时仍有同名身份混合、类型／定义来源保留不足和部分关系来源不足；有些片段外推获得相邻来源补证，逐条区分。它没有查看新Local分数，也不估计全图精度。372社区包含全部层级，未改变官方社区配置或只选局部层级省去报告。
+
+[离线评分准备复核](scoring-readiness-review.json)验证400行对照和15条可评分test的代码路径，修正了完成验证器及缺失耗时标签；内存fixture不等于真实80份新上下文已经完成。

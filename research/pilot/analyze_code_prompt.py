@@ -36,7 +36,8 @@ def run_summary(base):
         operations[name]={'physical_attempts':len(subset),
             'initially_validated':sum(e['status']=='validated' and not e.get('recovery') for e in subset),
             'complete_reply_later_validated_and_reused':sum(bool(e.get('recovery')) for e in subset),
-            'supervised_seconds':sum(e.get('elapsed_seconds',0) for e in subset)}
+            'known_supervised_seconds':sum(e['elapsed_seconds'] for e in subset if 'elapsed_seconds' in e),
+            'missing_supervised_timing_sequences':[e['sequence'] for e in subset if 'elapsed_seconds' not in e]}
     return {'index_tables':index['tables'],'entity_types':index['entity_type_counts'],
         'output_bytes':index['all_output_file_bytes'],'vector_bytes':index['vector_store_bytes'],
         'budget_generation_reservations':execution['index_generation_attempts'],

@@ -1,0 +1,80 @@
+{
+  "schema": 1,
+  "reviewer": {
+    "type": "independent_ai_agent",
+    "human_review": false,
+    "blind_review": false
+  },
+  "reviewed_utc": "2026-10-14T01:00:14.458286+00:00",
+  "status": "static_and_fixture_checks_passed_final_experiment_validation_pending",
+  "reviewed_files_sha256": {
+    "evaluate_code_prompt.py": "312e96efa8b0873fa7cf45bb93fe492a012ed5096e475506761e74ae01d987d8",
+    "analyze_code_prompt.py": "dafe63605eb8966cb6471bc4276630fc3593c9e5bf9c6e5644bc9e05dc0302fe",
+    "verify_code_prompt_completed.py": "81a032a9e4bcc936d0abe24bae21e725ed53151d8e26bc91038bf801b027549d",
+    "verify_results.py": "2b5b3adf0ee335235e42ad01a4adf2ed16aac26386cee41961ed9f56f3e7067d"
+  },
+  "static_checks": {
+    "frozen_question_gold_protocol_and_baseline_hashes_match": true,
+    "old_baseline_context_rows": 320,
+    "planned_new_context_rows": 80,
+    "expected_total_scoring_rows": 400,
+    "budgets": [
+      4000,
+      8000,
+      12000,
+      16000
+    ],
+    "test_questions_total": 16,
+    "scorable_test_questions": 15,
+    "unscorable_test_question_excluded_from_coverage": "Q19",
+    "official_Local_parameters_and_source_vectors_preserved": true,
+    "retrieval_does_not_load_gold": true,
+    "offline_evaluation_blocks_network_and_uses_exact_cached_query_vectors": true,
+    "phase_index_usage_separated_from_later_baseline_calls": true,
+    "cumulative_embedding_reservations_explicitly_cross_stage": true,
+    "no_answer_accuracy_or_causal_effect_claim": true
+  },
+  "pure_validation_changes": [
+    {
+      "file": "verify_code_prompt_completed.py",
+      "change": "Check frozen preflight hashes and call verify_results.validate for the unique80-context grid, actual rendered contexts and source provenance."
+    },
+    {
+      "file": "analyze_code_prompt.py",
+      "change": "Report known_supervised_seconds and missing_supervised_timing_sequences per operation; missing timing is not treated as measured zero."
+    }
+  ],
+  "fixture_checks": {
+    "basis": "Existing default Local contexts relabeled only in memory to exercise the new evaluation code path; no new experimental results created.",
+    "context_validation_passed": 80,
+    "duplicate_grid_rejected": true,
+    "scoring_rows": 400,
+    "scorable_question_budget_pairs": 76,
+    "all_new_vs_default_Local_fixture_differences_zero": true,
+    "test_total16_scorable15_confirmed": true,
+    "new_context_token_recount_performed": false
+  },
+  "final_experiment_validation": {
+    "actual_new80_contexts_validated": false,
+    "actual_new_scores_verified": false,
+    "index_completed": false,
+    "reason": "Index is stopped at community-report schema failure1027. No final new retrieval.json or scores.json exists at this review.",
+    "still_required": [
+      "Complete the authorized index.",
+      "Generate the80 actual offline contexts and verify their tokens/provenance/grid.",
+      "Recompute final scores and descriptive analysis from actual artifacts.",
+      "Run the completed-run validator and independently review final numerical conclusions."
+    ]
+  },
+  "execution_boundary": {
+    "real_model_calls": 0,
+    "real_ledger_mutations": 0,
+    "scoring_or_retrieval_algorithm_changes": 0,
+    "only_code_changes_are_the_two_pure_validation_or_label_changes_above": true
+  },
+  "limitations": [
+    "Passing a fixture validates a code path, not completion or effectiveness of the code-prompt experiment.",
+    "Coverage is necessary-source-evidence coverage, not generated-answer accuracy.",
+    "Host interruption leaves an unknown inactive interval; accumulated workflow time requires an upper-bound/uncertainty label."
+  ]
+}
